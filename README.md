@@ -58,7 +58,55 @@ cd docs
 mkdocs serve -f mkdocs-en.yml -a localhost:8001
 ```
 
-The tutorial includes 21 lessons (beginner/intermediate/advanced) and 111 practice exercises. Changes to files are auto-reloaded in the browser.
+Changes to files are auto-reloaded in the browser.
+
+### Tutorial Contents
+
+**Lessons (21)**
+
+| Level | # | Topic |
+|-------|---|-------|
+| Beginner | 01 | SELECT Basics |
+| | 02 | Filtering with WHERE |
+| | 03 | Sorting & Limiting |
+| | 04 | Aggregate Functions |
+| | 05 | GROUP BY & HAVING |
+| | 06 | NULL Handling |
+| Intermediate | 07 | INNER JOIN |
+| | 08 | LEFT JOIN & Outer Joins |
+| | 09 | Subqueries |
+| | 10 | CASE Expressions |
+| | 11 | Date & Time Functions |
+| | 12 | String Functions |
+| | 13 | UNION & Set Operations |
+| | 14 | INSERT, UPDATE, DELETE |
+| | 21 | SELF JOIN & CROSS JOIN |
+| Advanced | 15 | Window Functions |
+| | 16 | CTE & Recursive CTE |
+| | 17 | EXISTS & Correlated Subqueries |
+| | 18 | Views |
+| | 19 | Indexes & Performance |
+| | 20 | Triggers |
+
+**Exercises (111 problems)**
+
+| Level | Exercise | Problems |
+|-------|----------|----------|
+| Beginner | Product Exploration | 15 |
+| | Customer Analysis | 15 |
+| | Order Basics | 15 |
+| Intermediate | JOIN Master | 12 |
+| | Date & Time Analysis | 12 |
+| | Subqueries & Transformation | 12 |
+| Advanced | Sales Analysis | 6 |
+| | Customer Segmentation | 6 |
+| | Inventory Management | 6 |
+| | CS Performance | 6 |
+| | Real-World SQL Patterns | 6 |
+
+**Reference**
+
+- DB Dialect Comparison (SQLite / MySQL / PostgreSQL / SQL Server / Oracle)
 
 ## Features
 
