@@ -51,12 +51,15 @@ nav:
     - "JOIN 마스터": exercises/intermediate-joins.md
     - "날짜/시간 분석": exercises/intermediate-dates.md
     - "서브쿼리와 변환": exercises/intermediate-subqueries.md
+    - "제약조건 체험": exercises/intermediate-constraints.md
+    - "트랜잭션": exercises/intermediate-transactions.md
   - "실전 연습 — 고급":
     - "매출 분석": exercises/sales-analysis.md
     - "고객 세분화": exercises/customer-segmentation.md
     - "재고 관리": exercises/inventory.md
     - "CS 성과 분석": exercises/cs-performance.md
     - "실무 SQL 패턴": exercises/real-world-patterns.md
+    - "정규화 이해": exercises/advanced-normalization.md
 
 extra_css:
   - css/mermaid.css

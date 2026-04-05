@@ -51,12 +51,15 @@ nav:
     - "JOIN Master": exercises/intermediate-joins.md
     - "Date & Time Analysis": exercises/intermediate-dates.md
     - "Subqueries & Transformation": exercises/intermediate-subqueries.md
+    - "Constraints in Action": exercises/intermediate-constraints.md
+    - "Transactions": exercises/intermediate-transactions.md
   - "Exercises — Advanced":
     - "Sales Analysis": exercises/sales-analysis.md
     - "Customer Segmentation": exercises/customer-segmentation.md
     - "Inventory Management": exercises/inventory.md
     - "CS Performance": exercises/cs-performance.md
     - "Real-World SQL Patterns": exercises/real-world-patterns.md
+    - "Understanding Normalization": exercises/advanced-normalization.md
 
 extra_css:
   - css/mermaid.css

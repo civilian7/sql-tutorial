@@ -90,7 +90,7 @@ Changes to files are auto-reloaded in the browser.
 | | 19 | Indexes & Performance |
 | | 20 | Triggers |
 
-**Exercises (111 problems)**
+**Exercises (136 problems)**
 
 | Level | Exercise | Problems |
 |-------|----------|----------|
@@ -100,11 +100,14 @@ Changes to files are auto-reloaded in the browser.
 | Intermediate | JOIN Master | 12 |
 | | Date & Time Analysis | 12 |
 | | Subqueries & Transformation | 12 |
+| | Constraints in Action | 10 |
+| | Transactions | 7 |
 | Advanced | Sales Analysis | 6 |
 | | Customer Segmentation | 6 |
 | | Inventory Management | 6 |
 | | CS Performance | 6 |
 | | Real-World SQL Patterns | 6 |
+| | Understanding Normalization | 8 |
 
 **Reference**
 
