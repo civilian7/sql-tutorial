@@ -39,6 +39,27 @@ python generate.py --size large --locale en
 
 Output: `output/tutorial.db` (SQLite)
 
+### Browse the Tutorial Docs
+
+The tutorial documentation is built with MkDocs Material and can be previewed locally.
+
+```bash
+# Korean tutorial (http://localhost:8001)
+serve.bat
+
+# English tutorial
+serve.bat en
+```
+
+Or run directly:
+
+```bash
+cd docs
+mkdocs serve -f mkdocs-en.yml -a localhost:8001
+```
+
+The tutorial includes 21 lessons (beginner/intermediate/advanced) and 111 practice exercises. Changes to files are auto-reloaded in the browser.
+
 ## Features
 
 - **21 tables** with proper foreign keys, CHECK constraints, and indexes

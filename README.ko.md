@@ -39,6 +39,27 @@ python generate.py --size large --locale en
 
 생성된 파일: `output/tutorial.db` (SQLite)
 
+### 튜토리얼 문서 보기
+
+MkDocs Material 기반의 튜토리얼 문서를 로컬에서 미리볼 수 있습니다.
+
+```bash
+# 한국어 튜토리얼 (http://localhost:8001)
+serve.bat
+
+# 영문 튜토리얼
+serve.bat en
+```
+
+또는 직접 실행:
+
+```bash
+cd docs
+mkdocs serve -f mkdocs-ko.yml -a localhost:8001
+```
+
+튜토리얼은 21개 레슨(초급/중급/고급)과 111개 연습 문제로 구성되어 있으며, 파일 수정 시 브라우저에 자동 반영됩니다.
+
 ## 특징
 
 - **21개 테이블** — 외래 키, CHECK 제약조건, 인덱스 완비
