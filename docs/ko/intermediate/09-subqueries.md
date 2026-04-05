@@ -1,0 +1,242 @@
+# 9강: 서브쿼리
+
+서브쿼리(Subquery)는 다른 쿼리 안에 중첩된 `SELECT` 문입니다. `WHERE`, `FROM`, `SELECT` 절 어디에든 사용할 수 있습니다. 서브쿼리를 활용하면 복잡한 질문을 작고 읽기 쉬운 단계로 나눌 수 있습니다.
+
+## WHERE 절의 스칼라 서브쿼리
+
+스칼라 서브쿼리(Scalar Subquery)는 단일 값(행 1개, 열 1개)을 반환합니다. 리터럴 값이 들어갈 자리라면 어디든 사용할 수 있습니다.
+
+```sql
+-- 전체 평균 가격보다 비싼 상품
+SELECT name, price
+FROM products
+WHERE price > (SELECT AVG(price) FROM products WHERE is_active = 1)
+  AND is_active = 1
+ORDER BY price ASC;
+```
+
+**결과:**
+
+| name | price |
+|------|-------|
+| Corsair 32GB DDR5 Kit | 419.99 |
+| Samsung 27" Monitor | 449.99 |
+| ASUS ROG Swift 27" Monitor | 799.00 |
+| ... | |
+
+내부 쿼리 `(SELECT AVG(price) FROM products WHERE is_active = 1)`가 평균을 한 번 계산하면, 외부 쿼리가 각 상품 가격을 그 값과 비교합니다.
+
+```sql
+-- 첫 번째 주문보다 먼저 가입한 고객
+SELECT name, created_at
+FROM customers
+WHERE created_at < (SELECT MIN(ordered_at) FROM orders)
+LIMIT 5;
+```
+
+## IN 서브쿼리
+
+서브쿼리가 여러 행을 반환할 수 있을 때는 `=` 대신 `IN`을 사용하세요.
+
+```sql
+-- 별점 1점 리뷰를 남긴 적 있는 고객
+SELECT name, email, grade
+FROM customers
+WHERE id IN (
+    SELECT DISTINCT customer_id
+    FROM reviews
+    WHERE rating = 1
+)
+ORDER BY name;
+```
+
+**결과:**
+
+| name | email | grade |
+|------|-------|-------|
+| 강지훈 | k.jihun@testmail.kr | SILVER |
+| 윤서연 | y.seoyeon@testmail.kr | BRONZE |
+| ... | | |
+
+```sql
+-- 현재 장바구니에 담긴 활성 상품
+SELECT name, price, stock_qty
+FROM products
+WHERE id IN (
+    SELECT DISTINCT product_id
+    FROM cart_items
+)
+  AND is_active = 1
+ORDER BY name;
+```
+
+## NOT IN
+
+`NOT IN`은 서브쿼리 결과에 **없는** 행을 찾습니다 — `LEFT JOIN ... IS NULL` 안티 조인 패턴과 유사합니다.
+
+```sql
+-- 한 번도 주문되지 않은 상품
+SELECT name, price
+FROM products
+WHERE id NOT IN (
+    SELECT DISTINCT product_id
+    FROM order_items
+)
+  AND is_active = 1;
+```
+
+> **주의:** 서브쿼리가 NULL 값을 하나라도 반환하면 `NOT IN`이 예상치 못하게 동작합니다(행이 하나도 반환되지 않음). NULL이 포함될 수 있는 경우에는 `NOT EXISTS`(17강)를 사용하세요.
+
+## FROM 서브쿼리 (파생 테이블)
+
+`FROM` 절의 서브쿼리는 임시 인라인 테이블을 만듭니다. 이를 **파생 테이블(Derived Table)** 또는 **인라인 뷰(Inline View)**라고 합니다.
+
+```sql
+-- 고객 등급별 평균 주문 금액
+SELECT
+    grade,
+    ROUND(AVG(avg_order), 2) AS avg_order_value
+FROM (
+    SELECT
+        c.grade,
+        o.customer_id,
+        AVG(o.total_amount) AS avg_order
+    FROM orders AS o
+    INNER JOIN customers AS c ON o.customer_id = c.id
+    WHERE o.status NOT IN ('cancelled', 'returned')
+    GROUP BY c.grade, o.customer_id
+) AS customer_avgs
+GROUP BY grade
+ORDER BY avg_order_value DESC;
+```
+
+**결과:**
+
+| grade | avg_order_value |
+|-------|-----------------|
+| VIP | 892.34 |
+| GOLD | 614.22 |
+| SILVER | 421.87 |
+| BRONZE | 312.49 |
+
+```sql
+-- 매출 상위 3개월과 해당 월의 주문 수
+SELECT
+    monthly.year_month,
+    monthly.revenue,
+    monthly.order_count
+FROM (
+    SELECT
+        SUBSTR(ordered_at, 1, 7) AS year_month,
+        SUM(total_amount)        AS revenue,
+        COUNT(*)                 AS order_count
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+    GROUP BY SUBSTR(ordered_at, 1, 7)
+) AS monthly
+ORDER BY revenue DESC
+LIMIT 3;
+```
+
+**결과:**
+
+| year_month | revenue | order_count |
+|------------|---------|-------------|
+| 2024-12 | 1841293.70 | 892 |
+| 2023-12 | 1624817.40 | 801 |
+| 2024-11 | 1312944.90 | 703 |
+
+## SELECT 절의 스칼라 서브쿼리
+
+`SELECT` 목록에 있는 서브쿼리는 출력 행마다 한 번씩 실행됩니다.
+
+```sql
+-- 각 고객의 가장 최근 주문일
+SELECT
+    c.name,
+    c.grade,
+    (
+        SELECT MAX(ordered_at)
+        FROM orders
+        WHERE customer_id = c.id
+    ) AS last_order_date
+FROM customers AS c
+WHERE c.is_active = 1
+ORDER BY last_order_date DESC
+LIMIT 8;
+```
+
+**결과:**
+
+| name | grade | last_order_date |
+|------|-------|-----------------|
+| 김민수 | VIP | 2024-12-31 |
+| 이지은 | GOLD | 2024-12-30 |
+| ... | | |
+
+> `SELECT`의 스칼라 서브쿼리는 행마다 실행되므로 대용량 테이블에서 느릴 수 있습니다. 성능이 중요한 경우에는 `LEFT JOIN`과 집계를 사용하세요.
+
+## 연습 문제
+
+### 연습 1
+같은 카테고리 내 평균 가격보다 비싼 상품을 모두 찾으세요. 외부 쿼리의 `category_id`를 참조하는 스칼라 서브쿼리를 `WHERE` 절에 사용하고, `product_name`, `price`, `category_id`를 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        p.name        AS product_name,
+        p.price,
+        p.category_id
+    FROM products AS p
+    WHERE p.price > (
+        SELECT AVG(p2.price)
+        FROM products AS p2
+        WHERE p2.category_id = p.category_id
+          AND p2.is_active = 1
+    )
+      AND p.is_active = 1
+    ORDER BY p.category_id, p.price DESC;
+    ```
+
+### 연습 2
+`FROM` 서브쿼리를 사용하여 완료된 주문 수 기준 상위 10명의 고객을 구하세요. 내부 쿼리에서 고객별 주문 수를 세고, 외부 쿼리에서 `customers` 테이블과 조인하여 `name`과 `grade`를 추가하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.name,
+        c.grade,
+        order_stats.order_count,
+        order_stats.total_spent
+    FROM (
+        SELECT
+            customer_id,
+            COUNT(*)            AS order_count,
+            SUM(total_amount)   AS total_spent
+        FROM orders
+        WHERE status IN ('delivered', 'confirmed')
+        GROUP BY customer_id
+    ) AS order_stats
+    INNER JOIN customers AS c ON order_stats.customer_id = c.id
+    ORDER BY order_stats.order_count DESC
+    LIMIT 10;
+    ```
+
+### 연습 3
+최소 한 명의 고객 위시리스트에 있지만 **한 번도 주문된 적 없는** 상품을 찾으세요. `IN`과 `NOT IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name AS product_name, price
+    FROM products
+    WHERE id IN (
+        SELECT DISTINCT product_id FROM wishlists
+    )
+      AND id NOT IN (
+        SELECT DISTINCT product_id FROM order_items
+    )
+    ORDER BY price DESC;
+    ```
+
+---
+다음: [10강: CASE 표현식](10-case.md)

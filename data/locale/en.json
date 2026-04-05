@@ -1,0 +1,435 @@
+{
+  "faker_locale": "en_US",
+
+  "phone": {
+    "format": "555-{0:04d}-{1:04d}",
+    "description": "555 prefix (fictitious, like US movies)"
+  },
+
+  "email": {
+    "customer_domains": [
+      ["testmail.com", 0.14],
+      ["fakemail.com", 0.10],
+      ["mailtest.net", 0.08],
+      ["mymail.test", 0.06],
+      ["company-mail.test", 0.05],
+      ["office.testmail.com", 0.04],
+      ["biz-post.test", 0.03],
+      ["example-mail.com", 0.06],
+      ["demo-inbox.com", 0.05],
+      ["samplebox.net", 0.04],
+      ["testuser.net", 0.04],
+      ["noreal.test", 0.03],
+      ["devmail.test", 0.04],
+      ["dummy-mail.com", 0.03],
+      ["virtual-post.net", 0.02],
+      ["inbox.sample.com", 0.03],
+      ["fastmail.test", 0.03],
+      ["net-user.test", 0.03],
+      ["broadband.test", 0.02],
+      ["student.testmail.com", 0.02],
+      ["edu-mail.test", 0.02],
+      ["tempbox.net", 0.02],
+      ["demouser.test", 0.01],
+      ["signup.testmail.com", 0.01]
+    ],
+    "staff_domain": "techshop-staff.com",
+    "supplier_domain": "test.com"
+  },
+
+  "categories": {
+    "1": "Desktop PC", "2": "Pre-built", "3": "Custom Build", "4": "Barebone",
+    "5": "Laptop", "6": "General Laptop", "7": "Gaming Laptop", "8": "2-in-1", "9": "MacBook",
+    "10": "Monitor", "11": "General Monitor", "12": "Gaming Monitor", "13": "Professional Monitor",
+    "14": "CPU", "15": "Intel", "16": "AMD",
+    "17": "Motherboard", "18": "Intel Socket", "19": "AMD Socket",
+    "20": "Memory (RAM)", "21": "DDR4", "22": "DDR5",
+    "23": "Storage", "24": "SSD", "25": "HDD", "26": "External Storage",
+    "27": "Graphics Card", "28": "NVIDIA", "29": "AMD",
+    "30": "Power Supply (PSU)", "31": "Case", "32": "Cooling", "33": "Air Cooling", "34": "Liquid Cooling",
+    "35": "Keyboard", "36": "Mechanical", "37": "Membrane", "38": "Wireless",
+    "39": "Mouse", "40": "Wired", "41": "Wireless", "42": "Gaming",
+    "43": "Speakers/Headsets", "44": "Printers/Scanners",
+    "45": "Networking", "46": "Router", "47": "Switch/Hub", "48": "Network Card",
+    "49": "UPS/Power", "50": "Software", "51": "OS", "52": "Office", "53": "Security"
+  },
+
+  "customer": {
+    "address_labels": ["Home", "Office", "Other"],
+    "grades": ["BRONZE", "SILVER", "GOLD", "VIP"]
+  },
+
+  "staff": {
+    "departments": ["Sales", "Logistics", "CS", "Marketing", "Engineering", "Management"]
+  },
+
+  "order": {
+    "delivery_notes": [
+      "Leave at the front door",
+      "Leave with the doorman/concierge",
+      "Leave at the door if no one is home",
+      "Put in the mailbox/parcel locker",
+      "Please call before delivery",
+      "Handle with care — fragile",
+      "Do not ring the bell (baby sleeping)",
+      "Leave in the lobby on the first floor",
+      "Deliver to the office front desk",
+      "Please deliver after 2 PM",
+      "Gate code: *1234 (leave at door)",
+      "Please knock gently"
+    ]
+  },
+
+  "shipping": {
+    "carriers": {
+      "FedEx": 0.30,
+      "UPS": 0.25,
+      "USPS": 0.20,
+      "DHL": 0.15,
+      "OnTrac": 0.10
+    }
+  },
+
+  "payment": {
+    "card_issuers": {
+      "Visa": 0.30,
+      "Mastercard": 0.25,
+      "American Express": 0.15,
+      "Discover": 0.10,
+      "Capital One": 0.08,
+      "Chase": 0.07,
+      "Citi": 0.05
+    },
+    "banks": {
+      "Chase": 0.18,
+      "Bank of America": 0.16,
+      "Wells Fargo": 0.14,
+      "Citi": 0.12,
+      "US Bank": 0.10,
+      "PNC": 0.08,
+      "TD Bank": 0.07,
+      "Capital One": 0.06,
+      "Ally Bank": 0.05,
+      "Discover Bank": 0.04
+    },
+    "easy_pay": {
+      "kakao_pay": {
+        "PayPal Balance": 0.40,
+        "Linked Credit Card": 0.35,
+        "Linked Debit Card": 0.25
+      },
+      "naver_pay": {
+        "Apple Pay Balance": 0.30,
+        "Linked Credit Card": 0.40,
+        "Linked Debit Card": 0.20,
+        "Linked Bank Account": 0.10
+      }
+    },
+    "methods_display": {
+      "card": "Credit Card",
+      "bank_transfer": "Bank Transfer",
+      "virtual_account": "Virtual Account",
+      "kakao_pay": "PayPal",
+      "naver_pay": "Apple Pay",
+      "point": "Points"
+    },
+    "receipt_types": ["Tax Deduction", "Business Expense"]
+  },
+
+  "review": {
+    "titles": {
+      "5": ["Excellent!", "Very Satisfied", "Highly Recommend", "Perfect", "Best Value", "Outstanding"],
+      "4": ["Satisfied", "Good", "Recommended", "Not Bad", "Good Value"],
+      "3": ["Average", "It's Okay", "Nothing Special", "Below Expectations", "Mediocre"],
+      "2": ["Disappointing", "Not Great", "Needs Improvement", "Overpriced"],
+      "1": ["Terrible", "Defective", "Want a Refund", "Never Again"]
+    },
+    "templates": {
+      "5": [
+        "Fast shipping and great product quality.",
+        "Excellent value for the price. Will buy again.",
+        "Beautiful design and great performance. Highly recommend!",
+        "Packaging was perfect. Arrived in great condition.",
+        "Big {brand} fan, satisfied again with this purchase.",
+        "Was hesitant but so glad I bought it.",
+        "At this price, this performance is unbeatable.",
+        "Been using it for {period} with zero issues. Amazing.",
+        "Bought based on reviews and they were spot on. Very happy.",
+        "Already recommended to friends. This is my second purchase."
+      ],
+      "4": [
+        "Overall satisfied. {minor_issue}",
+        "Good value for the price. Typical {brand} quality.",
+        "After {period} of use, it's generally good.",
+        "Fast delivery and decent product. 4 stars.",
+        "Not quite what I expected but good enough.",
+        "First time trying {brand}, not bad at all.",
+        "Performance is great but {minor_issue}",
+        "Works well for office use.",
+        "Bought for gaming, works fine for casual use."
+      ],
+      "3": [
+        "Average. Nothing particularly good or bad.",
+        "A bit disappointing. {minor_issue}",
+        "Compared to other {brand} products, this is average.",
+        "Feels overpriced. Could find similar alternatives.",
+        "Used for {period}, it's just okay.",
+        "Design is nice but performance is below expectations."
+      ],
+      "2": [
+        "Not impressed. {minor_issue} Disappointed.",
+        "For this price, I expected better quality.",
+        "Previous {brand} model was much better.",
+        "Problems started after {period}.",
+        "Might need to send it for repairs. Inconvenient."
+      ],
+      "1": [
+        "Defective. Processing a return.",
+        "Dead on arrival. Very disappointed with {brand}.",
+        "Do not buy this. Waste of money.",
+        "Broke after {period}. Worst purchase ever.",
+        "Looks nothing like the photos. Feels like a scam."
+      ]
+    },
+    "minor_issues": [
+      "A bit noisy.",
+      "Runs slightly warm.",
+      "Heavier than expected.",
+      "Manual is not very helpful.",
+      "Color is slightly different from photos.",
+      "Packaging could be better.",
+      "Bigger than I thought.",
+      "Fan noise is noticeable.",
+      "Power button feels stiff.",
+      "Cable is too short."
+    ],
+    "periods": ["a week", "two weeks", "a month", "two months", "3 months", "6 months"]
+  },
+
+  "complaint": {
+    "categories_display": {
+      "product_defect": "Product Defect",
+      "delivery_issue": "Delivery Issue",
+      "wrong_item": "Wrong Item",
+      "refund_request": "Refund Request",
+      "exchange_request": "Exchange Request",
+      "general_inquiry": "General Inquiry",
+      "price_inquiry": "Price Inquiry"
+    },
+    "templates": {
+      "product_defect": {
+        "titles": [
+          "Product is defective",
+          "Received item has issues",
+          "Broken out of the box",
+          "Product won't turn on",
+          "Screen has dead pixels",
+          "Not powering on"
+        ],
+        "contents": [
+          "Received yesterday and it won't power on. Requesting exchange or refund.",
+          "Started making strange noises after 3 days and stopped working.",
+          "Visible scratches on the surface and packaging was torn.",
+          "Product has dents. Requesting replacement with a new unit.",
+          "Installed per instructions but device is not recognized. Seems defective."
+        ]
+      },
+      "delivery_issue": {
+        "titles": [
+          "Delivery delay inquiry",
+          "Tracking status not updating",
+          "Delivered to wrong address",
+          "Package seems lost",
+          "Past estimated delivery date"
+        ],
+        "contents": [
+          "It's been 5 days since ordering and it still shows 'processing'. Please check.",
+          "Tracking shows 'picked up' for 3 days straight.",
+          "Shows as delivered but I didn't receive anything.",
+          "Not at the door or with the concierge. Can I get the driver's contact?",
+          "Tracking number seems incorrect. Can't look it up."
+        ]
+      },
+      "wrong_item": {
+        "titles": [
+          "Received wrong product",
+          "Different item was delivered",
+          "Wrong color shipped",
+          "Wrong model received"
+        ],
+        "contents": [
+          "Ordered white but received black. Please exchange.",
+          "Completely different product was shipped.",
+          "Ordered 32GB but received 16GB.",
+          "Product is correct but quantity is short. Ordered 2 but received 1."
+        ]
+      },
+      "refund_request": {
+        "titles": [
+          "Requesting a refund",
+          "When will the refund be processed?",
+          "Cancelled but no refund yet",
+          "Partial refund request"
+        ],
+        "contents": [
+          "Sent the return a week ago but still no refund.",
+          "Cancelled the order but credit card charge hasn't been reversed. Please check.",
+          "Want to initiate a return. Changed my mind.",
+          "Item is unused. Please process the refund."
+        ]
+      },
+      "exchange_request": {
+        "titles": [
+          "Requesting an exchange",
+          "Can I exchange for a different size?",
+          "Want to switch to a different model"
+        ],
+        "contents": [
+          "It's bigger than expected, want to exchange for a different model.",
+          "Not compatible with my setup. Want to exchange.",
+          "Can I exchange colors? Item is still sealed."
+        ]
+      },
+      "general_inquiry": {
+        "titles": [
+          "Compatibility question",
+          "How to submit a warranty claim?",
+          "Warranty period inquiry",
+          "Product usage question",
+          "Bulk order inquiry",
+          "Can I get a bulk discount?",
+          "Tax invoice request"
+        ],
+        "contents": [
+          "I want to check if this product is compatible with my motherboard.",
+          "How long is the warranty? It's been over a year since purchase.",
+          "I can't figure out the driver installation. Need help.",
+          "We're a business. Do you offer bulk discounts?",
+          "Can you issue a tax invoice? Attaching our business registration.",
+          "I'd like to know the exact dimensions of this product."
+        ]
+      },
+      "price_inquiry": {
+        "titles": [
+          "Charged different price",
+          "Coupon wasn't applied",
+          "Can't use my points",
+          "Price dropped — can I get a price adjustment?"
+        ],
+        "contents": [
+          "Cart showed the discount price but I was charged full price.",
+          "Entered the coupon code but it didn't apply. Please check.",
+          "I have points but the use button is grayed out.",
+          "Bought 3 days ago and the price dropped today. Can I get the difference back?"
+        ]
+      }
+    },
+    "resolutions": {
+      "product_defect": [
+        "Defect confirmed. Replacement shipped.",
+        "Return processed. Full refund issued.",
+        "Forwarded to manufacturer warranty service.",
+        "Pickup scheduled. Will exchange if defective."
+      ],
+      "delivery_issue": [
+        "Carrier confirmed misdelivery. Reshipped.",
+        "Apology for delay + coupon issued.",
+        "Carrier confirmed lost. Reshipped.",
+        "Driver revisit completed."
+      ],
+      "wrong_item": [
+        "Wrong item confirmed. Correct item reshipped + pickup arranged.",
+        "Missing quantity confirmed. Additional unit shipped.",
+        "Color error confirmed. Exchange processed."
+      ],
+      "refund_request": [
+        "Return received. Card refund processed (3-5 business days).",
+        "Refund completed. Deposit pending.",
+        "Partial refund processed."
+      ],
+      "exchange_request": [
+        "Exchange request accepted. Pickup and reship scheduled.",
+        "Stock verified. Exchange completed.",
+        "Item out of stock. Refund processed instead."
+      ],
+      "general_inquiry": [
+        "Compatibility confirmed and communicated.",
+        "Warranty claim process explained.",
+        "Usage instructions sent via email.",
+        "Quote sent.",
+        "Tax invoice issued."
+      ],
+      "price_inquiry": [
+        "Coupon manually applied. Difference refunded.",
+        "System error found. Recharged at correct price.",
+        "Points usage conditions explained.",
+        "Price protection policy explained (7-day difference as store credit)."
+      ]
+    },
+    "channels_display": {
+      "website": "Website",
+      "phone": "Phone",
+      "email": "Email",
+      "chat": "Live Chat",
+      "kakao": "Messenger"
+    }
+  },
+
+  "return": {
+    "reason_details": {
+      "defective": [
+        "Won't power on",
+        "Screen defect (lines/flickering)",
+        "Making unusual noises",
+        "Button/key input malfunction",
+        "Won't charge",
+        "Port malfunction",
+        "Excessive heat",
+        "Loud fan noise"
+      ],
+      "wrong_item": [
+        "Received completely different product",
+        "Color mismatch",
+        "Model/spec mismatch",
+        "Quantity shortage"
+      ],
+      "change_of_mind": [
+        "Changed my mind",
+        "Want a different product",
+        "No longer needed",
+        "Size doesn't fit as expected",
+        "Found cheaper elsewhere"
+      ],
+      "damaged_in_transit": [
+        "Physical damage (dents/scratches)",
+        "Box damaged, contents affected",
+        "Shipping impact damage"
+      ],
+      "not_as_described": [
+        "Specs differ from product description",
+        "Appearance differs from photos",
+        "Not compatible (despite listing)"
+      ],
+      "late_delivery": [
+        "Delivery delayed past when I needed it",
+        "Arrived much later than promised date"
+      ]
+    }
+  },
+
+  "coupon": {
+    "names": [
+      "New Member Welcome Coupon", "First Purchase Discount", "VIP Exclusive Coupon",
+      "Black Friday Special", "Christmas Sale", "Year-End Thank You Coupon",
+      "Spring Sale", "Summer Cool Sale", "Holiday Special Coupon",
+      "Peripherals Discount", "Laptop Special Coupon", "Monitor Sale Event",
+      "$100+ Purchase Discount", "$200+ Purchase Discount", "$500+ Purchase Discount",
+      "Weekend Only Coupon", "Monday Special", "App Exclusive Discount",
+      "Repeat Customer Coupon", "Birthday Coupon"
+    ]
+  },
+
+  "supplier": {
+    "business_number_format": "{0:03d}-{1:02d}-{2:05d}"
+  }
+}

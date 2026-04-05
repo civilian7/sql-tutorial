@@ -1,0 +1,7 @@
+output/
+__pycache__/
+*.pyc
+.venv/
+logs/
+.claude/
+CLAUDE.md

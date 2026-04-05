@@ -1,0 +1,12 @@
+.mermaid .entityLabel {
+  font-size: 16px !important;
+}
+.mermaid .relationshipLabel {
+  font-size: 14px !important;
+}
+.mermaid .statediagram-state .nodeLabel {
+  font-size: 15px !important;
+}
+.mermaid .edgeLabel {
+  font-size: 13px !important;
+}

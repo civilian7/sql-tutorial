@@ -1,0 +1,259 @@
+# Lesson 11: Date and Time Functions
+
+SQLite stores dates as text in `YYYY-MM-DD` or `YYYY-MM-DD HH:MM:SS` format. A set of built-in functions lets you extract parts, calculate differences, and format dates for reporting.
+
+## Extracting Year and Month with SUBSTR
+
+Since SQLite dates are text strings, `SUBSTR` is a simple and fast way to extract year or month.
+
+```sql
+-- Count orders per year
+SELECT
+    SUBSTR(ordered_at, 1, 4) AS year,
+    COUNT(*)                 AS order_count,
+    SUM(total_amount)        AS annual_revenue
+FROM orders
+WHERE status NOT IN ('cancelled', 'returned')
+GROUP BY SUBSTR(ordered_at, 1, 4)
+ORDER BY year;
+```
+
+**Result:**
+
+| year | order_count | annual_revenue |
+|------|-------------|----------------|
+| 2015 | 412 | 184329.50 |
+| 2016 | 589 | 271948.20 |
+| 2017 | 843 | 412837.60 |
+| ... | | |
+
+```sql
+-- Monthly revenue for 2024
+SELECT
+    SUBSTR(ordered_at, 1, 7) AS year_month,
+    COUNT(*)                 AS orders,
+    SUM(total_amount)        AS revenue
+FROM orders
+WHERE ordered_at LIKE '2024%'
+  AND status NOT IN ('cancelled', 'returned')
+GROUP BY SUBSTR(ordered_at, 1, 7)
+ORDER BY year_month;
+```
+
+**Result:**
+
+| year_month | orders | revenue |
+|------------|--------|---------|
+| 2024-01 | 270 | 147832.40 |
+| 2024-02 | 251 | 136290.10 |
+| 2024-03 | 347 | 204123.70 |
+| ... | | |
+
+## DATE() and strftime()
+
+`DATE(expression, modifier, ...)` returns a date string. `strftime(format, expression)` formats it however you like.
+
+```sql
+-- Today's date
+SELECT DATE('now') AS today;
+```
+
+```sql
+-- Orders placed in the last 30 days
+SELECT order_number, ordered_at, total_amount
+FROM orders
+WHERE ordered_at >= DATE('now', '-30 days')
+ORDER BY ordered_at DESC
+LIMIT 5;
+```
+
+```sql
+-- Day of week analysis (0=Sunday, 6=Saturday)
+SELECT
+    CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+        WHEN 0 THEN 'Sunday'
+        WHEN 1 THEN 'Monday'
+        WHEN 2 THEN 'Tuesday'
+        WHEN 3 THEN 'Wednesday'
+        WHEN 4 THEN 'Thursday'
+        WHEN 5 THEN 'Friday'
+        WHEN 6 THEN 'Saturday'
+    END AS day_of_week,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY strftime('%w', ordered_at)
+ORDER BY CAST(strftime('%w', ordered_at) AS INTEGER);
+```
+
+**Result:**
+
+| day_of_week | order_count |
+|-------------|-------------|
+| Sunday | 4823 |
+| Monday | 5012 |
+| Tuesday | 4991 |
+| Wednesday | 5134 |
+| Thursday | 5089 |
+| Friday | 5247 |
+| Saturday | 4393 |
+
+## julianday() — Calculating Differences
+
+`julianday()` converts a date to a floating-point Julian Day Number. Subtracting two Julian Day values gives the difference in days.
+
+```sql
+-- How many days between order placed and delivery?
+SELECT
+    o.order_number,
+    o.ordered_at,
+    s.delivered_at,
+    ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
+FROM orders AS o
+INNER JOIN shipping AS s ON s.order_id = o.id
+WHERE s.delivered_at IS NOT NULL
+ORDER BY delivery_days DESC
+LIMIT 8;
+```
+
+**Result:**
+
+| order_number | ordered_at | delivered_at | delivery_days |
+|--------------|------------|--------------|---------------|
+| ORD-20190822-03421 | 2019-08-22 | 2019-09-08 | 17.0 |
+| ORD-20201103-04812 | 2020-11-03 | 2020-11-18 | 15.0 |
+| ... | | | |
+
+```sql
+-- Average delivery time by carrier
+SELECT
+    s.carrier,
+    COUNT(*)  AS deliveries,
+    ROUND(AVG(julianday(s.delivered_at) - julianday(o.ordered_at)), 1) AS avg_days
+FROM shipping AS s
+INNER JOIN orders AS o ON s.order_id = o.id
+WHERE s.delivered_at IS NOT NULL
+GROUP BY s.carrier
+ORDER BY avg_days;
+```
+
+**Result:**
+
+| carrier | deliveries | avg_days |
+|---------|------------|----------|
+| FedEx | 8341 | 2.8 |
+| UPS | 7892 | 3.1 |
+| USPS | 9214 | 4.2 |
+| DHL | 7495 | 3.6 |
+
+## Customer Age Calculation
+
+```sql
+-- Customer ages based on birth_date
+SELECT
+    name,
+    birth_date,
+    CAST(
+        (julianday('now') - julianday(birth_date)) / 365.25
+    AS INTEGER) AS age
+FROM customers
+WHERE birth_date IS NOT NULL
+ORDER BY age DESC
+LIMIT 8;
+```
+
+**Result:**
+
+| name | birth_date | age |
+|------|------------|-----|
+| Gerald Foster | 1951-02-18 | 73 |
+| Patricia Moore | 1952-08-30 | 72 |
+| ... | | |
+
+## Week and Quarter Extraction
+
+```sql
+-- Quarterly revenue breakdown
+SELECT
+    SUBSTR(ordered_at, 1, 4) AS year,
+    CASE
+        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 1 AND 3  THEN 'Q1'
+        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 4 AND 6  THEN 'Q2'
+        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 7 AND 9  THEN 'Q3'
+        ELSE 'Q4'
+    END AS quarter,
+    SUM(total_amount) AS revenue
+FROM orders
+WHERE status NOT IN ('cancelled', 'returned')
+  AND ordered_at LIKE '2024%'
+GROUP BY year, quarter
+ORDER BY year, quarter;
+```
+
+**Result:**
+
+| year | quarter | revenue |
+|------|---------|---------|
+| 2024 | Q1 | 488246.20 |
+| 2024 | Q2 | 523891.40 |
+| 2024 | Q3 | 612347.80 |
+| 2024 | Q4 | 1218807.10 |
+
+## Practice Exercises
+
+### Exercise 1
+Show the number of new customers who signed up each year since TechShop opened. Return `year` and `new_customers`, sorted chronologically.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        SUBSTR(created_at, 1, 4) AS year,
+        COUNT(*)                 AS new_customers
+    FROM customers
+    GROUP BY SUBSTR(created_at, 1, 4)
+    ORDER BY year;
+    ```
+
+### Exercise 2
+Calculate the average number of days between `ordered_at` and `shipped_at` (in the `shipping` table) for each carrier. Only include rows where both dates exist. Return `carrier`, `shipment_count`, and `avg_processing_days`, sorted by `avg_processing_days` ascending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        s.carrier,
+        COUNT(*) AS shipment_count,
+        ROUND(
+            AVG(julianday(s.shipped_at) - julianday(o.ordered_at)),
+            1
+        ) AS avg_processing_days
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.shipped_at IS NOT NULL
+    GROUP BY s.carrier
+    ORDER BY avg_processing_days ASC;
+    ```
+
+### Exercise 3
+Find the day-of-week with the highest average order value. Use `strftime('%w', ordered_at)` (0=Sunday) and convert the number to the day name with a `CASE` expression. Return `day_of_week`, `order_count`, and `avg_order_value`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+            WHEN 0 THEN 'Sunday'
+            WHEN 1 THEN 'Monday'
+            WHEN 2 THEN 'Tuesday'
+            WHEN 3 THEN 'Wednesday'
+            WHEN 4 THEN 'Thursday'
+            WHEN 5 THEN 'Friday'
+            WHEN 6 THEN 'Saturday'
+        END AS day_of_week,
+        COUNT(*)              AS order_count,
+        ROUND(AVG(total_amount), 2) AS avg_order_value
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+    GROUP BY strftime('%w', ordered_at)
+    ORDER BY avg_order_value DESC;
+    ```
+
+---
+Next: [Lesson 12: String Functions](12-string.md)

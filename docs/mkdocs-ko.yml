@@ -1,0 +1,75 @@
+site_name: SQL 튜토리얼 - 전자상거래 데이터베이스
+site_description: 현실적인 전자상거래 데이터베이스로 배우는 SQL
+docs_dir: ko
+site_dir: ../output/docs/ko
+
+theme:
+  name: material
+  language: ko
+  palette:
+    scheme: default
+  features:
+    - content.code.copy
+    - navigation.sections
+    - navigation.expand
+
+nav:
+  - 홈: index.md
+  - 시작하기: getting-started.md
+  - 데이터베이스 스키마: schema.md
+  - 초급:
+    - "01. SELECT 기초": beginner/01-select.md
+    - "02. WHERE로 필터링": beginner/02-where.md
+    - "03. 정렬과 페이징": beginner/03-sort-limit.md
+    - "04. 집계 함수": beginner/04-aggregates.md
+    - "05. GROUP BY와 HAVING": beginner/05-group-by.md
+    - "06. NULL 처리": beginner/06-null.md
+  - 중급:
+    - "07. INNER JOIN": intermediate/07-inner-join.md
+    - "08. LEFT JOIN": intermediate/08-left-join.md
+    - "09. 서브쿼리": intermediate/09-subqueries.md
+    - "10. CASE 표현식": intermediate/10-case.md
+    - "11. 날짜/시간 함수": intermediate/11-datetime.md
+    - "12. 문자열 함수": intermediate/12-string.md
+    - "13. UNION": intermediate/13-union.md
+    - "14. INSERT, UPDATE, DELETE": intermediate/14-dml.md
+    - "21. SELF JOIN과 CROSS JOIN": intermediate/21-self-cross-join.md
+  - 고급:
+    - "15. 윈도우 함수": advanced/15-window.md
+    - "16. CTE와 재귀 CTE": advanced/16-cte.md
+    - "17. EXISTS와 상관 서브쿼리": advanced/17-exists.md
+    - "18. 뷰(Views)": advanced/18-views.md
+    - "19. 인덱스와 성능": advanced/19-indexes.md
+    - "20. 트리거": advanced/20-triggers.md
+  - 참고:
+    - "DB 방언 비교": dialect-comparison.md
+  - "실전 연습 — 초급":
+    - "상품 탐색": exercises/beginner-products.md
+    - "고객 분석": exercises/beginner-customers.md
+    - "주문 기초": exercises/beginner-orders.md
+  - "실전 연습 — 중급":
+    - "JOIN 마스터": exercises/intermediate-joins.md
+    - "날짜/시간 분석": exercises/intermediate-dates.md
+    - "서브쿼리와 변환": exercises/intermediate-subqueries.md
+  - "실전 연습 — 고급":
+    - "매출 분석": exercises/sales-analysis.md
+    - "고객 세분화": exercises/customer-segmentation.md
+    - "재고 관리": exercises/inventory.md
+    - "CS 성과 분석": exercises/cs-performance.md
+    - "실무 SQL 패턴": exercises/real-world-patterns.md
+
+extra_css:
+  - css/mermaid.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - tables

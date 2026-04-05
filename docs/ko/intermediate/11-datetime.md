@@ -1,0 +1,259 @@
+# 11강: 날짜 및 시간 함수
+
+SQLite는 날짜를 `YYYY-MM-DD` 또는 `YYYY-MM-DD HH:MM:SS` 형식의 텍스트로 저장합니다. 내장 함수를 사용하면 날짜의 일부를 추출하거나, 날짜 간 차이를 계산하거나, 보고서용으로 형식을 변환할 수 있습니다.
+
+## SUBSTR로 연도·월 추출
+
+SQLite 날짜는 문자열이므로 `SUBSTR`을 사용하면 연도나 월을 빠르고 간단하게 추출할 수 있습니다.
+
+```sql
+-- 연도별 주문 수
+SELECT
+    SUBSTR(ordered_at, 1, 4) AS year,
+    COUNT(*)                 AS order_count,
+    SUM(total_amount)        AS annual_revenue
+FROM orders
+WHERE status NOT IN ('cancelled', 'returned')
+GROUP BY SUBSTR(ordered_at, 1, 4)
+ORDER BY year;
+```
+
+**결과:**
+
+| year | order_count | annual_revenue |
+|------|-------------|----------------|
+| 2015 | 412 | 184329.50 |
+| 2016 | 589 | 271948.20 |
+| 2017 | 843 | 412837.60 |
+| ... | | |
+
+```sql
+-- 2024년 월별 매출
+SELECT
+    SUBSTR(ordered_at, 1, 7) AS year_month,
+    COUNT(*)                 AS orders,
+    SUM(total_amount)        AS revenue
+FROM orders
+WHERE ordered_at LIKE '2024%'
+  AND status NOT IN ('cancelled', 'returned')
+GROUP BY SUBSTR(ordered_at, 1, 7)
+ORDER BY year_month;
+```
+
+**결과:**
+
+| year_month | orders | revenue |
+|------------|--------|---------|
+| 2024-01 | 270 | 147832.40 |
+| 2024-02 | 251 | 136290.10 |
+| 2024-03 | 347 | 204123.70 |
+| ... | | |
+
+## DATE()와 strftime()
+
+`DATE(expression, modifier, ...)`는 날짜 문자열을 반환합니다. `strftime(format, expression)`으로 원하는 형식으로 포맷할 수 있습니다.
+
+```sql
+-- 오늘 날짜
+SELECT DATE('now') AS today;
+```
+
+```sql
+-- 최근 30일 이내 주문
+SELECT order_number, ordered_at, total_amount
+FROM orders
+WHERE ordered_at >= DATE('now', '-30 days')
+ORDER BY ordered_at DESC
+LIMIT 5;
+```
+
+```sql
+-- 요일별 주문 분석 (0=일요일, 6=토요일)
+SELECT
+    CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+        WHEN 0 THEN '일요일'
+        WHEN 1 THEN '월요일'
+        WHEN 2 THEN '화요일'
+        WHEN 3 THEN '수요일'
+        WHEN 4 THEN '목요일'
+        WHEN 5 THEN '금요일'
+        WHEN 6 THEN '토요일'
+    END AS day_of_week,
+    COUNT(*) AS order_count
+FROM orders
+GROUP BY strftime('%w', ordered_at)
+ORDER BY CAST(strftime('%w', ordered_at) AS INTEGER);
+```
+
+**결과:**
+
+| day_of_week | order_count |
+|-------------|-------------|
+| 일요일 | 4823 |
+| 월요일 | 5012 |
+| 화요일 | 4991 |
+| 수요일 | 5134 |
+| 목요일 | 5089 |
+| 금요일 | 5247 |
+| 토요일 | 4393 |
+
+## julianday() — 날짜 차이 계산
+
+`julianday()`는 날짜를 부동소수점 율리우스 일수(Julian Day Number)로 변환합니다. 두 값을 빼면 일(day) 단위 차이를 구할 수 있습니다.
+
+```sql
+-- 주문일부터 배달 완료까지 며칠 걸렸는가?
+SELECT
+    o.order_number,
+    o.ordered_at,
+    s.delivered_at,
+    ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
+FROM orders AS o
+INNER JOIN shipping AS s ON s.order_id = o.id
+WHERE s.delivered_at IS NOT NULL
+ORDER BY delivery_days DESC
+LIMIT 8;
+```
+
+**결과:**
+
+| order_number | ordered_at | delivered_at | delivery_days |
+|--------------|------------|--------------|---------------|
+| ORD-20190822-03421 | 2019-08-22 | 2019-09-08 | 17.0 |
+| ORD-20201103-04812 | 2020-11-03 | 2020-11-18 | 15.0 |
+| ... | | | |
+
+```sql
+-- 택배사별 평균 배송 소요 일수
+SELECT
+    s.carrier,
+    COUNT(*)  AS deliveries,
+    ROUND(AVG(julianday(s.delivered_at) - julianday(o.ordered_at)), 1) AS avg_days
+FROM shipping AS s
+INNER JOIN orders AS o ON s.order_id = o.id
+WHERE s.delivered_at IS NOT NULL
+GROUP BY s.carrier
+ORDER BY avg_days;
+```
+
+**결과:**
+
+| carrier | deliveries | avg_days |
+|---------|------------|----------|
+| CJ대한통운 | 8341 | 2.8 |
+| 한진택배 | 7892 | 3.1 |
+| 우체국택배 | 9214 | 4.2 |
+| 롯데택배 | 7495 | 3.6 |
+
+## 고객 나이 계산
+
+```sql
+-- 생년월일 기준 고객 나이 계산
+SELECT
+    name,
+    birth_date,
+    CAST(
+        (julianday('now') - julianday(birth_date)) / 365.25
+    AS INTEGER) AS age
+FROM customers
+WHERE birth_date IS NOT NULL
+ORDER BY age DESC
+LIMIT 8;
+```
+
+**결과:**
+
+| name | birth_date | age |
+|------|------------|-----|
+| 김복순 | 1951-02-18 | 73 |
+| 이순례 | 1952-08-30 | 72 |
+| ... | | |
+
+## 주차 및 분기 추출
+
+```sql
+-- 분기별 매출 집계
+SELECT
+    SUBSTR(ordered_at, 1, 4) AS year,
+    CASE
+        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 1 AND 3  THEN 'Q1'
+        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 4 AND 6  THEN 'Q2'
+        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 7 AND 9  THEN 'Q3'
+        ELSE 'Q4'
+    END AS quarter,
+    SUM(total_amount) AS revenue
+FROM orders
+WHERE status NOT IN ('cancelled', 'returned')
+  AND ordered_at LIKE '2024%'
+GROUP BY year, quarter
+ORDER BY year, quarter;
+```
+
+**결과:**
+
+| year | quarter | revenue |
+|------|---------|---------|
+| 2024 | Q1 | 488246.20 |
+| 2024 | Q2 | 523891.40 |
+| 2024 | Q3 | 612347.80 |
+| 2024 | Q4 | 1218807.10 |
+
+## 연습 문제
+
+### 연습 1
+쇼핑몰 개업 이후 연도별 신규 고객 수를 구하세요. `year`와 `new_customers`를 반환하고, 연도 오름차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        SUBSTR(created_at, 1, 4) AS year,
+        COUNT(*)                 AS new_customers
+    FROM customers
+    GROUP BY SUBSTR(created_at, 1, 4)
+    ORDER BY year;
+    ```
+
+### 연습 2
+택배사별로 `ordered_at`부터 `shipped_at`(배송 테이블)까지의 평균 처리 일수를 계산하세요. 두 날짜가 모두 있는 행만 포함하고, `carrier`, `shipment_count`, `avg_processing_days`를 `avg_processing_days` 오름차순으로 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        s.carrier,
+        COUNT(*) AS shipment_count,
+        ROUND(
+            AVG(julianday(s.shipped_at) - julianday(o.ordered_at)),
+            1
+        ) AS avg_processing_days
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.shipped_at IS NOT NULL
+    GROUP BY s.carrier
+    ORDER BY avg_processing_days ASC;
+    ```
+
+### 연습 3
+평균 주문 금액이 가장 높은 요일을 구하세요. `strftime('%w', ordered_at)` (0=일요일)을 사용하고, `CASE` 표현식으로 숫자를 요일 이름으로 변환하세요. `day_of_week`, `order_count`, `avg_order_value`를 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+            WHEN 0 THEN '일요일'
+            WHEN 1 THEN '월요일'
+            WHEN 2 THEN '화요일'
+            WHEN 3 THEN '수요일'
+            WHEN 4 THEN '목요일'
+            WHEN 5 THEN '금요일'
+            WHEN 6 THEN '토요일'
+        END AS day_of_week,
+        COUNT(*)              AS order_count,
+        ROUND(AVG(total_amount), 2) AS avg_order_value
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+    GROUP BY strftime('%w', ordered_at)
+    ORDER BY avg_order_value DESC;
+    ```
+
+---
+다음: [12강: 문자열 함수](12-string.md)

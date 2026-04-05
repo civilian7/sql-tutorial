@@ -1,0 +1,75 @@
+site_name: SQL Tutorial - E-Commerce Database
+site_description: Learn SQL with a realistic e-commerce database
+docs_dir: en
+site_dir: ../output/docs/en
+
+theme:
+  name: material
+  language: en
+  palette:
+    scheme: default
+  features:
+    - content.code.copy
+    - navigation.sections
+    - navigation.expand
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Database Schema: schema.md
+  - Beginner:
+    - "01. SELECT Basics": beginner/01-select.md
+    - "02. Filtering with WHERE": beginner/02-where.md
+    - "03. Sorting & Limiting": beginner/03-sort-limit.md
+    - "04. Aggregate Functions": beginner/04-aggregates.md
+    - "05. GROUP BY & HAVING": beginner/05-group-by.md
+    - "06. NULL Handling": beginner/06-null.md
+  - Intermediate:
+    - "07. INNER JOIN": intermediate/07-inner-join.md
+    - "08. LEFT JOIN & Outer Joins": intermediate/08-left-join.md
+    - "09. Subqueries": intermediate/09-subqueries.md
+    - "10. CASE Expressions": intermediate/10-case.md
+    - "11. Date & Time Functions": intermediate/11-datetime.md
+    - "12. String Functions": intermediate/12-string.md
+    - "13. UNION & Set Operations": intermediate/13-union.md
+    - "14. INSERT, UPDATE, DELETE": intermediate/14-dml.md
+    - "21. SELF JOIN & CROSS JOIN": intermediate/21-self-cross-join.md
+  - Advanced:
+    - "15. Window Functions": advanced/15-window.md
+    - "16. CTE & Recursive CTE": advanced/16-cte.md
+    - "17. EXISTS & Correlated Subqueries": advanced/17-exists.md
+    - "18. Views": advanced/18-views.md
+    - "19. Indexes & Performance": advanced/19-indexes.md
+    - "20. Triggers": advanced/20-triggers.md
+  - Reference:
+    - "DB Dialect Comparison": dialect-comparison.md
+  - "Exercises — Beginner":
+    - "Product Exploration": exercises/beginner-products.md
+    - "Customer Analysis": exercises/beginner-customers.md
+    - "Order Basics": exercises/beginner-orders.md
+  - "Exercises — Intermediate":
+    - "JOIN Master": exercises/intermediate-joins.md
+    - "Date & Time Analysis": exercises/intermediate-dates.md
+    - "Subqueries & Transformation": exercises/intermediate-subqueries.md
+  - "Exercises — Advanced":
+    - "Sales Analysis": exercises/sales-analysis.md
+    - "Customer Segmentation": exercises/customer-segmentation.md
+    - "Inventory Management": exercises/inventory.md
+    - "CS Performance": exercises/cs-performance.md
+    - "Real-World SQL Patterns": exercises/real-world-patterns.md
+
+extra_css:
+  - css/mermaid.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - tables

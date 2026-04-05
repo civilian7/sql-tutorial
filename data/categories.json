@@ -1,0 +1,72 @@
+[
+  {"id": 1, "parent_id": null, "name": "데스크톱 PC", "slug": "desktop-pc", "depth": 0, "sort_order": 1},
+  {"id": 2, "parent_id": 1, "name": "완제품", "slug": "desktop-prebuilt", "depth": 1, "sort_order": 1},
+  {"id": 3, "parent_id": 1, "name": "조립PC", "slug": "desktop-custom", "depth": 1, "sort_order": 2},
+  {"id": 4, "parent_id": 1, "name": "베어본", "slug": "desktop-barebone", "depth": 1, "sort_order": 3},
+
+  {"id": 5, "parent_id": null, "name": "노트북", "slug": "laptop", "depth": 0, "sort_order": 2},
+  {"id": 6, "parent_id": 5, "name": "일반 노트북", "slug": "laptop-general", "depth": 1, "sort_order": 1},
+  {"id": 7, "parent_id": 5, "name": "게이밍 노트북", "slug": "laptop-gaming", "depth": 1, "sort_order": 2},
+  {"id": 8, "parent_id": 5, "name": "2in1", "slug": "laptop-2in1", "depth": 1, "sort_order": 3},
+  {"id": 9, "parent_id": 5, "name": "맥북", "slug": "laptop-macbook", "depth": 1, "sort_order": 4},
+
+  {"id": 10, "parent_id": null, "name": "모니터", "slug": "monitor", "depth": 0, "sort_order": 3},
+  {"id": 11, "parent_id": 10, "name": "일반 모니터", "slug": "monitor-general", "depth": 1, "sort_order": 1},
+  {"id": 12, "parent_id": 10, "name": "게이밍 모니터", "slug": "monitor-gaming", "depth": 1, "sort_order": 2},
+  {"id": 13, "parent_id": 10, "name": "전문가용 모니터", "slug": "monitor-professional", "depth": 1, "sort_order": 3},
+
+  {"id": 14, "parent_id": null, "name": "CPU", "slug": "cpu", "depth": 0, "sort_order": 4},
+  {"id": 15, "parent_id": 14, "name": "Intel", "slug": "cpu-intel", "depth": 1, "sort_order": 1},
+  {"id": 16, "parent_id": 14, "name": "AMD", "slug": "cpu-amd", "depth": 1, "sort_order": 2},
+
+  {"id": 17, "parent_id": null, "name": "메인보드", "slug": "motherboard", "depth": 0, "sort_order": 5},
+  {"id": 18, "parent_id": 17, "name": "Intel 소켓", "slug": "mb-intel", "depth": 1, "sort_order": 1},
+  {"id": 19, "parent_id": 17, "name": "AMD 소켓", "slug": "mb-amd", "depth": 1, "sort_order": 2},
+
+  {"id": 20, "parent_id": null, "name": "메모리(RAM)", "slug": "ram", "depth": 0, "sort_order": 6},
+  {"id": 21, "parent_id": 20, "name": "DDR4", "slug": "ram-ddr4", "depth": 1, "sort_order": 1},
+  {"id": 22, "parent_id": 20, "name": "DDR5", "slug": "ram-ddr5", "depth": 1, "sort_order": 2},
+
+  {"id": 23, "parent_id": null, "name": "저장장치", "slug": "storage", "depth": 0, "sort_order": 7},
+  {"id": 24, "parent_id": 23, "name": "SSD", "slug": "storage-ssd", "depth": 1, "sort_order": 1},
+  {"id": 25, "parent_id": 23, "name": "HDD", "slug": "storage-hdd", "depth": 1, "sort_order": 2},
+  {"id": 26, "parent_id": 23, "name": "외장 스토리지", "slug": "storage-external", "depth": 1, "sort_order": 3},
+
+  {"id": 27, "parent_id": null, "name": "그래픽카드", "slug": "gpu", "depth": 0, "sort_order": 8},
+  {"id": 28, "parent_id": 27, "name": "NVIDIA", "slug": "gpu-nvidia", "depth": 1, "sort_order": 1},
+  {"id": 29, "parent_id": 27, "name": "AMD", "slug": "gpu-amd", "depth": 1, "sort_order": 2},
+
+  {"id": 30, "parent_id": null, "name": "파워서플라이(PSU)", "slug": "psu", "depth": 0, "sort_order": 9},
+
+  {"id": 31, "parent_id": null, "name": "케이스", "slug": "case", "depth": 0, "sort_order": 10},
+
+  {"id": 32, "parent_id": null, "name": "쿨링", "slug": "cooling", "depth": 0, "sort_order": 11},
+  {"id": 33, "parent_id": 32, "name": "공랭", "slug": "cooling-air", "depth": 1, "sort_order": 1},
+  {"id": 34, "parent_id": 32, "name": "수랭", "slug": "cooling-liquid", "depth": 1, "sort_order": 2},
+
+  {"id": 35, "parent_id": null, "name": "키보드", "slug": "keyboard", "depth": 0, "sort_order": 12},
+  {"id": 36, "parent_id": 35, "name": "기계식", "slug": "keyboard-mechanical", "depth": 1, "sort_order": 1},
+  {"id": 37, "parent_id": 35, "name": "멤브레인", "slug": "keyboard-membrane", "depth": 1, "sort_order": 2},
+  {"id": 38, "parent_id": 35, "name": "무선", "slug": "keyboard-wireless", "depth": 1, "sort_order": 3},
+
+  {"id": 39, "parent_id": null, "name": "마우스", "slug": "mouse", "depth": 0, "sort_order": 13},
+  {"id": 40, "parent_id": 39, "name": "유선", "slug": "mouse-wired", "depth": 1, "sort_order": 1},
+  {"id": 41, "parent_id": 39, "name": "무선", "slug": "mouse-wireless", "depth": 1, "sort_order": 2},
+  {"id": 42, "parent_id": 39, "name": "게이밍", "slug": "mouse-gaming", "depth": 1, "sort_order": 3},
+
+  {"id": 43, "parent_id": null, "name": "스피커/헤드셋", "slug": "audio", "depth": 0, "sort_order": 14},
+
+  {"id": 44, "parent_id": null, "name": "프린터/스캐너", "slug": "printer", "depth": 0, "sort_order": 15},
+
+  {"id": 45, "parent_id": null, "name": "네트워크 장비", "slug": "network", "depth": 0, "sort_order": 16},
+  {"id": 46, "parent_id": 45, "name": "공유기", "slug": "network-router", "depth": 1, "sort_order": 1},
+  {"id": 47, "parent_id": 45, "name": "허브/스위치", "slug": "network-switch", "depth": 1, "sort_order": 2},
+  {"id": 48, "parent_id": 45, "name": "랜카드", "slug": "network-nic", "depth": 1, "sort_order": 3},
+
+  {"id": 49, "parent_id": null, "name": "UPS/전원", "slug": "ups", "depth": 0, "sort_order": 17},
+
+  {"id": 50, "parent_id": null, "name": "소프트웨어", "slug": "software", "depth": 0, "sort_order": 18},
+  {"id": 51, "parent_id": 50, "name": "OS", "slug": "software-os", "depth": 1, "sort_order": 1},
+  {"id": 52, "parent_id": 50, "name": "오피스", "slug": "software-office", "depth": 1, "sort_order": 2},
+  {"id": 53, "parent_id": 50, "name": "보안", "slug": "software-security", "depth": 1, "sort_order": 3}
+]

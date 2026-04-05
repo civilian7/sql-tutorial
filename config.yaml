@@ -1,0 +1,126 @@
+# ===========================================
+# 전자상거래 테스트 데이터베이스 생성 설정
+# ===========================================
+
+# 기본 설정
+seed: 42
+locale: ko_KR
+shop_name: "테크샵(TechShop)"
+start_year: 2016  # 개업 연도
+end_year: 2025    # 현재 연도 (10년차)
+
+# 데이터 규모 프로필 (small / medium / large)
+# CLI에서 --size 옵션으로 오버라이드 가능
+size: medium
+
+profiles:
+  small:
+    scale: 0.1     # medium 대비 10%
+    description: "빠른 기능 테스트, CI용 (~20만 건)"
+  medium:
+    scale: 1.0     # 기준
+    description: "일반 개발/테스트용 (~200만 건)"
+  large:
+    scale: 5.0     # medium 대비 500%
+    description: "성능 테스트, DB 엔진 비교용 (~1,000만 건)"
+
+# 출력 대상 DB (all, sqlite, mysql, postgresql, sqlserver, oracle)
+targets:
+  - sqlite
+
+# 출력 경로
+output_dir: ./output
+
+# ---- 성장 곡선 ----
+# 연도별 신규 고객 수, 일 평균 주문 범위, 활성 상품 수
+yearly_growth:
+  2016: { new_customers: 1000,  orders_per_day: [15, 25],   active_products: 300 }
+  2017: { new_customers: 1800,  orders_per_day: [25, 40],   active_products: 500 }
+  2018: { new_customers: 3000,  orders_per_day: [40, 70],   active_products: 800 }
+  2019: { new_customers: 4500,  orders_per_day: [70, 100],  active_products: 1100 }
+  2020: { new_customers: 7000,  orders_per_day: [100, 160], active_products: 1500 }
+  2021: { new_customers: 8000,  orders_per_day: [140, 200], active_products: 1800 }
+  2022: { new_customers: 6500,  orders_per_day: [130, 180], active_products: 2000 }
+  2023: { new_customers: 6000,  orders_per_day: [120, 170], active_products: 2200 }
+  2024: { new_customers: 7000,  orders_per_day: [140, 190], active_products: 2500 }
+  2025: { new_customers: 7500,  orders_per_day: [150, 200], active_products: 2800 }
+
+# ---- 계절성 ----
+monthly_seasonality:
+  1: 0.85    # 1월 비수기
+  2: 0.90    # 설 연휴
+  3: 1.15    # 신학기
+  4: 1.00
+  5: 0.95
+  6: 0.90    # 비수기
+  7: 0.85    # 여름 비수기
+  8: 1.05    # 방학/신학기 준비
+  9: 1.10    # 신학기
+  10: 1.05
+  11: 1.25   # 블랙프라이데이
+  12: 1.20   # 연말 세일
+
+# ---- 전화번호 ----
+phone:
+  prefix: "020"
+  format: "020-{4d}-{4d}"  # 020-XXXX-XXXX
+
+# ---- 이메일 ----
+email:
+  customer_domain: "testmail.kr"
+  staff_domain: "techshop-staff.kr"
+  supplier_domain: "test.kr"
+
+# ---- 주문 관련 ----
+order:
+  free_shipping_threshold: 50000  # 5만원 이상 무료배송
+  default_shipping_fee: 3000
+  items_per_order:
+    min: 1
+    max: 5
+    avg: 2.3
+  cancellation_rate: 0.05   # 5%
+  return_rate: 0.03          # 3%
+  points_earn_rate: 0.01     # 결제금액의 1% 적립
+
+# ---- 결제 수단 비율 ----
+payment_methods:
+  card: 0.45
+  kakao_pay: 0.20
+  naver_pay: 0.15
+  bank_transfer: 0.10
+  virtual_account: 0.05
+  point: 0.05
+
+# ---- 택배사 비율 ----
+carriers:
+  CJ대한통운: 0.40
+  한진택배: 0.25
+  로젠택배: 0.20
+  우체국택배: 0.15
+
+# ---- 리뷰 ----
+review:
+  write_rate: 0.25     # 구매 확정의 25%가 리뷰 작성
+  rating_distribution:  # 현실적 J자 분포
+    5: 0.40
+    4: 0.30
+    3: 0.15
+    2: 0.10
+    1: 0.05
+
+# ---- 고객 등급 ----
+customer_grades:
+  BRONZE: 0         # 기본
+  SILVER: 500000    # 최근 1년 50만원 이상
+  GOLD: 2000000     # 최근 1년 200만원 이상
+  VIP: 5000000      # 최근 1년 500만원 이상
+
+# ---- 엣지 케이스 비율 ----
+edge_cases:
+  null_birth_date: 0.15
+  null_gender: 0.10
+  long_product_name: 0.01    # 200자 이상
+  zero_payment: 0.01          # 포인트 전액
+  bulk_order: 0.005           # 기업 구매 (10개+)
+  no_review_products: 0.20
