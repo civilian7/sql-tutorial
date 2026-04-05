@@ -1,3 +1,5 @@
+**[한국어](README.ko.md)** | English
+
 # E-Commerce Test Database Generator
 
 A Python tool that generates **realistic test databases** for an online computer & peripherals store. Designed for SQL learners who want to practice with well-structured, production-like data.
