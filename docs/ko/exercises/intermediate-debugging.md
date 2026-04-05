@@ -22,6 +22,8 @@ WHERE o.ordered_at LIKE '2024%'
 GROUP BY p.id, p.name;
 ```
 
+**힌트:** 두 개의 1:N 관계를 동시에 JOIN하면 행이 곱해지는 상황(카디널리티 폭발)을 의심해보세요.
+
 ??? success "정답"
     **원인:** `reviews`와 `order_items`를 동시에 JOIN하면 행이 곱해집니다 (리뷰 3개 × 주문 5개 = 15행).
 
@@ -55,6 +57,8 @@ FROM customers
 WHERE birth_date = NULL;
 ```
 
+**힌트:** SQL에서 NULL과 `=` 비교는 항상 FALSE입니다. NULL 전용 비교 연산자를 사용하세요.
+
 ??? success "정답"
     **원인:** NULL은 `=`로 비교할 수 없습니다. `NULL = NULL`도 FALSE입니다.
 
@@ -79,6 +83,8 @@ LEFT JOIN reviews AS r ON p.id = r.product_id
 WHERE r.rating >= 3;
 ```
 
+**힌트:** `WHERE` 절에서 RIGHT 테이블의 컬럼을 필터링하면 NULL 행이 제거되어 LEFT JOIN이 INNER JOIN처럼 됩니다. 조건을 `ON` 절로 옮겨보세요.
+
 ??? success "정답"
     **원인:** `WHERE r.rating >= 3`이 NULL 행을 제거합니다. LEFT JOIN이 INNER JOIN과 같아집니다.
 
@@ -101,6 +107,8 @@ SELECT cat.name, COUNT(*) AS product_count
 FROM products AS p
 INNER JOIN categories AS cat ON p.category_id = cat.id;
 ```
+
+**힌트:** 집계 함수(`COUNT`)를 쓰면서 비집계 컬럼(`cat.name`)이 있으면 반드시 필요한 절이 있습니다.
 
 ??? success "정답"
     **원인:** 집계 함수(COUNT)를 쓰면서 GROUP BY가 없습니다.
@@ -127,6 +135,8 @@ INNER JOIN categories AS cat ON p.category_id = cat.id
 HAVING p.price >= 100000 AND COUNT(*) >= 5
 GROUP BY cat.name;
 ```
+
+**힌트:** 개별 행 필터(`p.price >= 100000`)는 `WHERE`, 그룹 필터(`COUNT(*) >= 5`)는 `HAVING`. 그리고 절의 순서도 확인하세요.
 
 ??? success "정답"
     **원인:** 1) 행 필터는 WHERE, 그룹 필터는 HAVING. 2) HAVING은 GROUP BY 뒤에 와야 합니다.
@@ -161,6 +171,8 @@ ORDER BY category_count DESC
 LIMIT 10;
 ```
 
+**힌트:** 같은 카테고리의 상품을 여러 번 사면 중복 카운트됩니다. `COUNT`에 중복 제거 키워드를 추가하세요.
+
 ??? success "정답"
     **원인:** 같은 카테고리의 상품을 여러 번 사면 중복 카운트됩니다.
 
@@ -192,6 +204,8 @@ WHERE price > (
     SELECT AVG(price) FROM products GROUP BY category_id
 );
 ```
+
+**힌트:** `>` 연산자는 단일 값만 비교할 수 있는데, 서브쿼리가 여러 행을 반환합니다. `GROUP BY`를 제거하거나 상관 서브쿼리로 바꿔보세요.
 
 ??? success "정답"
     **원인:** 서브쿼리가 카테고리별로 여러 행을 반환하는데, `>`는 단일 값만 비교합니다.
@@ -225,6 +239,8 @@ FROM orders
 WHERE ordered_at BETWEEN '2024-12-01' AND '2024-12-31';
 ```
 
+**힌트:** `ordered_at`에 시간 정보가 포함되어 있으면 `'2024-12-31'`은 `'2024-12-31 00:00:00'`으로 비교됩니다. 시간 끝까지 포함시키세요.
+
 ??? success "정답"
     **원인:** `ordered_at`에 시간이 포함되어 있으면 `'2024-12-31'`은 `'2024-12-31 00:00:00'`과 같아서 그 이후 시간이 빠집니다.
 
@@ -255,6 +271,8 @@ FROM orders
 GROUP BY SUBSTR(ordered_at, 1, 7)
 ORDER BY month;
 ```
+
+**힌트:** `WHERE` 절에서 취소/반품 상태의 주문을 제외하는 조건이 빠져 있습니다.
 
 ??? success "정답"
     **원인:** 취소(cancelled), 반품(returned) 주문을 제외하지 않았습니다.
@@ -290,6 +308,8 @@ LEFT JOIN returns AS ret ON ret.order_id = oi.order_id
 GROUP BY s.id, s.company_name;
 ```
 
+**힌트:** 분모가 0이 될 수 있는 나눗셈입니다. `NULLIF(값, 0)`으로 0을 NULL로 바꾸면 에러 대신 NULL이 됩니다.
+
 ??? success "정답"
     **원인:** `sale_count`가 0이면 0으로 나누기 에러.
 
@@ -324,6 +344,8 @@ WHERE tier = '저가'
 GROUP BY tier;
 ```
 
+**힌트:** SQL 실행 순서는 FROM → WHERE → GROUP BY → SELECT. `WHERE`에서는 `SELECT`의 별칭을 참조할 수 없습니다.
+
 ??? success "정답"
     **원인:** WHERE는 SELECT의 별칭을 참조할 수 없습니다 (실행 순서: FROM → WHERE → GROUP BY → SELECT).
 
@@ -357,6 +379,8 @@ SELECT order_number, total_amount, ordered_at FROM orders
 UNION ALL
 SELECT title, category, created_at FROM complaints;
 ```
+
+**힌트:** `UNION`의 각 SELECT는 컬럼 수와 타입이 호환되어야 합니다. 의미가 다른 컬럼을 통일된 구조로 맞춰보세요.
 
 ??? success "정답"
     **원인:** UNION의 각 SELECT는 같은 수의 컬럼, 호환 가능한 타입이어야 합니다. `total_amount`(REAL)와 `category`(TEXT)는 의미가 다릅니다.

@@ -13,6 +13,8 @@ EXPLAIN QUERY PLAN
 SELECT * FROM orders WHERE customer_id = 100;
 ```
 
+**힌트:** `SCAN TABLE`은 전체 테이블을 읽고, `SEARCH TABLE ... USING INDEX`는 인덱스로 필요한 행만 찾습니다.
+
 ??? success "정답"
     ```sql
     -- 먼저 실행 계획 확인
@@ -36,6 +38,8 @@ SELECT * FROM orders WHERE customer_id = 100;
 ### 2. 인덱스 효과 비교
 
 인덱스 유무에 따른 실행 계획 차이를 확인하세요.
+
+**힌트:** 인덱스가 있는 컬럼(`customer_id`)과 없는 컬럼(`notes`)에 대해 각각 `EXPLAIN QUERY PLAN`을 실행하여 비교하세요.
 
 ??? success "정답"
     ```sql
@@ -72,6 +76,8 @@ SELECT
 FROM products p
 WHERE p.is_active = 1;
 ```
+
+**힌트:** 상관 서브쿼리는 행마다 실행됩니다. 미리 `GROUP BY`로 집계한 서브쿼리를 `LEFT JOIN`하면 한 번만 실행됩니다.
 
 ??? success "정답"
     ```sql
@@ -120,6 +126,8 @@ ORDER BY total_amount DESC
 LIMIT 10;
 ```
 
+**힌트:** `SELECT *` 대신 실제 필요한 컬럼(`order_number`, `total_amount` 등)만 나열하면 디스크 I/O가 줄어듭니다.
+
 ??? success "정답"
     ```sql
     -- 개선: 필요한 컬럼만
@@ -146,6 +154,8 @@ SELECT * FROM products WHERE name LIKE 'Samsung%';
 SELECT * FROM products WHERE name LIKE '%Samsung%';
 ```
 
+**힌트:** 인덱스는 B-Tree 구조입니다. 접두사가 고정된 `'Samsung%'`은 범위 검색이 가능하지만, `'%Samsung%'`은 시작을 알 수 없어 전체 스캔합니다.
+
 ??? success "정답"
     ```sql
     EXPLAIN QUERY PLAN
@@ -162,6 +172,8 @@ SELECT * FROM products WHERE name LIKE '%Samsung%';
 ### 6. IN vs EXISTS 비교
 
 "리뷰가 있는 상품"을 찾는 두 가지 방법의 실행 계획을 비교하세요.
+
+**힌트:** `IN`, `EXISTS`, `INNER JOIN` 세 가지 방법을 `EXPLAIN QUERY PLAN`으로 비교하세요. `EXISTS`는 첫 매치에서 즉시 반환합니다.
 
 ??? success "정답"
     ```sql
@@ -198,6 +210,8 @@ WHERE status = 'pending'
 ORDER BY ordered_at DESC;
 ```
 
+**힌트:** WHERE, ORDER BY, SELECT에 사용된 모든 컬럼을 인덱스에 포함하면 테이블을 읽지 않고 인덱스만으로 결과를 반환합니다.
+
 ??? success "정답"
     ```sql
     -- 현재 실행 계획
@@ -233,6 +247,8 @@ SELECT order_number, total_amount, ordered_at
 FROM orders
 WHERE status = 'pending' OR status = 'paid' OR status = 'preparing';
 ```
+
+**힌트:** 여러 `OR` 조건을 `IN (...)` 으로 바꾸면 옵티마이저가 인덱스를 더 효율적으로 활용할 수 있습니다.
 
 ??? success "정답"
     ```sql

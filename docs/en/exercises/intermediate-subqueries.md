@@ -8,6 +8,8 @@
 
 Retrieve the name and price of products that are more expensive than the overall average price.
 
+**Hint:** Use a scalar subquery: `WHERE price > (SELECT AVG(price) FROM products)`.
+
 ??? success "Answer"
     ```sql
     SELECT name, price
@@ -21,6 +23,8 @@ Retrieve the name and price of products that are more expensive than the overall
 ### 2. Best-Selling Product Details
 
 Find the name, category, total quantity sold, and total revenue of the #1 best-selling product.
+
+**Hint:** JOIN `order_items` with `products` and `categories`, then aggregate per product with `GROUP BY`. Use `ORDER BY total_sold DESC LIMIT 1`.
 
 ??? success "Answer"
     ```sql
@@ -45,6 +49,8 @@ Find the name, category, total quantity sold, and total revenue of the #1 best-s
 
 Retrieve only the products that are more expensive than the average price of their category.
 
+**Hint:** Calculate the category average price in a subquery (inline view), then `JOIN` it and filter with `WHERE p.price > cat_avg.avg_price`.
+
 ??? success "Answer"
     ```sql
     SELECT p.name, p.price, cat.name AS category, cat_avg.avg_price
@@ -65,6 +71,8 @@ Retrieve only the products that are more expensive than the average price of the
 ### 4. High-Rated but Low-Revenue Products
 
 Find products with an average rating of 4.5 or higher but whose total revenue is below the median (bottom 50%).
+
+**Hint:** Calculate per-product average rating and revenue in a CTE, then filter by rating threshold and revenue below the overall average.
 
 ??? success "Answer"
     ```sql
@@ -93,6 +101,8 @@ Find products with an average rating of 4.5 or higher but whose total revenue is
 
 Classify orders by amount into tiers — small (under 50K), medium (50K–200K), large (200K–500K), premium (500K+) — and find the count and ratio for each tier.
 
+**Hint:** Classify tiers with `CASE WHEN total_amount < 50000 THEN 'Small' ...`, then `GROUP BY`. Calculate the ratio using the window function `SUM(COUNT(*)) OVER ()`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -116,6 +126,8 @@ Classify orders by amount into tiers — small (under 50K), medium (50K–200K),
 ### 6. Wishlisted but Never Purchased Products
 
 Find customer-product combinations that are in a wishlist but have never been ordered.
+
+**Hint:** Use `NOT EXISTS` with a correlated subquery to check if the customer has ever ordered that product.
 
 ??? success "Answer"
     ```sql
@@ -144,6 +156,8 @@ Find customer-product combinations that are in a wishlist but have never been or
 
 Find the count, average payment amount, and installment ratio per card issuer.
 
+**Hint:** Filter card payments with `WHERE method = 'card'`, then `GROUP BY card_issuer`. Calculate installment ratio with conditional aggregation using `CASE WHEN installment_months > 0`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -163,6 +177,8 @@ Find the count, average payment amount, and installment ratio per card issuer.
 ### 8. Resolution Rate by Inquiry Channel
 
 Find the count, resolution rate, and average processing time per customer inquiry channel.
+
+**Hint:** Aggregate with `GROUP BY channel`. Calculate resolution rate with `CASE WHEN status IN ('resolved','closed')` conditional counting. Processing time uses `JULIANDAY` difference.
 
 ??? success "Answer"
     ```sql
@@ -184,6 +200,8 @@ Find the count, resolution rate, and average processing time per customer inquir
 ### 9. Customers Who Both Reviewed and Wishlisted
 
 Find the name, review count, and wishlist count of customers who have both written reviews and added items to their wishlist.
+
+**Hint:** Aggregate reviews and wishlists in separate subqueries, then `INNER JOIN` them together (only customers present in both).
 
 ??? success "Answer"
     ```sql
@@ -210,6 +228,8 @@ Find the name, review count, and wishlist count of customers who have both writt
 
 Find the image count per product, including products with no images.
 
+**Hint:** `products LEFT JOIN product_images` to include products without images. `COUNT(pi.id)` doesn't count NULLs, so it returns 0.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -229,6 +249,8 @@ Find the image count per product, including products with no images.
 
 Find the count and percentage per cart status (active/converted/abandoned).
 
+**Hint:** Aggregate with `GROUP BY status`. Calculate the ratio with `100.0 * COUNT(*) / SUM(COUNT(*)) OVER ()`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -245,6 +267,8 @@ Find the count and percentage per cart status (active/converted/abandoned).
 ### 12. Combining Two Tables (UNION)
 
 Combine order cancellation events and return request events into a single timeline. Show the 20 most recent.
+
+**Hint:** Combine two SELECTs with `UNION ALL`, matching the number and meaning of columns. Add an event type column to distinguish them.
 
 ??? success "Answer"
     ```sql

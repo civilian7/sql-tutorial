@@ -22,6 +22,8 @@ WHERE o.ordered_at LIKE '2024%'
 GROUP BY p.id, p.name;
 ```
 
+**Hint:** When two 1:N relationships are JOINed simultaneously, suspect a cardinality explosion where rows multiply.
+
 ??? success "Answer"
     **Cause:** Joining `reviews` and `order_items` simultaneously causes row multiplication (3 reviews x 5 orders = 15 rows).
 
@@ -55,6 +57,8 @@ FROM customers
 WHERE birth_date = NULL;
 ```
 
+**Hint:** In SQL, comparing with NULL using `=` always returns FALSE. Use the NULL-specific comparison operator.
+
 ??? success "Answer"
     **Cause:** NULL cannot be compared with `=`. Even `NULL = NULL` evaluates to FALSE.
 
@@ -79,6 +83,8 @@ LEFT JOIN reviews AS r ON p.id = r.product_id
 WHERE r.rating >= 3;
 ```
 
+**Hint:** Filtering on the RIGHT table's column in `WHERE` removes NULL rows, making a LEFT JOIN behave like an INNER JOIN. Try moving the condition to the `ON` clause.
+
 ??? success "Answer"
     **Cause:** `WHERE r.rating >= 3` eliminates NULL rows. The LEFT JOIN effectively becomes an INNER JOIN.
 
@@ -101,6 +107,8 @@ SELECT cat.name, COUNT(*) AS product_count
 FROM products AS p
 INNER JOIN categories AS cat ON p.category_id = cat.id;
 ```
+
+**Hint:** When using an aggregate function (`COUNT`) alongside a non-aggregate column (`cat.name`), a certain clause is required.
 
 ??? success "Answer"
     **Cause:** An aggregate function (COUNT) is used without GROUP BY.
@@ -127,6 +135,8 @@ INNER JOIN categories AS cat ON p.category_id = cat.id
 HAVING p.price >= 100000 AND COUNT(*) >= 5
 GROUP BY cat.name;
 ```
+
+**Hint:** Row-level filters (`p.price >= 100000`) go in `WHERE`, group-level filters (`COUNT(*) >= 5`) go in `HAVING`. Also check the clause order.
 
 ??? success "Answer"
     **Cause:** 1) Row-level filters belong in WHERE, group-level filters in HAVING. 2) HAVING must come after GROUP BY.
@@ -161,6 +171,8 @@ ORDER BY category_count DESC
 LIMIT 10;
 ```
 
+**Hint:** Buying from the same category multiple times causes duplicate counts. Add a deduplication keyword to `COUNT`.
+
 ??? success "Answer"
     **Cause:** Buying multiple products from the same category results in duplicate counts.
 
@@ -192,6 +204,8 @@ WHERE price > (
     SELECT AVG(price) FROM products GROUP BY category_id
 );
 ```
+
+**Hint:** The `>` operator can only compare against a single value, but the subquery returns multiple rows. Remove the `GROUP BY` or convert to a correlated subquery.
 
 ??? success "Answer"
     **Cause:** The subquery returns multiple rows (one per category), but `>` can only compare against a single value.
@@ -225,6 +239,8 @@ FROM orders
 WHERE ordered_at BETWEEN '2024-12-01' AND '2024-12-31';
 ```
 
+**Hint:** If `ordered_at` contains time information, `'2024-12-31'` is compared as `'2024-12-31 00:00:00'`. Make sure to include up to the end of the day.
+
 ??? success "Answer"
     **Cause:** If `ordered_at` includes a time component, `'2024-12-31'` equals `'2024-12-31 00:00:00'`, so any time after midnight is excluded.
 
@@ -255,6 +271,8 @@ FROM orders
 GROUP BY SUBSTR(ordered_at, 1, 7)
 ORDER BY month;
 ```
+
+**Hint:** The `WHERE` clause is missing a condition to exclude cancelled/returned order statuses.
 
 ??? success "Answer"
     **Cause:** Cancelled and returned orders are not excluded.
@@ -290,6 +308,8 @@ LEFT JOIN returns AS ret ON ret.order_id = oi.order_id
 GROUP BY s.id, s.company_name;
 ```
 
+**Hint:** The denominator can be zero. Use `NULLIF(value, 0)` to convert 0 to NULL, which returns NULL instead of an error.
+
 ??? success "Answer"
     **Cause:** Division by zero error when `sale_count` is 0.
 
@@ -324,6 +344,8 @@ WHERE tier = '저가'
 GROUP BY tier;
 ```
 
+**Hint:** SQL execution order is FROM -> WHERE -> GROUP BY -> SELECT. `WHERE` cannot reference aliases from `SELECT`.
+
 ??? success "Answer"
     **Cause:** WHERE cannot reference SELECT aliases (execution order: FROM -> WHERE -> GROUP BY -> SELECT).
 
@@ -357,6 +379,8 @@ SELECT order_number, total_amount, ordered_at FROM orders
 UNION ALL
 SELECT title, category, created_at FROM complaints;
 ```
+
+**Hint:** Each SELECT in a `UNION` must have the same number of columns with compatible types. Align the columns to a unified structure with matching semantics.
 
 ??? success "Answer"
     **Cause:** Each SELECT in a UNION must have the same number of columns with compatible types. `total_amount` (REAL) and `category` (TEXT) have different semantics.

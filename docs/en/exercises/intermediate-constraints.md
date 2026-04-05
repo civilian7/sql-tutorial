@@ -15,6 +15,8 @@ What happens if you insert a product with an id that already exists?
 SELECT id, name FROM products WHERE id = 1;
 ```
 
+**Hint:** Inserting with an existing `id` value violates the PRIMARY KEY uniqueness constraint.
+
 ??? success "Try it"
     ```sql
     -- PRIMARY KEY 중복 → 에러 발생
@@ -34,6 +36,8 @@ What happens if you create a customer with an email that's already registered?
 -- 기존 고객 이메일 확인
 SELECT email FROM customers LIMIT 1;
 ```
+
+**Hint:** Inserting an already-existing value into a column with a `UNIQUE` constraint causes a duplicate error.
 
 ??? success "Try it"
     ```sql
@@ -55,6 +59,8 @@ What happens if you insert a product into a non-existent category?
 SELECT MAX(id) FROM categories;
 ```
 
+**Hint:** A `FOREIGN KEY` only allows values that exist in the parent table. In SQLite, `PRAGMA foreign_keys = ON` is required.
+
 ??? success "Try it"
     ```sql
     -- 존재하지 않는 category_id 사용
@@ -72,6 +78,8 @@ SELECT MAX(id) FROM categories;
 
 What happens if you set the price to a negative value?
 
+**Hint:** If a `CHECK(price >= 0)` constraint is defined, inserting a negative value will be rejected.
+
 ??? success "Try it"
     ```sql
     -- price >= 0 CHECK 위반
@@ -87,6 +95,8 @@ What happens if you set the price to a negative value?
 
 What happens if you set a customer grade to a value that's not allowed?
 
+**Hint:** An allowlist constraint like `CHECK(grade IN ('BRONZE','SILVER','GOLD','VIP'))` rejects values not in the list.
+
 ??? success "Try it"
     ```sql
     -- grade IN ('BRONZE', 'SILVER', 'GOLD', 'VIP') CHECK 위반
@@ -101,6 +111,8 @@ What happens if you set a customer grade to a value that's not allowed?
 ### 6. NOT NULL Violation
 
 What happens if you leave a required column empty?
+
+**Hint:** Inserting `NULL` into a column with a `NOT NULL` constraint causes an error.
 
 ??? success "Try it"
     ```sql
@@ -122,6 +134,8 @@ What happens if the same customer adds the same product to their wishlist twice?
 SELECT customer_id, product_id FROM wishlists LIMIT 1;
 ```
 
+**Hint:** If the combination of `(customer_id, product_id)` is `UNIQUE`, inserting the same combination a second time causes an error.
+
 ??? success "Try it"
     ```sql
     -- (customer_id, product_id) 복합 UNIQUE 위반
@@ -142,6 +156,8 @@ SELECT customer_id, product_id FROM wishlists LIMIT 1;
 
 What happens if you give a review a rating of 0 or 6?
 
+**Hint:** A `CHECK(rating BETWEEN 1 AND 5)` constraint rejects values outside the range.
+
 ??? success "Try it"
     ```sql
     -- rating BETWEEN 1 AND 5 CHECK 위반
@@ -156,6 +172,8 @@ What happens if you give a review a rating of 0 or 6?
 ### 9. Viewing Current Constraints
 
 Check all constraints defined in the database.
+
+**Hint:** Query the `sqlite_master` table with `type = 'table'` to see DDL with CHECK/NOT NULL constraints, and `type = 'index'` for UNIQUE indexes.
 
 ??? success "Answer"
     ```sql
@@ -179,6 +197,8 @@ Check all constraints defined in the database.
 ### 10. Handling Duplicates with ON CONFLICT
 
 Practice UPSERT — updating instead of throwing an error when a duplicate occurs.
+
+**Hint:** `INSERT OR IGNORE` silently skips duplicates, while `INSERT ... ON CONFLICT(id) DO UPDATE SET ...` updates the existing row on conflict.
 
 ??? success "Answer"
     ```sql

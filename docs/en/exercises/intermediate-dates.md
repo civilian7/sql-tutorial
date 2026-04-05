@@ -8,6 +8,8 @@
 
 Find the number of orders and revenue per month in 2025. Exclude cancelled orders.
 
+**Hint:** Extract the month with `SUBSTR(ordered_at, 1, 7)` and filter the year with `WHERE ordered_at LIKE '2025%'`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -26,6 +28,8 @@ Find the number of orders and revenue per month in 2025. Exclude cancelled order
 ### 2. Quarterly Revenue Comparison
 
 Find the revenue and order count per quarter (Q1–Q4) in 2024.
+
+**Hint:** Convert months to quarters with `CASE WHEN SUBSTR(ordered_at, 6, 2) IN ('01','02','03') THEN 'Q1' ...`.
 
 ??? success "Answer"
     ```sql
@@ -51,6 +55,8 @@ Find the revenue and order count per quarter (Q1–Q4) in 2024.
 
 Find the average number of days from signup to first order across all customers.
 
+**Hint:** Get the first order date with `MIN(ordered_at)` in a subquery, then calculate the day difference with `JULIANDAY`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -72,6 +78,8 @@ Find the average number of days from signup to first order across all customers.
 
 Find the number of orders per hour of day (0–23).
 
+**Hint:** Extract the hour portion with `SUBSTR(ordered_at, 12, 2)`. Convert to integer with `CAST(... AS INTEGER)`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -87,6 +95,8 @@ Find the number of orders per hour of day (0–23).
 ### 5. Last 30 Days Revenue
 
 Find the daily revenue for the last 30 days (based on 2025-11-01 to 2025-11-30).
+
+**Hint:** Filter with `BETWEEN '2025-11-01' AND '2025-11-30 23:59:59'`. Be careful to include up to the end of the last day.
 
 ??? success "Answer"
     ```sql
@@ -106,6 +116,8 @@ Find the daily revenue for the last 30 days (based on 2025-11-01 to 2025-11-30).
 ### 6. Delivery Duration Distribution
 
 Divide delivery duration into ranges (within 1 day, 2 days, 3 days, 4+ days) and count.
+
+**Hint:** Calculate delivery days with `JULIANDAY` difference in a subquery, then classify ranges with `CASE WHEN days <= 1 THEN ...`.
 
 ??? success "Answer"
     ```sql
@@ -134,6 +146,8 @@ Divide delivery duration into ranges (within 1 day, 2 days, 3 days, 4+ days) and
 
 Find the number of days since each customer's last order. Only customers with 180+ days.
 
+**Hint:** Get the last order date with `MAX(ordered_at)` and calculate elapsed days with `JULIANDAY('reference_date') - JULIANDAY(MAX(...))`. Filter with `HAVING` for 180+ days.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -155,6 +169,8 @@ Find the number of days since each customer's last order. Only customers with 18
 
 Find the order count by day of week (Mon–Sun) and hour (0–23). Show top 20 combinations.
 
+**Hint:** Extract the day-of-week number with `STRFTIME('%w', ordered_at)` and convert to day names with `CASE`. `GROUP BY` both columns.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -175,6 +191,8 @@ Find the order count by day of week (Mon–Sun) and hour (0–23). Show top 20 c
 ### 9. Year-over-Year Growth Rate
 
 Find the yearly revenue and year-over-year growth rate (%). Exclude cancelled orders.
+
+**Hint:** Calculate yearly revenue in a CTE, then reference the previous year's revenue with `LAG(revenue) OVER (ORDER BY year)`.
 
 ??? success "Answer"
     ```sql
@@ -202,6 +220,8 @@ Find the yearly revenue and year-over-year growth rate (%). Exclude cancelled or
 
 Find the average number of days from return request to completion. Only completed returns.
 
+**Hint:** Calculate processing days with `JULIANDAY(completed_at) - JULIANDAY(requested_at)` from the `returns` table. Filter with `WHERE status = 'completed'`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -218,6 +238,8 @@ Find the average number of days from return request to completion. Only complete
 ### 11. Monthly New vs Returning Customers
 
 Find the count of first-time buyers and repeat buyers per month in 2024.
+
+**Hint:** Get each customer's first order date with `MIN(ordered_at)` in a CTE, then compare the order month with the first order month to distinguish new vs returning customers.
 
 ??? success "Answer"
     ```sql
@@ -248,6 +270,8 @@ Find the count of first-time buyers and repeat buyers per month in 2024.
 ### 12. Price Change History Analysis
 
 Find the name, number of changes, first price, and current price of products whose price has changed 2 or more times.
+
+**Hint:** Join `products` with `product_prices` for history. Filter with `HAVING COUNT >= 2`. Get the first price via a subquery with `ORDER BY started_at ASC LIMIT 1`.
 
 ??? success "Answer"
     ```sql

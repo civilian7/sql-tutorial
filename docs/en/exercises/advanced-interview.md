@@ -8,6 +8,8 @@ Practice SQL patterns commonly asked in real technical interviews using this dat
 
 Find the top revenue product in each category. (Only one in case of a tie)
 
+**Hint:** Assign within-group rankings with `ROW_NUMBER() OVER (PARTITION BY category ORDER BY revenue DESC)`, then filter with `WHERE rn = 1`.
+
 ??? success "Answer"
     ```sql
     WITH ranked AS (
@@ -34,6 +36,8 @@ Find the top revenue product in each category. (Only one in case of a tie)
 ### 2. Consecutive Growth Periods
 
 Find periods where monthly revenue increased for 3 consecutive months.
+
+**Hint:** Use `LAG(revenue, 1)` and `LAG(revenue, 2)` to get the previous 2 months' revenue, then compare: current > previous > two months ago.
 
 ??? success "Answer"
     ```sql
@@ -64,6 +68,8 @@ Find periods where monthly revenue increased for 3 consecutive months.
 
 Calculate the monthly revenue and cumulative revenue for 2024.
 
+**Hint:** Calculate the running total with `SUM(monthly_revenue) OVER (ORDER BY month)`. `SUM(SUM(...))` is a pattern that nests a window function inside an aggregate.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -82,6 +88,8 @@ Calculate the monthly revenue and cumulative revenue for 2024.
 ### 4. Moving Average
 
 Calculate the 3-month moving average revenue.
+
+**Hint:** Use `AVG(revenue) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)` to average 3 rows including the current one.
 
 ??? success "Answer"
     ```sql
@@ -110,6 +118,8 @@ Calculate the 3-month moving average revenue.
 
 Find dates in 2024 with no orders.
 
+**Hint:** Generate all dates in 2024 with `WITH RECURSIVE`, then `LEFT JOIN` with actual order dates and find dates where the result is `NULL`.
+
 ??? success "Answer"
     ```sql
     -- 2024년 모든 날짜 생성 (재귀 CTE)
@@ -137,6 +147,8 @@ Find dates in 2024 with no orders.
 ### 6. Percentile
 
 Calculate the 10th, 25th, 50th (median), 75th, and 90th percentiles of customer purchase amounts.
+
+**Hint:** Create percentile groups with `NTILE(100) OVER (ORDER BY total_spent)`, then extract each point's value with `MAX(CASE WHEN percentile = N ...)`.
 
 ??? success "Answer"
     ```sql
@@ -168,6 +180,8 @@ Calculate the 10th, 25th, 50th (median), 75th, and 90th percentiles of customer 
 ### 7. Year-over-Year Rank Changes
 
 Calculate the yearly revenue ranking by category and show the rank change compared to the previous year.
+
+**Hint:** Assign yearly rankings with `RANK() OVER (PARTITION BY year ORDER BY revenue DESC)`, then get the previous year's rank with `LAG(rank) OVER (PARTITION BY category ORDER BY year)` and calculate the difference.
 
 ??? success "Answer"
     ```sql
@@ -202,6 +216,8 @@ Calculate the yearly revenue ranking by category and show the rank change compar
 ### 8. Funnel Analysis
 
 Analyze the customer journey funnel: Signup -> First Order -> Write Review -> Repeat Purchase. Calculate the conversion rate at each stage.
+
+**Hint:** Get the unique customer count for each stage using scalar subqueries, then calculate the conversion rate with `100.0 * next_stage / previous_stage`.
 
 ??? success "Answer"
     ```sql
@@ -248,6 +264,8 @@ Analyze the customer journey funnel: Signup -> First Order -> Write Review -> Re
 
 Find the maximum depth of the category hierarchy and the number of categories at each depth. Use a recursive CTE.
 
+**Hint:** In `WITH RECURSIVE`, start with `parent_id IS NULL` as the root (depth=0), then recursively traverse children with `c.parent_id = tree.id`.
+
 ??? success "Answer"
     ```sql
     WITH RECURSIVE tree AS (
@@ -273,6 +291,8 @@ Find the maximum depth of the category hierarchy and the number of categories at
 ### 10. Same Product Repurchase Interval
 
 Calculate the average repurchase interval (in days) for customers who purchased the same product 2 or more times.
+
+**Hint:** Use `LAG(ordered_at) OVER (PARTITION BY customer_id, product_id ORDER BY ordered_at)` to get the previous order date for the same customer-product pair, then calculate the `JULIANDAY` difference.
 
 ??? success "Answer"
     ```sql

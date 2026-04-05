@@ -8,6 +8,8 @@
 
 Check if there are any orders placed before the customer's signup date.
 
+**Hint:** JOIN `orders` with `customers`, then detect time reversal with `WHERE ordered_at < created_at`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -25,6 +27,8 @@ Check if there are any orders placed before the customer's signup date.
 ### 2. Orphan Records (Children Without Parents)
 
 Check if there are payment records with no corresponding order.
+
+**Hint:** `payments LEFT JOIN orders`, then `WHERE o.id IS NULL` to find orphan records without a parent.
 
 ??? success "Answer"
     ```sql
@@ -51,6 +55,8 @@ Check if there are payment records with no corresponding order.
 
 Find columns with high NULL rates in each table.
 
+**Hint:** Calculate the NULL ratio for each column with `SUM(CASE WHEN column IS NULL THEN 1 ELSE 0 END) / COUNT(*)`.
+
 ??? success "Answer"
     ```sql
     -- customers 테이블의 NULL 비율
@@ -71,6 +77,8 @@ Find columns with high NULL rates in each table.
 
 Find inconsistencies where shipping is delivered but the order status is still shipped.
 
+**Hint:** JOIN `orders` with `shipping`, then find rows where `shipping.status = 'delivered'` but `orders.status` is not a delivery-completed state.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -87,6 +95,8 @@ Find inconsistencies where shipping is delivered but the order status is still s
 ### 5. Date Order Validation
 
 Find abnormal records where the delivery date is earlier than the shipment date.
+
+**Hint:** Detect date reversal with `WHERE delivered_at < shipped_at`. Only target rows where both columns are NOT NULL.
 
 ??? success "Answer"
     ```sql
@@ -106,6 +116,8 @@ Find abnormal records where the delivery date is earlier than the shipment date.
 ### 6. Duplicate Data Detection
 
 Check if the same product is registered multiple times in the same order.
+
+**Hint:** After `GROUP BY order_id, product_id`, use `HAVING COUNT(*) > 1` to detect combinations that appear more than once.
 
 ??? success "Answer"
     ```sql
@@ -128,6 +140,8 @@ Check if the same product is registered multiple times in the same order.
 ### 7. Range Outlier Detection
 
 Find abnormally large values in prices, quantities, ratings, etc.
+
+**Hint:** Check for values exceeding N times the average like `WHERE total_amount > (SELECT AVG(total_amount) * 10 FROM orders)`, and also check for negative or zero values.
 
 ??? success "Answer"
     ```sql
@@ -159,6 +173,8 @@ Find abnormally large values in prices, quantities, ratings, etc.
 
 Find inconsistencies where a cancelled order has a delivery completion record.
 
+**Hint:** JOIN `orders` with `shipping`, then detect contradictory data where `o.status = 'cancelled' AND sh.status = 'delivered'`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -175,6 +191,8 @@ Find inconsistencies where a cancelled order has a delivery completion record.
 ### 9. Recent Orders for Inactive Products
 
 Check if discontinued or inactive (is_active=0) products have been ordered recently.
+
+**Hint:** Check with `HAVING` whether the most recent order date (`MAX(ordered_at)`) for inactive products is after the discontinuation date.
 
 ??? success "Answer"
     ```sql
@@ -194,6 +212,8 @@ Check if discontinued or inactive (is_active=0) products have been ordered recen
 ### 10. Cross-Table Count Consistency
 
 Verify whether orders and payments match 1:1.
+
+**Hint:** Check both directions with `LEFT JOIN` -- orders without payments, and payments without orders.
 
 ??? success "Answer"
     ```sql
@@ -226,6 +246,8 @@ Verify whether orders and payments match 1:1.
 
 Check whether the product's current price matches the latest record in the price history.
 
+**Hint:** Compare the price from `product_prices` where `ended_at IS NULL` (currently active price) with `products.price` to detect mismatches.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -242,6 +264,8 @@ Check whether the product's current price matches the latest record in the price
 ### 12. Overall Data Quality Dashboard
 
 Summarize key quality metrics in a single query.
+
+**Hint:** Create each quality check as a scalar subquery `(SELECT COUNT(*) FROM ... WHERE condition)` and list them all in a single SELECT.
 
 ??? success "Answer"
     ```sql

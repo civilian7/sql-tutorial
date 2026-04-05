@@ -10,6 +10,8 @@ You are given a role. Write the report that the department actually needs.
 
 **Requirements:** Based on the past week (2024-12-16 to 2024-12-22), show the number of orders, revenue, average order value, new customer signups, and week-over-week revenue growth rate in a single view.
 
+**Hint:** Calculate this week, last week, and new customers each as a CTE, then combine them into a single row with `FROM this_week, last_week, new_customers`.
+
 ??? success "Answer"
     ```sql
     WITH this_week AS (
@@ -48,6 +50,8 @@ You are given a role. Write the report that the department actually needs.
 **Role:** You are a merchandising (product planning) team member.
 
 **Requirements:** For the top 20 products by revenue in 2024, show the product name, category, revenue, units sold, average rating, and return count at a glance. Products with low ratings or high returns need attention.
+
+**Hint:** First extract the top 20 by revenue in a CTE, then `LEFT JOIN` `reviews` and `returns`. Add a warning flag with `CASE`.
 
 ??? success "Answer"
     ```sql
@@ -100,6 +104,8 @@ You are given a role. Write the report that the department actually needs.
 
 **Requirements:** Extract a list of customers who have purchased 3 or more times in the past but have had no orders in the last 6 months. Include name, email, grade, last order date, and total purchase amount, sorted by total purchase amount in descending order.
 
+**Hint:** Filter both conditions simultaneously with `HAVING COUNT(*) >= 3 AND MAX(ordered_at) < DATE('reference_date', '-6 months')`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -126,6 +132,8 @@ You are given a role. Write the report that the department actually needs.
 
 **Requirements:** Show the count, total payment amount, refund count, refund amount, and net revenue (payments minus refunds) by payment method.
 
+**Hint:** Use conditional aggregation from the `payments` table: `SUM(CASE WHEN status = 'completed' ...)` and `SUM(CASE WHEN status = 'refunded' ...)`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -150,6 +158,8 @@ You are given a role. Write the report that the department actually needs.
 
 **Requirements:** Aggregate shipments that took 3 or more days after dispatch by carrier. Show the carrier name, number of delayed shipments, average delivery days, and maximum delivery days.
 
+**Hint:** Calculate delivery days with `JULIANDAY(delivered_at) - JULIANDAY(shipped_at)` and filter delayed shipments with `>= 3`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -172,6 +182,8 @@ You are given a role. Write the report that the department actually needs.
 **Role:** You are a procurement team member.
 
 **Requirements:** Create a list of products whose current stock covers less than 14 days based on the average daily sales volume over the past 30 days. Include supplier contact information.
+
+**Hint:** Calculate average daily sales over 30 days in a CTE, then filter with `stock_qty / avg_daily_sales < 14` and JOIN `suppliers` for contact info.
 
 ??? success "Answer"
     ```sql
@@ -212,6 +224,8 @@ You are given a role. Write the report that the department actually needs.
 
 **Requirements:** Show unresolved inquiries older than 7 days from VIP/GOLD customers along with their priority. Include each customer's total purchase amount to assess importance.
 
+**Hint:** JOIN `complaints` with `customers`, filter by `status = 'open'` and `grade IN ('VIP', 'GOLD')`. LEFT JOIN a subquery for total purchase amount per customer.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -245,6 +259,8 @@ You are given a role. Write the report that the department actually needs.
 **Role:** You are a data analyst. You are preparing KPIs for the year-end management meeting.
 
 **Requirements:** Summarize 2024 key metrics in a single row -- total revenue, number of orders, new customers, active customers (purchased at least once), average order value, cancellation rate, and return rate.
+
+**Hint:** List each KPI as a scalar subquery `(SELECT ... FROM ...)` in the SELECT clause to output everything in a single row.
 
 ??? success "Answer"
     ```sql

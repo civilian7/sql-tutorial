@@ -13,6 +13,8 @@ EXPLAIN QUERY PLAN
 SELECT * FROM orders WHERE customer_id = 100;
 ```
 
+**Hint:** `SCAN TABLE` reads the entire table, while `SEARCH TABLE ... USING INDEX` uses an index to find only the needed rows.
+
 ??? success "Answer"
     ```sql
     -- 먼저 실행 계획 확인
@@ -36,6 +38,8 @@ SELECT * FROM orders WHERE customer_id = 100;
 ### 2. Comparing Index Effect
 
 Compare execution plans with and without an index.
+
+**Hint:** Run `EXPLAIN QUERY PLAN` on a column with an index (`customer_id`) and one without (`notes`) to compare.
 
 ??? success "Answer"
     ```sql
@@ -72,6 +76,8 @@ SELECT
 FROM products p
 WHERE p.is_active = 1;
 ```
+
+**Hint:** Correlated subqueries execute once per row. Pre-aggregate with `GROUP BY` in a subquery and `LEFT JOIN` it instead -- this runs only once.
 
 ??? success "Answer"
     ```sql
@@ -112,6 +118,8 @@ WHERE p.is_active = 1;
 
 Improve the query by specifying only the necessary columns.
 
+**Hint:** Instead of `SELECT *`, list only the columns you actually need (`order_number`, `total_amount`, etc.) to reduce disk I/O.
+
 ```sql
 -- 느린 쿼리
 SELECT * FROM orders
@@ -146,6 +154,8 @@ SELECT * FROM products WHERE name LIKE 'Samsung%';
 SELECT * FROM products WHERE name LIKE '%Samsung%';
 ```
 
+**Hint:** Indexes use a B-Tree structure. `'Samsung%'` with a fixed prefix allows a range search, but `'%Samsung%'` with an unknown start requires a full scan.
+
 ??? success "Answer"
     ```sql
     EXPLAIN QUERY PLAN
@@ -162,6 +172,8 @@ SELECT * FROM products WHERE name LIKE '%Samsung%';
 ### 6. IN vs EXISTS Comparison
 
 Compare the execution plans of two approaches for finding "products that have reviews."
+
+**Hint:** Compare `IN`, `EXISTS`, and `INNER JOIN` using `EXPLAIN QUERY PLAN`. `EXISTS` returns immediately upon finding the first match.
 
 ??? success "Answer"
     ```sql
@@ -189,6 +201,8 @@ Compare the execution plans of two approaches for finding "products that have re
 ### 7. Covering Index
 
 Design a covering index for a frequently executed query.
+
+**Hint:** If all columns used in WHERE, ORDER BY, and SELECT are included in the index, results can be returned from the index alone without reading the table.
 
 ```sql
 -- 이 쿼리가 매우 자주 실행됩니다
@@ -226,6 +240,8 @@ ORDER BY ordered_at DESC;
 ### 8. Compound Condition Optimization
 
 Rewrite the query below more efficiently.
+
+**Hint:** Replacing multiple `OR` conditions with `IN (...)` allows the optimizer to utilize indexes more efficiently.
 
 ```sql
 -- 비효율적: OR은 인덱스를 잘 활용하지 못함

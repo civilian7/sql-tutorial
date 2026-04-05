@@ -8,6 +8,8 @@ Uses the `customers` and `customer_addresses` tables. 15 problems practicing fil
 
 Find the number of active and inactive customers separately.
 
+**Hint:** Group with `GROUP BY is_active` and count each group with `COUNT(*)`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -23,6 +25,8 @@ Find the number of active and inactive customers separately.
 
 Find the number of customers per grade.
 
+**Hint:** Use `GROUP BY grade` and `COUNT(*)`.
+
 ??? success "Answer"
     ```sql
     SELECT grade, COUNT(*) AS cnt
@@ -36,6 +40,8 @@ Find the number of customers per grade.
 ### 3. VIP Customers
 
 Retrieve the name, email, and point balance of VIP-grade customers, sorted by point balance in descending order.
+
+**Hint:** Filter with `WHERE grade = 'VIP'` and sort with `ORDER BY point_balance DESC`.
 
 ??? success "Answer"
     ```sql
@@ -51,6 +57,8 @@ Retrieve the name, email, and point balance of VIP-grade customers, sorted by po
 
 Retrieve the name, signup date, and grade of the 10 most recently registered customers.
 
+**Hint:** Sort with `ORDER BY created_at DESC` for newest first, then `LIMIT 10`.
+
 ??? success "Answer"
     ```sql
     SELECT name, created_at, grade
@@ -64,6 +72,8 @@ Retrieve the name, signup date, and grade of the 10 most recently registered cus
 ### 5. Gender Ratio
 
 Find the customer count and percentage by gender. Include NULL values.
+
+**Hint:** Use `COALESCE(gender, 'N/A')` to handle NULLs. Calculate the ratio with `100.0 * COUNT(*) / SUM(COUNT(*)) OVER ()`.
 
 ??? success "Answer"
     ```sql
@@ -81,6 +91,8 @@ Find the customer count and percentage by gender. Include NULL values.
 
 Retrieve the name, grade, and point balance of the top 20 customers with the highest point balance.
 
+**Hint:** Use `ORDER BY point_balance DESC` and `LIMIT 20`. Target only active customers.
+
 ??? success "Answer"
     ```sql
     SELECT name, grade, point_balance
@@ -96,6 +108,8 @@ Retrieve the name, grade, and point balance of the top 20 customers with the hig
 
 Find the number of customers whose birth_date is NULL.
 
+**Hint:** Use `WHERE birth_date IS NULL` to check for NULLs. `= NULL` does not work.
+
 ??? success "Answer"
     ```sql
     SELECT COUNT(*) AS no_birthdate
@@ -108,6 +122,8 @@ Find the number of customers whose birth_date is NULL.
 ### 8. Signups by Year
 
 Find the number of new customers per signup year.
+
+**Hint:** Extract the year with `SUBSTR(created_at, 1, 4)` and group with `GROUP BY`.
 
 ??? success "Answer"
     ```sql
@@ -125,6 +141,8 @@ Find the number of new customers per signup year.
 
 Find the count and percentage of customers whose `last_login_at` is NULL.
 
+**Hint:** Calculate the ratio by dividing by the total count from a subquery `(SELECT COUNT(*) FROM customers)`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -139,6 +157,8 @@ Find the count and percentage of customers whose `last_login_at` is NULL.
 ### 10. Average Points by Grade
 
 Find the average and maximum point balance per grade.
+
+**Hint:** Use `GROUP BY grade` with `AVG(point_balance)` and `MAX(point_balance)` together.
 
 ??? success "Answer"
     ```sql
@@ -158,6 +178,8 @@ Find the average and maximum point balance per grade.
 
 Find the customer count by email domain (after the @).
 
+**Hint:** Extract the domain after `@` with `SUBSTR(email, INSTR(email, '@') + 1)`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -174,6 +196,8 @@ Find the customer count by email domain (after the @).
 ### 12. Customers with Multiple Addresses
 
 Retrieve the name and address count of customers who have registered 2 or more shipping addresses.
+
+**Hint:** `JOIN` `customers` and `customer_addresses`, then filter with `HAVING COUNT(...) >= 2`.
 
 ??? success "Answer"
     ```sql
@@ -194,6 +218,8 @@ Retrieve the name and address count of customers who have registered 2 or more s
 
 Retrieve the name, signup date, and grade of customers who joined in 2024 with a grade of VIP or GOLD.
 
+**Hint:** Filter year with `LIKE '2024%'` and grade with `IN ('VIP', 'GOLD')`. Combine both conditions with `AND`.
+
 ??? success "Answer"
     ```sql
     SELECT name, created_at, grade
@@ -208,6 +234,8 @@ Retrieve the name, signup date, and grade of customers who joined in 2024 with a
 ### 14. Monthly Signup Trend (2024)
 
 Find the number of signups per month in 2024.
+
+**Hint:** Extract 'YYYY-MM' format with `SUBSTR(created_at, 1, 7)` and aggregate monthly with `GROUP BY`.
 
 ??? success "Answer"
     ```sql
@@ -225,6 +253,8 @@ Find the number of signups per month in 2024.
 ### 15. Point Balance Distribution
 
 Divide point balances into ranges — 0, 1–1,000, 1,001–5,000, 5,001–10,000, and 10,001+ — and count the customers in each range.
+
+**Hint:** Classify point ranges with `CASE WHEN`, then aggregate with `GROUP BY` and `COUNT(*)`. Sort by range order with `ORDER BY MIN(point_balance)`.
 
 ??? success "Answer"
     ```sql

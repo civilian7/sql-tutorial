@@ -8,6 +8,8 @@ Analyze the design of the current database to understand normalization principle
 
 What problems would arise if customer names and emails were stored directly in the `orders` table?
 
+**Hint:** If a single customer has placed hundreds of orders, check with `COUNT(*)` how many rows would need to be updated when they change their name.
+
 ??? success "Answer"
     ```sql
     -- 현재 설계: orders는 customer_id만 저장 (정규화됨)
@@ -42,6 +44,8 @@ What problems would arise if customer names and emails were stored directly in t
 
 What if there were no `order_items` and products were listed as comma-separated values in the order?
 
+**Hint:** Searching for a specific product in comma-separated values requires `LIKE`, which is all you can use. In a normalized design, `WHERE product_id = ?` does the job.
+
 ??? success "Answer"
     ```sql
     -- 현재 설계: 1NF 준수 — order_items로 분리
@@ -73,6 +77,8 @@ What if there were no `order_items` and products were listed as comma-separated 
 ### 3. 2NF — Eliminating Partial Dependencies
 
 What if product names and categories were stored directly in `order_items`?
+
+**Hint:** In the composite key `(order_id, product_id)`, `product_name` depends only on `product_id`. This is a partial dependency (2NF violation).
 
 ??? success "Answer"
     ```sql
@@ -108,6 +114,8 @@ What if product names and categories were stored directly in `order_items`?
 
 What if customer grade and points were stored directly in `orders`?
 
+**Hint:** The chain `order -> customer_id -> customer_grade` is a transitive dependency. Grade should only be managed in the customers table.
+
 ??? success "Answer"
     ```sql
     -- 현재 설계: orders → customers → grade (3NF 준수)
@@ -142,6 +150,8 @@ What if customer grade and points were stored directly in `orders`?
 
 `order_items.unit_price` is a copy of `products.price`. Is this a normalization violation?
 
+**Hint:** Product prices change over time. Consider whether the price at the time of order needs to be preserved.
+
 ??? success "Answer"
     ```sql
     -- order_items에 unit_price를 별도 저장하는 이유:
@@ -167,6 +177,8 @@ What if customer grade and points were stored directly in `orders`?
 ### 6. Normalizing M:N Relationships
 
 Analyze how the many-to-many relationship between customers and products (wishlists) is implemented.
+
+**Hint:** M:N relationships are decomposed using a junction table. Check the structure of the `wishlists` table in `sqlite_master`.
 
 ??? success "Answer"
     ```sql
@@ -194,6 +206,8 @@ Analyze how the many-to-many relationship between customers and products (wishli
 ### 7. Self-Reference and Hierarchical Structure
 
 Analyze the self-referencing design of the `categories` table.
+
+**Hint:** `parent_id` references the `id` in the same table. To build the full path, a `WITH RECURSIVE` CTE is needed.
 
 ??? success "Answer"
     ```sql
@@ -235,6 +249,8 @@ Choose the correct design for the following scenario and explain your reasoning 
 
 - A) Add `phone2`, `phone3` columns to the `customers` table
 - B) Create a separate `customer_phones` table
+
+**Hint:** Recall the 1NF principle of "eliminating repeating groups." The `customer_addresses` table already implements the same pattern.
 
 ??? success "Answer"
     **B is correct.** — 1NF principle (eliminating repeating groups)

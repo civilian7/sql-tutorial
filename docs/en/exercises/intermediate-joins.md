@@ -8,6 +8,8 @@
 
 Retrieve each product's name, price, and category name. Top 10 by price descending.
 
+**Hint:** `INNER JOIN` `products` and `categories` on `category_id`, then `ORDER BY ... DESC LIMIT 10`.
+
 ??? success "Answer"
     ```sql
     SELECT p.name, p.price, cat.name AS category
@@ -22,6 +24,8 @@ Retrieve each product's name, price, and category name. Top 10 by price descendi
 ### 2. Product + Category + Supplier
 
 Retrieve the product name, category name, and supplier company name together.
+
+**Hint:** `INNER JOIN` both `categories` and `suppliers` from `products`.
 
 ??? success "Answer"
     ```sql
@@ -42,6 +46,8 @@ Retrieve the product name, category name, and supplier company name together.
 
 Retrieve the name and price of products that have never received a review.
 
+**Hint:** After `LEFT JOIN reviews`, use `WHERE r.id IS NULL` to find unmatched rows.
+
 ??? success "Answer"
     ```sql
     SELECT p.name, p.price
@@ -57,6 +63,8 @@ Retrieve the name and price of products that have never received a review.
 
 Retrieve the name and signup date of customers who have never placed an order.
 
+**Hint:** `customers LEFT JOIN orders`, then `WHERE o.id IS NULL` to filter customers with no orders.
+
 ??? success "Answer"
     ```sql
     SELECT c.name, c.created_at
@@ -71,6 +79,8 @@ Retrieve the name and signup date of customers who have never placed an order.
 ### 5. Order Summary by Customer
 
 Retrieve each customer's name, grade, order count, and total amount spent. Top 10 by total spent.
+
+**Hint:** `customers JOIN orders`, then aggregate with `GROUP BY`. Use `COUNT` and `SUM` together.
 
 ??? success "Answer"
     ```sql
@@ -91,6 +101,8 @@ Retrieve each customer's name, grade, order count, and total amount spent. Top 1
 ### 6. Order Details (4-Table JOIN)
 
 Retrieve the order number, customer name, product name, quantity, and unit price for the 5 most recent orders.
+
+**Hint:** Connect 4 tables with `INNER JOIN`: `orders -> customers`, `orders -> order_items -> products`.
 
 ??? success "Answer"
     ```sql
@@ -114,6 +126,8 @@ Retrieve the order number, customer name, product name, quantity, and unit price
 
 Find the total revenue and units sold per category. Exclude cancelled orders.
 
+**Hint:** JOIN `order_items -> products -> categories` and exclude cancelled orders with `WHERE o.status NOT IN ('cancelled')`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -135,6 +149,8 @@ Find the total revenue and units sold per category. Exclude cancelled orders.
 
 Find the name, average rating, and review count of products with 5 or more reviews.
 
+**Hint:** `products JOIN reviews`, then aggregate with `GROUP BY` and filter with `HAVING COUNT(r.id) >= 5`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -155,6 +171,8 @@ Find the name, average rating, and review count of products with 5 or more revie
 
 Find the average number of days from order to delivery for completed shipments.
 
+**Hint:** Calculate the date difference with `JULIANDAY(delivered_at) - JULIANDAY(ordered_at)`. JOIN `shipping` with `orders`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -170,6 +188,8 @@ Find the average number of days from order to delivery for completed shipments.
 ### 10. Shipping Status by Carrier
 
 Find the total shipments, delivered count, and delivery rate per carrier.
+
+**Hint:** `GROUP BY carrier` with conditional aggregation using `CASE WHEN status = 'delivered'`. Delivery rate is `100.0 * delivered / total`.
 
 ??? success "Answer"
     ```sql
@@ -189,6 +209,8 @@ Find the total shipments, delivered count, and delivery rate per carrier.
 
 Find the product count, average price, and highest price per supplier.
 
+**Hint:** `suppliers JOIN products`, then aggregate with `GROUP BY`. Use `COUNT`, `AVG`, and `MAX` functions.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -207,6 +229,8 @@ Find the product count, average price, and highest price per supplier.
 ### 12. Customer's Most Recent Order
 
 Retrieve each customer's most recent order date and order amount. Sort by most recent order.
+
+**Hint:** Use `MAX(o.ordered_at)` to get the most recent order date and aggregate per customer with `GROUP BY`.
 
 ??? success "Answer"
     ```sql

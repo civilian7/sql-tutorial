@@ -8,6 +8,8 @@
 
 만약 `orders` 테이블에 고객 이름과 이메일을 직접 저장했다면 어떤 문제가 생길까요?
 
+**힌트:** 한 고객이 수백 건 주문했을 때, 이름 변경 시 몇 행을 수정해야 하는지 `COUNT(*)`로 확인해 보세요.
+
 ??? success "정답"
     ```sql
     -- 현재 설계: orders는 customer_id만 저장 (정규화됨)
@@ -42,6 +44,8 @@
 
 `order_items`가 없고 주문에 상품을 쉼표로 나열했다면?
 
+**힌트:** 쉼표로 구분된 값에서 특정 상품을 검색하려면 `LIKE`밖에 쓸 수 없습니다. 정규화된 설계에서는 `WHERE product_id = ?`로 끝납니다.
+
 ??? success "정답"
     ```sql
     -- 현재 설계: 1NF 준수 — order_items로 분리
@@ -73,6 +77,8 @@
 ### 3. 2NF — 부분 종속 제거
 
 `order_items`에 상품명과 카테고리를 직접 저장했다면?
+
+**힌트:** 복합키 `(order_id, product_id)` 중 `product_name`은 `product_id`에만 종속됩니다. 이것이 부분 종속(2NF 위반)입니다.
 
 ??? success "정답"
     ```sql
@@ -108,6 +114,8 @@
 
 `orders`에 고객 등급과 적립금을 직접 저장했다면?
 
+**힌트:** `order → customer_id → customer_grade` 체인이 이행 종속입니다. 등급은 고객 테이블에서만 관리해야 합니다.
+
 ??? success "정답"
     ```sql
     -- 현재 설계: orders → customers → grade (3NF 준수)
@@ -142,6 +150,8 @@
 
 `order_items.unit_price`는 `products.price`의 복사본입니다. 이것은 정규화 위반일까요?
 
+**힌트:** 상품 가격은 시간에 따라 변합니다. 주문 시점의 가격을 보존해야 하는지 생각해 보세요.
+
 ??? success "정답"
     ```sql
     -- order_items에 unit_price를 별도 저장하는 이유:
@@ -167,6 +177,8 @@
 ### 6. M:N 관계의 정규화
 
 고객과 상품의 다대다 관계(위시리스트)가 어떻게 구현되었는지 분석하세요.
+
+**힌트:** M:N 관계는 연결 테이블(junction table)로 분해합니다. `wishlists` 테이블의 구조를 `sqlite_master`에서 확인해 보세요.
 
 ??? success "정답"
     ```sql
@@ -194,6 +206,8 @@
 ### 7. 자기 참조와 계층 구조
 
 `categories` 테이블의 자기 참조 설계를 분석하세요.
+
+**힌트:** `parent_id`가 같은 테이블의 `id`를 참조합니다. 전체 경로를 구하려면 `WITH RECURSIVE` CTE가 필요합니다.
 
 ??? success "정답"
     ```sql
@@ -235,6 +249,8 @@
 
 - A) `customers` 테이블에 `phone2`, `phone3` 컬럼 추가
 - B) 별도의 `customer_phones` 테이블 생성
+
+**힌트:** 1NF의 "반복 그룹 제거" 원칙을 떠올리세요. `customer_addresses` 테이블이 같은 패턴으로 이미 구현되어 있습니다.
 
 ??? success "정답"
     **B가 정답입니다.** — 1NF 원칙 (반복 그룹 제거)

@@ -8,6 +8,8 @@
 
 각 상품의 이름, 가격, 카테고리명을 조회하세요. 가격 내림차순으로 10개만.
 
+**힌트:** `products`와 `categories`를 `category_id`로 `INNER JOIN`하고, `ORDER BY ... DESC LIMIT 10`.
+
 ??? success "정답"
     ```sql
     SELECT p.name, p.price, cat.name AS category
@@ -22,6 +24,8 @@
 ### 2. 상품 + 카테고리 + 공급업체
 
 상품명, 카테고리명, 공급업체명을 함께 조회하세요.
+
+**힌트:** `products`에서 `categories`와 `suppliers` 두 테이블을 각각 `INNER JOIN`으로 연결.
 
 ??? success "정답"
     ```sql
@@ -42,6 +46,8 @@
 
 한 번도 리뷰를 받지 않은 상품의 이름과 가격을 조회하세요.
 
+**힌트:** `LEFT JOIN reviews` 후 `WHERE r.id IS NULL`로 매칭되지 않는 행을 찾기.
+
 ??? success "정답"
     ```sql
     SELECT p.name, p.price
@@ -57,6 +63,8 @@
 
 한 번도 주문하지 않은 고객의 이름과 가입일을 조회하세요.
 
+**힌트:** `customers LEFT JOIN orders` 후 `WHERE o.id IS NULL`로 주문이 없는 고객만 필터링.
+
 ??? success "정답"
     ```sql
     SELECT c.name, c.created_at
@@ -71,6 +79,8 @@
 ### 5. 고객별 주문 요약
 
 각 고객의 이름, 등급, 주문 수, 총 구매 금액을 조회하세요. 주문 수 상위 10명.
+
+**힌트:** `customers JOIN orders` 후 `GROUP BY`로 집계. `COUNT`와 `SUM`을 함께 사용.
 
 ??? success "정답"
     ```sql
@@ -91,6 +101,8 @@
 ### 6. 주문 상세 (4테이블 JOIN)
 
 최근 주문 5건의 주문번호, 고객명, 상품명, 수량, 단가를 조회하세요.
+
+**힌트:** `orders → customers`, `orders → order_items → products` 4개 테이블을 `INNER JOIN`으로 연결.
 
 ??? success "정답"
     ```sql
@@ -114,6 +126,8 @@
 
 카테고리별 총 매출과 판매 수량을 구하세요. 취소 제외.
 
+**힌트:** `order_items → products → categories`를 JOIN하고, `WHERE o.status NOT IN ('cancelled')`로 취소 제외.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -135,6 +149,8 @@
 
 리뷰가 5개 이상인 상품의 이름, 평균 평점, 리뷰 수를 구하세요.
 
+**힌트:** `products JOIN reviews`로 연결 후 `GROUP BY`와 `HAVING COUNT(r.id) >= 5`로 필터링.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -155,6 +171,8 @@
 
 배송 완료된 주문의 평균 배송 소요일(주문일 → 배송완료일)을 구하세요.
 
+**힌트:** `JULIANDAY(delivered_at) - JULIANDAY(ordered_at)`로 날짜 차이를 계산. `shipping JOIN orders`.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -170,6 +188,8 @@
 ### 10. 택배사별 배송 현황
 
 택배사(carrier)별 배송 건수, 완료 건수, 완료율을 구하세요.
+
+**힌트:** `GROUP BY carrier`와 `CASE WHEN status = 'delivered'`로 조건부 집계. 완료율은 `100.0 * 완료/전체`.
 
 ??? success "정답"
     ```sql
@@ -189,6 +209,8 @@
 
 공급업체별 공급 상품 수, 평균 가격, 최고가를 구하세요.
 
+**힌트:** `suppliers JOIN products`로 연결 후 `GROUP BY`로 집계. `COUNT`, `AVG`, `MAX` 함수 사용.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -207,6 +229,8 @@
 ### 12. 고객의 최근 주문
 
 각 고객의 가장 최근 주문일과 주문 금액을 조회하세요. 최근 주문순으로 정렬.
+
+**힌트:** `MAX(o.ordered_at)`로 최근 주문일을 구하고, `GROUP BY` 고객별로 집계.
 
 ??? success "정답"
     ```sql

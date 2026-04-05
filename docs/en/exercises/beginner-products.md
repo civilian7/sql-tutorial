@@ -8,6 +8,8 @@ Uses the `products`, `categories`, and `suppliers` tables. 15 problems using a s
 
 Find the total number of registered products.
 
+**Hint:** Use the `COUNT(*)` aggregate function.
+
 ??? success "Answer"
     ```sql
     SELECT COUNT(*) AS total_products FROM products;
@@ -18,6 +20,8 @@ Find the total number of registered products.
 ### 2. Top 5 Most Expensive Products
 
 Retrieve the names and prices of the top 5 products by price in descending order.
+
+**Hint:** Sort with `ORDER BY price DESC` and retrieve only the top 5 with `LIMIT 5`.
 
 ??? success "Answer"
     ```sql
@@ -33,6 +37,8 @@ Retrieve the names and prices of the top 5 products by price in descending order
 
 Retrieve the name, brand, and price of products priced at 100,000 KRW or less, sorted by price ascending.
 
+**Hint:** Use the `WHERE price <= 100000` condition and `ORDER BY price ASC`.
+
 ??? success "Answer"
     ```sql
     SELECT name, brand, price
@@ -47,6 +53,8 @@ Retrieve the name, brand, and price of products priced at 100,000 KRW or less, s
 
 Retrieve the name and SKU of products with zero stock.
 
+**Hint:** Filter with the `WHERE stock_qty = 0` condition.
+
 ??? success "Answer"
     ```sql
     SELECT name, sku
@@ -59,6 +67,8 @@ Retrieve the name and SKU of products with zero stock.
 ### 5. Product Count by Brand
 
 Count the number of products per brand and sort by product count in descending order.
+
+**Hint:** Group with `GROUP BY brand` and count with `COUNT(*)`. Sort with `ORDER BY ... DESC`.
 
 ??? success "Answer"
     ```sql
@@ -74,6 +84,8 @@ Count the number of products per brand and sort by product count in descending o
 
 Retrieve the name, price, and discontinuation date of products where `discontinued_at` is not NULL.
 
+**Hint:** Use `IS NOT NULL` to filter only rows that are not NULL.
+
 ??? success "Answer"
     ```sql
     SELECT name, price, discontinued_at
@@ -87,6 +99,8 @@ Retrieve the name, price, and discontinuation date of products where `discontinu
 ### 7. Average Price
 
 Find the average, minimum, and maximum price of all products.
+
+**Hint:** Use the `AVG()`, `MIN()`, and `MAX()` aggregate functions together. Use `ROUND()` to format decimals.
 
 ??? success "Answer"
     ```sql
@@ -103,6 +117,8 @@ Find the average, minimum, and maximum price of all products.
 
 Retrieve the name, price, and stock quantity of products with the brand 'Samsung'.
 
+**Hint:** Use the `WHERE brand = 'Samsung'` condition. Strings are enclosed in single quotes.
+
 ??? success "Answer"
     ```sql
     SELECT name, price, stock_qty
@@ -117,6 +133,8 @@ Retrieve the name, price, and stock quantity of products with the brand 'Samsung
 
 Retrieve products whose name contains "Gaming".
 
+**Hint:** Use `LIKE '%Gaming%'` to search for a substring. `%` represents any sequence of characters.
+
 ??? success "Answer"
     ```sql
     SELECT name, brand, price
@@ -130,6 +148,8 @@ Retrieve products whose name contains "Gaming".
 ### 10. Low Stock Products (10 or Fewer)
 
 Retrieve the name, stock quantity, and price of active products (`is_active = 1`) with stock of 10 or fewer.
+
+**Hint:** Combine two conditions in the `WHERE` clause with `AND`: `stock_qty <= 10 AND is_active = 1`.
 
 ??? success "Answer"
     ```sql
@@ -146,6 +166,8 @@ Retrieve the name, stock quantity, and price of active products (`is_active = 1`
 
 Retrieve only the top-level categories (depth = 0) sorted by display order.
 
+**Hint:** Filter with `WHERE depth = 0` from the `categories` table.
+
 ??? success "Answer"
     ```sql
     SELECT id, name, slug
@@ -159,6 +181,8 @@ Retrieve only the top-level categories (depth = 0) sorted by display order.
 ### 12. Product Count by Price Range
 
 Divide products into ranges — under 100K, 100K–500K, 500K–1M, and 1M+ KRW — and count the products in each range.
+
+**Hint:** Classify price ranges with `CASE WHEN`, then aggregate with `GROUP BY` and `COUNT(*)`.
 
 ??? success "Answer"
     ```sql
@@ -181,6 +205,8 @@ Divide products into ranges — under 100K, 100K–500K, 500K–1M, and 1M+ KRW 
 
 Retrieve the company name and contact person of active suppliers (`is_active = 1`).
 
+**Hint:** Filter with `WHERE is_active = 1` from the `suppliers` table.
+
 ??? success "Answer"
     ```sql
     SELECT company_name, contact_name, email
@@ -194,6 +220,8 @@ Retrieve the company name and contact person of active suppliers (`is_active = 1
 ### 14. Margin Rate Calculation
 
 Calculate the margin rate (`(price - cost_price) / price * 100`) for each product and retrieve the top 10 by margin rate.
+
+**Hint:** Calculate the margin rate using arithmetic in the SELECT clause. Use `ROUND()` for decimal formatting and `price > 0` to prevent division by zero.
 
 ??? success "Answer"
     ```sql
@@ -213,6 +241,8 @@ Calculate the margin rate (`(price - cost_price) / price * 100`) for each produc
 ### 15. Average Price and Product Count by Brand
 
 For brands with 3 or more products, find the average price and product count.
+
+**Hint:** After `GROUP BY brand`, use `HAVING COUNT(*) >= 3` to filter groups. `HAVING` filters after aggregation.
 
 ??? success "Answer"
     ```sql

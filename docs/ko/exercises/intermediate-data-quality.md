@@ -8,6 +8,8 @@
 
 고객 가입일보다 주문일이 빠른 주문이 있는지 확인하세요.
 
+**힌트:** `orders JOIN customers`로 연결 후 `WHERE ordered_at < created_at`으로 시간 역전을 탐지.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -25,6 +27,8 @@
 ### 2. 고아 레코드 (부모 없는 자식)
 
 주문이 존재하지 않는 결제 레코드가 있는지 확인하세요.
+
+**힌트:** `payments LEFT JOIN orders` 후 `WHERE o.id IS NULL`로 부모가 없는 고아 레코드를 찾으세요.
 
 ??? success "정답"
     ```sql
@@ -51,6 +55,8 @@
 
 각 테이블의 NULL이 많은 컬럼을 찾으세요.
 
+**힌트:** `SUM(CASE WHEN 컬럼 IS NULL THEN 1 ELSE 0 END) / COUNT(*)`로 각 컬럼의 NULL 비율을 계산.
+
 ??? success "정답"
     ```sql
     -- customers 테이블의 NULL 비율
@@ -71,6 +77,8 @@
 
 배송 완료(delivered)인데 주문 상태가 아직 shipped인 불일치를 찾으세요.
 
+**힌트:** `orders JOIN shipping`으로 연결 후 `shipping.status = 'delivered'`인데 `orders.status`가 배송 완료 상태가 아닌 행을 찾으세요.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -87,6 +95,8 @@
 ### 5. 날짜 순서 검증
 
 배송완료일이 출고일보다 빠른 비정상 레코드를 찾으세요.
+
+**힌트:** `WHERE delivered_at < shipped_at`으로 날짜 역전을 탐지. 두 컬럼 모두 NOT NULL인 행만 대상.
 
 ??? success "정답"
     ```sql
@@ -106,6 +116,8 @@
 ### 6. 중복 데이터 탐지
 
 같은 주문에 같은 상품이 중복 등록되었는지 확인하세요.
+
+**힌트:** `GROUP BY order_id, product_id` 후 `HAVING COUNT(*) > 1`로 동일 조합이 2건 이상인 행을 탐지.
 
 ??? success "정답"
     ```sql
@@ -128,6 +140,8 @@
 ### 7. 범위 이상치 탐지
 
 가격, 수량, 평점 등에서 비정상적으로 큰 값을 찾으세요.
+
+**힌트:** `WHERE total_amount > (SELECT AVG(total_amount) * 10 FROM orders)`처럼 평균의 N배를 초과하는 값이나, 음수/0 값을 확인.
 
 ??? success "정답"
     ```sql
@@ -159,6 +173,8 @@
 
 취소된 주문에 배송 완료 기록이 있는 불일치를 찾으세요.
 
+**힌트:** `orders JOIN shipping`으로 연결 후 `o.status = 'cancelled' AND sh.status = 'delivered'`인 모순 데이터를 탐지.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -175,6 +191,8 @@
 ### 9. 비활성 상품의 최근 주문
 
 단종(discontinued) 또는 비활성(is_active=0) 상품이 최근에 주문되었는지 확인하세요.
+
+**힌트:** 비활성 상품의 최근 주문일(`MAX(ordered_at)`)이 단종일 이후인지 `HAVING`으로 확인.
 
 ??? success "정답"
     ```sql
@@ -194,6 +212,8 @@
 ### 10. 테이블 간 건수 정합성
 
 주문 수와 결제 수가 1:1로 맞는지 확인하세요.
+
+**힌트:** 양방향 `LEFT JOIN`으로 확인 -- 주문은 있지만 결제가 없는 경우, 결제는 있지만 주문이 없는 경우를 각각 탐지.
 
 ??? success "정답"
     ```sql
@@ -226,6 +246,8 @@
 
 상품의 현재 가격이 가격 이력의 최신 레코드와 일치하는지 확인하세요.
 
+**힌트:** `product_prices`에서 `ended_at IS NULL`(현재 유효 가격)인 행의 가격과 `products.price`를 비교하여 불일치 탐지.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -242,6 +264,8 @@
 ### 12. 전체 데이터 품질 대시보드
 
 한 쿼리로 주요 품질 지표를 요약하세요.
+
+**힌트:** 각 품질 점검을 스칼라 서브쿼리 `(SELECT COUNT(*) FROM ... WHERE 조건)`로 만들어 하나의 SELECT에 나열.
 
 ??? success "정답"
     ```sql

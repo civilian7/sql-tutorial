@@ -8,6 +8,8 @@ Uses the `orders` and `payments` tables. 15 problems practicing date filters, st
 
 Find the total number of orders and total revenue.
 
+**Hint:** Use `COUNT(*)` and `SUM(total_amount)` together.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -22,6 +24,8 @@ Find the total number of orders and total revenue.
 
 Find the count of orders per status.
 
+**Hint:** Use `GROUP BY status` and `COUNT(*)`.
+
 ??? success "Answer"
     ```sql
     SELECT status, COUNT(*) AS cnt
@@ -35,6 +39,8 @@ Find the count of orders per status.
 ### 3. Orders in 2024
 
 Find the number of orders and total revenue for 2024.
+
+**Hint:** Filter for 2024 data only with `WHERE ordered_at LIKE '2024%'`.
 
 ??? success "Answer"
     ```sql
@@ -51,6 +57,8 @@ Find the number of orders and total revenue for 2024.
 
 Find the number of cancelled orders and the cancellation rate (%).
 
+**Hint:** Calculate the cancellation rate with `100.0 * COUNT(*) / (SELECT COUNT(*) FROM orders)`. Use a subquery to get the total count.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -66,6 +74,8 @@ Find the number of cancelled orders and the cancellation rate (%).
 
 Retrieve the order number, amount, and order date of the top 10 orders by amount.
 
+**Hint:** Sort with `ORDER BY total_amount DESC` then `LIMIT 10`.
+
 ??? success "Answer"
     ```sql
     SELECT order_number, total_amount, ordered_at
@@ -79,6 +89,8 @@ Retrieve the order number, amount, and order date of the top 10 orders by amount
 ### 6. Monthly Order Count (2024)
 
 Find the number of orders and revenue per month in 2024.
+
+**Hint:** Extract 'YYYY-MM' with `SUBSTR(ordered_at, 1, 7)` and aggregate monthly with `GROUP BY`. Filter for 2024 with `WHERE`.
 
 ??? success "Answer"
     ```sql
@@ -98,6 +110,8 @@ Find the number of orders and revenue per month in 2024.
 
 Compare the overall average order amount with the average excluding cancelled orders.
 
+**Hint:** Compare `AVG(total_amount)` with `AVG(CASE WHEN status NOT IN ('cancelled') THEN total_amount END)` in a single query.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -114,6 +128,8 @@ Compare the overall average order amount with the average excluding cancelled or
 
 Find the percentage of orders with zero shipping fee.
 
+**Hint:** Use `SUM(CASE WHEN shipping_fee = 0 THEN 1 ELSE 0 END)` for conditional counting. Divide by `COUNT(*)` to calculate the ratio.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -128,6 +144,8 @@ Find the percentage of orders with zero shipping fee.
 ### 9. Orders Using Points
 
 Find the number of orders that used points and the average amount of points used.
+
+**Hint:** Filter with `WHERE point_used > 0` for orders that used points. Calculate the average with `AVG(point_used)`.
 
 ??? success "Answer"
     ```sql
@@ -144,6 +162,8 @@ Find the number of orders that used points and the average amount of points used
 ### 10. Payment Method Summary
 
 Find the count and total payment amount per payment method.
+
+**Hint:** Group with `GROUP BY method` from the `payments` table. Use `COUNT(*)` and `SUM(amount)`.
 
 ??? success "Answer"
     ```sql
@@ -162,6 +182,8 @@ Find the count and total payment amount per payment method.
 
 Find the installment ratio and average installment months among card payments.
 
+**Hint:** Filter card payments with `WHERE method = 'card'`. Use `CASE WHEN` to count installment transactions and conditional `AVG` for average months.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -178,6 +200,8 @@ Find the installment ratio and average installment months among card payments.
 ### 12. Orders by Day of Week
 
 Find the number of orders per day of the week (Mon–Sun).
+
+**Hint:** Extract the day-of-week number with `STRFTIME('%w', ordered_at)` (0=Sun, 1=Mon, ...). Map to day names with `CASE`.
 
 ??? success "Answer"
     ```sql
@@ -203,6 +227,8 @@ Find the number of orders per day of the week (Mon–Sun).
 
 Find the percentage of orders that have a delivery note (notes).
 
+**Hint:** Determine note presence with `CASE WHEN notes IS NOT NULL THEN 1 ELSE 0 END` and aggregate with `SUM`.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -217,6 +243,8 @@ Find the percentage of orders that have a delivery note (notes).
 ### 14. Yearly Revenue Trend
 
 Find the order count, total revenue, and average order amount per year. Exclude cancelled orders.
+
+**Hint:** Exclude cancelled orders with `WHERE status NOT IN ('cancelled')`. Extract the year with `SUBSTR(ordered_at, 1, 4)` then `GROUP BY`.
 
 ??? success "Answer"
     ```sql
@@ -236,6 +264,8 @@ Find the order count, total revenue, and average order amount per year. Exclude 
 ### 15. Refunded Payments
 
 Find the count and total amount of refunded payments.
+
+**Hint:** Filter with `WHERE status = 'refunded'` from the `payments` table. Use `COUNT(*)` and `SUM(amount)`.
 
 ??? success "Answer"
     ```sql

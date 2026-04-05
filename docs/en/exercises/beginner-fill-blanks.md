@@ -15,6 +15,8 @@ WHERE ___
 ORDER BY name;
 ```
 
+**Hint:** The blank needs an equality condition comparing the grade column with the value 'VIP'.
+
 ??? success "Answer"
     ```sql
     SELECT name, email, grade
@@ -36,6 +38,8 @@ ORDER BY ___
 LIMIT 10;
 ```
 
+**Hint:** The blank needs the sort column and the descending keyword (`DESC`).
+
 ??? success "Answer"
     ```sql
     SELECT name, price
@@ -56,6 +60,8 @@ FROM products
 GROUP BY category_id;
 ```
 
+**Hint:** The blank needs an aggregate function that counts rows.
+
 ??? success "Answer"
     ```sql
     SELECT category_id, COUNT(*) AS product_count
@@ -75,6 +81,8 @@ FROM orders
 GROUP BY customer_id
 ___ ;
 ```
+
+**Hint:** The blank needs a `HAVING` clause that filters grouped results. `WHERE` filters before grouping, `HAVING` filters after grouping.
 
 ??? success "Answer"
     ```sql
@@ -97,6 +105,8 @@ INNER JOIN categories AS cat ON ___
 LIMIT 10;
 ```
 
+**Hint:** The blank needs the join condition linking the two tables. Match the foreign key in products with the primary key in categories.
+
 ??? success "Answer"
     ```sql
     SELECT p.name, cat.name AS category
@@ -118,6 +128,8 @@ LEFT JOIN orders AS o ON c.id = o.customer_id
 WHERE ___ ;
 ```
 
+**Hint:** After a `LEFT JOIN`, unmatched rows have NULL in the right table's columns. Use `IS NULL` to check.
+
 ??? success "Answer"
     ```sql
     SELECT c.name, c.email
@@ -137,6 +149,8 @@ SELECT order_number, total_amount, ordered_at
 FROM orders
 WHERE ordered_at ___ ;
 ```
+
+**Hint:** The blank needs `BETWEEN 'start_date' AND 'end_date'` to specify a date range.
 
 ??? success "Answer"
     ```sql
@@ -160,6 +174,8 @@ SELECT
     END AS stock_status
 FROM products;
 ```
+
+**Hint:** List conditions for each range like `WHEN stock_qty = 0 THEN 'Out of Stock'`. End with `ELSE` for the default.
 
 ??? success "Answer"
     ```sql
@@ -189,6 +205,8 @@ FROM customers
 LIMIT 10;
 ```
 
+**Hint:** The `COALESCE(column, default_value)` function returns a substitute value when the column is NULL.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -210,6 +228,8 @@ FROM products
 WHERE price > ___
 ORDER BY price DESC;
 ```
+
+**Hint:** The blank needs a subquery that calculates the average price: `(SELECT AVG(price) FROM products)`.
 
 ??? success "Answer"
     ```sql
@@ -235,6 +255,8 @@ FROM customers
 GROUP BY grade;
 ```
 
+**Hint:** The three blanks need `COUNT(*)`, `ROUND(AVG(...), 0)`, and `MAX(...)` aggregate functions respectively.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -258,6 +280,8 @@ FROM customers
 WHERE email LIKE ___
 LIMIT 10;
 ```
+
+**Hint:** In `LIKE` patterns, `%` represents any string. Create a pattern that ends with `@testmail.kr`.
 
 ??? success "Answer"
     ```sql
@@ -283,6 +307,8 @@ GROUP BY year, month
 ORDER BY year, month;
 ```
 
+**Hint:** Use `SUBSTR(ordered_at, start_position, length)` to extract substrings. Year is positions 1-4, month is positions 6-2.
+
 ??? success "Answer"
     ```sql
     SELECT
@@ -305,6 +331,8 @@ SELECT id, order_id, method, amount, status
 FROM payments
 WHERE status ___ ;
 ```
+
+**Hint:** Use the `IN ('value1', 'value2')` operator to check if a value matches one of several values.
 
 ??? success "Answer"
     ```sql
@@ -332,6 +360,8 @@ LEFT JOIN shipping AS sh ON ___
 ORDER BY o.ordered_at DESC
 LIMIT 5;
 ```
+
+**Hint:** Each blank needs a foreign key relationship: `o.customer_id = c.id`, `o.id = p.order_id`, `o.id = sh.order_id` pattern.
 
 ??? success "Answer"
     ```sql

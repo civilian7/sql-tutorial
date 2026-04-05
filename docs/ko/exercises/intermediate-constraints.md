@@ -15,6 +15,8 @@
 SELECT id, name FROM products WHERE id = 1;
 ```
 
+**힌트:** 이미 존재하는 `id` 값으로 `INSERT`하면 PRIMARY KEY의 고유성 제약이 위반됩니다.
+
 ??? success "실험"
     ```sql
     -- PRIMARY KEY 중복 → 에러 발생
@@ -34,6 +36,8 @@ SELECT id, name FROM products WHERE id = 1;
 -- 기존 고객 이메일 확인
 SELECT email FROM customers LIMIT 1;
 ```
+
+**힌트:** `UNIQUE` 제약이 걸린 컬럼에 이미 존재하는 값을 넣으면 중복 에러가 발생합니다.
 
 ??? success "실험"
     ```sql
@@ -55,6 +59,8 @@ SELECT email FROM customers LIMIT 1;
 SELECT MAX(id) FROM categories;
 ```
 
+**힌트:** `FOREIGN KEY`는 부모 테이블에 존재하는 값만 허용합니다. SQLite에서는 `PRAGMA foreign_keys = ON` 필요.
+
 ??? success "실험"
     ```sql
     -- 존재하지 않는 category_id 사용
@@ -72,6 +78,8 @@ SELECT MAX(id) FROM categories;
 
 가격을 음수로 설정하면?
 
+**힌트:** `CHECK(price >= 0)` 제약이 정의되어 있으면, 음수 값 삽입 시 거부됩니다.
+
 ??? success "실험"
     ```sql
     -- price >= 0 CHECK 위반
@@ -87,6 +95,8 @@ SELECT MAX(id) FROM categories;
 
 고객 등급을 허용되지 않은 값으로 설정하면?
 
+**힌트:** `CHECK(grade IN ('BRONZE','SILVER','GOLD','VIP'))` 같은 허용 목록 제약은 목록에 없는 값을 거부합니다.
+
 ??? success "실험"
     ```sql
     -- grade IN ('BRONZE', 'SILVER', 'GOLD', 'VIP') CHECK 위반
@@ -101,6 +111,8 @@ SELECT MAX(id) FROM categories;
 ### 6. NOT NULL 위반
 
 필수 컬럼을 비우면?
+
+**힌트:** `NOT NULL` 제약이 있는 컬럼에 `NULL`을 넣으면 에러가 발생합니다.
 
 ??? success "실험"
     ```sql
@@ -122,6 +134,8 @@ SELECT MAX(id) FROM categories;
 SELECT customer_id, product_id FROM wishlists LIMIT 1;
 ```
 
+**힌트:** `(customer_id, product_id)` 두 컬럼의 조합이 `UNIQUE`면, 같은 조합을 두 번째 삽입할 때 에러가 납니다.
+
 ??? success "실험"
     ```sql
     -- (customer_id, product_id) 복합 UNIQUE 위반
@@ -142,6 +156,8 @@ SELECT customer_id, product_id FROM wishlists LIMIT 1;
 
 리뷰 평점을 0점이나 6점으로 주면?
 
+**힌트:** `CHECK(rating BETWEEN 1 AND 5)` 제약은 범위를 벗어나는 값을 거부합니다.
+
 ??? success "실험"
     ```sql
     -- rating BETWEEN 1 AND 5 CHECK 위반
@@ -156,6 +172,8 @@ SELECT customer_id, product_id FROM wishlists LIMIT 1;
 ### 9. 현재 제약조건 조회
 
 데이터베이스에 정의된 모든 제약조건을 확인하세요.
+
+**힌트:** `sqlite_master` 테이블에서 `type = 'table'`인 DDL을 조회하면 CHECK/NOT NULL 등을 볼 수 있고, `type = 'index'`에서 UNIQUE 인덱스를 확인.
 
 ??? success "정답"
     ```sql
@@ -179,6 +197,8 @@ SELECT customer_id, product_id FROM wishlists LIMIT 1;
 ### 10. ON CONFLICT로 중복 처리
 
 중복 발생 시 에러 대신 업데이트하는 UPSERT를 실습하세요.
+
+**힌트:** `INSERT OR IGNORE`는 중복 시 무시, `INSERT ... ON CONFLICT(id) DO UPDATE SET ...`는 중복 시 기존 행을 업데이트.
 
 ??? success "정답"
     ```sql

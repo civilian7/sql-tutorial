@@ -10,6 +10,8 @@ Practice ensuring data consistency using BEGIN, COMMIT, and ROLLBACK.
 
 Wrap an order and its payment in a single transaction. Both must succeed for changes to be applied.
 
+**Hint:** Wrap with `BEGIN TRANSACTION` -> INSERTs -> `COMMIT` to apply everything at once. Use `last_insert_rowid()` to reference the just-inserted id.
+
 ??? success "Try it"
     ```sql
     BEGIN TRANSACTION;
@@ -33,6 +35,8 @@ Wrap an order and its payment in a single transaction. Both must succeed for cha
 ### 2. ROLLBACK — Undoing Changes
 
 What if you accidentally set all VIP customers' points to 0? Use ROLLBACK to recover.
+
+**Hint:** After `BEGIN`, execute the UPDATE and check the result. If it's wrong, use `ROLLBACK` to undo all changes since `BEGIN`.
 
 ??? success "Try it"
     ```sql
@@ -62,6 +66,8 @@ What if you accidentally set all VIP customers' points to 0? Use ROLLBACK to rec
 
 What if the order insert succeeds but the payment insert fails? Transactions guarantee atomicity.
 
+**Hint:** If any statement within a transaction fails, `ROLLBACK` to prevent "half-committed" data.
+
 ??? success "Try it"
     ```sql
     BEGIN TRANSACTION;
@@ -87,6 +93,8 @@ What if the order insert succeeds but the payment insert fails? Transactions gua
 ### 4. SAVEPOINT — Partial Rollback
 
 Use SAVEPOINT when you want to undo only part of a long transaction.
+
+**Hint:** Create a checkpoint with `SAVEPOINT name`, then roll back to that point with `ROLLBACK TO name`. Earlier changes are preserved.
 
 ??? success "Try it"
     ```sql
@@ -117,6 +125,8 @@ Use SAVEPOINT when you want to undo only part of a long transaction.
 
 Understand the difference when inserting 10,000 records with and without a transaction.
 
+**Hint:** Without a transaction, each INSERT triggers a disk write. Wrapping with `BEGIN`~`COMMIT` writes to disk only once.
+
 ??? success "Explanation"
     ```sql
     -- 트랜잭션 없이: 각 INSERT마다 디스크에 쓰기 (느림)
@@ -139,6 +149,8 @@ Understand the difference when inserting 10,000 records with and without a trans
 ### 6. ACID Properties
 
 Check the current database's ACID settings.
+
+**Hint:** Use `PRAGMA journal_mode`, `PRAGMA foreign_keys`, etc. to query SQLite's transaction-related settings.
 
 ??? success "Answer"
     ```sql
@@ -166,6 +178,8 @@ Check the current database's ACID settings.
 ### 7. Inventory Deduction Transaction
 
 Write a transaction that deducts inventory when an order is placed. ROLLBACK if stock is insufficient.
+
+**Hint:** Use `UPDATE ... SET stock_qty = stock_qty - N WHERE stock_qty >= N` to prevent insufficient stock (0 rows affected). Check with the `changes()` function.
 
 ??? success "Answer"
     ```sql

@@ -8,6 +8,8 @@
 
 각 카테고리에서 매출 1위 상품을 구하세요. (동률 시 하나만)
 
+**힌트:** `ROW_NUMBER() OVER (PARTITION BY category ORDER BY revenue DESC)`로 그룹 내 순위를 매기고, `WHERE rn = 1`로 필터링합니다.
+
 ??? success "정답"
     ```sql
     WITH ranked AS (
@@ -34,6 +36,8 @@
 ### 2. 연속 증가 구간
 
 월별 매출이 3개월 연속 증가한 구간을 찾으세요.
+
+**힌트:** `LAG(revenue, 1)`과 `LAG(revenue, 2)`로 이전 2개월 매출을 가져와서 현재 > 전월 > 전전월 조건 비교.
 
 ??? success "정답"
     ```sql
@@ -64,6 +68,8 @@
 
 2024년 월별 매출과 누적 매출을 구하세요.
 
+**힌트:** `SUM(monthly_revenue) OVER (ORDER BY month)`로 윈도우 함수 누적 합계를 구합니다. `SUM(SUM(...))`은 집계 안에 윈도우 함수를 중첩하는 패턴입니다.
+
 ??? success "정답"
     ```sql
     SELECT
@@ -82,6 +88,8 @@
 ### 4. 이동 평균 (Moving Average)
 
 3개월 이동 평균 매출을 구하세요.
+
+**힌트:** `AVG(revenue) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)`로 현재 행 포함 3행의 평균을 구합니다.
 
 ??? success "정답"
     ```sql
@@ -110,6 +118,8 @@
 
 2024년에 주문이 없는 날짜를 찾으세요.
 
+**힌트:** `WITH RECURSIVE`로 2024년 모든 날짜를 생성한 뒤, 실제 주문 날짜와 `LEFT JOIN`하여 `NULL`인 날을 찾습니다.
+
 ??? success "정답"
     ```sql
     -- 2024년 모든 날짜 생성 (재귀 CTE)
@@ -137,6 +147,8 @@
 ### 6. 백분위수 (Percentile)
 
 고객 구매 금액의 상위 10%, 25%, 50%(중앙값), 75%, 90% 지점을 구하세요.
+
+**힌트:** `NTILE(100) OVER (ORDER BY total_spent)`로 백분위 그룹을 만들고, `MAX(CASE WHEN percentile = N ...)`로 각 지점의 값을 추출합니다.
 
 ??? success "정답"
     ```sql
@@ -168,6 +180,8 @@
 ### 7. 연도별 순위 변동
 
 카테고리별 연도별 매출 순위를 구하고, 전년 대비 순위 변동을 표시하세요.
+
+**힌트:** `RANK() OVER (PARTITION BY year ORDER BY revenue DESC)`로 연도별 순위를 매기고, `LAG(rank) OVER (PARTITION BY category ORDER BY year)`로 전년 순위를 가져와 차이를 계산합니다.
 
 ??? success "정답"
     ```sql
@@ -202,6 +216,8 @@
 ### 8. Funnel 분석 (퍼널)
 
 고객 여정 퍼널을 분석하세요: 가입 → 첫 주문 → 리뷰 작성 → 재구매. 각 단계의 전환율을 구하세요.
+
+**힌트:** 각 단계의 고유 고객 수를 스칼라 서브쿼리로 구하고, `100.0 * 다음단계 / 이전단계`로 전환율을 계산합니다.
 
 ??? success "정답"
     ```sql
@@ -248,6 +264,8 @@
 
 카테고리 계층의 최대 깊이와 각 깊이별 카테고리 수를 구하세요. 재귀 CTE를 사용하세요.
 
+**힌트:** `WITH RECURSIVE`에서 `parent_id IS NULL`을 시작점(depth=0)으로, `c.parent_id = tree.id`로 자식을 재귀 탐색합니다.
+
 ??? success "정답"
     ```sql
     WITH RECURSIVE tree AS (
@@ -273,6 +291,8 @@
 ### 10. 동일 상품 재구매 간격
 
 같은 상품을 2회 이상 구매한 고객의 평균 재구매 간격(일)을 구하세요.
+
+**힌트:** `LAG(ordered_at) OVER (PARTITION BY customer_id, product_id ORDER BY ordered_at)`로 같은 고객-상품의 이전 주문일을 가져와 `JULIANDAY` 차이를 계산합니다.
 
 ??? success "정답"
     ```sql
