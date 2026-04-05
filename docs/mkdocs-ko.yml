@@ -47,12 +47,15 @@ nav:
     - "상품 탐색": exercises/beginner-products.md
     - "고객 분석": exercises/beginner-customers.md
     - "주문 기초": exercises/beginner-orders.md
+    - "빈칸 채우기": exercises/beginner-fill-blanks.md
   - "실전 연습 — 중급":
     - "JOIN 마스터": exercises/intermediate-joins.md
     - "날짜/시간 분석": exercises/intermediate-dates.md
     - "서브쿼리와 변환": exercises/intermediate-subqueries.md
     - "제약조건 체험": exercises/intermediate-constraints.md
     - "트랜잭션": exercises/intermediate-transactions.md
+    - "SQL 디버깅": exercises/intermediate-debugging.md
+    - "데이터 품질 점검": exercises/intermediate-data-quality.md
   - "실전 연습 — 고급":
     - "매출 분석": exercises/sales-analysis.md
     - "고객 세분화": exercises/customer-segmentation.md
@@ -60,6 +63,9 @@ nav:
     - "CS 성과 분석": exercises/cs-performance.md
     - "실무 SQL 패턴": exercises/real-world-patterns.md
     - "정규화 이해": exercises/advanced-normalization.md
+    - "비즈니스 시나리오": exercises/advanced-scenarios.md
+    - "쿼리 최적화": exercises/advanced-optimization.md
+    - "면접 대비": exercises/advanced-interview.md
 
 extra_css:
   - css/mermaid.css

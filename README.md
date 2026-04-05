@@ -90,24 +90,30 @@ Changes to files are auto-reloaded in the browser.
 | | 19 | Indexes & Performance |
 | | 20 | Triggers |
 
-**Exercises (136 problems)**
+**Exercises (201 problems)**
 
 | Level | Exercise | Problems |
 |-------|----------|----------|
 | Beginner | Product Exploration | 15 |
 | | Customer Analysis | 15 |
 | | Order Basics | 15 |
+| | Fill in the Blanks | 15 |
 | Intermediate | JOIN Master | 12 |
 | | Date & Time Analysis | 12 |
 | | Subqueries & Transformation | 12 |
 | | Constraints in Action | 10 |
 | | Transactions | 7 |
+| | SQL Debugging | 12 |
+| | Data Quality Check | 12 |
 | Advanced | Sales Analysis | 6 |
 | | Customer Segmentation | 6 |
 | | Inventory Management | 6 |
 | | CS Performance | 6 |
 | | Real-World SQL Patterns | 6 |
 | | Understanding Normalization | 8 |
+| | Business Scenarios | 8 |
+| | Query Optimization | 8 |
+| | Interview Prep | 10 |
 
 **Reference**
 

@@ -47,12 +47,15 @@ nav:
     - "Product Exploration": exercises/beginner-products.md
     - "Customer Analysis": exercises/beginner-customers.md
     - "Order Basics": exercises/beginner-orders.md
+    - "Fill in the Blanks": exercises/beginner-fill-blanks.md
   - "Exercises — Intermediate":
     - "JOIN Master": exercises/intermediate-joins.md
     - "Date & Time Analysis": exercises/intermediate-dates.md
     - "Subqueries & Transformation": exercises/intermediate-subqueries.md
     - "Constraints in Action": exercises/intermediate-constraints.md
     - "Transactions": exercises/intermediate-transactions.md
+    - "SQL Debugging": exercises/intermediate-debugging.md
+    - "Data Quality Check": exercises/intermediate-data-quality.md
   - "Exercises — Advanced":
     - "Sales Analysis": exercises/sales-analysis.md
     - "Customer Segmentation": exercises/customer-segmentation.md
@@ -60,6 +63,9 @@ nav:
     - "CS Performance": exercises/cs-performance.md
     - "Real-World SQL Patterns": exercises/real-world-patterns.md
     - "Understanding Normalization": exercises/advanced-normalization.md
+    - "Business Scenarios": exercises/advanced-scenarios.md
+    - "Query Optimization": exercises/advanced-optimization.md
+    - "Interview Prep": exercises/advanced-interview.md
 
 extra_css:
   - css/mermaid.css
