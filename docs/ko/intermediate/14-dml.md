@@ -14,9 +14,6 @@ flowchart LR
     T["Table"] --> I
     T --> U
     T --> D
-    style I fill:#e8f5e9,stroke:#2e7d32
-    style U fill:#fff9c4,stroke:#f9a825
-    style D fill:#ffcdd2,stroke:#c62828
 ```
 
 > DML은 데이터를 조작합니다. INSERT(추가), UPDATE(수정), DELETE(삭제)가 있습니다.
@@ -27,7 +24,7 @@ flowchart LR
 
 ### 단일 행 삽입
 
-컬럼 이름을 명시적으로 나열하세요 — 쿼리가 자기 문서화되고, 테이블 구조 변경에도 안전합니다.
+칼럼 이름을 명시적으로 나열하세요 — 쿼리가 자기 문서화되고, 테이블 구조 변경에도 안전합니다.
 
 === "SQLite"
     ```sql
@@ -215,7 +212,7 @@ COMMIT;
 | 중복 기본 키 삽입 | 제약 조건 오류 | SQLite: `INSERT OR IGNORE` / MySQL: `INSERT IGNORE` / PG: `ON CONFLICT DO NOTHING` |
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -256,5 +253,246 @@ COMMIT;
     );
     ```
 
+### 연습 3
+`products` 테이블에 다음 3개의 상품을 한 번에 삽입하세요. `category_id = 9`(키보드), `supplier_id = 1`, `is_active = 1`, `stock_qty = 30`은 모두 동일합니다.
+
+| sku | name | price |
+|-----|------|------:|
+| SKU-TEST-101 | 무선 키보드 A | 59.99 |
+| SKU-TEST-102 | 무선 키보드 B | 79.99 |
+| SKU-TEST-103 | 무선 키보드 C | 99.99 |
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES
+            ('SKU-TEST-101', '무선 키보드 A', 9, 1, 59.99, 30, 1, datetime('now'), datetime('now')),
+            ('SKU-TEST-102', '무선 키보드 B', 9, 1, 79.99, 30, 1, datetime('now'), datetime('now')),
+            ('SKU-TEST-103', '무선 키보드 C', 9, 1, 99.99, 30, 1, datetime('now'), datetime('now'));
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES
+            ('SKU-TEST-101', '무선 키보드 A', 9, 1, 59.99, 30, 1, NOW(), NOW()),
+            ('SKU-TEST-102', '무선 키보드 B', 9, 1, 79.99, 30, 1, NOW(), NOW()),
+            ('SKU-TEST-103', '무선 키보드 C', 9, 1, 99.99, 30, 1, NOW(), NOW());
+        ```
+
+### 연습 4
+BRONZE 등급이고 포인트 잔액(`point_balance`)이 0인 활성 고객의 등급을 `'SILVER'`로, 포인트를 `500`으로 변경하세요. `updated_at`도 갱신하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        -- 먼저 확인
+        SELECT id, name, grade, point_balance
+        FROM customers
+        WHERE grade = 'BRONZE' AND point_balance = 0 AND is_active = 1;
+
+        -- 업데이트
+        UPDATE customers
+        SET
+            grade         = 'SILVER',
+            point_balance = 500,
+            updated_at    = datetime('now')
+        WHERE grade = 'BRONZE'
+          AND point_balance = 0
+          AND is_active = 1;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        -- 먼저 확인
+        SELECT id, name, grade, point_balance
+        FROM customers
+        WHERE grade = 'BRONZE' AND point_balance = 0 AND is_active = 1;
+
+        -- 업데이트
+        UPDATE customers
+        SET
+            grade         = 'SILVER',
+            point_balance = 500,
+            updated_at    = NOW()
+        WHERE grade = 'BRONZE'
+          AND point_balance = 0
+          AND is_active = 1;
+        ```
+
+### 연습 5
+`reviews` 테이블에서 `rating`이 1이고 `content`가 NULL인 리뷰를 삭제하세요. 먼저 `SELECT`로 삭제 대상 건수를 확인하세요.
+
+??? success "정답"
+    ```sql
+    -- 먼저 확인
+    SELECT COUNT(*)
+    FROM reviews
+    WHERE rating = 1 AND content IS NULL;
+
+    -- 삭제
+    DELETE FROM reviews
+    WHERE rating = 1
+      AND content IS NULL;
+    ```
+
+### 연습 6
+비활성(`is_active = 0`)이고 단종된(`discontinued_at IS NOT NULL`) 상품의 `stock_qty`를 0으로, `updated_at`을 현재 시각으로 갱신하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        -- 먼저 확인
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
+
+        -- 업데이트
+        UPDATE products
+        SET
+            stock_qty  = 0,
+            updated_at = datetime('now')
+        WHERE is_active = 0
+          AND discontinued_at IS NOT NULL
+          AND stock_qty > 0;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        -- 먼저 확인
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
+
+        -- 업데이트
+        UPDATE products
+        SET
+            stock_qty  = 0,
+            updated_at = NOW()
+        WHERE is_active = 0
+          AND discontinued_at IS NOT NULL
+          AND stock_qty > 0;
+        ```
+
+### 연습 7
+가격이 1000 이상이고 활성인 상품을 기반으로, 가격을 60%로 할인한 리퍼비시 상품을 `INSERT ... SELECT`로 삽입하세요. `sku`는 원래 SKU 앞에 `'REF-'`를 붙이고, `name` 뒤에 `' (리퍼비시)'`를 추가하세요. `stock_qty`는 5로 설정합니다.
+
+??? success "정답"
+    === "SQLite / PostgreSQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        SELECT
+            'REF-' || sku,
+            name || ' (리퍼비시)',
+            category_id,
+            supplier_id,
+            ROUND(price * 0.6, 2),
+            5,
+            1,
+            datetime('now'),
+            datetime('now')
+        FROM products
+        WHERE price >= 1000
+          AND is_active = 1;
+        ```
+
+    === "MySQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        SELECT
+            CONCAT('REF-', sku),
+            CONCAT(name, ' (리퍼비시)'),
+            category_id,
+            supplier_id,
+            ROUND(price * 0.6, 2),
+            5,
+            1,
+            NOW(),
+            NOW()
+        FROM products
+        WHERE price >= 1000
+          AND is_active = 1;
+        ```
+
+### 연습 8
+2022년 이전에 접수된(`created_at < '2022-01-01'`) `status = 'resolved'`인 불만을 삭제하세요. 먼저 `SELECT`로 건수와 날짜 범위를 확인하세요.
+
+??? success "정답"
+    ```sql
+    -- 먼저 확인
+    SELECT COUNT(*), MIN(created_at), MAX(created_at)
+    FROM complaints
+    WHERE status = 'resolved'
+      AND created_at < '2022-01-01';
+
+    -- 삭제
+    DELETE FROM complaints
+    WHERE status = 'resolved'
+      AND created_at < '2022-01-01';
+    ```
+
+### 연습 9
+다음 시나리오에서 `WHERE` 절을 빠뜨리면 어떤 일이 발생하는지 설명하고, 올바른 `UPDATE`를 작성하세요: "고객 ID 500의 전화번호를 `'020-0555-1234'`로 변경"
+
+??? success "정답"
+    `WHERE`를 빠뜨리면 **모든 고객**의 전화번호가 `'020-0555-1234'`로 변경됩니다. 올바른 쿼리:
+
+    === "SQLite"
+        ```sql
+        UPDATE customers
+        SET
+            phone      = '020-0555-1234',
+            updated_at = datetime('now')
+        WHERE id = 500;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        UPDATE customers
+        SET
+            phone      = '020-0555-1234',
+            updated_at = NOW()
+        WHERE id = 500;
+        ```
+
+### 연습 10
+한 번도 주문되지 않은 상품의 재고(`stock_qty`)를 확인하는 `SELECT`를 작성한 뒤, 해당 상품들을 비활성(`is_active = 0`)으로 변경하는 `UPDATE`를 작성하세요. 서브쿼리를 사용하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        -- 먼저 확인
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+
+        -- 업데이트
+        UPDATE products
+        SET
+            is_active  = 0,
+            updated_at = datetime('now')
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        -- 먼저 확인
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+
+        -- 업데이트
+        UPDATE products
+        SET
+            is_active  = 0,
+            updated_at = NOW()
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+        ```
+
 ---
-다음: [15강: 윈도우 함수](../advanced/15-window.md)
+다음: [15강: DDL — 테이블 생성과 변경](15-ddl.md)

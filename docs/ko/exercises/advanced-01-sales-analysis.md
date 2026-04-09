@@ -220,11 +220,11 @@ MD팀이 2024년에 가장 많은 매출을 올린 상품이 무엇인지 알고
 
 질문 3과 5를 결합하세요.
 2024년 카테고리(행) x 월(열) 형태의 히트맵 표를 만들어 보세요.
-12개의 SUM(CASE WHEN month = 'XX' ...) 컬럼을 가진 조건부 집계를 사용합니다.
+12개의 SUM(CASE WHEN month = 'XX' ...) 칼럼을 가진 조건부 집계를 사용합니다.
 
 
 **힌트 1:** - `SUBSTR(o.ordered_at, 6, 2)` 로 월 추출
-- 12개 컬럼에 대해 각각 `SUM(CASE WHEN ... THEN ... ELSE 0 END)`
+- 12개 칼럼에 대해 각각 `SUM(CASE WHEN ... THEN ... ELSE 0 END)`
 - `GROUP BY cat.name`
 
 

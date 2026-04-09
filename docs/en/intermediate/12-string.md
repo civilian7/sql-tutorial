@@ -53,7 +53,7 @@ LIMIT 5;
 **Result:**
 
 | name | name_length |
-|------|-------------|
+|------|------------:|
 | Razer BlackWidow V3 Pro Wireless TKL Gaming Keyboard | 52 |
 | ASUS ProArt PA329CRV 32" 4K HDR Professional Monitor | 51 |
 | ... | |
@@ -225,7 +225,7 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
 ```
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -268,6 +268,179 @@ For each order, extract the sequence number (the last 5 digits of `order_number`
     ORDER BY sequence_no DESC
     LIMIT 10;
     ```
+
+### Exercise 3
+Find the 5 customers with the longest names. Return `name` and `name_length`, sorted by `name_length` descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        LENGTH(name) AS name_length
+    FROM customers
+    ORDER BY name_length DESC
+    LIMIT 5;
+    ```
+
+### Exercise 4
+Replace underscores with spaces in order `status` values and convert them to uppercase. Show only distinct values. Return the original `status` and `display_status`.
+
+??? success "Answer"
+    ```sql
+    SELECT DISTINCT
+        status,
+        UPPER(REPLACE(status, '_', ' ')) AS display_status
+    FROM orders;
+    ```
+
+### Exercise 5
+Find products whose name contains the word `'Gaming'`. Return `name` and `price`, sorted by price descending. Use a LIKE pattern.
+
+??? success "Answer"
+    ```sql
+    SELECT name, price
+    FROM products
+    WHERE name LIKE '%Gaming%'
+    ORDER BY price DESC;
+    ```
+
+### Exercise 6
+Extract the user ID part of each customer's email (everything before the `@`). Return `name`, `email`, and `user_id`. Limit to 10 rows.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            email,
+            SUBSTR(email, 1, INSTR(email, '@') - 1) AS user_id
+        FROM customers
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            email,
+            SUBSTRING(email, 1, LOCATE('@', email) - 1) AS user_id
+        FROM customers
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            email,
+            SUBSTRING(email FROM 1 FOR POSITION('@' IN email) - 1) AS user_id
+        FROM customers
+        LIMIT 10;
+        ```
+
+### Exercise 7
+Truncate product names to 20 characters and append `'...'` if the name is longer than 20 characters. If the name is 20 characters or fewer, show it as-is. Return `name` and `short_name`, sorted by name length descending, limit 10.
+
+??? success "Answer"
+    === "SQLite / PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            CASE
+                WHEN LENGTH(name) > 20
+                    THEN SUBSTR(name, 1, 20) || '...'
+                ELSE name
+            END AS short_name
+        FROM products
+        ORDER BY LENGTH(name) DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            CASE
+                WHEN LENGTH(name) > 20
+                    THEN CONCAT(SUBSTRING(name, 1, 20), '...')
+                ELSE name
+            END AS short_name
+        FROM products
+        ORDER BY LENGTH(name) DESC
+        LIMIT 10;
+        ```
+
+### Exercise 8
+Build a display string in the format `"GRADE: grade - Name"` for each customer, where grade appears in both uppercase and lowercase. Return `id` and `display_text` for active customers. Limit to 10 rows.
+
+??? success "Answer"
+    === "SQLite / PostgreSQL"
+        ```sql
+        SELECT
+            id,
+            UPPER(grade) || ': ' || LOWER(grade) || ' - ' || name AS display_text
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            id,
+            CONCAT(UPPER(grade), ': ', LOWER(grade), ' - ', name) AS display_text
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
+
+### Exercise 9
+From orders starting with `'ORD-2024'`, extract the date portion embedded in the order number (characters 5 through 12, e.g. `20240315`). Return `order_number`, `date_part`, and `total_amount`. Limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        order_number,
+        SUBSTR(order_number, 5, 8) AS date_part,
+        total_amount
+    FROM orders
+    WHERE order_number LIKE 'ORD-2024%'
+    LIMIT 10;
+    ```
+
+### Exercise 10
+Find the position of the first space in product names. Only include products whose name contains a space. Return `name` and `space_pos`. Limit to 10 rows.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            INSTR(name, ' ') AS space_pos
+        FROM products
+        WHERE INSTR(name, ' ') > 0
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            LOCATE(' ', name) AS space_pos
+        FROM products
+        WHERE LOCATE(' ', name) > 0
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            POSITION(' ' IN name) AS space_pos
+        FROM products
+        WHERE POSITION(' ' IN name) > 0
+        LIMIT 10;
+        ```
 
 ---
 Next: [Lesson 13: UNION](13-union.md)

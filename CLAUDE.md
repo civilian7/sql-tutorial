@@ -46,7 +46,7 @@ ecommerce-test-db/
 ├── generate.py              # 메인 실행 스크립트
 ├── src/
 │   ├── __init__.py
-│   ├── schema.py            # 스키마 정의 (테이블, 컬럼, 관계)
+│   ├── schema.py            # 스키마 정의 (테이블, 칼럼, 관계)
 │   ├── generators/
 │   │   ├── __init__.py
 │   │   ├── base.py          # 공통 생성 로직

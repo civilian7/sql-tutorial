@@ -5,11 +5,6 @@
 ```mermaid
 flowchart LR
     T["All\nRows"] --> G["GROUP BY\ncategory"] --> GR["Groups\n🔵🔵 | 🟢🟢🟢 | 🔴"]  --> A["Aggregate\nper group"] --> R["Summary\nper group"]
-    style T fill:#e3f2fd,stroke:#1565c0
-    style G fill:#fff3e0,stroke:#e65100
-    style GR fill:#f3e5f5,stroke:#6a1b9a
-    style A fill:#fff9c4,stroke:#f9a825
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > **Concept:** GROUP BY groups rows together, then applies aggregates to each group.
@@ -28,7 +23,7 @@ GROUP BY grade;
 **Result:**
 
 | grade | customer_count |
-|-------|----------------|
+|-------|---------------:|
 | BRONZE | 2614 |
 | SILVER | 1569 |
 | GOLD | 785 |
@@ -50,7 +45,7 @@ ORDER BY total_revenue DESC;
 **Result:**
 
 | status | order_count | total_revenue |
-|--------|-------------|---------------|
+|--------|------------:|--------------:|
 | confirmed | 8423 | 7291847.20 |
 | delivered | 6812 | 5904329.10 |
 | shipped | 4103 | 3287650.88 |
@@ -76,7 +71,7 @@ ORDER BY grade, gender;
 **Result:**
 
 | grade | gender | cnt |
-|-------|--------|-----|
+|-------|--------|----:|
 | BRONZE | F | 922 |
 | BRONZE | M | 1580 |
 | GOLD | F | 271 |
@@ -88,24 +83,53 @@ ORDER BY grade, gender;
 
 ## Monthly Order Counts
 
-Date strings in SQLite (format `YYYY-MM-DD HH:MM:SS`) let you group by extracting a prefix.
+Extract the year-month from a date column to group by month.
 
-```sql
--- Monthly order count for 2024
-SELECT
-    SUBSTR(ordered_at, 1, 7) AS year_month,
-    COUNT(*)                 AS order_count,
-    SUM(total_amount)        AS monthly_revenue
-FROM orders
-WHERE ordered_at LIKE '2024%'
-GROUP BY SUBSTR(ordered_at, 1, 7)
-ORDER BY year_month;
-```
+=== "SQLite"
+    ```sql
+    -- Monthly order count for 2024
+    SELECT
+        SUBSTR(ordered_at, 1, 7) AS year_month,
+        COUNT(*)                 AS order_count,
+        SUM(total_amount)        AS monthly_revenue
+    FROM orders
+    WHERE ordered_at LIKE '2024%'
+    GROUP BY SUBSTR(ordered_at, 1, 7)
+    ORDER BY year_month;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Monthly order count for 2024
+    SELECT
+        DATE_FORMAT(ordered_at, '%Y-%m') AS year_month,
+        COUNT(*)                         AS order_count,
+        SUM(total_amount)                AS monthly_revenue
+    FROM orders
+    WHERE ordered_at >= '2024-01-01'
+      AND ordered_at <  '2025-01-01'
+    GROUP BY DATE_FORMAT(ordered_at, '%Y-%m')
+    ORDER BY year_month;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Monthly order count for 2024
+    SELECT
+        TO_CHAR(ordered_at, 'YYYY-MM') AS year_month,
+        COUNT(*)                       AS order_count,
+        SUM(total_amount)              AS monthly_revenue
+    FROM orders
+    WHERE ordered_at >= '2024-01-01'
+      AND ordered_at <  '2025-01-01'
+    GROUP BY TO_CHAR(ordered_at, 'YYYY-MM')
+    ORDER BY year_month;
+    ```
 
 **Result:**
 
 | year_month | order_count | monthly_revenue |
-|------------|-------------|-----------------|
+|------------|------------:|----------------:|
 | 2024-01 | 312 | 178432.50 |
 | 2024-02 | 289 | 162890.20 |
 | 2024-03 | 405 | 238741.90 |
@@ -128,7 +152,7 @@ HAVING COUNT(*) > 500;
 **Result:**
 
 | grade | customer_count |
-|-------|----------------|
+|-------|---------------:|
 | BRONZE | 2614 |
 | SILVER | 1569 |
 
@@ -149,7 +173,7 @@ ORDER BY avg_price DESC;
 **Result:**
 
 | category_id | product_count | avg_price |
-|-------------|---------------|-----------|
+|------------:|--------------:|----------:|
 | 3 | 22 | 987.45 |
 | 5 | 18 | 412.30 |
 | 2 | 15 | 248.90 |
@@ -174,7 +198,7 @@ HAVING AVG(point_balance) > 500;  -- only grades where avg points > 500
 ```
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -208,19 +232,175 @@ For each `method` in the `payments` table, calculate the total `amount` collecte
     ```
 
 ### Exercise 3
-Find all months (from the `orders` table) in 2023 and 2024 where monthly revenue exceeded $500,000. Return `year_month` and `monthly_revenue`, sorted chronologically.
+Calculate the average `point_balance` for each `grade` in the `customers` table. Sort by average points descending.
 
 ??? success "Answer"
     ```sql
     SELECT
-        SUBSTR(ordered_at, 1, 7) AS year_month,
-        SUM(total_amount)        AS monthly_revenue
+        grade,
+        AVG(point_balance) AS avg_points
+    FROM customers
+    GROUP BY grade
+    ORDER BY avg_points DESC;
+    ```
+
+### Exercise 4
+Group customers by both `grade` and `gender`, and count the number of customers in each combination. Include rows where `gender` is NULL.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        grade,
+        gender,
+        COUNT(*) AS customer_count
+    FROM customers
+    GROUP BY grade, gender
+    ORDER BY grade, gender;
+    ```
+
+### Exercise 5
+Count the number of reviews for each `rating` value in the `reviews` table. Show only ratings that have 100 or more reviews. Sort by `rating`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        rating,
+        COUNT(*) AS review_count
+    FROM reviews
+    GROUP BY rating
+    HAVING COUNT(*) >= 100
+    ORDER BY rating;
+    ```
+
+### Exercise 6
+For active orders only (`status NOT IN ('cancelled', 'returned')`), find the count and average amount (rounded to 0 decimals) per `status`. Show only statuses where the average amount exceeds 300.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        status,
+        COUNT(*)                    AS order_count,
+        ROUND(AVG(total_amount), 0) AS avg_amount
     FROM orders
-    WHERE ordered_at BETWEEN '2023-01-01' AND '2024-12-31 23:59:59'
-      AND status NOT IN ('cancelled', 'returned')
-    GROUP BY SUBSTR(ordered_at, 1, 7)
-    HAVING SUM(total_amount) > 500000
-    ORDER BY year_month;
+    WHERE status NOT IN ('cancelled', 'returned')
+    GROUP BY status
+    HAVING AVG(total_amount) > 300
+    ORDER BY avg_amount DESC;
+    ```
+
+### Exercise 7
+Find all months (from the `orders` table) in 2023 and 2024 where monthly revenue exceeded $500,000. Return `year_month` and `monthly_revenue`, sorted chronologically.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            SUBSTR(ordered_at, 1, 7) AS year_month,
+            SUM(total_amount)        AS monthly_revenue
+        FROM orders
+        WHERE ordered_at BETWEEN '2023-01-01' AND '2024-12-31 23:59:59'
+          AND status NOT IN ('cancelled', 'returned')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        HAVING SUM(total_amount) > 500000
+        ORDER BY year_month;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            DATE_FORMAT(ordered_at, '%Y-%m') AS year_month,
+            SUM(total_amount)                AS monthly_revenue
+        FROM orders
+        WHERE ordered_at >= '2023-01-01'
+          AND ordered_at <  '2025-01-01'
+          AND status NOT IN ('cancelled', 'returned')
+        GROUP BY DATE_FORMAT(ordered_at, '%Y-%m')
+        HAVING SUM(total_amount) > 500000
+        ORDER BY year_month;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            TO_CHAR(ordered_at, 'YYYY-MM') AS year_month,
+            SUM(total_amount)              AS monthly_revenue
+        FROM orders
+        WHERE ordered_at >= '2023-01-01'
+          AND ordered_at <  '2025-01-01'
+          AND status NOT IN ('cancelled', 'returned')
+        GROUP BY TO_CHAR(ordered_at, 'YYYY-MM')
+        HAVING SUM(total_amount) > 500000
+        ORDER BY year_month;
+        ```
+
+### Exercise 8
+Find the number of unique orders per payment `method` in the `payments` table using `COUNT(DISTINCT order_id)`. Sort by unique order count descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        method,
+        COUNT(DISTINCT order_id) AS unique_orders
+    FROM payments
+    GROUP BY method
+    ORDER BY unique_orders DESC;
+    ```
+
+### Exercise 9
+Calculate yearly order count and total revenue from the `orders` table. Exclude cancelled and returned orders.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            SUBSTR(ordered_at, 1, 4) AS order_year,
+            COUNT(*)                 AS order_count,
+            SUM(total_amount)        AS yearly_revenue
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY SUBSTR(ordered_at, 1, 4)
+        ORDER BY order_year;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            YEAR(ordered_at)  AS order_year,
+            COUNT(*)          AS order_count,
+            SUM(total_amount) AS yearly_revenue
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY YEAR(ordered_at)
+        ORDER BY order_year;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            EXTRACT(YEAR FROM ordered_at)::int AS order_year,
+            COUNT(*)                           AS order_count,
+            SUM(total_amount)                  AS yearly_revenue
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY EXTRACT(YEAR FROM ordered_at)
+        ORDER BY order_year;
+        ```
+
+### Exercise 10
+For each `category_id` in the `products` table, find the product count, average price (0 decimals), and total stock (`stock_qty` sum). Show only categories with 5 or more products and average price of at least 50. Sort by product count descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        category_id,
+        COUNT(*)                 AS product_count,
+        ROUND(AVG(price), 0)     AS avg_price,
+        SUM(stock_qty)           AS total_stock
+    FROM products
+    GROUP BY category_id
+    HAVING COUNT(*) >= 5
+       AND AVG(price) >= 50
+    ORDER BY product_count DESC;
     ```
 
 ---

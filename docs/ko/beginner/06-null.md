@@ -8,12 +8,6 @@ flowchart TD
     V --> |"= NULL"| U["UNKNOWN ❓"]
     N["NULL"] --> |"= NULL"| U2["UNKNOWN ❓"]
     N --> |"IS NULL"| T2["TRUE ✅"]
-    style V fill:#e3f2fd,stroke:#1565c0
-    style N fill:#ffcdd2,stroke:#c62828
-    style T fill:#e8f5e9,stroke:#2e7d32
-    style T2 fill:#e8f5e9,stroke:#2e7d32
-    style U fill:#fff9c4,stroke:#f9a825
-    style U2 fill:#fff9c4,stroke:#f9a825
 ```
 
 > **개념:** NULL은 '값이 없음'입니다. = NULL은 항상 UNKNOWN이므로 IS NULL을 사용해야 합니다.
@@ -61,7 +55,7 @@ LIMIT 5;
 **결과:**
 
 | order_number | total_amount |
-|--------------|--------------|
+|--------------|-------------:|
 | ORD-20150314-00001 | 249.98 |
 | ORD-20150314-00002 | 1399.99 |
 | ORD-20150315-00003 | 59.99 |
@@ -140,7 +134,7 @@ GROUP BY grade;
 **결과:**
 
 | grade | total | inactive | pct_inactive |
-|-------|-------|----------|--------------|
+|-------|------:|---------:|-------------:|
 | BRONZE | 2614 | 182 | 7.0 |
 | SILVER | 1569 | 94 | 6.0 |
 | GOLD | 785 | 31 | 3.9 |
@@ -148,23 +142,42 @@ GROUP BY grade;
 
 ## 집계 함수와 NULL
 
-집계 함수(`SUM`, `AVG`, `COUNT(컬럼명)`, `MIN`, `MAX`)는 NULL 값을 조용히 무시합니다. 예상치 못한 결과가 나올 수 있으므로 주의하세요.
+집계 함수(`SUM`, `AVG`, `COUNT(칼럼명)`, `MIN`, `MAX`)는 NULL 값을 조용히 무시합니다. 예상치 못한 결과가 나올 수 있으므로 주의하세요.
 
-```sql
--- COUNT(*)와 COUNT(birth_date) 비교
-SELECT
-    COUNT(*)           AS all_customers,
-    COUNT(birth_date)  AS customers_with_dob,
-    AVG(
-        CAST(SUBSTR(birth_date, 1, 4) AS INTEGER)
-    )                  AS avg_birth_year
-FROM customers;
-```
+=== "SQLite"
+    ```sql
+    -- COUNT(*)와 COUNT(birth_date) 비교
+    SELECT
+        COUNT(*)           AS all_customers,
+        COUNT(birth_date)  AS customers_with_dob,
+        AVG(
+            CAST(SUBSTR(birth_date, 1, 4) AS INTEGER)
+        )                  AS avg_birth_year
+    FROM customers;
+    ```
+
+=== "MySQL"
+    ```sql
+    SELECT
+        COUNT(*)           AS all_customers,
+        COUNT(birth_date)  AS customers_with_dob,
+        AVG(YEAR(birth_date)) AS avg_birth_year
+    FROM customers;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    SELECT
+        COUNT(*)           AS all_customers,
+        COUNT(birth_date)  AS customers_with_dob,
+        AVG(EXTRACT(YEAR FROM birth_date))::numeric(6,1) AS avg_birth_year
+    FROM customers;
+    ```
 
 **결과:**
 
 | all_customers | customers_with_dob | avg_birth_year |
-|---------------|--------------------|----------------|
+|--------------:|-------------------:|---------------:|
 | 5230 | 4445 | 1982.3 |
 
 > `AVG`는 생년월일이 있는 4,445명만을 대상으로 계산됩니다. NULL인 785명은 자동으로 제외됩니다.
@@ -183,21 +196,48 @@ SELECT
 
 `COALESCE`로 NULL 전파를 방지할 수 있습니다.
 
-```sql
--- birth_date가 NULL이면 나이를 -1로 처리
-SELECT
-    name,
-    birth_date,
-    COALESCE(
-        CAST((julianday('now') - julianday(birth_date)) / 365.25 AS INTEGER),
-        -1
-    ) AS age_years
-FROM customers
-LIMIT 5;
-```
+=== "SQLite"
+    ```sql
+    -- birth_date가 NULL이면 나이를 -1로 처리
+    SELECT
+        name,
+        birth_date,
+        COALESCE(
+            CAST((julianday('now') - julianday(birth_date)) / 365.25 AS INTEGER),
+            -1
+        ) AS age_years
+    FROM customers
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    SELECT
+        name,
+        birth_date,
+        COALESCE(
+            TIMESTAMPDIFF(YEAR, birth_date, CURDATE()),
+            -1
+        ) AS age_years
+    FROM customers
+    LIMIT 5;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    SELECT
+        name,
+        birth_date,
+        COALESCE(
+            EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::int,
+            -1
+        ) AS age_years
+    FROM customers
+    LIMIT 5;
+    ```
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -230,6 +270,78 @@ LIMIT 5;
     ```
 
 ### 문제 3
+`orders` 테이블에서 `cancelled_at`이 NULL인(취소되지 않은) 주문 수와 NULL이 아닌(취소된) 주문 수를 각각 구하세요. 별칭은 `not_cancelled`, `cancelled`로 지정하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        COUNT(CASE WHEN cancelled_at IS NULL THEN 1 END)     AS not_cancelled,
+        COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
+    FROM orders;
+    ```
+
+### 문제 4
+`customers` 테이블에서 `phone`이 NULL인 고객의 `name`, `email`을 조회하되, `email`도 NULL이면 `'연락처 없음'`으로 대체하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        COALESCE(email, '연락처 없음') AS email
+    FROM customers
+    WHERE phone IS NULL;
+    ```
+
+### 문제 5
+`products` 테이블에서 `weight` 칼럼이 NULL인 상품 수와 전체 상품 수를 구하고, NULL 비율(소수점 1자리)을 계산하세요. 별칭은 `total_products`, `missing_weight`, `pct_missing`으로 지정하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        COUNT(*)                                AS total_products,
+        COUNT(*) - COUNT(weight)                AS missing_weight,
+        ROUND(100.0 * (COUNT(*) - COUNT(weight)) / COUNT(*), 1) AS pct_missing
+    FROM products;
+    ```
+
+### 문제 6
+`NULLIF`를 사용하여 `products` 테이블에서 `stock_qty`가 0인 상품의 가격 대비 재고 비율을 안전하게 계산하세요. `name`, `price`, `stock_qty`, `price / NULLIF(stock_qty, 0)`을 `price_per_unit`이라는 별칭으로 반환하세요. 결과를 5행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        price,
+        stock_qty,
+        price / NULLIF(stock_qty, 0) AS price_per_unit
+    FROM products
+    LIMIT 5;
+    ```
+
+### 문제 7
+`reviews` 테이블에서 `content`가 NULL인 리뷰와 NULL이 아닌 리뷰의 평균 `rating`을 각각 구하세요. `COUNT(*)`와 `AVG(rating)`을 함께 표시하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END AS content_status,
+        COUNT(*)        AS review_count,
+        AVG(rating)     AS avg_rating
+    FROM reviews
+    GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
+    ```
+
+### 문제 8
+`staff` 테이블에서 `manager_id`가 NULL인 직원(최고 관리자)의 `name`, `department`, `role`을 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, department, role
+    FROM staff
+    WHERE manager_id IS NULL;
+    ```
+
+### 문제 9
 멤버십 `grade`별로 성별이 확인된 고객 수와 성별 미입력 고객 수를 함께 조회하세요. 그룹화 기준으로 `COALESCE(gender, 'Unknown')`을 사용하세요.
 
 ??? success "정답"
@@ -241,6 +353,20 @@ LIMIT 5;
     FROM customers
     GROUP BY grade, COALESCE(gender, 'Unknown')
     ORDER BY grade, gender_status;
+    ```
+
+### 문제 10
+`customers` 테이블에서 `last_login_at`이 NULL인 고객의 `name`, `email`, `created_at`을 조회하세요. `email`이 NULL이면 `'없음'`, `created_at`이 NULL이면 `'알 수 없음'`으로 대체하세요. 결과를 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        COALESCE(email, '없음')        AS email,
+        COALESCE(created_at, '알 수 없음') AS created_at
+    FROM customers
+    WHERE last_login_at IS NULL
+    LIMIT 10;
     ```
 
 ---

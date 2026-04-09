@@ -41,11 +41,11 @@ and a non-indexed column (`notes`) to compare.
 
 ??? success "Answer"
     ```sql
-    -- 1) 인덱스가 있는 컬럼으로 검색
+    -- 1) 인덱스가 있는 칼럼으로 검색
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE customer_id = 100;
     
-    -- 2) 인덱스가 없는 컬럼으로 검색
+    -- 2) 인덱스가 없는 칼럼으로 검색
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE notes LIKE '%배송%';
     
@@ -107,7 +107,7 @@ Improve queries by specifying only needed columns.
 
 ??? success "Answer"
     ```sql
-    -- 개선: 필요한 컬럼만
+    -- 개선: 필요한 칼럼만
     SELECT order_number, customer_id, total_amount, status, ordered_at
     FROM orders
     WHERE ordered_at LIKE '2024-12%'

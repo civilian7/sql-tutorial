@@ -14,9 +14,6 @@ flowchart LR
     T["Table"] --> I
     T --> U
     T --> D
-    style I fill:#e8f5e9,stroke:#2e7d32
-    style U fill:#fff9c4,stroke:#f9a825
-    style D fill:#ffcdd2,stroke:#c62828
 ```
 
 > DML manipulates data: INSERT (add), UPDATE (modify), DELETE (remove).
@@ -215,7 +212,7 @@ COMMIT;
 | Inserting duplicate primary key | Constraint error | SQLite: `INSERT OR IGNORE` / MySQL: `INSERT IGNORE` / PG: `ON CONFLICT DO NOTHING` |
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -256,5 +253,246 @@ Insert a new customer record for a walk-in registration. Use: name `'Sam Rivera'
     );
     ```
 
+### Exercise 3
+Insert 3 products into the `products` table at once. All share `category_id = 9` (Keyboards), `supplier_id = 1`, `is_active = 1`, and `stock_qty = 30`.
+
+| sku | name | price |
+|-----|------|------:|
+| SKU-TEST-101 | Wireless Keyboard A | 59.99 |
+| SKU-TEST-102 | Wireless Keyboard B | 79.99 |
+| SKU-TEST-103 | Wireless Keyboard C | 99.99 |
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES
+            ('SKU-TEST-101', 'Wireless Keyboard A', 9, 1, 59.99, 30, 1, datetime('now'), datetime('now')),
+            ('SKU-TEST-102', 'Wireless Keyboard B', 9, 1, 79.99, 30, 1, datetime('now'), datetime('now')),
+            ('SKU-TEST-103', 'Wireless Keyboard C', 9, 1, 99.99, 30, 1, datetime('now'), datetime('now'));
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES
+            ('SKU-TEST-101', 'Wireless Keyboard A', 9, 1, 59.99, 30, 1, NOW(), NOW()),
+            ('SKU-TEST-102', 'Wireless Keyboard B', 9, 1, 79.99, 30, 1, NOW(), NOW()),
+            ('SKU-TEST-103', 'Wireless Keyboard C', 9, 1, 99.99, 30, 1, NOW(), NOW());
+        ```
+
+### Exercise 4
+Update all active BRONZE customers with a `point_balance` of 0: change their grade to `'SILVER'` and set their points to `500`. Also update `updated_at`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Verify first
+        SELECT id, name, grade, point_balance
+        FROM customers
+        WHERE grade = 'BRONZE' AND point_balance = 0 AND is_active = 1;
+
+        -- Update
+        UPDATE customers
+        SET
+            grade         = 'SILVER',
+            point_balance = 500,
+            updated_at    = datetime('now')
+        WHERE grade = 'BRONZE'
+          AND point_balance = 0
+          AND is_active = 1;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        -- Verify first
+        SELECT id, name, grade, point_balance
+        FROM customers
+        WHERE grade = 'BRONZE' AND point_balance = 0 AND is_active = 1;
+
+        -- Update
+        UPDATE customers
+        SET
+            grade         = 'SILVER',
+            point_balance = 500,
+            updated_at    = NOW()
+        WHERE grade = 'BRONZE'
+          AND point_balance = 0
+          AND is_active = 1;
+        ```
+
+### Exercise 5
+Delete reviews where `rating` is 1 and `content` is NULL. First write a `SELECT` to check how many rows will be affected.
+
+??? success "Answer"
+    ```sql
+    -- Verify first
+    SELECT COUNT(*)
+    FROM reviews
+    WHERE rating = 1 AND content IS NULL;
+
+    -- Delete
+    DELETE FROM reviews
+    WHERE rating = 1
+      AND content IS NULL;
+    ```
+
+### Exercise 6
+Set `stock_qty` to 0 for all inactive (`is_active = 0`) and discontinued (`discontinued_at IS NOT NULL`) products. Also update `updated_at`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Verify first
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
+
+        -- Update
+        UPDATE products
+        SET
+            stock_qty  = 0,
+            updated_at = datetime('now')
+        WHERE is_active = 0
+          AND discontinued_at IS NOT NULL
+          AND stock_qty > 0;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        -- Verify first
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
+
+        -- Update
+        UPDATE products
+        SET
+            stock_qty  = 0,
+            updated_at = NOW()
+        WHERE is_active = 0
+          AND discontinued_at IS NOT NULL
+          AND stock_qty > 0;
+        ```
+
+### Exercise 7
+Using `INSERT ... SELECT`, create refurbished versions of all active products priced at 1000 or above. Prefix the SKU with `'REF-'`, append `' (Refurbished)'` to the name, set the price to 60% of the original, and set `stock_qty` to 5.
+
+??? success "Answer"
+    === "SQLite / PostgreSQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        SELECT
+            'REF-' || sku,
+            name || ' (Refurbished)',
+            category_id,
+            supplier_id,
+            ROUND(price * 0.6, 2),
+            5,
+            1,
+            datetime('now'),
+            datetime('now')
+        FROM products
+        WHERE price >= 1000
+          AND is_active = 1;
+        ```
+
+    === "MySQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        SELECT
+            CONCAT('REF-', sku),
+            CONCAT(name, ' (Refurbished)'),
+            category_id,
+            supplier_id,
+            ROUND(price * 0.6, 2),
+            5,
+            1,
+            NOW(),
+            NOW()
+        FROM products
+        WHERE price >= 1000
+          AND is_active = 1;
+        ```
+
+### Exercise 8
+Delete resolved complaints (`status = 'resolved'`) that were created before 2022 (`created_at < '2022-01-01'`). First verify the count and date range with a `SELECT`.
+
+??? success "Answer"
+    ```sql
+    -- Verify first
+    SELECT COUNT(*), MIN(created_at), MAX(created_at)
+    FROM complaints
+    WHERE status = 'resolved'
+      AND created_at < '2022-01-01';
+
+    -- Delete
+    DELETE FROM complaints
+    WHERE status = 'resolved'
+      AND created_at < '2022-01-01';
+    ```
+
+### Exercise 9
+Explain what happens if you omit the `WHERE` clause in this scenario, then write the correct `UPDATE`: "Change the phone number of customer ID 500 to `'555-0555-1234'`."
+
+??? success "Answer"
+    Without `WHERE`, **every customer** in the table would have their phone changed to `'555-0555-1234'`. The correct query:
+
+    === "SQLite"
+        ```sql
+        UPDATE customers
+        SET
+            phone      = '555-0555-1234',
+            updated_at = datetime('now')
+        WHERE id = 500;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        UPDATE customers
+        SET
+            phone      = '555-0555-1234',
+            updated_at = NOW()
+        WHERE id = 500;
+        ```
+
+### Exercise 10
+Write a `SELECT` to find active products that have never been ordered, then write an `UPDATE` to deactivate them (`is_active = 0`). Use a subquery.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Verify first
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+
+        -- Update
+        UPDATE products
+        SET
+            is_active  = 0,
+            updated_at = datetime('now')
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        -- Verify first
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+
+        -- Update
+        UPDATE products
+        SET
+            is_active  = 0,
+            updated_at = NOW()
+        WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
+          AND is_active = 1;
+        ```
+
 ---
-Next: [Lesson 15: Window Functions](../advanced/15-window.md)
+Next: [Lesson 15: DDL — Creating and Altering Tables](15-ddl.md)

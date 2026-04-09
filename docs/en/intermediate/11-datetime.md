@@ -11,12 +11,6 @@ flowchart LR
     D --> DOM["DAY\n15"]
     D --> H["HOUR\n14"]
     D --> Q["QUARTER\n1"]
-    style D fill:#e3f2fd,stroke:#1565c0
-    style Y fill:#e8f5e9,stroke:#2e7d32
-    style M fill:#e8f5e9,stroke:#2e7d32
-    style DOM fill:#e8f5e9,stroke:#2e7d32
-    style H fill:#e8f5e9,stroke:#2e7d32
-    style Q fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > You can extract specific parts from a datetime value.
@@ -40,7 +34,7 @@ ORDER BY year;
 **Result:**
 
 | year | order_count | annual_revenue |
-|------|-------------|----------------|
+|-----:|------------:|---------------:|
 | 2015 | 412 | 184329.50 |
 | 2016 | 589 | 271948.20 |
 | 2017 | 843 | 412837.60 |
@@ -62,7 +56,7 @@ ORDER BY year_month;
 **Result:**
 
 | year_month | orders | revenue |
-|------------|--------|---------|
+|------------|-------:|--------:|
 | 2024-01 | 270 | 147832.40 |
 | 2024-02 | 251 | 136290.10 |
 | 2024-03 | 347 | 204123.70 |
@@ -184,7 +178,7 @@ ORDER BY year_month;
 **Result:**
 
 | day_of_week | order_count |
-|-------------|-------------|
+|-------------|------------:|
 | Sunday | 4823 |
 | Monday | 5012 |
 | Tuesday | 4991 |
@@ -245,7 +239,7 @@ ORDER BY year_month;
 **Result:**
 
 | order_number | ordered_at | delivered_at | delivery_days |
-|--------------|------------|--------------|---------------|
+|--------------|------------|--------------|--------------:|
 | ORD-20190822-03421 | 2019-08-22 | 2019-09-08 | 17.0 |
 | ORD-20201103-04812 | 2020-11-03 | 2020-11-18 | 15.0 |
 | ... | | | |
@@ -295,7 +289,7 @@ ORDER BY year_month;
 **Result:**
 
 | carrier | deliveries | avg_days |
-|---------|------------|----------|
+|---------|-----------:|---------:|
 | FedEx | 8341 | 2.8 |
 | UPS | 7892 | 3.1 |
 | USPS | 9214 | 4.2 |
@@ -347,7 +341,7 @@ ORDER BY year_month;
 **Result:**
 
 | name | birth_date | age |
-|------|------------|-----|
+|------|------------|----:|
 | Gerald Foster | 1951-02-18 | 73 |
 | Patricia Moore | 1952-08-30 | 72 |
 | ... | | |
@@ -406,14 +400,14 @@ ORDER BY year_month;
 **Result:**
 
 | year | quarter | revenue |
-|------|---------|---------|
+|-----:|---------|--------:|
 | 2024 | Q1 | 488246.20 |
 | 2024 | Q2 | 523891.40 |
 | 2024 | Q3 | 612347.80 |
 | 2024 | Q4 | 1218807.10 |
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -544,6 +538,276 @@ Find the day-of-week with the highest average order value. Use `strftime('%w', o
         WHERE status NOT IN ('cancelled', 'returned')
         GROUP BY EXTRACT(DOW FROM ordered_at::date)
         ORDER BY avg_order_value DESC;
+        ```
+
+### Exercise 4
+Retrieve orders placed in March 2024. Return `order_number`, `ordered_at`, and `total_amount`. Use date range filtering and sort by `ordered_at` ascending.
+
+??? success "Answer"
+    ```sql
+    SELECT order_number, ordered_at, total_amount
+    FROM orders
+    WHERE ordered_at >= '2024-03-01'
+      AND ordered_at <  '2024-04-01'
+    ORDER BY ordered_at ASC;
+    ```
+
+### Exercise 5
+Calculate each customer's age from `birth_date`. Return `name`, `birth_date`, and `age`. Exclude customers with NULL `birth_date`. Sort by age descending, limit to 10 rows.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            birth_date,
+            CAST(
+                (julianday('now') - julianday(birth_date)) / 365.25
+            AS INTEGER) AS age
+        FROM customers
+        WHERE birth_date IS NOT NULL
+        ORDER BY age DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            birth_date,
+            TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age
+        FROM customers
+        WHERE birth_date IS NOT NULL
+        ORDER BY age DESC
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            birth_date,
+            EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::int AS age
+        FROM customers
+        WHERE birth_date IS NOT NULL
+        ORDER BY age DESC
+        LIMIT 10;
+        ```
+
+### Exercise 6
+Extract the year and month from orders and count orders per month for 2023 only. Return `order_year`, `order_month`, and `order_count`, sorted by month ascending.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            SUBSTR(ordered_at, 1, 4) AS order_year,
+            SUBSTR(ordered_at, 6, 2) AS order_month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE ordered_at LIKE '2023%'
+        GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)
+        ORDER BY order_month ASC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            YEAR(ordered_at)  AS order_year,
+            MONTH(ordered_at) AS order_month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE YEAR(ordered_at) = 2023
+        GROUP BY YEAR(ordered_at), MONTH(ordered_at)
+        ORDER BY order_month ASC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            EXTRACT(YEAR FROM ordered_at::date)::int  AS order_year,
+            EXTRACT(MONTH FROM ordered_at::date)::int AS order_month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE EXTRACT(YEAR FROM ordered_at::date) = 2023
+        GROUP BY
+            EXTRACT(YEAR FROM ordered_at::date),
+            EXTRACT(MONTH FROM ordered_at::date)
+        ORDER BY order_month ASC;
+        ```
+
+### Exercise 7
+Find delivered orders where the delivery took 7 or more days. Return `order_number`, `ordered_at`, `delivered_at`, and `delivery_days`. Sort by `delivery_days` descending, limit to 10 rows.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            o.order_number,
+            o.ordered_at,
+            s.delivered_at,
+            ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE s.delivered_at IS NOT NULL
+          AND julianday(s.delivered_at) - julianday(o.ordered_at) >= 7
+        ORDER BY delivery_days DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            o.order_number,
+            o.ordered_at,
+            s.delivered_at,
+            DATEDIFF(s.delivered_at, o.ordered_at) AS delivery_days
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE s.delivered_at IS NOT NULL
+          AND DATEDIFF(s.delivered_at, o.ordered_at) >= 7
+        ORDER BY delivery_days DESC
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            o.order_number,
+            o.ordered_at,
+            s.delivered_at,
+            s.delivered_at::date - o.ordered_at::date AS delivery_days
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE s.delivered_at IS NOT NULL
+          AND s.delivered_at::date - o.ordered_at::date >= 7
+        ORDER BY delivery_days DESC
+        LIMIT 10;
+        ```
+
+### Exercise 8
+Calculate each active staff member's tenure in years. Return `name`, `hired_at`, and `years_worked`. Sort by tenure descending.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            hired_at,
+            CAST(
+                (julianday('now') - julianday(hired_at)) / 365.25
+            AS INTEGER) AS years_worked
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY years_worked DESC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            hired_at,
+            TIMESTAMPDIFF(YEAR, hired_at, CURDATE()) AS years_worked
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY years_worked DESC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            hired_at,
+            EXTRACT(YEAR FROM AGE(CURRENT_DATE, hired_at))::int AS years_worked
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY years_worked DESC;
+        ```
+
+### Exercise 9
+Calculate the number of days between a customer's `created_at` and `last_login_at`. Only include active customers where both dates exist. Return `name`, `created_at`, `last_login_at`, and `active_days`. Sort by `active_days` descending, limit to 10 rows.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            created_at,
+            last_login_at,
+            CAST(julianday(last_login_at) - julianday(created_at) AS INTEGER) AS active_days
+        FROM customers
+        WHERE is_active = 1
+          AND last_login_at IS NOT NULL
+        ORDER BY active_days DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            created_at,
+            last_login_at,
+            DATEDIFF(last_login_at, created_at) AS active_days
+        FROM customers
+        WHERE is_active = 1
+          AND last_login_at IS NOT NULL
+        ORDER BY active_days DESC
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            created_at,
+            last_login_at,
+            last_login_at::date - created_at::date AS active_days
+        FROM customers
+        WHERE is_active = 1
+          AND last_login_at IS NOT NULL
+        ORDER BY active_days DESC
+        LIMIT 10;
+        ```
+
+### Exercise 10
+Count reviews and calculate the average rating per month for 2024. Return `review_month`, `review_count`, and `avg_rating` (2 decimal places). Sort by month ascending.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            SUBSTR(created_at, 6, 2) AS review_month,
+            COUNT(*)                 AS review_count,
+            ROUND(AVG(rating), 2)    AS avg_rating
+        FROM reviews
+        WHERE created_at LIKE '2024%'
+        GROUP BY SUBSTR(created_at, 6, 2)
+        ORDER BY review_month ASC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            MONTH(created_at)     AS review_month,
+            COUNT(*)              AS review_count,
+            ROUND(AVG(rating), 2) AS avg_rating
+        FROM reviews
+        WHERE YEAR(created_at) = 2024
+        GROUP BY MONTH(created_at)
+        ORDER BY review_month ASC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            EXTRACT(MONTH FROM created_at::date)::int AS review_month,
+            COUNT(*)              AS review_count,
+            ROUND(AVG(rating), 2) AS avg_rating
+        FROM reviews
+        WHERE EXTRACT(YEAR FROM created_at::date) = 2024
+        GROUP BY EXTRACT(MONTH FROM created_at::date)
+        ORDER BY review_month ASC;
         ```
 
 ---

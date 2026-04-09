@@ -62,7 +62,7 @@ problems:
     level: 2
     type: "CASE/IF"
     question: |
-      각 테이블의 NULL이 많은 컬럼을 찾으세요.
+      각 테이블의 NULL이 많은 칼럼을 찾으세요.
     question_en: |
       Find columns with high NULL rates in each table.
     reference_sql:
@@ -82,7 +82,7 @@ problems:
       type: result_match
       ordered: false
     hints:
-      - ko: "`SUM(CASE WHEN 컬럼 IS NULL THEN 1 ELSE 0 END) / COUNT(*)`로 각 컬럼의 NULL 비율을 계산."
+      - ko: "`SUM(CASE WHEN 칼럼 IS NULL THEN 1 ELSE 0 END) / COUNT(*)`로 각 칼럼의 NULL 비율을 계산."
         en: "Calculate the NULL ratio for each column with `SUM(CASE WHEN column IS NULL THEN 1 ELSE 0 END) / COUNT(*)`."
     max_score: 10
     tags: [CASE, SUM, COUNT, customers]
@@ -136,7 +136,7 @@ problems:
       type: result_match
       ordered: false
     hints:
-      - ko: "`WHERE delivered_at < shipped_at`으로 날짜 역전을 탐지. 두 컬럼 모두 NOT NULL인 행만 대상."
+      - ko: "`WHERE delivered_at < shipped_at`으로 날짜 역전을 탐지. 두 칼럼 모두 NOT NULL인 행만 대상."
         en: "Detect date reversal with `WHERE delivered_at < shipped_at`. Only target rows where both columns are NOT NULL."
     max_score: 10
     tags: [INNER JOIN, WHERE, date arithmetic, shipping, orders]

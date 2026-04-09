@@ -49,7 +49,7 @@ problems:
       type: error_expected
       ordered: false
     hints:
-      - ko: "`UNIQUE` 제약이 걸린 컬럼에 이미 존재하는 값을 넣으면 중복 에러가 발생합니다."
+      - ko: "`UNIQUE` 제약이 걸린 칼럼에 이미 존재하는 값을 넣으면 중복 에러가 발생합니다."
         en: "Inserting an already-existing value into a column with a `UNIQUE` constraint causes a duplicate error."
     max_score: 10
     tags: [INSERT, customers]
@@ -124,7 +124,7 @@ problems:
     level: 2
     type: "SELECT"
     question: |
-      필수 컬럼을 비우면?
+      필수 칼럼을 비우면?
     question_en: |
       What happens if you leave a required column empty?
     reference_sql:
@@ -137,7 +137,7 @@ problems:
       type: error_expected
       ordered: false
     hints:
-      - ko: "`NOT NULL` 제약이 있는 컬럼에 `NULL`을 넣으면 에러가 발생합니다."
+      - ko: "`NOT NULL` 제약이 있는 칼럼에 `NULL`을 넣으면 에러가 발생합니다."
         en: "Inserting `NULL` into a column with a `NOT NULL` constraint causes an error."
     max_score: 10
     tags: [INSERT, products]
@@ -164,7 +164,7 @@ problems:
       type: error_expected
       ordered: false
     hints:
-      - ko: "`(customer_id, product_id)` 두 컬럼의 조합이 `UNIQUE`면, 같은 조합을 두 번째 삽입할 때 에러가 납니다."
+      - ko: "`(customer_id, product_id)` 두 칼럼의 조합이 `UNIQUE`면, 같은 조합을 두 번째 삽입할 때 에러가 납니다."
         en: "If the combination of `(customer_id, product_id)` is `UNIQUE`, inserting the same combination a second time causes an error."
     max_score: 10
     tags: [INSERT, wishlists]

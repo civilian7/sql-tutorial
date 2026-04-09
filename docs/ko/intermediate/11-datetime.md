@@ -11,12 +11,6 @@ flowchart LR
     D --> DOM["DAY\n15"]
     D --> H["HOUR\n14"]
     D --> Q["QUARTER\n1"]
-    style D fill:#e3f2fd,stroke:#1565c0
-    style Y fill:#e8f5e9,stroke:#2e7d32
-    style M fill:#e8f5e9,stroke:#2e7d32
-    style DOM fill:#e8f5e9,stroke:#2e7d32
-    style H fill:#e8f5e9,stroke:#2e7d32
-    style Q fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > 날짜/시간 값에서 필요한 부분만 추출할 수 있습니다.
@@ -40,7 +34,7 @@ ORDER BY year;
 **결과:**
 
 | year | order_count | annual_revenue |
-|------|-------------|----------------|
+|-----:|------------:|---------------:|
 | 2015 | 412 | 184329.50 |
 | 2016 | 589 | 271948.20 |
 | 2017 | 843 | 412837.60 |
@@ -62,7 +56,7 @@ ORDER BY year_month;
 **결과:**
 
 | year_month | orders | revenue |
-|------------|--------|---------|
+|------------|-------:|--------:|
 | 2024-01 | 270 | 147832.40 |
 | 2024-02 | 251 | 136290.10 |
 | 2024-03 | 347 | 204123.70 |
@@ -184,7 +178,7 @@ ORDER BY year_month;
 **결과:**
 
 | day_of_week | order_count |
-|-------------|-------------|
+|-------------|------------:|
 | 일요일 | 4823 |
 | 월요일 | 5012 |
 | 화요일 | 4991 |
@@ -245,7 +239,7 @@ ORDER BY year_month;
 **결과:**
 
 | order_number | ordered_at | delivered_at | delivery_days |
-|--------------|------------|--------------|---------------|
+|--------------|------------|--------------|--------------:|
 | ORD-20190822-03421 | 2019-08-22 | 2019-09-08 | 17.0 |
 | ORD-20201103-04812 | 2020-11-03 | 2020-11-18 | 15.0 |
 | ... | | | |
@@ -295,7 +289,7 @@ ORDER BY year_month;
 **결과:**
 
 | carrier | deliveries | avg_days |
-|---------|------------|----------|
+|---------|-----------:|---------:|
 | CJ대한통운 | 8341 | 2.8 |
 | 한진택배 | 7892 | 3.1 |
 | 우체국택배 | 9214 | 4.2 |
@@ -347,7 +341,7 @@ ORDER BY year_month;
 **결과:**
 
 | name | birth_date | age |
-|------|------------|-----|
+|------|------------|----:|
 | 김복순 | 1951-02-18 | 73 |
 | 이순례 | 1952-08-30 | 72 |
 | ... | | |
@@ -406,14 +400,14 @@ ORDER BY year_month;
 **결과:**
 
 | year | quarter | revenue |
-|------|---------|---------|
+|-----:|---------|--------:|
 | 2024 | Q1 | 488246.20 |
 | 2024 | Q2 | 523891.40 |
 | 2024 | Q3 | 612347.80 |
 | 2024 | Q4 | 1218807.10 |
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -544,6 +538,276 @@ ORDER BY year_month;
         WHERE status NOT IN ('cancelled', 'returned')
         GROUP BY EXTRACT(DOW FROM ordered_at::date)
         ORDER BY avg_order_value DESC;
+        ```
+
+### 연습 4
+2024년 3월에 주문된 건의 `order_number`, `ordered_at`, `total_amount`를 조회하세요. 날짜 범위 필터링을 사용하고, 주문일 오름차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT order_number, ordered_at, total_amount
+    FROM orders
+    WHERE ordered_at >= '2024-03-01'
+      AND ordered_at <  '2024-04-01'
+    ORDER BY ordered_at ASC;
+    ```
+
+### 연습 5
+고객의 나이를 계산하여 `name`, `birth_date`, `age`를 반환하세요. `birth_date`가 NULL인 고객은 제외하고, 나이가 많은 순으로 10행까지 정렬하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            birth_date,
+            CAST(
+                (julianday('now') - julianday(birth_date)) / 365.25
+            AS INTEGER) AS age
+        FROM customers
+        WHERE birth_date IS NOT NULL
+        ORDER BY age DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            birth_date,
+            TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age
+        FROM customers
+        WHERE birth_date IS NOT NULL
+        ORDER BY age DESC
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            birth_date,
+            EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::int AS age
+        FROM customers
+        WHERE birth_date IS NOT NULL
+        ORDER BY age DESC
+        LIMIT 10;
+        ```
+
+### 연습 6
+주문에서 연도와 월을 추출하여 `order_year`, `order_month`, `order_count`를 반환하세요. 2023년 주문만 대상으로, 월 오름차순으로 정렬하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            SUBSTR(ordered_at, 1, 4) AS order_year,
+            SUBSTR(ordered_at, 6, 2) AS order_month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE ordered_at LIKE '2023%'
+        GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)
+        ORDER BY order_month ASC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            YEAR(ordered_at)  AS order_year,
+            MONTH(ordered_at) AS order_month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE YEAR(ordered_at) = 2023
+        GROUP BY YEAR(ordered_at), MONTH(ordered_at)
+        ORDER BY order_month ASC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            EXTRACT(YEAR FROM ordered_at::date)::int  AS order_year,
+            EXTRACT(MONTH FROM ordered_at::date)::int AS order_month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE EXTRACT(YEAR FROM ordered_at::date) = 2023
+        GROUP BY
+            EXTRACT(YEAR FROM ordered_at::date),
+            EXTRACT(MONTH FROM ordered_at::date)
+        ORDER BY order_month ASC;
+        ```
+
+### 연습 7
+배송 완료(`delivered_at`이 NOT NULL)된 주문 중 배송 소요일이 7일 이상인 건을 찾으세요. `order_number`, `ordered_at`, `delivered_at`, `delivery_days`를 반환하고, 소요일 내림차순으로 10행까지 정렬하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            o.order_number,
+            o.ordered_at,
+            s.delivered_at,
+            ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE s.delivered_at IS NOT NULL
+          AND julianday(s.delivered_at) - julianday(o.ordered_at) >= 7
+        ORDER BY delivery_days DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            o.order_number,
+            o.ordered_at,
+            s.delivered_at,
+            DATEDIFF(s.delivered_at, o.ordered_at) AS delivery_days
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE s.delivered_at IS NOT NULL
+          AND DATEDIFF(s.delivered_at, o.ordered_at) >= 7
+        ORDER BY delivery_days DESC
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            o.order_number,
+            o.ordered_at,
+            s.delivered_at,
+            s.delivered_at::date - o.ordered_at::date AS delivery_days
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE s.delivered_at IS NOT NULL
+          AND s.delivered_at::date - o.ordered_at::date >= 7
+        ORDER BY delivery_days DESC
+        LIMIT 10;
+        ```
+
+### 연습 8
+직원의 근속 연수를 계산하세요. `name`, `hired_at`, `years_worked`를 반환하고, 활성 직원만 포함합니다. 근속 연수가 긴 순으로 정렬하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            hired_at,
+            CAST(
+                (julianday('now') - julianday(hired_at)) / 365.25
+            AS INTEGER) AS years_worked
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY years_worked DESC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            hired_at,
+            TIMESTAMPDIFF(YEAR, hired_at, CURDATE()) AS years_worked
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY years_worked DESC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            hired_at,
+            EXTRACT(YEAR FROM AGE(CURRENT_DATE, hired_at))::int AS years_worked
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY years_worked DESC;
+        ```
+
+### 연습 9
+고객의 가입일(`created_at`)과 마지막 로그인(`last_login_at`) 사이의 일수 차이를 계산하세요. 두 날짜가 모두 있는 활성 고객만 포함합니다. `name`, `created_at`, `last_login_at`, `active_days`를 반환하고, `active_days` 내림차순으로 10행까지 정렬하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            created_at,
+            last_login_at,
+            CAST(julianday(last_login_at) - julianday(created_at) AS INTEGER) AS active_days
+        FROM customers
+        WHERE is_active = 1
+          AND last_login_at IS NOT NULL
+        ORDER BY active_days DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            created_at,
+            last_login_at,
+            DATEDIFF(last_login_at, created_at) AS active_days
+        FROM customers
+        WHERE is_active = 1
+          AND last_login_at IS NOT NULL
+        ORDER BY active_days DESC
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            created_at,
+            last_login_at,
+            last_login_at::date - created_at::date AS active_days
+        FROM customers
+        WHERE is_active = 1
+          AND last_login_at IS NOT NULL
+        ORDER BY active_days DESC
+        LIMIT 10;
+        ```
+
+### 연습 10
+리뷰가 작성된 월별로 리뷰 수와 평균 평점을 집계하세요. 2024년 리뷰만 대상으로, `review_month`, `review_count`, `avg_rating`(소수점 2자리)을 반환하고, 월 오름차순으로 정렬하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            SUBSTR(created_at, 6, 2) AS review_month,
+            COUNT(*)                 AS review_count,
+            ROUND(AVG(rating), 2)    AS avg_rating
+        FROM reviews
+        WHERE created_at LIKE '2024%'
+        GROUP BY SUBSTR(created_at, 6, 2)
+        ORDER BY review_month ASC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            MONTH(created_at)     AS review_month,
+            COUNT(*)              AS review_count,
+            ROUND(AVG(rating), 2) AS avg_rating
+        FROM reviews
+        WHERE YEAR(created_at) = 2024
+        GROUP BY MONTH(created_at)
+        ORDER BY review_month ASC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            EXTRACT(MONTH FROM created_at::date)::int AS review_month,
+            COUNT(*)              AS review_count,
+            ROUND(AVG(rating), 2) AS avg_rating
+        FROM reviews
+        WHERE EXTRACT(YEAR FROM created_at::date) = 2024
+        GROUP BY EXTRACT(MONTH FROM created_at::date)
+        ORDER BY review_month ASC;
         ```
 
 ---

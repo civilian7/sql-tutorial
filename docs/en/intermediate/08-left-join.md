@@ -23,7 +23,6 @@ flowchart LR
     C3 --> R3
     O1 --> R1
     O3 --> R2
-    style R3 fill:#fff9c4,stroke:#f9a825
 ```
 
 > LEFT JOIN keeps all rows from the left table. Missing matches on the right become NULL.
@@ -46,7 +45,7 @@ LIMIT 8;
 **Result:**
 
 | product_name | price | rating | reviewed_at |
-|--------------|-------|--------|-------------|
+|--------------|------:|--------|-------------|
 | ASUS ProArt 32" 4K Monitor | 2199.00 | 5 | 2023-08-14 |
 | ASUS ProArt 32" 4K Monitor | 2199.00 | 4 | 2024-01-22 |
 | ASUS ROG Gaming Desktop | 1899.00 | 5 | 2022-11-03 |
@@ -75,7 +74,7 @@ ORDER BY p.name;
 **Result:**
 
 | id | name | price |
-|----|------|-------|
+|---:|------|------:|
 | 47 | ASUS TUF Gaming Laptop | 1099.00 |
 | 83 | Belkin USB-C Hub | 49.99 |
 | 116 | Corsair K60 RGB Keyboard | 89.99 |
@@ -98,7 +97,7 @@ LIMIT 10;
 **Result:**
 
 | id | name | email | created_at |
-|----|------|-------|------------|
+|---:|------|-------|------------|
 | 5228 | Tyler Brooks | t.brooks@testmail.com | 2024-12-28 |
 | 5221 | Grace Liu | g.liu@testmail.com | 2024-12-19 |
 | ... | | | |
@@ -127,7 +126,7 @@ LIMIT 10;
 **Result:**
 
 | product_name | price | review_count | avg_rating |
-|--------------|-------|--------------|------------|
+|--------------|------:|-------------:|-----------:|
 | Dell XPS 15 Laptop | 1299.99 | 87 | 4.21 |
 | Logitech MX Master 3 | 99.99 | 74 | 4.56 |
 | Samsung 27" Monitor | 449.99 | 68 | 4.03 |
@@ -153,7 +152,7 @@ LIMIT 8;
 **Result:**
 
 | name | grade | order_count | lifetime_value |
-|------|-------|-------------|----------------|
+|------|-------|------------:|---------------:|
 | Jennifer Martinez | VIP | 48 | 64291.50 |
 | Robert Kim | VIP | 41 | 52884.20 |
 | ... | | | |
@@ -177,7 +176,7 @@ LIMIT 5;
 ```
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -229,6 +228,84 @@ Find all active products that have **no inventory transactions** recorded in the
     WHERE p.is_active = 1
       AND it.id IS NULL
     ORDER BY p.name;
+    ```
+
+### Exercise 4
+Show every customer's name, email, and the status of their most recent order. For customers with no orders, display `'No orders'` using `COALESCE`. Sort by customer name ascending and limit to 15 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        c.name,
+        c.email,
+        COALESCE(o.status, 'No orders') AS last_order_status
+    FROM customers AS c
+    LEFT JOIN orders AS o ON c.id = o.customer_id
+        AND o.ordered_at = (
+            SELECT MAX(o2.ordered_at)
+            FROM orders AS o2
+            WHERE o2.customer_id = c.id
+        )
+    ORDER BY c.name
+    LIMIT 15;
+    ```
+
+### Exercise 5
+Count how many customers have **never written a review**. Return a single value named `no_review_customers`.
+
+??? success "Answer"
+    ```sql
+    SELECT COUNT(*) AS no_review_customers
+    FROM customers AS c
+    LEFT JOIN reviews AS r ON c.id = r.customer_id
+    WHERE r.id IS NULL;
+    ```
+
+### Exercise 6
+For every category, show the category name and the number of products in it (`product_count`). **Include categories with zero products.** Sort by `product_count` descending, then category name ascending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        cat.name        AS category_name,
+        COUNT(p.id)     AS product_count
+    FROM categories AS cat
+    LEFT JOIN products AS p ON cat.id = p.category_id
+    GROUP BY cat.id, cat.name
+    ORDER BY product_count DESC, category_name ASC;
+    ```
+
+### Exercise 7
+For every order, show the order number, total amount, payment method (`payments.method`), and shipping carrier (`shipping.carrier`). Include orders that have no payment or shipping records, displaying `'Unpaid'` and `'Not shipped'` respectively via `COALESCE`. Sort by total amount descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        o.order_number,
+        o.total_amount,
+        COALESCE(p.method, 'Unpaid')      AS payment_method,
+        COALESCE(s.carrier, 'Not shipped') AS carrier
+    FROM orders AS o
+    LEFT JOIN payments AS p ON o.id = p.order_id
+    LEFT JOIN shipping AS s ON o.id = s.order_id
+    ORDER BY o.total_amount DESC
+    LIMIT 10;
+    ```
+
+### Exercise 8
+For each supplier, find the number of active products they supply (`product_count`) and total stock (`total_stock`). **Include suppliers with no products**, showing 0 for those values. Sort by `total_stock` descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        sup.company_name,
+        COUNT(p.id)                     AS product_count,
+        COALESCE(SUM(p.stock_qty), 0)   AS total_stock
+    FROM suppliers AS sup
+    LEFT JOIN products AS p ON sup.id = p.supplier_id
+        AND p.is_active = 1
+    GROUP BY sup.id, sup.company_name
+    ORDER BY total_stock DESC;
     ```
 
 ---

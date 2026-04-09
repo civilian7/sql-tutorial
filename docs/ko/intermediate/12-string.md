@@ -53,7 +53,7 @@ LIMIT 5;
 **결과:**
 
 | name | name_length |
-|------|-------------|
+|------|------------:|
 | Razer BlackWidow V3 Pro Wireless TKL Gaming Keyboard | 52 |
 | ASUS ProArt PA329CRV 32" 4K HDR Professional Monitor | 51 |
 | ... | |
@@ -225,7 +225,7 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
 ```
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -268,6 +268,179 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
     ORDER BY sequence_no DESC
     LIMIT 10;
     ```
+
+### 연습 3
+고객 이름의 길이를 구하고, 이름이 가장 긴 상위 5명을 반환하세요. `name`, `name_length`를 `name_length` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        LENGTH(name) AS name_length
+    FROM customers
+    ORDER BY name_length DESC
+    LIMIT 5;
+    ```
+
+### 연습 4
+주문 상태(`status`)의 밑줄(`_`)을 공백으로 바꾸고 대문자로 변환하세요. 고유한 상태값만 표시합니다. `status`(원본)와 `display_status`를 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT DISTINCT
+        status,
+        UPPER(REPLACE(status, '_', ' ')) AS display_status
+    FROM orders;
+    ```
+
+### 연습 5
+상품 이름에 `'Gaming'`이라는 단어가 포함된 상품의 `name`, `price`를 가격 내림차순으로 조회하세요. LIKE 패턴을 사용하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, price
+    FROM products
+    WHERE name LIKE '%Gaming%'
+    ORDER BY price DESC;
+    ```
+
+### 연습 6
+고객 이메일에서 `@` 앞의 사용자 ID 부분만 추출하세요. `name`, `email`, `user_id`를 반환하고 10행으로 제한하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            email,
+            SUBSTR(email, 1, INSTR(email, '@') - 1) AS user_id
+        FROM customers
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            email,
+            SUBSTRING(email, 1, LOCATE('@', email) - 1) AS user_id
+        FROM customers
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            email,
+            SUBSTRING(email FROM 1 FOR POSITION('@' IN email) - 1) AS user_id
+        FROM customers
+        LIMIT 10;
+        ```
+
+### 연습 7
+상품 이름의 처음 20자만 잘라서 말줄임표(`...`)를 붙인 `short_name`을 만드세요. 이름이 20자 이하이면 원래 이름을 그대로 표시합니다. `name`, `short_name`을 반환하고, 이름이 긴 순서대로 10행을 표시하세요.
+
+??? success "정답"
+    === "SQLite / PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            CASE
+                WHEN LENGTH(name) > 20
+                    THEN SUBSTR(name, 1, 20) || '...'
+                ELSE name
+            END AS short_name
+        FROM products
+        ORDER BY LENGTH(name) DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            CASE
+                WHEN LENGTH(name) > 20
+                    THEN CONCAT(SUBSTRING(name, 1, 20), '...')
+                ELSE name
+            END AS short_name
+        FROM products
+        ORDER BY LENGTH(name) DESC
+        LIMIT 10;
+        ```
+
+### 연습 8
+고객의 등급(`grade`)을 소문자로, 이름(`name`)을 대문자로 변환하여 `"GRADE: grade - NAME"` 형식의 문자열을 만드세요. 예: `"VIP: vip - 김민수"` → `"VIP: vip - 김민수"`. `id`, `display_text`를 반환하고, 활성 고객 10행으로 제한하세요.
+
+??? success "정답"
+    === "SQLite / PostgreSQL"
+        ```sql
+        SELECT
+            id,
+            UPPER(grade) || ': ' || LOWER(grade) || ' - ' || name AS display_text
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            id,
+            CONCAT(UPPER(grade), ': ', LOWER(grade), ' - ', name) AS display_text
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
+
+### 연습 9
+주문 번호(`order_number`)가 `'ORD-2024'`로 시작하는 주문 중, 주문 번호의 중간 날짜 부분(5~12번째 문자, 예: `20240315`)을 추출하세요. `order_number`, `date_part`, `total_amount`를 반환하고 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        order_number,
+        SUBSTR(order_number, 5, 8) AS date_part,
+        total_amount
+    FROM orders
+    WHERE order_number LIKE 'ORD-2024%'
+    LIMIT 10;
+    ```
+
+### 연습 10
+상품 이름에서 `@` 기호의 위치를 찾아보세요 (존재하지 않으면 0). 이름에 공백이 포함된 상품만 대상으로 `name`, `space_pos`(첫 번째 공백 위치)를 반환하고, 10행으로 제한하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            INSTR(name, ' ') AS space_pos
+        FROM products
+        WHERE INSTR(name, ' ') > 0
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            LOCATE(' ', name) AS space_pos
+        FROM products
+        WHERE LOCATE(' ', name) > 0
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            POSITION(' ' IN name) AS space_pos
+        FROM products
+        WHERE POSITION(' ' IN name) > 0
+        LIMIT 10;
+        ```
 
 ---
 다음: [13강: UNION](13-union.md)

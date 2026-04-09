@@ -5,9 +5,6 @@
 ```mermaid
 flowchart LR
     T["🗄️ All Rows\n(5,230)"] --> W["WHERE\ncondition"] --> R["📋 Filtered\n(127 rows)"]
-    style T fill:#e3f2fd,stroke:#1565c0
-    style W fill:#fff3e0,stroke:#e65100
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > **개념:** WHERE는 조건에 맞는 행만 걸러냅니다. 전체 5,230명 중 VIP 127명만 추출하는 것과 같습니다.
@@ -31,7 +28,7 @@ WHERE price > 500;
 **결과:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Dell XPS 15 Laptop | 1299.99 |
 | ASUS ROG Gaming Desktop | 1899.00 |
 | ... | |
@@ -59,7 +56,7 @@ WHERE is_active = 1
 **결과:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Samsung 27" Monitor | 449.99 |
 | Corsair 16GB DDR5 RAM | 129.99 |
 | WD Black 1TB SSD | 189.99 |
@@ -78,7 +75,7 @@ WHERE grade = 'VIP'
 
 ## IN
 
-`IN`은 같은 컬럼에 대한 여러 `OR` 조건을 간결하게 표현합니다.
+`IN`은 같은 칼럼에 대한 여러 `OR` 조건을 간결하게 표현합니다.
 
 ```sql
 -- GOLD 또는 VIP 고객 조회 (IN 사용이 더 간결)
@@ -117,7 +114,7 @@ WHERE price BETWEEN 50 AND 200;
 **결과:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Logitech MX Master 3 | 99.99 |
 | Corsair 16GB DDR5 RAM | 129.99 |
 | WD Black 1TB SSD | 189.99 |
@@ -144,7 +141,7 @@ WHERE name LIKE '%Gaming%';
 **결과:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | ASUS ROG Gaming Desktop | 1899.00 |
 | Razer BlackWidow Gaming Keyboard | 149.99 |
 | SteelSeries Gaming Headset | 79.99 |
@@ -184,7 +181,7 @@ WHERE notes IS NOT NULL;
 ```
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -220,6 +217,79 @@ WHERE notes IS NOT NULL;
     FROM customers
     WHERE gender IS NULL
       AND last_login_at IS NULL;
+    ```
+
+### 문제 4
+가격이 1,000 이상인 상품의 `name`과 `price`를 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, price
+    FROM products
+    WHERE price >= 1000;
+    ```
+
+### 문제 5
+재고가 0이 아닌 상품(`stock_qty <> 0`)의 `name`과 `stock_qty`를 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, stock_qty
+    FROM products
+    WHERE stock_qty <> 0;
+    ```
+
+### 문제 6
+`customers` 테이블에서 포인트 잔액이 500에서 2000 사이인 GOLD 등급 고객의 `name`과 `point_balance`를 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, point_balance
+    FROM customers
+    WHERE grade = 'GOLD'
+      AND point_balance BETWEEN 500 AND 2000;
+    ```
+
+### 문제 7
+주문 상태가 `'pending'` 또는 `'processing'`인 주문의 `order_number`와 `status`를 조회하세요. `IN` 연산자를 사용하세요.
+
+??? success "정답"
+    ```sql
+    SELECT order_number, status
+    FROM orders
+    WHERE status IN ('pending', 'processing');
+    ```
+
+### 문제 8
+상품명이 "Keyboard"로 끝나는 상품의 `name`과 `price`를 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, price
+    FROM products
+    WHERE name LIKE '%Keyboard';
+    ```
+
+### 문제 9
+`staff` 테이블에서 `department`가 `'Sales'`가 아닌 활성 직원(`is_active = 1`)의 `name`과 `department`를 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, department
+    FROM staff
+    WHERE is_active = 1
+      AND department <> 'Sales';
+    ```
+
+### 문제 10
+`customers` 테이블에서 VIP 등급이면서 비활성(`is_active = 0`)이거나, 포인트 잔액이 5000 이상인 고객의 `name`, `grade`, `point_balance`, `is_active`를 조회하세요. 괄호를 사용하여 조건 우선순위를 명확히 하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, grade, point_balance, is_active
+    FROM customers
+    WHERE (grade = 'VIP' AND is_active = 0)
+       OR point_balance >= 5000;
     ```
 
 ---

@@ -5,8 +5,9 @@ set LANG=%~1
 if "%LANG%"=="" set LANG=all
 
 if "%LANG%"=="all" (
-    echo Building both languages...
     cd /d "%~dp0docs"
+
+    echo Building...
     mkdocs build -f mkdocs-ko.yml -q
     mkdocs build -f mkdocs-en.yml -q
 
@@ -14,6 +15,10 @@ if "%LANG%"=="all" (
     echo Serving at http://localhost:8001
     echo   Korean:  http://localhost:8001/ko/
     echo   English: http://localhost:8001/en/
+    echo.
+    echo Switch languages using the toolbar button.
+    echo Changes require manual rebuild: serve.bat
+    echo For live reload, use: serve.bat ko  or  serve.bat en
     echo.
 
     cd /d "%~dp0output\docs"

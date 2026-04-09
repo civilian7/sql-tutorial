@@ -136,7 +136,7 @@ problems:
       type: result_match
       ordered: false
     hints:
-      - ko: "`WHERE` 절에서 RIGHT 테이블의 컬럼을 필터링하면 NULL 행이 제거되어 LEFT JOIN이 INNER JOIN처럼 됩니다. 조건을 `ON` 절로 옮겨보세요."
+      - ko: "`WHERE` 절에서 RIGHT 테이블의 칼럼을 필터링하면 NULL 행이 제거되어 LEFT JOIN이 INNER JOIN처럼 됩니다. 조건을 `ON` 절로 옮겨보세요."
         en: "Filtering on the RIGHT table's column in `WHERE` removes NULL rows, making a LEFT JOIN behave like an INNER JOIN. Try moving the condition to the `ON` clause."
     max_score: 10
     tags: [LEFT JOIN, products, reviews]
@@ -172,7 +172,7 @@ problems:
       type: result_match
       ordered: false
     hints:
-      - ko: "집계 함수(`COUNT`)를 쓰면서 비집계 컬럼(`cat.name`)이 있으면 반드시 필요한 절이 있습니다."
+      - ko: "집계 함수(`COUNT`)를 쓰면서 비집계 칼럼(`cat.name`)이 있으면 반드시 필요한 절이 있습니다."
         en: "When using an aggregate function (`COUNT`) alongside a non-aggregate column (`cat.name`), a certain clause is required."
     max_score: 10
     tags: [GROUP BY, COUNT, INNER JOIN, products, categories]
@@ -551,7 +551,7 @@ problems:
       type: result_match
       ordered: true
     hints:
-      - ko: "`UNION`의 각 SELECT는 컬럼 수와 타입이 호환되어야 합니다. 의미가 다른 컬럼을 통일된 구조로 맞춰보세요."
+      - ko: "`UNION`의 각 SELECT는 칼럼 수와 타입이 호환되어야 합니다. 의미가 다른 칼럼을 통일된 구조로 맞춰보세요."
         en: "Each SELECT in a `UNION` must have the same number of columns with compatible types. Align the columns to a unified structure with matching semantics."
     max_score: 10
     tags: [UNION, orders, complaints]

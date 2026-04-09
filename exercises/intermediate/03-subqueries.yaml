@@ -370,7 +370,7 @@ problems:
       type: result_match
       ordered: true
     hints:
-      - ko: "`UNION ALL`로 두 SELECT를 합치되, 컬럼 수와 의미를 맞춰야 함. 이벤트 유형 구분 컬럼 추가."
+      - ko: "`UNION ALL`로 두 SELECT를 합치되, 칼럼 수와 의미를 맞춰야 함. 이벤트 유형 구분 칼럼 추가."
         en: "Combine two SELECTs with `UNION ALL`, matching the number and meaning of columns. Add an event type column to distinguish them."
     max_score: 10
     tags: [UNION, CAST, ORDER BY, orders, returns]

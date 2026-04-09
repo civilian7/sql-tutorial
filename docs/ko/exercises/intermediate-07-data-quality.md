@@ -45,13 +45,13 @@
 ---
 
 
-### 3. 각 테이블의 NULL이 많은 컬럼을 찾으세요.
+### 3. 각 테이블의 NULL이 많은 칼럼을 찾으세요.
 
 
-각 테이블의 NULL이 많은 컬럼을 찾으세요.
+각 테이블의 NULL이 많은 칼럼을 찾으세요.
 
 
-**힌트 1:** `SUM(CASE WHEN 컬럼 IS NULL THEN 1 ELSE 0 END) / COUNT(*)`로 각 컬럼의 NULL 비율을 계산.
+**힌트 1:** `SUM(CASE WHEN 칼럼 IS NULL THEN 1 ELSE 0 END) / COUNT(*)`로 각 칼럼의 NULL 비율을 계산.
 
 
 ??? success "정답"
@@ -102,7 +102,7 @@
 배송완료일이 출고일보다 빠른 비정상 레코드를 찾으세요.
 
 
-**힌트 1:** `WHERE delivered_at < shipped_at`으로 날짜 역전을 탐지. 두 컬럼 모두 NOT NULL인 행만 대상.
+**힌트 1:** `WHERE delivered_at < shipped_at`으로 날짜 역전을 탐지. 두 칼럼 모두 NOT NULL인 행만 대상.
 
 
 ??? success "정답"

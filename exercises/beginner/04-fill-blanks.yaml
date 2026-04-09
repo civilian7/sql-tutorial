@@ -44,7 +44,7 @@ problems:
       type: result_match
       ordered: true
     hints:
-      - ko: "빈칸에는 grade 컬럼과 'VIP' 값을 비교하는 등호 조건이 들어갑니다"
+      - ko: "빈칸에는 grade 칼럼과 'VIP' 값을 비교하는 등호 조건이 들어갑니다"
         en: "The blank needs an equality condition comparing the grade column with the value 'VIP'"
     rubric:
       ko: "grade = 'VIP' 조건을 사용해야 함"
@@ -84,7 +84,7 @@ problems:
       type: result_match
       ordered: true
     hints:
-      - ko: "빈칸에는 정렬 기준 컬럼과 내림차순 키워드(DESC)가 들어갑니다"
+      - ko: "빈칸에는 정렬 기준 칼럼과 내림차순 키워드(DESC)가 들어갑니다"
         en: "The blank needs the sort column and the descending keyword (DESC)"
     rubric:
       ko: "price DESC를 사용해야 함"
@@ -241,7 +241,7 @@ problems:
       type: result_match
       ordered: false
     hints:
-      - ko: "LEFT JOIN 후 매칭되지 않은 행은 오른쪽 테이블 컬럼이 NULL. IS NULL로 확인"
+      - ko: "LEFT JOIN 후 매칭되지 않은 행은 오른쪽 테이블 칼럼이 NULL. IS NULL로 확인"
         en: "After a LEFT JOIN, unmatched rows have NULL in the right table's columns. Use IS NULL to check"
     rubric:
       ko: "o.id IS NULL을 사용해야 함"
@@ -373,7 +373,7 @@ problems:
       type: result_match
       ordered: false
     hints:
-      - ko: "COALESCE(컬럼, 기본값) 함수는 NULL일 때 대체값을 반환합니다"
+      - ko: "COALESCE(칼럼, 기본값) 함수는 NULL일 때 대체값을 반환합니다"
         en: "The COALESCE(column, default_value) function returns a substitute value when the column is NULL"
     rubric:
       ko: "COALESCE를 사용해야 함"

@@ -539,7 +539,7 @@
 
 ## 트리거 문법
 
-데이터 변경 시 자동으로 실행되는 트리거의 문법 차이입니다. 자세한 내용은 [레슨 20](advanced/20-triggers.md)을 참고하세요.
+데이터 변경 시 자동으로 실행되는 트리거의 문법 차이입니다. 자세한 내용은 [레슨 22](advanced/22-triggers.md)을 참고하세요.
 
 === "SQLite"
 
@@ -583,7 +583,7 @@
 이 튜토리얼의 쿼리를 다른 DB에서 실행할 때 확인할 항목:
 
 | # | 확인 사항 | SQLite 원본 | 변환 대상 |
-|---|-----------|-------------|-----------|
+|--:|-----------|-------------|-----------|
 | 1 | LIMIT/OFFSET | `LIMIT 10` | MSSQL/Oracle: `FETCH NEXT 10 ROWS ONLY` |
 | 2 | 날짜 추출 | `SUBSTR(ordered_at, 1, 7)` | MySQL: `DATE_FORMAT(ordered_at, '%Y-%m')` |
 | 3 | 경과 일수 | `JULIANDAY(a) - JULIANDAY(b)` | MySQL: `DATEDIFF(a, b)` |

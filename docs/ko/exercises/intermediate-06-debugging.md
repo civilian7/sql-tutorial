@@ -85,7 +85,7 @@ WHERE r.rating >= 3;
 ```
 
 
-**힌트 1:** `WHERE` 절에서 RIGHT 테이블의 컬럼을 필터링하면 NULL 행이 제거되어 LEFT JOIN이 INNER JOIN처럼 됩니다. 조건을 `ON` 절로 옮겨보세요.
+**힌트 1:** `WHERE` 절에서 RIGHT 테이블의 칼럼을 필터링하면 NULL 행이 제거되어 LEFT JOIN이 INNER JOIN처럼 됩니다. 조건을 `ON` 절로 옮겨보세요.
 
 
 ??? success "정답"
@@ -112,7 +112,7 @@ INNER JOIN categories AS cat ON p.category_id = cat.id;
 ```
 
 
-**힌트 1:** 집계 함수(`COUNT`)를 쓰면서 비집계 컬럼(`cat.name`)이 있으면 반드시 필요한 절이 있습니다.
+**힌트 1:** 집계 함수(`COUNT`)를 쓰면서 비집계 칼럼(`cat.name`)이 있으면 반드시 필요한 절이 있습니다.
 
 
 ??? success "정답"
@@ -400,7 +400,7 @@ SELECT title, category, created_at FROM complaints;
 ```
 
 
-**힌트 1:** `UNION`의 각 SELECT는 컬럼 수와 타입이 호환되어야 합니다. 의미가 다른 컬럼을 통일된 구조로 맞춰보세요.
+**힌트 1:** `UNION`의 각 SELECT는 칼럼 수와 타입이 호환되어야 합니다. 의미가 다른 칼럼을 통일된 구조로 맞춰보세요.
 
 
 ??? success "정답"

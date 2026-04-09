@@ -37,7 +37,7 @@ problems:
         EXPLAIN ANALYZE
         SELECT * FROM orders WHERE total_amount > 1000000;
     hints:
-      - ko: "total_amount 컬럼에 인덱스가 있는지 확인하세요"
+      - ko: "total_amount 칼럼에 인덱스가 있는지 확인하세요"
         en: "Check if there's an index on the total_amount column"
     max_score: 10
     validation:
@@ -99,7 +99,7 @@ problems:
         EXPLAIN ANALYZE
         SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
     hints:
-      - ko: "복합 인덱스는 첫 번째 컬럼이 조건에 있어야 사용됩니다"
+      - ko: "복합 인덱스는 첫 번째 칼럼이 조건에 있어야 사용됩니다"
         en: "A composite index requires the first column in the WHERE clause"
     max_score: 10
     validation:

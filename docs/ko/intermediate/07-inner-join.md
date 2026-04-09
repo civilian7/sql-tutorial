@@ -1,6 +1,6 @@
 # 7강: INNER JOIN
 
-`JOIN`은 관련 컬럼을 기준으로 두 개 이상의 테이블 행을 합칩니다. `INNER JOIN`은 **양쪽** 테이블에서 모두 일치하는 행만 반환합니다 — 일치하지 않는 행은 결과에서 제외됩니다.
+`JOIN`은 관련 칼럼을 기준으로 두 개 이상의 테이블 행을 합칩니다. `INNER JOIN`은 **양쪽** 테이블에서 모두 일치하는 행만 반환합니다 — 일치하지 않는 행은 결과에서 제외됩니다.
 
 ```mermaid
 flowchart LR
@@ -25,7 +25,6 @@ flowchart LR
     O1 --> R1
     O2 --> R2
     O3 --> R3
-    style C3 fill:#ffcdd2,stroke:#c62828
 ```
 
 > INNER JOIN은 양쪽 테이블에 모두 매칭되는 행만 반환합니다. Park(ID:3)은 주문이 없어 결과에서 제외됩니다.
@@ -50,7 +49,7 @@ LIMIT 5;
 **결과:**
 
 | order_number | customer_name | status | total_amount |
-|--------------|---------------|--------|--------------|
+|--------------|---------------|--------|-------------:|
 | ORD-20241231-09842 | 김민수 | confirmed | 2349.00 |
 | ORD-20241231-09841 | 이지은 | delivered | 149.99 |
 | ORD-20241231-09840 | 박서준 | shipped | 89.99 |
@@ -95,7 +94,7 @@ LIMIT 6;
 **결과:**
 
 | item_id | order_number | product_name | category | quantity | unit_price |
-|---------|--------------|--------------|----------|----------|------------|
+|--------:|--------------|--------------|----------|---------:|-----------:|
 | 74513 | ORD-20241231-09842 | Dell XPS 15 Laptop | Laptops | 1 | 1299.99 |
 | 74512 | ORD-20241231-09842 | Logitech MX Master 3 | Mice | 2 | 99.99 |
 | 74511 | ORD-20241231-09841 | Samsung 27" Monitor | Monitors | 1 | 149.99 |
@@ -104,7 +103,7 @@ LIMIT 6;
 
 ## 조인 후 집계
 
-조인을 먼저 한 다음 집계합니다. 조인된 테이블에서 그룹화에 필요한 컬럼을 활용할 수 있습니다.
+조인을 먼저 한 다음 집계합니다. 조인된 테이블에서 그룹화에 필요한 칼럼을 활용할 수 있습니다.
 
 ```sql
 -- 상품 카테고리별 총 매출
@@ -126,7 +125,7 @@ LIMIT 8;
 **결과:**
 
 | category | order_count | units_sold | gross_revenue |
-|----------|-------------|------------|---------------|
+|----------|------------:|-----------:|--------------:|
 | Laptops | 6241 | 6312 | 7849201.88 |
 | Desktops | 2841 | 2958 | 4293847.00 |
 | Monitors | 5103 | 5587 | 2341920.45 |
@@ -152,7 +151,7 @@ ORDER BY o.total_amount DESC;
 ```
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -205,6 +204,90 @@ ORDER BY o.total_amount DESC;
     GROUP BY c.id, c.name, c.grade
     ORDER BY total_spent DESC
     LIMIT 5;
+    ```
+
+### 연습 4
+주문번호(`order_number`), 고객명(`customer_name`), 주문 상태(`status`)를 조회하되, 주문 상태가 `'shipped'`인 것만 필터링하세요. 주문일(`ordered_at`) 내림차순으로 정렬하고 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        o.order_number,
+        c.name   AS customer_name,
+        o.status
+    FROM orders AS o
+    INNER JOIN customers AS c ON o.customer_id = c.id
+    WHERE o.status = 'shipped'
+    ORDER BY o.ordered_at DESC
+    LIMIT 10;
+    ```
+
+### 연습 5
+배송(`shipping`) 테이블과 주문(`orders`) 테이블을 조인하여, 배송 완료(`delivered`)된 주문의 `order_number`, `carrier`, `tracking_number`, `delivered_at`을 조회하세요. `delivered_at` 내림차순으로 정렬하고 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        o.order_number,
+        s.carrier,
+        s.tracking_number,
+        s.delivered_at
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.status = 'delivered'
+    ORDER BY s.delivered_at DESC
+    LIMIT 10;
+    ```
+
+### 연습 6
+주문 항목(`order_items`)에서 상품명(`products.name`), 공급업체명(`suppliers.company_name`), 수량(`quantity`), 단가(`unit_price`)를 조회하세요. 3개 테이블을 조인하고, 단가 내림차순으로 정렬하여 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        p.name          AS product_name,
+        sup.company_name AS supplier_name,
+        oi.quantity,
+        oi.unit_price
+    FROM order_items AS oi
+    INNER JOIN products  AS p   ON oi.product_id  = p.id
+    INNER JOIN suppliers AS sup ON p.supplier_id   = sup.id
+    ORDER BY oi.unit_price DESC
+    LIMIT 10;
+    ```
+
+### 연습 7
+공급업체별로 해당 업체의 상품이 포함된 총 주문 건수(`order_count`)와 총 판매 수량(`total_qty`)을 구하세요. `company_name`, `order_count`, `total_qty`를 반환하고, `total_qty` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        sup.company_name,
+        COUNT(DISTINCT oi.order_id) AS order_count,
+        SUM(oi.quantity)            AS total_qty
+    FROM order_items AS oi
+    INNER JOIN products  AS p   ON oi.product_id = p.id
+    INNER JOIN suppliers AS sup ON p.supplier_id  = sup.id
+    GROUP BY sup.id, sup.company_name
+    ORDER BY total_qty DESC;
+    ```
+
+### 연습 8
+담당 직원(`staff`)별로 처리한 주문 수(`order_count`)와 총 매출(`total_revenue`)을 구하세요. 취소·반품 주문은 제외하고, `staff_name`, `department`, `order_count`, `total_revenue`를 반환하세요. `total_revenue` 내림차순으로 정렬하고 상위 10명만 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        st.name        AS staff_name,
+        st.department,
+        COUNT(o.id)         AS order_count,
+        SUM(o.total_amount) AS total_revenue
+    FROM orders AS o
+    INNER JOIN staff AS st ON o.staff_id = st.id
+    WHERE o.status NOT IN ('cancelled', 'returned', 'return_requested')
+    GROUP BY st.id, st.name, st.department
+    ORDER BY total_revenue DESC
+    LIMIT 10;
     ```
 
 ---

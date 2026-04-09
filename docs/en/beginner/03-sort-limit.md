@@ -5,11 +5,6 @@ SQL rows have no guaranteed order unless you ask for one. `ORDER BY` lets you so
 ```mermaid
 flowchart LR
     T["Unsorted\nRows"] --> O["ORDER BY\nprice DESC"] --> S["Sorted\nRows"] --> L["LIMIT 5"] --> R["Top 5\nRows"]
-    style T fill:#e3f2fd,stroke:#1565c0
-    style O fill:#fff3e0,stroke:#e65100
-    style S fill:#fff9c4,stroke:#f9a825
-    style L fill:#fce4ec,stroke:#c62828
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > **Concept:** ORDER BY sorts the rows, then LIMIT takes the top N.
@@ -29,7 +24,7 @@ ORDER BY price ASC;
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | USB-C Cable 2m | 9.99 |
 | Microfiber Cleaning Kit | 12.99 |
 | Screen Protector 15" | 14.99 |
@@ -46,7 +41,7 @@ ORDER BY price DESC;
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | ASUS ProArt 32" 4K Monitor | 2199.00 |
 | Dell XPS 17 Laptop | 1999.00 |
 | ASUS ROG Gaming Desktop | 1899.00 |
@@ -67,7 +62,7 @@ ORDER BY grade ASC, name ASC;
 **Result:**
 
 | name | grade | point_balance |
-|------|-------|---------------|
+|------|-------|--------------:|
 | Aaron Brooks | BRONZE | 120 |
 | Alice Ward | BRONZE | 450 |
 | Amanda Lee | BRONZE | 80 |
@@ -84,7 +79,7 @@ ORDER BY ordered_at DESC, total_amount DESC;
 **Result:**
 
 | order_number | ordered_at | total_amount |
-|--------------|------------|--------------|
+|--------------|------------|-------------:|
 | ORD-20241231-09842 | 2024-12-31 23:58:01 | 2349.00 |
 | ORD-20241231-09841 | 2024-12-31 23:41:17 | 149.99 |
 | ORD-20241231-09840 | 2024-12-31 22:59:44 | 89.99 |
@@ -106,7 +101,7 @@ LIMIT 5;
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | ASUS ProArt 32" 4K Monitor | 2199.00 |
 | Dell XPS 17 Laptop | 1999.00 |
 | ASUS ROG Gaming Desktop | 1899.00 |
@@ -143,7 +138,7 @@ LIMIT 10 OFFSET 20;
 **Page 1 Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | ASUS ProArt Studiobook 16 | 2099.00 |
 | ASUS ROG Gaming Desktop | 1899.00 |
 | ASUS ROG Swift 27" Monitor | 799.00 |
@@ -175,7 +170,7 @@ LIMIT 5;
 | ... | |
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -211,6 +206,97 @@ Implement page 3 of a product catalog (10 items per page), sorted alphabetically
     WHERE is_active = 1
     ORDER BY name ASC
     LIMIT 10 OFFSET 20;
+    ```
+
+### Exercise 4
+Find the 5 customers with the highest point balance. Return `name`, `grade`, and `point_balance`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, grade, point_balance
+    FROM customers
+    ORDER BY point_balance DESC
+    LIMIT 5;
+    ```
+
+### Exercise 5
+List `name` and `price` from `products`, sorted by price ascending. When prices are equal, sort alphabetically by name.
+
+??? success "Answer"
+    ```sql
+    SELECT name, price
+    FROM products
+    ORDER BY price ASC, name ASC;
+    ```
+
+### Exercise 6
+Select `name`, `price`, and `cost` from `products`, sorted by margin (`price - cost`) in descending order. Return only the top 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT name, price, cost
+    FROM products
+    ORDER BY price - cost DESC
+    LIMIT 10;
+    ```
+
+### Exercise 7
+From `reviews`, select `product_id`, `rating`, and `created_at`. Sort by most recent first and return the 2nd page (5 items per page, i.e., rows 6 through 10).
+
+??? success "Answer"
+    ```sql
+    SELECT product_id, rating, created_at
+    FROM reviews
+    ORDER BY created_at DESC
+    LIMIT 5 OFFSET 5;
+    ```
+
+### Exercise 8
+List `name`, `department`, and `hired_at` from the `staff` table. Sort by department alphabetically, then within each department by hire date ascending (longest-tenured first).
+
+??? success "Answer"
+    ```sql
+    SELECT name, department, hired_at
+    FROM staff
+    ORDER BY department ASC, hired_at ASC;
+    ```
+
+### Exercise 9
+Select `name` and `birth_date` from `customers`, sorted so that customers with a NULL birth date appear last. Non-NULL rows should be sorted by birth date ascending.
+
+=== "SQLite"
+    ??? success "Answer"
+        ```sql
+        SELECT name, birth_date
+        FROM customers
+        ORDER BY birth_date IS NULL ASC, birth_date ASC;
+        ```
+
+=== "MySQL"
+    ??? success "Answer"
+        ```sql
+        SELECT name, birth_date
+        FROM customers
+        ORDER BY birth_date IS NULL ASC, birth_date ASC;
+        ```
+
+=== "PostgreSQL"
+    ??? success "Answer"
+        ```sql
+        SELECT name, birth_date
+        FROM customers
+        ORDER BY birth_date ASC NULLS LAST;
+        ```
+
+### Exercise 10
+Select `order_number`, `total_amount`, and `ordered_at` from `orders`. Sort by amount descending, breaking ties by most recent order first. Return only the top 15 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT order_number, total_amount, ordered_at
+    FROM orders
+    ORDER BY total_amount DESC, ordered_at DESC
+    LIMIT 15;
     ```
 
 ---

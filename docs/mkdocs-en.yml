@@ -63,18 +63,20 @@ nav:
     - "12. String Functions": intermediate/12-string.md
     - "13. UNION & Set Operations": intermediate/13-union.md
     - "14. INSERT, UPDATE, DELETE": intermediate/14-dml.md
-    - "21. SELF JOIN & CROSS JOIN": intermediate/21-self-cross-join.md
+    - "15. DDL": intermediate/15-ddl.md
+    - "16. SELF JOIN & CROSS JOIN": intermediate/16-self-cross-join.md
   - Advanced:
-    - "15. Window Functions": advanced/15-window.md
-    - "16. CTE & Recursive CTE": advanced/16-cte.md
-    - "17. EXISTS & Correlated Subqueries": advanced/17-exists.md
-    - "18. Views": advanced/18-views.md
-    - "19. Indexes & Performance": advanced/19-indexes.md
-    - "20. Triggers": advanced/20-triggers.md
+    - "17. Window Functions": advanced/17-window.md
+    - "18. CTE & Recursive CTE": advanced/18-cte.md
+    - "19. EXISTS & Correlated Subqueries": advanced/19-exists.md
+    - "20. Views": advanced/20-views.md
+    - "21. Indexes & Performance": advanced/21-indexes.md
+    - "22. Triggers": advanced/22-triggers.md
   - Reference:
     - "Generator Reference": generator-guide.md
     - "SQL Across Databases": dialect-comparison.md
   - Exercises:
+    - exercises/index.md
     - Beginner:
       - "Product Exploration": exercises/beginner-01-products.md
       - "Customer Analysis": exercises/beginner-02-customers.md

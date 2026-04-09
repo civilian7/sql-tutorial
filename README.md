@@ -4,7 +4,7 @@
 
 [Changelog](#changelog) | [GitHub](https://github.com/civilian7/sql-tutorial)
 
-A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (21 lessons, 270 exercises).
+A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (22 lessons, 208 exercises).
 
 > **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **687,000 rows of realistic data** + full tutorial + exercises you can actually execute.
 
@@ -23,8 +23,8 @@ Open `output/ecommerce.db` in any SQL tool and start learning.
 | Component | Details |
 |-----------|---------|
 | **Database Generator** | 30 tables, 18 views, 5 triggers, 61 indexes |
-| **Tutorial** | 21 lessons (beginner → intermediate → advanced), bilingual (ko/en) |
-| **Exercises** | 270 problems (level 1~5), with answers and hints |
+| **Tutorial** | 22 lessons (beginner → intermediate → advanced), bilingual (ko/en) |
+| **Exercises** | 208 in-lesson review problems + separate exercise sets, with answers |
 | **Stored Procedures** | 25 procedures + 5 functions (MySQL & PostgreSQL) |
 | **3 Databases** | SQLite (default), MySQL, PostgreSQL |
 | **Dirty Data Mode** | `--dirty-data` for data cleaning practice |
@@ -61,13 +61,13 @@ python generate.py [OPTIONS]
 
 ## Tutorial
 
-21 lessons with visual diagrams, DB-specific SQL tabs, and review exercises.
+22 lessons with visual diagrams, DB-specific SQL tabs, and review exercises.
 
 | Level | Lessons | Topics |
 |-------|---------|--------|
-| Beginner | 01-06 | SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL |
-| Intermediate | 07-14, 21 | JOINs, Subqueries, CASE, Date/String, DML, Self/Cross JOIN |
-| Advanced | 15-20 | Window Functions, CTE, EXISTS, Views, Indexes, Triggers |
+| Beginner | 01–06 | SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL |
+| Intermediate | 07–16 | JOINs, Subqueries, CASE, Date/String, DML, DDL, Self/Cross JOIN |
+| Advanced | 17–22 | Window Functions, CTE, EXISTS, Views, Indexes, Triggers |
 
 ## Exercises (270 problems)
 
@@ -152,14 +152,37 @@ PostgreSQL additionally includes: JSONB, custom ENUM types, materialized views.
 | `config.yaml` | Core settings (dates, scale, growth, rates) |
 | `config_detailed.yaml` | 120+ tunable parameters (all have defaults) |
 
-## Viewing the Tutorial
+## Viewing the Tutorial (MkDocs)
+
+The tutorial is built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/). Install prerequisites first:
 
 ```bash
-# Both languages (http://localhost:8001)
-serve.bat
+pip install -r requirements.txt    # includes mkdocs + mkdocs-material
+```
 
-# Korean:  http://localhost:8001/ko/
-# English: http://localhost:8001/en/
+### Both languages (static)
+
+```bash
+serve.bat
+# http://localhost:8001/ko/  (Korean)
+# http://localhost:8001/en/  (English)
+```
+
+Use the **language switcher** in the toolbar to switch between Korean and English. Changes require re-running `serve.bat`.
+
+### Single language with live reload
+
+```bash
+serve.bat ko     # Korean at http://localhost:8001 (auto-reload on file change)
+serve.bat en     # English at http://localhost:8001
+```
+
+### Static build only
+
+```bash
+cd docs
+mkdocs build -f mkdocs-ko.yml     # → output/docs/ko/
+mkdocs build -f mkdocs-en.yml     # → output/docs/en/
 ```
 
 ## Project Structure
@@ -197,7 +220,7 @@ Free for personal learning and non-commercial education. For commercial use: civ
 
 **Data Realism**: Product bundles, gender/age preferences, point rewards, promotions, category return rates, product popularity decay, supplier deactivation
 
-**Tutorial**: 21 lessons with Mermaid diagrams, DB-specific SQL tabs, 270 exercises (level 1-5), exercise compiler (YAML → DB + mkdocs)
+**Tutorial**: 22 lessons with Mermaid diagrams, DB-specific SQL tabs, 208 in-lesson review exercises, exercise compiler (YAML → DB + mkdocs)
 
 **Features**: `--start-date`/`--end-date`, `--dirty-data`, `--apply` (direct DB), `config_detailed.yaml` (120+ params), MySQL/PostgreSQL exporters, bilingual content (ko/en)
 

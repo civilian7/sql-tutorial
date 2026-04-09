@@ -244,7 +244,7 @@ CS 직원별 2024년 월별 해결 건수를 피벗 테이블로 만드세요.
 12개월(열) x 직원(행) 형태입니다.
 
 
-**힌트 1:** - 12개 `SUM(CASE WHEN SUBSTR(...) = 'MM' AND status ... THEN 1 ELSE 0 END)` 컬럼
+**힌트 1:** - 12개 `SUM(CASE WHEN SUBSTR(...) = 'MM' AND status ... THEN 1 ELSE 0 END)` 칼럼
 - `LEFT JOIN staff`으로 미배정 포함
 
 

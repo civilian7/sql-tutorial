@@ -229,7 +229,7 @@ categories 테이블의 자기 참조 설계를 분석하세요.
 
 다음 시나리오에서 올바른 설계를 선택하고 그 이유를 SQL로 설명하세요.
 시나리오: 고객에게 여러 개의 전화번호를 저장하고 싶다.
-A) customers 테이블에 phone2, phone3 컬럼 추가
+A) customers 테이블에 phone2, phone3 칼럼 추가
 B) 별도의 customer_phones 테이블 생성
 
 

@@ -1,6 +1,6 @@
 # 8강: LEFT JOIN
 
-`LEFT JOIN`은 **왼쪽 테이블의 모든 행**을 반환하고, 오른쪽 테이블에서 일치하는 행이 있으면 함께 가져옵니다. 일치하는 행이 없으면 오른쪽 컬럼은 `NULL`로 채워집니다. 관련 레코드가 없는 행을 찾을 때 꼭 필요한 기법으로, 실무에서 매우 자주 쓰입니다.
+`LEFT JOIN`은 **왼쪽 테이블의 모든 행**을 반환하고, 오른쪽 테이블에서 일치하는 행이 있으면 함께 가져옵니다. 일치하는 행이 없으면 오른쪽 칼럼은 `NULL`로 채워집니다. 관련 레코드가 없는 행을 찾을 때 꼭 필요한 기법으로, 실무에서 매우 자주 쓰입니다.
 
 ```mermaid
 flowchart LR
@@ -23,7 +23,6 @@ flowchart LR
     C3 --> R3
     O1 --> R1
     O3 --> R2
-    style R3 fill:#fff9c4,stroke:#f9a825
 ```
 
 > LEFT JOIN은 왼쪽 테이블의 모든 행을 유지합니다. 오른쪽에 매칭이 없으면 NULL로 채워집니다.
@@ -46,7 +45,7 @@ LIMIT 8;
 **결과:**
 
 | product_name | price | rating | reviewed_at |
-|--------------|-------|--------|-------------|
+|--------------|------:|--------|-------------|
 | ASUS ProArt 32" 4K Monitor | 2199.00 | 5 | 2023-08-14 |
 | ASUS ProArt 32" 4K Monitor | 2199.00 | 4 | 2024-01-22 |
 | ASUS ROG Gaming Desktop | 1899.00 | 5 | 2022-11-03 |
@@ -75,7 +74,7 @@ ORDER BY p.name;
 **결과:**
 
 | id | name | price |
-|----|------|-------|
+|---:|------|------:|
 | 47 | ASUS TUF Gaming Laptop | 1099.00 |
 | 83 | Belkin USB-C Hub | 49.99 |
 | 116 | Corsair K60 RGB Keyboard | 89.99 |
@@ -98,7 +97,7 @@ LIMIT 10;
 **결과:**
 
 | id | name | email | created_at |
-|----|------|-------|------------|
+|---:|------|-------|------------|
 | 5228 | 한소희 | h.sohi@testmail.kr | 2024-12-28 |
 | 5221 | 오준혁 | o.junhyuk@testmail.kr | 2024-12-19 |
 | ... | | | |
@@ -127,7 +126,7 @@ LIMIT 10;
 **결과:**
 
 | product_name | price | review_count | avg_rating |
-|--------------|-------|--------------|------------|
+|--------------|------:|-------------:|-----------:|
 | Dell XPS 15 Laptop | 1299.99 | 87 | 4.21 |
 | Logitech MX Master 3 | 99.99 | 74 | 4.56 |
 | Samsung 27" Monitor | 449.99 | 68 | 4.03 |
@@ -153,7 +152,7 @@ LIMIT 8;
 **결과:**
 
 | name | grade | order_count | lifetime_value |
-|------|-------|-------------|----------------|
+|------|-------|------------:|---------------:|
 | 김민수 | VIP | 48 | 64291.50 |
 | 이지은 | VIP | 41 | 52884.20 |
 | ... | | | |
@@ -177,7 +176,7 @@ LIMIT 5;
 ```
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -229,6 +228,84 @@ LIMIT 5;
     WHERE p.is_active = 1
       AND it.id IS NULL
     ORDER BY p.name;
+    ```
+
+### 연습 4
+모든 고객의 이름, 이메일, 가장 최근 주문 상태(`status`)를 조회하세요. 주문이 없는 고객의 상태는 `'주문 없음'`으로 표시하세요. `COALESCE`를 사용하고, 고객명 오름차순으로 정렬하여 15행까지 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.name,
+        c.email,
+        COALESCE(o.status, '주문 없음') AS last_order_status
+    FROM customers AS c
+    LEFT JOIN orders AS o ON c.id = o.customer_id
+        AND o.ordered_at = (
+            SELECT MAX(o2.ordered_at)
+            FROM orders AS o2
+            WHERE o2.customer_id = c.id
+        )
+    ORDER BY c.name
+    LIMIT 15;
+    ```
+
+### 연습 5
+**리뷰를 남기지 않은** 고객 수를 구하세요. `no_review_customers`라는 단일 값을 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT COUNT(*) AS no_review_customers
+    FROM customers AS c
+    LEFT JOIN reviews AS r ON c.id = r.customer_id
+    WHERE r.id IS NULL;
+    ```
+
+### 연습 6
+모든 카테고리에 대해 카테고리명과 해당 카테고리에 속한 상품 수(`product_count`)를 구하세요. **상품이 하나도 없는 카테고리도 포함**하여 0으로 표시하세요. `product_count` 내림차순, 같으면 카테고리명 오름차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        cat.name        AS category_name,
+        COUNT(p.id)     AS product_count
+    FROM categories AS cat
+    LEFT JOIN products AS p ON cat.id = p.category_id
+    GROUP BY cat.id, cat.name
+    ORDER BY product_count DESC, category_name ASC;
+    ```
+
+### 연습 7
+모든 주문에 대해 주문번호, 총액, 결제 수단(`payments.method`), 배송 운송사(`shipping.carrier`)를 보여주세요. 결제나 배송 정보가 없는 주문도 포함하고, 그 경우 `COALESCE`로 `'미결제'`, `'미배송'`으로 표시하세요. 주문 총액 내림차순으로 10행까지 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        o.order_number,
+        o.total_amount,
+        COALESCE(p.method, '미결제')   AS payment_method,
+        COALESCE(s.carrier, '미배송')  AS carrier
+    FROM orders AS o
+    LEFT JOIN payments AS p ON o.id = p.order_id
+    LEFT JOIN shipping AS s ON o.id = s.order_id
+    ORDER BY o.total_amount DESC
+    LIMIT 10;
+    ```
+
+### 연습 8
+공급업체(`suppliers`)별로 공급하는 활성 상품 수(`product_count`)와 총 재고(`total_stock`)를 구하세요. **상품이 없는 공급업체도 포함**하고, 해당 값은 0으로 표시하세요. `total_stock` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        sup.company_name,
+        COUNT(p.id)                     AS product_count,
+        COALESCE(SUM(p.stock_qty), 0)   AS total_stock
+    FROM suppliers AS sup
+    LEFT JOIN products AS p ON sup.id = p.supplier_id
+        AND p.is_active = 1
+    GROUP BY sup.id, sup.company_name
+    ORDER BY total_stock DESC;
     ```
 
 ---

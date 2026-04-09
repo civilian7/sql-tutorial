@@ -1,6 +1,6 @@
 # 13강: UNION
 
-`UNION`은 두 개 이상의 `SELECT` 문 결과를 위아래로 쌓아 합칩니다. 각 쿼리는 같은 수의 컬럼을 반환해야 하며, 대응하는 컬럼의 타입이 호환되어야 합니다. 컬럼 이름은 첫 번째 쿼리의 것을 사용합니다.
+`UNION`은 두 개 이상의 `SELECT` 문 결과를 위아래로 쌓아 합칩니다. 각 쿼리는 같은 수의 칼럼을 반환해야 하며, 대응하는 칼럼의 타입이 호환되어야 합니다. 칼럼 이름은 첫 번째 쿼리의 것을 사용합니다.
 
 ```mermaid
 flowchart LR
@@ -13,12 +13,9 @@ flowchart LR
     A --> U["UNION\n(remove duplicates)"]
     B --> U
     U --> R["Combined\nResult"]
-    style A fill:#e3f2fd,stroke:#1565c0
-    style B fill:#fff3e0,stroke:#e65100
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
-> UNION은 두 쿼리의 결과를 세로로 합칩니다. 컬럼 수와 타입이 일치해야 합니다.
+> UNION은 두 쿼리의 결과를 세로로 합칩니다. 칼럼 수와 타입이 일치해야 합니다.
 
 ## UNION vs. UNION ALL
 
@@ -46,33 +43,80 @@ ORDER BY name;
 
 UNION의 대표적인 활용 사례: 여러 소스 테이블에서 통합된 활동 피드나 보고서를 만들 때 사용합니다.
 
-```sql
--- 특정 고객의 주문과 리뷰를 합친 활동 로그
-SELECT
-    'order'   AS activity_type,
-    customer_id,
-    ordered_at AS activity_date,
-    CAST(total_amount AS TEXT) AS detail
-FROM orders
-WHERE customer_id = 42
+=== "SQLite"
+    ```sql
+    -- 특정 고객의 주문과 리뷰를 합친 활동 로그
+    SELECT
+        'order'   AS activity_type,
+        customer_id,
+        ordered_at AS activity_date,
+        CAST(total_amount AS TEXT) AS detail
+    FROM orders
+    WHERE customer_id = 42
 
-UNION ALL
+    UNION ALL
 
-SELECT
-    'review'  AS activity_type,
-    customer_id,
-    created_at AS activity_date,
-    '별점: ' || CAST(rating AS TEXT) AS detail
-FROM reviews
-WHERE customer_id = 42
+    SELECT
+        'review'  AS activity_type,
+        customer_id,
+        created_at AS activity_date,
+        '별점: ' || CAST(rating AS TEXT) AS detail
+    FROM reviews
+    WHERE customer_id = 42
 
-ORDER BY activity_date DESC;
-```
+    ORDER BY activity_date DESC;
+    ```
+
+=== "MySQL"
+    ```sql
+    SELECT
+        'order'   AS activity_type,
+        customer_id,
+        ordered_at AS activity_date,
+        CAST(total_amount AS CHAR) AS detail
+    FROM orders
+    WHERE customer_id = 42
+
+    UNION ALL
+
+    SELECT
+        'review'  AS activity_type,
+        customer_id,
+        created_at AS activity_date,
+        CONCAT('별점: ', rating) AS detail
+    FROM reviews
+    WHERE customer_id = 42
+
+    ORDER BY activity_date DESC;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    SELECT
+        'order'   AS activity_type,
+        customer_id,
+        ordered_at AS activity_date,
+        total_amount::text AS detail
+    FROM orders
+    WHERE customer_id = 42
+
+    UNION ALL
+
+    SELECT
+        'review'  AS activity_type,
+        customer_id,
+        created_at AS activity_date,
+        '별점: ' || rating::text AS detail
+    FROM reviews
+    WHERE customer_id = 42
+
+    ORDER BY activity_date DESC;
+    ```
 
 **결과:**
 
 | activity_type | customer_id | activity_date | detail |
-|---------------|-------------|---------------|--------|
+|---------------|------------:|---------------|--------|
 | order | 42 | 2024-11-18 | 299.99 |
 | review | 42 | 2024-11-20 | 별점: 5 |
 | order | 42 | 2024-09-03 | 89.99 |
@@ -137,7 +181,7 @@ ORDER BY
 **결과 (일부):**
 
 | category | revenue |
-|----------|---------|
+|----------|--------:|
 | Laptops | 1849201.88 |
 | Desktops | 943847.00 |
 | Monitors | 541920.45 |
@@ -145,7 +189,7 @@ ORDER BY
 | 합계 | 4218807.10 |
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -202,6 +246,162 @@ ORDER BY
     GROUP BY customer_id
     ORDER BY total_activity DESC
     LIMIT 10;
+    ```
+
+### 연습 3
+VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을 `UNION`으로 합쳐서 하나의 목록으로 조회하세요. 이름순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, grade FROM customers WHERE grade = 'VIP'
+    UNION
+    SELECT name, grade FROM customers WHERE grade = 'GOLD'
+    ORDER BY name;
+    ```
+
+### 연습 4
+모든 활성 상품(`is_active = 1`)의 `name`과 모든 카테고리의 `name`을 `UNION`으로 합쳐서 중복 없는 이름 목록을 만드세요. 결과 칼럼명은 `name`으로 하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name FROM products WHERE is_active = 1
+    UNION
+    SELECT name FROM categories
+    ORDER BY name;
+    ```
+
+### 연습 5
+2024년 리뷰와 2024년 상품 Q&A(질문만, `parent_id IS NULL`)를 합친 "고객 피드백" 목록을 만드세요. `UNION ALL`을 사용하고, `feedback_type`('review' 또는 'qna'), `product_id`, `customer_id`, `created_at`을 포함하세요. `created_at` 내림차순으로 정렬하고 상위 20건만 표시하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        'review' AS feedback_type,
+        product_id,
+        customer_id,
+        created_at
+    FROM reviews
+    WHERE created_at LIKE '2024%'
+
+    UNION ALL
+
+    SELECT
+        'qna' AS feedback_type,
+        product_id,
+        customer_id,
+        created_at
+    FROM product_qna
+    WHERE parent_id IS NULL
+      AND created_at LIKE '2024%'
+
+    ORDER BY created_at DESC
+    LIMIT 20;
+    ```
+
+### 연습 6
+결제 수단별 건수를 집계한 뒤, `UNION ALL`로 합계 행을 추가하세요. 합계 행의 `method`는 `'합계'`로 표시합니다. `status = 'completed'`인 결제만 대상입니다.
+
+??? success "정답"
+    ```sql
+    SELECT
+        method,
+        COUNT(*) AS tx_count
+    FROM payments
+    WHERE status = 'completed'
+    GROUP BY method
+
+    UNION ALL
+
+    SELECT
+        '합계' AS method,
+        COUNT(*) AS tx_count
+    FROM payments
+    WHERE status = 'completed'
+
+    ORDER BY
+        CASE WHEN method = '합계' THEN 1 ELSE 0 END,
+        tx_count DESC;
+    ```
+
+### 연습 7
+고객 등급별 인원수를 집계한 뒤, `UNION ALL`로 전체 합계 행(`'전체'`)을 추가하세요. `is_active = 1`인 고객만 대상입니다. 합계 행이 마지막에 오도록 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        grade,
+        COUNT(*) AS cnt
+    FROM customers
+    WHERE is_active = 1
+    GROUP BY grade
+
+    UNION ALL
+
+    SELECT
+        '전체' AS grade,
+        COUNT(*) AS cnt
+    FROM customers
+    WHERE is_active = 1
+
+    ORDER BY
+        CASE WHEN grade = '전체' THEN 1 ELSE 0 END,
+        cnt DESC;
+    ```
+
+### 연습 8
+공급업체별 활성 상품 수와 비활성 상품 수를 각각 집계하고, `UNION ALL`로 합친 뒤 서브쿼리로 감싸서 공급업체별 한 행(활성 수, 비활성 수)으로 만드세요. `suppliers` 테이블과 JOIN하여 회사명도 표시하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        s.company_name,
+        SUM(CASE WHEN t.status_type = 'active' THEN t.cnt ELSE 0 END) AS active_count,
+        SUM(CASE WHEN t.status_type = 'inactive' THEN t.cnt ELSE 0 END) AS inactive_count
+    FROM (
+        SELECT supplier_id, 'active' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 1
+        GROUP BY supplier_id
+
+        UNION ALL
+
+        SELECT supplier_id, 'inactive' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 0
+        GROUP BY supplier_id
+    ) AS t
+    INNER JOIN suppliers AS s ON t.supplier_id = s.id
+    GROUP BY s.company_name
+    ORDER BY active_count DESC;
+    ```
+
+### 연습 9
+주문 상태별 건수와 평균 금액을 집계한 뒤, `UNION ALL`로 전체 합계 행을 추가하세요. 결과를 서브쿼리로 감싸서 `pct`(각 상태의 건수가 전체 건수에서 차지하는 비율, 소수 첫째 자리까지)를 계산하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        status,
+        order_count,
+        avg_amount,
+        ROUND(100.0 * order_count / SUM(order_count) OVER (), 1) AS pct
+    FROM (
+        SELECT
+            status,
+            COUNT(*)            AS order_count,
+            ROUND(AVG(total_amount), 2) AS avg_amount
+        FROM orders
+        GROUP BY status
+
+        UNION ALL
+
+        SELECT
+            '합계' AS status,
+            COUNT(*)            AS order_count,
+            ROUND(AVG(total_amount), 2) AS avg_amount
+        FROM orders
+    ) AS t
+    ORDER BY
+        CASE WHEN status = '합계' THEN 1 ELSE 0 END,
+        order_count DESC;
     ```
 
 ---

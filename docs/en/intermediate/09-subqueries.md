@@ -12,9 +12,6 @@ flowchart TB
     end
     IQ -->|"450,000"| OQ
     OQ --> R["Products where\nprice > 450,000"]
-    style IQ fill:#fff3e0,stroke:#e65100
-    style OQ fill:#e3f2fd,stroke:#1565c0
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > The inner query runs first, and its result is passed to the outer query.
@@ -35,7 +32,7 @@ ORDER BY price ASC;
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Corsair 32GB DDR5 Kit | 419.99 |
 | Samsung 27" Monitor | 449.99 |
 | ASUS ROG Swift 27" Monitor | 799.00 |
@@ -102,7 +99,7 @@ WHERE id NOT IN (
   AND is_active = 1;
 ```
 
-> **Caution:** `NOT IN` behaves unexpectedly when the subquery returns any NULL values (it returns no rows). Prefer `NOT EXISTS` (Lesson 17) when NULLs might appear.
+> **Caution:** `NOT IN` behaves unexpectedly when the subquery returns any NULL values (it returns no rows). Prefer `NOT EXISTS` (Lesson 19) when NULLs might appear.
 
 ## FROM Subqueries (Derived Tables)
 
@@ -130,35 +127,74 @@ ORDER BY avg_order_value DESC;
 **Result:**
 
 | grade | avg_order_value |
-|-------|-----------------|
+|-------|----------------:|
 | VIP | 892.34 |
 | GOLD | 614.22 |
 | SILVER | 421.87 |
 | BRONZE | 312.49 |
 
-```sql
--- Top 3 highest-revenue months, then show their order counts
-SELECT
-    monthly.year_month,
-    monthly.revenue,
-    monthly.order_count
-FROM (
+=== "SQLite"
+    ```sql
+    -- Top 3 highest-revenue months, then show their order counts
     SELECT
-        SUBSTR(ordered_at, 1, 7) AS year_month,
-        SUM(total_amount)        AS revenue,
-        COUNT(*)                 AS order_count
-    FROM orders
-    WHERE status NOT IN ('cancelled', 'returned')
-    GROUP BY SUBSTR(ordered_at, 1, 7)
-) AS monthly
-ORDER BY revenue DESC
-LIMIT 3;
-```
+        monthly.year_month,
+        monthly.revenue,
+        monthly.order_count
+    FROM (
+        SELECT
+            SUBSTR(ordered_at, 1, 7) AS year_month,
+            SUM(total_amount)        AS revenue,
+            COUNT(*)                 AS order_count
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+    ) AS monthly
+    ORDER BY revenue DESC
+    LIMIT 3;
+    ```
+
+=== "MySQL"
+    ```sql
+    SELECT
+        monthly.year_month,
+        monthly.revenue,
+        monthly.order_count
+    FROM (
+        SELECT
+            DATE_FORMAT(ordered_at, '%Y-%m') AS year_month,
+            SUM(total_amount)                AS revenue,
+            COUNT(*)                         AS order_count
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY DATE_FORMAT(ordered_at, '%Y-%m')
+    ) AS monthly
+    ORDER BY revenue DESC
+    LIMIT 3;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    SELECT
+        monthly.year_month,
+        monthly.revenue,
+        monthly.order_count
+    FROM (
+        SELECT
+            TO_CHAR(ordered_at, 'YYYY-MM') AS year_month,
+            SUM(total_amount)              AS revenue,
+            COUNT(*)                       AS order_count
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY TO_CHAR(ordered_at, 'YYYY-MM')
+    ) AS monthly
+    ORDER BY revenue DESC
+    LIMIT 3;
+    ```
 
 **Result:**
 
 | year_month | revenue | order_count |
-|------------|---------|-------------|
+|------------|--------:|------------:|
 | 2024-12 | 1841293.70 | 892 |
 | 2023-12 | 1624817.40 | 801 |
 | 2024-11 | 1312944.90 | 703 |
@@ -194,7 +230,7 @@ LIMIT 8;
 > Scalar subqueries in `SELECT` can be slow on large tables because they run per row. Consider a `LEFT JOIN` with aggregation for better performance.
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -256,6 +292,119 @@ Find products that are in the wishlist of at least one customer but have **never
         SELECT DISTINCT product_id FROM order_items
     )
     ORDER BY price DESC;
+    ```
+
+### Exercise 4
+Find all orders whose `total_amount` exceeds the overall average order amount. Return `order_number` and `total_amount`, sorted by `total_amount` descending. Limit to 10 rows. Use a scalar subquery in the `WHERE` clause.
+
+??? success "Answer"
+    ```sql
+    SELECT order_number, total_amount
+    FROM orders
+    WHERE total_amount > (
+        SELECT AVG(total_amount) FROM orders
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+### Exercise 5
+Find all products that have been ordered at least once by a `'VIP'` customer. Use an `IN` subquery. Return `product_name` and `price`, sorted by price descending.
+
+??? success "Answer"
+    ```sql
+    SELECT p.name AS product_name, p.price
+    FROM products AS p
+    WHERE p.id IN (
+        SELECT DISTINCT oi.product_id
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE c.grade = 'VIP'
+    )
+    ORDER BY p.price DESC;
+    ```
+
+### Exercise 6
+Find orders that have never had a completed payment. Use a `NOT IN` subquery to exclude `order_id` values from `payments` where `status = 'completed'`. Return `order_number`, `total_amount`, and `status`. Sort by `total_amount` descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT order_number, total_amount, status
+    FROM orders
+    WHERE id NOT IN (
+        SELECT order_id
+        FROM payments
+        WHERE status = 'completed'
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+### Exercise 7
+Use a `FROM` subquery to compute the average product price per category, then join with `categories` in the outer query to show `category_name` and `avg_price`. Sort by `avg_price` descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        cat.name       AS category_name,
+        price_stats.avg_price
+    FROM (
+        SELECT
+            category_id,
+            ROUND(AVG(price), 2) AS avg_price
+        FROM products
+        WHERE is_active = 1
+        GROUP BY category_id
+    ) AS price_stats
+    INNER JOIN categories AS cat ON price_stats.category_id = cat.id
+    ORDER BY price_stats.avg_price DESC;
+    ```
+
+### Exercise 8
+For each active product, show its name, price, and the number of reviews it has received using a scalar subquery in the `SELECT` clause. Return `product_name`, `price`, and `review_count`. Sort by `review_count` descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        p.name  AS product_name,
+        p.price,
+        (
+            SELECT COUNT(*)
+            FROM reviews AS r
+            WHERE r.product_id = p.id
+        ) AS review_count
+    FROM products AS p
+    WHERE p.is_active = 1
+    ORDER BY review_count DESC
+    LIMIT 10;
+    ```
+
+### Exercise 9
+Find customers whose order count is above the average number of orders per customer. Use a `FROM` subquery to count orders per customer, and a scalar subquery in `WHERE` to compare against the average. Return `customer_id` and `order_count`, sorted by `order_count` descending. Limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        customer_id,
+        order_count
+    FROM (
+        SELECT
+            customer_id,
+            COUNT(*) AS order_count
+        FROM orders
+        GROUP BY customer_id
+    ) AS cust_orders
+    WHERE order_count > (
+        SELECT AVG(cnt)
+        FROM (
+            SELECT COUNT(*) AS cnt
+            FROM orders
+            GROUP BY customer_id
+        ) AS avg_calc
+    )
+    ORDER BY order_count DESC
+    LIMIT 10;
     ```
 
 ---

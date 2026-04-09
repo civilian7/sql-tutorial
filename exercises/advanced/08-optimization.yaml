@@ -47,17 +47,17 @@ problems:
     body_en: |
       Compare execution plans with and without indexes.
     hint: |
-      인덱스가 있는 컬럼(`customer_id`)과 없는 컬럼(`notes`)에 대해
+      인덱스가 있는 칼럼(`customer_id`)과 없는 칼럼(`notes`)에 대해
       각각 `EXPLAIN QUERY PLAN`을 실행하여 비교하세요.
     hint_en: |
       Run `EXPLAIN QUERY PLAN` for an indexed column (`customer_id`)
       and a non-indexed column (`notes`) to compare.
     reference_sql: |
-      -- 1) 인덱스가 있는 컬럼으로 검색
+      -- 1) 인덱스가 있는 칼럼으로 검색
       EXPLAIN QUERY PLAN
       SELECT * FROM orders WHERE customer_id = 100;
 
-      -- 2) 인덱스가 없는 컬럼으로 검색
+      -- 2) 인덱스가 없는 칼럼으로 검색
       EXPLAIN QUERY PLAN
       SELECT * FROM orders WHERE notes LIKE '%배송%';
 
@@ -108,15 +108,15 @@ problems:
     title: "SELECT * 제거"
     title_en: "Eliminating SELECT *"
     body: |
-      필요한 컬럼만 명시하여 쿼리를 개선하세요.
+      필요한 칼럼만 명시하여 쿼리를 개선하세요.
     body_en: |
       Improve queries by specifying only needed columns.
     hint: |
-      `SELECT *` 대신 실제 필요한 컬럼만 나열하면 디스크 I/O가 줄어듭니다.
+      `SELECT *` 대신 실제 필요한 칼럼만 나열하면 디스크 I/O가 줄어듭니다.
     hint_en: |
       Listing only needed columns instead of `SELECT *` reduces disk I/O.
     reference_sql: |
-      -- 개선: 필요한 컬럼만
+      -- 개선: 필요한 칼럼만
       SELECT order_number, customer_id, total_amount, status, ordered_at
       FROM orders
       WHERE ordered_at LIKE '2024-12%'
@@ -194,7 +194,7 @@ problems:
     body_en: |
       Design a covering index for a frequently executed query.
     hint: |
-      WHERE, ORDER BY, SELECT에 사용된 모든 컬럼을 인덱스에 포함하면
+      WHERE, ORDER BY, SELECT에 사용된 모든 칼럼을 인덱스에 포함하면
       테이블을 읽지 않고 인덱스만으로 결과를 반환합니다.
     hint_en: |
       Include all columns used in WHERE, ORDER BY, and SELECT in the index.

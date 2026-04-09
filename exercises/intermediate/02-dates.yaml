@@ -367,7 +367,7 @@ problems:
       type: result_match
       ordered: true
     hints:
-      - ko: "`STRFTIME('%w', ordered_at)`로 요일 번호를 추출하고, `CASE`로 한글 요일명 변환. 두 컬럼으로 `GROUP BY`."
+      - ko: "`STRFTIME('%w', ordered_at)`로 요일 번호를 추출하고, `CASE`로 한글 요일명 변환. 두 칼럼으로 `GROUP BY`."
         en: "Extract the day-of-week number with `STRFTIME('%w', ordered_at)` and convert to day names with `CASE`. `GROUP BY` both columns."
     max_score: 10
     tags: [CASE, SUBSTR, GROUP BY, date extract, orders]

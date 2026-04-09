@@ -12,9 +12,6 @@ flowchart TB
     end
     IQ -->|"450,000"| OQ
     OQ --> R["Products where\nprice > 450,000"]
-    style IQ fill:#fff3e0,stroke:#e65100
-    style OQ fill:#e3f2fd,stroke:#1565c0
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > 서브쿼리는 안쪽 쿼리가 먼저 실행되고, 그 결과가 바깥 쿼리에 전달됩니다.
@@ -35,7 +32,7 @@ ORDER BY price ASC;
 **결과:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Corsair 32GB DDR5 Kit | 419.99 |
 | Samsung 27" Monitor | 449.99 |
 | ASUS ROG Swift 27" Monitor | 799.00 |
@@ -102,7 +99,7 @@ WHERE id NOT IN (
   AND is_active = 1;
 ```
 
-> **주의:** 서브쿼리가 NULL 값을 하나라도 반환하면 `NOT IN`이 예상치 못하게 동작합니다(행이 하나도 반환되지 않음). NULL이 포함될 수 있는 경우에는 `NOT EXISTS`(17강)를 사용하세요.
+> **주의:** 서브쿼리가 NULL 값을 하나라도 반환하면 `NOT IN`이 예상치 못하게 동작합니다(행이 하나도 반환되지 않음). NULL이 포함될 수 있는 경우에는 `NOT EXISTS`(19강)를 사용하세요.
 
 ## FROM 서브쿼리 (파생 테이블)
 
@@ -130,35 +127,74 @@ ORDER BY avg_order_value DESC;
 **결과:**
 
 | grade | avg_order_value |
-|-------|-----------------|
+|-------|----------------:|
 | VIP | 892.34 |
 | GOLD | 614.22 |
 | SILVER | 421.87 |
 | BRONZE | 312.49 |
 
-```sql
--- 매출 상위 3개월과 해당 월의 주문 수
-SELECT
-    monthly.year_month,
-    monthly.revenue,
-    monthly.order_count
-FROM (
+=== "SQLite"
+    ```sql
+    -- 매출 상위 3개월과 해당 월의 주문 수
     SELECT
-        SUBSTR(ordered_at, 1, 7) AS year_month,
-        SUM(total_amount)        AS revenue,
-        COUNT(*)                 AS order_count
-    FROM orders
-    WHERE status NOT IN ('cancelled', 'returned')
-    GROUP BY SUBSTR(ordered_at, 1, 7)
-) AS monthly
-ORDER BY revenue DESC
-LIMIT 3;
-```
+        monthly.year_month,
+        monthly.revenue,
+        monthly.order_count
+    FROM (
+        SELECT
+            SUBSTR(ordered_at, 1, 7) AS year_month,
+            SUM(total_amount)        AS revenue,
+            COUNT(*)                 AS order_count
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+    ) AS monthly
+    ORDER BY revenue DESC
+    LIMIT 3;
+    ```
+
+=== "MySQL"
+    ```sql
+    SELECT
+        monthly.year_month,
+        monthly.revenue,
+        monthly.order_count
+    FROM (
+        SELECT
+            DATE_FORMAT(ordered_at, '%Y-%m') AS year_month,
+            SUM(total_amount)                AS revenue,
+            COUNT(*)                         AS order_count
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY DATE_FORMAT(ordered_at, '%Y-%m')
+    ) AS monthly
+    ORDER BY revenue DESC
+    LIMIT 3;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    SELECT
+        monthly.year_month,
+        monthly.revenue,
+        monthly.order_count
+    FROM (
+        SELECT
+            TO_CHAR(ordered_at, 'YYYY-MM') AS year_month,
+            SUM(total_amount)              AS revenue,
+            COUNT(*)                       AS order_count
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY TO_CHAR(ordered_at, 'YYYY-MM')
+    ) AS monthly
+    ORDER BY revenue DESC
+    LIMIT 3;
+    ```
 
 **결과:**
 
 | year_month | revenue | order_count |
-|------------|---------|-------------|
+|------------|--------:|------------:|
 | 2024-12 | 1841293.70 | 892 |
 | 2023-12 | 1624817.40 | 801 |
 | 2024-11 | 1312944.90 | 703 |
@@ -194,7 +230,7 @@ LIMIT 8;
 > `SELECT`의 스칼라 서브쿼리는 행마다 실행되므로 대용량 테이블에서 느릴 수 있습니다. 성능이 중요한 경우에는 `LEFT JOIN`과 집계를 사용하세요.
 
 !!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
 
@@ -256,6 +292,119 @@ LIMIT 8;
         SELECT DISTINCT product_id FROM order_items
     )
     ORDER BY price DESC;
+    ```
+
+### 연습 4
+전체 주문의 평균 금액보다 큰 주문을 조회하세요. `order_number`, `total_amount`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요. `WHERE` 절에 스칼라 서브쿼리를 사용하세요.
+
+??? success "정답"
+    ```sql
+    SELECT order_number, total_amount
+    FROM orders
+    WHERE total_amount > (
+        SELECT AVG(total_amount) FROM orders
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+### 연습 5
+`'VIP'` 등급 고객이 한 번이라도 주문한 상품을 모두 찾으세요. `IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요. 가격 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT p.name AS product_name, p.price
+    FROM products AS p
+    WHERE p.id IN (
+        SELECT DISTINCT oi.product_id
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE c.grade = 'VIP'
+    )
+    ORDER BY p.price DESC;
+    ```
+
+### 연습 6
+한 번도 결제가 완료되지 않은 주문을 찾으세요. `NOT IN` 서브쿼리를 사용하여 `payments` 테이블에서 `status = 'completed'`인 `order_id`를 제외하세요. `order_number`, `total_amount`, `status`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT order_number, total_amount, status
+    FROM orders
+    WHERE id NOT IN (
+        SELECT order_id
+        FROM payments
+        WHERE status = 'completed'
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+### 연습 7
+`FROM` 서브쿼리를 사용하여 카테고리별 평균 상품 가격을 먼저 계산한 뒤, 외부 쿼리에서 `categories` 테이블과 조인하여 카테고리명(`category_name`)과 `avg_price`를 반환하세요. `avg_price` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        cat.name       AS category_name,
+        price_stats.avg_price
+    FROM (
+        SELECT
+            category_id,
+            ROUND(AVG(price), 2) AS avg_price
+        FROM products
+        WHERE is_active = 1
+        GROUP BY category_id
+    ) AS price_stats
+    INNER JOIN categories AS cat ON price_stats.category_id = cat.id
+    ORDER BY price_stats.avg_price DESC;
+    ```
+
+### 연습 8
+각 상품의 이름과 해당 상품의 리뷰 수를 `SELECT` 절의 스칼라 서브쿼리로 구하세요. `product_name`, `price`, `review_count`를 반환하고, `review_count` 내림차순으로 정렬하여 10행으로 제한하세요. 활성 상품만 대상으로 하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        p.name  AS product_name,
+        p.price,
+        (
+            SELECT COUNT(*)
+            FROM reviews AS r
+            WHERE r.product_id = p.id
+        ) AS review_count
+    FROM products AS p
+    WHERE p.is_active = 1
+    ORDER BY review_count DESC
+    LIMIT 10;
+    ```
+
+### 연습 9
+주문 횟수가 전체 고객 평균 주문 횟수보다 많은 고객을 찾으세요. `FROM` 서브쿼리로 고객별 주문 횟수를 먼저 구하고, `WHERE` 절에 스칼라 서브쿼리로 평균을 비교하세요. `customer_id`와 `order_count`를 반환하고, `order_count` 내림차순으로 정렬하여 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        customer_id,
+        order_count
+    FROM (
+        SELECT
+            customer_id,
+            COUNT(*) AS order_count
+        FROM orders
+        GROUP BY customer_id
+    ) AS cust_orders
+    WHERE order_count > (
+        SELECT AVG(cnt)
+        FROM (
+            SELECT COUNT(*) AS cnt
+            FROM orders
+            GROUP BY customer_id
+        ) AS avg_calc
+    )
+    ORDER BY order_count DESC
+    LIMIT 10;
     ```
 
 ---

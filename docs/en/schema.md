@@ -9,64 +9,78 @@ With 52,300 customers, 378,000 orders, 2,800 products, and more at medium scale,
 
 ## Entity Relationship Diagram (ERD)
 
-```
-categories ─────────┐
-  (parent_id ──►)   ├──< products ──< product_images
-suppliers ─────────┘    │   │          product_prices
-                        │   │
-                        │   ├── successor_id ──► products (self-ref: successor model)
-                        │   │
-                        │   ├──< product_tags ──> tags
-                        │   ├──< product_views ──> customers
-                        │   ├──< product_qna (parent_id ──► self-ref: answer→question)
-                        │   │     ├──> customers (questioner)
-                        │   │     └──> staff (answerer)
-                        │   │
-                        │   └──< promotion_products ──> promotions
-                        │
-customers ──< customer_addresses
-    │                    │
-    ├──< orders ─────────┘
-    │      ├──< order_items ──> products
-    │      ├──< payments
-    │      ├──< shipping
-    │      └──< returns
-    │             ├── claim_id ──> complaints
-    │             └── exchange_product_id ──> products
-    │
-    ├──< reviews ──> products, orders
-    ├──< carts ──< cart_items ──> products
-    ├──< wishlists ──> products
-    ├──< complaints ──> orders, staff
-    ├──< coupon_usage ──> coupons, orders
-    ├──< customer_grade_history
-    ├──< point_transactions ──> orders
-    └──< product_views ──> products
+### Core Commerce — 12 Tables
 
-staff ──< complaints
-          orders (CS assigned)
-          product_qna (answers)
-  (manager_id ──► staff: self-ref)
-
-calendar (standalone -- date dimension table)
+```mermaid
+erDiagram
+    categories ||--o{ categories : "parent_id"
+    categories ||--o{ products : "category_id"
+    suppliers ||--o{ products : "supplier_id"
+    products ||--o| products : "successor_id"
+    products ||--o{ product_images : "product_id"
+    products ||--o{ product_prices : "product_id"
+    customers ||--o{ customer_addresses : "customer_id"
+    customers ||--o{ orders : "customer_id"
+    staff ||--o| staff : "manager_id"
+    staff ||--o{ orders : "staff_id"
+    orders ||--o{ order_items : "order_id"
+    order_items }o--|| products : "product_id"
+    orders ||--|| payments : "order_id"
+    orders ||--o| shipping : "order_id"
 ```
 
-## Relationship Types
+### Engagement & Support — 6 Tables
+
+```mermaid
+erDiagram
+    customers ||--o{ reviews : "customer_id"
+    products ||--o{ reviews : "product_id"
+    orders ||--o{ reviews : "order_id"
+    customers ||--o{ wishlists : "customer_id"
+    products ||--o{ wishlists : "product_id"
+    customers ||--o{ complaints : "customer_id"
+    orders ||--o{ complaints : "order_id"
+    staff ||--o{ complaints : "staff_id"
+    orders ||--o{ returns : "order_id"
+    complaints ||--o{ returns : "claim_id"
+    products ||--o{ returns : "exchange_product_id"
+    coupons ||--o{ coupon_usage : "coupon_id"
+    customers ||--o{ coupon_usage : "customer_id"
+    orders ||--o{ coupon_usage : "order_id"
+```
+
+### Analytics & Rewards — 12 Tables
+
+```mermaid
+erDiagram
+    products ||--o{ inventory_transactions : "product_id"
+    customers ||--o{ carts : "customer_id"
+    carts ||--o{ cart_items : "cart_id"
+    products ||--o{ cart_items : "product_id"
+    customers ||--o{ customer_grade_history : "customer_id"
+    tags ||--o{ product_tags : "tag_id"
+    products ||--o{ product_tags : "product_id"
+    customers ||--o{ product_views : "customer_id"
+    products ||--o{ product_views : "product_id"
+    customers ||--o{ point_transactions : "customer_id"
+    promotions ||--o{ promotion_products : "promotion_id"
+    products ||--o{ promotion_products : "product_id"
+    products ||--o{ product_qna : "product_id"
+    product_qna ||--o{ product_qna : "parent_id"
+```
+
+> `calendar` is a standalone dimension table with no FK relationships — used for CROSS JOIN and date gap analysis.
+
+### Relationship Types
 
 | Type | Example | Description |
-|------|---------|-------------|
-| **1:1** | orders -> payments | Each order has exactly one payment |
-| **1:N** | customers -> orders | One customer can have many orders |
-| **M:N** | customers <-> products (wishlists) | Many customers can favorite many products |
-| **M:N** | products <-> tags (product_tags) | Many-to-many between products and tags |
-| **M:N** | promotions <-> products (promotion_products) | Promotions and their target products |
-| **Self-ref** | categories.parent_id -> categories.id | Parent-child category hierarchy |
-| **Self-ref** | products.successor_id -> products.id | Discontinued product -> successor model |
-| **Self-ref** | staff.manager_id -> staff.id | Employee -> supervisor |
-| **Self-ref** | product_qna.parent_id -> product_qna.id | Answer -> original question |
-| **Nullable FK** | orders.staff_id -> staff.id | Only assigned for orders requiring CS |
-| **Cross-table FK** | returns.claim_id -> complaints.id | Return originated from a CS complaint |
-| **Cross-table FK** | returns.exchange_product_id -> products.id | Replacement product for exchange |
+|------|------|------|
+| 1:1 | orders → payments | One payment per order |
+| 1:N | customers → orders | One customer, many orders |
+| M:N | products ↔ tags (product_tags) | Many-to-many via bridge table |
+| Self-ref | categories.parent_id, staff.manager_id, products.successor_id, product_qna.parent_id | Hierarchy/links within same table |
+| Nullable FK | orders.staff_id → staff.id | Only assigned for orders requiring CS |
+| Cross-table FK | returns.claim_id → complaints.id | Return originated from a CS complaint |
 
 ---
 
@@ -122,7 +136,7 @@ Row counts per table based on the `--size` option. Medium/Large are estimates ba
 ### Core Commerce -- 12 tables
 
 | # | Table | Rows | Description |
-|---|-------|-----:|-------------|
+|--:|-------|-----:|-------------|
 | 1 | categories | 53 | Product categories (3-level hierarchy) |
 | 2 | suppliers | 60 | Product vendors |
 | 3 | products | 2,800 | Products (JSON specs, successor links) |
@@ -139,7 +153,7 @@ Row counts per table based on the `--size` option. Medium/Large are estimates ba
 ### Engagement & Support -- 6 tables
 
 | # | Table | Rows | Description |
-|---|-------|-----:|-------------|
+|--:|-------|-----:|-------------|
 | 13 | reviews | 86,806 | Product reviews |
 | 14 | wishlists | 19,995 | Wish lists (purchase conversion tracking) |
 | 15 | complaints | 37,953 | Customer inquiries/complaints (type/compensation/escalation) |
@@ -150,7 +164,7 @@ Row counts per table based on the `--size` option. Medium/Large are estimates ba
 ### Analytics & Rewards -- 12 tables
 
 | # | Table | Rows | Description |
-|---|-------|-----:|-------------|
+|--:|-------|-----:|-------------|
 | 19 | inventory_transactions | 130,322 | Stock in/out history |
 | 20 | carts | 30,000 | Shopping carts |
 | 21 | cart_items | 90,061 | Cart items |
@@ -778,21 +792,71 @@ When generating for MySQL or PostgreSQL, the output includes database-engine-nat
 
 ## Full Schema Inspection
 
-```sql
--- All tables with DDL
-SELECT name, sql FROM sqlite_master
-WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
-ORDER BY name;
+=== "SQLite"
+    ```sql
+    -- All tables with DDL
+    SELECT name, sql FROM sqlite_master
+    WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+    ORDER BY name;
 
--- All views
-SELECT name FROM sqlite_master WHERE type = 'view' ORDER BY name;
+    -- All views
+    SELECT name FROM sqlite_master WHERE type = 'view' ORDER BY name;
 
--- Column info for a specific table
-PRAGMA table_info('orders');
+    -- Column info for a specific table
+    PRAGMA table_info('orders');
 
--- All indexes
-SELECT name, tbl_name FROM sqlite_master WHERE type = 'index' ORDER BY tbl_name;
+    -- All indexes
+    SELECT name, tbl_name FROM sqlite_master WHERE type = 'index' ORDER BY tbl_name;
 
--- All triggers
-SELECT name, tbl_name FROM sqlite_master WHERE type = 'trigger' ORDER BY name;
-```
+    -- All triggers
+    SELECT name, tbl_name FROM sqlite_master WHERE type = 'trigger' ORDER BY name;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- All tables
+    SHOW TABLES;
+
+    -- All views
+    SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS
+    WHERE TABLE_SCHEMA = DATABASE();
+
+    -- Column info for a specific table
+    DESCRIBE orders;
+
+    -- All indexes
+    SELECT TABLE_NAME, INDEX_NAME, COLUMN_NAME
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+    ORDER BY TABLE_NAME, INDEX_NAME;
+
+    -- All triggers
+    SELECT TRIGGER_NAME, EVENT_OBJECT_TABLE, EVENT_MANIPULATION
+    FROM INFORMATION_SCHEMA.TRIGGERS
+    WHERE TRIGGER_SCHEMA = DATABASE();
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- All tables
+    SELECT tablename FROM pg_tables
+    WHERE schemaname = 'public' ORDER BY tablename;
+
+    -- All views
+    SELECT viewname FROM pg_views
+    WHERE schemaname = 'public' ORDER BY viewname;
+
+    -- Column info for a specific table
+    SELECT column_name, data_type, is_nullable
+    FROM information_schema.columns
+    WHERE table_name = 'orders' ORDER BY ordinal_position;
+
+    -- All indexes
+    SELECT indexname, tablename FROM pg_indexes
+    WHERE schemaname = 'public' ORDER BY tablename;
+
+    -- All triggers
+    SELECT tgname, relname
+    FROM pg_trigger t JOIN pg_class c ON t.tgrelid = c.oid
+    WHERE NOT t.tgisinternal ORDER BY tgname;
+    ```

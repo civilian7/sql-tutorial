@@ -9,67 +9,78 @@
 
 ## 엔티티 관계도(ERD)
 
-```
-categories ─────────┐
-  (parent_id ──►)   ├──< products ──< product_images
-suppliers ─────────┘    │   │          product_prices
-                        │   │
-                        │   ├── successor_id ──► products (자기참조: 후속모델)
-                        │   ├── specs (JSON 상품 사양)
-                        │   │
-                        │   ├──< product_tags ──> tags
-                        │   ├──< product_views ──> customers
-                        │   ├──< product_qna (parent_id ──► 자기참조: 답변→질문)
-                        │   │     ├──> customers (질문자)
-                        │   │     └──> staff (답변자)
-                        │   │
-                        │   └──< promotion_products ──> promotions
-                        │
-customers ──< customer_addresses (updated_at)
-    │  (acquisition_channel)
-    │
-    ├──< orders ─────────┘
-    │      ├──< order_items ──> products
-    │      ├──< payments
-    │      ├──< shipping
-    │      ├──< returns
-    │      │      ├── claim_id ──> complaints
-    │      │      └── exchange_product_id ──> products
-    │      └──< coupon_usage ──> coupons
-    │
-    ├──< reviews ──> products, orders
-    ├──< carts ──< cart_items ──> products
-    ├──< wishlists ──> products (is_purchased)
-    ├──< complaints ──> orders, staff
-    │      (type/compensation_type/compensation_amount/escalated/response_count)
-    ├──< customer_grade_history
-    ├──< point_transactions ──> orders
-    └──< product_views ──> products
+### 핵심 상거래 (Core Commerce) — 12개 테이블
 
-staff ──< complaints
-          orders (CS 담당)
-          product_qna (답변)
-  (manager_id ──► staff: 자기참조)
-
-calendar (독립 — 날짜 차원 테이블)
+```mermaid
+erDiagram
+    categories ||--o{ categories : "parent_id"
+    categories ||--o{ products : "category_id"
+    suppliers ||--o{ products : "supplier_id"
+    products ||--o| products : "successor_id"
+    products ||--o{ product_images : "product_id"
+    products ||--o{ product_prices : "product_id"
+    customers ||--o{ customer_addresses : "customer_id"
+    customers ||--o{ orders : "customer_id"
+    staff ||--o| staff : "manager_id"
+    staff ||--o{ orders : "staff_id"
+    orders ||--o{ order_items : "order_id"
+    order_items }o--|| products : "product_id"
+    orders ||--|| payments : "order_id"
+    orders ||--o| shipping : "order_id"
 ```
 
-## 관계 유형
+### 고객 참여 및 지원 (Engagement & Support) — 6개 테이블
+
+```mermaid
+erDiagram
+    customers ||--o{ reviews : "customer_id"
+    products ||--o{ reviews : "product_id"
+    orders ||--o{ reviews : "order_id"
+    customers ||--o{ wishlists : "customer_id"
+    products ||--o{ wishlists : "product_id"
+    customers ||--o{ complaints : "customer_id"
+    orders ||--o{ complaints : "order_id"
+    staff ||--o{ complaints : "staff_id"
+    orders ||--o{ returns : "order_id"
+    complaints ||--o{ returns : "claim_id"
+    products ||--o{ returns : "exchange_product_id"
+    coupons ||--o{ coupon_usage : "coupon_id"
+    customers ||--o{ coupon_usage : "customer_id"
+    orders ||--o{ coupon_usage : "order_id"
+```
+
+### 분석 및 리워드 (Analytics & Rewards) — 12개 테이블
+
+```mermaid
+erDiagram
+    products ||--o{ inventory_transactions : "product_id"
+    customers ||--o{ carts : "customer_id"
+    carts ||--o{ cart_items : "cart_id"
+    products ||--o{ cart_items : "product_id"
+    customers ||--o{ customer_grade_history : "customer_id"
+    tags ||--o{ product_tags : "tag_id"
+    products ||--o{ product_tags : "product_id"
+    customers ||--o{ product_views : "customer_id"
+    products ||--o{ product_views : "product_id"
+    customers ||--o{ point_transactions : "customer_id"
+    promotions ||--o{ promotion_products : "promotion_id"
+    products ||--o{ promotion_products : "product_id"
+    products ||--o{ product_qna : "product_id"
+    product_qna ||--o{ product_qna : "parent_id"
+```
+
+> `calendar`는 독립 차원 테이블로, 다른 테이블과 FK 관계 없이 CROSS JOIN에 활용됩니다.
+
+### 관계 유형 요약
 
 | 유형 | 예시 | 설명 |
-|------|---------|-------------|
-| **1:1** | orders → payments | 각 주문에는 정확히 하나의 결제가 존재 |
-| **1:N** | customers → orders | 한 고객이 여러 주문을 가질 수 있음 |
-| **M:N** | customers ↔ products (wishlists) | 여러 고객이 여러 상품을 찜할 수 있음 |
-| **M:N** | products ↔ tags (product_tags) | 상품과 태그의 다대다 관계 |
-| **M:N** | promotions ↔ products (promotion_products) | 프로모션과 대상 상품 |
-| **자기 참조** | categories.parent_id → categories.id | 부모-자식 계층 구조 |
-| **자기 참조** | products.successor_id → products.id | 단종 상품 → 후속 모델 |
-| **자기 참조** | staff.manager_id → staff.id | 직원 → 상위 관리자 |
-| **자기 참조** | product_qna.parent_id → product_qna.id | 답변 → 원래 질문 |
-| **Nullable FK** | orders.staff_id → staff.id | CS 처리가 필요한 주문에만 지정 |
-| **Cross-table FK** | returns.claim_id → complaints.id | 반품이 CS 불만에서 기원 |
-| **Cross-table FK** | returns.exchange_product_id → products.id | 교환 대상 상품 |
+|------|------|------|
+| 1:1 | orders → payments | 주문당 하나의 결제 |
+| 1:N | customers → orders | 한 고객이 여러 주문 |
+| M:N | products ↔ tags (product_tags) | 교차 테이블을 통한 다대다 |
+| 자기 참조 | categories.parent_id, staff.manager_id, products.successor_id, product_qna.parent_id | 같은 테이블 내 계층/연결 |
+| Nullable FK | orders.staff_id → staff.id | CS 처리가 필요한 주문에만 지정 |
+| Cross-table FK | returns.claim_id → complaints.id | 반품이 CS 불만에서 기원 |
 
 ---
 
@@ -125,7 +136,7 @@ calendar (독립 — 날짜 차원 테이블)
 ### 핵심 상거래 (Core Commerce) — 12개
 
 | # | 테이블 | 행 수 (medium) | 설명 |
-|---|--------|---------------:|------|
+|--:|--------|---------------:|------|
 | 1 | categories | 53 | 상품 카테고리 (3단계 계층) |
 | 2 | suppliers | 60 | 공급업체 |
 | 3 | products | 2,800 | 상품 (JSON 스펙, 후속모델 참조) |
@@ -142,7 +153,7 @@ calendar (독립 — 날짜 차원 테이블)
 ### 고객 참여 및 지원 (Engagement & Support) — 6개
 
 | # | 테이블 | 행 수 (medium) | 설명 |
-|---|--------|---------------:|------|
+|--:|--------|---------------:|------|
 | 13 | reviews | 86,806 | 상품 리뷰 |
 | 14 | wishlists | 19,995 | 위시리스트 (구매전환 추적) |
 | 15 | complaints | 37,953 | 고객 문의/불만 (유형/보상/에스컬레이션) |
@@ -153,7 +164,7 @@ calendar (독립 — 날짜 차원 테이블)
 ### 분석 및 리워드 (Analytics & Rewards) — 12개
 
 | # | 테이블 | 행 수 (medium) | 설명 |
-|---|--------|---------------:|------|
+|--:|--------|---------------:|------|
 | 19 | inventory_transactions | 130,322 | 재고 입출고 이력 |
 | 20 | carts | 30,000 | 장바구니 |
 | 21 | cart_items | 90,061 | 장바구니 상품 |
@@ -175,7 +186,7 @@ calendar (독립 — 날짜 차원 테이블)
 
 3단계 계층 구조 (대분류 → 중분류 → 소분류). `parent_id`가 NULL이면 최상위.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 parent_id | INTEGER | O | → categories(id), NULL=최상위 (자기참조) |
@@ -199,7 +210,7 @@ ORDER BY sort_order;
 
 상품을 공급하는 업체 정보 60개. 각 상품은 하나의 공급업체에 속합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | company_name | TEXT | - | 회사명 |
@@ -217,7 +228,7 @@ ORDER BY sort_order;
 판매 중인 전자제품 2,800개 (medium). SKU 코드로 유일 식별. 가격, 원가, 재고, 단종 상태를 포함합니다.
 `successor_id`로 단종 상품의 후속 모델을, `specs`로 JSON 형태의 상세 사양을 관리합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 category_id | INTEGER | - | → categories(id) |
@@ -252,7 +263,7 @@ LIMIT 10;
 
 상품별 다각도 이미지. `is_primary`로 대표 이미지를 구분합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 product_id | INTEGER | - | → products(id) |
@@ -271,7 +282,7 @@ LIMIT 10;
 
 상품 가격 변동을 기록합니다. `ended_at`이 NULL이면 현재 적용 중인 가격입니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 product_id | INTEGER | - | → products(id) |
@@ -285,7 +296,7 @@ LIMIT 10;
 쇼핑몰 회원 52,300명 (medium). 등급제(BRONZE~VIP), 적립금, 활성/탈퇴 상태를 관리합니다.
 `acquisition_channel`로 가입 경로를 추적합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | email | TEXT | - | UNIQUE — `user123@testmail.kr` |
@@ -315,7 +326,7 @@ GROUP BY grade;
 고객별 다수 배송지. `is_default`로 기본 배송지를 구분합니다.
 `updated_at`으로 주소 변경 이력을 추적합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 customer_id | INTEGER | - | → customers(id) |
@@ -334,7 +345,7 @@ GROUP BY grade;
 쇼핑몰 운영 직원 50명 (medium). CS 담당자 배정, 문의 처리에 사용됩니다.
 `manager_id`로 상위 관리자를 참조하는 자기 참조 구조를 가집니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 manager_id | INTEGER | O | → staff(id), 상위 관리자 (자기참조, NULL=최상위) |
@@ -351,7 +362,7 @@ GROUP BY grade;
 
 핵심 트랜잭션 테이블 (medium: 378,368건). 주문번호 `ORD-YYYYMMDD-NNNNN` 기반, 9단계 상태 관리.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | order_number | TEXT | - | UNIQUE — `ORD-20240315-00001` |
@@ -384,7 +395,7 @@ paid → cancelled (→ 환불)
 
 주문별 상품 목록. 주문 시점의 단가와 할인을 기록하여 가격 변동에 독립적입니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 order_id | INTEGER | - | → orders(id) |
@@ -410,7 +421,7 @@ LIMIT 10;
 
 주문당 1건의 결제. 카드, 계좌이체, 간편결제 등 다양한 수단을 지원합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 order_id | INTEGER | - | → orders(id) |
@@ -435,7 +446,7 @@ LIMIT 10;
 
 주문별 배송 추적. 택배사별 운송장 번호와 상태를 관리합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 order_id | INTEGER | - | → orders(id) |
@@ -451,7 +462,7 @@ LIMIT 10;
 
 구매 인증 리뷰 86,806건 (medium). 1~5점 평점 (5점 40%, 4점 30%, 3점 15%, 2점 10%, 1점 5%).
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 product_id | INTEGER | - | → products(id) |
@@ -480,7 +491,7 @@ LIMIT 10;
 고객이 관심 상품으로 등록. 동일 고객-상품 조합은 UNIQUE.
 `is_purchased`로 찜한 상품의 구매 전환 여부를 추적합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 customer_id | INTEGER | - | → customers(id) |
@@ -492,9 +503,9 @@ LIMIT 10;
 ### complaints — 고객 문의/불만
 
 CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 4단계 우선순위.
-`type` (inquiry/claim/report), `sub_category`, `compensation_type`, `compensation_amount`, `escalated`, `response_count` 컬럼으로 상세한 CS 분석이 가능합니다.
+`type` (inquiry/claim/report), `sub_category`, `compensation_type`, `compensation_amount`, `escalated`, `response_count` 칼럼으로 상세한 CS 분석이 가능합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 order_id | INTEGER | O | → orders(id), NULL=일반문의 |
@@ -520,9 +531,9 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 ### returns — 반품/교환
 
 반품 또는 교환 요청 11,413건 (medium). 사유, 수거, 검수, 환불의 전 과정을 추적합니다.
-`claim_id`(CS 불만에서 기원한 반품 연결), `exchange_product_id`(교환 대상 상품), `restocking_fee`(변심 반품 수수료) 컬럼이 포함됩니다.
+`claim_id`(CS 불만에서 기원한 반품 연결), `exchange_product_id`(교환 대상 상품), `restocking_fee`(변심 반품 수수료) 칼럼이 포함됩니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 order_id | INTEGER | - | → orders(id) |
@@ -551,7 +562,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 할인 쿠폰 200종 (medium). 정율(percent) 또는 정액(fixed) 할인, 사용 한도, 유효기간을 관리합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | code | TEXT | - | UNIQUE — 쿠폰 코드 (CP2401001) |
@@ -571,7 +582,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 쿠폰이 실제로 사용된 기록. 어떤 고객이 어떤 주문에서 얼마 할인받았는지 추적합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 coupon_id | INTEGER | - | → coupons(id) |
@@ -584,7 +595,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 상품 재고 변동 이력. 입고(양수), 출고(음수), 반품, 조정을 기록합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 product_id | INTEGER | - | → products(id) |
@@ -598,7 +609,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 고객별 장바구니. 주문 전환(converted), 포기(abandoned) 상태를 추적합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 customer_id | INTEGER | - | → customers(id) |
@@ -610,7 +621,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 장바구니에 담긴 개별 상품과 수량.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 cart_id | INTEGER | - | → carts(id) |
@@ -622,7 +633,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 2016~2025년 전체 날짜를 포함하는 차원 테이블. CROSS JOIN, 날짜 갭 분석에 활용합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 date_key | TEXT | - | YYYY-MM-DD (PK) |
 | year | INTEGER | - | 연도 |
@@ -639,7 +650,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 고객 등급 변동을 기록합니다. SCD(Slowly Changing Dimension) Type 2 패턴 학습에 활용됩니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 customer_id | INTEGER | - | → customers(id) |
@@ -654,7 +665,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 **tags:**
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | name | TEXT | - | UNIQUE — 태그명 |
@@ -662,7 +673,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 **product_tags:**
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔗 product_id | INTEGER | - | → products(id), 복합 PK |
 | 🔗 tag_id | INTEGER | - | → tags(id), 복합 PK |
@@ -671,7 +682,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 상품 페이지 조회 기록. 유입 경로, 디바이스, 체류 시간을 포함합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 customer_id | INTEGER | - | → customers(id) |
@@ -685,7 +696,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 포인트 적립/사용/소멸 내역. `balance_after`로 잔액 추이를 추적합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 customer_id | INTEGER | - | → customers(id) |
@@ -703,7 +714,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 **promotions:**
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | name | TEXT | - | 프로모션명 |
@@ -718,7 +729,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 **promotion_products:**
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔗 promotion_id | INTEGER | - | → promotions(id), 복합 PK |
 | 🔗 product_id | INTEGER | - | → products(id), 복합 PK |
@@ -728,7 +739,7 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
 
 상품에 대한 질문과 답변. `parent_id`로 질문-답변 쌍을 자기 참조로 연결합니다.
 
-| 컬럼 | 타입 | NULL | 설명 |
+| 칼럼 | 타입 | NULL | 설명 |
 |------|------|:----:|------|
 | 🔑 id | INTEGER | - | 자동 증가 |
 | 🔗 product_id | INTEGER | - | → products(id) |
@@ -798,21 +809,71 @@ python generate.py --target postgresql
 
 ## 전체 스키마 확인
 
-```sql
--- 전체 테이블 목록과 DDL
-SELECT name, sql FROM sqlite_master
-WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
-ORDER BY name;
+=== "SQLite"
+    ```sql
+    -- 전체 테이블 목록과 DDL
+    SELECT name, sql FROM sqlite_master
+    WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+    ORDER BY name;
 
--- 전체 뷰 목록
-SELECT name FROM sqlite_master WHERE type = 'view' ORDER BY name;
+    -- 전체 뷰 목록
+    SELECT name FROM sqlite_master WHERE type = 'view' ORDER BY name;
 
--- 특정 테이블의 컬럼 정보
-PRAGMA table_info('orders');
+    -- 특정 테이블의 칼럼 정보
+    PRAGMA table_info('orders');
 
--- 인덱스 목록
-SELECT name, tbl_name FROM sqlite_master WHERE type = 'index' ORDER BY tbl_name;
+    -- 인덱스 목록
+    SELECT name, tbl_name FROM sqlite_master WHERE type = 'index' ORDER BY tbl_name;
 
--- 트리거 목록
-SELECT name, tbl_name FROM sqlite_master WHERE type = 'trigger' ORDER BY name;
-```
+    -- 트리거 목록
+    SELECT name, tbl_name FROM sqlite_master WHERE type = 'trigger' ORDER BY name;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- 전체 테이블 목록
+    SHOW TABLES;
+
+    -- 전체 뷰 목록
+    SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS
+    WHERE TABLE_SCHEMA = DATABASE();
+
+    -- 특정 테이블의 칼럼 정보
+    DESCRIBE orders;
+
+    -- 인덱스 목록
+    SELECT TABLE_NAME, INDEX_NAME, COLUMN_NAME
+    FROM INFORMATION_SCHEMA.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+    ORDER BY TABLE_NAME, INDEX_NAME;
+
+    -- 트리거 목록
+    SELECT TRIGGER_NAME, EVENT_OBJECT_TABLE, EVENT_MANIPULATION
+    FROM INFORMATION_SCHEMA.TRIGGERS
+    WHERE TRIGGER_SCHEMA = DATABASE();
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- 전체 테이블 목록
+    SELECT tablename FROM pg_tables
+    WHERE schemaname = 'public' ORDER BY tablename;
+
+    -- 전체 뷰 목록
+    SELECT viewname FROM pg_views
+    WHERE schemaname = 'public' ORDER BY viewname;
+
+    -- 특정 테이블의 칼럼 정보
+    SELECT column_name, data_type, is_nullable
+    FROM information_schema.columns
+    WHERE table_name = 'orders' ORDER BY ordinal_position;
+
+    -- 인덱스 목록
+    SELECT indexname, tablename FROM pg_indexes
+    WHERE schemaname = 'public' ORDER BY tablename;
+
+    -- 트리거 목록
+    SELECT tgname, relname
+    FROM pg_trigger t JOIN pg_class c ON t.tgrelid = c.oid
+    WHERE NOT t.tgisinternal ORDER BY tgname;
+    ```

@@ -8,12 +8,6 @@ flowchart TD
     V --> |"= NULL"| U["UNKNOWN ❓"]
     N["NULL"] --> |"= NULL"| U2["UNKNOWN ❓"]
     N --> |"IS NULL"| T2["TRUE ✅"]
-    style V fill:#e3f2fd,stroke:#1565c0
-    style N fill:#ffcdd2,stroke:#c62828
-    style T fill:#e8f5e9,stroke:#2e7d32
-    style T2 fill:#e8f5e9,stroke:#2e7d32
-    style U fill:#fff9c4,stroke:#f9a825
-    style U2 fill:#fff9c4,stroke:#f9a825
 ```
 
 > **Concept:** NULL means 'no value'. = NULL always returns UNKNOWN, so use IS NULL instead.
@@ -61,7 +55,7 @@ LIMIT 5;
 **Result:**
 
 | order_number | total_amount |
-|--------------|--------------|
+|--------------|-------------:|
 | ORD-20150314-00001 | 249.98 |
 | ORD-20150314-00002 | 1399.99 |
 | ORD-20150315-00003 | 59.99 |
@@ -140,7 +134,7 @@ GROUP BY grade;
 **Result:**
 
 | grade | total | inactive | pct_inactive |
-|-------|-------|----------|--------------|
+|-------|------:|---------:|-------------:|
 | BRONZE | 2614 | 182 | 7.0 |
 | SILVER | 1569 | 94 | 6.0 |
 | GOLD | 785 | 31 | 3.9 |
@@ -150,21 +144,40 @@ GROUP BY grade;
 
 Aggregate functions (`SUM`, `AVG`, `COUNT(column)`, `MIN`, `MAX`) silently ignore NULL values. This can cause surprises.
 
-```sql
--- Comparing COUNT(*) vs COUNT(birth_date)
-SELECT
-    COUNT(*)           AS all_customers,
-    COUNT(birth_date)  AS customers_with_dob,
-    AVG(
-        CAST(SUBSTR(birth_date, 1, 4) AS INTEGER)
-    )                  AS avg_birth_year
-FROM customers;
-```
+=== "SQLite"
+    ```sql
+    -- Comparing COUNT(*) vs COUNT(birth_date)
+    SELECT
+        COUNT(*)           AS all_customers,
+        COUNT(birth_date)  AS customers_with_dob,
+        AVG(
+            CAST(SUBSTR(birth_date, 1, 4) AS INTEGER)
+        )                  AS avg_birth_year
+    FROM customers;
+    ```
+
+=== "MySQL"
+    ```sql
+    SELECT
+        COUNT(*)           AS all_customers,
+        COUNT(birth_date)  AS customers_with_dob,
+        AVG(YEAR(birth_date)) AS avg_birth_year
+    FROM customers;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    SELECT
+        COUNT(*)           AS all_customers,
+        COUNT(birth_date)  AS customers_with_dob,
+        AVG(EXTRACT(YEAR FROM birth_date))::numeric(6,1) AS avg_birth_year
+    FROM customers;
+    ```
 
 **Result:**
 
 | all_customers | customers_with_dob | avg_birth_year |
-|---------------|--------------------|----------------|
+|--------------:|-------------------:|---------------:|
 | 5230 | 4445 | 1982.3 |
 
 > The `AVG` is calculated only over the 4,445 rows that have a birth date — the 785 NULLs are excluded automatically.
@@ -183,21 +196,48 @@ SELECT
 
 Use `COALESCE` to guard against this:
 
-```sql
--- Calculate age in years, treating NULL birth_date as unknown
-SELECT
-    name,
-    birth_date,
-    COALESCE(
-        CAST((julianday('now') - julianday(birth_date)) / 365.25 AS INTEGER),
-        -1
-    ) AS age_years
-FROM customers
-LIMIT 5;
-```
+=== "SQLite"
+    ```sql
+    -- Calculate age in years, treating NULL birth_date as unknown
+    SELECT
+        name,
+        birth_date,
+        COALESCE(
+            CAST((julianday('now') - julianday(birth_date)) / 365.25 AS INTEGER),
+            -1
+        ) AS age_years
+    FROM customers
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    SELECT
+        name,
+        birth_date,
+        COALESCE(
+            TIMESTAMPDIFF(YEAR, birth_date, CURDATE()),
+            -1
+        ) AS age_years
+    FROM customers
+    LIMIT 5;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    SELECT
+        name,
+        birth_date,
+        COALESCE(
+            EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::int,
+            -1
+        ) AS age_years
+    FROM customers
+    LIMIT 5;
+    ```
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -230,6 +270,78 @@ List all orders where `staff_id IS NULL` (no customer service rep assigned). For
     ```
 
 ### Exercise 3
+Count how many orders in the `orders` table have a NULL `cancelled_at` (not cancelled) and how many have a non-NULL `cancelled_at` (cancelled). Use aliases `not_cancelled` and `cancelled`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        COUNT(CASE WHEN cancelled_at IS NULL THEN 1 END)     AS not_cancelled,
+        COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
+    FROM orders;
+    ```
+
+### Exercise 4
+Find customers whose `phone` is NULL. Show their `name` and `email`, but replace NULL emails with `'No contact'` using COALESCE.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        COALESCE(email, 'No contact') AS email
+    FROM customers
+    WHERE phone IS NULL;
+    ```
+
+### Exercise 5
+From the `products` table, count the total products, how many are missing a `weight`, and what percentage that is (1 decimal place). Use aliases `total_products`, `missing_weight`, `pct_missing`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        COUNT(*)                                AS total_products,
+        COUNT(*) - COUNT(weight)                AS missing_weight,
+        ROUND(100.0 * (COUNT(*) - COUNT(weight)) / COUNT(*), 1) AS pct_missing
+    FROM products;
+    ```
+
+### Exercise 6
+Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `name`, `price`, `stock_qty`, and `price / NULLIF(stock_qty, 0)` as `price_per_unit`. Limit to 5 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        price,
+        stock_qty,
+        price / NULLIF(stock_qty, 0) AS price_per_unit
+    FROM products
+    LIMIT 5;
+    ```
+
+### Exercise 7
+In the `reviews` table, compare the average `rating` of reviews that have `content` (not NULL) vs. reviews without content (NULL). Show `COUNT(*)` and `AVG(rating)` for each group.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END AS content_status,
+        COUNT(*)        AS review_count,
+        AVG(rating)     AS avg_rating
+    FROM reviews
+    GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
+    ```
+
+### Exercise 8
+Find the top-level managers in the `staff` table — employees whose `manager_id` is NULL. Show their `name`, `department`, and `role`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, department, role
+    FROM staff
+    WHERE manager_id IS NULL;
+    ```
+
+### Exercise 9
 For each membership `grade`, show how many customers have a known gender vs. an unknown gender. Use `COALESCE(gender, 'Unknown')` as the grouping column.
 
 ??? success "Answer"
@@ -241,6 +353,20 @@ For each membership `grade`, show how many customers have a known gender vs. an 
     FROM customers
     GROUP BY grade, COALESCE(gender, 'Unknown')
     ORDER BY grade, gender_status;
+    ```
+
+### Exercise 10
+List customers who have never logged in (`last_login_at IS NULL`). Show `name`, `email`, and `created_at`, replacing NULL `email` with `'N/A'` and NULL `created_at` with `'Unknown'`. Limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        COALESCE(email, 'N/A')       AS email,
+        COALESCE(created_at, 'Unknown') AS created_at
+    FROM customers
+    WHERE last_login_at IS NULL
+    LIMIT 10;
     ```
 
 ---

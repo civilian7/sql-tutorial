@@ -4,7 +4,7 @@
 
 [변경 이력](#변경-이력) | [GitHub](https://github.com/civilian7/sql-tutorial)
 
-컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (21개 레슨, 270개 연습문제)을 제공하는 프로젝트입니다.
+컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (22개 레슨, 208개 연습문제)을 제공하는 프로젝트입니다.
 
 > **왜 이 프로젝트를?** 대부분의 SQL 교재는 문제만 있고 데이터가 없어서 쿼리를 실행해볼 수 없습니다. 이 프로젝트는 **69만 건의 현실적 데이터**와 완전한 튜토리얼 + 실행 가능한 연습문제를 제공합니다.
 
@@ -23,8 +23,8 @@ python generate.py --size small
 | 구성 | 상세 |
 |------|------|
 | **데이터베이스 생성기** | 30 테이블, 18 뷰, 5 트리거, 61 인덱스 |
-| **튜토리얼** | 21개 레슨 (초급→중급→고급), 한국어/영어 |
-| **연습문제** | 270문제 (난이도 1~5), 정답+힌트 포함 |
+| **튜토리얼** | 22개 레슨 (초급→중급→고급), 한국어/영어 |
+| **연습문제** | 208개 레슨 내 복습 문제 + 별도 연습 세트, 정답 포함 |
 | **저장 프로시저** | 25개 프로시저 + 5개 함수 (MySQL & PostgreSQL) |
 | **3개 DB** | SQLite (기본), MySQL, PostgreSQL |
 | **더티 데이터** | `--dirty-data` 데이터 정제 연습 |
@@ -61,15 +61,15 @@ python generate.py [OPTIONS]
 
 ## 튜토리얼
 
-21개 레슨에 시각적 도표, DB별 SQL 탭, 복습 문제가 포함됩니다.
+22개 레슨에 시각적 도표, DB별 SQL 탭, 복습 문제가 포함됩니다.
 
 | 레벨 | 레슨 | 주제 |
 |------|------|------|
-| 초급 | 01-06 | SELECT, WHERE, ORDER BY, 집계, GROUP BY, NULL |
-| 중급 | 07-14, 21 | JOIN, 서브쿼리, CASE, 날짜/문자열, DML, Self/Cross JOIN |
-| 고급 | 15-20 | 윈도우 함수, CTE, EXISTS, 뷰, 인덱스, 트리거 |
+| 초급 | 01–06 | SELECT, WHERE, ORDER BY, 집계, GROUP BY, NULL |
+| 중급 | 07–16 | JOIN, 서브쿼리, CASE, 날짜/문자열, DML, DDL, Self/Cross JOIN |
+| 고급 | 17–22 | 윈도우 함수, CTE, EXISTS, 뷰, 인덱스, 트리거 |
 
-## 연습문제 (270문제)
+## 연습문제 (208문제)
 
 | 난이도 | 문제 수 | 예시 |
 |:------:|:-------:|------|
@@ -150,14 +150,37 @@ python generate.py --target mysql --size small --apply --ask-password
 | `config.yaml` | 핵심 설정 (날짜, 규모, 성장, 비율) |
 | `config_detailed.yaml` | 120+ 세부 파라미터 (기본값 내장) |
 
-## 튜토리얼 보기
+## 튜토리얼 보기 (MkDocs)
+
+튜토리얼은 [MkDocs Material](https://squidfunk.github.io/mkdocs-material/)로 빌드됩니다. 먼저 패키지를 설치하세요:
 
 ```bash
-# 양 언어 동시 서빙 (http://localhost:8001)
-serve.bat
+pip install -r requirements.txt    # mkdocs + mkdocs-material 포함
+```
 
-# 한국어: http://localhost:8001/ko/
-# 영어:   http://localhost:8001/en/
+### 양 언어 (정적)
+
+```bash
+serve.bat
+# http://localhost:8001/ko/  (한국어)
+# http://localhost:8001/en/  (영어)
+```
+
+툴바의 **언어 전환** 버튼으로 한국어/영어를 전환할 수 있습니다. 파일 수정 후에는 `serve.bat`을 다시 실행하세요.
+
+### 단일 언어 + 라이브 리로드
+
+```bash
+serve.bat ko     # 한국어 http://localhost:8001 (파일 수정 시 자동 반영)
+serve.bat en     # 영어 http://localhost:8001
+```
+
+### 정적 빌드만
+
+```bash
+cd docs
+mkdocs build -f mkdocs-ko.yml     # → output/docs/ko/
+mkdocs build -f mkdocs-en.yml     # → output/docs/en/
 ```
 
 ## 프로젝트 구조
@@ -195,7 +218,7 @@ serve.bat
 
 **데이터 현실감**: 상품 번들, 성별/연령 선호도, 포인트 리워드, 프로모션, 카테고리별 반품률, 인기도 감쇠, 공급업체 비활성화
 
-**튜토리얼**: 21개 레슨 (Mermaid 도표, DB별 SQL 탭), 270개 연습문제 (난이도 1-5), 연습문제 컴파일러 (YAML → DB + mkdocs)
+**튜토리얼**: 22개 레슨 (Mermaid 도표, DB별 SQL 탭), 208개 레슨 내 복습 문제, 연습문제 컴파일러 (YAML → DB + mkdocs)
 
 **기능**: `--start-date`/`--end-date`, `--dirty-data`, `--apply` (DB 직접 적용), `config_detailed.yaml` (120+ 파라미터), MySQL/PostgreSQL 내보내기, 한국어/영어 콘텐츠
 

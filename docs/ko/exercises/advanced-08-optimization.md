@@ -34,18 +34,18 @@ SCAN TABLE과 SEARCH TABLE의 차이는 무엇인가요?
 인덱스 유무에 따른 실행 계획 차이를 확인하세요.
 
 
-**힌트 1:** 인덱스가 있는 컬럼(`customer_id`)과 없는 컬럼(`notes`)에 대해
+**힌트 1:** 인덱스가 있는 칼럼(`customer_id`)과 없는 칼럼(`notes`)에 대해
 각각 `EXPLAIN QUERY PLAN`을 실행하여 비교하세요.
 
 
 
 ??? success "정답"
     ```sql
-    -- 1) 인덱스가 있는 컬럼으로 검색
+    -- 1) 인덱스가 있는 칼럼으로 검색
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE customer_id = 100;
     
-    -- 2) 인덱스가 없는 컬럼으로 검색
+    -- 2) 인덱스가 없는 칼럼으로 검색
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE notes LIKE '%배송%';
     
@@ -98,16 +98,16 @@ SCAN TABLE과 SEARCH TABLE의 차이는 무엇인가요?
 ### 4. SELECT * 제거
 
 
-필요한 컬럼만 명시하여 쿼리를 개선하세요.
+필요한 칼럼만 명시하여 쿼리를 개선하세요.
 
 
-**힌트 1:** `SELECT *` 대신 실제 필요한 컬럼만 나열하면 디스크 I/O가 줄어듭니다.
+**힌트 1:** `SELECT *` 대신 실제 필요한 칼럼만 나열하면 디스크 I/O가 줄어듭니다.
 
 
 
 ??? success "정답"
     ```sql
-    -- 개선: 필요한 컬럼만
+    -- 개선: 필요한 칼럼만
     SELECT order_number, customer_id, total_amount, status, ordered_at
     FROM orders
     WHERE ordered_at LIKE '2024-12%'
@@ -185,7 +185,7 @@ B) WHERE name LIKE '%Samsung%'
 자주 실행되는 쿼리에 대해 커버링 인덱스를 설계하세요.
 
 
-**힌트 1:** WHERE, ORDER BY, SELECT에 사용된 모든 컬럼을 인덱스에 포함하면
+**힌트 1:** WHERE, ORDER BY, SELECT에 사용된 모든 칼럼을 인덱스에 포함하면
 테이블을 읽지 않고 인덱스만으로 결과를 반환합니다.
 
 

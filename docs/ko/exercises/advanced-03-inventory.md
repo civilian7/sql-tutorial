@@ -48,7 +48,7 @@
 순변동이 마이너스인 상품만 보여주세요.
 
 
-**힌트 1:** - `inventory_transactions`의 `type` 컬럼: 'inbound' (입고), 'outbound' (출고)
+**힌트 1:** - `inventory_transactions`의 `type` 칼럼: 'inbound' (입고), 'outbound' (출고)
 - 조건부 집계: `SUM(CASE WHEN type='inbound' THEN quantity ELSE 0 END)`
 - `products`와 JOIN하여 현재 재고 포함
 

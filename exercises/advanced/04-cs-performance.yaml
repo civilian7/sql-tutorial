@@ -263,7 +263,7 @@ problems:
       Create a pivot table of resolved cases per CS staff member for 2024.
       Format: 12 months (columns) x staff (rows).
     hint: |
-      - 12개 `SUM(CASE WHEN SUBSTR(...) = 'MM' AND status ... THEN 1 ELSE 0 END)` 컬럼
+      - 12개 `SUM(CASE WHEN SUBSTR(...) = 'MM' AND status ... THEN 1 ELSE 0 END)` 칼럼
       - `LEFT JOIN staff`으로 미배정 포함
     hint_en: |
       - 12 columns with `SUM(CASE WHEN SUBSTR(...) = 'MM' AND status ... THEN 1 ELSE 0 END)`

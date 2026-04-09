@@ -490,7 +490,7 @@ customer:
 **Price tier browsing weights**:
 
 | Price Range | Weight | Meaning |
-|-------------|--------|---------|
+|-------------|-------:|---------|
 | Up to 50K | 5.0 | Budget items browsed most |
 | Up to 200K | 3.0 | |
 | Up to 500K | 2.0 | |

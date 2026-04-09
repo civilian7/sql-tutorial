@@ -5,9 +5,6 @@ The `SELECT` statement is the foundation of SQL. It retrieves data from one or m
 ```mermaid
 flowchart LR
     T["🗄️ Table\n(all rows, all columns)"] --> S["SELECT\ncolumn1, column2"] --> R["📋 Result\n(all rows, selected columns)"]
-    style T fill:#e3f2fd,stroke:#1565c0
-    style S fill:#fff3e0,stroke:#e65100
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > **Concept:** SELECT picks only the columns you want from a table.
@@ -23,7 +20,7 @@ SELECT * FROM products;
 **Result:**
 
 | id | sku | name | category_id | supplier_id | price | stock_qty | is_active | ... |
-|----|-----|------|-------------|-------------|-------|-----------|-----------|-----|
+|---:|-----|------|------------:|------------:|------:|----------:|----------:|-----|
 | 1 | SKU-0001 | Dell XPS 15 Laptop | 3 | 12 | 1299.99 | 42 | 1 | ... |
 | 2 | SKU-0002 | Logitech MX Master 3 | 8 | 7 | 99.99 | 156 | 1 | ... |
 | 3 | SKU-0003 | Samsung 27" Monitor | 5 | 3 | 449.99 | 38 | 1 | ... |
@@ -43,7 +40,7 @@ FROM products;
 **Result:**
 
 | name | price | stock_qty |
-|------|-------|-----------|
+|------|------:|----------:|
 | Dell XPS 15 Laptop | 1299.99 | 42 |
 | Logitech MX Master 3 | 99.99 | 156 |
 | Samsung 27" Monitor | 449.99 | 38 |
@@ -64,7 +61,7 @@ FROM products;
 **Result:**
 
 | product_name | unit_price | in_stock |
-|--------------|------------|----------|
+|--------------|-----------:|---------:|
 | Dell XPS 15 Laptop | 1299.99 | 42 |
 | Logitech MX Master 3 | 99.99 | 156 |
 | Samsung 27" Monitor | 449.99 | 38 |
@@ -82,7 +79,7 @@ FROM products;
 **Result:**
 
 | name | price_with_tax |
-|------|----------------|
+|------|---------------:|
 | Dell XPS 15 Laptop | 1429.989 |
 | Logitech MX Master 3 | 109.989 |
 | ... | |
@@ -137,7 +134,7 @@ ORDER BY is_active;
 | 1 |
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -172,6 +169,79 @@ Select `name`, `price`, and `stock_qty` from `products`. Add a computed column c
         price,
         stock_qty,
         price * stock_qty AS inventory_value
+    FROM products;
+    ```
+
+### Exercise 4
+Retrieve all columns from the `categories` table.
+
+??? success "Answer"
+    ```sql
+    SELECT * FROM categories;
+    ```
+
+### Exercise 5
+Select `name`, `department`, and `role` from the `staff` table, but rearrange the column order to `department`, `role`, `name`.
+
+??? success "Answer"
+    ```sql
+    SELECT department, role, name
+    FROM staff;
+    ```
+
+### Exercise 6
+Find all distinct `status` values in the `orders` table.
+
+??? success "Answer"
+    ```sql
+    SELECT DISTINCT status
+    FROM orders;
+    ```
+
+### Exercise 7
+List product `name` and `price` from `products`, and add a column `discounted_price` that shows the price after a 10% discount.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        price,
+        price * 0.9 AS discounted_price
+    FROM products;
+    ```
+
+### Exercise 8
+Select `name` and `price` from `products`, and add a string literal `'KRW'` as a column aliased `currency` on every row.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        price,
+        'KRW' AS currency
+    FROM products;
+    ```
+
+### Exercise 9
+Find all distinct combinations of `contact_name` and `company_name` from the `suppliers` table. (Use DISTINCT with multiple columns.)
+
+??? success "Answer"
+    ```sql
+    SELECT DISTINCT contact_name, company_name
+    FROM suppliers;
+    ```
+
+### Exercise 10
+From `products`, select `name`, `price`, and `cost`. Add a computed column `margin` (`price - cost`) and another `margin_pct` (`(price - cost) / price * 100`).
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        price,
+        cost,
+        price - cost                    AS margin,
+        (price - cost) / price * 100    AS margin_pct
     FROM products;
     ```
 

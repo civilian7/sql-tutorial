@@ -5,9 +5,6 @@ The `WHERE` clause narrows your results to only the rows that satisfy a conditio
 ```mermaid
 flowchart LR
     T["🗄️ All Rows\n(5,230)"] --> W["WHERE\ncondition"] --> R["📋 Filtered\n(127 rows)"]
-    style T fill:#e3f2fd,stroke:#1565c0
-    style W fill:#fff3e0,stroke:#e65100
-    style R fill:#e8f5e9,stroke:#2e7d32
 ```
 
 > **Concept:** WHERE filters rows by condition. Like extracting 127 VIP customers from 5,230 total.
@@ -31,7 +28,7 @@ WHERE price > 500;
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Dell XPS 15 Laptop | 1299.99 |
 | Samsung 27" Monitor | 449.99 |
 | ASUS ROG Gaming Desktop | 1899.00 |
@@ -60,7 +57,7 @@ WHERE is_active = 1
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Samsung 27" Monitor | 449.99 |
 | Corsair 16GB DDR5 RAM | 129.99 |
 | WD Black 1TB SSD | 189.99 |
@@ -118,7 +115,7 @@ WHERE price BETWEEN 50 AND 200;
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | Logitech MX Master 3 | 99.99 |
 | Corsair 16GB DDR5 RAM | 129.99 |
 | WD Black 1TB SSD | 189.99 |
@@ -145,7 +142,7 @@ WHERE name LIKE '%Gaming%';
 **Result:**
 
 | name | price |
-|------|-------|
+|------|------:|
 | ASUS ROG Gaming Desktop | 1899.00 |
 | Razer BlackWidow Gaming Keyboard | 149.99 |
 | SteelSeries Gaming Headset | 79.99 |
@@ -185,7 +182,7 @@ WHERE notes IS NOT NULL;
 ```
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -221,6 +218,79 @@ Find all customers whose gender is unknown (NULL) and who have never logged in (
     FROM customers
     WHERE gender IS NULL
       AND last_login_at IS NULL;
+    ```
+
+### Exercise 4
+Find all products with a price of $1,000 or more. Return `name` and `price`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, price
+    FROM products
+    WHERE price >= 1000;
+    ```
+
+### Exercise 5
+List products whose stock quantity is not zero (`stock_qty <> 0`). Return `name` and `stock_qty`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, stock_qty
+    FROM products
+    WHERE stock_qty <> 0;
+    ```
+
+### Exercise 6
+Find GOLD-grade customers whose point balance is between 500 and 2000. Return `name` and `point_balance`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, point_balance
+    FROM customers
+    WHERE grade = 'GOLD'
+      AND point_balance BETWEEN 500 AND 2000;
+    ```
+
+### Exercise 7
+List orders whose status is either `'pending'` or `'processing'`. Return `order_number` and `status`. Use the `IN` operator.
+
+??? success "Answer"
+    ```sql
+    SELECT order_number, status
+    FROM orders
+    WHERE status IN ('pending', 'processing');
+    ```
+
+### Exercise 8
+Find products whose name ends with "Keyboard". Return `name` and `price`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, price
+    FROM products
+    WHERE name LIKE '%Keyboard';
+    ```
+
+### Exercise 9
+From the `staff` table, find active employees (`is_active = 1`) who are not in the `'Sales'` department. Return `name` and `department`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, department
+    FROM staff
+    WHERE is_active = 1
+      AND department <> 'Sales';
+    ```
+
+### Exercise 10
+Find customers who are either VIP-grade and inactive (`is_active = 0`), or have a point balance of 5,000 or more. Return `name`, `grade`, `point_balance`, and `is_active`. Use parentheses to make the condition precedence clear.
+
+??? success "Answer"
+    ```sql
+    SELECT name, grade, point_balance, is_active
+    FROM customers
+    WHERE (grade = 'VIP' AND is_active = 0)
+       OR point_balance >= 5000;
     ```
 
 ---

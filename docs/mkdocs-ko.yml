@@ -63,18 +63,20 @@ nav:
     - "12. 문자열 함수": intermediate/12-string.md
     - "13. UNION": intermediate/13-union.md
     - "14. INSERT, UPDATE, DELETE": intermediate/14-dml.md
-    - "21. SELF JOIN과 CROSS JOIN": intermediate/21-self-cross-join.md
+    - "15. DDL — 테이블 생성과 변경": intermediate/15-ddl.md
+    - "16. SELF JOIN과 CROSS JOIN": intermediate/16-self-cross-join.md
   - 고급:
-    - "15. 윈도우 함수": advanced/15-window.md
-    - "16. CTE와 재귀 CTE": advanced/16-cte.md
-    - "17. EXISTS와 상관 서브쿼리": advanced/17-exists.md
-    - "18. 뷰(Views)": advanced/18-views.md
-    - "19. 인덱스와 성능": advanced/19-indexes.md
-    - "20. 트리거": advanced/20-triggers.md
+    - "17. 윈도우 함수": advanced/17-window.md
+    - "18. CTE와 재귀 CTE": advanced/18-cte.md
+    - "19. EXISTS와 상관 서브쿼리": advanced/19-exists.md
+    - "20. 뷰(Views)": advanced/20-views.md
+    - "21. 인덱스와 성능": advanced/21-indexes.md
+    - "22. 트리거": advanced/22-triggers.md
   - 참고:
     - "생성기 상세 가이드": generator-guide.md
     - "데이터베이스별 SQL 차이": dialect-comparison.md
   - 연습 문제:
+    - exercises/index.md
     - 초급:
       - "상품 탐색": exercises/beginner-01-products.md
       - "고객 분석": exercises/beginner-02-customers.md

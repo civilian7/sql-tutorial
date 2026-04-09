@@ -63,7 +63,7 @@ problems:
       Using the calendar table, compare average order amounts on weekdays vs weekends.
       Show weekday/weekend label, order count, average order value, and total revenue.
     hint: |
-      - `calendar.is_weekend` 컬럼 활용
+      - `calendar.is_weekend` 칼럼 활용
       - `orders`와 `calendar`를 날짜로 JOIN
     hint_en: |
       - Use `calendar.is_weekend` column
@@ -2008,7 +2008,7 @@ problems:
     title: "JSON 스펙 조회"
     title_en: "JSON Specs Query"
     question: |
-      products 테이블의 specs(JSON) 컬럼에서 CPU 정보를 추출하세요.
+      products 테이블의 specs(JSON) 칼럼에서 CPU 정보를 추출하세요.
       specs가 NULL이 아닌 상품의 이름과 CPU 정보를 표시합니다.
     question_en: |
       Extract CPU information from the products.specs JSON column.

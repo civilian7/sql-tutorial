@@ -539,7 +539,7 @@ Store reusable logic on the server and call it by name. SQLite does not support 
 
 ## Trigger Syntax
 
-Triggers execute automatically when data changes. See [Lesson 20](advanced/20-triggers.md) for details.
+Triggers execute automatically when data changes. See [Lesson 22](advanced/22-triggers.md) for details.
 
 === "SQLite"
 
@@ -583,7 +583,7 @@ Triggers execute automatically when data changes. See [Lesson 20](advanced/20-tr
 When running this tutorial's queries on another DB:
 
 | # | Check | SQLite Original | Convert To |
-|---|-------|----------------|------------|
+|--:|-------|----------------|------------|
 | 1 | LIMIT/OFFSET | `LIMIT 10` | MSSQL/Oracle: `FETCH NEXT 10 ROWS ONLY` |
 | 2 | Date extraction | `SUBSTR(ordered_at, 1, 7)` | MySQL: `DATE_FORMAT(ordered_at, '%Y-%m')` |
 | 3 | Days elapsed | `JULIANDAY(a) - JULIANDAY(b)` | MySQL: `DATEDIFF(a, b)` |

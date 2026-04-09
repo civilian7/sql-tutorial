@@ -25,7 +25,6 @@ flowchart LR
     O1 --> R1
     O2 --> R2
     O3 --> R3
-    style C3 fill:#ffcdd2,stroke:#c62828
 ```
 
 > INNER JOIN returns only rows that match in both tables. Park (ID:3) has no orders and is excluded.
@@ -50,7 +49,7 @@ LIMIT 5;
 **Result:**
 
 | order_number | customer_name | status | total_amount |
-|--------------|---------------|--------|--------------|
+|--------------|---------------|--------|-------------:|
 | ORD-20241231-09842 | Jennifer Martinez | confirmed | 2349.00 |
 | ORD-20241231-09841 | David Park | delivered | 149.99 |
 | ORD-20241231-09840 | Sarah Johnson | shipped | 89.99 |
@@ -95,7 +94,7 @@ LIMIT 6;
 **Result:**
 
 | item_id | order_number | product_name | category | quantity | unit_price |
-|---------|--------------|--------------|----------|----------|------------|
+|--------:|--------------|--------------|----------|---------:|-----------:|
 | 74513 | ORD-20241231-09842 | Dell XPS 15 Laptop | Laptops | 1 | 1299.99 |
 | 74512 | ORD-20241231-09842 | Logitech MX Master 3 | Mice | 2 | 99.99 |
 | 74511 | ORD-20241231-09841 | Samsung 27" Monitor | Monitors | 1 | 149.99 |
@@ -126,7 +125,7 @@ LIMIT 8;
 **Result:**
 
 | category | order_count | units_sold | gross_revenue |
-|----------|-------------|------------|---------------|
+|----------|------------:|-----------:|--------------:|
 | Laptops | 6241 | 6312 | 7849201.88 |
 | Desktops | 2841 | 2958 | 4293847.00 |
 | Monitors | 5103 | 5587 | 2341920.45 |
@@ -152,7 +151,7 @@ ORDER BY o.total_amount DESC;
 ```
 
 !!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
 
@@ -205,6 +204,90 @@ Find the top 5 customers by total amount spent (sum of `total_amount` for non-ca
     GROUP BY c.id, c.name, c.grade
     ORDER BY total_spent DESC
     LIMIT 5;
+    ```
+
+### Exercise 4
+Show the `order_number`, `customer_name`, and `status` for orders whose status is `'shipped'`. Sort by `ordered_at` descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        o.order_number,
+        c.name   AS customer_name,
+        o.status
+    FROM orders AS o
+    INNER JOIN customers AS c ON o.customer_id = c.id
+    WHERE o.status = 'shipped'
+    ORDER BY o.ordered_at DESC
+    LIMIT 10;
+    ```
+
+### Exercise 5
+Join the `shipping` and `orders` tables to list delivered shipments. Return `order_number`, `carrier`, `tracking_number`, and `delivered_at`. Sort by `delivered_at` descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        o.order_number,
+        s.carrier,
+        s.tracking_number,
+        s.delivered_at
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.status = 'delivered'
+    ORDER BY s.delivered_at DESC
+    LIMIT 10;
+    ```
+
+### Exercise 6
+From `order_items`, show the product name (`products.name`), supplier name (`suppliers.company_name`), quantity, and unit price. Join three tables and sort by unit price descending. Limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        p.name          AS product_name,
+        sup.company_name AS supplier_name,
+        oi.quantity,
+        oi.unit_price
+    FROM order_items AS oi
+    INNER JOIN products  AS p   ON oi.product_id  = p.id
+    INNER JOIN suppliers AS sup ON p.supplier_id   = sup.id
+    ORDER BY oi.unit_price DESC
+    LIMIT 10;
+    ```
+
+### Exercise 7
+For each supplier, find the total number of orders containing their products (`order_count`) and the total quantity sold (`total_qty`). Return `company_name`, `order_count`, and `total_qty`, sorted by `total_qty` descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        sup.company_name,
+        COUNT(DISTINCT oi.order_id) AS order_count,
+        SUM(oi.quantity)            AS total_qty
+    FROM order_items AS oi
+    INNER JOIN products  AS p   ON oi.product_id = p.id
+    INNER JOIN suppliers AS sup ON p.supplier_id  = sup.id
+    GROUP BY sup.id, sup.company_name
+    ORDER BY total_qty DESC;
+    ```
+
+### Exercise 8
+For each staff member, count the orders they handled (`order_count`) and total revenue (`total_revenue`). Exclude cancelled and returned orders. Return `staff_name`, `department`, `order_count`, and `total_revenue`. Sort by `total_revenue` descending and limit to 10.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        st.name        AS staff_name,
+        st.department,
+        COUNT(o.id)         AS order_count,
+        SUM(o.total_amount) AS total_revenue
+    FROM orders AS o
+    INNER JOIN staff AS st ON o.staff_id = st.id
+    WHERE o.status NOT IN ('cancelled', 'returned', 'return_requested')
+    GROUP BY st.id, st.name, st.department
+    ORDER BY total_revenue DESC
+    LIMIT 10;
     ```
 
 ---
