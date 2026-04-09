@@ -2,6 +2,23 @@
 
 서브쿼리(Subquery)는 다른 쿼리 안에 중첩된 `SELECT` 문입니다. `WHERE`, `FROM`, `SELECT` 절 어디에든 사용할 수 있습니다. 서브쿼리를 활용하면 복잡한 질문을 작고 읽기 쉬운 단계로 나눌 수 있습니다.
 
+```mermaid
+flowchart TB
+    subgraph "Outer Query"
+        OQ["SELECT * FROM products\nWHERE price > ???"]
+    end
+    subgraph "Inner Query (runs first)"
+        IQ["SELECT AVG(price)\nFROM products\n→ 450,000"]
+    end
+    IQ -->|"450,000"| OQ
+    OQ --> R["Products where\nprice > 450,000"]
+    style IQ fill:#fff3e0,stroke:#e65100
+    style OQ fill:#e3f2fd,stroke:#1565c0
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> 서브쿼리는 안쪽 쿼리가 먼저 실행되고, 그 결과가 바깥 쿼리에 전달됩니다.
+
 ## WHERE 절의 스칼라 서브쿼리
 
 스칼라 서브쿼리(Scalar Subquery)는 단일 값(행 1개, 열 1개)을 반환합니다. 리터럴 값이 들어갈 자리라면 어디든 사용할 수 있습니다.
@@ -175,6 +192,9 @@ LIMIT 8;
 | ... | | |
 
 > `SELECT`의 스칼라 서브쿼리는 행마다 실행되므로 대용량 테이블에서 느릴 수 있습니다. 성능이 중요한 경우에는 `LEFT JOIN`과 집계를 사용하세요.
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

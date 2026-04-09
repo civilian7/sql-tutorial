@@ -1,0 +1,419 @@
+metadata:
+  id: beginner-01-products
+  title: "상품 탐색"
+  title_en: "Product Exploration"
+  difficulty: beginner
+  concepts: [SELECT, WHERE, ORDER BY, LIMIT, COUNT, AVG, MIN, MAX, GROUP BY, HAVING, LIKE, CASE WHEN, IS NOT NULL]
+  prerequisites: []
+  estimated_minutes: 20
+  default_level: 1
+  default_type: "SELECT"
+  description: "products, categories, suppliers 테이블을 사용합니다."
+  description_en: "Uses products, categories, suppliers tables."
+
+problems:
+  - id: b01-01
+    level: 1
+    type: "Aggregate"
+    question: |
+      현재 등록된 전체 상품 수를 구하세요.
+    question_en: |
+      Find the total number of registered products.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS total_products FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "COUNT(*) 집계 함수를 사용하세요"
+        en: "Use the COUNT(*) aggregate function"
+    rubric:
+      ko: "COUNT(*)를 사용해야 함"
+      en: "Must use COUNT(*)"
+    max_score: 10
+    tags: [SELECT, COUNT, products]
+
+  - id: b01-02
+    level: 1
+    type: "SELECT"
+    question: |
+      가격이 높은 순으로 상위 5개 상품의 이름과 가격을 조회하세요.
+    question_en: |
+      Retrieve the names and prices of the top 5 products by price in descending order.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        ORDER BY price DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY price DESC로 정렬하고 LIMIT 5로 상위 5개만 가져오세요"
+        en: "Sort with ORDER BY price DESC and retrieve only the top 5 with LIMIT 5"
+    rubric:
+      ko: "ORDER BY price DESC와 LIMIT 5를 사용해야 함"
+      en: "Must use ORDER BY price DESC and LIMIT 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, products]
+
+  - id: b01-03
+    level: 1
+    type: "SELECT"
+    question: |
+      가격이 100,000원 이하인 상품의 이름, 브랜드, 가격을 가격 오름차순으로 조회하세요.
+    question_en: |
+      Retrieve the name, brand, and price of products priced at 100,000 KRW or less, sorted by price ascending.
+    reference_sql:
+      common: |
+        SELECT name, brand, price
+        FROM products
+        WHERE price <= 100000
+        ORDER BY price ASC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE price <= 100000 조건과 ORDER BY price ASC를 사용하세요"
+        en: "Use the WHERE price <= 100000 condition and ORDER BY price ASC"
+    rubric:
+      ko: "WHERE price <= 100000과 ORDER BY price ASC를 사용해야 함"
+      en: "Must use WHERE price <= 100000 and ORDER BY price ASC"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, products]
+
+  - id: b01-04
+    level: 1
+    type: "SELECT"
+    question: |
+      재고가 0인 상품의 이름과 SKU를 조회하세요.
+    question_en: |
+      Retrieve the name and SKU of products with zero stock.
+    reference_sql:
+      common: |
+        SELECT name, sku
+        FROM products
+        WHERE stock_qty = 0;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "WHERE stock_qty = 0 조건으로 필터링하세요"
+        en: "Filter with the WHERE stock_qty = 0 condition"
+    rubric:
+      ko: "WHERE stock_qty = 0을 사용해야 함"
+      en: "Must use WHERE stock_qty = 0"
+    max_score: 10
+    tags: [SELECT, WHERE, products]
+
+  - id: b01-05
+    level: 2
+    type: "Aggregate"
+    question: |
+      브랜드별로 몇 개의 상품이 있는지 세고, 상품 수가 많은 순으로 정렬하세요.
+    question_en: |
+      Count the number of products per brand and sort by product count in descending order.
+    reference_sql:
+      common: |
+        SELECT brand, COUNT(*) AS product_count
+        FROM products
+        GROUP BY brand
+        ORDER BY product_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY brand로 그룹화하고 COUNT(*)로 세기. ORDER BY ... DESC로 정렬"
+        en: "Group with GROUP BY brand and count with COUNT(*). Sort with ORDER BY ... DESC"
+    rubric:
+      ko: "GROUP BY brand와 COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY brand and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, ORDER BY, products]
+
+  - id: b01-06
+    level: 1
+    type: "SELECT"
+    question: |
+      단종일(discontinued_at)이 NULL이 아닌 상품의 이름, 가격, 단종일을 조회하세요.
+    question_en: |
+      Retrieve the name, price, and discontinuation date of products where discontinued_at is not NULL.
+    reference_sql:
+      common: |
+        SELECT name, price, discontinued_at
+        FROM products
+        WHERE discontinued_at IS NOT NULL
+        ORDER BY discontinued_at DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "IS NOT NULL로 NULL이 아닌 행만 필터링하세요"
+        en: "Use IS NOT NULL to filter only rows that are not NULL"
+    rubric:
+      ko: "IS NOT NULL을 사용해야 함"
+      en: "Must use IS NOT NULL"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, products]
+
+  - id: b01-07
+    level: 1
+    type: "Aggregate"
+    question: |
+      전체 상품의 평균 가격과 중간 가격대를 구하세요.
+    question_en: |
+      Find the average, minimum, and maximum price of all products.
+    reference_sql:
+      common: |
+        SELECT
+            ROUND(AVG(price), 2) AS avg_price,
+            ROUND(MIN(price), 2) AS min_price,
+            ROUND(MAX(price), 2) AS max_price
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "AVG(), MIN(), MAX() 집계 함수를 함께 사용하세요. ROUND()로 소수점 정리"
+        en: "Use the AVG(), MIN(), and MAX() aggregate functions together. Use ROUND() to format decimals"
+    rubric:
+      ko: "AVG(), MIN(), MAX()를 사용해야 함"
+      en: "Must use AVG(), MIN(), MAX()"
+    max_score: 10
+    tags: [SELECT, AVG, MIN, MAX, products]
+
+  - id: b01-08
+    level: 1
+    type: "SELECT"
+    question: |
+      브랜드가 'Samsung'인 상품의 이름, 가격, 재고를 조회하세요.
+    question_en: |
+      Retrieve the name, price, and stock quantity of products with the brand 'Samsung'.
+    reference_sql:
+      common: |
+        SELECT name, price, stock_qty
+        FROM products
+        WHERE brand = 'Samsung'
+        ORDER BY price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE brand = 'Samsung' 조건을 사용하세요. 문자열은 작은따옴표로 감싸기"
+        en: "Use the WHERE brand = 'Samsung' condition. Strings are enclosed in single quotes"
+    rubric:
+      ko: "WHERE brand = 'Samsung'을 사용해야 함"
+      en: "Must use WHERE brand = 'Samsung'"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, products]
+
+  - id: b01-09
+    level: 1
+    type: "SELECT"
+    question: |
+      상품명에 "Gaming"이 포함된 상품을 조회하세요.
+    question_en: |
+      Retrieve products whose name contains "Gaming".
+    reference_sql:
+      common: |
+        SELECT name, brand, price
+        FROM products
+        WHERE name LIKE '%Gaming%'
+        ORDER BY price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "LIKE '%Gaming%'으로 부분 문자열을 검색하세요. %는 임의의 문자열을 의미"
+        en: "Use LIKE '%Gaming%' to search for a substring. % represents any sequence of characters"
+    rubric:
+      ko: "LIKE '%Gaming%'을 사용해야 함"
+      en: "Must use LIKE '%Gaming%'"
+    max_score: 10
+    tags: [SELECT, WHERE, LIKE, ORDER BY, products]
+
+  - id: b01-10
+    level: 1
+    type: "SELECT"
+    question: |
+      재고가 10개 이하이고 판매 중(is_active = 1)인 상품의 이름, 재고, 가격을 조회하세요.
+    question_en: |
+      Retrieve the name, stock quantity, and price of active products (is_active = 1) with stock of 10 or fewer.
+    reference_sql:
+      common: |
+        SELECT name, stock_qty, price
+        FROM products
+        WHERE stock_qty <= 10
+          AND is_active = 1
+        ORDER BY stock_qty ASC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE 절에서 AND로 두 조건을 결합하세요: stock_qty <= 10 AND is_active = 1"
+        en: "Combine two conditions in the WHERE clause with AND: stock_qty <= 10 AND is_active = 1"
+    rubric:
+      ko: "WHERE에서 AND로 두 조건을 결합해야 함"
+      en: "Must combine two conditions with AND in WHERE"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, products]
+
+  - id: b01-11
+    level: 1
+    type: "SELECT"
+    question: |
+      최상위 카테고리(depth = 0)만 이름순으로 조회하세요.
+    question_en: |
+      Retrieve only the top-level categories (depth = 0) sorted by display order.
+    reference_sql:
+      common: |
+        SELECT id, name, slug
+        FROM categories
+        WHERE depth = 0
+        ORDER BY sort_order;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "categories 테이블에서 WHERE depth = 0으로 필터링하세요"
+        en: "Filter with WHERE depth = 0 from the categories table"
+    rubric:
+      ko: "categories 테이블에서 WHERE depth = 0을 사용해야 함"
+      en: "Must use WHERE depth = 0 from the categories table"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, categories]
+
+  - id: b01-12
+    level: 2
+    type: "CASE/IF"
+    question: |
+      10만원 미만, 10~50만원, 50~100만원, 100만원 이상으로 나누어 각 구간의 상품 수를 구하세요.
+    question_en: |
+      Divide products into ranges -- under 100K, 100K-500K, 500K-1M, and 1M+ KRW -- and count the products in each range.
+    reference_sql:
+      common: |
+        SELECT
+            CASE
+                WHEN price < 100000 THEN '10만원 미만'
+                WHEN price < 500000 THEN '10~50만원'
+                WHEN price < 1000000 THEN '50~100만원'
+                ELSE '100만원 이상'
+            END AS price_range,
+            COUNT(*) AS product_count
+        FROM products
+        GROUP BY price_range
+        ORDER BY MIN(price);
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "CASE WHEN으로 가격 구간을 분류한 뒤 GROUP BY와 COUNT(*)로 집계하세요"
+        en: "Classify price ranges with CASE WHEN, then aggregate with GROUP BY and COUNT(*)"
+    rubric:
+      ko: "CASE WHEN과 GROUP BY를 사용해야 함"
+      en: "Must use CASE WHEN and GROUP BY"
+    max_score: 10
+    tags: [SELECT, CASE, GROUP BY, COUNT, products]
+
+  - id: b01-13
+    level: 1
+    type: "SELECT"
+    question: |
+      활성(is_active = 1) 공급업체의 회사명과 담당자명을 조회하세요.
+    question_en: |
+      Retrieve the company name and contact person of active suppliers (is_active = 1).
+    reference_sql:
+      common: |
+        SELECT company_name, contact_name, email
+        FROM suppliers
+        WHERE is_active = 1
+        ORDER BY company_name;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "suppliers 테이블에서 WHERE is_active = 1로 필터링하세요"
+        en: "Filter with WHERE is_active = 1 from the suppliers table"
+    rubric:
+      ko: "suppliers 테이블에서 WHERE is_active = 1을 사용해야 함"
+      en: "Must use WHERE is_active = 1 from the suppliers table"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, suppliers]
+
+  - id: b01-14
+    level: 1
+    type: "SELECT"
+    question: |
+      각 상품의 마진율((price - cost_price) / price * 100)을 계산하고, 마진율이 높은 순으로 10개를 조회하세요.
+    question_en: |
+      Calculate the margin rate ((price - cost_price) / price * 100) for each product and retrieve the top 10 by margin rate.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            price,
+            cost_price,
+            ROUND((price - cost_price) / price * 100, 1) AS margin_pct
+        FROM products
+        WHERE price > 0
+        ORDER BY margin_pct DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SELECT 절에서 산술 연산으로 마진율을 계산하세요. ROUND()로 소수점 정리, price > 0 조건으로 0 나눗셈 방지"
+        en: "Calculate the margin rate using arithmetic in the SELECT clause. Use ROUND() for decimal formatting and price > 0 to prevent division by zero"
+    rubric:
+      ko: "산술 연산으로 마진율 계산, ROUND(), price > 0 조건 사용해야 함"
+      en: "Must calculate margin with arithmetic, use ROUND(), and price > 0 condition"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, products]
+
+  - id: b01-15
+    level: 2
+    type: "Aggregate"
+    question: |
+      상품이 3개 이상인 브랜드만 대상으로, 평균 가격과 상품 수를 구하세요.
+    question_en: |
+      For brands with 3 or more products, find the average price and product count.
+    reference_sql:
+      common: |
+        SELECT
+            brand,
+            COUNT(*) AS product_count,
+            ROUND(AVG(price), 2) AS avg_price,
+            ROUND(MIN(price), 2) AS min_price,
+            ROUND(MAX(price), 2) AS max_price
+        FROM products
+        GROUP BY brand
+        HAVING COUNT(*) >= 3
+        ORDER BY avg_price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY brand 후 HAVING COUNT(*) >= 3으로 그룹을 필터링하세요. HAVING은 집계 후 조건"
+        en: "After GROUP BY brand, use HAVING COUNT(*) >= 3 to filter groups. HAVING filters after aggregation"
+    rubric:
+      ko: "GROUP BY와 HAVING COUNT(*) >= 3을 사용해야 함"
+      en: "Must use GROUP BY and HAVING COUNT(*) >= 3"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, COUNT, AVG, products]

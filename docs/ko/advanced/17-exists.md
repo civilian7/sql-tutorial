@@ -2,6 +2,19 @@
 
 `EXISTS`는 서브쿼리가 한 건이라도 행을 반환하는지 검사합니다. `IN`과 달리 첫 번째 일치 행을 찾는 즉시 중단하므로, 대용량 데이터에서 효율적이며 NULL이 포함될 수 있는 상황에서도 안전합니다.
 
+```mermaid
+flowchart TD
+    OQ["Outer Query\nFOR EACH customer..."] --> CK{"EXISTS(\n  SELECT 1\n  FROM orders\n  WHERE ...)?"}
+    CK -->|"YES"| INC["Include in result ✓"]
+    CK -->|"NO"| EXC["Exclude ✗"]
+    style OQ fill:#e3f2fd,stroke:#1565c0
+    style CK fill:#fff3e0,stroke:#e65100
+    style INC fill:#e8f5e9,stroke:#2e7d32
+    style EXC fill:#ffcdd2,stroke:#c62828
+```
+
+> EXISTS는 외부 쿼리의 각 행에 대해 서브쿼리를 실행하고, 결과가 있으면 포함합니다.
+
 ## EXISTS vs. IN
 
 | 특성 | `IN` | `EXISTS` |
@@ -142,6 +155,9 @@ HAVING EXISTS (
 )
 ORDER BY category;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

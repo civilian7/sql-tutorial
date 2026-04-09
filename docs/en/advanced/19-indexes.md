@@ -2,6 +2,23 @@
 
 An index is a data structure that lets SQLite find rows without scanning the entire table. Understanding when indexes help — and when they don't — is the foundation of query performance tuning.
 
+```mermaid
+flowchart TD
+    subgraph "Without Index (Full Scan)"
+        FS["Check row 1\nCheck row 2\n...\nCheck row 34,331\n⏱️ Slow"]
+    end
+    subgraph "With Index (B-Tree)"
+        BT["Root"] --> L["< 'M'"] --> LF["Kim ✓\nLee ✓"]
+        BT --> R[">= 'M'"] --> RF["Park\nYoon"]
+        LF --> FA["⚡ Fast"]
+    end
+    style FS fill:#ffcdd2,stroke:#c62828
+    style FA fill:#e8f5e9,stroke:#2e7d32
+    style BT fill:#fff3e0,stroke:#e65100
+```
+
+> Without an index, every row is checked (full scan). With an index, B-tree lookup is fast.
+
 ## What an Index Does
 
 Without an index, SQLite reads every row in a table to find matches (a **full table scan**). With an index on the search column, it jumps directly to the relevant rows — like a book's index versus reading every page.
@@ -138,6 +155,9 @@ WHERE ordered_at > '2024-01-01'   -- missing left column
 ```sql
 DROP INDEX IF EXISTS idx_orders_status_date;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

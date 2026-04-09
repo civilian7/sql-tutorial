@@ -1,4 +1,4 @@
-"""배송 데이터 생성"""
+"""Shipping data generation"""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from src.generators.base import BaseGenerator
 class ShippingGenerator(BaseGenerator):
 
     def generate_shipping(self, orders: list[dict]) -> list[dict]:
-        """주문별 배송 데이터를 생성한다."""
+        """Generate shipping data per order."""
         rows = []
         ship_id = 0
         carriers = self.locale["shipping"]["carriers"]
@@ -38,7 +38,7 @@ class ShippingGenerator(BaseGenerator):
                 status = "delivered"
                 ship_days = self.rng.randint(1, 3)
                 ship_dt = ordered_at + timedelta(days=ship_days)
-                deliver_days = self.rng.randint(1, 4)  # 출고 후 1~4일
+                deliver_days = self.rng.randint(1, 4)  # 1~4 days after dispatch
                 shipped_at = self.fmt_dt(ship_dt)
                 delivered_at = self.fmt_dt(ship_dt + timedelta(days=deliver_days))
                 tracking = self._gen_tracking(carrier)

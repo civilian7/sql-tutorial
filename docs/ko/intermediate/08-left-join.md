@@ -2,6 +2,32 @@
 
 `LEFT JOIN`은 **왼쪽 테이블의 모든 행**을 반환하고, 오른쪽 테이블에서 일치하는 행이 있으면 함께 가져옵니다. 일치하는 행이 없으면 오른쪽 컬럼은 `NULL`로 채워집니다. 관련 레코드가 없는 행을 찾을 때 꼭 필요한 기법으로, 실무에서 매우 자주 쓰입니다.
 
+```mermaid
+flowchart LR
+    subgraph "customers (LEFT)"
+        C1["ID:1 Kim"]
+        C2["ID:2 Lee"]
+        C3["ID:3 Park"]
+    end
+    subgraph "orders (RIGHT)"
+        O1["Cust:1 ORD-001"]
+        O3["Cust:2 ORD-003"]
+    end
+    subgraph "LEFT JOIN Result"
+        R1["Kim + ORD-001"]
+        R2["Lee + ORD-003"]
+        R3["Park + NULL"]
+    end
+    C1 --> R1
+    C2 --> R2
+    C3 --> R3
+    O1 --> R1
+    O3 --> R2
+    style R3 fill:#fff9c4,stroke:#f9a825
+```
+
+> LEFT JOIN은 왼쪽 테이블의 모든 행을 유지합니다. 오른쪽에 매칭이 없으면 NULL로 채워집니다.
+
 ## 기본 LEFT JOIN
 
 ```sql
@@ -149,6 +175,9 @@ LEFT JOIN payments AS p ON p.order_id = o.id
 WHERE o.ordered_at LIKE '2024-12%'
 LIMIT 5;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

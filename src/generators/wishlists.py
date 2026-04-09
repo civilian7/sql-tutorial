@@ -1,4 +1,4 @@
-"""위시리스트(찜) 데이터 생성 — M:N 관계 학습용"""
+"""Wishlist data generation — for M:N relationship learning"""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ class WishlistGenerator(BaseGenerator):
         orders: list[dict],
         order_items: list[dict],
     ) -> list[dict]:
-        """위시리스트를 생성한다. 일부는 구매 전환, 일부는 미구매 상태."""
+        """Generate wishlists. Some convert to purchases, some remain unbought."""
         rows = []
         wish_id = 0
         used_pairs: set[tuple[int, int]] = set()
@@ -27,15 +27,22 @@ class WishlistGenerator(BaseGenerator):
         if not active_customers or not active_products:
             return rows
 
-        # 주문 이력: 고객별 구매 상품
-        purchased: dict[int, set[int]] = {}
+        # Order history: purchased products per customer + order date
+        # {customer_id: {product_id: earliest_ordered_at}}
+        purchased: dict[int, dict[int, datetime]] = {}
         items_by_order: dict[int, list[dict]] = {}
         for it in order_items:
             items_by_order.setdefault(it["order_id"], []).append(it)
         for o in orders:
             if o["status"] in ("confirmed", "delivered"):
+                ordered_at = datetime.strptime(o["ordered_at"], "%Y-%m-%d %H:%M:%S")
+                cid = o["customer_id"]
+                if cid not in purchased:
+                    purchased[cid] = {}
                 for it in items_by_order.get(o["id"], []):
-                    purchased.setdefault(o["customer_id"], set()).add(it["product_id"])
+                    pid = it["product_id"]
+                    if pid not in purchased[cid] or ordered_at < purchased[cid][pid]:
+                        purchased[cid][pid] = ordered_at
 
         target_count = max(100, int(20000 * self.scale))
 
@@ -49,26 +56,32 @@ class WishlistGenerator(BaseGenerator):
 
             wish_id += 1
             cust_created = datetime.strptime(customer["created_at"], "%Y-%m-%d %H:%M:%S")
-            wished_at = self.random_datetime(
-                cust_created,
-                datetime(self.end_year, 6, 30),
-            )
 
-            # 구매 전환 여부 — 찜한 상품을 실제 구매했는지
-            cust_purchased = purchased.get(customer["id"], set())
-            if product["id"] in cust_purchased:
+            # Purchase conversion — 40% chance to set as wishlisted-before-purchase if order history exists
+            cust_purchased = purchased.get(customer["id"], {})
+            bought_at = cust_purchased.get(product["id"])
+            if bought_at is not None and bought_at > cust_created and self.rng.random() < 0.40:
+                # Wishlist-to-purchase case: wishlisted 1~30 days before purchase
+                days_before = self.rng.randint(1, 30)
+                wished_at = bought_at - timedelta(days=days_before)
+                if wished_at < cust_created:
+                    wished_at = cust_created + timedelta(hours=self.rng.randint(1, 48))
                 is_purchased = 1
             else:
-                # 찜만 하고 안 산 경우가 더 많음 (70%)
+                wished_at = self.random_datetime(
+                    cust_created,
+                    self.end_date,
+                )
                 is_purchased = 0
 
-            # 알림 설정 (가격 하락 알림)
+            # Notification setting (price drop alert)
             notify_on_sale = 1 if self.rng.random() < 0.30 else 0
 
             rows.append({
                 "id": wish_id,
                 "customer_id": customer["id"],
                 "product_id": product["id"],
+                "is_purchased": is_purchased,
                 "notify_on_sale": notify_on_sale,
                 "created_at": self.fmt_dt(wished_at),
             })

@@ -2,6 +2,24 @@
 
 `UNION`은 두 개 이상의 `SELECT` 문 결과를 위아래로 쌓아 합칩니다. 각 쿼리는 같은 수의 컬럼을 반환해야 하며, 대응하는 컬럼의 타입이 호환되어야 합니다. 컬럼 이름은 첫 번째 쿼리의 것을 사용합니다.
 
+```mermaid
+flowchart LR
+    subgraph "Query A"
+        A["SELECT ...\nFROM complaints"]
+    end
+    subgraph "Query B"
+        B["SELECT ...\nFROM reviews"]
+    end
+    A --> U["UNION\n(remove duplicates)"]
+    B --> U
+    U --> R["Combined\nResult"]
+    style A fill:#e3f2fd,stroke:#1565c0
+    style B fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> UNION은 두 쿼리의 결과를 세로로 합칩니다. 컬럼 수와 타입이 일치해야 합니다.
+
 ## UNION vs. UNION ALL
 
 | 연산자 | 중복 처리 | 속도 |
@@ -125,6 +143,9 @@ ORDER BY
 | Monitors | 541920.45 |
 | ... | |
 | 합계 | 4218807.10 |
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

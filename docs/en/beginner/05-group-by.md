@@ -2,6 +2,18 @@
 
 `GROUP BY` divides rows into groups and applies aggregate functions to each group separately. `HAVING` then filters those groups — it is the `WHERE` for aggregated results.
 
+```mermaid
+flowchart LR
+    T["All\nRows"] --> G["GROUP BY\ncategory"] --> GR["Groups\n🔵🔵 | 🟢🟢🟢 | 🔴"]  --> A["Aggregate\nper group"] --> R["Summary\nper group"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style G fill:#fff3e0,stroke:#e65100
+    style GR fill:#f3e5f5,stroke:#6a1b9a
+    style A fill:#fff9c4,stroke:#f9a825
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **Concept:** GROUP BY groups rows together, then applies aggregates to each group.
+
 ## GROUP BY — Single Column
 
 ```sql
@@ -160,6 +172,9 @@ WHERE is_active = 1          -- exclude inactive customers (row-level)
 GROUP BY grade
 HAVING AVG(point_balance) > 500;  -- only grades where avg points > 500
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

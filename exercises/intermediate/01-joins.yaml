@@ -1,0 +1,516 @@
+metadata:
+  id: intermediate-01-joins
+  title: "JOIN 마스터"
+  title_en: "JOIN Master"
+  difficulty: intermediate
+  concepts: [INNER JOIN, LEFT JOIN, multi-table JOIN, GROUP BY, aggregate functions]
+  prerequisites: [beginner-01-products]
+  estimated_minutes: 30
+  default_level: 2
+  default_type: "JOIN/UNION"
+
+problems:
+  - id: i05-01
+    level: 2
+    type: "JOIN/UNION"
+    question: |
+      각 상품의 이름, 가격, 카테고리명을 조회하세요. 가격 내림차순으로 10개만.
+    question_en: |
+      Retrieve each product's name, price, and category name. Top 10 by price descending.
+    reference_sql:
+      common: |
+        SELECT p.name, p.price, cat.name AS category
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        ORDER BY p.price DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`products`와 `categories`를 `category_id`로 `INNER JOIN`하고, `ORDER BY ... DESC LIMIT 10`."
+        en: "`INNER JOIN` `products` and `categories` on `category_id`, then `ORDER BY ... DESC LIMIT 10`."
+    max_score: 10
+    tags: [INNER JOIN, ORDER BY, LIMIT, products, categories]
+
+  - id: i05-02
+    level: 2
+    type: "JOIN/UNION"
+    question: |
+      상품명, 카테고리명, 공급업체명을 함께 조회하세요.
+    question_en: |
+      Retrieve the product name, category name, and supplier company name together.
+    reference_sql:
+      common: |
+        SELECT
+            p.name AS product,
+            cat.name AS category,
+            s.company_name AS supplier
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        INNER JOIN suppliers AS s ON p.supplier_id = s.id
+        ORDER BY p.name
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`products`에서 `categories`와 `suppliers` 두 테이블을 각각 `INNER JOIN`으로 연결."
+        en: "`INNER JOIN` both `categories` and `suppliers` from `products`."
+    max_score: 10
+    tags: [INNER JOIN, MULTI JOIN, products, categories, suppliers]
+
+  - id: i05-03
+    level: 2
+    type: "JOIN/UNION"
+    question: |
+      한 번도 리뷰를 받지 않은 상품의 이름과 가격을 조회하세요.
+    question_en: |
+      Retrieve the name and price of products that have never received a review.
+    reference_sql:
+      common: |
+        SELECT p.name, p.price
+        FROM products AS p
+        LEFT JOIN reviews AS r ON p.id = r.product_id
+        WHERE r.id IS NULL
+        ORDER BY p.price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`LEFT JOIN reviews` 후 `WHERE r.id IS NULL`로 매칭되지 않는 행을 찾기."
+        en: "After `LEFT JOIN reviews`, use `WHERE r.id IS NULL` to find unmatched rows."
+    max_score: 10
+    tags: [LEFT JOIN, ANTI JOIN, products, reviews]
+
+  - id: i05-04
+    level: 2
+    type: "JOIN/UNION"
+    question: |
+      한 번도 주문하지 않은 고객의 이름과 가입일을 조회하세요.
+    question_en: |
+      Retrieve the name and signup date of customers who have never placed an order.
+    reference_sql:
+      common: |
+        SELECT c.name, c.created_at
+        FROM customers AS c
+        LEFT JOIN orders AS o ON c.id = o.customer_id
+        WHERE o.id IS NULL
+        ORDER BY c.created_at;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`customers LEFT JOIN orders` 후 `WHERE o.id IS NULL`로 주문이 없는 고객만 필터링."
+        en: "`customers LEFT JOIN orders`, then `WHERE o.id IS NULL` to filter customers with no orders."
+    max_score: 10
+    tags: [LEFT JOIN, ANTI JOIN, customers, orders]
+
+  - id: i05-05
+    level: 2
+    type: "Aggregate"
+    question: |
+      각 고객의 이름, 등급, 주문 수, 총 구매 금액을 조회하세요. 주문 수 상위 10명.
+    question_en: |
+      Retrieve each customer's name, grade, order count, and total amount spent. Top 10 by total spent.
+    reference_sql:
+      common: |
+        SELECT
+            c.name, c.grade,
+            COUNT(o.id) AS order_count,
+            ROUND(SUM(o.total_amount), 2) AS total_spent
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        WHERE o.status NOT IN ('cancelled')
+        GROUP BY c.id, c.name, c.grade
+        ORDER BY total_spent DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`customers JOIN orders` 후 `GROUP BY`로 집계. `COUNT`와 `SUM`을 함께 사용."
+        en: "`customers JOIN orders`, then aggregate with `GROUP BY`. Use `COUNT` and `SUM` together."
+    max_score: 10
+    tags: [INNER JOIN, GROUP BY, COUNT, SUM, customers, orders]
+
+  - id: i05-06
+    level: 3
+    type: "JOIN/UNION"
+    question: |
+      최근 주문 5건의 주문번호, 고객명, 상품명, 수량, 단가를 조회하세요.
+    question_en: |
+      Retrieve the order number, customer name, product name, quantity, and unit price for the 5 most recent orders.
+    reference_sql:
+      common: |
+        SELECT
+            o.order_number,
+            c.name AS customer,
+            p.name AS product,
+            oi.quantity,
+            oi.unit_price
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        INNER JOIN order_items AS oi ON o.id = oi.order_id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        ORDER BY o.ordered_at DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`orders -> customers`, `orders -> order_items -> products` 4개 테이블을 `INNER JOIN`으로 연결."
+        en: "Connect 4 tables with `INNER JOIN`: `orders -> customers`, `orders -> order_items -> products`."
+    max_score: 10
+    tags: [INNER JOIN, MULTI JOIN, ORDER BY, orders, customers, order_items, products]
+
+  - id: i05-07
+    level: 3
+    type: "Aggregate"
+    question: |
+      카테고리별 총 매출과 판매 수량을 구하세요. 취소 제외.
+    question_en: |
+      Find the total revenue and units sold per category. Exclude cancelled orders.
+    reference_sql:
+      common: |
+        SELECT
+            cat.name AS category,
+            SUM(oi.quantity) AS units_sold,
+            ROUND(SUM(oi.quantity * oi.unit_price), 2) AS revenue
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE o.status NOT IN ('cancelled')
+        GROUP BY cat.name
+        ORDER BY revenue DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`order_items -> products -> categories`를 JOIN하고, `WHERE o.status NOT IN ('cancelled')`로 취소 제외."
+        en: "JOIN `order_items -> products -> categories` and exclude cancelled orders with `WHERE o.status NOT IN ('cancelled')`."
+    max_score: 10
+    tags: [INNER JOIN, MULTI JOIN, GROUP BY, SUM, order_items, orders, products, categories]
+
+  - id: i05-08
+    level: 2
+    type: "Aggregate"
+    question: |
+      리뷰가 5개 이상인 상품의 이름, 평균 평점, 리뷰 수를 구하세요.
+    question_en: |
+      Find the name, average rating, and review count of products with 5 or more reviews.
+    reference_sql:
+      common: |
+        SELECT
+            p.name,
+            ROUND(AVG(r.rating), 2) AS avg_rating,
+            COUNT(r.id) AS review_count
+        FROM products AS p
+        INNER JOIN reviews AS r ON p.id = r.product_id
+        GROUP BY p.id, p.name
+        HAVING COUNT(r.id) >= 5
+        ORDER BY avg_rating DESC
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`products JOIN reviews`로 연결 후 `GROUP BY`와 `HAVING COUNT(r.id) >= 5`로 필터링."
+        en: "`products JOIN reviews`, then aggregate with `GROUP BY` and filter with `HAVING COUNT(r.id) >= 5`."
+    max_score: 10
+    tags: [INNER JOIN, GROUP BY, HAVING, AVG, COUNT, products, reviews]
+
+  - id: i05-09
+    level: 2
+    type: "String/Date"
+    question: |
+      배송 완료된 주문의 평균 배송 소요일(주문일 -> 배송완료일)을 구하세요.
+    question_en: |
+      Find the average number of days from order to delivery for completed shipments.
+    reference_sql:
+      common: |
+        SELECT
+            ROUND(AVG(JULIANDAY(sh.delivered_at) - JULIANDAY(o.ordered_at)), 1) AS avg_delivery_days
+        FROM shipping AS sh
+        INNER JOIN orders AS o ON sh.order_id = o.id
+        WHERE sh.status = 'delivered'
+          AND sh.delivered_at IS NOT NULL;
+    supported_db: [sqlite]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "`JULIANDAY(delivered_at) - JULIANDAY(ordered_at)`로 날짜 차이를 계산. `shipping JOIN orders`."
+        en: "Calculate the date difference with `JULIANDAY(delivered_at) - JULIANDAY(ordered_at)`. JOIN `shipping` with `orders`."
+    max_score: 10
+    tags: [INNER JOIN, AVG, date arithmetic, shipping, orders]
+
+  - id: i05-10
+    level: 2
+    type: "CASE/IF"
+    question: |
+      택배사(carrier)별 배송 건수, 완료 건수, 완료율을 구하세요.
+    question_en: |
+      Find the total shipments, delivered count, and delivery rate per carrier.
+    reference_sql:
+      common: |
+        SELECT
+            carrier,
+            COUNT(*) AS total,
+            SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) AS delivered,
+            ROUND(100.0 * SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*), 1) AS delivery_rate
+        FROM shipping
+        GROUP BY carrier
+        ORDER BY total DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`GROUP BY carrier`와 `CASE WHEN status = 'delivered'`로 조건부 집계. 완료율은 `100.0 * 완료/전체`."
+        en: "`GROUP BY carrier` with conditional aggregation using `CASE WHEN status = 'delivered'`. Delivery rate is `100.0 * delivered / total`."
+    max_score: 10
+    tags: [GROUP BY, CASE, COUNT, SUM, shipping]
+
+  - id: i05-11
+    level: 2
+    type: "Aggregate"
+    question: |
+      공급업체별 공급 상품 수, 평균 가격, 최고가를 구하세요.
+    question_en: |
+      Find the product count, average price, and highest price per supplier.
+    reference_sql:
+      common: |
+        SELECT
+            s.company_name,
+            COUNT(p.id) AS product_count,
+            ROUND(AVG(p.price), 2) AS avg_price,
+            ROUND(MAX(p.price), 2) AS max_price
+        FROM suppliers AS s
+        INNER JOIN products AS p ON s.id = p.supplier_id
+        GROUP BY s.id, s.company_name
+        ORDER BY product_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`suppliers JOIN products`로 연결 후 `GROUP BY`로 집계. `COUNT`, `AVG`, `MAX` 함수 사용."
+        en: "`suppliers JOIN products`, then aggregate with `GROUP BY`. Use `COUNT`, `AVG`, and `MAX` functions."
+    max_score: 10
+    tags: [INNER JOIN, GROUP BY, COUNT, AVG, MAX, suppliers, products]
+
+  - id: i05-12
+    level: 2
+    type: "Aggregate"
+    question: |
+      각 고객의 가장 최근 주문일과 주문 금액을 조회하세요. 최근 주문순으로 정렬.
+    question_en: |
+      Retrieve each customer's most recent order date and order amount. Sort by most recent order.
+    reference_sql:
+      common: |
+        SELECT
+            c.name,
+            c.grade,
+            MAX(o.ordered_at) AS last_order_date,
+            o.total_amount AS last_order_amount
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        WHERE o.status NOT IN ('cancelled')
+        GROUP BY c.id, c.name, c.grade
+        ORDER BY last_order_date DESC
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`MAX(o.ordered_at)`로 최근 주문일을 구하고, `GROUP BY` 고객별로 집계."
+        en: "Use `MAX(o.ordered_at)` to get the most recent order date and aggregate per customer with `GROUP BY`."
+    max_score: 10
+    tags: [INNER JOIN, GROUP BY, MAX, customers, orders]
+
+  - id: i01-13
+    level: 2
+    type: "JOIN/UNION"
+    title: "직원 계층 구조 (Self-JOIN)"
+    title_en: "Staff Hierarchy (Self-JOIN)"
+    question: |
+      모든 직원과 그 상사(매니저)의 이름을 함께 조회하세요.
+      매니저가 없는 최상위 직원은 상사명을 NULL로 표시합니다.
+    question_en: |
+      List all staff members with their manager names.
+      Top-level staff with no manager should show NULL for manager name.
+    reference_sql:
+      common: |
+        SELECT
+            s.id,
+            s.name       AS staff_name,
+            s.department,
+            s.role,
+            m.name       AS manager_name,
+            m.department AS manager_department
+        FROM staff AS s
+        LEFT JOIN staff AS m ON s.manager_id = m.id
+        ORDER BY s.department, s.name;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`staff` 테이블을 자기 자신과 LEFT JOIN. `staff AS s LEFT JOIN staff AS m ON s.manager_id = m.id`. 매니저가 없으면 `m.name`이 NULL."
+        en: "Self LEFT JOIN on `staff` table. `staff AS s LEFT JOIN staff AS m ON s.manager_id = m.id`. If no manager, `m.name` is NULL."
+    max_score: 10
+    tags: [SELF JOIN, LEFT JOIN, staff]
+
+  - id: i01-14
+    level: 2
+    type: "JOIN/UNION"
+    title: "상품 후속 모델 체인 (Self-JOIN)"
+    title_en: "Product Successor Chain (Self-JOIN)"
+    question: |
+      단종된 상품과 그 후속 모델을 함께 조회하세요.
+      단종 상품명, 단종일, 후속 모델명, 후속 모델 가격을 표시합니다.
+    question_en: |
+      Find discontinued products and their successors.
+      Show discontinued product name, date, successor name, and successor price.
+    reference_sql:
+      common: |
+        SELECT
+            p.name        AS discontinued_product,
+            p.price       AS old_price,
+            p.discontinued_at,
+            succ.name     AS successor_product,
+            succ.price    AS new_price,
+            ROUND(succ.price - p.price, 0) AS price_diff
+        FROM products AS p
+        INNER JOIN products AS succ ON p.successor_id = succ.id
+        WHERE p.discontinued_at IS NOT NULL
+        ORDER BY p.discontinued_at DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`products.successor_id`가 같은 테이블의 `id`를 참조. `products AS p JOIN products AS succ ON p.successor_id = succ.id`. `p.discontinued_at IS NOT NULL` 필터."
+        en: "`products.successor_id` references `id` in the same table. `products AS p JOIN products AS succ ON p.successor_id = succ.id`. Filter `p.discontinued_at IS NOT NULL`."
+    max_score: 10
+    tags: [SELF JOIN, INNER JOIN, products]
+
+  - id: i01-15
+    level: 3
+    type: "JOIN/UNION"
+    title: "Q&A 스레드 조회 (Self-JOIN)"
+    title_en: "Q&A Thread View (Self-JOIN)"
+    question: |
+      상품 Q&A에서 질문과 답변을 한 행에 보여주세요.
+      질문 내용, 질문 작성자(고객), 답변 내용, 답변 작성자(직원)를 표시합니다.
+    question_en: |
+      Show Q&A pairs in one row: question content, customer name, answer content, staff name.
+    reference_sql:
+      common: |
+        SELECT
+            p.name        AS product_name,
+            q.content     AS question,
+            c.name        AS asked_by,
+            q.created_at  AS asked_at,
+            a.content     AS answer,
+            s.name        AS answered_by,
+            a.created_at  AS answered_at
+        FROM product_qna AS q
+        INNER JOIN products AS p ON q.product_id = p.id
+        LEFT JOIN customers AS c ON q.customer_id = c.id
+        LEFT JOIN product_qna AS a ON a.parent_id = q.id
+        LEFT JOIN staff AS s ON a.staff_id = s.id
+        WHERE q.parent_id IS NULL
+        ORDER BY q.created_at DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "질문: `parent_id IS NULL`. 답변: `parent_id`가 질문의 `id`를 참조. 질문(`q`) LEFT JOIN 답변(`a`) ON `a.parent_id = q.id`."
+        en: "Questions: `parent_id IS NULL`. Answers: `parent_id` references question's `id`. Question (`q`) LEFT JOIN Answer (`a`) ON `a.parent_id = q.id`."
+    max_score: 10
+    tags: [SELF JOIN, LEFT JOIN, MULTI JOIN, product_qna, products, customers, staff]
+
+  - id: i01-16
+    level: 2
+    type: "JOIN/UNION"
+    title: "주문이 없는 날 찾기 (CROSS JOIN)"
+    title_en: "Days with No Orders (CROSS JOIN)"
+    question: |
+      calendar 테이블을 활용하여 2024년에 주문이 하나도 없는 날짜를 찾으세요.
+    question_en: |
+      Using the calendar table, find dates in 2024 with zero orders.
+    reference_sql:
+      common: |
+        SELECT
+            cal.date_key,
+            cal.day_name,
+            cal.is_weekend,
+            cal.is_holiday,
+            cal.holiday_name
+        FROM calendar AS cal
+        LEFT JOIN (
+            SELECT DISTINCT SUBSTR(ordered_at, 1, 10) AS order_date
+            FROM orders
+        ) AS od ON cal.date_key = od.order_date
+        WHERE cal.year = 2024
+          AND od.order_date IS NULL
+        ORDER BY cal.date_key;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`calendar` LEFT JOIN `orders` (날짜 기준). `orders`의 주문일을 `SUBSTR(ordered_at, 1, 10)`으로 날짜만 추출. `WHERE o.id IS NULL`로 주문 없는 날 필터."
+        en: "LEFT JOIN `calendar` with `orders` on date. Extract date from `ordered_at` with `SUBSTR(ordered_at, 1, 10)`. Filter `WHERE o.id IS NULL` for no-order days."
+    max_score: 10
+    tags: [LEFT JOIN, ANTI JOIN, DISTINCT, calendar, orders]
+
+  - id: i01-17
+    level: 2
+    type: "JOIN/UNION"
+    title: "상품 태그 검색 (M:N JOIN)"
+    title_en: "Product Tag Search (M:N JOIN)"
+    question: |
+      "Gaming" 태그가 달린 상품 목록을 조회하세요.
+      상품명, 브랜드, 가격, 카테고리를 표시합니다.
+    question_en: |
+      Find products with the "Gaming" tag.
+      Show product name, brand, price, and category.
+    reference_sql:
+      common: |
+        SELECT
+            p.name   AS product_name,
+            p.brand,
+            p.price,
+            cat.name AS category
+        FROM product_tags AS pt
+        INNER JOIN tags       AS t   ON pt.tag_id     = t.id
+        INNER JOIN products   AS p   ON pt.product_id = p.id
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE t.name = 'Gaming'
+          AND p.is_active = 1
+        ORDER BY p.price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`product_tags` -> `tags` JOIN으로 태그 이름 필터. `product_tags` -> `products` JOIN으로 상품 정보. `tags.name = 'Gaming'`."
+        en: "JOIN `product_tags` -> `tags` to filter by tag name. JOIN `product_tags` -> `products` for product info. `tags.name = 'Gaming'`."
+    max_score: 10
+    tags: [INNER JOIN, MULTI JOIN, product_tags, tags, products, categories]

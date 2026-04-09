@@ -1,4 +1,4 @@
-"""쿠폰 및 쿠폰 사용 이력 데이터 생성"""
+"""Coupon and coupon usage history data generation"""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from src.generators.base import BaseGenerator
 class CouponGenerator(BaseGenerator):
 
     def generate_coupons(self) -> list[dict]:
-        """쿠폰 목록을 생성한다 (~200개)."""
+        """Generate coupon list (~200 coupons)."""
         count = max(20, int(200 * self.scale))
         if count > 500:
             count = 500
@@ -48,7 +48,7 @@ class CouponGenerator(BaseGenerator):
                 "max_discount": max_discount,
                 "usage_limit": self.rng.choice([None, 100, 500, 1000, 5000]),
                 "per_user_limit": self.rng.choice([1, 1, 1, 2, 3]),
-                "is_active": 1 if expired_at > datetime(self.end_year, 6, 1) else 0,
+                "is_active": 1 if expired_at > self.end_date else 0,
                 "started_at": self.fmt_dt(started_at),
                 "expired_at": self.fmt_dt(expired_at),
                 "created_at": self.fmt_dt(started_at - timedelta(days=self.rng.randint(1, 7))),
@@ -59,7 +59,7 @@ class CouponGenerator(BaseGenerator):
     def generate_coupon_usage(
         self, coupons: list[dict], orders: list[dict],
     ) -> list[dict]:
-        """쿠폰 사용 이력을 생성한다."""
+        """Generate coupon usage history."""
         rows = []
         usage_id = 0
         target_count = max(100, int(50000 * self.scale))
@@ -67,6 +67,10 @@ class CouponGenerator(BaseGenerator):
         confirmed_orders = [o for o in orders if o["status"] in ("confirmed", "delivered")]
         if not confirmed_orders or not coupons:
             return rows
+
+        # Track usage count per coupon and per customer
+        coupon_total_usage: dict[int, int] = {}
+        coupon_user_usage: dict[tuple[int, int], int] = {}
 
         for _ in range(min(target_count, len(confirmed_orders))):
             order = self.rng.choice(confirmed_orders)
@@ -79,7 +83,24 @@ class CouponGenerator(BaseGenerator):
             if not (coupon_start <= ordered_at <= coupon_end):
                 continue
 
+            # Minimum order amount validation
+            if coupon["min_order_amount"] and order["total_amount"] < coupon["min_order_amount"]:
+                continue
+
+            # Total usage limit validation
+            cid = coupon["id"]
+            if coupon["usage_limit"] and coupon_total_usage.get(cid, 0) >= coupon["usage_limit"]:
+                continue
+
+            # Per-user usage limit validation
+            pair = (cid, order["customer_id"])
+            if coupon_user_usage.get(pair, 0) >= coupon["per_user_limit"]:
+                continue
+
             usage_id += 1
+            coupon_total_usage[cid] = coupon_total_usage.get(cid, 0) + 1
+            coupon_user_usage[pair] = coupon_user_usage.get(pair, 0) + 1
+
             if coupon["type"] == "percent":
                 disc = order["total_amount"] * coupon["discount_value"] / 100
                 if coupon["max_discount"]:

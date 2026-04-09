@@ -2,6 +2,22 @@
 
 `NULL` represents an unknown or missing value. It is not zero, not an empty string — it is the absence of a value. Understanding NULL is critical because it behaves differently from every other value in SQL.
 
+```mermaid
+flowchart TD
+    V["Value"] --> |"= 'VIP'"| T["TRUE ✅"]
+    V --> |"= NULL"| U["UNKNOWN ❓"]
+    N["NULL"] --> |"= NULL"| U2["UNKNOWN ❓"]
+    N --> |"IS NULL"| T2["TRUE ✅"]
+    style V fill:#e3f2fd,stroke:#1565c0
+    style N fill:#ffcdd2,stroke:#c62828
+    style T fill:#e8f5e9,stroke:#2e7d32
+    style T2 fill:#e8f5e9,stroke:#2e7d32
+    style U fill:#fff9c4,stroke:#f9a825
+    style U2 fill:#fff9c4,stroke:#f9a825
+```
+
+> **Concept:** NULL means 'no value'. = NULL always returns UNKNOWN, so use IS NULL instead.
+
 ## NULL is Not Equal to Anything
 
 You cannot compare NULL with `=` or `<>`. These comparisons always return `NULL` (unknown), never `TRUE`.
@@ -179,6 +195,9 @@ SELECT
 FROM customers
 LIMIT 5;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

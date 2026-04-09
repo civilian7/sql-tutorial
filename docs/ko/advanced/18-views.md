@@ -2,6 +2,26 @@
 
 **뷰(View)**는 데이터베이스에 이름이 붙은 객체로 저장된 쿼리입니다. 뷰를 조회하는 방식은 테이블 조회와 동일하지만, 내부적으로는 쿼리가 매번 실행됩니다. 뷰는 복잡한 쿼리를 단순화하고, 일관된 비즈니스 로직을 강제하며, 원시 테이블의 세부 내용을 숨겨 보안 계층을 제공합니다.
 
+```mermaid
+flowchart LR
+    subgraph "Physical Tables"
+        T1["customers"]
+        T2["orders"]
+        T3["order_items"]
+    end
+    subgraph "View (virtual)"
+        V["v_customer_summary\n= stored query"]
+    end
+    T1 --> V
+    T2 --> V
+    T3 --> V
+    V --> Q["SELECT * FROM\nv_customer_summary\nWHERE ..."]
+    style V fill:#fff3e0,stroke:#e65100,stroke-dasharray: 5 5
+    style Q fill:#e8f5e9,stroke:#2e7d32
+```
+
+> 뷰는 저장된 쿼리입니다. 물리적 테이블이 아니라 실행할 때마다 원본 테이블에서 데이터를 가져옵니다.
+
 ## 뷰 생성
 
 ```sql
@@ -149,6 +169,9 @@ HAVING open_complaints > 0 OR pending_returns > 0;
 ```sql
 DROP VIEW IF EXISTS v_cs_watchlist;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

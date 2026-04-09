@@ -2,6 +2,16 @@
 
 `SELECT` 문은 SQL의 근간입니다. 하나 이상의 테이블에서 데이터를 조회하며, 어떤 컬럼을 반환할지, 어떻게 표시할지를 정밀하게 지정할 수 있습니다.
 
+```mermaid
+flowchart LR
+    T["🗄️ Table\n(all rows, all columns)"] --> S["SELECT\ncolumn1, column2"] --> R["📋 Result\n(all rows, selected columns)"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style S fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **개념:** SELECT는 테이블에서 원하는 컬럼만 골라서 보여줍니다.
+
 ## 전체 컬럼 조회
 
 `SELECT *`를 사용하면 테이블의 모든 컬럼을 가져옵니다. 데이터를 빠르게 훑어볼 때 유용합니다.
@@ -125,6 +135,9 @@ ORDER BY is_active;
 |--------|
 | 0 |
 | 1 |
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

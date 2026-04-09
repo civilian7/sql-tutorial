@@ -4,6 +4,26 @@
 
 구문: `function() OVER (PARTITION BY ... ORDER BY ...)`
 
+```mermaid
+flowchart LR
+    subgraph "Partition: Customer A"
+        R1["Row 1: 50,000"]
+        R2["Row 2: 80,000"]
+        R3["Row 3: 30,000"]
+    end
+    subgraph "Window Frame"
+        W["SUM() OVER\n(ORDER BY date\nROWS BETWEEN\n1 PRECEDING\nAND CURRENT)"]
+    end
+    R1 -.->|"frame"| W
+    R2 -.->|"frame"| W
+    W --> O1["50,000"]
+    W --> O2["130,000"]
+    W --> O3["110,000"]
+    style W fill:#fff3e0,stroke:#e65100
+```
+
+> 윈도우 함수는 행을 그룹화하지 않고, 각 행에서 주변 행들을 참조하여 계산합니다. 결과 행 수가 줄어들지 않습니다.
+
 ## ROW_NUMBER, RANK, DENSE_RANK
 
 순위 함수는 파티션 내에서 각 행에 순위를 부여합니다.
@@ -161,6 +181,58 @@ WHERE c.grade = 'VIP'
 ORDER BY c.name, o.ordered_at
 LIMIT 10;
 ```
+
+## 윈도우 함수 추가 활용
+
+### 포인트 잔액 검증 (SUM OVER)
+
+`point_transactions`의 `balance_after`가 올바른지 `SUM() OVER()`로 검증합니다.
+
+```sql
+SELECT
+    id,
+    customer_id,
+    type,
+    reason,
+    amount,
+    balance_after,
+    SUM(amount) OVER (
+        PARTITION BY customer_id
+        ORDER BY created_at, id
+    ) AS calculated_balance,
+    balance_after - SUM(amount) OVER (
+        PARTITION BY customer_id
+        ORDER BY created_at, id
+    ) AS difference
+FROM point_transactions
+WHERE customer_id = 42
+ORDER BY created_at, id;
+```
+
+### 등급 변동 추적 (LAG)
+
+`customer_grade_history`에서 이전 등급과 현재 등급의 변화를 추적합니다.
+
+```sql
+SELECT
+    customer_id,
+    changed_at,
+    old_grade,
+    new_grade,
+    reason,
+    LAG(new_grade) OVER (
+        PARTITION BY customer_id ORDER BY changed_at
+    ) AS previous_record_grade,
+    LEAD(changed_at) OVER (
+        PARTITION BY customer_id ORDER BY changed_at
+    ) AS next_change_date
+FROM customer_grade_history
+WHERE customer_id = 42
+ORDER BY changed_at;
+```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

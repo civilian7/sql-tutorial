@@ -1,5 +1,7 @@
-site_name: SQL 튜토리얼 - 전자상거래 데이터베이스
-site_description: 현실적인 전자상거래 데이터베이스로 배우는 SQL
+site_name: SQL 튜토리얼 v2.0
+site_description: 현실적인 전자상거래 데이터베이스(30 테이블)로 배우는 SQL
+repo_url: https://github.com/civilian7/sql-tutorial
+repo_name: GitHub
 docs_dir: ko
 site_dir: ../output/docs/ko
 
@@ -7,11 +9,39 @@ theme:
   name: material
   language: ko
   palette:
-    scheme: default
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: 다크 모드로 전환
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: 라이트 모드로 전환
   features:
     - content.code.copy
     - navigation.sections
     - navigation.expand
+    - navigation.top
+    - search.highlight
+
+copyright: Copyright &copy; 2023-2026 Fullbit Computing. All rights reserved.
+
+extra:
+  generator: false
+  alternate:
+    - name: 한국어
+      link: ../ko/
+      lang: ko
+    - name: English
+      link: ../en/
+      lang: en
+
+extra_css:
+  - css/extra.css
 
 nav:
   - 홈: index.md
@@ -42,33 +72,36 @@ nav:
     - "19. 인덱스와 성능": advanced/19-indexes.md
     - "20. 트리거": advanced/20-triggers.md
   - 참고:
-    - "DB 방언 비교": dialect-comparison.md
-  - "실전 연습 — 초급":
-    - "상품 탐색": exercises/beginner-products.md
-    - "고객 분석": exercises/beginner-customers.md
-    - "주문 기초": exercises/beginner-orders.md
-    - "빈칸 채우기": exercises/beginner-fill-blanks.md
-  - "실전 연습 — 중급":
-    - "JOIN 마스터": exercises/intermediate-joins.md
-    - "날짜/시간 분석": exercises/intermediate-dates.md
-    - "서브쿼리와 변환": exercises/intermediate-subqueries.md
-    - "제약조건 체험": exercises/intermediate-constraints.md
-    - "트랜잭션": exercises/intermediate-transactions.md
-    - "SQL 디버깅": exercises/intermediate-debugging.md
-    - "데이터 품질 점검": exercises/intermediate-data-quality.md
-  - "실전 연습 — 고급":
-    - "매출 분석": exercises/sales-analysis.md
-    - "고객 세분화": exercises/customer-segmentation.md
-    - "재고 관리": exercises/inventory.md
-    - "CS 성과 분석": exercises/cs-performance.md
-    - "실무 SQL 패턴": exercises/real-world-patterns.md
-    - "정규화 이해": exercises/advanced-normalization.md
-    - "비즈니스 시나리오": exercises/advanced-scenarios.md
-    - "쿼리 최적화": exercises/advanced-optimization.md
-    - "면접 대비": exercises/advanced-interview.md
+    - "생성기 상세 가이드": generator-guide.md
+    - "데이터베이스별 SQL 차이": dialect-comparison.md
+  - 연습 문제:
+    - 초급:
+      - "상품 탐색": exercises/beginner-01-products.md
+      - "고객 분석": exercises/beginner-02-customers.md
+      - "주문 기초": exercises/beginner-03-orders.md
+      - "빈칸 채우기": exercises/beginner-04-fill-blanks.md
+    - 중급:
+      - "JOIN 마스터": exercises/intermediate-01-joins.md
+      - "날짜/시간 분석": exercises/intermediate-02-dates.md
+      - "서브쿼리와 변환": exercises/intermediate-03-subqueries.md
+      - "제약조건 체험": exercises/intermediate-04-constraints.md
+      - "트랜잭션": exercises/intermediate-05-transactions.md
+      - "SQL 디버깅": exercises/intermediate-06-debugging.md
+      - "데이터 품질 점검": exercises/intermediate-07-data-quality.md
 
-extra_css:
-  - css/mermaid.css
+    - 고급:
+      - "매출 분석": exercises/advanced-01-sales-analysis.md
+      - "고객 세분화": exercises/advanced-02-customer-segmentation.md
+      - "재고 관리": exercises/advanced-03-inventory.md
+      - "CS 성과 분석": exercises/advanced-04-cs-performance.md
+      - "실무 SQL 패턴": exercises/advanced-05-real-world-patterns.md
+      - "정규화 이해": exercises/advanced-06-normalization.md
+      - "비즈니스 시나리오": exercises/advanced-07-scenarios.md
+      - "쿼리 최적화": exercises/advanced-08-optimization.md
+      - "면접 대비": exercises/advanced-09-interview.md
+      - "고급 분석": exercises/advanced-10-analytics.md
+      - "도전 문제": exercises/advanced-11-challenge.md
+      - "실행 계획 분석": exercises/advanced-12-explain-plan.md
 
 markdown_extensions:
   - admonition

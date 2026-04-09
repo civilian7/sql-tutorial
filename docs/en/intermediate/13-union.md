@@ -2,6 +2,24 @@
 
 `UNION` stacks the results of two or more `SELECT` statements on top of each other. Each query must return the same number of columns, and corresponding columns must be compatible types. The column names come from the first query.
 
+```mermaid
+flowchart LR
+    subgraph "Query A"
+        A["SELECT ...\nFROM complaints"]
+    end
+    subgraph "Query B"
+        B["SELECT ...\nFROM reviews"]
+    end
+    A --> U["UNION\n(remove duplicates)"]
+    B --> U
+    U --> R["Combined\nResult"]
+    style A fill:#e3f2fd,stroke:#1565c0
+    style B fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> UNION stacks two query results vertically. Column count and types must match.
+
 ## UNION vs. UNION ALL
 
 | Operator | Duplicates | Speed |
@@ -125,6 +143,9 @@ ORDER BY
 | Monitors | 541920.45 |
 | ... | |
 | TOTAL | 4218807.10 |
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

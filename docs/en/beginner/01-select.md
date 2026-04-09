@@ -2,6 +2,16 @@
 
 The `SELECT` statement is the foundation of SQL. It retrieves data from one or more tables, letting you specify exactly which columns to return and how they appear.
 
+```mermaid
+flowchart LR
+    T["🗄️ Table\n(all rows, all columns)"] --> S["SELECT\ncolumn1, column2"] --> R["📋 Result\n(all rows, selected columns)"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style S fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **Concept:** SELECT picks only the columns you want from a table.
+
 ## SELECT All Columns
 
 Use `SELECT *` to fetch every column from a table. This is great for quick exploration.
@@ -125,6 +135,9 @@ ORDER BY is_active;
 |--------|
 | 0 |
 | 1 |
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

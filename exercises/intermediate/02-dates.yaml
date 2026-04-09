@@ -1,0 +1,610 @@
+metadata:
+  id: intermediate-02-dates
+  title: "날짜와 시간 분석"
+  title_en: "Date and Time Analysis"
+  difficulty: intermediate
+  concepts: [SUBSTR, JULIANDAY, STRFTIME, date arithmetic, LAG, CTE, window functions]
+  prerequisites: [intermediate-05-joins]
+  estimated_minutes: 35
+  default_level: 2
+  default_type: "String/Date"
+
+problems:
+  - id: i06-01
+    level: 2
+    type: "String/Date"
+    question: |
+      2025년 월별 주문 수와 매출을 구하세요. 취소 제외.
+    question_en: |
+      Find the number of orders and revenue per month in 2025. Exclude cancelled orders.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(ordered_at, 1, 7) AS month,
+            COUNT(*) AS orders,
+            ROUND(SUM(total_amount), 2) AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2025%'
+          AND status NOT IN ('cancelled')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        ORDER BY month;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SUBSTR(ordered_at, 1, 7)`로 월을 추출하고, `WHERE ordered_at LIKE '2025%'`로 연도 필터링."
+        en: "Extract the month with `SUBSTR(ordered_at, 1, 7)` and filter the year with `WHERE ordered_at LIKE '2025%'`."
+    max_score: 10
+    tags: [SUBSTR, GROUP BY, SUM, LIKE, orders]
+
+  - id: i06-02
+    level: 2
+    type: "CASE/IF"
+    question: |
+      2024년 분기(Q1~Q4)별 매출과 주문 수를 구하세요.
+    question_en: |
+      Find the revenue and order count per quarter (Q1-Q4) in 2024.
+    reference_sql:
+      common: |
+        SELECT
+            CASE
+                WHEN SUBSTR(ordered_at, 6, 2) IN ('01','02','03') THEN 'Q1'
+                WHEN SUBSTR(ordered_at, 6, 2) IN ('04','05','06') THEN 'Q2'
+                WHEN SUBSTR(ordered_at, 6, 2) IN ('07','08','09') THEN 'Q3'
+                ELSE 'Q4'
+            END AS quarter,
+            COUNT(*) AS orders,
+            ROUND(SUM(total_amount), 2) AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+          AND status NOT IN ('cancelled')
+        GROUP BY quarter
+        ORDER BY quarter;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`CASE WHEN SUBSTR(ordered_at, 6, 2) IN ('01','02','03') THEN 'Q1' ...`으로 월을 분기로 변환."
+        en: "Convert months to quarters with `CASE WHEN SUBSTR(ordered_at, 6, 2) IN ('01','02','03') THEN 'Q1' ...`."
+    max_score: 10
+    tags: [CASE, SUBSTR, GROUP BY, date extract, orders]
+
+  - id: i06-03
+    level: 3
+    type: "Subquery/CTE"
+    question: |
+      고객별로 가입일부터 첫 주문일까지 평균 며칠이 걸리는지 구하세요.
+    question_en: |
+      Find the average number of days from signup to first order across all customers.
+    reference_sql:
+      sqlite: |
+        SELECT
+            ROUND(AVG(JULIANDAY(first_order) - JULIANDAY(join_date)), 1) AS avg_days_to_first_order
+        FROM (
+            SELECT
+                c.id,
+                c.created_at AS join_date,
+                MIN(o.ordered_at) AS first_order
+            FROM customers AS c
+            INNER JOIN orders AS o ON c.id = o.customer_id
+            GROUP BY c.id, c.created_at
+        );
+      mysql: |
+        SELECT
+            ROUND(AVG(DATEDIFF(first_order, join_date)), 1) AS avg_days_to_first_order
+        FROM (
+            SELECT
+                c.id,
+                c.created_at AS join_date,
+                MIN(o.ordered_at) AS first_order
+            FROM customers AS c
+            INNER JOIN orders AS o ON c.id = o.customer_id
+            GROUP BY c.id, c.created_at
+        ) AS sub;
+      postgresql: |
+        SELECT
+            ROUND(AVG(first_order::date - join_date::date), 1) AS avg_days_to_first_order
+        FROM (
+            SELECT
+                c.id,
+                c.created_at AS join_date,
+                MIN(o.ordered_at) AS first_order
+            FROM customers AS c
+            INNER JOIN orders AS o ON c.id = o.customer_id
+            GROUP BY c.id, c.created_at
+        ) AS sub;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "서브쿼리에서 `MIN(ordered_at)`으로 첫 주문일을 구한 뒤, `JULIANDAY` 차이로 일수 계산."
+        en: "Get the first order date with `MIN(ordered_at)` in a subquery, then calculate the day difference with `JULIANDAY`."
+    max_score: 10
+    tags: [derived table, INNER JOIN, MIN, AVG, date arithmetic, customers, orders]
+
+  - id: i06-04
+    level: 2
+    type: "String/Date"
+    question: |
+      시간대(0~23시)별 주문 수를 구하세요.
+    question_en: |
+      Find the number of orders per hour of day (0-23).
+    reference_sql:
+      sqlite: |
+        SELECT
+            CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) AS hour,
+            COUNT(*) AS order_count
+        FROM orders
+        GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
+        ORDER BY hour;
+      mysql: |
+        SELECT
+            HOUR(ordered_at) AS hour,
+            COUNT(*) AS order_count
+        FROM orders
+        GROUP BY HOUR(ordered_at)
+        ORDER BY hour;
+      postgresql: |
+        SELECT
+            EXTRACT(HOUR FROM ordered_at::timestamp)::INTEGER AS hour,
+            COUNT(*) AS order_count
+        FROM orders
+        GROUP BY EXTRACT(HOUR FROM ordered_at::timestamp)
+        ORDER BY hour;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SUBSTR(ordered_at, 12, 2)`로 시간 부분을 추출. `CAST(... AS INTEGER)`로 정수 변환."
+        en: "Extract the hour portion with `SUBSTR(ordered_at, 12, 2)`. Convert to integer with `CAST(... AS INTEGER)`."
+    max_score: 10
+    tags: [SUBSTR, CAST, GROUP BY, date extract, orders]
+
+  - id: i06-05
+    level: 2
+    type: "String/Date"
+    question: |
+      최근 30일간(2025-11-01 ~ 2025-11-30 기준) 일별 매출을 구하세요.
+    question_en: |
+      Find the daily revenue for the last 30 days (based on 2025-11-01 to 2025-11-30).
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(ordered_at, 1, 10) AS order_date,
+            COUNT(*) AS orders,
+            ROUND(SUM(total_amount), 2) AS revenue
+        FROM orders
+        WHERE ordered_at BETWEEN '2025-11-01' AND '2025-11-30 23:59:59'
+          AND status NOT IN ('cancelled')
+        GROUP BY SUBSTR(ordered_at, 1, 10)
+        ORDER BY order_date;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`BETWEEN '2025-11-01' AND '2025-11-30 23:59:59'`로 기간 필터링. 시간 끝까지 포함하도록 주의."
+        en: "Filter with `BETWEEN '2025-11-01' AND '2025-11-30 23:59:59'`. Be careful to include up to the end of the last day."
+    max_score: 10
+    tags: [SUBSTR, GROUP BY, SUM, date arithmetic, orders]
+
+  - id: i06-06
+    level: 3
+    type: "Subquery/CTE"
+    question: |
+      배송 소요일을 구간별(1일, 2일, 3일, 4일 이상)로 나누어 건수를 구하세요.
+    question_en: |
+      Divide delivery duration into ranges (within 1 day, 2 days, 3 days, 4+ days) and count.
+    reference_sql:
+      sqlite: |
+        SELECT
+            CASE
+                WHEN days <= 1 THEN '1일 이내'
+                WHEN days <= 2 THEN '2일'
+                WHEN days <= 3 THEN '3일'
+                ELSE '4일 이상'
+            END AS delivery_range,
+            COUNT(*) AS cnt
+        FROM (
+            SELECT
+                JULIANDAY(sh.delivered_at) - JULIANDAY(o.ordered_at) AS days
+            FROM shipping AS sh
+            INNER JOIN orders AS o ON sh.order_id = o.id
+            WHERE sh.delivered_at IS NOT NULL
+        )
+        GROUP BY delivery_range
+        ORDER BY MIN(days);
+      mysql: |
+        SELECT
+            CASE
+                WHEN days <= 1 THEN '1일 이내'
+                WHEN days <= 2 THEN '2일'
+                WHEN days <= 3 THEN '3일'
+                ELSE '4일 이상'
+            END AS delivery_range,
+            COUNT(*) AS cnt
+        FROM (
+            SELECT
+                DATEDIFF(sh.delivered_at, o.ordered_at) AS days
+            FROM shipping AS sh
+            INNER JOIN orders AS o ON sh.order_id = o.id
+            WHERE sh.delivered_at IS NOT NULL
+        ) AS sub
+        GROUP BY delivery_range
+        ORDER BY MIN(days);
+      postgresql: |
+        SELECT
+            CASE
+                WHEN days <= 1 THEN '1일 이내'
+                WHEN days <= 2 THEN '2일'
+                WHEN days <= 3 THEN '3일'
+                ELSE '4일 이상'
+            END AS delivery_range,
+            COUNT(*) AS cnt
+        FROM (
+            SELECT
+                (sh.delivered_at::date - o.ordered_at::date) AS days
+            FROM shipping AS sh
+            INNER JOIN orders AS o ON sh.order_id = o.id
+            WHERE sh.delivered_at IS NOT NULL
+        ) AS sub
+        GROUP BY delivery_range
+        ORDER BY MIN(days);
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "서브쿼리에서 `JULIANDAY` 차이로 소요일을 계산한 뒤, `CASE WHEN days <= 1 THEN ...`으로 구간 분류."
+        en: "Calculate delivery days with `JULIANDAY` difference in a subquery, then classify ranges with `CASE WHEN days <= 1 THEN ...`."
+    max_score: 10
+    tags: [derived table, INNER JOIN, CASE, date arithmetic, shipping, orders]
+
+  - id: i06-07
+    level: 3
+    type: "String/Date"
+    question: |
+      각 고객의 마지막 주문 후 경과일을 구하세요. 180일 이상인 고객만.
+    question_en: |
+      Find the number of days since each customer's last order. Only customers with 180+ days.
+    reference_sql:
+      sqlite: |
+        SELECT
+            c.name,
+            c.grade,
+            MAX(o.ordered_at) AS last_order,
+            CAST(JULIANDAY('2025-12-31') - JULIANDAY(MAX(o.ordered_at)) AS INTEGER) AS days_ago
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.name, c.grade
+        HAVING days_ago >= 180
+        ORDER BY days_ago DESC
+        LIMIT 20;
+      mysql: |
+        SELECT
+            c.name,
+            c.grade,
+            MAX(o.ordered_at) AS last_order,
+            DATEDIFF('2025-12-31', MAX(o.ordered_at)) AS days_ago
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.name, c.grade
+        HAVING days_ago >= 180
+        ORDER BY days_ago DESC
+        LIMIT 20;
+      postgresql: |
+        SELECT
+            c.name,
+            c.grade,
+            MAX(o.ordered_at) AS last_order,
+            ('2025-12-31'::date - MAX(o.ordered_at)::date) AS days_ago
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.name, c.grade
+        HAVING ('2025-12-31'::date - MAX(o.ordered_at)::date) >= 180
+        ORDER BY days_ago DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`MAX(ordered_at)`로 마지막 주문일을 구하고, `JULIANDAY('기준일') - JULIANDAY(MAX(...))`로 경과일 계산. `HAVING`으로 180일 필터."
+        en: "Get the last order date with `MAX(ordered_at)` and calculate elapsed days with `JULIANDAY('reference_date') - JULIANDAY(MAX(...))`. Filter with `HAVING` for 180+ days."
+    max_score: 10
+    tags: [INNER JOIN, GROUP BY, HAVING, MAX, date arithmetic, customers, orders]
+
+  - id: i06-08
+    level: 3
+    type: "String/Date"
+    question: |
+      요일(월~일)과 시간대(0~23)별 주문 수를 구하세요. 상위 20개 조합만.
+    question_en: |
+      Find the order count by day of week (Mon-Sun) and hour (0-23). Show top 20 combinations.
+    reference_sql:
+      sqlite: |
+        SELECT
+            CASE CAST(STRFTIME('%w', ordered_at) AS INTEGER)
+                WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
+                WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
+            END AS day_name,
+            CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) AS hour,
+            COUNT(*) AS orders
+        FROM orders
+        GROUP BY STRFTIME('%w', ordered_at), CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
+        ORDER BY orders DESC
+        LIMIT 20;
+      mysql: |
+        SELECT
+            CASE DAYOFWEEK(ordered_at)
+                WHEN 1 THEN '일' WHEN 2 THEN '월' WHEN 3 THEN '화'
+                WHEN 4 THEN '수' WHEN 5 THEN '목' WHEN 6 THEN '금' WHEN 7 THEN '토'
+            END AS day_name,
+            HOUR(ordered_at) AS hour,
+            COUNT(*) AS orders
+        FROM orders
+        GROUP BY DAYOFWEEK(ordered_at), HOUR(ordered_at)
+        ORDER BY orders DESC
+        LIMIT 20;
+      postgresql: |
+        SELECT
+            CASE EXTRACT(DOW FROM ordered_at::timestamp)::INTEGER
+                WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
+                WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
+            END AS day_name,
+            EXTRACT(HOUR FROM ordered_at::timestamp)::INTEGER AS hour,
+            COUNT(*) AS orders
+        FROM orders
+        GROUP BY EXTRACT(DOW FROM ordered_at::timestamp), EXTRACT(HOUR FROM ordered_at::timestamp)
+        ORDER BY orders DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`STRFTIME('%w', ordered_at)`로 요일 번호를 추출하고, `CASE`로 한글 요일명 변환. 두 컬럼으로 `GROUP BY`."
+        en: "Extract the day-of-week number with `STRFTIME('%w', ordered_at)` and convert to day names with `CASE`. `GROUP BY` both columns."
+    max_score: 10
+    tags: [CASE, SUBSTR, GROUP BY, date extract, orders]
+
+  - id: i06-09
+    level: 3
+    type: "Window"
+    question: |
+      연도별 매출과 전년 대비 성장률(%)을 구하세요. 취소 제외.
+    question_en: |
+      Find the yearly revenue and year-over-year growth rate (%). Exclude cancelled orders.
+    reference_sql:
+      common: |
+        WITH yearly AS (
+            SELECT
+                SUBSTR(ordered_at, 1, 4) AS year,
+                ROUND(SUM(total_amount), 2) AS revenue
+            FROM orders
+            WHERE status NOT IN ('cancelled')
+            GROUP BY SUBSTR(ordered_at, 1, 4)
+        )
+        SELECT
+            year,
+            revenue,
+            LAG(revenue) OVER (ORDER BY year) AS prev_year,
+            ROUND(100.0 * (revenue - LAG(revenue) OVER (ORDER BY year))
+                / LAG(revenue) OVER (ORDER BY year), 1) AS growth_pct
+        FROM yearly
+        ORDER BY year;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "CTE로 연도별 매출을 구한 뒤, `LAG(revenue) OVER (ORDER BY year)`로 전년 매출을 참조."
+        en: "Calculate yearly revenue in a CTE, then reference the previous year's revenue with `LAG(revenue) OVER (ORDER BY year)`."
+    max_score: 10
+    tags: [CTE, LAG, SUM OVER, date arithmetic, orders]
+
+  - id: i06-10
+    level: 2
+    type: "String/Date"
+    question: |
+      반품 요청에서 완료까지 평균 소요일을 구하세요. 완료된 건만.
+    question_en: |
+      Find the average number of days from return request to completion. Only completed returns.
+    reference_sql:
+      sqlite: |
+        SELECT
+            ROUND(AVG(JULIANDAY(completed_at) - JULIANDAY(requested_at)), 1) AS avg_days,
+            MIN(CAST(JULIANDAY(completed_at) - JULIANDAY(requested_at) AS INTEGER)) AS min_days,
+            MAX(CAST(JULIANDAY(completed_at) - JULIANDAY(requested_at) AS INTEGER)) AS max_days
+        FROM returns
+        WHERE status = 'completed'
+          AND completed_at IS NOT NULL;
+      mysql: |
+        SELECT
+            ROUND(AVG(DATEDIFF(completed_at, requested_at)), 1) AS avg_days,
+            MIN(DATEDIFF(completed_at, requested_at)) AS min_days,
+            MAX(DATEDIFF(completed_at, requested_at)) AS max_days
+        FROM returns
+        WHERE status = 'completed'
+          AND completed_at IS NOT NULL;
+      postgresql: |
+        SELECT
+            ROUND(AVG(completed_at::date - requested_at::date), 1) AS avg_days,
+            MIN(completed_at::date - requested_at::date) AS min_days,
+            MAX(completed_at::date - requested_at::date) AS max_days
+        FROM returns
+        WHERE status = 'completed'
+          AND completed_at IS NOT NULL;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "`returns` 테이블에서 `JULIANDAY(completed_at) - JULIANDAY(requested_at)`로 소요일 계산. `WHERE status = 'completed'`."
+        en: "Calculate processing days with `JULIANDAY(completed_at) - JULIANDAY(requested_at)` from the `returns` table. Filter with `WHERE status = 'completed'`."
+    max_score: 10
+    tags: [AVG, MIN, MAX, date arithmetic, returns]
+
+  - id: i06-11
+    level: 3
+    type: "Subquery/CTE"
+    question: |
+      2024년 월별로 첫 구매 고객 수와 재구매 고객 수를 구하세요.
+    question_en: |
+      Find the count of first-time buyers and repeat buyers per month in 2024.
+    reference_sql:
+      common: |
+        WITH first_orders AS (
+            SELECT
+                customer_id,
+                MIN(ordered_at) AS first_order_date
+            FROM orders
+            WHERE status NOT IN ('cancelled')
+            GROUP BY customer_id
+        )
+        SELECT
+            SUBSTR(o.ordered_at, 1, 7) AS month,
+            SUM(CASE WHEN SUBSTR(o.ordered_at, 1, 7) = SUBSTR(fo.first_order_date, 1, 7)
+                THEN 1 ELSE 0 END) AS new_customers,
+            SUM(CASE WHEN SUBSTR(o.ordered_at, 1, 7) > SUBSTR(fo.first_order_date, 1, 7)
+                THEN 1 ELSE 0 END) AS returning_customers
+        FROM orders AS o
+        INNER JOIN first_orders AS fo ON o.customer_id = fo.customer_id
+        WHERE o.ordered_at LIKE '2024%'
+          AND o.status NOT IN ('cancelled')
+        GROUP BY SUBSTR(o.ordered_at, 1, 7)
+        ORDER BY month;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "CTE로 고객별 `MIN(ordered_at)`(첫 주문일)을 구한 뒤, 주문월과 첫 주문월을 비교하여 신규/재구매 구분."
+        en: "Get each customer's first order date with `MIN(ordered_at)` in a CTE, then compare the order month with the first order month to distinguish new vs returning customers."
+    max_score: 10
+    tags: [CTE, CASE, INNER JOIN, SUBSTR, customers, orders]
+
+  - id: i06-12
+    level: 3
+    type: "Subquery/CTE"
+    question: |
+      가격이 2회 이상 변경된 상품의 이름, 변경 횟수, 최초 가격, 현재 가격을 조회하세요.
+    question_en: |
+      Find the name, number of changes, first price, and current price of products whose price has changed 2 or more times.
+    reference_sql:
+      common: |
+        SELECT
+            p.name,
+            COUNT(pp.id) AS price_changes,
+            (SELECT pp2.price FROM product_prices pp2
+             WHERE pp2.product_id = p.id ORDER BY pp2.started_at ASC LIMIT 1) AS first_price,
+            p.price AS current_price
+        FROM products AS p
+        INNER JOIN product_prices AS pp ON p.id = pp.product_id
+        GROUP BY p.id, p.name, p.price
+        HAVING COUNT(pp.id) >= 2
+        ORDER BY price_changes DESC
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`products JOIN product_prices`로 이력 연결. `HAVING COUNT >= 2`. 최초 가격은 서브쿼리에서 `ORDER BY started_at ASC LIMIT 1`."
+        en: "Join `products` with `product_prices` for history. Filter with `HAVING COUNT >= 2`. Get the first price via a subquery with `ORDER BY started_at ASC LIMIT 1`."
+    max_score: 10
+    tags: [INNER JOIN, HAVING, scalar subquery, products, product_prices]
+
+  - id: i02-13
+    level: 3
+    type: "Subquery/CTE"
+    title: "주말 vs 평일 주문 비교"
+    title_en: "Weekend vs Weekday Order Comparison"
+    question: |
+      calendar 테이블을 orders와 JOIN하여
+      2024년 주말과 평일의 일평균 주문 수와 일평균 매출을 비교하세요.
+    question_en: |
+      JOIN calendar with orders to compare 2024 weekend vs weekday
+      average daily order count and average daily revenue.
+    reference_sql:
+      common: |
+        WITH daily_orders AS (
+            SELECT
+                cal.date_key,
+                cal.is_weekend,
+                COUNT(o.id)         AS order_count,
+                COALESCE(SUM(o.total_amount), 0) AS daily_revenue
+            FROM calendar AS cal
+            LEFT JOIN orders AS o
+                ON SUBSTR(o.ordered_at, 1, 10) = cal.date_key
+               AND o.status NOT IN ('cancelled')
+            WHERE cal.year = 2024
+            GROUP BY cal.date_key, cal.is_weekend
+        )
+        SELECT
+            CASE is_weekend WHEN 1 THEN '주말' ELSE '평일' END AS day_type,
+            COUNT(*)                     AS total_days,
+            SUM(order_count)             AS total_orders,
+            ROUND(AVG(order_count), 1)   AS avg_daily_orders,
+            ROUND(AVG(daily_revenue), 0) AS avg_daily_revenue
+        FROM daily_orders
+        GROUP BY is_weekend;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "`calendar.is_weekend` 활용. 날짜별 주문을 먼저 집계한 뒤 주말/평일 그룹별 평균 계산."
+        en: "Use `calendar.is_weekend`. First aggregate orders per day, then calculate averages by weekend/weekday group."
+    max_score: 10
+    tags: [CTE, LEFT JOIN, CASE, AVG, calendar, orders]
+
+  - id: i02-14
+    level: 3
+    type: "JOIN/UNION"
+    title: "프로모션 대상 상품 조회"
+    title_en: "Promotion Products Search"
+    question: |
+      특정 기간(2024-11-01 ~ 2024-12-31)에 진행 중인 프로모션과
+      해당 프로모션에 포함된 상품을 조회하세요.
+    question_en: |
+      Find promotions active during a specific period (2024-11-01 to 2024-12-31)
+      and the products included in them.
+    reference_sql:
+      common: |
+        SELECT
+            promo.name       AS promotion_name,
+            promo.type       AS promotion_type,
+            promo.discount_type,
+            promo.discount_value,
+            promo.started_at,
+            promo.ended_at,
+            p.name           AS product_name,
+            p.price          AS regular_price,
+            pp.override_price AS special_price,
+            CASE
+                WHEN pp.override_price IS NOT NULL THEN pp.override_price
+                WHEN promo.discount_type = 'percent' THEN ROUND(p.price * (1 - promo.discount_value / 100.0), 0)
+                ELSE ROUND(p.price - promo.discount_value, 0)
+            END AS final_price
+        FROM promotions AS promo
+        INNER JOIN promotion_products AS pp ON promo.id = pp.promotion_id
+        INNER JOIN products           AS p  ON pp.product_id = p.id
+        WHERE promo.started_at <= '2024-12-31'
+          AND promo.ended_at   >= '2024-11-01'
+          AND promo.is_active = 1
+        ORDER BY promo.name, p.name
+        LIMIT 30;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "기간 겹침: `promotions.started_at <= '2024-12-31' AND promotions.ended_at >= '2024-11-01'`. `promotion_products` -> `products` JOIN. `override_price`가 있으면 특가 표시."
+        en: "Period overlap: `promotions.started_at <= '2024-12-31' AND promotions.ended_at >= '2024-11-01'`. JOIN `promotion_products` -> `products`. Show override_price as special price if present."
+    max_score: 10
+    tags: [INNER JOIN, MULTI JOIN, CASE, WHERE, promotions, promotion_products, products]

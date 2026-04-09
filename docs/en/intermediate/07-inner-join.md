@@ -2,6 +2,34 @@
 
 A `JOIN` combines rows from two or more tables based on a related column. `INNER JOIN` returns only the rows where a match exists in **both** tables — unmatched rows are excluded entirely.
 
+```mermaid
+flowchart LR
+    subgraph "customers"
+        C1["ID:1 Kim"]
+        C2["ID:2 Lee"]
+        C3["ID:3 Park"]
+    end
+    subgraph "orders"
+        O1["Cust:1 ORD-001"]
+        O2["Cust:1 ORD-002"]
+        O3["Cust:2 ORD-003"]
+    end
+    subgraph "INNER JOIN Result"
+        R1["Kim + ORD-001"]
+        R2["Kim + ORD-002"]
+        R3["Lee + ORD-003"]
+    end
+    C1 --> R1
+    C1 --> R2
+    C2 --> R3
+    O1 --> R1
+    O2 --> R2
+    O3 --> R3
+    style C3 fill:#ffcdd2,stroke:#c62828
+```
+
+> INNER JOIN returns only rows that match in both tables. Park (ID:3) has no orders and is excluded.
+
 ## Joining Two Tables
 
 The syntax is `FROM table_a INNER JOIN table_b ON table_a.key = table_b.key`. The `ON` clause specifies the matching condition.
@@ -122,6 +150,9 @@ WHERE c.grade = 'VIP'
   AND o.ordered_at LIKE '2024%'
 ORDER BY o.total_amount DESC;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

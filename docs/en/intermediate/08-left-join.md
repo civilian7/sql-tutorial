@@ -2,6 +2,32 @@
 
 `LEFT JOIN` returns **all rows from the left table**, plus matched rows from the right table. When there is no match, the right-side columns are filled with `NULL`. This is essential for finding records that lack a related record — a very common real-world need.
 
+```mermaid
+flowchart LR
+    subgraph "customers (LEFT)"
+        C1["ID:1 Kim"]
+        C2["ID:2 Lee"]
+        C3["ID:3 Park"]
+    end
+    subgraph "orders (RIGHT)"
+        O1["Cust:1 ORD-001"]
+        O3["Cust:2 ORD-003"]
+    end
+    subgraph "LEFT JOIN Result"
+        R1["Kim + ORD-001"]
+        R2["Lee + ORD-003"]
+        R3["Park + NULL"]
+    end
+    C1 --> R1
+    C2 --> R2
+    C3 --> R3
+    O1 --> R1
+    O3 --> R2
+    style R3 fill:#fff9c4,stroke:#f9a825
+```
+
+> LEFT JOIN keeps all rows from the left table. Missing matches on the right become NULL.
+
 ## Basic LEFT JOIN
 
 ```sql
@@ -149,6 +175,9 @@ LEFT JOIN payments AS p ON p.order_id = o.id
 WHERE o.ordered_at LIKE '2024-12%'
 LIMIT 5;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

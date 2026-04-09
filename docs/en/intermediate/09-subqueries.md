@@ -2,6 +2,23 @@
 
 A subquery is a `SELECT` statement nested inside another query. It can appear in the `WHERE`, `FROM`, or `SELECT` clause. Subqueries let you break complex questions into smaller, readable steps.
 
+```mermaid
+flowchart TB
+    subgraph "Outer Query"
+        OQ["SELECT * FROM products\nWHERE price > ???"]
+    end
+    subgraph "Inner Query (runs first)"
+        IQ["SELECT AVG(price)\nFROM products\n→ 450,000"]
+    end
+    IQ -->|"450,000"| OQ
+    OQ --> R["Products where\nprice > 450,000"]
+    style IQ fill:#fff3e0,stroke:#e65100
+    style OQ fill:#e3f2fd,stroke:#1565c0
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> The inner query runs first, and its result is passed to the outer query.
+
 ## Scalar Subqueries in WHERE
 
 A scalar subquery returns a single value (one row, one column). It can be used anywhere a literal value would work.
@@ -175,6 +192,9 @@ LIMIT 8;
 | ... | | |
 
 > Scalar subqueries in `SELECT` can be slow on large tables because they run per row. Consider a `LEFT JOIN` with aggregation for better performance.
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

@@ -1,4 +1,4 @@
-"""반품/교환 데이터 생성"""
+"""Return/exchange data generation"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 from src.generators.base import BaseGenerator
 
 
-# 반품 사유별 비율
+# Weight per return reason
 RETURN_REASONS = {
     "defective":          {"weight": 0.25},
     "wrong_item":         {"weight": 0.10},
@@ -18,7 +18,7 @@ RETURN_REASONS = {
     "late_delivery":      {"weight": 0.05},
 }
 
-# 검수 결과
+# Inspection results
 INSPECTION_RESULTS = {
     "defective":          {"defective": 0.80, "good": 0.15, "unsellable": 0.05},
     "wrong_item":         {"good": 0.90, "defective": 0.05, "unsellable": 0.05},
@@ -37,12 +37,14 @@ class ReturnGenerator(BaseGenerator):
         orders: list[dict],
         order_items: list[dict],
         shipping: list[dict],
+        complaints: list[dict] | None = None,
+        products: list[dict] | None = None,
     ) -> list[dict]:
-        """반품/교환 데이터를 생성한다."""
+        """Generate return/exchange data."""
         returns = []
         return_id = 0
 
-        # order_id → items, shipping 매핑
+        # order_id → items, shipping mapping
         items_by_order: dict[int, list[dict]] = {}
         for it in order_items:
             items_by_order.setdefault(it["order_id"], []).append(it)
@@ -51,6 +53,19 @@ class ReturnGenerator(BaseGenerator):
         for s in shipping:
             ship_by_order[s["order_id"]] = s
 
+        # Build claim complaints index by order_id for linking
+        claims_by_order: dict[int, list[dict]] = {}
+        if complaints:
+            for c in complaints:
+                if c.get("type") == "claim" and c.get("order_id"):
+                    claims_by_order.setdefault(c["order_id"], []).append(c)
+
+        # Build products by category for exchange_product_id
+        products_by_category: dict[int, list[dict]] = {}
+        if products:
+            for p in products:
+                products_by_category.setdefault(p["category_id"], []).append(p)
+
         reasons = list(RETURN_REASONS.keys())
         reason_weights = [RETURN_REASONS[r]["weight"] for r in reasons]
         return_carriers_data = self.locale["shipping"]["carriers"]
@@ -58,7 +73,7 @@ class ReturnGenerator(BaseGenerator):
         carrier_weights = list(return_carriers_data.values())
         reason_details = self.locale["return"]["reason_details"]
 
-        # 반품/교환 대상 주문
+        # Orders eligible for return/exchange
         return_orders = [
             o for o in orders
             if o["status"] in ("return_requested", "returned")
@@ -72,11 +87,11 @@ class ReturnGenerator(BaseGenerator):
             if not items:
                 continue
 
-            # 반품 사유
+            # Return reason
             reason = self.rng.choices(reasons, weights=reason_weights, k=1)[0]
             reason_detail = self.rng.choice(reason_details[reason])
 
-            # 반품 유형: 환불 vs 교환
+            # Return type: refund vs exchange
             if reason in ("change_of_mind", "late_delivery"):
                 return_type = self.rng.choices(["refund", "exchange"], weights=[0.7, 0.3], k=1)[0]
             elif reason in ("defective", "damaged_in_transit"):
@@ -84,7 +99,7 @@ class ReturnGenerator(BaseGenerator):
             else:
                 return_type = self.rng.choices(["refund", "exchange"], weights=[0.6, 0.4], k=1)[0]
 
-            # 반품 요청일: 배송완료 후 1~14일
+            # Return request date: 1~14 days after delivery
             delivered_at = None
             if ship and ship.get("delivered_at"):
                 delivered_at = datetime.strptime(ship["delivered_at"], "%Y-%m-%d %H:%M:%S")
@@ -96,26 +111,26 @@ class ReturnGenerator(BaseGenerator):
                 hours=self.rng.randint(0, 23),
             )
 
-            # 수거 택배
+            # Pickup carrier
             carrier = self.rng.choices(carriers, weights=carrier_weights, k=1)[0]
             tracking = str(self.rng.randint(100000000000, 999999999999))
 
-            # 수거 일정
+            # Pickup schedule
             pickup_at = requested_at + timedelta(days=self.rng.randint(1, 3))
 
-            # 반품 대상 아이템 (전체 또는 일부)
+            # Return items (full or partial)
             if len(items) == 1 or self.rng.random() < 0.7:
-                return_items = items  # 전체 반품
+                return_items = items  # Full return
                 is_partial = 0
             else:
-                return_items = [self.rng.choice(items)]  # 부분 반품
+                return_items = [self.rng.choice(items)]  # Partial return
                 is_partial = 1
 
             refund_amount = sum(it["subtotal"] for it in return_items)
 
-            # 처리 상태
+            # Processing status
             if order["status"] == "return_requested":
-                # 아직 진행 중
+                # Still in progress
                 status = self.rng.choices(
                     ["requested", "pickup_scheduled", "in_transit"],
                     weights=[0.3, 0.4, 0.3], k=1,
@@ -126,11 +141,11 @@ class ReturnGenerator(BaseGenerator):
                 completed_at = None
                 refund_status = "pending"
             else:
-                # 완료
+                # Completed
                 received_at = pickup_at + timedelta(days=self.rng.randint(1, 4))
                 inspected_at = received_at + timedelta(hours=self.rng.randint(2, 48))
 
-                # 검수 결과
+                # Inspection result
                 insp_dist = INSPECTION_RESULTS[reason]
                 inspection_result = self.rng.choices(
                     list(insp_dist.keys()),
@@ -140,15 +155,44 @@ class ReturnGenerator(BaseGenerator):
                 completed_at = inspected_at + timedelta(hours=self.rng.randint(1, 24))
                 status = "completed"
 
-                # 환불 상태
+                # Refund status
                 if return_type == "exchange":
                     refund_status = "exchanged"
                 elif inspection_result == "unsellable" and reason == "change_of_mind":
-                    # 고객 귀책 파손 → 부분 환불
+                    # Customer-caused damage → partial refund
                     refund_amount = round(refund_amount * 0.8, 2)
                     refund_status = "partial_refund"
                 else:
                     refund_status = "refunded"
+
+            # Link to a claim complaint (~40% of returns)
+            claim_id = None
+            order_claims = claims_by_order.get(order["id"], [])
+            if order_claims and self.rng.random() < 0.40:
+                claim_id = self.rng.choice(order_claims)["id"]
+
+            # Exchange product: for wrong_item/defective with exchange type, pick from same category
+            exchange_product_id = None
+            if return_type == "exchange" and reason in ("wrong_item", "defective") and return_items:
+                item = return_items[0]
+                product_id = item["product_id"]
+                # Find the product's category
+                cat_id = None
+                if products:
+                    for p in products:
+                        if p["id"] == product_id:
+                            cat_id = p["category_id"]
+                            break
+                if cat_id and cat_id in products_by_category:
+                    candidates = [p for p in products_by_category[cat_id] if p["id"] != product_id]
+                    if candidates:
+                        exchange_product_id = self.rng.choice(candidates)["id"]
+
+            # Restocking fee: for change_of_mind, 10% of item value capped at 50000
+            restocking_fee = 0
+            if reason == "change_of_mind":
+                raw_fee = round(refund_amount * 0.10, 0)
+                restocking_fee = min(raw_fee, 50000)
 
             returns.append({
                 "id": return_id,
@@ -169,6 +213,9 @@ class ReturnGenerator(BaseGenerator):
                 "inspected_at": self.fmt_dt(inspected_at) if inspected_at else None,
                 "inspection_result": inspection_result,
                 "completed_at": self.fmt_dt(completed_at) if completed_at else None,
+                "claim_id": claim_id,
+                "exchange_product_id": exchange_product_id,
+                "restocking_fee": restocking_fee,
                 "created_at": self.fmt_dt(requested_at),
             })
 

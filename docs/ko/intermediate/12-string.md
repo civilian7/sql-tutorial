@@ -1,5 +1,7 @@
 # 12강: 문자열 함수
 
+문자열 함수는 데이터베이스마다 이름이나 인자 순서가 다른 경우가 많습니다. 이 강의에서는 SQLite를 기본으로 하되, 차이가 있는 부분에서 MySQL과 PostgreSQL 탭을 함께 보여줍니다.
+
 SQLite는 텍스트 조작에 유용한 함수들을 제공합니다. 데이터 정제, 출력 형식 지정, 저장된 문자열 파싱, 검색 조건 구성 등에 필수적입니다.
 
 ## SUBSTR — 문자열 일부 추출
@@ -107,18 +109,27 @@ FROM orders;
 | return_requested | return requested |
 | ... | |
 
-## ||로 문자열 연결
+## 문자열 연결
 
-`||`를 사용해 문자열을 이어 붙입니다.
+=== "SQLite / PostgreSQL"
+    ```sql
+    -- Build a contact info string with ||
+    SELECT
+        name,
+        phone || ' — ' || email AS contact_info
+    FROM customers
+    LIMIT 5;
+    ```
 
-```sql
--- 전체 연락처 정보 한 줄로 만들기
-SELECT
-    name,
-    phone || ' — ' || email AS contact_info
-FROM customers
-LIMIT 5;
-```
+=== "MySQL"
+    ```sql
+    -- Build a contact info string with CONCAT()
+    SELECT
+        name,
+        CONCAT(phone, ' — ', email) AS contact_info
+    FROM customers
+    LIMIT 5;
+    ```
 
 **결과:**
 
@@ -127,30 +138,67 @@ LIMIT 5;
 | 김민수 | 020-1234-5678 — k.minsu@testmail.kr |
 | 이지은 | 020-9876-5432 — l.jieun@testmail.kr |
 
-```sql
--- 카테고리 접두어를 붙인 표시용 SKU 생성
-SELECT
-    p.name,
-    cat.name || '-' || p.sku AS display_sku
-FROM products AS p
-INNER JOIN categories AS cat ON p.category_id = cat.id
-LIMIT 5;
-```
+=== "SQLite / PostgreSQL"
+    ```sql
+    -- Display SKU with category prefix
+    SELECT
+        p.name,
+        cat.name || '-' || p.sku AS display_sku
+    FROM products AS p
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Display SKU with category prefix
+    SELECT
+        p.name,
+        CONCAT(cat.name, '-', p.sku) AS display_sku
+    FROM products AS p
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    LIMIT 5;
+    ```
 
 ## 패턴 매칭 LIKE
 
 2강에서 다뤘지만, 더 고급 패턴 예시를 소개합니다.
 
-```sql
--- 이메일 도메인별 사용자 수 (@ 뒤 부분)
-SELECT DISTINCT
-    SUBSTR(email, INSTR(email, '@') + 1) AS domain,
-    COUNT(*) AS users
-FROM customers
-GROUP BY domain
-ORDER BY users DESC
-LIMIT 5;
-```
+=== "SQLite"
+    ```sql
+    -- Users per email domain (after @)
+    SELECT DISTINCT
+        SUBSTR(email, INSTR(email, '@') + 1) AS domain,
+        COUNT(*) AS users
+    FROM customers
+    GROUP BY domain
+    ORDER BY users DESC
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Users per email domain (after @)
+    SELECT
+        SUBSTRING(email, LOCATE('@', email) + 1) AS domain,
+        COUNT(*) AS users
+    FROM customers
+    GROUP BY domain
+    ORDER BY users DESC
+    LIMIT 5;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Users per email domain (after @)
+    SELECT
+        SUBSTRING(email FROM POSITION('@' IN email) + 1) AS domain,
+        COUNT(*) AS users
+    FROM customers
+    GROUP BY domain
+    ORDER BY users DESC
+    LIMIT 5;
+    ```
 
 ```sql
 -- 모델 번호에 숫자가 포함된 상품
@@ -176,21 +224,36 @@ FROM products
 WHERE LENGTH(name) != LENGTH(TRIM(name));
 ```
 
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
+
 ## 연습 문제
 
 ### 연습 1
 고객 연락처 카드를 만드세요: 각 고객의 `name`, `phone`, `email`을 `"이름 | 전화번호 | 이메일"` 형식의 단일 문자열로 연결하세요. 활성 고객 전체의 `customer_id`, `contact_card`, `grade`를 반환하고, 10행으로 제한하세요.
 
 ??? success "정답"
-    ```sql
-    SELECT
-        id AS customer_id,
-        name || ' | ' || phone || ' | ' || email AS contact_card,
-        grade
-    FROM customers
-    WHERE is_active = 1
-    LIMIT 10;
-    ```
+    === "SQLite / PostgreSQL"
+        ```sql
+        SELECT
+            id AS customer_id,
+            name || ' | ' || phone || ' | ' || email AS contact_card,
+            grade
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            id AS customer_id,
+            CONCAT(name, ' | ', phone, ' | ', email) AS contact_card,
+            grade
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
 
 ### 연습 2
 각 주문에서 일련번호(예: `ORD-20240315-00042`의 마지막 5자리 `00042`)를 추출하여 정수로 표시하세요. `order_number`, `sequence_no`(정수), `total_amount`를 반환하고, `sequence_no` 내림차순으로 10행까지 정렬하세요.

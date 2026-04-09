@@ -2,6 +2,25 @@
 
 DML (Data Manipulation Language) statements change the data in your tables. Unlike `SELECT`, these statements are permanent — always double-check your `WHERE` clause before running `UPDATE` or `DELETE`.
 
+Most DML is standard SQL and works identically across databases. Tabs are shown only where syntax differs (date functions, UPSERT, etc.).
+
+```mermaid
+flowchart LR
+    subgraph "DML Operations"
+        I["INSERT\n+ new row"]
+        U["UPDATE\n~ modify row"]
+        D["DELETE\n- remove row"]
+    end
+    T["Table"] --> I
+    T --> U
+    T --> D
+    style I fill:#e8f5e9,stroke:#2e7d32
+    style U fill:#fff9c4,stroke:#f9a825
+    style D fill:#ffcdd2,stroke:#c62828
+```
+
+> DML manipulates data: INSERT (add), UPDATE (modify), DELETE (remove).
+
 > **Safety rule:** Before running any `UPDATE` or `DELETE`, first run the equivalent `SELECT` with the same `WHERE` clause to confirm exactly which rows will be affected.
 
 ## INSERT INTO
@@ -10,21 +29,39 @@ DML (Data Manipulation Language) statements change the data in your tables. Unli
 
 List the column names explicitly — this makes your query self-documenting and safe against table structure changes.
 
-```sql
--- Add a new product
-INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-VALUES (
-    'SKU-TEST-001',
-    'Test Mechanical Keyboard',
-    9,          -- category_id for Keyboards
-    1,          -- supplier_id
-    129.99,
-    50,
-    1,
-    datetime('now'),
-    datetime('now')
-);
-```
+=== "SQLite"
+    ```sql
+    -- Add a new product
+    INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+    VALUES (
+        'SKU-TEST-001',
+        'Test Mechanical Keyboard',
+        9,          -- category_id for Keyboards
+        1,          -- supplier_id
+        129.99,
+        50,
+        1,
+        datetime('now'),
+        datetime('now')
+    );
+    ```
+
+=== "MySQL / PostgreSQL"
+    ```sql
+    -- Add a new product
+    INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+    VALUES (
+        'SKU-TEST-001',
+        'Test Mechanical Keyboard',
+        9,          -- category_id for Keyboards
+        1,          -- supplier_id
+        129.99,
+        50,
+        1,
+        NOW(),
+        NOW()
+    );
+    ```
 
 After running, verify:
 ```sql
@@ -108,12 +145,29 @@ WHERE id NOT IN (
 
 ### Delete Specific Rows
 
-```sql
--- Remove cancelled orders older than 3 years (for archival)
-DELETE FROM orders
-WHERE status = 'cancelled'
-  AND cancelled_at < DATE('now', '-3 years');
-```
+=== "SQLite"
+    ```sql
+    -- Remove cancelled orders older than 3 years
+    DELETE FROM orders
+    WHERE status = 'cancelled'
+      AND cancelled_at < DATE('now', '-3 years');
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Remove cancelled orders older than 3 years
+    DELETE FROM orders
+    WHERE status = 'cancelled'
+      AND cancelled_at < DATE_SUB(CURDATE(), INTERVAL 3 YEAR);
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Remove cancelled orders older than 3 years
+    DELETE FROM orders
+    WHERE status = 'cancelled'
+      AND cancelled_at < CURRENT_DATE - INTERVAL '3 years';
+    ```
 
 > Before running: `SELECT COUNT(*) FROM orders WHERE status = 'cancelled' AND cancelled_at < DATE('now', '-3 years');`
 
@@ -158,7 +212,10 @@ COMMIT;
 | `UPDATE table SET col = val` with no `WHERE` | Updates every row | Always verify with `SELECT` first |
 | `DELETE FROM table` with no `WHERE` | Deletes every row | Use transactions; check count first |
 | Forgetting `updated_at` | Stale audit trail | Include `updated_at = datetime('now')` in every UPDATE |
-| Inserting duplicate primary key | Constraint error | Use `INSERT OR IGNORE` or `INSERT OR REPLACE` |
+| Inserting duplicate primary key | Constraint error | SQLite: `INSERT OR IGNORE` / MySQL: `INSERT IGNORE` / PG: `ON CONFLICT DO NOTHING` |
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

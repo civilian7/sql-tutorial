@@ -2,6 +2,18 @@
 
 SQL rows have no guaranteed order unless you ask for one. `ORDER BY` lets you sort results by one or more columns, while `LIMIT` and `OFFSET` let you page through large result sets efficiently.
 
+```mermaid
+flowchart LR
+    T["Unsorted\nRows"] --> O["ORDER BY\nprice DESC"] --> S["Sorted\nRows"] --> L["LIMIT 5"] --> R["Top 5\nRows"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style O fill:#fff3e0,stroke:#e65100
+    style S fill:#fff9c4,stroke:#f9a825
+    style L fill:#fce4ec,stroke:#c62828
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **Concept:** ORDER BY sorts the rows, then LIMIT takes the top N.
+
 ## ORDER BY — Single Column
 
 Append `ASC` (ascending, the default) or `DESC` (descending) after the column name.
@@ -161,6 +173,9 @@ LIMIT 5;
 | ... | (NULL) |
 | Robert Kim | 1955-03-12 |
 | ... | |
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

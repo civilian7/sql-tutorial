@@ -2,6 +2,23 @@
 
 지금까지 서로 다른 테이블 간의 JOIN을 배웠습니다. 이 강에서는 **같은 테이블을 자기 자신과 결합**하는 SELF JOIN과, **모든 행의 조합**을 만드는 CROSS JOIN을 다룹니다. 두 기법 모두 실무에서 자주 등장하며, 특히 계층 구조와 비교 분석에 필수적입니다.
 
+```mermaid
+flowchart TD
+    CEO["CEO\n(manager_id = NULL)"] --> MGR1["Manager A\nSales"]
+    CEO --> MGR2["Manager B\nCS"]
+    MGR1 --> S1["Staff 1"]
+    MGR1 --> S2["Staff 2"]
+    MGR2 --> S3["Staff 3"]
+    style CEO fill:#e8f5e9,stroke:#2e7d32
+    style MGR1 fill:#e3f2fd,stroke:#1565c0
+    style MGR2 fill:#e3f2fd,stroke:#1565c0
+    style S1 fill:#fff3e0,stroke:#e65100
+    style S2 fill:#fff3e0,stroke:#e65100
+    style S3 fill:#fff3e0,stroke:#e65100
+```
+
+> Self-JOIN은 같은 테이블을 자기 자신과 결합합니다. staff 테이블의 manager_id로 조직도를 표현할 수 있습니다.
+
 ## SELF JOIN — 같은 테이블끼리 결합
 
 SELF JOIN은 특별한 문법이 아닙니다. 같은 테이블에 서로 다른 별칭을 붙여 JOIN하면 됩니다.
@@ -85,6 +102,54 @@ LIMIT 10;
 
 `p1.id < p2.id` 조건이 핵심입니다. 이 조건이 없으면 (A, B)와 (B, A)가 모두 나오고, (A, A) 자기 자신과의 쌍도 포함됩니다.
 
+### 직원 조직도 (staff.manager_id)
+
+`staff` 테이블의 `manager_id`는 같은 테이블의 `id`를 참조합니다. 직원과 상사의 관계를 조회할 수 있습니다.
+
+```sql
+SELECT
+    s.name AS employee,
+    s.department,
+    s.role,
+    m.name AS manager
+FROM staff s
+LEFT JOIN staff m ON s.manager_id = m.id
+ORDER BY s.id;
+```
+
+### 상품 세대교체 (products.successor_id)
+
+단종된 상품과 그 후속 모델을 조회합니다.
+
+```sql
+SELECT
+    old.name AS discontinued_product,
+    old.discontinued_at,
+    new.name AS successor_product,
+    new.price AS new_price
+FROM products old
+JOIN products new ON old.successor_id = new.id
+WHERE old.successor_id IS NOT NULL
+ORDER BY old.discontinued_at;
+```
+
+### 상품 Q&A 스레드 (product_qna.parent_id)
+
+질문과 답변을 한 줄에 보여줍니다.
+
+```sql
+SELECT
+    q.id AS question_id,
+    q.content AS question,
+    a.content AS answer,
+    a.created_at AS answered_at
+FROM product_qna q
+LEFT JOIN product_qna a ON a.parent_id = q.id
+WHERE q.parent_id IS NULL  -- top-level questions only
+ORDER BY q.created_at DESC
+LIMIT 10;
+```
+
 ---
 
 ## CROSS JOIN — 모든 조합 생성
@@ -159,7 +224,28 @@ ORDER BY total_amount DESC;
 
 > **주의:** CROSS JOIN은 강력하지만, 큰 테이블끼리 CROSS JOIN하면 행 수가 폭발합니다. 반드시 한쪽 또는 양쪽이 소규모 결과 집합일 때만 사용하세요.
 
+### 주문이 없는 날 찾기 (calendar CROSS JOIN)
+
+`calendar` 테이블과 CROSS JOIN + LEFT JOIN으로 주문이 없던 날을 찾습니다.
+
+```sql
+SELECT
+    c.date_key,
+    c.day_name,
+    c.is_weekend,
+    c.is_holiday,
+    c.holiday_name
+FROM calendar c
+LEFT JOIN orders o ON DATE(o.ordered_at) = c.date_key
+WHERE o.id IS NULL
+  AND c.year >= 2024
+ORDER BY c.date_key;
+```
+
 ---
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

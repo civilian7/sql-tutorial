@@ -1,4 +1,4 @@
-"""상품 이미지 데이터 생성 + 다운로드"""
+"""Product image data generation + download"""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ import json
 from src.generators.base import BaseGenerator
 
 
-# 카테고리 slug → Pexels 검색 키워드 매핑
+# Category slug → Pexels search keyword mapping
 CATEGORY_KEYWORDS = {
     "desktop-prebuilt": "desktop computer",
     "desktop-custom": "gaming PC setup",
@@ -58,7 +58,7 @@ CATEGORY_KEYWORDS = {
     "software-security": "antivirus software",
 }
 
-# 대분류 fallback
+# Parent category fallback
 PARENT_KEYWORDS = {
     "desktop-pc": "desktop computer",
     "laptop": "laptop computer",
@@ -83,7 +83,7 @@ class ImageGenerator(BaseGenerator):
         products: list[dict],
         categories: list[dict],
     ) -> list[dict]:
-        """상품별 이미지 레코드를 생성한다 (URL은 placeholder)."""
+        """Generate image records per product (URLs are placeholders)."""
         rows = []
         img_id = 0
 
@@ -91,7 +91,7 @@ class ImageGenerator(BaseGenerator):
 
         for p in products:
             slug = cat_slug_map.get(p["category_id"], "")
-            # 상품당 1~5장 (대부분 2~3장)
+            # 1~5 images per product (mostly 2~3)
             num_images = self.rng.choices([1, 2, 3, 4, 5], weights=[15, 35, 30, 15, 5], k=1)[0]
 
             for i in range(num_images):
@@ -99,7 +99,7 @@ class ImageGenerator(BaseGenerator):
                 created = datetime.strptime(p["created_at"], "%Y-%m-%d %H:%M:%S")
                 img_created = created + timedelta(hours=self.rng.randint(0, 24))
 
-                # 이미지 타입
+                # Image type
                 if i == 0:
                     image_type = "main"
                 elif i == 1:
@@ -109,11 +109,11 @@ class ImageGenerator(BaseGenerator):
                 else:
                     image_type = self.rng.choice(["lifestyle", "accessory", "size_comparison"])
 
-                # placeholder URL (즉시 작동)
+                # Placeholder URL (works immediately)
                 name_encoded = p["name"].replace(" ", "+")[:50]
                 image_url = f"https://placehold.co/800x800/f0f0f0/333?text={name_encoded}"
 
-                # 파일명 (다운로드 시 사용)
+                # File name (used for downloads)
                 file_name = f"{p['id']}_{i+1}.jpg"
 
                 rows.append({
@@ -142,39 +142,39 @@ def download_images(
     api_key: str,
     max_per_category: int = 15,
 ):
-    """Pexels API로 카테고리별 이미지를 다운로드하고 DB 레코드를 업데이트한다."""
+    """Download images per category via Pexels API and update DB records."""
     img_dir = os.path.join(output_dir, "images")
     os.makedirs(img_dir, exist_ok=True)
 
     cat_slug_map = {c["id"]: c["slug"] for c in categories}
 
-    # 카테고리별 상품 그룹
+    # Group products by category
     prods_by_cat: dict[str, list[dict]] = {}
     for p in products:
         slug = cat_slug_map.get(p["category_id"], "unknown")
         prods_by_cat.setdefault(slug, []).append(p)
 
-    # 카테고리별 이미지 다운로드
+    # Download images per category
     cat_images: dict[str, list[str]] = {}  # slug → [local_path, ...]
     downloaded = 0
 
     for slug, prods in prods_by_cat.items():
         keyword = CATEGORY_KEYWORDS.get(slug, "")
         if not keyword:
-            # 대분류 fallback
+            # Parent category fallback
             parent_slug = slug.split("-")[0] if "-" in slug else slug
             keyword = PARENT_KEYWORDS.get(parent_slug, "computer technology")
 
-        print(f"  [{slug}] '{keyword}' 검색 중... ({len(prods)}개 상품)")
+        print(f"  [{slug}] Searching '{keyword}'... ({len(prods)} products)")
 
         photos = _search_pexels(api_key, keyword, max_per_category)
         if not photos:
-            print(f"    -> 결과 없음, fallback 'computer technology'")
+            print(f"    -> No results, falling back to 'computer technology'")
             photos = _search_pexels(api_key, "computer technology", 5)
 
         paths = []
         for i, photo in enumerate(photos):
-            # medium 크기 (800px 내외)
+            # Medium size (~800px)
             url = photo.get("src", {}).get("medium", "")
             if not url:
                 continue
@@ -187,19 +187,19 @@ def download_images(
                     _download_file(url, fpath)
                     downloaded += 1
                 except Exception as e:
-                    print(f"    다운로드 실패: {e}")
+                    print(f"    Download failed: {e}")
                     continue
 
             file_size = os.path.getsize(fpath)
             paths.append((fname, photo.get("width", 800), photo.get("height", 600), file_size))
 
         cat_images[slug] = paths
-        print(f"    -> {len(paths)}장 확보")
+        print(f"    -> {len(paths)} images acquired")
 
-        # API rate limit 준수
+        # Respect API rate limit
         time.sleep(0.5)
 
-    # 이미지 레코드 업데이트
+    # Update image records
     updated = 0
     for rec in image_records:
         prod_id = rec["product_id"]
@@ -211,7 +211,7 @@ def download_images(
         if not paths:
             continue
 
-        # 라운드 로빈으로 이미지 할당
+        # Assign images via round-robin
         idx = (rec["sort_order"] - 1) % len(paths)
         fname, w, h, fsize = paths[idx]
 
@@ -222,12 +222,12 @@ def download_images(
         rec["file_size"] = fsize
         updated += 1
 
-    print(f"\n  다운로드: {downloaded}장, 레코드 업데이트: {updated}건")
+    print(f"\n  Downloaded: {downloaded} images, Records updated: {updated}")
     return image_records
 
 
 def _search_pexels(api_key: str, query: str, per_page: int = 15) -> list[dict]:
-    """Pexels API로 이미지를 검색한다."""
+    """Search images via Pexels API."""
     url = f"https://api.pexels.com/v1/search?query={query}&per_page={per_page}&orientation=square"
     req = Request(url, headers={"Authorization": api_key})
     try:
@@ -235,12 +235,12 @@ def _search_pexels(api_key: str, query: str, per_page: int = 15) -> list[dict]:
             data = json.loads(resp.read().decode())
             return data.get("photos", [])
     except (URLError, Exception) as e:
-        print(f"    API 오류: {e}")
+        print(f"    API error: {e}")
         return []
 
 
 def _download_file(url: str, path: str):
-    """URL에서 파일을 다운로드한다."""
+    """Download a file from a URL."""
     req = Request(url, headers={"User-Agent": "TestDBGenerator/1.0"})
     with urlopen(req, timeout=30) as resp:
         with open(path, "wb") as f:

@@ -1,4 +1,4 @@
-"""장바구니 데이터 생성"""
+"""Cart data generation"""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ class CartGenerator(BaseGenerator):
     def generate_carts(
         self, customers: list[dict], products: list[dict],
     ) -> tuple[list[dict], list[dict]]:
-        """장바구니 및 장바구니 아이템을 생성한다."""
+        """Generate carts and cart items."""
         carts = []
         cart_items = []
         cart_id = 0
@@ -29,7 +29,7 @@ class CartGenerator(BaseGenerator):
             customer = self.rng.choice(active_customers)
             created = datetime.strptime(customer["created_at"], "%Y-%m-%d %H:%M:%S")
             cart_created = self.random_datetime(
-                created, datetime(self.end_year, 12, 31)
+                created, self.end_date
             )
 
             status = self.rng.choices(
@@ -46,7 +46,7 @@ class CartGenerator(BaseGenerator):
                 "updated_at": self.fmt_dt(cart_created + timedelta(hours=self.rng.randint(0, 72))),
             })
 
-            # 1~5개 아이템
+            # 1~5 items per cart
             num_items = self.rng.randint(1, 5)
             for _ in range(num_items):
                 item_id += 1

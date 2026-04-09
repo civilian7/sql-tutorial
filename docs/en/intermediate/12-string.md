@@ -1,5 +1,7 @@
 # Lesson 12: String Functions
 
+String functions often differ in name or argument order across databases. This lesson uses SQLite as the default but shows MySQL and PostgreSQL alternatives in tabs where the syntax diverges.
+
 SQLite provides a useful set of functions for manipulating text. These are essential for cleaning data, formatting output, parsing stored strings, and building search conditions.
 
 ## SUBSTR — Extract Part of a String
@@ -107,18 +109,27 @@ FROM orders;
 | return_requested | return requested |
 | ... | |
 
-## String Concatenation with ||
+## String Concatenation
 
-Use `||` to join strings together.
+=== "SQLite / PostgreSQL"
+    ```sql
+    -- Build a contact info string with ||
+    SELECT
+        name,
+        phone || ' — ' || email AS contact_info
+    FROM customers
+    LIMIT 5;
+    ```
 
-```sql
--- Build a full address label
-SELECT
-    name,
-    phone || ' — ' || email AS contact_info
-FROM customers
-LIMIT 5;
-```
+=== "MySQL"
+    ```sql
+    -- Build a contact info string with CONCAT()
+    SELECT
+        name,
+        CONCAT(phone, ' — ', email) AS contact_info
+    FROM customers
+    LIMIT 5;
+    ```
 
 **Result:**
 
@@ -127,30 +138,67 @@ LIMIT 5;
 | Jennifer Martinez | 555-0142-8821 — jennifer.m@testmail.com |
 | Alex Chen | 555-0287-4412 — alex.chen@testmail.com |
 
-```sql
--- Construct a display SKU with category prefix
-SELECT
-    p.name,
-    cat.name || '-' || p.sku AS display_sku
-FROM products AS p
-INNER JOIN categories AS cat ON p.category_id = cat.id
-LIMIT 5;
-```
+=== "SQLite / PostgreSQL"
+    ```sql
+    -- Display SKU with category prefix
+    SELECT
+        p.name,
+        cat.name || '-' || p.sku AS display_sku
+    FROM products AS p
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Display SKU with category prefix
+    SELECT
+        p.name,
+        CONCAT(cat.name, '-', p.sku) AS display_sku
+    FROM products AS p
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    LIMIT 5;
+    ```
 
 ## LIKE for Pattern Matching
 
 Covered in Lesson 2, but here are more advanced patterns.
 
-```sql
--- Email domains (everything after @)
-SELECT DISTINCT
-    SUBSTR(email, INSTR(email, '@') + 1) AS domain,
-    COUNT(*) AS users
-FROM customers
-GROUP BY domain
-ORDER BY users DESC
-LIMIT 5;
-```
+=== "SQLite"
+    ```sql
+    -- Users per email domain (after @)
+    SELECT DISTINCT
+        SUBSTR(email, INSTR(email, '@') + 1) AS domain,
+        COUNT(*) AS users
+    FROM customers
+    GROUP BY domain
+    ORDER BY users DESC
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Users per email domain (after @)
+    SELECT
+        SUBSTRING(email, LOCATE('@', email) + 1) AS domain,
+        COUNT(*) AS users
+    FROM customers
+    GROUP BY domain
+    ORDER BY users DESC
+    LIMIT 5;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Users per email domain (after @)
+    SELECT
+        SUBSTRING(email FROM POSITION('@' IN email) + 1) AS domain,
+        COUNT(*) AS users
+    FROM customers
+    GROUP BY domain
+    ORDER BY users DESC
+    LIMIT 5;
+    ```
 
 ```sql
 -- Products with model numbers that contain digits
@@ -176,21 +224,36 @@ FROM products
 WHERE LENGTH(name) != LENGTH(TRIM(name));
 ```
 
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
+
 ## Practice Exercises
 
 ### Exercise 1
 Build a customer contact card: concatenate each customer's `name`, `phone`, and `email` into a single string formatted as `"Name | Phone | Email"`. Return `customer_id`, `contact_card`, and `grade` for all active customers. Limit to 10 rows.
 
 ??? success "Answer"
-    ```sql
-    SELECT
-        id AS customer_id,
-        name || ' | ' || phone || ' | ' || email AS contact_card,
-        grade
-    FROM customers
-    WHERE is_active = 1
-    LIMIT 10;
-    ```
+    === "SQLite / PostgreSQL"
+        ```sql
+        SELECT
+            id AS customer_id,
+            name || ' | ' || phone || ' | ' || email AS contact_card,
+            grade
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            id AS customer_id,
+            CONCAT(name, ' | ', phone, ' | ', email) AS contact_card,
+            grade
+        FROM customers
+        WHERE is_active = 1
+        LIMIT 10;
+        ```
 
 ### Exercise 2
 For each order, extract the sequence number (the last 5 digits of `order_number`, e.g. `00042` from `ORD-20240315-00042`) and display it as an integer. Return `order_number`, `sequence_no` (as integer), and `total_amount`. Sort by `sequence_no` descending, limit 10.

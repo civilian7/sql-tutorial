@@ -1,4 +1,4 @@
-"""연도별 성장 곡선 계산"""
+"""Yearly growth curve calculation"""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ def get_daily_order_count(
     scale: float,
     rng: random.Random,
 ) -> int:
-    """해당 연/월의 일 주문 수를 계산한다."""
+    """Calculate the daily order count for a given year/month."""
     growth = yearly_growth[year]
     lo, hi = growth["orders_per_day"]
     base = rng.uniform(lo, hi)
@@ -27,7 +27,7 @@ def get_yearly_new_customers(
     yearly_growth: dict[int, dict[str, Any]],
     scale: float,
 ) -> int:
-    """해당 연도의 신규 고객 수를 반환한다."""
+    """Return the number of new customers for the given year."""
     return max(1, int(yearly_growth[year]["new_customers"] * scale))
 
 
@@ -36,5 +36,5 @@ def get_yearly_active_products(
     yearly_growth: dict[int, dict[str, Any]],
     scale: float,
 ) -> int:
-    """해당 연도의 활성 상품 수를 반환한다."""
+    """Return the number of active products for the given year."""
     return max(1, int(yearly_growth[year]["active_products"] * scale))

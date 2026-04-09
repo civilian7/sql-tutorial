@@ -2,6 +2,16 @@
 
 집계 함수(Aggregate Functions)는 여러 행을 하나의 요약 값으로 압축합니다. 보고서, 대시보드, 비즈니스 지표를 만들 때 핵심적으로 사용됩니다.
 
+```mermaid
+flowchart LR
+    T["Multiple\nRows"] --> A["Aggregate\nCOUNT / SUM\nAVG / MIN / MAX"] --> R["Single\nValue"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style A fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **개념:** 집계 함수는 여러 행을 하나의 값으로 요약합니다.
+
 ## COUNT
 
 `COUNT(*)`는 결과의 전체 행 수를 셉니다. `COUNT(컬럼명)`은 해당 컬럼에서 NULL이 아닌 값의 수를 셉니다.
@@ -148,6 +158,9 @@ FROM reviews;
 | total_reviews | avg_rating | lowest_rating | highest_rating | five_star_count |
 |---------------|------------|---------------|----------------|-----------------|
 | 7947 | 3.87 | 1 | 5 | 2341 |
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

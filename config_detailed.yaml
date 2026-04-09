@@ -1,0 +1,187 @@
+# ===========================================
+# Detailed configuration — all tunable parameters
+# Override any value here to customize data generation.
+# Values not set here use the built-in defaults in each generator.
+# ===========================================
+
+# ---- Customer ----
+customer:
+  gender_ratio: [0.65, 0.35]                # [male, female]
+  dormancy_rates:
+    under_1year: 0.05
+    1_to_3_years: 0.15
+    3_to_5_years: 0.30
+    over_5_years: 0.45
+  withdrawal_rate: 0.03                      # account deactivation
+  never_logged_in_rate: 0.05
+  address_count_weights: [0.50, 0.35, 0.15]  # probability for 1/2/3 addresses
+  apartment_probability: 0.70                 # address2 (apt/floor) fill rate
+
+# ---- Product ----
+product:
+  discontinuation_rate: 0.25
+  price_history:
+    max_changes: 4                            # 0..N price changes per product
+    change_ratio_range: [0.80, 1.15]          # -20% to +15%
+  images_per_product_weights: [15, 35, 30, 15, 5]  # for 1/2/3/4/5 images
+
+# ---- Order ----
+order:
+  hourly_weights: [
+    0.3, 0.2, 0.1, 0.1, 0.1, 0.2,
+    0.4, 0.6, 0.9, 1.2, 1.5, 1.4,
+    1.6, 1.5, 1.3, 1.2, 1.1, 1.0,
+    1.2, 1.4, 1.8, 2.0, 1.6, 0.8
+  ]
+  weekday_weights: [1.10, 0.95, 0.90, 0.90, 0.95, 1.10, 1.10]  # Mon-Sun
+  daily_variance: [0.8, 1.2]
+  item_count_weights: [40, 30, 15, 10, 5]    # for 1/2/3/4/5 items
+  bulk_item_range: [5, 15]
+  bulk_quantity_range: [2, 10]
+  discount_probability: 0.10
+  discount_ratio_range: [0.03, 0.15]
+  points_usage_probability: 0.10
+  points_usage_range: [100, 5000]
+  points_max_ratio: 0.30                      # max 30% of order total
+  status_timeline_days: [3, 5, 10, 21]        # pending/paid/shipped/delivered thresholds
+  completion_days_range: [8, 21]
+  cancellation_hours_range: [1, 48]
+  delivery_notes_probability: 0.35
+  pareto:                                      # customer purchasing distribution
+    tiers: [0.05, 0.20, 0.50]                 # top 5% / 20% / 50%
+    weights: [10.0, 4.0, 1.5, 0.5]            # heavy / medium / light / rare
+  product_price_weights:                       # browsing frequency by price tier
+    - { max_price: 50000,   weight: 5.0 }
+    - { max_price: 200000,  weight: 3.0 }
+    - { max_price: 500000,  weight: 2.0 }
+    - { max_price: 1000000, weight: 1.0 }
+    - { max_price: 2000000, weight: 0.5 }
+    - { max_price: 99999999, weight: 0.2 }
+  customer_activity_cutoff_days: 365
+
+# ---- Payment ----
+payment:
+  cancelled_refund_probability: 0.50
+  receipt_probability:
+    bank_transfer: 0.70
+    easy_pay: 0.20
+  processing_delays:
+    card_minutes: [1, 30]
+    virtual_account_days: [7, 21]
+    bank_transfer_minutes: [1, 30]
+
+# ---- Shipping ----
+shipping:
+  ship_days_range: [1, 3]                     # days from order to shipment
+  deliver_days_range: [1, 4]                  # days from shipment to delivery
+
+# ---- Review ----
+review:
+  creation_delay_days: [3, 30]                # days after order to write review
+  title_probability: 0.80
+  empty_content_probability: 0.10
+
+# ---- Inventory ----
+inventory:
+  initial_stock_range: [50, 500]
+  restock_frequency_range: [1, 5]
+  restock_quantity_range: [20, 300]
+
+# ---- Cart ----
+cart:
+  target_count_base: 30000                    # multiplied by scale
+  status_weights: [0.2, 0.5, 0.3]            # active/abandoned/converted
+  items_range: [1, 5]
+  item_quantity_weights: [0.7, 0.2, 0.1]     # qty 1/2/3
+  item_add_time_minutes: [0, 120]
+
+# ---- Coupon ----
+coupon:
+  target_count_base: 200
+  max_count: 500
+  percent_values: [5, 10, 15, 20, 30]
+  max_discount_values: [10000, 30000, 50000, 100000]
+  fixed_values: [3000, 5000, 10000, 20000, 50000]
+  min_order_amounts: [null, 30000, 50000, 100000, 200000, 500000]
+  duration_days: [30, 60, 90, 180, 365]
+  usage_limits: [null, 100, 500, 1000, 5000]
+  per_user_limits: [1, 1, 1, 2, 3]
+  target_usage_base: 50000
+
+# ---- Wishlist ----
+wishlist:
+  target_count_base: 20000
+  purchase_conversion_rate: 0.40
+  pre_purchase_days_range: [1, 30]
+  notify_on_sale_rate: 0.30
+
+# ---- Return ----
+return:
+  request_delay_days: [0, 14]
+  pickup_days_range: [1, 3]
+  full_return_probability: 0.70
+  reception_days_range: [1, 4]
+  inspection_hours_range: [2, 48]
+  completion_hours_range: [1, 24]
+
+# ---- Complaint ----
+complaint:
+  order_complaint_rate: 0.08
+  general_ratio: 0.25                         # general complaints as ratio of order complaints
+  unresolved_rate: 0.05
+  auto_closure_probability: 0.85
+  response_hours_by_priority:
+    urgent: [1, 4]
+    high: [2, 12]
+    medium: [4, 48]
+    low: [12, 96]
+  category_weights:
+    product_defect: 0.15
+    delivery_issue: 0.25
+    wrong_item: 0.08
+    refund_request: 0.15
+    exchange_request: 0.07
+    general_inquiry: 0.22
+    price_inquiry: 0.08
+  channel_weights:
+    website: 0.35
+    phone: 0.25
+    email: 0.20
+    chat: 0.15
+    kakao: 0.05
+
+# ---- Staff ----
+staff:
+  target_count_base: 50
+  max_count: 200
+  admin_count: 3
+  manager_threshold: 10                       # IDs 4..N are managers up to this
+  termination_rate: 0.10
+
+# ---- Tags ----
+tags:
+  per_product_range: [2, 6]
+  price_thresholds:
+    high_end: 2000000
+    premium: 1000000
+    budget: 100000
+
+# ---- Product Views ----
+product_views:
+  views_per_order: 8                          # total views ≈ orders × this
+  session_gap_minutes: 30
+  session_probability: 0.30
+  session_extra_views: [1, 4]
+  pre_purchase_views: [1, 5]
+  pre_purchase_days: [0, 14]
+  referrer_weights:
+    direct: 0.20
+    search: 0.35
+    ad: 0.15
+    recommendation: 0.15
+    social: 0.10
+    email: 0.05
+  device_weights:
+    desktop: 0.45
+    mobile: 0.45
+    tablet: 0.10

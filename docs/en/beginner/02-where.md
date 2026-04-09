@@ -2,6 +2,16 @@
 
 The `WHERE` clause narrows your results to only the rows that satisfy a condition. Without it, every row in the table is returned. Mastering `WHERE` is essential for answering real business questions.
 
+```mermaid
+flowchart LR
+    T["🗄️ All Rows\n(5,230)"] --> W["WHERE\ncondition"] --> R["📋 Filtered\n(127 rows)"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style W fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **Concept:** WHERE filters rows by condition. Like extracting 127 VIP customers from 5,230 total.
+
 ## Comparison Operators
 
 | Operator | Meaning |
@@ -173,6 +183,9 @@ SELECT order_number, notes
 FROM orders
 WHERE notes IS NOT NULL;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

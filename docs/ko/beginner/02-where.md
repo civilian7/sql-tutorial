@@ -2,6 +2,16 @@
 
 `WHERE` 절은 조건을 만족하는 행만 결과에 포함시킵니다. `WHERE`가 없으면 테이블의 모든 행이 반환됩니다. 실무에서 의미 있는 데이터를 뽑아내려면 `WHERE` 사용이 필수입니다.
 
+```mermaid
+flowchart LR
+    T["🗄️ All Rows\n(5,230)"] --> W["WHERE\ncondition"] --> R["📋 Filtered\n(127 rows)"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style W fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **개념:** WHERE는 조건에 맞는 행만 걸러냅니다. 전체 5,230명 중 VIP 127명만 추출하는 것과 같습니다.
+
 ## 비교 연산자
 
 | 연산자 | 의미 |
@@ -172,6 +182,9 @@ SELECT order_number, notes
 FROM orders
 WHERE notes IS NOT NULL;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

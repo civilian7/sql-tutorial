@@ -2,6 +2,22 @@
 
 `NULL`은 알 수 없거나 존재하지 않는 값을 나타냅니다. 0도 아니고 빈 문자열도 아닌, 값 자체가 없는 상태입니다. NULL은 SQL의 다른 모든 값과 다르게 동작하기 때문에 정확히 이해하는 것이 중요합니다.
 
+```mermaid
+flowchart TD
+    V["Value"] --> |"= 'VIP'"| T["TRUE ✅"]
+    V --> |"= NULL"| U["UNKNOWN ❓"]
+    N["NULL"] --> |"= NULL"| U2["UNKNOWN ❓"]
+    N --> |"IS NULL"| T2["TRUE ✅"]
+    style V fill:#e3f2fd,stroke:#1565c0
+    style N fill:#ffcdd2,stroke:#c62828
+    style T fill:#e8f5e9,stroke:#2e7d32
+    style T2 fill:#e8f5e9,stroke:#2e7d32
+    style U fill:#fff9c4,stroke:#f9a825
+    style U2 fill:#fff9c4,stroke:#f9a825
+```
+
+> **개념:** NULL은 '값이 없음'입니다. = NULL은 항상 UNKNOWN이므로 IS NULL을 사용해야 합니다.
+
 ## NULL은 어떤 값과도 같지 않습니다
 
 NULL을 `=`나 `<>`로 비교할 수 없습니다. 이런 비교는 항상 `NULL`(알 수 없음)을 반환하며, 절대 `TRUE`가 되지 않습니다.
@@ -179,6 +195,9 @@ SELECT
 FROM customers
 LIMIT 5;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

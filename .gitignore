@@ -2,6 +2,10 @@ output/
 __pycache__/
 *.pyc
 .venv/
+*.db
 logs/
 .claude/
-CLAUDE.md
+
+# Private design docs (should not be in public repo)
+DESIGN-*.md
+!docs/**/DESIGN-*.md

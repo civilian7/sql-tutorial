@@ -48,5 +48,15 @@
   {"id": 47, "company_name": "디앤디컴", "business_type": "수입/유통"},
   {"id": 48, "company_name": "서린시스테크", "business_type": "수입/유통"},
   {"id": 49, "company_name": "스카이디지탈", "business_type": "제조/유통"},
-  {"id": 50, "company_name": "한미마이크로닉스", "business_type": "수입/유통"}
+  {"id": 50, "company_name": "한미마이크로닉스", "business_type": "수입/유통"},
+  {"id": 51, "company_name": "키크론코리아", "business_type": "수입/유통"},
+  {"id": 52, "company_name": "사이버파워코리아", "business_type": "수입/유통"},
+  {"id": 53, "company_name": "ASRock코리아", "business_type": "수입/유통"},
+  {"id": 54, "company_name": "비콰이어트코리아", "business_type": "수입/유통"},
+  {"id": 55, "company_name": "아틱코리아", "business_type": "수입/유통"},
+  {"id": 56, "company_name": "스틸시리즈코리아", "business_type": "수입/유통"},
+  {"id": 57, "company_name": "마이크론코리아", "business_type": "수입/유통"},
+  {"id": 58, "company_name": "에이서코리아", "business_type": "수입/유통"},
+  {"id": 59, "company_name": "풀사코리아", "business_type": "수입/유통"},
+  {"id": 60, "company_name": "팀그룹코리아", "business_type": "수입/유통"}
 ]

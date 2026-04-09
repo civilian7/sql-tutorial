@@ -4,6 +4,26 @@ Window functions perform calculations across a set of rows that are related to t
 
 The syntax is: `function() OVER (PARTITION BY ... ORDER BY ...)`
 
+```mermaid
+flowchart LR
+    subgraph "Partition: Customer A"
+        R1["Row 1: 50,000"]
+        R2["Row 2: 80,000"]
+        R3["Row 3: 30,000"]
+    end
+    subgraph "Window Frame"
+        W["SUM() OVER\n(ORDER BY date\nROWS BETWEEN\n1 PRECEDING\nAND CURRENT)"]
+    end
+    R1 -.->|"frame"| W
+    R2 -.->|"frame"| W
+    W --> O1["50,000"]
+    W --> O2["130,000"]
+    W --> O3["110,000"]
+    style W fill:#fff3e0,stroke:#e65100
+```
+
+> Window functions compute across related rows without grouping. The number of result rows stays the same.
+
 ## ROW_NUMBER, RANK, DENSE_RANK
 
 These ranking functions assign a position to each row within a partition.
@@ -161,6 +181,58 @@ WHERE c.grade = 'VIP'
 ORDER BY c.name, o.ordered_at
 LIMIT 10;
 ```
+
+## More Window Function Examples
+
+### Point Balance Verification (SUM OVER)
+
+Verify that `balance_after` in `point_transactions` is correct using `SUM() OVER()`.
+
+```sql
+SELECT
+    id,
+    customer_id,
+    type,
+    reason,
+    amount,
+    balance_after,
+    SUM(amount) OVER (
+        PARTITION BY customer_id
+        ORDER BY created_at, id
+    ) AS calculated_balance,
+    balance_after - SUM(amount) OVER (
+        PARTITION BY customer_id
+        ORDER BY created_at, id
+    ) AS difference
+FROM point_transactions
+WHERE customer_id = 42
+ORDER BY created_at, id;
+```
+
+### Grade Change Tracking (LAG)
+
+Track grade transitions in `customer_grade_history` using LAG and LEAD.
+
+```sql
+SELECT
+    customer_id,
+    changed_at,
+    old_grade,
+    new_grade,
+    reason,
+    LAG(new_grade) OVER (
+        PARTITION BY customer_id ORDER BY changed_at
+    ) AS previous_record_grade,
+    LEAD(changed_at) OVER (
+        PARTITION BY customer_id ORDER BY changed_at
+    ) AS next_change_date
+FROM customer_grade_history
+WHERE customer_id = 42
+ORDER BY changed_at;
+```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

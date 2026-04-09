@@ -1,6 +1,25 @@
 # Lesson 11: Date and Time Functions
 
+Date/time functions are one of the areas where SQL syntax differs the most across databases. This lesson uses SQLite as the default but shows MySQL and PostgreSQL alternatives in tabs where the syntax diverges.
+
 SQLite stores dates as text in `YYYY-MM-DD` or `YYYY-MM-DD HH:MM:SS` format. A set of built-in functions lets you extract parts, calculate differences, and format dates for reporting.
+
+```mermaid
+flowchart LR
+    D["'2024-03-15 14:30:00'"] --> Y["YEAR\n2024"]
+    D --> M["MONTH\n3"]
+    D --> DOM["DAY\n15"]
+    D --> H["HOUR\n14"]
+    D --> Q["QUARTER\n1"]
+    style D fill:#e3f2fd,stroke:#1565c0
+    style Y fill:#e8f5e9,stroke:#2e7d32
+    style M fill:#e8f5e9,stroke:#2e7d32
+    style DOM fill:#e8f5e9,stroke:#2e7d32
+    style H fill:#e8f5e9,stroke:#2e7d32
+    style Q fill:#e8f5e9,stroke:#2e7d32
+```
+
+> You can extract specific parts from a datetime value.
 
 ## Extracting Year and Month with SUBSTR
 
@@ -53,37 +72,114 @@ ORDER BY year_month;
 
 `DATE(expression, modifier, ...)` returns a date string. `strftime(format, expression)` formats it however you like.
 
-```sql
--- Today's date
-SELECT DATE('now') AS today;
-```
+=== "SQLite"
+    ```sql
+    -- Today's date
+    SELECT DATE('now') AS today;
+    ```
 
-```sql
--- Orders placed in the last 30 days
-SELECT order_number, ordered_at, total_amount
-FROM orders
-WHERE ordered_at >= DATE('now', '-30 days')
-ORDER BY ordered_at DESC
-LIMIT 5;
-```
+=== "MySQL"
+    ```sql
+    -- Today's date
+    SELECT CURDATE() AS today;
+    ```
 
-```sql
--- Day of week analysis (0=Sunday, 6=Saturday)
-SELECT
-    CASE CAST(strftime('%w', ordered_at) AS INTEGER)
-        WHEN 0 THEN 'Sunday'
-        WHEN 1 THEN 'Monday'
-        WHEN 2 THEN 'Tuesday'
-        WHEN 3 THEN 'Wednesday'
-        WHEN 4 THEN 'Thursday'
-        WHEN 5 THEN 'Friday'
-        WHEN 6 THEN 'Saturday'
-    END AS day_of_week,
-    COUNT(*) AS order_count
-FROM orders
-GROUP BY strftime('%w', ordered_at)
-ORDER BY CAST(strftime('%w', ordered_at) AS INTEGER);
-```
+=== "PostgreSQL"
+    ```sql
+    -- Today's date
+    SELECT CURRENT_DATE AS today;
+    ```
+
+---
+
+=== "SQLite"
+    ```sql
+    -- Orders placed in the last 30 days
+    SELECT order_number, ordered_at, total_amount
+    FROM orders
+    WHERE ordered_at >= DATE('now', '-30 days')
+    ORDER BY ordered_at DESC
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Orders placed in the last 30 days
+    SELECT order_number, ordered_at, total_amount
+    FROM orders
+    WHERE ordered_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    ORDER BY ordered_at DESC
+    LIMIT 5;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Orders placed in the last 30 days
+    SELECT order_number, ordered_at, total_amount
+    FROM orders
+    WHERE ordered_at >= CURRENT_DATE - INTERVAL '30 days'
+    ORDER BY ordered_at DESC
+    LIMIT 5;
+    ```
+
+---
+
+=== "SQLite"
+    ```sql
+    -- Day of week analysis (0=Sunday, 6=Saturday)
+    SELECT
+        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+            WHEN 0 THEN 'Sunday'
+            WHEN 1 THEN 'Monday'
+            WHEN 2 THEN 'Tuesday'
+            WHEN 3 THEN 'Wednesday'
+            WHEN 4 THEN 'Thursday'
+            WHEN 5 THEN 'Friday'
+            WHEN 6 THEN 'Saturday'
+        END AS day_of_week,
+        COUNT(*) AS order_count
+    FROM orders
+    GROUP BY strftime('%w', ordered_at)
+    ORDER BY CAST(strftime('%w', ordered_at) AS INTEGER);
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Day of week analysis (1=Sunday, 7=Saturday)
+    SELECT
+        CASE DAYOFWEEK(ordered_at)
+            WHEN 1 THEN 'Sunday'
+            WHEN 2 THEN 'Monday'
+            WHEN 3 THEN 'Tuesday'
+            WHEN 4 THEN 'Wednesday'
+            WHEN 5 THEN 'Thursday'
+            WHEN 6 THEN 'Friday'
+            WHEN 7 THEN 'Saturday'
+        END AS day_of_week,
+        COUNT(*) AS order_count
+    FROM orders
+    GROUP BY DAYOFWEEK(ordered_at)
+    ORDER BY DAYOFWEEK(ordered_at);
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Day of week analysis (0=Sunday, 6=Saturday)
+    SELECT
+        CASE EXTRACT(DOW FROM ordered_at::date)
+            WHEN 0 THEN 'Sunday'
+            WHEN 1 THEN 'Monday'
+            WHEN 2 THEN 'Tuesday'
+            WHEN 3 THEN 'Wednesday'
+            WHEN 4 THEN 'Thursday'
+            WHEN 5 THEN 'Friday'
+            WHEN 6 THEN 'Saturday'
+        END AS day_of_week,
+        COUNT(*) AS order_count
+    FROM orders
+    GROUP BY EXTRACT(DOW FROM ordered_at::date)
+    ORDER BY EXTRACT(DOW FROM ordered_at::date);
+    ```
 
 **Result:**
 
@@ -101,19 +197,50 @@ ORDER BY CAST(strftime('%w', ordered_at) AS INTEGER);
 
 `julianday()` converts a date to a floating-point Julian Day Number. Subtracting two Julian Day values gives the difference in days.
 
-```sql
--- How many days between order placed and delivery?
-SELECT
-    o.order_number,
-    o.ordered_at,
-    s.delivered_at,
-    ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
-FROM orders AS o
-INNER JOIN shipping AS s ON s.order_id = o.id
-WHERE s.delivered_at IS NOT NULL
-ORDER BY delivery_days DESC
-LIMIT 8;
-```
+=== "SQLite"
+    ```sql
+    -- How many days between order placed and delivery?
+    SELECT
+        o.order_number,
+        o.ordered_at,
+        s.delivered_at,
+        ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
+    FROM orders AS o
+    INNER JOIN shipping AS s ON s.order_id = o.id
+    WHERE s.delivered_at IS NOT NULL
+    ORDER BY delivery_days DESC
+    LIMIT 8;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- How many days between order placed and delivery?
+    SELECT
+        o.order_number,
+        o.ordered_at,
+        s.delivered_at,
+        DATEDIFF(s.delivered_at, o.ordered_at) AS delivery_days
+    FROM orders AS o
+    INNER JOIN shipping AS s ON s.order_id = o.id
+    WHERE s.delivered_at IS NOT NULL
+    ORDER BY delivery_days DESC
+    LIMIT 8;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- How many days between order placed and delivery?
+    SELECT
+        o.order_number,
+        o.ordered_at,
+        s.delivered_at,
+        s.delivered_at::date - o.ordered_at::date AS delivery_days
+    FROM orders AS o
+    INNER JOIN shipping AS s ON s.order_id = o.id
+    WHERE s.delivered_at IS NOT NULL
+    ORDER BY delivery_days DESC
+    LIMIT 8;
+    ```
 
 **Result:**
 
@@ -123,18 +250,47 @@ LIMIT 8;
 | ORD-20201103-04812 | 2020-11-03 | 2020-11-18 | 15.0 |
 | ... | | | |
 
-```sql
--- Average delivery time by carrier
-SELECT
-    s.carrier,
-    COUNT(*)  AS deliveries,
-    ROUND(AVG(julianday(s.delivered_at) - julianday(o.ordered_at)), 1) AS avg_days
-FROM shipping AS s
-INNER JOIN orders AS o ON s.order_id = o.id
-WHERE s.delivered_at IS NOT NULL
-GROUP BY s.carrier
-ORDER BY avg_days;
-```
+=== "SQLite"
+    ```sql
+    -- Average delivery time by carrier
+    SELECT
+        s.carrier,
+        COUNT(*)  AS deliveries,
+        ROUND(AVG(julianday(s.delivered_at) - julianday(o.ordered_at)), 1) AS avg_days
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.delivered_at IS NOT NULL
+    GROUP BY s.carrier
+    ORDER BY avg_days;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Average delivery time by carrier
+    SELECT
+        s.carrier,
+        COUNT(*)  AS deliveries,
+        ROUND(AVG(DATEDIFF(s.delivered_at, o.ordered_at)), 1) AS avg_days
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.delivered_at IS NOT NULL
+    GROUP BY s.carrier
+    ORDER BY avg_days;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Average delivery time by carrier
+    SELECT
+        s.carrier,
+        COUNT(*)  AS deliveries,
+        ROUND(AVG(s.delivered_at::date - o.ordered_at::date), 1) AS avg_days
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.delivered_at IS NOT NULL
+    GROUP BY s.carrier
+    ORDER BY avg_days;
+    ```
 
 **Result:**
 
@@ -147,19 +303,46 @@ ORDER BY avg_days;
 
 ## Customer Age Calculation
 
-```sql
--- Customer ages based on birth_date
-SELECT
-    name,
-    birth_date,
-    CAST(
-        (julianday('now') - julianday(birth_date)) / 365.25
-    AS INTEGER) AS age
-FROM customers
-WHERE birth_date IS NOT NULL
-ORDER BY age DESC
-LIMIT 8;
-```
+=== "SQLite"
+    ```sql
+    -- Customer ages based on birth_date
+    SELECT
+        name,
+        birth_date,
+        CAST(
+            (julianday('now') - julianday(birth_date)) / 365.25
+        AS INTEGER) AS age
+    FROM customers
+    WHERE birth_date IS NOT NULL
+    ORDER BY age DESC
+    LIMIT 8;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Customer ages based on birth_date
+    SELECT
+        name,
+        birth_date,
+        TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age
+    FROM customers
+    WHERE birth_date IS NOT NULL
+    ORDER BY age DESC
+    LIMIT 8;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Customer ages based on birth_date
+    SELECT
+        name,
+        birth_date,
+        EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::int AS age
+    FROM customers
+    WHERE birth_date IS NOT NULL
+    ORDER BY age DESC
+    LIMIT 8;
+    ```
 
 **Result:**
 
@@ -171,23 +354,54 @@ LIMIT 8;
 
 ## Week and Quarter Extraction
 
-```sql
--- Quarterly revenue breakdown
-SELECT
-    SUBSTR(ordered_at, 1, 4) AS year,
-    CASE
-        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 1 AND 3  THEN 'Q1'
-        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 4 AND 6  THEN 'Q2'
-        WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 7 AND 9  THEN 'Q3'
-        ELSE 'Q4'
-    END AS quarter,
-    SUM(total_amount) AS revenue
-FROM orders
-WHERE status NOT IN ('cancelled', 'returned')
-  AND ordered_at LIKE '2024%'
-GROUP BY year, quarter
-ORDER BY year, quarter;
-```
+=== "SQLite"
+    ```sql
+    -- Quarterly revenue breakdown
+    SELECT
+        SUBSTR(ordered_at, 1, 4) AS year,
+        CASE
+            WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 1 AND 3  THEN 'Q1'
+            WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 4 AND 6  THEN 'Q2'
+            WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) BETWEEN 7 AND 9  THEN 'Q3'
+            ELSE 'Q4'
+        END AS quarter,
+        SUM(total_amount) AS revenue
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+      AND ordered_at LIKE '2024%'
+    GROUP BY year, quarter
+    ORDER BY year, quarter;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Quarterly revenue breakdown
+    SELECT
+        YEAR(ordered_at) AS year,
+        CONCAT('Q', QUARTER(ordered_at)) AS quarter,
+        SUM(total_amount) AS revenue
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+      AND YEAR(ordered_at) = 2024
+    GROUP BY YEAR(ordered_at), QUARTER(ordered_at)
+    ORDER BY year, quarter;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Quarterly revenue breakdown
+    SELECT
+        EXTRACT(YEAR FROM ordered_at::date)::int AS year,
+        'Q' || EXTRACT(QUARTER FROM ordered_at::date)::int AS quarter,
+        SUM(total_amount) AS revenue
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+      AND EXTRACT(YEAR FROM ordered_at::date) = 2024
+    GROUP BY
+        EXTRACT(YEAR FROM ordered_at::date),
+        EXTRACT(QUARTER FROM ordered_at::date)
+    ORDER BY year, quarter;
+    ```
 
 **Result:**
 
@@ -197,6 +411,9 @@ ORDER BY year, quarter;
 | 2024 | Q2 | 523891.40 |
 | 2024 | Q3 | 612347.80 |
 | 2024 | Q4 | 1218807.10 |
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 
@@ -217,43 +434,117 @@ Show the number of new customers who signed up each year since TechShop opened. 
 Calculate the average number of days between `ordered_at` and `shipped_at` (in the `shipping` table) for each carrier. Only include rows where both dates exist. Return `carrier`, `shipment_count`, and `avg_processing_days`, sorted by `avg_processing_days` ascending.
 
 ??? success "Answer"
-    ```sql
-    SELECT
-        s.carrier,
-        COUNT(*) AS shipment_count,
-        ROUND(
-            AVG(julianday(s.shipped_at) - julianday(o.ordered_at)),
-            1
-        ) AS avg_processing_days
-    FROM shipping AS s
-    INNER JOIN orders AS o ON s.order_id = o.id
-    WHERE s.shipped_at IS NOT NULL
-    GROUP BY s.carrier
-    ORDER BY avg_processing_days ASC;
-    ```
+    === "SQLite"
+        ```sql
+        SELECT
+            s.carrier,
+            COUNT(*) AS shipment_count,
+            ROUND(
+                AVG(julianday(s.shipped_at) - julianday(o.ordered_at)),
+                1
+            ) AS avg_processing_days
+        FROM shipping AS s
+        INNER JOIN orders AS o ON s.order_id = o.id
+        WHERE s.shipped_at IS NOT NULL
+        GROUP BY s.carrier
+        ORDER BY avg_processing_days ASC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            s.carrier,
+            COUNT(*) AS shipment_count,
+            ROUND(
+                AVG(DATEDIFF(s.shipped_at, o.ordered_at)),
+                1
+            ) AS avg_processing_days
+        FROM shipping AS s
+        INNER JOIN orders AS o ON s.order_id = o.id
+        WHERE s.shipped_at IS NOT NULL
+        GROUP BY s.carrier
+        ORDER BY avg_processing_days ASC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            s.carrier,
+            COUNT(*) AS shipment_count,
+            ROUND(
+                AVG(s.shipped_at::date - o.ordered_at::date),
+                1
+            ) AS avg_processing_days
+        FROM shipping AS s
+        INNER JOIN orders AS o ON s.order_id = o.id
+        WHERE s.shipped_at IS NOT NULL
+        GROUP BY s.carrier
+        ORDER BY avg_processing_days ASC;
+        ```
 
 ### Exercise 3
 Find the day-of-week with the highest average order value. Use `strftime('%w', ordered_at)` (0=Sunday) and convert the number to the day name with a `CASE` expression. Return `day_of_week`, `order_count`, and `avg_order_value`.
 
 ??? success "Answer"
-    ```sql
-    SELECT
-        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
-            WHEN 0 THEN 'Sunday'
-            WHEN 1 THEN 'Monday'
-            WHEN 2 THEN 'Tuesday'
-            WHEN 3 THEN 'Wednesday'
-            WHEN 4 THEN 'Thursday'
-            WHEN 5 THEN 'Friday'
-            WHEN 6 THEN 'Saturday'
-        END AS day_of_week,
-        COUNT(*)              AS order_count,
-        ROUND(AVG(total_amount), 2) AS avg_order_value
-    FROM orders
-    WHERE status NOT IN ('cancelled', 'returned')
-    GROUP BY strftime('%w', ordered_at)
-    ORDER BY avg_order_value DESC;
-    ```
+    === "SQLite"
+        ```sql
+        SELECT
+            CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+                WHEN 0 THEN 'Sunday'
+                WHEN 1 THEN 'Monday'
+                WHEN 2 THEN 'Tuesday'
+                WHEN 3 THEN 'Wednesday'
+                WHEN 4 THEN 'Thursday'
+                WHEN 5 THEN 'Friday'
+                WHEN 6 THEN 'Saturday'
+            END AS day_of_week,
+            COUNT(*)              AS order_count,
+            ROUND(AVG(total_amount), 2) AS avg_order_value
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY strftime('%w', ordered_at)
+        ORDER BY avg_order_value DESC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            CASE DAYOFWEEK(ordered_at)
+                WHEN 1 THEN 'Sunday'
+                WHEN 2 THEN 'Monday'
+                WHEN 3 THEN 'Tuesday'
+                WHEN 4 THEN 'Wednesday'
+                WHEN 5 THEN 'Thursday'
+                WHEN 6 THEN 'Friday'
+                WHEN 7 THEN 'Saturday'
+            END AS day_of_week,
+            COUNT(*)              AS order_count,
+            ROUND(AVG(total_amount), 2) AS avg_order_value
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY DAYOFWEEK(ordered_at)
+        ORDER BY avg_order_value DESC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            CASE EXTRACT(DOW FROM ordered_at::date)
+                WHEN 0 THEN 'Sunday'
+                WHEN 1 THEN 'Monday'
+                WHEN 2 THEN 'Tuesday'
+                WHEN 3 THEN 'Wednesday'
+                WHEN 4 THEN 'Thursday'
+                WHEN 5 THEN 'Friday'
+                WHEN 6 THEN 'Saturday'
+            END AS day_of_week,
+            COUNT(*)              AS order_count,
+            ROUND(AVG(total_amount), 2) AS avg_order_value
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY EXTRACT(DOW FROM ordered_at::date)
+        ORDER BY avg_order_value DESC;
+        ```
 
 ---
 Next: [Lesson 12: String Functions](12-string.md)

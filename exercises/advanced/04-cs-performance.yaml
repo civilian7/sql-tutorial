@@ -1,0 +1,291 @@
+metadata:
+  id: advanced-04-cs-performance
+  title: "CS 성과 분석"
+  title_en: "CS Performance Analysis"
+  difficulty: advanced
+  category: exercises
+  concepts: [JULIANDAY, CASE, Window Functions, CTE, Pivot]
+  table_count: 5
+  tables: [complaints, staff, customers, orders, returns]
+
+problems:
+  - id: a15-01
+    level: 3
+    type: "Aggregate"
+    tags: [Aggregate, CASE, Date, complaints]
+    title: "문의 유형별 현황"
+    title_en: "Complaint Category Summary"
+    body: |
+      CS팀장이 최근 1년(2025년) 문의 현황을 파악하고 싶어합니다.
+      문의 유형(category)별로 건수, 해결률, 평균 처리 시간을 보여주세요.
+    body_en: |
+      The CS team lead wants a 2025 complaint summary.
+      Show count, resolution rate, and average resolution time by category.
+    hint: |
+      - `complaints` 테이블의 `category`, `status`, `created_at`, `resolved_at` 사용
+      - 해결률: `status IN ('resolved', 'closed')` 건수 / 전체 건수
+      - 처리 시간: `JULIANDAY(resolved_at) - JULIANDAY(created_at)`
+    hint_en: |
+      - Use `complaints.category`, `status`, `created_at`, `resolved_at`
+      - Resolution rate: count of `status IN ('resolved', 'closed')` / total
+      - Resolution time: `JULIANDAY(resolved_at) - JULIANDAY(created_at)`
+    reference_sql: |
+      SELECT
+          category,
+          COUNT(*) AS total_count,
+          SUM(CASE WHEN status IN ('resolved', 'closed') THEN 1 ELSE 0 END)
+              AS resolved_count,
+          ROUND(100.0 * SUM(CASE WHEN status IN ('resolved', 'closed') THEN 1 ELSE 0 END)
+              / COUNT(*), 1) AS resolution_rate_pct,
+          ROUND(AVG(CASE
+              WHEN resolved_at IS NOT NULL
+              THEN JULIANDAY(resolved_at) - JULIANDAY(created_at)
+          END), 1) AS avg_resolution_days
+      FROM complaints
+      WHERE created_at LIKE '2025%'
+      GROUP BY category
+      ORDER BY total_count DESC;
+
+  - id: a15-02
+    level: 3
+    type: "Aggregate"
+    tags: [CTE, JOIN, Aggregate, Window funcs, complaints, staff]
+    title: "CS 직원별 성과 비교"
+    title_en: "CS Staff Performance Comparison"
+    body: |
+      각 직원이 담당한 문의 건수, 해결률, 평균 처리 시간, 담당 고객 수를 보여주세요.
+      전체 평균과 비교할 수 있도록 표시합니다.
+    body_en: |
+      Show each staff member's case count, resolution rate, average processing time,
+      and customer count. Display team averages for comparison.
+    hint: |
+      - `complaints.staff_id` -> `staff` JOIN
+      - `staff_id`가 NULL인 문의는 "미배정"으로 표시
+      - 윈도우 함수로 전체 평균을 같은 행에 표시
+    hint_en: |
+      - JOIN `complaints.staff_id` -> `staff`
+      - Show NULL staff_id as "Unassigned"
+      - Use window functions to show team averages in each row
+    reference_sql: |
+      WITH staff_metrics AS (
+          SELECT
+              COALESCE(s.name, '미배정') AS staff_name,
+              COUNT(*) AS case_count,
+              COUNT(DISTINCT comp.customer_id) AS customer_count,
+              SUM(CASE WHEN comp.status IN ('resolved', 'closed') THEN 1 ELSE 0 END)
+                  AS resolved_count,
+              ROUND(100.0 * SUM(CASE WHEN comp.status IN ('resolved', 'closed') THEN 1 ELSE 0 END)
+                  / COUNT(*), 1) AS resolution_rate,
+              ROUND(AVG(CASE
+                  WHEN comp.resolved_at IS NOT NULL
+                  THEN JULIANDAY(comp.resolved_at) - JULIANDAY(comp.created_at)
+              END), 1) AS avg_days
+          FROM complaints AS comp
+          LEFT JOIN staff AS s ON comp.staff_id = s.id
+          WHERE comp.created_at LIKE '2025%'
+          GROUP BY COALESCE(s.name, '미배정')
+      )
+      SELECT
+          staff_name,
+          case_count,
+          customer_count,
+          resolution_rate,
+          avg_days,
+          ROUND(AVG(case_count) OVER (), 0)       AS team_avg_cases,
+          ROUND(AVG(resolution_rate) OVER (), 1)   AS team_avg_rate,
+          ROUND(AVG(avg_days) OVER (), 1)          AS team_avg_days
+      FROM staff_metrics
+      ORDER BY resolution_rate DESC;
+
+  - id: a15-03
+    level: 3
+    type: "Aggregate"
+    tags: [Aggregate, Window funcs, returns]
+    title: "반품 사유 분석"
+    title_en: "Return Reason Analysis"
+    body: |
+      반품 사유별 건수, 비율, 평균 환불 금액을 보여주세요.
+      카테고리별로 어떤 사유가 많은지도 분석합니다.
+    body_en: |
+      Show return count, percentage, and average refund by reason.
+      Also analyze which reasons are common per product category.
+    hint: |
+      - `returns.reason`으로 사유 분류
+      - `returns` -> `orders` -> `order_items` -> `products` -> `categories` JOIN
+      - `returns.refund_amount`로 환불 금액 계산
+    hint_en: |
+      - Classify by `returns.reason`
+      - JOIN chain: `returns` -> `orders` -> `order_items` -> `products` -> `categories`
+      - Use `returns.refund_amount` for refund amounts
+    reference_sql: |
+      SELECT
+          r.reason,
+          COUNT(*)                     AS return_count,
+          ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct,
+          ROUND(AVG(r.refund_amount), 2) AS avg_refund
+      FROM returns AS r
+      GROUP BY r.reason
+      ORDER BY return_count DESC;
+
+  - id: a15-04
+    level: 3
+    type: "Aggregate"
+    tags: [CTE, JOIN, Aggregate, Date, orders, complaints, returns]
+    title: "월별 CS 트렌드와 주문 대비 문의 비율"
+    title_en: "Monthly CS Trend and Complaint-to-Order Ratio"
+    body: |
+      2024년 월별 주문 수, 문의 수, 반품 수, 주문 대비 문의율(%)을 보여주세요.
+    body_en: |
+      Show 2024 monthly order count, complaint count, return count,
+      and complaint-to-order ratio.
+    hint: |
+      - 각 테이블에서 월별 건수를 CTE로 준비
+      - 월(SUBSTR)로 JOIN
+      - 문의율 = 문의 수 / 주문 수 * 100
+    hint_en: |
+      - Prepare monthly counts from each table as CTEs
+      - JOIN by month (SUBSTR)
+      - Complaint rate = complaint count / order count * 100
+    reference_sql: |
+      WITH monthly_orders AS (
+          SELECT
+              SUBSTR(ordered_at, 1, 7) AS year_month,
+              COUNT(*) AS order_count
+          FROM orders
+          WHERE ordered_at LIKE '2024%'
+          GROUP BY SUBSTR(ordered_at, 1, 7)
+      ),
+      monthly_complaints AS (
+          SELECT
+              SUBSTR(created_at, 1, 7) AS year_month,
+              COUNT(*) AS complaint_count
+          FROM complaints
+          WHERE created_at LIKE '2024%'
+          GROUP BY SUBSTR(created_at, 1, 7)
+      ),
+      monthly_returns AS (
+          SELECT
+              SUBSTR(requested_at, 1, 7) AS year_month,
+              COUNT(*) AS return_count
+          FROM returns
+          WHERE requested_at LIKE '2024%'
+          GROUP BY SUBSTR(requested_at, 1, 7)
+      )
+      SELECT
+          mo.year_month,
+          mo.order_count,
+          COALESCE(mc.complaint_count, 0) AS complaint_count,
+          COALESCE(mr.return_count, 0)    AS return_count,
+          ROUND(100.0 * COALESCE(mc.complaint_count, 0) / mo.order_count, 2)
+              AS complaint_rate_pct,
+          ROUND(100.0 * COALESCE(mr.return_count, 0) / mo.order_count, 2)
+              AS return_rate_pct
+      FROM monthly_orders AS mo
+      LEFT JOIN monthly_complaints AS mc ON mo.year_month = mc.year_month
+      LEFT JOIN monthly_returns    AS mr ON mo.year_month = mr.year_month
+      ORDER BY mo.year_month;
+
+  - id: a15-05
+    level: 3
+    type: "Subquery/CTE"
+    tags: [CTE, JOIN, CASE, HAVING, Aggregate, complaints, customers, orders]
+    title: "반복 문의 고객과 에스컬레이션 대상"
+    title_en: "Repeat Complainers and Escalation Targets"
+    body: |
+      3회 이상 문의한 고객 중 미해결 건이 있는 경우를 에스컬레이션 대상으로 분류하세요.
+      총 문의 수, 미해결 건수, 총 구매 금액, 마지막 문의일을 보여주세요.
+    body_en: |
+      Identify customers with 3+ complaints who still have unresolved cases.
+      Show total complaints, open count, total spend, and last complaint date.
+    hint: |
+      - 고객별 문의 통계를 먼저 집계
+      - `HAVING`으로 3회 이상 + 미해결 건 존재 필터
+      - `orders`와 JOIN하여 구매 금액 포함
+    hint_en: |
+      - Aggregate complaint stats per customer first
+      - Filter with `HAVING` for 3+ complaints and open cases > 0
+      - JOIN with `orders` for purchase value
+    reference_sql: |
+      WITH complaint_summary AS (
+          SELECT
+              customer_id,
+              COUNT(*) AS total_complaints,
+              SUM(CASE WHEN status NOT IN ('resolved', 'closed') THEN 1 ELSE 0 END)
+                  AS open_count,
+              MAX(created_at) AS last_complaint_date
+          FROM complaints
+          GROUP BY customer_id
+          HAVING COUNT(*) >= 3
+             AND SUM(CASE WHEN status NOT IN ('resolved', 'closed') THEN 1 ELSE 0 END) > 0
+      ),
+      customer_value AS (
+          SELECT
+              customer_id,
+              ROUND(SUM(total_amount), 2) AS total_spent
+          FROM orders
+          WHERE status NOT IN ('cancelled')
+          GROUP BY customer_id
+      )
+      SELECT
+          c.name          AS customer_name,
+          c.grade,
+          c.email,
+          cs.total_complaints,
+          cs.open_count,
+          cs.last_complaint_date,
+          COALESCE(cv.total_spent, 0) AS total_spent,
+          CASE
+              WHEN c.grade IN ('VIP', 'GOLD') THEN '우선 처리'
+              WHEN cs.open_count >= 3          THEN '긴급'
+              ELSE '일반'
+          END AS priority
+      FROM complaint_summary AS cs
+      INNER JOIN customers     AS c  ON cs.customer_id = c.id
+      LEFT  JOIN customer_value AS cv ON cs.customer_id = cv.customer_id
+      ORDER BY
+          CASE
+              WHEN c.grade IN ('VIP', 'GOLD') THEN 1
+              WHEN cs.open_count >= 3          THEN 2
+              ELSE 3
+          END,
+          cv.total_spent DESC;
+
+  - id: a15-06
+    level: 4
+    type: "Analytics"
+    tags: [CASE, Aggregate, Pivot, JOIN, complaints, staff]
+    title: "보너스: CS 직원별 월별 성과 피벗"
+    title_en: "Bonus: Staff Monthly Performance Pivot"
+    body: |
+      CS 직원별 2024년 월별 해결 건수를 피벗 테이블로 만드세요.
+      12개월(열) x 직원(행) 형태입니다.
+    body_en: |
+      Create a pivot table of resolved cases per CS staff member for 2024.
+      Format: 12 months (columns) x staff (rows).
+    hint: |
+      - 12개 `SUM(CASE WHEN SUBSTR(...) = 'MM' AND status ... THEN 1 ELSE 0 END)` 컬럼
+      - `LEFT JOIN staff`으로 미배정 포함
+    hint_en: |
+      - 12 columns with `SUM(CASE WHEN SUBSTR(...) = 'MM' AND status ... THEN 1 ELSE 0 END)`
+      - `LEFT JOIN staff` to include unassigned
+    reference_sql: |
+      SELECT
+          COALESCE(s.name, '미배정') AS staff_name,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='01' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS jan,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='02' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS feb,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='03' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS mar,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='04' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS apr,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='05' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS may,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='06' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS jun,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='07' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS jul,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='08' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS aug,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='09' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS sep,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='10' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS oct,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='11' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS nov,
+          SUM(CASE WHEN SUBSTR(comp.created_at,6,2)='12' AND comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS dec,
+          SUM(CASE WHEN comp.status IN ('resolved','closed') THEN 1 ELSE 0 END) AS total
+      FROM complaints AS comp
+      LEFT JOIN staff AS s ON comp.staff_id = s.id
+      WHERE comp.created_at LIKE '2024%'
+      GROUP BY COALESCE(s.name, '미배정')
+      ORDER BY total DESC;

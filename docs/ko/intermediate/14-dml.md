@@ -2,6 +2,25 @@
 
 DML(Data Manipulation Language, 데이터 조작 언어) 문은 테이블의 데이터를 변경합니다. `SELECT`와 달리 이 문장들은 영구적으로 반영됩니다 — `UPDATE`나 `DELETE`를 실행하기 전에 `WHERE` 절을 반드시 다시 확인하세요.
 
+대부분의 DML은 표준 SQL이므로 모든 데이터베이스에서 동일하게 동작합니다. 차이가 있는 부분(날짜 함수, UPSERT 등)만 탭으로 표시합니다.
+
+```mermaid
+flowchart LR
+    subgraph "DML Operations"
+        I["INSERT\n+ new row"]
+        U["UPDATE\n~ modify row"]
+        D["DELETE\n- remove row"]
+    end
+    T["Table"] --> I
+    T --> U
+    T --> D
+    style I fill:#e8f5e9,stroke:#2e7d32
+    style U fill:#fff9c4,stroke:#f9a825
+    style D fill:#ffcdd2,stroke:#c62828
+```
+
+> DML은 데이터를 조작합니다. INSERT(추가), UPDATE(수정), DELETE(삭제)가 있습니다.
+
 > **안전 수칙:** `UPDATE`나 `DELETE`를 실행하기 전에, 동일한 `WHERE` 조건으로 먼저 `SELECT`를 실행하여 영향받을 행을 정확히 확인하세요.
 
 ## INSERT INTO
@@ -10,21 +29,39 @@ DML(Data Manipulation Language, 데이터 조작 언어) 문은 테이블의 데
 
 컬럼 이름을 명시적으로 나열하세요 — 쿼리가 자기 문서화되고, 테이블 구조 변경에도 안전합니다.
 
-```sql
--- 새 상품 추가
-INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-VALUES (
-    'SKU-TEST-001',
-    '테스트 기계식 키보드',
-    9,          -- Keyboards 카테고리 ID
-    1,          -- 공급업체 ID
-    129.99,
-    50,
-    1,
-    datetime('now'),
-    datetime('now')
-);
-```
+=== "SQLite"
+    ```sql
+    -- Add a new product
+    INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+    VALUES (
+        'SKU-TEST-001',
+        '테스트 기계식 키보드',
+        9,          -- Keyboards category ID
+        1,          -- supplier ID
+        129.99,
+        50,
+        1,
+        datetime('now'),
+        datetime('now')
+    );
+    ```
+
+=== "MySQL / PostgreSQL"
+    ```sql
+    -- Add a new product
+    INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+    VALUES (
+        'SKU-TEST-001',
+        '테스트 기계식 키보드',
+        9,          -- Keyboards category ID
+        1,          -- supplier ID
+        129.99,
+        50,
+        1,
+        NOW(),
+        NOW()
+    );
+    ```
 
 실행 후 확인:
 ```sql
@@ -108,12 +145,29 @@ WHERE id NOT IN (
 
 ### 특정 행 삭제
 
-```sql
--- 3년 이상 된 취소 주문 삭제 (아카이빙 목적)
-DELETE FROM orders
-WHERE status = 'cancelled'
-  AND cancelled_at < DATE('now', '-3 years');
-```
+=== "SQLite"
+    ```sql
+    -- Remove cancelled orders older than 3 years
+    DELETE FROM orders
+    WHERE status = 'cancelled'
+      AND cancelled_at < DATE('now', '-3 years');
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Remove cancelled orders older than 3 years
+    DELETE FROM orders
+    WHERE status = 'cancelled'
+      AND cancelled_at < DATE_SUB(CURDATE(), INTERVAL 3 YEAR);
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- Remove cancelled orders older than 3 years
+    DELETE FROM orders
+    WHERE status = 'cancelled'
+      AND cancelled_at < CURRENT_DATE - INTERVAL '3 years';
+    ```
 
 > 실행 전 확인: `SELECT COUNT(*) FROM orders WHERE status = 'cancelled' AND cancelled_at < DATE('now', '-3 years');`
 
@@ -158,7 +212,10 @@ COMMIT;
 | `WHERE` 없이 `UPDATE table SET col = val` | 모든 행이 업데이트됨 | 항상 먼저 `SELECT`로 확인 |
 | `WHERE` 없이 `DELETE FROM table` | 모든 행이 삭제됨 | 트랜잭션 사용; 먼저 COUNT 확인 |
 | `updated_at` 누락 | 감사 추적 정보가 낡아짐 | 모든 UPDATE에 `updated_at = datetime('now')` 포함 |
-| 중복 기본 키 삽입 | 제약 조건 오류 | `INSERT OR IGNORE` 또는 `INSERT OR REPLACE` 사용 |
+| 중복 기본 키 삽입 | 제약 조건 오류 | SQLite: `INSERT OR IGNORE` / MySQL: `INSERT IGNORE` / PG: `ON CONFLICT DO NOTHING` |
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

@@ -1,4 +1,4 @@
-"""재고/입출고 이력 데이터 생성"""
+"""Inventory and stock movement history data generation"""
 
 from __future__ import annotations
 
@@ -16,11 +16,11 @@ class InventoryGenerator(BaseGenerator):
         orders: list[dict],
         order_items: list[dict],
     ) -> list[dict]:
-        """입출고 이력을 생성한다."""
+        """Generate stock movement history."""
         rows = []
         inv_id = 0
 
-        # 상품별 초기 입고
+        # Initial stock receipt per product
         for p in products:
             inv_id += 1
             created = datetime.strptime(p["created_at"], "%Y-%m-%d %H:%M:%S")
@@ -35,12 +35,12 @@ class InventoryGenerator(BaseGenerator):
                 "created_at": self.fmt_dt(created),
             })
 
-            # 추가 입고 1~5회
+            # 1~5 additional restocks
             for _ in range(self.rng.randint(1, 5)):
                 inv_id += 1
                 restock_date = self.random_datetime(
                     created + timedelta(days=30),
-                    datetime(self.end_year, 12, 31),
+                    self.end_date,
                 )
                 rows.append({
                     "id": inv_id,
@@ -52,7 +52,7 @@ class InventoryGenerator(BaseGenerator):
                     "created_at": self.fmt_dt(restock_date),
                 })
 
-        # 주문 기반 출고 (일부만 — 전체 주문을 기록하면 너무 많음)
+        # Order-based outbound (sampled -- recording all orders would be too many)
         items_by_order: dict[int, list[dict]] = {}
         for it in order_items:
             items_by_order.setdefault(it["order_id"], []).append(it)
@@ -76,7 +76,7 @@ class InventoryGenerator(BaseGenerator):
                     "created_at": order["ordered_at"],
                 })
 
-        # 반품 입고
+        # Return inbound
         returned_orders = [o for o in orders if o["status"] == "returned"]
         for order in returned_orders:
             items = items_by_order.get(order["id"], [])

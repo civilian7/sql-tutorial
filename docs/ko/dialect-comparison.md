@@ -1,4 +1,4 @@
-# DB 방언 비교 가이드
+# 데이터베이스별 SQL 차이
 
 이 튜토리얼의 SQL은 SQLite 기준으로 작성되었습니다. 다른 데이터베이스에서 같은 쿼리를 실행하려면 아래 차이점을 참고하세요.
 
@@ -421,6 +421,159 @@
         INNER JOIN category_tree ct ON c.parent_id = ct.id
     )
     SELECT * FROM category_tree;
+    ```
+
+---
+
+## JSON 쿼리
+
+각 데이터베이스는 JSON 데이터를 다루는 고유한 함수를 제공합니다.
+
+=== "SQLite"
+
+    ```sql
+    SELECT name, JSON_EXTRACT(specs, '$.cpu') AS cpu
+    FROM products
+    WHERE specs IS NOT NULL;
+    ```
+
+=== "MySQL"
+
+    ```sql
+    SELECT name, JSON_EXTRACT(specs, '$.cpu') AS cpu
+    FROM products
+    WHERE specs IS NOT NULL;
+    -- 또는: specs->'$.cpu'
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    SELECT name, specs->>'cpu' AS cpu
+    FROM products
+    WHERE specs IS NOT NULL;
+    ```
+
+---
+
+## 실행 계획 (EXPLAIN)
+
+쿼리 성능을 분석할 때 사용하는 실행 계획 확인 문법입니다.
+
+=== "SQLite"
+
+    ```sql
+    EXPLAIN QUERY PLAN
+    SELECT * FROM orders WHERE customer_id = 42;
+    ```
+
+=== "MySQL"
+
+    ```sql
+    EXPLAIN
+    SELECT * FROM orders WHERE customer_id = 42;
+    -- 또는: EXPLAIN ANALYZE (MySQL 8.0.18+)
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    EXPLAIN ANALYZE
+    SELECT * FROM orders WHERE customer_id = 42;
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    SET STATISTICS IO ON;
+    SELECT * FROM orders WHERE customer_id = 42;
+    -- 또는: SET SHOWPLAN_TEXT ON;
+    ```
+
+---
+
+## 저장 프로시저
+
+반복적인 로직을 서버에 저장하여 호출하는 기능입니다. SQLite는 저장 프로시저를 지원하지 않습니다.
+
+=== "MySQL"
+
+    ```sql
+    DELIMITER //
+    CREATE PROCEDURE sp_example(IN p_id INT)
+    BEGIN
+        SELECT * FROM customers WHERE id = p_id;
+    END //
+    DELIMITER ;
+
+    CALL sp_example(42);
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    CREATE OR REPLACE FUNCTION sp_example(p_id INT)
+    RETURNS TABLE(name TEXT, email TEXT) AS $$
+    BEGIN
+        RETURN QUERY SELECT c.name, c.email
+        FROM customers c WHERE c.id = p_id;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    SELECT * FROM sp_example(42);
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE PROCEDURE sp_example @p_id INT
+    AS
+    BEGIN
+        SELECT * FROM customers WHERE id = @p_id;
+    END;
+
+    EXEC sp_example @p_id = 42;
+    ```
+
+---
+
+## 트리거 문법
+
+데이터 변경 시 자동으로 실행되는 트리거의 문법 차이입니다. 자세한 내용은 [레슨 20](advanced/20-triggers.md)을 참고하세요.
+
+=== "SQLite"
+
+    ```sql
+    CREATE TRIGGER trg_example AFTER INSERT ON orders
+    BEGIN
+        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
+    END;
+    ```
+
+=== "MySQL"
+
+    ```sql
+    DELIMITER //
+    CREATE TRIGGER trg_example AFTER INSERT ON order_items
+    FOR EACH ROW
+    BEGIN
+        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
+    END //
+    DELIMITER ;
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    CREATE OR REPLACE FUNCTION fn_example() RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER trg_example AFTER INSERT ON order_items
+    FOR EACH ROW EXECUTE FUNCTION fn_example();
     ```
 
 ---

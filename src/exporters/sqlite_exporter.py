@@ -1,4 +1,4 @@
-"""SQLite3 데이터베이스 익스포터"""
+"""SQLite3 database exporter"""
 
 from __future__ import annotations
 
@@ -9,249 +9,254 @@ from typing import Any
 
 SCHEMA_SQL = """
 -- =============================================
--- 상품 카테고리 (계층형: 대분류 > 중분류 > 소분류)
+-- Product categories (hierarchical: top > mid > sub)
 -- =============================================
 CREATE TABLE categories (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    parent_id       INTEGER NULL REFERENCES categories(id),  -- 상위 카테고리 (NULL=최상위)
-    name            TEXT NOT NULL,                           -- 카테고리명
-    slug            TEXT NOT NULL UNIQUE,                    -- URL용 식별자
-    depth           INTEGER NOT NULL DEFAULT 0,              -- 0=대분류, 1=중분류, 2=소분류
-    sort_order      INTEGER NOT NULL DEFAULT 0,              -- 정렬 순서
-    is_active       INTEGER NOT NULL DEFAULT 1,              -- 활성 여부 (0/1)
+    parent_id       INTEGER NULL REFERENCES categories(id),  -- parent category (NULL=root)
+    name            TEXT NOT NULL,                           -- category name
+    slug            TEXT NOT NULL UNIQUE,                    -- URL-safe identifier
+    depth           INTEGER NOT NULL DEFAULT 0,              -- 0=top, 1=mid, 2=sub
+    sort_order      INTEGER NOT NULL DEFAULT 0,              -- display order
+    is_active       INTEGER NOT NULL DEFAULT 1,              -- active flag (0/1)
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 공급업체 (상품 납품처)
+-- Suppliers (product vendors)
 -- =============================================
 CREATE TABLE suppliers (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    company_name    TEXT NOT NULL,                           -- 회사명
-    business_number TEXT NOT NULL,                           -- 사업자등록번호 (가상)
-    contact_name    TEXT NOT NULL,                           -- 담당자명
-    phone           TEXT NOT NULL,                           -- 020-XXXX-XXXX (가상번호)
+    company_name    TEXT NOT NULL,                           -- company name
+    business_number TEXT NOT NULL,                           -- business registration number (fictional)
+    contact_name    TEXT NOT NULL,                           -- contact person
+    phone           TEXT NOT NULL,                           -- 020-XXXX-XXXX (fictional number)
     email           TEXT NOT NULL,                           -- contact@xxx.test.kr
-    address         TEXT,                                    -- 사업장 주소
+    address         TEXT,                                    -- business address
     is_active       INTEGER NOT NULL DEFAULT 1,
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 상품 (컴퓨터/주변기기)
+-- Products (computers & peripherals)
 -- =============================================
 CREATE TABLE products (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     category_id     INTEGER NOT NULL REFERENCES categories(id),
     supplier_id     INTEGER NOT NULL REFERENCES suppliers(id),
-    name            TEXT NOT NULL,                           -- 상품명
-    sku             TEXT NOT NULL UNIQUE,                    -- 재고관리코드 (예: LA-GEN-삼성-00001)
-    brand           TEXT NOT NULL,                           -- 브랜드명
-    model_number    TEXT,                                    -- 모델번호
-    description     TEXT,                                    -- 상품 설명
-    price           REAL NOT NULL CHECK(price >= 0),           -- 현재 판매가 (원)
-    cost_price      REAL NOT NULL CHECK(cost_price >= 0),    -- 원가 (원)
-    stock_qty  INTEGER NOT NULL DEFAULT 0,              -- 현재 재고 수량
-    weight_grams    INTEGER,                                 -- 배송 무게 (g)
-    is_active       INTEGER NOT NULL DEFAULT 1,              -- 판매 중 여부
-    discontinued_at TEXT NULL,                               -- 단종일 (NULL=판매중)
+    successor_id    INTEGER NULL REFERENCES products(id),   -- next-generation replacement product
+    name            TEXT NOT NULL,                           -- product name
+    sku             TEXT NOT NULL UNIQUE,                    -- stock keeping unit (e.g. LA-GEN-Samsung-00001)
+    brand           TEXT NOT NULL,                           -- brand name
+    model_number    TEXT,                                    -- model number
+    description     TEXT,                                    -- product description
+    specs           TEXT NULL,                               -- JSON product specifications
+    price           REAL NOT NULL CHECK(price >= 0),           -- current selling price (KRW)
+    cost_price      REAL NOT NULL CHECK(cost_price >= 0),    -- cost price (KRW)
+    stock_qty  INTEGER NOT NULL DEFAULT 0,              -- current stock quantity
+    weight_grams    INTEGER,                                 -- shipping weight (g)
+    is_active       INTEGER NOT NULL DEFAULT 1,              -- on sale flag
+    discontinued_at TEXT NULL,                               -- discontinuation date (NULL=active)
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 상품 이미지 (상품당 1~5장)
+-- Product images (1~5 per product)
 -- =============================================
 CREATE TABLE product_images (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id      INTEGER NOT NULL REFERENCES products(id),
-    image_url       TEXT NOT NULL,                           -- 이미지 경로/URL
-    file_name       TEXT NOT NULL,                           -- 파일명 (예: 42_1.jpg)
+    image_url       TEXT NOT NULL,                           -- image path/URL
+    file_name       TEXT NOT NULL,                           -- filename (e.g. 42_1.jpg)
     image_type      TEXT NOT NULL,                           -- main/angle/side/back/detail/package/lifestyle/accessory/size_comparison
-    alt_text        TEXT,                                    -- 대체 텍스트
-    width           INTEGER,                                 -- 이미지 너비 (px)
-    height          INTEGER,                                 -- 이미지 높이 (px)
-    file_size       INTEGER,                                 -- 파일 크기 (bytes, 다운로드 후)
-    sort_order      INTEGER NOT NULL DEFAULT 1,              -- 표시 순서
-    is_primary      INTEGER NOT NULL DEFAULT 0,              -- 대표 이미지 여부
+    alt_text        TEXT,                                    -- alt text
+    width           INTEGER,                                 -- image width (px)
+    height          INTEGER,                                 -- image height (px)
+    file_size       INTEGER,                                 -- file size (bytes, after download)
+    sort_order      INTEGER NOT NULL DEFAULT 1,              -- display order
+    is_primary      INTEGER NOT NULL DEFAULT 0,              -- primary image flag
     created_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 상품 가격 이력 (가격 변동 추적)
+-- Product price history (price change tracking)
 -- =============================================
 CREATE TABLE product_prices (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id      INTEGER NOT NULL REFERENCES products(id),
-    price           REAL NOT NULL,                           -- 해당 기간 판매가
-    started_at      TEXT NOT NULL,                           -- 적용 시작일
-    ended_at        TEXT NULL,                               -- 적용 종료일 (NULL=현재가)
+    price           REAL NOT NULL,                           -- selling price for this period
+    started_at      TEXT NOT NULL,                           -- effective start date
+    ended_at        TEXT NULL,                               -- effective end date (NULL=current)
     change_reason   TEXT                                     -- regular/promotion/price_drop/cost_increase
 );
 
 -- =============================================
--- 고객
+-- Customers
 -- =============================================
 CREATE TABLE customers (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    email           TEXT NOT NULL UNIQUE,                    -- 이메일 (가상 도메인)
-    password_hash   TEXT NOT NULL,                           -- SHA-256 해시 (가상)
-    name            TEXT NOT NULL,                           -- 고객명
-    phone           TEXT NOT NULL,                           -- 020-XXXX-XXXX (가상번호)
-    birth_date      TEXT NULL,                               -- 생년월일 (YYYY-MM-DD, ~15% NULL)
-    gender          TEXT NULL,                               -- M/F (NULL ~10%, 남성 65%)
+    email           TEXT NOT NULL UNIQUE,                    -- email (fictional domain)
+    password_hash   TEXT NOT NULL,                           -- SHA-256 hash (fictional)
+    name            TEXT NOT NULL,                           -- customer name
+    phone           TEXT NOT NULL,                           -- 020-XXXX-XXXX (fictional number)
+    birth_date      TEXT NULL,                               -- birth date (YYYY-MM-DD, ~15% NULL)
+    gender          TEXT NULL,                               -- M/F (NULL ~10%, male 65%)
     grade           TEXT NOT NULL DEFAULT 'BRONZE' CHECK(grade IN ('BRONZE','SILVER','GOLD','VIP')),
     point_balance   INTEGER NOT NULL DEFAULT 0 CHECK(point_balance >= 0),
-    is_active       INTEGER NOT NULL DEFAULT 1,              -- 활성 여부 (0=탈퇴)
-    last_login_at   TEXT NULL,                               -- 마지막 로그인 (NULL=미접속)
-    created_at      TEXT NOT NULL,                           -- 가입일
+    acquisition_channel TEXT NULL,                            -- organic/search_ad/social/referral/direct
+    is_active       INTEGER NOT NULL DEFAULT 1,              -- active status (0=deactivated)
+    last_login_at   TEXT NULL,                               -- last login (NULL=never logged in)
+    created_at      TEXT NOT NULL,                           -- signup date
     updated_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 고객 배송지 (1인당 1~3개)
+-- Customer addresses (1~3 per customer)
 -- =============================================
 CREATE TABLE customer_addresses (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     customer_id     INTEGER NOT NULL REFERENCES customers(id),
-    label           TEXT NOT NULL,                           -- 자택/회사/기타
-    recipient_name  TEXT NOT NULL,                           -- 수령인
-    phone           TEXT NOT NULL,                           -- 수령인 연락처
-    zip_code        TEXT NOT NULL,                           -- 우편번호
-    address1        TEXT NOT NULL,                           -- 기본 주소
-    address2        TEXT,                                    -- 상세 주소
-    is_default      INTEGER NOT NULL DEFAULT 0,              -- 기본 배송지 여부
-    created_at      TEXT NOT NULL
+    label           TEXT NOT NULL,                           -- home/office/other
+    recipient_name  TEXT NOT NULL,                           -- recipient
+    phone           TEXT NOT NULL,                           -- recipient phone
+    zip_code        TEXT NOT NULL,                           -- postal code
+    address1        TEXT NOT NULL,                           -- base address
+    address2        TEXT,                                    -- detailed address
+    is_default      INTEGER NOT NULL DEFAULT 0,              -- default address flag
+    created_at      TEXT NOT NULL,
+    updated_at      TEXT NULL                                -- address change date
 );
 
 -- =============================================
--- 직원/관리자
+-- Staff / administrators
 -- =============================================
 CREATE TABLE staff (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    manager_id      INTEGER NULL REFERENCES staff(id),      -- supervisor (Self-Join / recursive CTE)
     email           TEXT NOT NULL UNIQUE,                    -- staffN@techshop-staff.kr
     name            TEXT NOT NULL,
     phone           TEXT NOT NULL,
-    department      TEXT NOT NULL,                           -- 영업/물류/CS/마케팅/개발/경영
+    department      TEXT NOT NULL,                           -- sales/logistics/CS/marketing/dev/management
     role            TEXT NOT NULL,                           -- admin/manager/staff
     is_active       INTEGER NOT NULL DEFAULT 1,
-    hired_at        TEXT NOT NULL,                           -- 입사일
+    hired_at        TEXT NOT NULL,                           -- hire date
     created_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 주문
+-- Orders
 -- =============================================
 CREATE TABLE orders (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     order_number    TEXT NOT NULL UNIQUE,                    -- ORD-YYYYMMDD-NNNNN
     customer_id     INTEGER NOT NULL REFERENCES customers(id),
     address_id      INTEGER NOT NULL REFERENCES customer_addresses(id),
-    staff_id        INTEGER NULL REFERENCES staff(id),      -- CS 담당자 (취소/반품 시)
+    staff_id        INTEGER NULL REFERENCES staff(id),      -- CS agent (for cancellations/returns)
     status          TEXT NOT NULL,                           -- pending/paid/preparing/shipped/delivered/confirmed/cancelled/return_requested/returned
-    total_amount    REAL NOT NULL,                           -- 최종 결제 금액
-    discount_amount REAL NOT NULL DEFAULT 0,                 -- 할인 합계
-    shipping_fee    REAL NOT NULL DEFAULT 0,                 -- 배송비 (5만원 이상 무료)
-    point_used      INTEGER NOT NULL DEFAULT 0,              -- 사용 적립금
-    point_earned    INTEGER NOT NULL DEFAULT 0,              -- 적립 예정 포인트
-    notes           TEXT NULL,                               -- 배송 메모 (~35%)
-    ordered_at      TEXT NOT NULL,                           -- 주문일시
-    completed_at    TEXT NULL,                               -- 구매확정일
-    cancelled_at    TEXT NULL,                               -- 취소일
+    total_amount    REAL NOT NULL,                           -- final payment amount
+    discount_amount REAL NOT NULL DEFAULT 0,                 -- total discount
+    shipping_fee    REAL NOT NULL DEFAULT 0,                 -- shipping fee (free over 50,000 KRW)
+    point_used      INTEGER NOT NULL DEFAULT 0,              -- points used
+    point_earned    INTEGER NOT NULL DEFAULT 0,              -- points to be earned
+    notes           TEXT NULL,                               -- delivery memo (~35%)
+    ordered_at      TEXT NOT NULL,                           -- order datetime
+    completed_at    TEXT NULL,                               -- purchase confirmation date
+    cancelled_at    TEXT NULL,                               -- cancellation date
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 주문 상세 (주문당 1~5개 아이템)
+-- Order items (1~5 items per order)
 -- =============================================
 CREATE TABLE order_items (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id        INTEGER NOT NULL REFERENCES orders(id),
     product_id      INTEGER NOT NULL REFERENCES products(id),
-    quantity        INTEGER NOT NULL CHECK(quantity > 0),     -- 수량
-    unit_price      REAL NOT NULL CHECK(unit_price >= 0),    -- 주문 시점 단가
-    discount_amount REAL NOT NULL DEFAULT 0,                 -- 아이템 할인
-    subtotal        REAL NOT NULL                            -- (단가 x 수량) - 할인
+    quantity        INTEGER NOT NULL CHECK(quantity > 0),     -- quantity
+    unit_price      REAL NOT NULL CHECK(unit_price >= 0),    -- unit price at order time
+    discount_amount REAL NOT NULL DEFAULT 0,                 -- item discount
+    subtotal        REAL NOT NULL                            -- (unit_price x quantity) - discount
 );
 
 -- =============================================
--- 결제
--- card: 카드사/승인번호/할부
--- bank_transfer: 은행/입금자명
--- virtual_account: 은행/가상계좌번호
--- kakao_pay/naver_pay: 간편결제 내부 수단
--- point: 포인트 전액 결제
+-- Payments
+-- card: issuer/approval number/installment
+-- bank_transfer: bank/depositor name
+-- virtual_account: bank/virtual account number
+-- kakao_pay/naver_pay: easy payment sub-method
+-- point: full point payment
 -- =============================================
 CREATE TABLE payments (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id        INTEGER NOT NULL REFERENCES orders(id),
     method          TEXT NOT NULL,                           -- card/bank_transfer/virtual_account/kakao_pay/naver_pay/point
-    amount          REAL NOT NULL CHECK(amount >= 0),         -- 결제 금액
+    amount          REAL NOT NULL CHECK(amount >= 0),         -- payment amount
     status          TEXT NOT NULL CHECK(status IN ('pending','completed','failed','refunded')),
-    pg_transaction_id TEXT NULL,                             -- PG사 거래번호 (가상)
-    card_issuer     TEXT NULL,                               -- 카드사 (신한/삼성/KB국민/현대/롯데/하나/우리/NH농협/BC)
-    card_approval_no TEXT NULL,                              -- 카드 승인번호 (8자리)
-    installment_months INTEGER NULL,                         -- 할부 개월 (0=일시불)
-    bank_name       TEXT NULL,                               -- 은행명 (계좌이체/가상계좌)
-    account_no      TEXT NULL,                               -- 가상계좌 번호
-    depositor_name  TEXT NULL,                               -- 입금자명 (계좌이체)
-    easy_pay_method TEXT NULL,                               -- 간편결제 내부 수단 (카카오페이머니/연결카드 등)
-    receipt_type    TEXT NULL,                               -- 소득공제/지출증빙 (현금영수증)
-    receipt_no      TEXT NULL,                               -- 현금영수증 번호
-    paid_at         TEXT NULL,                               -- 결제 완료 시각
-    refunded_at     TEXT NULL,                               -- 환불 시각
+    pg_transaction_id TEXT NULL,                             -- PG transaction ID (fictional)
+    card_issuer     TEXT NULL,                               -- card issuer (Shinhan/Samsung/KB/Hyundai/Lotte/Hana/Woori/NH/BC)
+    card_approval_no TEXT NULL,                              -- card approval number (8 digits)
+    installment_months INTEGER NULL,                         -- installment months (0=lump sum)
+    bank_name       TEXT NULL,                               -- bank name (bank transfer/virtual account)
+    account_no      TEXT NULL,                               -- virtual account number
+    depositor_name  TEXT NULL,                               -- depositor name (bank transfer)
+    easy_pay_method TEXT NULL,                               -- easy payment sub-method (KakaoPay balance/linked card, etc.)
+    receipt_type    TEXT NULL,                               -- income deduction/expense proof (cash receipt)
+    receipt_no      TEXT NULL,                               -- cash receipt number
+    paid_at         TEXT NULL,                               -- payment completion time
+    refunded_at     TEXT NULL,                               -- refund time
     created_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 배송 (정방향 배송)
+-- Shipping (outbound delivery)
 -- =============================================
 CREATE TABLE shipping (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id        INTEGER NOT NULL REFERENCES orders(id),
-    carrier         TEXT NOT NULL,                           -- CJ대한통운/한진택배/로젠택배/우체국택배
-    tracking_number TEXT NULL,                               -- 운송장 번호
+    carrier         TEXT NOT NULL,                           -- CJ Logistics/Hanjin/Logen/Korea Post
+    tracking_number TEXT NULL,                               -- tracking number
     status          TEXT NOT NULL,                           -- preparing/shipped/in_transit/delivered/returned
-    shipped_at      TEXT NULL,                               -- 출고일
-    delivered_at    TEXT NULL,                               -- 배송완료일 (반드시 shipped_at 이후)
+    shipped_at      TEXT NULL,                               -- ship date
+    delivered_at    TEXT NULL,                               -- delivery date (must be after shipped_at)
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 상품 리뷰 (구매확정 주문의 ~25%)
+-- Product reviews (~25% of confirmed orders)
 -- =============================================
 CREATE TABLE reviews (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id      INTEGER NOT NULL REFERENCES products(id),
     customer_id     INTEGER NOT NULL REFERENCES customers(id),
     order_id        INTEGER NOT NULL REFERENCES orders(id),
-    rating          INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),  -- 1~5점 (5점 40%, 1점 5%)
-    title           TEXT NULL,                               -- 리뷰 제목 (~80%)
-    content         TEXT NULL,                               -- 리뷰 본문
-    is_verified     INTEGER NOT NULL DEFAULT 1,              -- 구매 인증 여부
+    rating          INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5),  -- 1~5 stars (5=40%, 1=5%)
+    title           TEXT NULL,                               -- review title (~80%)
+    content         TEXT NULL,                               -- review body
+    is_verified     INTEGER NOT NULL DEFAULT 1,              -- verified purchase flag
     created_at      TEXT NOT NULL,
     updated_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 입출고 이력 (재고 변동 추적)
+-- Inventory transactions (stock change tracking)
 -- =============================================
 CREATE TABLE inventory_transactions (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id      INTEGER NOT NULL REFERENCES products(id),
     type            TEXT NOT NULL,                           -- inbound/outbound/return/adjustment
-    quantity        INTEGER NOT NULL,                        -- 양수=입고, 음수=출고
-    reference_id    INTEGER NULL,                            -- 관련 주문 ID
-    notes           TEXT NULL,                               -- 초기입고/정기입고/반품입고
+    quantity        INTEGER NOT NULL,                        -- positive=inbound, negative=outbound
+    reference_id    INTEGER NULL,                            -- related order ID
+    notes           TEXT NULL,                               -- initial_stock/regular_inbound/return_inbound
     created_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 장바구니
+-- Shopping carts
 -- =============================================
 CREATE TABLE carts (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -262,7 +267,7 @@ CREATE TABLE carts (
 );
 
 -- =============================================
--- 장바구니 상세
+-- Cart items
 -- =============================================
 CREATE TABLE cart_items (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -273,38 +278,64 @@ CREATE TABLE cart_items (
 );
 
 -- =============================================
--- 쿠폰 (percent: 할인율, fixed: 고정금액)
+-- Coupons (percent: rate discount, fixed: flat discount)
 -- =============================================
 CREATE TABLE coupons (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    code            TEXT NOT NULL UNIQUE,                    -- 쿠폰 코드 (CP2401001)
-    name            TEXT NOT NULL,                           -- 쿠폰명
+    code            TEXT NOT NULL UNIQUE,                    -- coupon code (CP2401001)
+    name            TEXT NOT NULL,                           -- coupon name
     type            TEXT NOT NULL,                           -- percent/fixed
-    discount_value  REAL NOT NULL CHECK(discount_value > 0),  -- 할인율(%) 또는 할인금액(원)
-    min_order_amount REAL NULL,                              -- 최소 주문금액
-    max_discount    REAL NULL,                               -- 최대 할인금액 (percent 타입)
-    usage_limit     INTEGER NULL,                            -- 전체 사용 한도
-    per_user_limit  INTEGER NOT NULL DEFAULT 1,              -- 1인당 사용 한도
+    discount_value  REAL NOT NULL CHECK(discount_value > 0),  -- discount rate (%) or amount (KRW)
+    min_order_amount REAL NULL,                              -- minimum order amount
+    max_discount    REAL NULL,                               -- max discount amount (percent type)
+    usage_limit     INTEGER NULL,                            -- total usage limit
+    per_user_limit  INTEGER NOT NULL DEFAULT 1,              -- per-user usage limit
     is_active       INTEGER NOT NULL DEFAULT 1,
-    started_at      TEXT NOT NULL,                           -- 유효기간 시작
-    expired_at      TEXT NOT NULL,                           -- 유효기간 종료
+    started_at      TEXT NOT NULL,                           -- validity start
+    expired_at      TEXT NOT NULL,                           -- validity end
     created_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 쿠폰 사용 이력
+-- Coupon usage history
 -- =============================================
 CREATE TABLE coupon_usage (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     coupon_id       INTEGER NOT NULL REFERENCES coupons(id),
     customer_id     INTEGER NOT NULL REFERENCES customers(id),
     order_id        INTEGER NOT NULL REFERENCES orders(id),
-    discount_amount REAL NOT NULL,                           -- 실제 할인 금액
+    discount_amount REAL NOT NULL,                           -- actual discount amount
     used_at         TEXT NOT NULL
 );
 
 -- =============================================
--- 반품/교환 (역물류 + 검수 + 환불 추적)
+-- Customer inquiries/complaints (CS)
+-- =============================================
+CREATE TABLE complaints (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id        INTEGER NULL REFERENCES orders(id),     -- order-related inquiry (NULL=general)
+    customer_id     INTEGER NOT NULL REFERENCES customers(id),
+    staff_id        INTEGER NULL REFERENCES staff(id),      -- assigned CS agent
+    category        TEXT NOT NULL,                           -- product_defect/delivery_issue/wrong_item/refund_request/exchange_request/general_inquiry/price_inquiry
+    channel         TEXT NOT NULL,                           -- website/phone/email/chat/kakao
+    priority        TEXT NOT NULL,                           -- low/medium/high/urgent
+    status          TEXT NOT NULL,                           -- open/resolved/closed
+    title           TEXT NOT NULL,                           -- inquiry title
+    content         TEXT NOT NULL,                           -- inquiry content
+    resolution      TEXT NULL,                               -- resolution detail (when resolved)
+    type            TEXT NOT NULL DEFAULT 'inquiry',         -- inquiry/claim/report
+    sub_category    TEXT NULL,                               -- detailed category (e.g., initial_defect/in_use_damage/misdelivery)
+    compensation_type TEXT NULL,                             -- refund/exchange/partial_refund/point_compensation/none
+    compensation_amount REAL NULL DEFAULT 0,                 -- compensation amount
+    escalated       INTEGER NOT NULL DEFAULT 0,             -- escalated to supervisor (0/1)
+    response_count  INTEGER NOT NULL DEFAULT 1,             -- number of back-and-forth responses
+    created_at      TEXT NOT NULL,                           -- submitted date
+    resolved_at     TEXT NULL,                               -- resolved date
+    closed_at       TEXT NULL                                -- closed date
+);
+
+-- =============================================
+-- Returns/exchanges (reverse logistics + inspection + refund tracking)
 -- =============================================
 CREATE TABLE returns (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -312,58 +343,151 @@ CREATE TABLE returns (
     customer_id     INTEGER NOT NULL REFERENCES customers(id),
     return_type     TEXT NOT NULL,                           -- refund/exchange
     reason          TEXT NOT NULL,                           -- defective/wrong_item/change_of_mind/damaged_in_transit/not_as_described/late_delivery
-    reason_detail   TEXT NOT NULL,                           -- 상세 사유 설명
+    reason_detail   TEXT NOT NULL,                           -- detailed reason description
     status          TEXT NOT NULL,                           -- requested/pickup_scheduled/in_transit/completed
-    is_partial      INTEGER NOT NULL DEFAULT 0,              -- 부분반품 여부 (~17%)
-    refund_amount   REAL NOT NULL,                           -- 환불 금액
+    is_partial      INTEGER NOT NULL DEFAULT 0,              -- partial return flag (~17%)
+    refund_amount   REAL NOT NULL,                           -- refund amount
     refund_status   TEXT NOT NULL,                           -- pending/refunded/exchanged/partial_refund
-    carrier         TEXT NOT NULL,                           -- 수거 택배사
-    tracking_number TEXT NOT NULL,                           -- 수거 운송장 번호
-    requested_at    TEXT NOT NULL,                           -- 반품 요청일
-    pickup_at       TEXT NOT NULL,                           -- 수거 예정/완료일
-    received_at     TEXT NULL,                               -- 물류센터 입고일
-    inspected_at    TEXT NULL,                               -- 검수 완료일
+    carrier         TEXT NOT NULL,                           -- pickup carrier
+    tracking_number TEXT NOT NULL,                           -- pickup tracking number
+    requested_at    TEXT NOT NULL,                           -- return request date
+    pickup_at       TEXT NOT NULL,                           -- pickup scheduled/completed date
+    received_at     TEXT NULL,                               -- warehouse receipt date
+    inspected_at    TEXT NULL,                               -- inspection completion date
     inspection_result TEXT NULL,                             -- good/opened_good/defective/unsellable
-    completed_at    TEXT NULL,                               -- 처리 완료일
+    completed_at    TEXT NULL,                               -- processing completion date
+    claim_id        INTEGER NULL REFERENCES complaints(id), -- linked claim (if return originated from CS)
+    exchange_product_id INTEGER NULL REFERENCES products(id), -- replacement product for exchanges
+    restocking_fee  REAL NOT NULL DEFAULT 0,                 -- change-of-mind restocking fee
     created_at      TEXT NOT NULL
 );
 
 -- =============================================
--- 위시리스트/찜 (M:N: customers ↔ products)
+-- Wishlists (M:N: customers ↔ products)
 -- =============================================
 CREATE TABLE wishlists (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     customer_id     INTEGER NOT NULL REFERENCES customers(id),
     product_id      INTEGER NOT NULL REFERENCES products(id),
-    notify_on_sale  INTEGER NOT NULL DEFAULT 0,              -- 가격 하락 알림 (0/1)
+    is_purchased    INTEGER NOT NULL DEFAULT 0,              -- converted to purchase flag (0/1)
+    notify_on_sale  INTEGER NOT NULL DEFAULT 0,              -- price drop notification (0/1)
     created_at      TEXT NOT NULL,
-    UNIQUE(customer_id, product_id)                          -- 동일 고객-상품 중복 방지
+    UNIQUE(customer_id, product_id)                          -- prevent duplicate customer-product pairs
 );
 
 -- =============================================
--- 고객 문의/불만 (CS)
+-- Date dimension table (for CROSS JOIN practice)
 -- =============================================
-CREATE TABLE complaints (
+CREATE TABLE calendar (
+    date_key        TEXT PRIMARY KEY,                        -- YYYY-MM-DD
+    year            INTEGER NOT NULL,
+    month           INTEGER NOT NULL,
+    day             INTEGER NOT NULL,
+    quarter         INTEGER NOT NULL,                        -- 1~4
+    day_of_week     INTEGER NOT NULL,                        -- 0=Mon ~ 6=Sun
+    day_name        TEXT NOT NULL,                           -- Monday~Sunday
+    is_weekend      INTEGER NOT NULL DEFAULT 0,              -- Sat/Sun = 1
+    is_holiday      INTEGER NOT NULL DEFAULT 0,              -- public holiday = 1
+    holiday_name    TEXT NULL                                -- holiday name
+);
+
+-- =============================================
+-- Customer grade change history (for SCD Type 2 practice)
+-- =============================================
+CREATE TABLE customer_grade_history (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_id        INTEGER NULL REFERENCES orders(id),     -- 주문 연관 문의 (NULL=일반문의)
     customer_id     INTEGER NOT NULL REFERENCES customers(id),
-    staff_id        INTEGER NULL REFERENCES staff(id),      -- 담당 CS 직원
-    category        TEXT NOT NULL,                           -- product_defect/delivery_issue/wrong_item/refund_request/exchange_request/general_inquiry/price_inquiry
-    channel         TEXT NOT NULL,                           -- website/phone/email/chat/kakao
-    priority        TEXT NOT NULL,                           -- low/medium/high/urgent
-    status          TEXT NOT NULL,                           -- open/resolved/closed
-    title           TEXT NOT NULL,                           -- 문의 제목
-    content         TEXT NOT NULL,                           -- 문의 내용
-    resolution      TEXT NULL,                               -- 처리 결과 (해결 시)
-    created_at      TEXT NOT NULL,                           -- 접수일
-    resolved_at     TEXT NULL,                               -- 해결일
-    closed_at       TEXT NULL                                -- 종료일
+    old_grade       TEXT NULL,                               -- previous grade (NULL on initial signup)
+    new_grade       TEXT NOT NULL,                           -- new grade
+    changed_at      TEXT NOT NULL,                           -- change datetime
+    reason          TEXT NOT NULL                            -- signup/upgrade/downgrade/yearly_review
+);
+
+-- =============================================
+-- Tags (product tags, for M:N practice)
+-- =============================================
+CREATE TABLE tags (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT NOT NULL UNIQUE,
+    category        TEXT NOT NULL                            -- feature/use_case/target/spec
+);
+
+CREATE TABLE product_tags (
+    product_id      INTEGER NOT NULL REFERENCES products(id),
+    tag_id          INTEGER NOT NULL REFERENCES tags(id),
+    PRIMARY KEY (product_id, tag_id)
+);
+
+-- =============================================
+-- Product view logs (for funnel/session/cohort analysis)
+-- =============================================
+CREATE TABLE product_views (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id     INTEGER NOT NULL REFERENCES customers(id),
+    product_id      INTEGER NOT NULL REFERENCES products(id),
+    referrer_source TEXT NOT NULL,                           -- direct/search/ad/recommendation/social/email
+    device_type     TEXT NOT NULL,                           -- desktop/mobile/tablet
+    duration_seconds INTEGER NOT NULL,                       -- page dwell time (seconds)
+    viewed_at       TEXT NOT NULL
+);
+
+-- =============================================
+-- Point transactions (earn/use/expire)
+-- =============================================
+CREATE TABLE point_transactions (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id     INTEGER NOT NULL REFERENCES customers(id),
+    order_id        INTEGER NULL REFERENCES orders(id),
+    type            TEXT NOT NULL,                           -- earn/use/expire
+    reason          TEXT NOT NULL,                           -- purchase/confirm/review/signup/use/expiry
+    amount          INTEGER NOT NULL,                        -- + for earn, - for use/expire
+    balance_after   INTEGER NOT NULL,                        -- running balance after this transaction
+    expires_at      TEXT NULL,                               -- expiry date for earn transactions
+    created_at      TEXT NOT NULL
+);
+
+-- =============================================
+-- Promotions / sale events
+-- =============================================
+CREATE TABLE promotions (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT NOT NULL,
+    type            TEXT NOT NULL,                           -- seasonal/flash/category
+    discount_type   TEXT NOT NULL,                           -- percent/fixed
+    discount_value  REAL NOT NULL,
+    min_order_amount REAL NULL,
+    started_at      TEXT NOT NULL,
+    ended_at        TEXT NOT NULL,
+    is_active       INTEGER NOT NULL DEFAULT 1,
+    created_at      TEXT NOT NULL
+);
+
+CREATE TABLE promotion_products (
+    promotion_id    INTEGER NOT NULL REFERENCES promotions(id),
+    product_id      INTEGER NOT NULL REFERENCES products(id),
+    override_price  REAL NULL,                               -- flash sale special price (NULL = use promotion discount)
+    PRIMARY KEY (promotion_id, product_id)
+);
+
+-- =============================================
+-- Product Q&A (Self-Join: parent_id)
+-- =============================================
+CREATE TABLE product_qna (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id      INTEGER NOT NULL REFERENCES products(id),
+    customer_id     INTEGER NULL REFERENCES customers(id),   -- NULL for staff answers
+    staff_id        INTEGER NULL REFERENCES staff(id),       -- NULL for customer questions
+    parent_id       INTEGER NULL REFERENCES product_qna(id), -- self-join: answer→question
+    content         TEXT NOT NULL,
+    is_answered     INTEGER NOT NULL DEFAULT 0,
+    created_at      TEXT NOT NULL
 );
 """
 
 INDEX_SQL = """
 CREATE INDEX idx_products_category_id ON products(category_id);
 CREATE INDEX idx_products_supplier_id ON products(supplier_id);
+CREATE INDEX idx_products_successor_id ON products(successor_id);
 CREATE INDEX idx_products_name ON products(name);
 CREATE INDEX idx_products_sku ON products(sku);
 CREATE INDEX idx_product_images_product_id ON product_images(product_id);
@@ -398,31 +522,101 @@ CREATE INDEX idx_complaints_customer_id ON complaints(customer_id);
 CREATE INDEX idx_complaints_staff_id ON complaints(staff_id);
 CREATE INDEX idx_complaints_category ON complaints(category);
 CREATE INDEX idx_complaints_status ON complaints(status);
+CREATE INDEX idx_complaints_type ON complaints(type);
+CREATE INDEX idx_returns_claim_id ON returns(claim_id);
+CREATE INDEX idx_returns_exchange_product_id ON returns(exchange_product_id);
 CREATE INDEX idx_wishlists_customer_id ON wishlists(customer_id);
 CREATE INDEX idx_wishlists_product_id ON wishlists(product_id);
+CREATE INDEX idx_staff_manager_id ON staff(manager_id);
+CREATE INDEX idx_calendar_year_month ON calendar(year, month);
+CREATE INDEX idx_grade_history_customer_id ON customer_grade_history(customer_id);
+CREATE INDEX idx_grade_history_changed_at ON customer_grade_history(changed_at);
+CREATE INDEX idx_product_tags_tag_id ON product_tags(tag_id);
+CREATE INDEX idx_product_views_customer_id ON product_views(customer_id);
+CREATE INDEX idx_product_views_product_id ON product_views(product_id);
+CREATE INDEX idx_product_views_viewed_at ON product_views(viewed_at);
+CREATE INDEX idx_product_views_customer_product ON product_views(customer_id, product_id);
+CREATE INDEX idx_point_tx_customer_id ON point_transactions(customer_id);
+CREATE INDEX idx_point_tx_order_id ON point_transactions(order_id);
+CREATE INDEX idx_point_tx_type ON point_transactions(type);
+CREATE INDEX idx_point_tx_created_at ON point_transactions(created_at);
+CREATE INDEX idx_promotions_type ON promotions(type);
+CREATE INDEX idx_promotions_dates ON promotions(started_at, ended_at);
+CREATE INDEX idx_promo_products_product_id ON promotion_products(product_id);
+CREATE INDEX idx_qna_product_id ON product_qna(product_id);
+CREATE INDEX idx_qna_customer_id ON product_qna(customer_id);
+CREATE INDEX idx_qna_parent_id ON product_qna(parent_id);
+"""
+
+TRIGGER_SQL = """
+-- =============================================
+-- TRIGGER: Auto-deduct stock on order item insert
+-- Learning: AFTER INSERT trigger, UPDATE with NEW reference
+-- =============================================
+CREATE TRIGGER trg_deduct_stock AFTER INSERT ON order_items
+BEGIN
+    UPDATE products
+    SET stock_qty = MAX(0, stock_qty - NEW.quantity)
+    WHERE id = NEW.product_id;
+END;
+
+-- =============================================
+-- TRIGGER: Auto-update review count/avg on review insert
+-- Learning: Correlated UPDATE with subquery in trigger
+-- =============================================
+-- Note: This trigger references a hypothetical review_count/avg_rating
+-- column. It is provided as a learning example, not applied to the schema.
+-- CREATE TRIGGER trg_update_review_stats AFTER INSERT ON reviews
+-- BEGIN
+--     UPDATE products
+--     SET review_count = (SELECT COUNT(*) FROM reviews WHERE product_id = NEW.product_id),
+--         avg_rating = (SELECT ROUND(AVG(rating), 1) FROM reviews WHERE product_id = NEW.product_id)
+--     WHERE id = NEW.product_id;
+-- END;
+
+-- =============================================
+-- TRIGGER: Prevent negative point balance
+-- Learning: BEFORE UPDATE trigger with RAISE for validation
+-- =============================================
+CREATE TRIGGER trg_prevent_negative_balance BEFORE UPDATE OF point_balance ON customers
+WHEN NEW.point_balance < 0
+BEGIN
+    SELECT RAISE(ABORT, 'Point balance cannot be negative');
+END;
+
+-- =============================================
+-- TRIGGER: Log grade changes automatically
+-- Learning: AFTER UPDATE trigger, conditional INSERT
+-- =============================================
+CREATE TRIGGER trg_log_grade_change AFTER UPDATE OF grade ON customers
+WHEN OLD.grade != NEW.grade
+BEGIN
+    INSERT INTO customer_grade_history (customer_id, old_grade, new_grade, changed_at, reason)
+    VALUES (NEW.id, OLD.grade, NEW.grade, datetime('now'), 'auto_trigger');
+END;
 """
 
 VIEW_SQL = """
 -- =============================================
--- VIEW: 월별 매출 요약
--- 학습 포인트: GROUP BY, 날짜 함수, 집계 함수, ORDER BY
+-- VIEW: Monthly sales summary
+-- Learning: GROUP BY, date functions, aggregates, ORDER BY
 -- =============================================
 CREATE VIEW v_monthly_sales AS
 SELECT
     SUBSTR(o.ordered_at, 1, 7) AS month,               -- YYYY-MM
-    COUNT(DISTINCT o.id) AS order_count,                -- 주문 건수
-    COUNT(DISTINCT o.customer_id) AS customer_count,    -- 구매 고객 수
-    CAST(SUM(o.total_amount) AS INTEGER) AS revenue,    -- 총 매출
-    CAST(AVG(o.total_amount) AS INTEGER) AS avg_order,  -- 평균 주문 금액
-    SUM(o.discount_amount) AS total_discount            -- 총 할인
+    COUNT(DISTINCT o.id) AS order_count,                -- number of orders
+    COUNT(DISTINCT o.customer_id) AS customer_count,    -- unique buyers
+    CAST(SUM(o.total_amount) AS INTEGER) AS revenue,    -- total revenue
+    CAST(AVG(o.total_amount) AS INTEGER) AS avg_order,  -- average order value
+    SUM(o.discount_amount) AS total_discount            -- total discount
 FROM orders o
 WHERE o.status NOT IN ('cancelled')
 GROUP BY SUBSTR(o.ordered_at, 1, 7)
 ORDER BY month;
 
 -- =============================================
--- VIEW: 고객 요약 (생애 가치)
--- 학습 포인트: LEFT JOIN, COALESCE, CASE, 서브쿼리, 집계
+-- VIEW: Customer summary (lifetime value)
+-- Learning: LEFT JOIN, COALESCE, CASE, subquery, aggregates
 -- =============================================
 CREATE VIEW v_customer_summary AS
 SELECT
@@ -476,8 +670,8 @@ LEFT JOIN (
 ) ws ON c.id = ws.customer_id;
 
 -- =============================================
--- VIEW: 상품 실적 (매출, 리뷰, 재고)
--- 학습 포인트: 다중 LEFT JOIN, Window Function 대상 데이터
+-- VIEW: Product performance (sales, reviews, inventory)
+-- Learning: multiple LEFT JOINs, window function data source
 -- =============================================
 CREATE VIEW v_product_performance AS
 SELECT
@@ -530,8 +724,8 @@ LEFT JOIN (
 ) rt ON p.id = rt.product_id;
 
 -- =============================================
--- VIEW: 카테고리 계층 (재귀 CTE 예시)
--- 학습 포인트: Recursive CTE, 문자열 연결, 계층 탐색
+-- VIEW: Category tree (recursive CTE example)
+-- Learning: Recursive CTE, string concatenation, hierarchy traversal
 -- =============================================
 CREATE VIEW v_category_tree AS
 WITH RECURSIVE tree AS (
@@ -558,8 +752,8 @@ LEFT JOIN (
 ORDER BY t.sort_key;
 
 -- =============================================
--- VIEW: 일별 주문 통계
--- 학습 포인트: 날짜 처리, 다중 집계, CASE
+-- VIEW: Daily order statistics
+-- Learning: date handling, multiple aggregates, CASE
 -- =============================================
 CREATE VIEW v_daily_orders AS
 SELECT
@@ -579,8 +773,8 @@ GROUP BY DATE(ordered_at)
 ORDER BY order_date;
 
 -- =============================================
--- VIEW: 결제 수단별 통계
--- 학습 포인트: CASE 피벗, 비율 계산, 문자열 함수
+-- VIEW: Payment method statistics
+-- Learning: CASE pivot, ratio calculation, string functions
 -- =============================================
 CREATE VIEW v_payment_summary AS
 SELECT
@@ -596,8 +790,8 @@ GROUP BY method
 ORDER BY payment_count DESC;
 
 -- =============================================
--- VIEW: 주문 상세 (비정규화 조회용)
--- 학습 포인트: 다중 JOIN (5개 테이블), NULL 처리
+-- VIEW: Order detail (denormalized for queries)
+-- Learning: multi-table JOIN (5 tables), NULL handling
 -- =============================================
 CREATE VIEW v_order_detail AS
 SELECT
@@ -629,8 +823,8 @@ LEFT JOIN shipping s ON o.id = s.order_id
 LEFT JOIN customer_addresses ca ON o.address_id = ca.id;
 
 -- =============================================
--- VIEW: 매출 성장률 (전월 대비)
--- 학습 포인트: LAG 윈도우 함수, ROUND, 비율 계산
+-- VIEW: Revenue growth (month-over-month)
+-- Learning: LAG window function, ROUND, ratio calculation
 -- =============================================
 CREATE VIEW v_revenue_growth AS
 SELECT
@@ -654,8 +848,8 @@ FROM (
 ORDER BY month;
 
 -- =============================================
--- VIEW: 카테고리별 상품 매출 순위
--- 학습 포인트: ROW_NUMBER, PARTITION BY, 다중 JOIN
+-- VIEW: Top products by category revenue rank
+-- Learning: ROW_NUMBER, PARTITION BY, multi-table JOIN
 -- =============================================
 CREATE VIEW v_top_products_by_category AS
 SELECT
@@ -685,9 +879,9 @@ FROM (
 WHERE rank_in_category <= 5;
 
 -- =============================================
--- VIEW: 고객 RFM 분석 (마케팅 세분화)
--- 학습 포인트: NTILE 윈도우 함수, CASE, 날짜 계산, CTE
--- Recency(최근성) x Frequency(빈도) x Monetary(금액)
+-- VIEW: Customer RFM analysis (marketing segmentation)
+-- Learning: NTILE window function, CASE, date calculation, CTE
+-- Recency x Frequency x Monetary
 -- =============================================
 CREATE VIEW v_customer_rfm AS
 WITH rfm_raw AS (
@@ -705,7 +899,7 @@ WITH rfm_raw AS (
 ),
 rfm_scored AS (
     SELECT *,
-        NTILE(5) OVER (ORDER BY recency_days ASC) AS r_score,   -- 최근일수록 높은 점수
+        NTILE(5) OVER (ORDER BY recency_days ASC) AS r_score,   -- more recent = higher score
         NTILE(5) OVER (ORDER BY frequency DESC) AS f_score,
         NTILE(5) OVER (ORDER BY monetary DESC) AS m_score
     FROM rfm_raw
@@ -726,8 +920,8 @@ SELECT
 FROM rfm_scored;
 
 -- =============================================
--- VIEW: 장바구니 이탈 분석
--- 학습 포인트: LEFT JOIN + IS NULL, 집계, 잠재 매출 계산
+-- VIEW: Cart abandonment analysis
+-- Learning: LEFT JOIN + IS NULL, aggregates, potential revenue
 -- =============================================
 CREATE VIEW v_cart_abandonment AS
 SELECT
@@ -747,8 +941,8 @@ WHERE c.status = 'abandoned'
 GROUP BY c.id;
 
 -- =============================================
--- VIEW: 공급업체 실적
--- 학습 포인트: 다중 집계, HAVING, 비율 계산
+-- VIEW: Supplier performance
+-- Learning: multiple aggregates, HAVING, ratio calculation
 -- =============================================
 CREATE VIEW v_supplier_performance AS
 SELECT
@@ -786,8 +980,8 @@ LEFT JOIN (
 GROUP BY s.id;
 
 -- =============================================
--- VIEW: 시간대별 주문 패턴
--- 학습 포인트: CAST, 문자열 추출, 피벗 형태 집계
+-- VIEW: Hourly order patterns
+-- Learning: CAST, string extraction, pivot-style aggregation
 -- =============================================
 CREATE VIEW v_hourly_pattern AS
 SELECT
@@ -806,8 +1000,8 @@ GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
 ORDER BY hour;
 
 -- =============================================
--- VIEW: 상품 ABC 분석 (파레토/80-20 법칙)
--- 학습 포인트: 누적합(SUM OVER), 비율 계산, CASE 분류
+-- VIEW: Product ABC analysis (Pareto / 80-20 rule)
+-- Learning: cumulative SUM OVER, ratio calculation, CASE classification
 -- =============================================
 CREATE VIEW v_product_abc AS
 SELECT
@@ -840,8 +1034,8 @@ FROM (
 ORDER BY total_revenue DESC;
 
 -- =============================================
--- VIEW: CS 직원 업무 현황
--- 학습 포인트: 다중 LEFT JOIN, 평균 처리 시간 계산
+-- VIEW: CS staff workload
+-- Learning: multiple LEFT JOINs, average resolution time
 -- =============================================
 CREATE VIEW v_staff_workload AS
 SELECT
@@ -874,8 +1068,8 @@ LEFT JOIN (
 WHERE s.department = 'CS' OR comp.complaint_count > 0;
 
 -- =============================================
--- VIEW: 쿠폰 효과 분석
--- 학습 포인트: JOIN + 집계, ROI 계산, 비율
+-- VIEW: Coupon effectiveness analysis
+-- Learning: JOIN + aggregates, ROI calculation, ratios
 -- =============================================
 CREATE VIEW v_coupon_effectiveness AS
 SELECT
@@ -908,8 +1102,8 @@ LEFT JOIN (
 ORDER BY COALESCE(u.usage_count, 0) DESC;
 
 -- =============================================
--- VIEW: 반품 사유 분석
--- 학습 포인트: GROUP BY + CASE 피벗, 비율 계산
+-- VIEW: Return reason analysis
+-- Learning: GROUP BY + CASE pivot, ratio calculation
 -- =============================================
 CREATE VIEW v_return_analysis AS
 SELECT
@@ -931,8 +1125,8 @@ GROUP BY reason
 ORDER BY total_count DESC;
 
 -- =============================================
--- VIEW: 연도별 핵심 KPI 대시보드
--- 학습 포인트: 다중 서브쿼리, 종합 집계, 비즈니스 메트릭
+-- VIEW: Yearly KPI dashboard
+-- Learning: multiple subqueries, combined aggregates, business metrics
 -- =============================================
 CREATE VIEW v_yearly_kpi AS
 SELECT
@@ -978,8 +1172,8 @@ ORDER BY o_stats.yr;
 
 TRIGGER_SQL = """
 -- =============================================
--- TRIGGER: 주문 상태 변경 시 updated_at 자동 갱신
--- 학습 포인트: AFTER UPDATE 트리거, NEW/OLD 참조, datetime 함수
+-- TRIGGER: Auto-update updated_at on order status change
+-- Learning: AFTER UPDATE trigger, NEW/OLD reference, datetime function
 -- =============================================
 CREATE TRIGGER trg_orders_updated_at
 AFTER UPDATE OF status ON orders
@@ -988,7 +1182,7 @@ BEGIN
 END;
 
 -- =============================================
--- TRIGGER: 리뷰 수정 시 updated_at 자동 갱신
+-- TRIGGER: Auto-update updated_at on review modification
 -- =============================================
 CREATE TRIGGER trg_reviews_updated_at
 AFTER UPDATE OF rating, title, content ON reviews
@@ -997,25 +1191,25 @@ BEGIN
 END;
 
 -- =============================================
--- TRIGGER: 상품 가격 변경 시 자동 가격 이력 추가
--- 학습 포인트: BEFORE UPDATE, 이력 테이블 자동화
+-- TRIGGER: Auto-insert price history on product price change
+-- Learning: BEFORE UPDATE, history table automation
 -- =============================================
 CREATE TRIGGER trg_product_price_history
 AFTER UPDATE OF price ON products
 WHEN OLD.price != NEW.price
 BEGIN
-    -- 기존 이력 종료
+    -- Close existing history record
     UPDATE product_prices
     SET ended_at = datetime('now')
     WHERE product_id = NEW.id AND ended_at IS NULL;
 
-    -- 새 이력 추가
+    -- Insert new history record
     INSERT INTO product_prices (product_id, price, started_at, ended_at, change_reason)
     VALUES (NEW.id, NEW.price, datetime('now'), NULL, 'price_update');
 END;
 
 -- =============================================
--- TRIGGER: 상품 정보 변경 시 updated_at 갱신
+-- TRIGGER: Auto-update updated_at on product modification
 -- =============================================
 CREATE TRIGGER trg_products_updated_at
 AFTER UPDATE ON products
@@ -1024,7 +1218,7 @@ BEGIN
 END;
 
 -- =============================================
--- TRIGGER: 고객 정보 변경 시 updated_at 갱신
+-- TRIGGER: Auto-update updated_at on customer modification
 -- =============================================
 CREATE TRIGGER trg_customers_updated_at
 AFTER UPDATE ON customers
@@ -1039,29 +1233,36 @@ class SQLiteExporter:
     def __init__(self, output_dir: str):
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
-        self.db_path = os.path.join(output_dir, "tutorial.db")
+        self.db_path = os.path.join(output_dir, "ecommerce.db")
 
     def export(self, data: dict[str, list[dict]]) -> str:
-        """모든 데이터를 SQLite DB로 내보낸다."""
+        """Export all data to a SQLite database."""
         if os.path.exists(self.db_path):
             os.remove(self.db_path)
 
         conn = sqlite3.connect(self.db_path)
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA synchronous=OFF")
-        conn.execute("PRAGMA foreign_keys=ON")
+        # Disable FK during bulk insert (self-referencing FKs like products.successor_id)
+        conn.execute("PRAGMA foreign_keys=OFF")
 
-        # 스키마 생성
+        # Create schema
         conn.executescript(SCHEMA_SQL)
 
-        # 데이터 삽입 (테이블 순서대로)
+        # Insert data (table order respects FK dependencies)
         table_order = [
             "categories", "suppliers", "products", "product_images", "product_prices",
             "customers", "customer_addresses", "staff",
             "orders", "order_items", "payments", "shipping",
             "reviews", "inventory_transactions",
             "carts", "cart_items", "coupons", "coupon_usage",
-            "wishlists", "returns", "complaints",
+            "wishlists", "complaints", "returns",
+            "calendar", "customer_grade_history",
+            "tags", "product_tags",
+            "product_views",
+            "point_transactions",
+            "promotions", "promotion_products",
+            "product_qna",
         ]
 
         for table in table_order:
@@ -1070,13 +1271,14 @@ class SQLiteExporter:
                 continue
             self._insert_rows(conn, table, rows)
 
-        # 인덱스 생성
+        # Re-enable FK and verify integrity
+        conn.execute("PRAGMA foreign_keys=ON")
         conn.executescript(INDEX_SQL)
 
-        # 뷰 생성
+        # Create views
         conn.executescript(VIEW_SQL)
 
-        # 트리거 생성
+        # Create triggers
         conn.executescript(TRIGGER_SQL)
 
         conn.execute("PRAGMA journal_mode=DELETE")
@@ -1086,7 +1288,7 @@ class SQLiteExporter:
         return self.db_path
 
     def _insert_rows(self, conn: sqlite3.Connection, table: str, rows: list[dict]):
-        """배치 INSERT를 수행한다."""
+        """Perform batch INSERT."""
         if not rows:
             return
 

@@ -2,6 +2,34 @@
 
 `JOIN`은 관련 컬럼을 기준으로 두 개 이상의 테이블 행을 합칩니다. `INNER JOIN`은 **양쪽** 테이블에서 모두 일치하는 행만 반환합니다 — 일치하지 않는 행은 결과에서 제외됩니다.
 
+```mermaid
+flowchart LR
+    subgraph "customers"
+        C1["ID:1 Kim"]
+        C2["ID:2 Lee"]
+        C3["ID:3 Park"]
+    end
+    subgraph "orders"
+        O1["Cust:1 ORD-001"]
+        O2["Cust:1 ORD-002"]
+        O3["Cust:2 ORD-003"]
+    end
+    subgraph "INNER JOIN Result"
+        R1["Kim + ORD-001"]
+        R2["Kim + ORD-002"]
+        R3["Lee + ORD-003"]
+    end
+    C1 --> R1
+    C1 --> R2
+    C2 --> R3
+    O1 --> R1
+    O2 --> R2
+    O3 --> R3
+    style C3 fill:#ffcdd2,stroke:#c62828
+```
+
+> INNER JOIN은 양쪽 테이블에 모두 매칭되는 행만 반환합니다. Park(ID:3)은 주문이 없어 결과에서 제외됩니다.
+
 ## 두 테이블 조인하기
 
 문법은 `FROM table_a INNER JOIN table_b ON table_a.key = table_b.key`입니다. `ON` 절에서 일치 조건을 지정합니다.
@@ -122,6 +150,9 @@ WHERE c.grade = 'VIP'
   AND o.ordered_at LIKE '2024%'
 ORDER BY o.total_amount DESC;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

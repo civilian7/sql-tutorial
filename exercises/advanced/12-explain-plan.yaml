@@ -1,0 +1,291 @@
+metadata:
+  id: advanced-12-explain-plan
+  title: "실행 계획 분석"
+  title_en: "EXPLAIN / Query Plan Analysis"
+  difficulty: advanced
+  default_level: 4
+  default_type: Analytics
+  concepts: [EXPLAIN, QUERY PLAN, index, performance, optimization]
+  estimated_minutes: 30
+  description: "EXPLAIN으로 쿼리 실행 계획을 분석하고 성능을 최적화하는 문제입니다."
+  description_en: "Analyze query execution plans with EXPLAIN and optimize performance."
+
+problems:
+  - id: ep12-01
+    level: 3
+    type: Analytics
+    tags: [EXPLAIN, full scan, orders]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      다음 쿼리의 실행 계획을 확인하세요. 풀 테이블 스캔이 발생하는지 판단하세요.
+      ```sql
+      SELECT * FROM orders WHERE total_amount > 1000000;
+      ```
+    question_en: |
+      Check the execution plan for this query. Determine if a full table scan occurs.
+      ```sql
+      SELECT * FROM orders WHERE total_amount > 1000000;
+      ```
+    reference_sql:
+      sqlite: |
+        EXPLAIN QUERY PLAN
+        SELECT * FROM orders WHERE total_amount > 1000000;
+      mysql: |
+        EXPLAIN
+        SELECT * FROM orders WHERE total_amount > 1000000;
+      postgresql: |
+        EXPLAIN ANALYZE
+        SELECT * FROM orders WHERE total_amount > 1000000;
+    hints:
+      - ko: "total_amount 컬럼에 인덱스가 있는지 확인하세요"
+        en: "Check if there's an index on the total_amount column"
+    max_score: 10
+    validation:
+      type: result_match
+      ordered: false
+
+  - id: ep12-02
+    level: 3
+    type: Analytics
+    tags: [EXPLAIN, index, WHERE, orders, customers]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      customer_id로 주문을 조회할 때와 status로 조회할 때의 실행 계획을 비교하세요.
+      어느 쪽이 더 효율적인가요?
+    question_en: |
+      Compare execution plans when querying orders by customer_id vs by status.
+      Which is more efficient?
+    reference_sql:
+      sqlite: |
+        EXPLAIN QUERY PLAN
+        SELECT * FROM orders WHERE customer_id = 42;
+      mysql: |
+        EXPLAIN
+        SELECT * FROM orders WHERE customer_id = 42;
+      postgresql: |
+        EXPLAIN ANALYZE
+        SELECT * FROM orders WHERE customer_id = 42;
+    hints:
+      - ko: "idx_orders_customer_id 인덱스가 존재합니다"
+        en: "The idx_orders_customer_id index exists"
+    max_score: 10
+    validation:
+      type: result_match
+      ordered: false
+
+  - id: ep12-03
+    level: 3
+    type: Analytics
+    tags: [EXPLAIN, index, composite index, orders]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      복합 인덱스 idx_orders_customer_status(customer_id, status)가 있습니다.
+      다음 두 쿼리 중 이 인덱스를 활용하는 것은 어느 쪽인가요?
+      (A) WHERE customer_id = 42 AND status = 'confirmed'
+      (B) WHERE status = 'confirmed'
+    question_en: |
+      There's a composite index idx_orders_customer_status(customer_id, status).
+      Which of these queries uses this index?
+      (A) WHERE customer_id = 42 AND status = 'confirmed'
+      (B) WHERE status = 'confirmed'
+    reference_sql:
+      sqlite: |
+        EXPLAIN QUERY PLAN
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+      mysql: |
+        EXPLAIN
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+      postgresql: |
+        EXPLAIN ANALYZE
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+    hints:
+      - ko: "복합 인덱스는 첫 번째 컬럼이 조건에 있어야 사용됩니다"
+        en: "A composite index requires the first column in the WHERE clause"
+    max_score: 10
+    validation:
+      type: result_match
+      ordered: false
+
+  - id: ep12-04
+    level: 4
+    type: Analytics
+    tags: [EXPLAIN, JOIN, subquery, optimization, orders, order_items, products]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      같은 결과를 반환하는 두 쿼리의 실행 계획을 비교하세요.
+      (A) 서브쿼리: SELECT * FROM products WHERE id IN (SELECT product_id FROM order_items WHERE order_id = 100)
+      (B) JOIN: SELECT p.* FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = 100
+      어느 쪽이 효율적인가요?
+    question_en: |
+      Compare execution plans of two equivalent queries:
+      (A) Subquery: SELECT * FROM products WHERE id IN (SELECT product_id FROM order_items WHERE order_id = 100)
+      (B) JOIN: SELECT p.* FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = 100
+      Which is more efficient?
+    reference_sql:
+      sqlite: |
+        EXPLAIN QUERY PLAN
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
+      mysql: |
+        EXPLAIN
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
+      postgresql: |
+        EXPLAIN ANALYZE
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
+    hints:
+      - ko: "서브쿼리와 JOIN 두 가지 모두 EXPLAIN으로 확인해보세요"
+        en: "Run EXPLAIN on both the subquery and JOIN versions"
+    max_score: 15
+    validation:
+      type: result_match
+      ordered: false
+
+  - id: ep12-05
+    level: 4
+    type: Analytics
+    tags: [EXPLAIN, covering index, index only scan, products]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      products 테이블에서 brand와 price만 조회할 때,
+      인덱스만으로 결과를 반환하는 커버링 인덱스(covering index) 효과를 확인하세요.
+      idx_products_name 인덱스와 비교하세요.
+    question_en: |
+      When querying only brand and price from products,
+      check if a covering index effect occurs.
+      Compare with the idx_products_name index.
+    reference_sql:
+      sqlite: |
+        EXPLAIN QUERY PLAN
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
+      mysql: |
+        EXPLAIN
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
+      postgresql: |
+        EXPLAIN ANALYZE
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
+    hints:
+      - ko: "커버링 인덱스는 테이블 접근 없이 인덱스만으로 결과를 반환합니다"
+        en: "A covering index returns results from the index alone without table access"
+    max_score: 15
+    validation:
+      type: result_match
+      ordered: false
+
+  - id: ep12-06
+    level: 4
+    type: Analytics
+    tags: [EXPLAIN, product_views, large table, optimization]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      product_views (약 30만 행)에서 특정 고객의 조회 기록을 찾는 쿼리의
+      실행 계획을 분석하세요. 인덱스가 활용되는지 확인하세요.
+    question_en: |
+      Analyze the execution plan for finding a specific customer's
+      browsing history in product_views (~300K rows). Check if indexes are used.
+    reference_sql:
+      sqlite: |
+        EXPLAIN QUERY PLAN
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
+      mysql: |
+        EXPLAIN
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
+      postgresql: |
+        EXPLAIN ANALYZE
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
+    hints:
+      - ko: "idx_product_views_customer_id 인덱스가 있습니다"
+        en: "The idx_product_views_customer_id index exists"
+    max_score: 15
+    validation:
+      type: result_match
+      ordered: false
+
+  - id: ep12-07
+    level: 5
+    type: Analytics
+    tags: [EXPLAIN, window function, performance, point_transactions]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      point_transactions (약 13만 행)에서 윈도우 함수를 사용한 러닝 토탈 쿼리의
+      실행 계획을 분석하세요. 임시 테이블이나 정렬 작업이 발생하는지 확인하세요.
+    question_en: |
+      Analyze the execution plan of a running total query using window functions
+      on point_transactions (~130K rows). Check for temp tables or sort operations.
+    reference_sql:
+      sqlite: |
+        EXPLAIN QUERY PLAN
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
+      mysql: |
+        EXPLAIN
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
+      postgresql: |
+        EXPLAIN ANALYZE
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
+    hints:
+      - ko: "윈도우 함수는 내부적으로 정렬이 필요합니다"
+        en: "Window functions require internal sorting"
+    max_score: 20
+    validation:
+      type: result_match
+      ordered: false
+
+  - id: ep12-08
+    level: 5
+    type: Analytics
+    tags: [EXPLAIN, optimization, rewrite, orders, customers, JOIN]
+    supported_db: [sqlite, mysql, postgresql]
+    question: |
+      다음 느린 쿼리의 실행 계획을 분석하고, 더 효율적인 쿼리로 재작성하세요.
+      ```sql
+      SELECT c.name, c.email,
+             (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS order_count,
+             (SELECT SUM(total_amount) FROM orders o WHERE o.customer_id = c.id) AS total_spent
+      FROM customers c
+      WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) > 10;
+      ```
+    question_en: |
+      Analyze this slow query's execution plan and rewrite it more efficiently.
+      ```sql
+      SELECT c.name, c.email,
+             (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS order_count,
+             (SELECT SUM(total_amount) FROM orders o WHERE o.customer_id = c.id) AS total_spent
+      FROM customers c
+      WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) > 10;
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, c.email, COUNT(o.id) AS order_count, SUM(o.total_amount) AS total_spent
+        FROM customers c
+        JOIN orders o ON c.id = o.customer_id
+        GROUP BY c.id, c.name, c.email
+        HAVING COUNT(o.id) > 10;
+    hints:
+      - ko: "상관 서브쿼리 3개를 JOIN + GROUP BY로 대체하면 테이블 스캔 횟수가 줄어듭니다"
+        en: "Replace 3 correlated subqueries with JOIN + GROUP BY to reduce table scans"
+    max_score: 20
+    validation:
+      type: result_match
+      ordered: false

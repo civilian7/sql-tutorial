@@ -2,6 +2,16 @@
 
 Aggregate functions collapse many rows into a single summary value. They are the building blocks for reports, dashboards, and business metrics.
 
+```mermaid
+flowchart LR
+    T["Multiple\nRows"] --> A["Aggregate\nCOUNT / SUM\nAVG / MIN / MAX"] --> R["Single\nValue"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style A fill:#fff3e0,stroke:#e65100
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **Concept:** Aggregate functions summarize many rows into a single value.
+
 ## COUNT
 
 `COUNT(*)` counts every row in the result. `COUNT(column)` counts non-NULL values in that column.
@@ -148,6 +158,9 @@ FROM reviews;
 | total_reviews | avg_rating | lowest_rating | highest_rating | five_star_count |
 |---------------|------------|---------------|----------------|-----------------|
 | 7947 | 3.87 | 1 | 5 | 2341 |
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

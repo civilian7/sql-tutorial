@@ -2,6 +2,26 @@
 
 A **view** is a saved query stored in the database as a named object. Querying a view feels identical to querying a table, but the underlying SQL runs each time. Views simplify complex queries, enforce consistent business logic, and provide a security layer by hiding raw table details.
 
+```mermaid
+flowchart LR
+    subgraph "Physical Tables"
+        T1["customers"]
+        T2["orders"]
+        T3["order_items"]
+    end
+    subgraph "View (virtual)"
+        V["v_customer_summary\n= stored query"]
+    end
+    T1 --> V
+    T2 --> V
+    T3 --> V
+    V --> Q["SELECT * FROM\nv_customer_summary\nWHERE ..."]
+    style V fill:#fff3e0,stroke:#e65100,stroke-dasharray: 5 5
+    style Q fill:#e8f5e9,stroke:#2e7d32
+```
+
+> A view is a stored query. It's not a physical table — data is fetched from source tables every time.
+
 ## Creating a View
 
 ```sql
@@ -149,6 +169,9 @@ HAVING open_complaints > 0 OR pending_returns > 0;
 ```sql
 DROP VIEW IF EXISTS v_cs_watchlist;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

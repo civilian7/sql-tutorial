@@ -2,6 +2,19 @@
 
 `CASE`는 SQL의 조건 표현식으로, 프로그래밍 언어의 `if/else`와 유사합니다. 값 변환, 레이블 생성, 데이터 구간 분류, 조건부 집계 등을 단일 쿼리 안에서 모두 처리할 수 있습니다.
 
+```mermaid
+flowchart TD
+    V["point_balance"] -->|">= 100,000"| A["'Heavy User'"]
+    V -->|">= 10,000"| B["'Regular'"]
+    V -->|"else"| C["'Light'"]
+    style V fill:#e3f2fd,stroke:#1565c0
+    style A fill:#e8f5e9,stroke:#2e7d32
+    style B fill:#fff9c4,stroke:#f9a825
+    style C fill:#ffcdd2,stroke:#c62828
+```
+
+> CASE는 SQL의 if-else입니다. 조건을 위에서 아래로 순서대로 검사합니다.
+
 ## 단순 CASE
 
 단순(Simple) CASE는 하나의 컬럼 값을 고정된 값들과 비교합니다.
@@ -172,6 +185,9 @@ ORDER BY
     total_amount DESC
 LIMIT 10;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

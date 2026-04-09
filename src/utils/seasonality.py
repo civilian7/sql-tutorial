@@ -1,4 +1,4 @@
-"""계절성 패턴 유틸리티"""
+"""Seasonality pattern utilities"""
 
 from __future__ import annotations
 
@@ -11,6 +11,6 @@ DEFAULT_SEASONALITY: dict[int, float] = {
 
 
 def get_seasonality(month: int, config_seasonality: dict[int, float] | None = None) -> float:
-    """월별 계절성 계수를 반환한다."""
+    """Return the seasonality coefficient for a given month."""
     s = config_seasonality or DEFAULT_SEASONALITY
     return s.get(month, 1.0)

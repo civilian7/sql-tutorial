@@ -2,6 +2,19 @@
 
 `EXISTS` tests whether a subquery returns any rows at all. Unlike `IN`, it stops as soon as it finds one matching row — making it efficient for large datasets and safe when NULLs might be present.
 
+```mermaid
+flowchart TD
+    OQ["Outer Query\nFOR EACH customer..."] --> CK{"EXISTS(\n  SELECT 1\n  FROM orders\n  WHERE ...)?"}
+    CK -->|"YES"| INC["Include in result ✓"]
+    CK -->|"NO"| EXC["Exclude ✗"]
+    style OQ fill:#e3f2fd,stroke:#1565c0
+    style CK fill:#fff3e0,stroke:#e65100
+    style INC fill:#e8f5e9,stroke:#2e7d32
+    style EXC fill:#ffcdd2,stroke:#c62828
+```
+
+> EXISTS runs the subquery for each outer row and includes it if any result exists.
+
 ## EXISTS vs. IN
 
 | Feature | `IN` | `EXISTS` |
@@ -142,6 +155,9 @@ HAVING EXISTS (
 )
 ORDER BY category;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

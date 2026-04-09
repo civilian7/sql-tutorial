@@ -1,58 +1,39 @@
-# SQL Tutorial with E-Commerce Database
+# SQL Tutorial <small>v2.0</small>
 
-Welcome to the hands-on SQL tutorial! You'll learn SQL from basics to advanced topics using a **realistic e-commerce database** — a computer & peripherals online store with 10 years of business data.
+A hands-on SQL tutorial using a realistic **e-commerce database**.
 
-## What You'll Learn
+Learn SQL by querying 10 years of business data from **TechShop**, a fictional online store selling computers and peripherals. From basics to advanced — every query runs against real data.
 
-| Level | Topics | Lessons |
-|-------|--------|---------|
-| **Beginner** | SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL | 1-6 |
-| **Intermediate** | JOINs, Subqueries, CASE, Date/String functions, DML | 7-14 |
-| **Advanced** | Window Functions, CTE, EXISTS, Views, Indexes, Triggers | 15-20 |
-| **Exercises** | Real-world business problems | 4 modules |
+!!! tip "What Makes This Different"
+    Most SQL textbooks have exercises but no data — you write queries but can't run them.
+    This tutorial provides **687,000 rows of realistic data**, so you can execute every query and see actual results.
 
-## The Database
+## Learning Path
 
-This tutorial uses a fictional online store called **TechShop** that sells computers and peripherals. The database contains:
+| Level | Topics | Lessons | Exercises |
+|-------|--------|:-------:|:---------:|
+| **Beginner** | SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL | 6 | 60 |
+| **Intermediate** | JOINs, Subqueries, CASE, Date/String, DML, Self/Cross JOIN | 9 | 89 |
+| **Advanced** | Window Functions, CTE, EXISTS, Views, Indexes, Triggers | 6 | 74 |
+| | | **21 lessons** | **223 exercises** |
 
-- **21 tables**: customers, products, orders, payments, shipping, reviews, and more
-- **18 views**: pre-built queries demonstrating advanced SQL patterns
-- **~230,000 rows** (small size) of realistic, interconnected data
-- **10 years** of business history (2016-2025)
+## Key Features
 
-## How to Use This Tutorial
+- **30 tables** — customers, products, orders, payments, shipping, reviews, points, promotions, Q&A
+- **18 views** — window functions, CTEs, RFM analysis, and more
+- **10 years of realistic data** — growth curves, seasonality, customer behavior patterns
+- **3 databases** — SQLite (default), MySQL, PostgreSQL
+- **Korean / English** — data and documentation in both languages
+- **223 exercises** — beginner to advanced, with DB-specific SQL tabs
 
-1. Open the sample database `tutorial.db` in your SQL tool
-2. Follow each lesson in order — they build on each other
-3. **Try every query yourself** before reading the result
-4. Complete the practice exercises at the end of each lesson
-5. Use the hint/answer toggles only when stuck
+## Get Started
 
-!!! tip "Learning Approach"
-    Don't just read the queries — **type them out yourself**. Muscle memory matters in SQL just as it does in programming. Modify the queries, break them, fix them. That's how you learn.
-
-## Database Quick Reference
-
-### Core Tables
-
-```
-customers (5,230 rows)     — Registered users with grades, demographics
-products (280 rows)        — Computer hardware & peripherals
-orders (34,689 rows)       — Purchase orders with status tracking
-order_items (74,513 rows)  — Items within each order
-payments (34,689 rows)     — Payment details (card, bank, e-wallet)
+```bash
+pip install -r requirements.txt
+python generate.py --size small
 ```
 
-### Supporting Tables
+Open the generated `output/ecommerce.db` in your SQL tool and follow the [Getting Started](getting-started.md) guide.
 
-```
-categories (53)            — Hierarchical product categories
-suppliers (50)             — Product vendors
-shipping (32,942)          — Delivery tracking
-reviews (7,947)            — Product ratings & text reviews
-wishlists (1,998)          — Customer favorites (M:N)
-complaints (3,481)         — Customer service inquiries
-returns (1,022)            — Return/exchange processing
-```
-
-Let's begin with [Lesson 1: SELECT Basics](beginner/01-select.md)!
+[Get Started →](getting-started.md){ .md-button .md-button--primary }
+[Schema Reference →](schema.md){ .md-button }

@@ -2,6 +2,23 @@
 
 인덱스(Index)는 SQLite가 테이블 전체를 스캔하지 않고도 행을 빠르게 찾을 수 있게 해주는 데이터 구조입니다. 언제 인덱스가 도움이 되고 언제 그렇지 않은지를 이해하는 것이 쿼리 성능 튜닝의 기초입니다.
 
+```mermaid
+flowchart TD
+    subgraph "Without Index (Full Scan)"
+        FS["Check row 1\nCheck row 2\n...\nCheck row 34,331\n⏱️ Slow"]
+    end
+    subgraph "With Index (B-Tree)"
+        BT["Root"] --> L["< 'M'"] --> LF["Kim ✓\nLee ✓"]
+        BT --> R[">= 'M'"] --> RF["Park\nYoon"]
+        LF --> FA["⚡ Fast"]
+    end
+    style FS fill:#ffcdd2,stroke:#c62828
+    style FA fill:#e8f5e9,stroke:#2e7d32
+    style BT fill:#fff3e0,stroke:#e65100
+```
+
+> 인덱스 없이는 모든 행을 확인합니다 (풀 스캔). 인덱스가 있으면 B-tree로 빠르게 찾습니다.
+
 ## 인덱스의 역할
 
 인덱스가 없으면 SQLite는 일치하는 행을 찾기 위해 테이블의 모든 행을 읽어야 합니다(**전체 테이블 스캔, Full Table Scan**). 검색 컬럼에 인덱스가 있으면 관련 행으로 바로 이동합니다. 책의 색인으로 찾는 것과 처음부터 끝까지 읽는 것의 차이와 같습니다.
@@ -138,6 +155,9 @@ WHERE ordered_at > '2024-01-01'
 ```sql
 DROP INDEX IF EXISTS idx_orders_status_date;
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

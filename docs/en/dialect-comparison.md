@@ -1,4 +1,4 @@
-# DB Dialect Comparison Guide
+# SQL Syntax Across Databases
 
 This tutorial's SQL is written for SQLite. Use this reference when running the same queries on other databases.
 
@@ -421,6 +421,159 @@ When identifiers contain reserved words or spaces:
         INNER JOIN category_tree ct ON c.parent_id = ct.id
     )
     SELECT * FROM category_tree;
+    ```
+
+---
+
+## JSON Queries
+
+Each database provides its own functions for working with JSON data.
+
+=== "SQLite"
+
+    ```sql
+    SELECT name, JSON_EXTRACT(specs, '$.cpu') AS cpu
+    FROM products
+    WHERE specs IS NOT NULL;
+    ```
+
+=== "MySQL"
+
+    ```sql
+    SELECT name, JSON_EXTRACT(specs, '$.cpu') AS cpu
+    FROM products
+    WHERE specs IS NOT NULL;
+    -- or: specs->'$.cpu'
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    SELECT name, specs->>'cpu' AS cpu
+    FROM products
+    WHERE specs IS NOT NULL;
+    ```
+
+---
+
+## EXPLAIN / Query Plan
+
+Use execution plans to analyze query performance.
+
+=== "SQLite"
+
+    ```sql
+    EXPLAIN QUERY PLAN
+    SELECT * FROM orders WHERE customer_id = 42;
+    ```
+
+=== "MySQL"
+
+    ```sql
+    EXPLAIN
+    SELECT * FROM orders WHERE customer_id = 42;
+    -- or: EXPLAIN ANALYZE (MySQL 8.0.18+)
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    EXPLAIN ANALYZE
+    SELECT * FROM orders WHERE customer_id = 42;
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    SET STATISTICS IO ON;
+    SELECT * FROM orders WHERE customer_id = 42;
+    -- or: SET SHOWPLAN_TEXT ON;
+    ```
+
+---
+
+## Stored Procedures
+
+Store reusable logic on the server and call it by name. SQLite does not support stored procedures.
+
+=== "MySQL"
+
+    ```sql
+    DELIMITER //
+    CREATE PROCEDURE sp_example(IN p_id INT)
+    BEGIN
+        SELECT * FROM customers WHERE id = p_id;
+    END //
+    DELIMITER ;
+
+    CALL sp_example(42);
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    CREATE OR REPLACE FUNCTION sp_example(p_id INT)
+    RETURNS TABLE(name TEXT, email TEXT) AS $$
+    BEGIN
+        RETURN QUERY SELECT c.name, c.email
+        FROM customers c WHERE c.id = p_id;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    SELECT * FROM sp_example(42);
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE PROCEDURE sp_example @p_id INT
+    AS
+    BEGIN
+        SELECT * FROM customers WHERE id = @p_id;
+    END;
+
+    EXEC sp_example @p_id = 42;
+    ```
+
+---
+
+## Trigger Syntax
+
+Triggers execute automatically when data changes. See [Lesson 20](advanced/20-triggers.md) for details.
+
+=== "SQLite"
+
+    ```sql
+    CREATE TRIGGER trg_example AFTER INSERT ON orders
+    BEGIN
+        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
+    END;
+    ```
+
+=== "MySQL"
+
+    ```sql
+    DELIMITER //
+    CREATE TRIGGER trg_example AFTER INSERT ON order_items
+    FOR EACH ROW
+    BEGIN
+        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
+    END //
+    DELIMITER ;
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    CREATE OR REPLACE FUNCTION fn_example() RETURNS TRIGGER AS $$
+    BEGIN
+        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER trg_example AFTER INSERT ON order_items
+    FOR EACH ROW EXECUTE FUNCTION fn_example();
     ```
 
 ---

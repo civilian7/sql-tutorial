@@ -1,2 +1,17 @@
+# Core dependencies (always required)
 Faker>=25.0.0
 PyYAML>=6.0
+
+# SQLite3: included in Python standard library (no install needed)
+
+# MkDocs documentation (pin below 2.0 — incompatible breaking changes)
+mkdocs>=1.6.0,<2.0.0
+mkdocs-material>=9.5.0
+
+# Optional: MySQL/MariaDB direct apply (--apply --target mysql)
+# pip install mysql-connector-python
+# mysql-connector-python>=8.0.0
+
+# Optional: PostgreSQL direct apply (--apply --target postgresql)
+# pip install psycopg2-binary
+# psycopg2-binary>=2.9.0

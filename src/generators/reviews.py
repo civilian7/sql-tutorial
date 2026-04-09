@@ -1,4 +1,4 @@
-"""리뷰 데이터 생성"""
+"""Review data generation"""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ class ReviewGenerator(BaseGenerator):
     def generate_reviews(
         self, orders: list[dict], order_items: list[dict], products: list[dict],
     ) -> list[dict]:
-        """구매 확정 주문의 일부에 대해 리뷰를 생성한다."""
+        """Generate reviews for a portion of confirmed orders."""
         reviews = []
         review_id = 0
         write_rate = self.config["review"]["write_rate"]
@@ -21,10 +21,10 @@ class ReviewGenerator(BaseGenerator):
         ratings = list(rating_dist.keys())
         weights = list(rating_dist.values())
 
-        # 상품 ID → 브랜드 매핑
+        # Product ID -> brand mapping
         prod_brand = {p["id"]: p["brand"] for p in products}
 
-        # order_id → items 매핑
+        # order_id -> items mapping
         items_by_order: dict[int, list[dict]] = {}
         for it in order_items:
             items_by_order.setdefault(it["order_id"], []).append(it)
@@ -53,7 +53,7 @@ class ReviewGenerator(BaseGenerator):
             titles_by_rating = review_locale["titles"]
             title = self.rng.choice(titles_by_rating[str(rating)]) if self.rng.random() < 0.8 else None
 
-            # 동적 리뷰 본문 생성
+            # Generate dynamic review body
             brand = prod_brand.get(item["product_id"], "")
             content = self._make_content(rating, brand)
 
@@ -73,7 +73,7 @@ class ReviewGenerator(BaseGenerator):
         return reviews
 
     def _make_content(self, rating: int, brand: str) -> str | None:
-        # ~10% 확률로 content 없음
+        # ~10% chance of no content
         if self.rng.random() < 0.10:
             return None
 

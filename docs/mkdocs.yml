@@ -1,9 +1,24 @@
-site_name: SQL Tutorial - E-Commerce Database
-site_description: Learn SQL with a realistic e-commerce database
+site_name: SQL Tutorial - E-Commerce Database v2.0
+site_description: Learn SQL with a realistic e-commerce database (30 tables, 3 RDBMS)
+docs_dir: en
+site_dir: ../output/docs/default
+copyright: Copyright &copy; 2023-2026 Fullbit Computing. All rights reserved.
+
 theme:
   name: material
   palette:
-    scheme: default
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
   features:
     - content.code.copy
     - navigation.sections
@@ -29,6 +44,7 @@ nav:
     - "12. String Functions": intermediate/12-string.md
     - "13. UNION & Set Operations": intermediate/13-union.md
     - "14. INSERT, UPDATE, DELETE": intermediate/14-dml.md
+    - "21. SELF JOIN & CROSS JOIN": intermediate/21-self-cross-join.md
   - Advanced:
     - "15. Window Functions": advanced/15-window.md
     - "16. CTE & Recursive CTE": advanced/16-cte.md
@@ -36,20 +52,37 @@ nav:
     - "18. Views": advanced/18-views.md
     - "19. Indexes & Performance": advanced/19-indexes.md
     - "20. Triggers": advanced/20-triggers.md
-  - Real-World Exercises:
-    - "Sales Analysis": exercises/sales-analysis.md
-    - "Customer Segmentation": exercises/customer-segmentation.md
-    - "Inventory Management": exercises/inventory.md
-    - "CS Performance": exercises/cs-performance.md
+  - Reference:
+    - "DB Dialect Comparison": dialect-comparison.md
+  - Exercises:
+    - Beginner:
+      - "Product Exploration": exercises/beginner-products.md
+      - "Customer Analysis": exercises/beginner-customers.md
+      - "Order Basics": exercises/beginner-orders.md
+      - "Fill in the Blanks": exercises/beginner-fill-blanks.md
+    - Intermediate:
+      - "JOIN Master": exercises/intermediate-joins.md
+      - "Date & Time Analysis": exercises/intermediate-dates.md
+      - "Subqueries & Transformations": exercises/intermediate-subqueries.md
+      - "Constraints": exercises/intermediate-constraints.md
+      - "Transactions": exercises/intermediate-transactions.md
+      - "SQL Debugging": exercises/intermediate-debugging.md
+      - "Data Quality Checks": exercises/intermediate-data-quality.md
+    - Advanced:
+      - "Sales Analysis": exercises/sales-analysis.md
+      - "Customer Segmentation": exercises/customer-segmentation.md
+      - "Inventory Management": exercises/inventory.md
+      - "CS Performance": exercises/cs-performance.md
+      - "Real-World SQL Patterns": exercises/real-world-patterns.md
+      - "Normalization": exercises/advanced-normalization.md
+      - "Business Scenarios": exercises/advanced-scenarios.md
+      - "Query Optimization": exercises/advanced-optimization.md
+      - "Interview Prep": exercises/advanced-interview.md
 
 markdown_extensions:
   - admonition
   - pymdownx.details
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
   - attr_list

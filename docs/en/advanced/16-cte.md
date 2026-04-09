@@ -2,6 +2,33 @@
 
 A Common Table Expression (CTE) is a named, temporary result set defined with the `WITH` keyword before the main query. CTEs make complex queries dramatically easier to read, debug, and reuse — each CTE is like a named subquery you can reference multiple times.
 
+```mermaid
+flowchart TD
+    subgraph "CTE Pipeline"
+        CTE1["WITH sales AS (\n  SELECT ...\n)"] --> CTE2["monthly AS (\n  SELECT ... FROM sales\n)"] --> FQ["SELECT *\nFROM monthly\nWHERE ..."]
+    end
+    style CTE1 fill:#e3f2fd,stroke:#1565c0
+    style CTE2 fill:#fff3e0,stroke:#e65100
+    style FQ fill:#e8f5e9,stroke:#2e7d32
+```
+
+```mermaid
+flowchart TD
+    B["Base Case\n(WHERE parent_id IS NULL)"] --> |"Level 0"| N1["Desktop PC"]
+    N1 --> |"Level 1"| N2["Pre-built"]
+    N1 --> |"Level 1"| N3["Custom"]
+    N2 --> |"Level 2"| N4["Samsung"]
+    N2 --> |"Level 2"| N5["LG"]
+    style B fill:#e8f5e9,stroke:#2e7d32
+    style N1 fill:#e3f2fd,stroke:#1565c0
+    style N2 fill:#fff3e0,stroke:#e65100
+    style N3 fill:#fff3e0,stroke:#e65100
+    style N4 fill:#f3e5f5,stroke:#6a1b9a
+    style N5 fill:#f3e5f5,stroke:#6a1b9a
+```
+
+> CTEs break queries into steps connected like a pipeline. Recursive CTEs traverse tree structures.
+
 ## Basic CTE
 
 ```sql
@@ -175,6 +202,61 @@ ORDER BY path;
 |     Mice | 2 | Electronics > Peripherals > Mice |
 |     Keyboards | 2 | Electronics > Peripherals > Keyboards |
 | ... | | |
+
+## More Recursive CTE Examples
+
+### Staff Org Chart (Recursive CTE)
+
+Recursively follow `staff.manager_id` to build the full organizational hierarchy.
+
+```sql
+WITH RECURSIVE org_chart AS (
+    -- Base: CEO (no manager)
+    SELECT id, name, role, department, manager_id, 0 AS level,
+           name AS path
+    FROM staff
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive: employees under each manager
+    SELECT s.id, s.name, s.role, s.department, s.manager_id,
+           oc.level + 1,
+           oc.path || ' > ' || s.name
+    FROM staff s
+    JOIN org_chart oc ON s.manager_id = oc.id
+)
+SELECT level, path, role, department
+FROM org_chart
+ORDER BY path;
+```
+
+### Q&A Threads (Recursive CTE)
+
+Recursively trace the question → answer → follow-up chain.
+
+```sql
+WITH RECURSIVE thread AS (
+    SELECT id, content, parent_id, 0 AS depth,
+           CAST(id AS TEXT) AS thread_path
+    FROM product_qna
+    WHERE parent_id IS NULL
+
+    UNION ALL
+
+    SELECT q.id, q.content, q.parent_id, t.depth + 1,
+           t.thread_path || '.' || CAST(q.id AS TEXT)
+    FROM product_qna q
+    JOIN thread t ON q.parent_id = t.id
+)
+SELECT depth, thread_path, SUBSTR('          ', 1, depth * 2) || content AS indented
+FROM thread
+ORDER BY thread_path
+LIMIT 20;
+```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 

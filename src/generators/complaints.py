@@ -1,4 +1,4 @@
-"""고객 문의/불만(CS) 데이터 생성"""
+"""Customer inquiry/complaint (CS) data generation"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 from src.generators.base import BaseGenerator
 
 
-# 유형별 비율
+# Weight per category
 CATEGORY_WEIGHTS = {
     "product_defect": 0.15,
     "delivery_issue": 0.25,
@@ -19,7 +19,7 @@ CATEGORY_WEIGHTS = {
     "price_inquiry": 0.08,
 }
 
-# 접수 채널
+# Submission channels
 CHANNELS = {
     "website": 0.35,
     "phone": 0.25,
@@ -27,6 +27,27 @@ CHANNELS = {
     "chat": 0.15,
     "kakao": 0.05,
 }
+
+# Sub-categories per complaint category
+SUB_CATEGORIES = {
+    "product_defect": ["initial_defect", "in_use_damage", "manufacturing_defect", "cosmetic_defect"],
+    "delivery_issue": ["misdelivery", "delayed_delivery", "lost_package", "damaged_package"],
+    "wrong_item": ["wrong_product", "wrong_quantity", "missing_item"],
+    "refund_request": ["unsatisfied", "duplicate_order", "price_difference"],
+    "exchange_request": ["size_change", "color_change", "model_change"],
+    "general_inquiry": None,
+    "price_inquiry": None,
+}
+
+# Complaint types: inquiry (general questions), claim (demand resolution), report (issue report)
+COMPLAINT_TYPES = {
+    "inquiry": 0.70,
+    "claim": 0.25,
+    "report": 0.05,
+}
+
+# Categories that are always claims regardless of random assignment
+CLAIM_CATEGORIES = {"product_defect", "wrong_item", "refund_request", "exchange_request"}
 
 
 
@@ -38,14 +59,16 @@ class ComplaintGenerator(BaseGenerator):
         customers: list[dict],
         staff: list[dict],
     ) -> list[dict]:
-        """고객 문의/불만 데이터를 생성한다."""
+        """Generate customer inquiry/complaint data."""
         complaints = []
         complaint_id = 0
 
         cs_staff = [s for s in staff if s["department"] == "CS" and s["is_active"]]
         all_staff = [s for s in staff if s["is_active"]]
         if not cs_staff:
-            cs_staff = all_staff[:3]
+            cs_staff = all_staff if all_staff else None
+        if not cs_staff:
+            return complaints
 
         categories = list(CATEGORY_WEIGHTS.keys())
         cat_weights = list(CATEGORY_WEIGHTS.values())
@@ -53,7 +76,7 @@ class ComplaintGenerator(BaseGenerator):
         ch_weights = list(CHANNELS.values())
         complaint_templates = self.locale["complaint"]["templates"]
 
-        # 1) 주문 연관 문의 — 전체 주문의 ~8%
+        # 1) Order-related inquiries — ~8% of all orders
         for order in orders:
             if self.rng.random() >= 0.08:
                 continue
@@ -61,7 +84,7 @@ class ComplaintGenerator(BaseGenerator):
             complaint_id += 1
             ordered_at = datetime.strptime(order["ordered_at"], "%Y-%m-%d %H:%M:%S")
 
-            # 주문 상태에 따라 문의 유형 편향
+            # Bias complaint category based on order status
             if order["status"] == "cancelled":
                 category = self.rng.choices(
                     ["refund_request", "price_inquiry", "general_inquiry"],
@@ -92,8 +115,9 @@ class ComplaintGenerator(BaseGenerator):
             )
 
             assigned_staff = self.rng.choice(cs_staff)
+            type_fields = self._assign_type_fields(category, order.get("total_amount"))
 
-            complaints.append({
+            complaint = {
                 "id": complaint_id,
                 "order_id": order["id"],
                 "customer_id": order["customer_id"],
@@ -105,12 +129,19 @@ class ComplaintGenerator(BaseGenerator):
                 "title": self.rng.choice(tmpl["titles"]),
                 "content": self.rng.choice(tmpl["contents"]),
                 "resolution": resolution,
+                "type": type_fields["type"],
+                "sub_category": type_fields["sub_category"],
+                "compensation_type": type_fields["compensation_type"],
+                "compensation_amount": type_fields["compensation_amount"],
+                "escalated": type_fields["escalated"],
+                "response_count": type_fields["response_count"],
                 "created_at": self.fmt_dt(created_at),
                 "resolved_at": resolved_at,
                 "closed_at": closed_at,
-            })
+            }
+            complaints.append(complaint)
 
-        # 2) 주문 무관 일반 문의 — 전체 문의의 ~20%
+        # 2) General inquiries (not order-related) — ~20% of total
         order_complaints = len(complaints)
         general_count = max(10, int(order_complaints * 0.25))
         active_customers = [c for c in customers if c["is_active"]]
@@ -127,13 +158,15 @@ class ComplaintGenerator(BaseGenerator):
             cust_created = datetime.strptime(customer["created_at"], "%Y-%m-%d %H:%M:%S")
             created_at = self.random_datetime(
                 cust_created,
-                datetime(self.end_year, 6, 30),
+                self.end_date,
             )
 
             priority = "low"
             status, resolved_at, closed_at, resolution = self._resolve(
                 category, priority, created_at
             )
+
+            type_fields = self._assign_type_fields(category)
 
             complaints.append({
                 "id": complaint_id,
@@ -147,6 +180,12 @@ class ComplaintGenerator(BaseGenerator):
                 "title": self.rng.choice(tmpl["titles"]),
                 "content": self.rng.choice(tmpl["contents"]),
                 "resolution": resolution,
+                "type": type_fields["type"],
+                "sub_category": type_fields["sub_category"],
+                "compensation_type": type_fields["compensation_type"],
+                "compensation_amount": type_fields["compensation_amount"],
+                "escalated": type_fields["escalated"],
+                "response_count": type_fields["response_count"],
                 "created_at": self.fmt_dt(created_at),
                 "resolved_at": resolved_at,
                 "closed_at": closed_at,
@@ -174,12 +213,12 @@ class ComplaintGenerator(BaseGenerator):
     def _resolve(
         self, category: str, priority: str, created_at: datetime,
     ) -> tuple[str, str | None, str | None, str | None]:
-        """문의 처리 상태와 해결 시간을 결정한다."""
-        # 해결률: 95% (미해결 5%)
+        """Determine complaint processing status and resolution time."""
+        # Resolution rate: 95% (5% unresolved)
         if self.rng.random() < 0.05:
             return "open", None, None, None
 
-        # 응답 시간: 우선순위별
+        # Response time by priority
         if priority == "urgent":
             hours = self.rng.randint(1, 4)
         elif priority == "high":
@@ -193,7 +232,7 @@ class ComplaintGenerator(BaseGenerator):
         resolutions = self.locale["complaint"]["resolutions"]
         resolution = self.rng.choice(resolutions.get(category, ["Processed"]))
 
-        # 해결 후 종료까지 0~3일
+        # 0~3 days from resolution to closure
         if self.rng.random() < 0.85:
             closed_at = resolved_at + timedelta(hours=self.rng.randint(0, 72))
             status = "closed"
@@ -202,3 +241,68 @@ class ComplaintGenerator(BaseGenerator):
             status = "resolved"
 
         return status, self.fmt_dt(resolved_at), self.fmt_dt(closed_at) if closed_at else None, resolution
+
+    def _assign_type_fields(self, category: str, refund_amount: float | None = None) -> dict:
+        """Assign type, sub_category, compensation, escalated, and response_count."""
+        # Determine complaint type
+        if category in CLAIM_CATEGORIES:
+            # Product/order issues are mostly claims
+            complaint_type = self.rng.choices(
+                ["claim", "inquiry", "report"],
+                weights=[0.65, 0.25, 0.10], k=1,
+            )[0]
+        else:
+            types = list(COMPLAINT_TYPES.keys())
+            type_weights = list(COMPLAINT_TYPES.values())
+            complaint_type = self.rng.choices(types, weights=type_weights, k=1)[0]
+
+        # Sub-category
+        sub_cats = SUB_CATEGORIES.get(category)
+        sub_category = self.rng.choice(sub_cats) if sub_cats else None
+
+        # Compensation (only for claims)
+        compensation_type = None
+        compensation_amount = 0
+        escalated = 0
+        response_count = 1
+
+        if complaint_type == "claim":
+            # Compensation type distribution
+            compensation_type = self.rng.choices(
+                ["refund", "partial_refund", "point_compensation", "exchange", "none"],
+                weights=[0.25, 0.25, 0.20, 0.15, 0.15], k=1,
+            )[0]
+
+            base_amount = refund_amount if refund_amount else self.rng.uniform(10000, 200000)
+
+            if compensation_type == "refund":
+                compensation_amount = round(base_amount, 0)
+            elif compensation_type == "partial_refund":
+                compensation_amount = round(base_amount * self.rng.uniform(0.3, 0.7), 0)
+            elif compensation_type == "point_compensation":
+                compensation_amount = self.rng.randint(1, 10) * 1000  # 1000~10000 in steps of 1000
+            elif compensation_type == "exchange":
+                compensation_amount = 0
+            else:  # none
+                compensation_amount = 0
+
+            # 15% of claims are escalated
+            escalated = 1 if self.rng.random() < 0.15 else 0
+
+            # Response count: 2-5 for claims, 3-8 for escalated
+            if escalated:
+                response_count = self.rng.randint(3, 8)
+            else:
+                response_count = self.rng.randint(2, 5)
+        else:
+            # Simple inquiries/reports: 1 response
+            response_count = 1
+
+        return {
+            "type": complaint_type,
+            "sub_category": sub_category,
+            "compensation_type": compensation_type,
+            "compensation_amount": compensation_amount,
+            "escalated": escalated,
+            "response_count": response_count,
+        }

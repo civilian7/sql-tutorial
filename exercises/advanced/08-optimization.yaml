@@ -1,0 +1,250 @@
+metadata:
+  id: advanced-08-optimization
+  title: "쿼리 최적화"
+  title_en: "Query Optimization"
+  difficulty: advanced
+  category: exercises
+  concepts: [EXPLAIN, Index, Covering Index, Correlated Subquery, IN vs EXISTS]
+  table_count: 4
+  tables: [orders, order_items, products, reviews]
+
+problems:
+  - id: a19-01
+    level: 3
+    type: "SELECT"
+    tags: [EXPLAIN, Index, orders]
+    title: "EXPLAIN 읽기"
+    title_en: "Reading EXPLAIN"
+    body: |
+      아래 쿼리의 실행 계획을 확인하세요.
+      SCAN TABLE과 SEARCH TABLE의 차이는 무엇인가요?
+    body_en: |
+      Check the execution plan of the query below.
+      What is the difference between SCAN TABLE and SEARCH TABLE?
+    hint: |
+      `SCAN TABLE`은 전체 테이블을 읽고,
+      `SEARCH TABLE ... USING INDEX`는 인덱스로 필요한 행만 찾습니다.
+    hint_en: |
+      `SCAN TABLE` reads the entire table.
+      `SEARCH TABLE ... USING INDEX` finds only needed rows via index.
+    reference_sql: |
+      -- 실행 계획 확인
+      EXPLAIN QUERY PLAN
+      SELECT * FROM orders WHERE customer_id = 100;
+
+      -- 인덱스 확인
+      SELECT name, sql FROM sqlite_master
+      WHERE type = 'index' AND tbl_name = 'orders';
+
+  - id: a19-02
+    level: 3
+    type: "SELECT"
+    tags: [EXPLAIN, Index, orders]
+    title: "인덱스 효과 비교"
+    title_en: "Index Effect Comparison"
+    body: |
+      인덱스 유무에 따른 실행 계획 차이를 확인하세요.
+    body_en: |
+      Compare execution plans with and without indexes.
+    hint: |
+      인덱스가 있는 컬럼(`customer_id`)과 없는 컬럼(`notes`)에 대해
+      각각 `EXPLAIN QUERY PLAN`을 실행하여 비교하세요.
+    hint_en: |
+      Run `EXPLAIN QUERY PLAN` for an indexed column (`customer_id`)
+      and a non-indexed column (`notes`) to compare.
+    reference_sql: |
+      -- 1) 인덱스가 있는 컬럼으로 검색
+      EXPLAIN QUERY PLAN
+      SELECT * FROM orders WHERE customer_id = 100;
+
+      -- 2) 인덱스가 없는 컬럼으로 검색
+      EXPLAIN QUERY PLAN
+      SELECT * FROM orders WHERE notes LIKE '%배송%';
+
+      -- 3) 현재 인덱스 목록
+      SELECT name, tbl_name, sql
+      FROM sqlite_master
+      WHERE type = 'index'
+      ORDER BY tbl_name;
+
+  - id: a19-03
+    level: 3
+    type: "Subquery/CTE"
+    tags: [Subquery, JOIN, Aggregate, products, order_items, reviews]
+    title: "서브쿼리 -> JOIN 변환"
+    title_en: "Subquery to JOIN Conversion"
+    body: |
+      상관 서브쿼리를 JOIN으로 바꿔 성능을 개선하세요.
+    body_en: |
+      Improve performance by converting correlated subqueries to JOINs.
+    hint: |
+      상관 서브쿼리는 행마다 실행됩니다.
+      미리 `GROUP BY`로 집계한 서브쿼리를 `LEFT JOIN`하면 한 번만 실행됩니다.
+    hint_en: |
+      Correlated subqueries execute once per row.
+      Pre-aggregated subqueries with `LEFT JOIN` execute only once.
+    reference_sql: |
+      -- 개선: JOIN으로 한 번에 처리
+      SELECT
+          p.name,
+          p.price,
+          COALESCE(oi_stats.order_count, 0) AS order_count,
+          r_stats.avg_rating
+      FROM products p
+      LEFT JOIN (
+          SELECT product_id, COUNT(*) AS order_count
+          FROM order_items GROUP BY product_id
+      ) oi_stats ON p.id = oi_stats.product_id
+      LEFT JOIN (
+          SELECT product_id, ROUND(AVG(rating), 2) AS avg_rating
+          FROM reviews GROUP BY product_id
+      ) r_stats ON p.id = r_stats.product_id
+      WHERE p.is_active = 1;
+
+  - id: a19-04
+    level: 3
+    type: "SELECT"
+    tags: [SELECT, orders]
+    title: "SELECT * 제거"
+    title_en: "Eliminating SELECT *"
+    body: |
+      필요한 컬럼만 명시하여 쿼리를 개선하세요.
+    body_en: |
+      Improve queries by specifying only needed columns.
+    hint: |
+      `SELECT *` 대신 실제 필요한 컬럼만 나열하면 디스크 I/O가 줄어듭니다.
+    hint_en: |
+      Listing only needed columns instead of `SELECT *` reduces disk I/O.
+    reference_sql: |
+      -- 개선: 필요한 컬럼만
+      SELECT order_number, customer_id, total_amount, status, ordered_at
+      FROM orders
+      WHERE ordered_at LIKE '2024-12%'
+      ORDER BY total_amount DESC
+      LIMIT 10;
+
+  - id: a19-05
+    level: 3
+    type: "SELECT"
+    tags: [EXPLAIN, LIKE, Index, products]
+    title: "LIKE 패턴과 인덱스"
+    title_en: "LIKE Patterns and Indexes"
+    body: |
+      아래 두 쿼리 중 어느 것이 인덱스를 활용할 수 있나요?
+      A) WHERE name LIKE 'Samsung%'
+      B) WHERE name LIKE '%Samsung%'
+    body_en: |
+      Which of these two queries can use an index?
+      A) WHERE name LIKE 'Samsung%'
+      B) WHERE name LIKE '%Samsung%'
+    hint: |
+      인덱스는 B-Tree 구조입니다. 접두사가 고정된 'Samsung%'은 범위 검색이 가능하지만,
+      '%Samsung%'은 시작을 알 수 없어 전체 스캔합니다.
+    hint_en: |
+      Indexes use B-Tree structure. Fixed prefix 'Samsung%' allows range search,
+      but '%Samsung%' cannot determine start position, requiring full scan.
+    reference_sql: |
+      EXPLAIN QUERY PLAN
+      SELECT * FROM products WHERE name LIKE 'Samsung%';
+
+      EXPLAIN QUERY PLAN
+      SELECT * FROM products WHERE name LIKE '%Samsung%';
+
+  - id: a19-06
+    level: 3
+    type: "Subquery/CTE"
+    tags: [Subquery, IN, EXISTS, JOIN, products, reviews]
+    title: "IN vs EXISTS 비교"
+    title_en: "IN vs EXISTS Comparison"
+    body: |
+      "리뷰가 있는 상품"을 찾는 세 가지 방법의 실행 계획을 비교하세요.
+    body_en: |
+      Compare execution plans of three methods to find "products with reviews".
+    hint: |
+      `IN`, `EXISTS`, `INNER JOIN` 세 가지 방법을 `EXPLAIN QUERY PLAN`으로 비교하세요.
+      `EXISTS`는 첫 매치에서 즉시 반환합니다.
+    hint_en: |
+      Compare `IN`, `EXISTS`, `INNER JOIN` with `EXPLAIN QUERY PLAN`.
+      `EXISTS` returns immediately on first match.
+    reference_sql: |
+      -- 방법 1: IN
+      EXPLAIN QUERY PLAN
+      SELECT name, price FROM products
+      WHERE id IN (SELECT DISTINCT product_id FROM reviews);
+
+      -- 방법 2: EXISTS
+      EXPLAIN QUERY PLAN
+      SELECT name, price FROM products p
+      WHERE EXISTS (SELECT 1 FROM reviews r WHERE r.product_id = p.id);
+
+      -- 방법 3: JOIN
+      EXPLAIN QUERY PLAN
+      SELECT DISTINCT p.name, p.price
+      FROM products p
+      INNER JOIN reviews r ON p.id = r.product_id;
+
+  - id: a19-07
+    level: 4
+    type: "SELECT"
+    tags: [EXPLAIN, Index, Covering Index, orders]
+    title: "커버링 인덱스"
+    title_en: "Covering Index"
+    body: |
+      자주 실행되는 쿼리에 대해 커버링 인덱스를 설계하세요.
+    body_en: |
+      Design a covering index for a frequently executed query.
+    hint: |
+      WHERE, ORDER BY, SELECT에 사용된 모든 컬럼을 인덱스에 포함하면
+      테이블을 읽지 않고 인덱스만으로 결과를 반환합니다.
+    hint_en: |
+      Include all columns used in WHERE, ORDER BY, and SELECT in the index.
+      The query can then return results from the index alone without reading the table.
+    reference_sql: |
+      -- 현재 실행 계획
+      EXPLAIN QUERY PLAN
+      SELECT customer_id, status, total_amount
+      FROM orders
+      WHERE status = 'pending'
+      ORDER BY ordered_at DESC;
+
+      -- 커버링 인덱스 생성
+      CREATE INDEX idx_orders_status_covering
+      ON orders(status, ordered_at DESC, customer_id, total_amount);
+
+      -- 개선된 실행 계획 확인
+      EXPLAIN QUERY PLAN
+      SELECT customer_id, status, total_amount
+      FROM orders
+      WHERE status = 'pending'
+      ORDER BY ordered_at DESC;
+
+  - id: a19-08
+    level: 3
+    type: "SELECT"
+    tags: [EXPLAIN, IN, orders]
+    title: "복합 조건 최적화"
+    title_en: "Compound Condition Optimization"
+    body: |
+      여러 OR 조건을 IN으로 변환하여 쿼리를 개선하세요.
+    body_en: |
+      Improve a query by converting multiple OR conditions to IN.
+    hint: |
+      여러 `OR` 조건을 `IN (...)` 으로 바꾸면 옵티마이저가
+      인덱스를 더 효율적으로 활용할 수 있습니다.
+    hint_en: |
+      Converting multiple `OR` conditions to `IN (...)` helps the optimizer
+      use indexes more efficiently.
+    reference_sql: |
+      -- 개선: IN 사용
+      SELECT order_number, total_amount, ordered_at
+      FROM orders
+      WHERE status IN ('pending', 'paid', 'preparing');
+
+      -- 실행 계획 비교
+      EXPLAIN QUERY PLAN
+      SELECT order_number FROM orders
+      WHERE status = 'pending' OR status = 'paid' OR status = 'preparing';
+
+      EXPLAIN QUERY PLAN
+      SELECT order_number FROM orders
+      WHERE status IN ('pending', 'paid', 'preparing');

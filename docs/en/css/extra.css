@@ -1,0 +1,228 @@
+/* ===========================================
+   Custom color palette — muted, professional
+   =========================================== */
+
+/* Light mode */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #37474f;         /* blue-grey 800 — header bg */
+  --md-primary-fg-color--light: #546e7a;  /* blue-grey 600 */
+  --md-primary-fg-color--dark: #263238;   /* blue-grey 900 */
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #f5f5f5;
+  --md-accent-fg-color: #5c6bc0;          /* indigo 400 — muted accent for links */
+  --md-accent-fg-color--transparent: rgba(92, 107, 192, 0.1);
+}
+
+/* Dark mode */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #263238;         /* blue-grey 900 */
+  --md-primary-fg-color--light: #37474f;
+  --md-primary-fg-color--dark: #1a2327;
+  --md-primary-bg-color: #e0e0e0;
+  --md-primary-bg-color--light: #bdbdbd;
+  --md-accent-fg-color: #7986cb;          /* indigo 300 — softer in dark */
+  --md-accent-fg-color--transparent: rgba(121, 134, 203, 0.1);
+}
+
+/* ===========================================
+   Header / Footer
+   =========================================== */
+
+/* Header — subtle, not shouting */
+.md-header {
+  background-color: var(--md-primary-fg-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Footer — blends with content */
+.md-footer {
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color--light);
+}
+
+.md-footer-meta {
+  background-color: var(--md-primary-fg-color--dark);
+}
+
+/* Copyright text */
+.md-copyright {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.7rem;
+}
+
+/* ===========================================
+   Navigation
+   =========================================== */
+
+/* Active nav item — subtle highlight */
+.md-nav__link--active {
+  color: var(--md-accent-fg-color) !important;
+  font-weight: 600;
+}
+
+/* ===========================================
+   Content
+   =========================================== */
+
+/* Table — compact, auto-fit columns */
+.md-typeset table:not([class]) {
+  font-size: 0.75rem;
+  width: auto;                          /* shrink to content, not 100% */
+  max-width: 100%;
+  table-layout: auto;                   /* columns sized by content */
+  border-collapse: collapse;
+}
+
+.md-typeset table:not([class]) th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35em 0.6em;
+  white-space: nowrap;                  /* headers don't wrap */
+  background-color: var(--md-default-bg-color--lighter, #f5f5f5);
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.md-typeset table:not([class]) td {
+  font-size: 0.75rem;
+  padding: 0.35em 0.6em;
+}
+
+/* Numeric columns — right-align, no wrap */
+.md-typeset table:not([class]) td:nth-child(n) {
+  vertical-align: top;
+}
+
+/* Description columns (last in most tables) — allow wrapping */
+.md-typeset table:not([class]) td:last-child {
+  white-space: normal;
+  min-width: 12em;
+}
+
+/* Code in table cells — tighter */
+.md-typeset table:not([class]) code {
+  font-size: 0.7rem;
+  padding: 0.1em 0.3em;
+  white-space: nowrap;
+}
+
+.md-typeset table:not([class]) code {
+  font-size: 0.7rem;
+}
+
+/* Version badge in title */
+.md-typeset h1 small {
+  font-size: 0.5em;
+  font-weight: 400;
+  vertical-align: middle;
+  background: var(--md-primary-fg-color--light);
+  color: #ffffff;
+  padding: 0.1em 0.5em;
+  border-radius: 0.25em;
+}
+
+/* Admonition colors — softer */
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-color: #66bb6a;
+}
+
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  border-color: #42a5f5;
+}
+
+/* Code blocks — subtle background */
+.md-typeset pre > code {
+  border-radius: 6px;
+}
+
+/* Tabbed content — active tab highlight */
+.md-typeset .tabbed-labels > label.tabbed-alternate:checked,
+.md-typeset .tabbed-set > input:checked + label {
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color);
+}
+
+/* ===========================================
+   Mermaid diagrams — dark mode fix
+   =========================================== */
+
+/* Light mode — keep defaults, ensure readability */
+[data-md-color-scheme="default"] .mermaid {
+  --md-mermaid-font-family: var(--md-text-font-family);
+}
+
+/* Dark mode — brighten all elements */
+[data-md-color-scheme="slate"] .mermaid {
+  --md-mermaid-font-family: var(--md-text-font-family);
+}
+
+/* Node backgrounds in dark mode */
+[data-md-color-scheme="slate"] .mermaid .node rect,
+[data-md-color-scheme="slate"] .mermaid .node circle,
+[data-md-color-scheme="slate"] .mermaid .node polygon {
+  fill: #37474f !important;
+  stroke: #90a4ae !important;
+  stroke-width: 1.5px;
+}
+
+/* Node text in dark mode */
+[data-md-color-scheme="slate"] .mermaid .nodeLabel,
+[data-md-color-scheme="slate"] .mermaid .label {
+  color: #eceff1 !important;
+  fill: #eceff1 !important;
+}
+
+/* Edges/arrows in dark mode */
+[data-md-color-scheme="slate"] .mermaid .edgePath .path,
+[data-md-color-scheme="slate"] .mermaid .flowchart-link {
+  stroke: #90a4ae !important;
+  stroke-width: 1.5px;
+}
+
+[data-md-color-scheme="slate"] .mermaid .arrowheadPath {
+  fill: #90a4ae !important;
+}
+
+/* Edge labels in dark mode */
+[data-md-color-scheme="slate"] .mermaid .edgeLabel {
+  background-color: #263238 !important;
+  color: #b0bec5 !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid .edgeLabel rect {
+  fill: #263238 !important;
+  opacity: 0.8;
+}
+
+/* Subgraph backgrounds in dark mode */
+[data-md-color-scheme="slate"] .mermaid .cluster rect {
+  fill: #1e2a30 !important;
+  stroke: #546e7a !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid .cluster span {
+  color: #b0bec5 !important;
+}
+
+/* Styled nodes (fill colors from lessons) — lighten in dark mode */
+[data-md-color-scheme="slate"] .mermaid [style*="fill:#e3f2fd"] { fill: #1a3a4a !important; }
+[data-md-color-scheme="slate"] .mermaid [style*="fill:#fff3e0"] { fill: #3e2a10 !important; }
+[data-md-color-scheme="slate"] .mermaid [style*="fill:#e8f5e9"] { fill: #1a3a1e !important; }
+[data-md-color-scheme="slate"] .mermaid [style*="fill:#ffcdd2"] { fill: #4a1a1a !important; }
+[data-md-color-scheme="slate"] .mermaid [style*="fill:#fff9c4"] { fill: #3a3510 !important; }
+[data-md-color-scheme="slate"] .mermaid [style*="fill:#f3e5f5"] { fill: #2a1a3a !important; }
+[data-md-color-scheme="slate"] .mermaid [style*="fill:#fce4ec"] { fill: #3a1520 !important; }
+
+/* Language selector — subtle */
+.md-header__option .md-select__link {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.md-header__option .md-select__link:hover {
+  opacity: 1;
+}

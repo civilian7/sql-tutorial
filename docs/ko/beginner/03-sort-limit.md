@@ -2,6 +2,18 @@
 
 SQL 결과의 행 순서는 별도로 지정하지 않으면 보장되지 않습니다. `ORDER BY`로 하나 이상의 컬럼을 기준으로 정렬할 수 있고, `LIMIT`과 `OFFSET`으로 대용량 결과를 페이지 단위로 나눠 조회할 수 있습니다.
 
+```mermaid
+flowchart LR
+    T["Unsorted\nRows"] --> O["ORDER BY\nprice DESC"] --> S["Sorted\nRows"] --> L["LIMIT 5"] --> R["Top 5\nRows"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style O fill:#fff3e0,stroke:#e65100
+    style S fill:#fff9c4,stroke:#f9a825
+    style L fill:#fce4ec,stroke:#c62828
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **개념:** ORDER BY로 정렬한 후 LIMIT로 상위 N개만 잘라냅니다.
+
 ## ORDER BY — 단일 컬럼
 
 컬럼 이름 뒤에 `ASC`(오름차순, 기본값) 또는 `DESC`(내림차순)를 붙입니다.
@@ -161,6 +173,9 @@ LIMIT 5;
 | ... | (NULL) |
 | 김영철 | 1955-03-12 |
 | ... | |
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

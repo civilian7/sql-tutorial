@@ -6,8 +6,10 @@
 seed: 42
 locale: ko_KR
 shop_name: "테크샵(TechShop)"
-start_year: 2016  # 개업 연도
-end_year: 2025    # 현재 연도 (10년차)
+
+# Date range (YYYY-MM-DD)
+start_date: "2016-01-01"
+end_date: "2025-06-30"
 
 # 데이터 규모 프로필 (small / medium / large)
 # CLI에서 --size 옵션으로 오버라이드 가능

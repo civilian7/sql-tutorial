@@ -2,6 +2,18 @@
 
 `GROUP BY`는 행을 그룹으로 나누고, 각 그룹에 집계 함수를 따로 적용합니다. `HAVING`은 그 그룹들을 다시 필터링합니다. 집계된 결과에 대한 `WHERE`라고 이해하면 됩니다.
 
+```mermaid
+flowchart LR
+    T["All\nRows"] --> G["GROUP BY\ncategory"] --> GR["Groups\n🔵🔵 | 🟢🟢🟢 | 🔴"]  --> A["Aggregate\nper group"] --> R["Summary\nper group"]
+    style T fill:#e3f2fd,stroke:#1565c0
+    style G fill:#fff3e0,stroke:#e65100
+    style GR fill:#f3e5f5,stroke:#6a1b9a
+    style A fill:#fff9c4,stroke:#f9a825
+    style R fill:#e8f5e9,stroke:#2e7d32
+```
+
+> **개념:** GROUP BY는 행을 그룹으로 묶고, 각 그룹에 집계 함수를 적용합니다.
+
 ## GROUP BY — 단일 컬럼
 
 ```sql
@@ -160,6 +172,9 @@ WHERE is_active = 1          -- 비활성 고객 제외 (행 수준)
 GROUP BY grade
 HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
 ```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

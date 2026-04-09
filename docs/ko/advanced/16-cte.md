@@ -2,6 +2,33 @@
 
 공통 테이블 식(CTE)은 메인 쿼리 앞에 `WITH` 키워드로 정의하는, 이름이 붙은 임시 결과 집합입니다. CTE를 사용하면 복잡한 쿼리를 훨씬 읽기 쉽고 디버깅하기 좋게 만들 수 있습니다. 각 CTE는 여러 번 참조할 수 있는 이름 있는 서브쿼리와 같습니다.
 
+```mermaid
+flowchart TD
+    subgraph "CTE Pipeline"
+        CTE1["WITH sales AS (\n  SELECT ...\n)"] --> CTE2["monthly AS (\n  SELECT ... FROM sales\n)"] --> FQ["SELECT *\nFROM monthly\nWHERE ..."]
+    end
+    style CTE1 fill:#e3f2fd,stroke:#1565c0
+    style CTE2 fill:#fff3e0,stroke:#e65100
+    style FQ fill:#e8f5e9,stroke:#2e7d32
+```
+
+```mermaid
+flowchart TD
+    B["Base Case\n(WHERE parent_id IS NULL)"] --> |"Level 0"| N1["Desktop PC"]
+    N1 --> |"Level 1"| N2["Pre-built"]
+    N1 --> |"Level 1"| N3["Custom"]
+    N2 --> |"Level 2"| N4["Samsung"]
+    N2 --> |"Level 2"| N5["LG"]
+    style B fill:#e8f5e9,stroke:#2e7d32
+    style N1 fill:#e3f2fd,stroke:#1565c0
+    style N2 fill:#fff3e0,stroke:#e65100
+    style N3 fill:#fff3e0,stroke:#e65100
+    style N4 fill:#f3e5f5,stroke:#6a1b9a
+    style N5 fill:#f3e5f5,stroke:#6a1b9a
+```
+
+> CTE는 쿼리를 단계별로 쪼개서 파이프라인처럼 연결합니다. 재귀 CTE는 트리 구조를 탐색합니다.
+
 ## 기본 CTE
 
 ```sql
@@ -175,6 +202,61 @@ ORDER BY path;
 |     마우스 | 2 | 전자기기 > 주변기기 > 마우스 |
 |     키보드 | 2 | 전자기기 > 주변기기 > 키보드 |
 | ... | | |
+
+## 재귀 CTE 추가 활용
+
+### 직원 조직도 (재귀 CTE)
+
+`staff.manager_id`를 재귀적으로 따라가며 전체 조직도를 생성합니다.
+
+```sql
+WITH RECURSIVE org_chart AS (
+    -- Base: CEO (no manager)
+    SELECT id, name, role, department, manager_id, 0 AS level,
+           name AS path
+    FROM staff
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive: employees under each manager
+    SELECT s.id, s.name, s.role, s.department, s.manager_id,
+           oc.level + 1,
+           oc.path || ' > ' || s.name
+    FROM staff s
+    JOIN org_chart oc ON s.manager_id = oc.id
+)
+SELECT level, path, role, department
+FROM org_chart
+ORDER BY path;
+```
+
+### Q&A 스레드 (재귀 CTE)
+
+질문 → 답변 → 후속 질문 체인을 재귀적으로 추적합니다.
+
+```sql
+WITH RECURSIVE thread AS (
+    SELECT id, content, parent_id, 0 AS depth,
+           CAST(id AS TEXT) AS thread_path
+    FROM product_qna
+    WHERE parent_id IS NULL
+
+    UNION ALL
+
+    SELECT q.id, q.content, q.parent_id, t.depth + 1,
+           t.thread_path || '.' || CAST(q.id AS TEXT)
+    FROM product_qna q
+    JOIN thread t ON q.parent_id = t.id
+)
+SELECT depth, thread_path, SUBSTR('          ', 1, depth * 2) || content AS indented
+FROM thread
+ORDER BY thread_path
+LIMIT 20;
+```
+
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/) 섹션을 참고하세요.
 
 ## 연습 문제
 

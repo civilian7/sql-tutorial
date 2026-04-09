@@ -1,4 +1,4 @@
-"""결제 데이터 생성"""
+"""Payment data generation"""
 
 from __future__ import annotations
 
@@ -9,11 +9,11 @@ from typing import Any
 from src.generators.base import BaseGenerator
 
 
-# 할부 개월 분포 (금액대별 차등)
+# Installment month distribution (tiered by amount)
 INSTALLMENT_MONTHS = {
-    "low":  {"0": 0.90, "2": 0.05, "3": 0.05},                                     # ~30만
-    "mid":  {"0": 0.40, "2": 0.15, "3": 0.20, "6": 0.15, "10": 0.07, "12": 0.03},  # 30~100만
-    "high": {"0": 0.15, "3": 0.15, "6": 0.25, "10": 0.20, "12": 0.15, "24": 0.10}, # 100만+
+    "low":  {"0": 0.90, "2": 0.05, "3": 0.05},                                     # ~300K KRW
+    "mid":  {"0": 0.40, "2": 0.15, "3": 0.20, "6": 0.15, "10": 0.07, "12": 0.03},  # 300K~1M KRW
+    "high": {"0": 0.15, "3": 0.15, "6": 0.25, "10": 0.20, "12": 0.15, "24": 0.10}, # 1M+ KRW
 }
 
 
@@ -21,7 +21,7 @@ INSTALLMENT_MONTHS = {
 class PaymentGenerator(BaseGenerator):
 
     def generate_payments(self, orders: list[dict]) -> list[dict]:
-        """주문별 결제 데이터를 생성한다."""
+        """Generate payment data per order."""
         payments = []
         payment_id = 0
         methods = self.config["payment_methods"]
@@ -41,7 +41,7 @@ class PaymentGenerator(BaseGenerator):
             ordered_at = datetime.strptime(order["ordered_at"], "%Y-%m-%d %H:%M:%S")
             amount = order["total_amount"]
 
-            # 결제 상태 결정
+            # Determine payment status
             if order["status"] == "cancelled" and order["cancelled_at"]:
                 if self.rng.random() < 0.5:
                     status = "failed"
@@ -64,12 +64,12 @@ class PaymentGenerator(BaseGenerator):
                 paid_at = self.fmt_dt(ordered_at + timedelta(minutes=self.rng.randint(1, 30)))
                 refunded_at = None
 
-            # PG 거래번호
+            # PG transaction ID
             pg_tid = None
             if method != "point" and status in ("completed", "refunded"):
                 pg_tid = f"PG-{uuid.UUID(int=self.rng.getrandbits(128)).hex[:16].upper()}"
 
-            # 결제 수단별 상세 정보
+            # Payment method-specific details
             card_issuer = None
             card_approval_no = None
             installment_months = None
@@ -85,7 +85,7 @@ class PaymentGenerator(BaseGenerator):
                 if status in ("completed", "refunded"):
                     card_approval_no = f"{self.rng.randint(10000000, 99999999)}"
 
-                # 할부 (금액대별)
+                # Installment (by amount tier)
                 if amount < 300000:
                     tier = "low"
                 elif amount < 1000000:
@@ -100,9 +100,9 @@ class PaymentGenerator(BaseGenerator):
             elif method == "bank_transfer":
                 bank_name = self.rng.choices(banks, weights=bank_w, k=1)[0]
                 if status in ("completed", "refunded"):
-                    depositor_name = order.get("_customer_name")  # 나중에 매핑
+                    depositor_name = order.get("_customer_name")  # mapped later
                     if not depositor_name:
-                        depositor_name = None  # generate.py에서 후처리
+                        depositor_name = None  # post-processed in generate.py
 
             elif method == "virtual_account":
                 bank_name = self.rng.choices(banks, weights=bank_w, k=1)[0]
@@ -114,7 +114,7 @@ class PaymentGenerator(BaseGenerator):
                     list(ep_methods.keys()), weights=list(ep_methods.values()), k=1,
                 )[0]
 
-            # 현금영수증 (계좌이체/가상계좌: 70%, 카카오/네이버: 20%)
+            # Cash receipt (bank transfer/virtual account: 70%, Kakao/Naver: 20%)
             if method in ("bank_transfer", "virtual_account") and status == "completed":
                 if self.rng.random() < 0.70:
                     receipt_type = self.rng.choice(receipt_types)

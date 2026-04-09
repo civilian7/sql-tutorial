@@ -2,6 +2,23 @@
 
 So far you have learned to JOIN different tables together. This lesson covers **SELF JOIN** — joining a table to itself — and **CROSS JOIN** — producing every combination of rows from two sets. Both are essential for hierarchy queries and comparison analysis.
 
+```mermaid
+flowchart TD
+    CEO["CEO\n(manager_id = NULL)"] --> MGR1["Manager A\nSales"]
+    CEO --> MGR2["Manager B\nCS"]
+    MGR1 --> S1["Staff 1"]
+    MGR1 --> S2["Staff 2"]
+    MGR2 --> S3["Staff 3"]
+    style CEO fill:#e8f5e9,stroke:#2e7d32
+    style MGR1 fill:#e3f2fd,stroke:#1565c0
+    style MGR2 fill:#e3f2fd,stroke:#1565c0
+    style S1 fill:#fff3e0,stroke:#e65100
+    style S2 fill:#fff3e0,stroke:#e65100
+    style S3 fill:#fff3e0,stroke:#e65100
+```
+
+> Self-JOIN joins a table to itself. The staff table's manager_id represents an org chart.
+
 ## SELF JOIN — Joining a Table to Itself
 
 A SELF JOIN is not special syntax. You simply give the same table two different aliases and JOIN them.
@@ -85,6 +102,54 @@ LIMIT 10;
 
 The `p1.id < p2.id` condition is key. Without it you get both (A, B) and (B, A), plus self-pairs (A, A).
 
+### Staff Org Chart (staff.manager_id)
+
+The `staff` table's `manager_id` references the `id` column in the same table. You can query the relationship between employees and their managers.
+
+```sql
+SELECT
+    s.name AS employee,
+    s.department,
+    s.role,
+    m.name AS manager
+FROM staff s
+LEFT JOIN staff m ON s.manager_id = m.id
+ORDER BY s.id;
+```
+
+### Product Succession (products.successor_id)
+
+Find discontinued products and their successor models.
+
+```sql
+SELECT
+    old.name AS discontinued_product,
+    old.discontinued_at,
+    new.name AS successor_product,
+    new.price AS new_price
+FROM products old
+JOIN products new ON old.successor_id = new.id
+WHERE old.successor_id IS NOT NULL
+ORDER BY old.discontinued_at;
+```
+
+### Product Q&A Threads (product_qna.parent_id)
+
+Show questions and their answers side by side.
+
+```sql
+SELECT
+    q.id AS question_id,
+    q.content AS question,
+    a.content AS answer,
+    a.created_at AS answered_at
+FROM product_qna q
+LEFT JOIN product_qna a ON a.parent_id = q.id
+WHERE q.parent_id IS NULL  -- top-level questions only
+ORDER BY q.created_at DESC
+LIMIT 10;
+```
+
 ---
 
 ## CROSS JOIN — Generate Every Combination
@@ -159,7 +224,28 @@ ORDER BY total_amount DESC;
 
 > **Warning:** CROSS JOIN is powerful but dangerous with large tables — row counts multiply. Only use it when at least one side produces a small result set.
 
+### Finding Days with No Orders (calendar CROSS JOIN)
+
+Use the `calendar` table with LEFT JOIN to find days when no orders were placed.
+
+```sql
+SELECT
+    c.date_key,
+    c.day_name,
+    c.is_weekend,
+    c.is_holiday,
+    c.holiday_name
+FROM calendar c
+LEFT JOIN orders o ON DATE(o.ordered_at) = c.date_key
+WHERE o.id IS NULL
+  AND c.year >= 2024
+ORDER BY c.date_key;
+```
+
 ---
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Exercises
 

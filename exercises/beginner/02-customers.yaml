@@ -1,0 +1,538 @@
+metadata:
+  id: beginner-02-customers
+  title: "고객 분석"
+  title_en: "Customer Analysis"
+  difficulty: beginner
+  concepts: [SELECT, WHERE, GROUP BY, COUNT, AVG, MAX, COALESCE, SUBSTR, INSTR, JOIN, HAVING, LIKE, IN, CASE WHEN]
+  prerequisites: []
+  estimated_minutes: 20
+  default_level: 1
+  default_type: "SELECT"
+  description: "customers, customer_addresses 테이블을 사용합니다."
+  description_en: "Uses customers and customer_addresses tables."
+
+problems:
+  - id: b02-01
+    level: 1
+    type: "Aggregate"
+    question: |
+      활성 고객과 비활성 고객 수를 각각 구하세요.
+    question_en: |
+      Find the number of active and inactive customers separately.
+    reference_sql:
+      common: |
+        SELECT
+            is_active,
+            COUNT(*) AS customer_count
+        FROM customers
+        GROUP BY is_active;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "GROUP BY is_active로 그룹화하고 COUNT(*)로 각 그룹의 수를 세세요"
+        en: "Group with GROUP BY is_active and count each group with COUNT(*)"
+    rubric:
+      ko: "GROUP BY is_active와 COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY is_active and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, customers]
+
+  - id: b02-02
+    level: 1
+    type: "Aggregate"
+    question: |
+      고객 등급(grade)별 인원 수를 구하세요.
+    question_en: |
+      Find the number of customers per grade.
+    reference_sql:
+      common: |
+        SELECT grade, COUNT(*) AS cnt
+        FROM customers
+        GROUP BY grade
+        ORDER BY cnt DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY grade와 COUNT(*)를 사용하세요"
+        en: "Use GROUP BY grade and COUNT(*)"
+    rubric:
+      ko: "GROUP BY grade와 COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY grade and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, ORDER BY, customers]
+
+  - id: b02-03
+    level: 1
+    type: "SELECT"
+    question: |
+      VIP 등급 고객의 이름, 이메일, 적립금을 적립금 내림차순으로 조회하세요.
+    question_en: |
+      Retrieve the name, email, and point balance of VIP-grade customers, sorted by point balance in descending order.
+    reference_sql:
+      common: |
+        SELECT name, email, point_balance
+        FROM customers
+        WHERE grade = 'VIP'
+        ORDER BY point_balance DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE grade = 'VIP'로 필터링하고 ORDER BY point_balance DESC로 정렬"
+        en: "Filter with WHERE grade = 'VIP' and sort with ORDER BY point_balance DESC"
+    rubric:
+      ko: "WHERE grade = 'VIP'와 ORDER BY point_balance DESC를 사용해야 함"
+      en: "Must use WHERE grade = 'VIP' and ORDER BY point_balance DESC"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, customers]
+
+  - id: b02-04
+    level: 1
+    type: "SELECT"
+    question: |
+      가장 최근에 가입한 고객 10명의 이름, 가입일, 등급을 조회하세요.
+    question_en: |
+      Retrieve the name, signup date, and grade of the 10 most recently registered customers.
+    reference_sql:
+      common: |
+        SELECT name, created_at, grade
+        FROM customers
+        ORDER BY created_at DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY created_at DESC로 최신순 정렬 후 LIMIT 10"
+        en: "Sort with ORDER BY created_at DESC for newest first, then LIMIT 10"
+    rubric:
+      ko: "ORDER BY created_at DESC와 LIMIT 10을 사용해야 함"
+      en: "Must use ORDER BY created_at DESC and LIMIT 10"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, customers]
+
+  - id: b02-05
+    level: 2
+    type: "Aggregate"
+    question: |
+      성별(gender)별 고객 수와 비율(%)을 구하세요. NULL도 포함합니다.
+    question_en: |
+      Find the customer count and percentage by gender. Include NULL values.
+    reference_sql:
+      common: |
+        SELECT
+            COALESCE(gender, '미입력') AS gender,
+            COUNT(*) AS cnt,
+            ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct
+        FROM customers
+        GROUP BY gender;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "COALESCE(gender, '미입력')으로 NULL 처리. 비율은 100.0 * COUNT(*) / SUM(COUNT(*)) OVER ()로 계산"
+        en: "Use COALESCE(gender, 'N/A') to handle NULLs. Calculate the ratio with 100.0 * COUNT(*) / SUM(COUNT(*)) OVER ()"
+    rubric:
+      ko: "COALESCE와 윈도우 함수를 사용해야 함"
+      en: "Must use COALESCE and window function"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, COALESCE, SUM OVER, customers]
+
+  - id: b02-06
+    level: 1
+    type: "SELECT"
+    question: |
+      적립금(point_balance)이 가장 많은 상위 20명의 이름, 등급, 적립금을 조회하세요.
+    question_en: |
+      Retrieve the name, grade, and point balance of the top 20 customers with the highest point balance.
+    reference_sql:
+      common: |
+        SELECT name, grade, point_balance
+        FROM customers
+        WHERE is_active = 1
+        ORDER BY point_balance DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY point_balance DESC와 LIMIT 20을 사용하세요. 활성 고객만 대상"
+        en: "Use ORDER BY point_balance DESC and LIMIT 20. Target only active customers"
+    rubric:
+      ko: "ORDER BY point_balance DESC와 LIMIT 20을 사용해야 함"
+      en: "Must use ORDER BY point_balance DESC and LIMIT 20"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, customers]
+
+  - id: b02-07
+    level: 1
+    type: "SELECT"
+    question: |
+      생년월일(birth_date)이 NULL인 고객 수를 구하세요.
+    question_en: |
+      Find the number of customers whose birth_date is NULL.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS no_birthdate
+        FROM customers
+        WHERE birth_date IS NULL;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "WHERE birth_date IS NULL로 NULL을 확인하세요. = NULL은 동작하지 않음"
+        en: "Use WHERE birth_date IS NULL to check for NULLs. = NULL does not work"
+    rubric:
+      ko: "WHERE birth_date IS NULL을 사용해야 함"
+      en: "Must use WHERE birth_date IS NULL"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, customers]
+
+  - id: b02-08
+    level: 2
+    type: "String/Date"
+    question: |
+      가입 연도별 신규 고객 수를 구하세요.
+    question_en: |
+      Find the number of new customers per signup year.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(created_at, 1, 4) AS join_year,
+            COUNT(*) AS new_customers
+        FROM customers
+        GROUP BY SUBSTR(created_at, 1, 4)
+        ORDER BY join_year;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SUBSTR(created_at, 1, 4)로 연도를 추출하고 GROUP BY로 그룹화"
+        en: "Extract the year with SUBSTR(created_at, 1, 4) and group with GROUP BY"
+    rubric:
+      ko: "SUBSTR로 연도 추출 후 GROUP BY를 사용해야 함"
+      en: "Must extract year with SUBSTR then use GROUP BY"
+    max_score: 10
+    tags: [SELECT, SUBSTR, GROUP BY, COUNT, customers]
+
+  - id: b02-09
+    level: 2
+    type: "Subquery/CTE"
+    question: |
+      last_login_at이 NULL인 고객 수와 전체 대비 비율을 구하세요.
+    question_en: |
+      Find the count and percentage of customers whose last_login_at is NULL.
+    reference_sql:
+      common: |
+        SELECT
+            COUNT(*) AS never_logged_in,
+            ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers), 1) AS pct
+        FROM customers
+        WHERE last_login_at IS NULL;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "비율은 서브쿼리 (SELECT COUNT(*) FROM customers)로 전체 수를 구해서 나누세요"
+        en: "Calculate the ratio by dividing by the total count from a subquery (SELECT COUNT(*) FROM customers)"
+    rubric:
+      ko: "서브쿼리로 전체 수를 구하고 비율을 계산해야 함"
+      en: "Must calculate ratio using a subquery for total count"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, scalar subquery, customers]
+
+  - id: b02-10
+    level: 2
+    type: "Aggregate"
+    question: |
+      등급별 평균 적립금과 최대 적립금을 구하세요.
+    question_en: |
+      Find the average and maximum point balance per grade.
+    reference_sql:
+      common: |
+        SELECT
+            grade,
+            COUNT(*) AS cnt,
+            ROUND(AVG(point_balance), 0) AS avg_points,
+            MAX(point_balance) AS max_points
+        FROM customers
+        GROUP BY grade
+        ORDER BY avg_points DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY grade와 AVG(point_balance), MAX(point_balance)를 함께 사용하세요"
+        en: "Use GROUP BY grade with AVG(point_balance) and MAX(point_balance) together"
+    rubric:
+      ko: "GROUP BY grade와 AVG, MAX를 사용해야 함"
+      en: "Must use GROUP BY grade with AVG and MAX"
+    max_score: 10
+    tags: [SELECT, GROUP BY, AVG, MAX, ORDER BY, customers]
+
+  - id: b02-11
+    level: 2
+    type: "String/Date"
+    question: |
+      고객 이메일의 도메인(@뒤)별 고객 수를 구하세요.
+    question_en: |
+      Find the customer count by email domain (after the @).
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(email, INSTR(email, '@') + 1) AS domain,
+            COUNT(*) AS cnt
+        FROM customers
+        GROUP BY domain
+        ORDER BY cnt DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SUBSTR(email, INSTR(email, '@') + 1)로 @ 뒤의 도메인을 추출하세요"
+        en: "Extract the domain after @ with SUBSTR(email, INSTR(email, '@') + 1)"
+    rubric:
+      ko: "SUBSTR과 INSTR로 도메인을 추출해야 함"
+      en: "Must extract domain with SUBSTR and INSTR"
+    max_score: 10
+    tags: [SELECT, SUBSTR, GROUP BY, COUNT, customers]
+
+  - id: b02-12
+    level: 2
+    type: "JOIN/UNION"
+    question: |
+      배송지를 2개 이상 등록한 고객의 이름과 배송지 수를 조회하세요.
+    question_en: |
+      Retrieve the name and address count of customers who have registered 2 or more shipping addresses.
+    reference_sql:
+      common: |
+        SELECT
+            c.name,
+            COUNT(a.id) AS address_count
+        FROM customers AS c
+        INNER JOIN customer_addresses AS a ON c.id = a.customer_id
+        GROUP BY c.id, c.name
+        HAVING COUNT(a.id) >= 2
+        ORDER BY address_count DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "customers와 customer_addresses를 JOIN하고, HAVING COUNT(...) >= 2로 필터링"
+        en: "JOIN customers and customer_addresses, then filter with HAVING COUNT(...) >= 2"
+    rubric:
+      ko: "JOIN과 HAVING COUNT >= 2를 사용해야 함"
+      en: "Must use JOIN and HAVING COUNT >= 2"
+    max_score: 10
+    tags: [SELECT, INNER JOIN, GROUP BY, HAVING, COUNT, customers, customer_addresses]
+
+  - id: b02-13
+    level: 1
+    type: "SELECT"
+    question: |
+      2024년에 가입한 고객 중 등급이 VIP 또는 GOLD인 고객의 이름, 가입일, 등급을 조회하세요.
+    question_en: |
+      Retrieve the name, signup date, and grade of customers who joined in 2024 with a grade of VIP or GOLD.
+    reference_sql:
+      common: |
+        SELECT name, created_at, grade
+        FROM customers
+        WHERE created_at LIKE '2024%'
+          AND grade IN ('VIP', 'GOLD')
+        ORDER BY created_at;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "LIKE '2024%'로 연도 필터링, IN ('VIP', 'GOLD')로 등급 필터링. 두 조건을 AND로 결합"
+        en: "Filter year with LIKE '2024%' and grade with IN ('VIP', 'GOLD'). Combine both conditions with AND"
+    rubric:
+      ko: "LIKE와 IN을 AND로 결합해야 함"
+      en: "Must combine LIKE and IN with AND"
+    max_score: 10
+    tags: [SELECT, WHERE, LIKE, ORDER BY, customers]
+
+  - id: b02-14
+    level: 2
+    type: "String/Date"
+    question: |
+      2024년 월별 가입자 수를 구하세요.
+    question_en: |
+      Find the number of signups per month in 2024.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(created_at, 1, 7) AS month,
+            COUNT(*) AS signups
+        FROM customers
+        WHERE created_at LIKE '2024%'
+        GROUP BY SUBSTR(created_at, 1, 7)
+        ORDER BY month;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SUBSTR(created_at, 1, 7)로 'YYYY-MM' 형태를 추출하고 GROUP BY로 월별 집계"
+        en: "Extract 'YYYY-MM' format with SUBSTR(created_at, 1, 7) and aggregate monthly with GROUP BY"
+    rubric:
+      ko: "SUBSTR로 월 추출 후 GROUP BY를 사용해야 함"
+      en: "Must extract month with SUBSTR then use GROUP BY"
+    max_score: 10
+    tags: [SELECT, SUBSTR, WHERE, GROUP BY, COUNT, customers]
+
+  - id: b02-15
+    level: 2
+    type: "CASE/IF"
+    question: |
+      적립금을 0, 1~1000, 1001~5000, 5001~10000, 10001 이상으로 나누어 각 구간의 고객 수를 구하세요.
+    question_en: |
+      Divide point balances into ranges -- 0, 1-1,000, 1,001-5,000, 5,001-10,000, and 10,001+ -- and count the customers in each range.
+    reference_sql:
+      common: |
+        SELECT
+            CASE
+                WHEN point_balance = 0 THEN '없음'
+                WHEN point_balance <= 1000 THEN '1~1,000'
+                WHEN point_balance <= 5000 THEN '1,001~5,000'
+                WHEN point_balance <= 10000 THEN '5,001~10,000'
+                ELSE '10,001 이상'
+            END AS point_range,
+            COUNT(*) AS cnt
+        FROM customers
+        GROUP BY point_range
+        ORDER BY MIN(point_balance);
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "CASE WHEN으로 적립금 구간을 분류한 뒤 GROUP BY와 COUNT(*)로 집계. ORDER BY MIN(point_balance)로 구간 순 정렬"
+        en: "Classify point ranges with CASE WHEN, then aggregate with GROUP BY and COUNT(*). Sort by range order with ORDER BY MIN(point_balance)"
+    rubric:
+      ko: "CASE WHEN과 GROUP BY를 사용해야 함"
+      en: "Must use CASE WHEN and GROUP BY"
+    max_score: 10
+    tags: [SELECT, CASE, GROUP BY, COUNT, customers]
+
+  - id: b02-16
+    level: 2
+    type: "Aggregate"
+    title: "다중 태그 상품 (GROUP BY HAVING)"
+    title_en: "Multi-Tag Products (GROUP BY HAVING)"
+    question: |
+      태그가 3개 이상 달린 상품을 찾으세요.
+      상품명과 태그 목록(쉼표 구분)을 보여주세요.
+    question_en: |
+      Find products with 3 or more tags.
+      Show product name and tag list (comma-separated).
+    reference_sql:
+      sqlite: |
+        SELECT
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            GROUP_CONCAT(t.name, ', ') AS tags
+        FROM product_tags AS pt
+        INNER JOIN products AS p ON pt.product_id = p.id
+        INNER JOIN tags     AS t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC
+        LIMIT 20;
+      mysql: |
+        SELECT
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            GROUP_CONCAT(t.name SEPARATOR ', ') AS tags
+        FROM product_tags AS pt
+        INNER JOIN products AS p ON pt.product_id = p.id
+        INNER JOIN tags     AS t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC
+        LIMIT 20;
+      postgresql: |
+        SELECT
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            STRING_AGG(t.name, ', ') AS tags
+        FROM product_tags AS pt
+        INNER JOIN products AS p ON pt.product_id = p.id
+        INNER JOIN tags     AS t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`product_tags` GROUP BY `product_id`. `HAVING COUNT(*) >= 3`. `GROUP_CONCAT(t.name, ', ')`로 태그 목록 표시."
+        en: "GROUP BY `product_id` on `product_tags`. `HAVING COUNT(*) >= 3`. Use `GROUP_CONCAT(t.name, ', ')` for tag list."
+    max_score: 10
+    tags: [INNER JOIN, GROUP BY, HAVING, GROUP_CONCAT, product_tags, products, tags]
+
+  - id: b02-17
+    level: 3
+    type: "Subquery/CTE"
+    title: "가입 경로별 고객 분포"
+    title_en: "Customer Acquisition Channel Distribution"
+    question: |
+      고객의 가입 경로(acquisition_channel)별로 고객 수, 비율, 평균 구매 금액을 보여주세요.
+    question_en: |
+      Show customer count, percentage, and average purchase amount by acquisition channel.
+    reference_sql:
+      common: |
+        WITH channel_stats AS (
+            SELECT
+                COALESCE(c.acquisition_channel, 'unknown') AS channel,
+                COUNT(DISTINCT c.id) AS customer_count,
+                COUNT(o.id) AS order_count,
+                ROUND(COALESCE(SUM(o.total_amount), 0), 0) AS total_revenue
+            FROM customers AS c
+            LEFT JOIN orders AS o
+                ON c.id = o.customer_id
+               AND o.status NOT IN ('cancelled')
+            GROUP BY COALESCE(c.acquisition_channel, 'unknown')
+        )
+        SELECT
+            channel,
+            customer_count,
+            ROUND(100.0 * customer_count / SUM(customer_count) OVER (), 1) AS pct,
+            order_count,
+            CASE WHEN customer_count > 0
+                THEN ROUND(1.0 * total_revenue / customer_count, 0)
+                ELSE 0
+            END AS avg_revenue_per_customer
+        FROM channel_stats
+        ORDER BY customer_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`customers.acquisition_channel` 사용 (NULL 가능). `COALESCE`로 NULL을 '미분류'로 표시. LEFT JOIN `orders`로 구매 금액 계산."
+        en: "Use `customers.acquisition_channel` (can be NULL). Use `COALESCE` to show NULL as 'Unknown'. LEFT JOIN `orders` for purchase amounts."
+    max_score: 10
+    tags: [CTE, LEFT JOIN, COALESCE, SUM OVER, CASE, customers, orders]

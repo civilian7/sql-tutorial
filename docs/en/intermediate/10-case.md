@@ -2,6 +2,19 @@
 
 `CASE` is SQL's conditional expression — similar to `if/else` in programming languages. It lets you transform values, create labels, bucket data into ranges, and conditionally aggregate, all within a single query.
 
+```mermaid
+flowchart TD
+    V["point_balance"] -->|">= 100,000"| A["'Heavy User'"]
+    V -->|">= 10,000"| B["'Regular'"]
+    V -->|"else"| C["'Light'"]
+    style V fill:#e3f2fd,stroke:#1565c0
+    style A fill:#e8f5e9,stroke:#2e7d32
+    style B fill:#fff9c4,stroke:#f9a825
+    style C fill:#ffcdd2,stroke:#c62828
+```
+
+> CASE is SQL's if-else. Conditions are checked top to bottom.
+
 ## Simple CASE
 
 The simple form compares a single column against fixed values.
@@ -172,6 +185,9 @@ ORDER BY
     total_amount DESC
 LIMIT 10;
 ```
+
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/) section.
 
 ## Practice Exercises
 
