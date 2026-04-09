@@ -2,7 +2,7 @@
 
 ## Overview
 
-This tutorial uses the **TechShop** database -- a 10-year-old e-commerce store selling computers and peripherals.
+This tutorial uses the **TechShop** database -- a fictional 10-year-old e-commerce store selling computers and peripherals.
 With 52,300 customers, 378,000 orders, 2,800 products, and more at medium scale, the data is realistic enough for meaningful SQL practice.
 
 > The data is generated with seed 42 (deterministic), so identical queries always return identical results.
