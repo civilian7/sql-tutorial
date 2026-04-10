@@ -183,6 +183,18 @@ mkdocs build -f mkdocs-ko.yml     # → output/docs/ko/
 mkdocs build -f mkdocs-en.yml     # → output/docs/en/
 ```
 
+### PDF 내보내기
+
+```bash
+pdf.bat          # 한국어 + 영어
+pdf.bat ko       # 한국어만
+pdf.bat en       # 영어만
+```
+
+출력: `output/docs/{ko,en}/pdf/sql-tutorial-{ko,en}.pdf`
+
+첫 실행 시 Playwright + Chromium (~200MB)이 자동 설치됩니다. 헤드리스 브라우저로 렌더링하므로 탭, 머메이드 다이어그램, admonition이 모두 정상 출력됩니다.
+
 ## 프로젝트 구조
 
 ```
@@ -198,6 +210,7 @@ mkdocs build -f mkdocs-en.yml     # → output/docs/en/
 │   ├── generators/          # 18개 데이터 생성기
 │   └── exporters/           # SQLite, MySQL, PostgreSQL 내보내기
 ├── serve.bat                # 로컬 튜토리얼 서버
+├── pdf.bat                  # PDF 내보내기 (mkdocs-exporter + Chromium)
 └── output/                  # 생성된 파일
 ```
 

@@ -185,6 +185,18 @@ mkdocs build -f mkdocs-ko.yml     # → output/docs/ko/
 mkdocs build -f mkdocs-en.yml     # → output/docs/en/
 ```
 
+### PDF export
+
+```bash
+pdf.bat          # Both languages
+pdf.bat ko       # Korean only
+pdf.bat en       # English only
+```
+
+Output: `output/docs/{ko,en}/pdf/sql-tutorial-{ko,en}.pdf`
+
+First run automatically installs Playwright + Chromium (~200MB). PDF rendering uses a headless browser, so tabs, Mermaid diagrams, and Material admonitions are fully rendered.
+
 ## Project Structure
 
 ```
@@ -200,6 +212,7 @@ mkdocs build -f mkdocs-en.yml     # → output/docs/en/
 │   ├── generators/          # 18 data generators
 │   └── exporters/           # SQLite, MySQL, PostgreSQL exporters
 ├── serve.bat                # Local tutorial server
+├── pdf.bat                  # PDF export (mkdocs-exporter + Chromium)
 └── output/                  # Generated files
 ```
 
