@@ -1,6 +1,6 @@
-# Lesson 19: EXISTS and Correlated Subqueries
+# 강의 20: EXISTS와 상관 서브쿼리(Correlated Subqueries)
 
-`EXISTS` tests whether a subquery returns any rows at all. Unlike `IN`, it stops as soon as it finds one matching row — making it efficient for large datasets and safe when NULLs might be present.
+`EXISTS`는 서브쿼리가 한 건이라도 행을 반환하는지 검사합니다. `IN`과 달리 첫 번째 일치 행을 찾는 즉시 중단하므로, 대용량 데이터에서 효율적이며 NULL이 포함될 수 있는 상황에서도 안전합니다.
 
 ```mermaid
 flowchart TD
@@ -9,21 +9,23 @@ flowchart TD
     CK -->|"NO"| EXC["Exclude ✗"]
 ```
 
-> EXISTS runs the subquery for each outer row and includes it if any result exists.
+> EXISTS는 외부 쿼리의 각 행에 대해 서브쿼리를 실행하고, 결과가 있으면 포함합니다.
 
 ## EXISTS vs. IN
 
-| Feature | `IN` | `EXISTS` |
+| 특성 | `IN` | `EXISTS` |
 |---------|------|---------|
-| Returns | Matching values | True/False |
-| NULL safety | Unsafe — `NOT IN` fails with NULLs | Safe |
-| Short-circuit | No | Yes — stops at first match |
-| Self-referencing | No | Yes — correlated |
+| 반환값 | 일치하는 값 | True/False |
+| NULL 안전성 | 안전하지 않음 — `NOT IN`은 NULL이 있으면 실패 | 안전 |
+| 단락 평가 | 없음 | 있음 — 첫 번째 일치 시 중단 |
+| 자기 참조 | 불가 | 가능 — 상관 서브쿼리 |
 
-## Basic EXISTS
+## 기본 EXISTS
+
+![EXISTS — 교집합](../img/set-intersect.svg){ .off-glb width="280"  }
 
 ```sql
--- Customers who have placed at least one order
+-- 주문을 한 번이라도 한 고객
 SELECT id, name, grade
 FROM customers AS c
 WHERE EXISTS (
@@ -35,14 +37,16 @@ ORDER BY name
 LIMIT 8;
 ```
 
-The inner query references `c.id` from the outer query — this is a **correlated subquery**. It runs once per outer row, checking whether any matching order exists.
+내부 쿼리가 외부 쿼리의 `c.id`를 참조하는 것을 **상관 서브쿼리(Correlated Subquery)**라고 합니다. 외부 행마다 한 번씩 실행되면서 일치하는 주문이 존재하는지 확인합니다.
 
-## NOT EXISTS — Finding Gaps
+## NOT EXISTS — 누락 데이터 찾기
 
-`NOT EXISTS` is the safe alternative to `NOT IN` when the subquery column might contain NULLs.
+![NOT EXISTS — 차집합](../img/set-except.svg){ .off-glb width="280"  }
+
+`NOT EXISTS`는 서브쿼리 칼럼에 NULL이 있을 수 있는 경우 `NOT IN`의 안전한 대안입니다.
 
 ```sql
--- Customers who have NEVER placed an order (safer than NOT IN)
+-- 한 번도 주문하지 않은 고객 (NOT IN보다 안전)
 SELECT id, name, email, created_at
 FROM customers AS c
 WHERE NOT EXISTS (
@@ -54,16 +58,16 @@ ORDER BY created_at DESC
 LIMIT 10;
 ```
 
-**Result:**
+**결과:**
 
 | id | name | email | created_at |
 |---:|------|-------|------------|
-| 5228 | Tyler Brooks | t.brooks@testmail.com | 2024-12-28 |
-| 5221 | Grace Liu | g.liu@testmail.com | 2024-12-19 |
+| 5228 | 김태양 | t.kim@testmail.kr | 2024-12-28 |
+| 5221 | 이하은 | h.lee@testmail.kr | 2024-12-19 |
 | ... | | | |
 
 ```sql
--- Products in someone's wishlist that have NEVER been purchased
+-- 누군가의 찜 목록에는 있지만 한 번도 구매된 적 없는 상품
 SELECT p.id, p.name, p.price
 FROM products AS p
 WHERE EXISTS (
@@ -75,46 +79,46 @@ AND NOT EXISTS (
 ORDER BY p.price DESC;
 ```
 
-**Result:**
+**결과:**
 
 | id | name | price |
 |---:|------|------:|
-| 214 | Limited Edition Gaming Chair | 899.00 |
-| 187 | 8K HDMI Cable 3m | 79.99 |
+| 214 | 한정판 게이밍 체어 | 899.00 |
+| 187 | 8K HDMI 케이블 3m | 79.99 |
 | ... | | |
 
-## Correlated Subqueries for Conditional Logic
+## 조건부 로직을 위한 상관 서브쿼리
 
-Correlated subqueries in `SELECT` can answer "does this row have a related record?" per row.
+`SELECT` 절의 상관 서브쿼리를 사용하면 행마다 "관련 레코드가 있는가?"를 확인할 수 있습니다.
 
 ```sql
--- Show each customer with flags for order, review, and complaint history
+-- 각 고객의 주문, 리뷰, 불만 접수 여부 표시
 SELECT
     c.id,
     c.name,
     c.grade,
-    CASE WHEN EXISTS (SELECT 1 FROM orders     WHERE customer_id = c.id) THEN 'Yes' ELSE 'No' END AS has_orders,
-    CASE WHEN EXISTS (SELECT 1 FROM reviews    WHERE customer_id = c.id) THEN 'Yes' ELSE 'No' END AS has_reviews,
-    CASE WHEN EXISTS (SELECT 1 FROM complaints WHERE customer_id = c.id) THEN 'Yes' ELSE 'No' END AS has_complaints
+    CASE WHEN EXISTS (SELECT 1 FROM orders     WHERE customer_id = c.id) THEN '있음' ELSE '없음' END AS has_orders,
+    CASE WHEN EXISTS (SELECT 1 FROM reviews    WHERE customer_id = c.id) THEN '있음' ELSE '없음' END AS has_reviews,
+    CASE WHEN EXISTS (SELECT 1 FROM complaints WHERE customer_id = c.id) THEN '있음' ELSE '없음' END AS has_complaints
 FROM customers AS c
 WHERE c.grade IN ('VIP', 'GOLD')
 ORDER BY c.name
 LIMIT 8;
 ```
 
-**Result:**
+**결과:**
 
 | id | name | grade | has_orders | has_reviews | has_complaints |
 |---:|------|-------|------------|-------------|----------------|
-| 41 | Aaron Cross | GOLD | Yes | Yes | No |
-| 88 | Alice Morgan | VIP | Yes | Yes | Yes |
-| 102 | Amanda Foster | GOLD | Yes | No | No |
+| 41 | 강도현 | GOLD | 있음 | 있음 | 없음 |
+| 88 | 박소율 | VIP | 있음 | 있음 | 있음 |
+| 102 | 이지안 | GOLD | 있음 | 없음 | 없음 |
 | ... | | | | | |
 
-## EXISTS with Multiple Conditions
+## 다중 조건 EXISTS
 
 ```sql
--- Customers who have BOTH an order in 2024 AND a complaint
+-- 2024년에 주문도 하고 불만도 접수한 고객
 SELECT c.id, c.name, c.grade
 FROM customers AS c
 WHERE EXISTS (
@@ -131,10 +135,10 @@ AND EXISTS (
 ORDER BY c.name;
 ```
 
-## Using EXISTS in HAVING (via Aggregation)
+## HAVING에서 EXISTS 사용 (집계와 함께)
 
 ```sql
--- Categories where at least one product has been reviewed 50+ times
+-- 리뷰가 50개 이상인 상품이 하나라도 있는 카테고리
 SELECT
     cat.name    AS category,
     COUNT(p.id) AS product_count
@@ -152,15 +156,15 @@ HAVING EXISTS (
 ORDER BY category;
 ```
 
-!!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
+!!! note "레슨 복습 문제"
+    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## Practice Exercises
+## 연습 문제
 
-### Exercise 1
-Find all wishlist items where the product has **not yet been purchased** by that same customer. Return `customer_name`, `product_name`, and `added_at` (when the item was wishlisted). Use `NOT EXISTS` with a correlated subquery that checks `order_items` + `orders` for a matching `customer_id` and `product_id`.
+### 연습 1
+해당 고객이 아직 **구매하지 않은** 찜 목록 상품을 모두 찾으세요. `customer_name`, `product_name`, `added_at`(찜 등록 일시)을 반환하세요. `order_items`와 `orders`에서 `customer_id`와 `product_id`가 일치하는지 확인하는 상관 서브쿼리와 함께 `NOT EXISTS`를 사용하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT
         c.name  AS customer_name,
@@ -181,10 +185,10 @@ Find all wishlist items where the product has **not yet been purchased** by that
     LIMIT 20;
     ```
 
-### Exercise 2
-Identify customers who have submitted a complaint AND have a return on record. Return `customer_id`, `name`, `grade`, `complaint_count`, and `return_count`. Use `EXISTS` for filtering, and subquery aggregation or joins for the counts.
+### 연습 2
+불만을 접수한 적 있고 반품 이력도 있는 고객을 찾으세요. `customer_id`, `name`, `grade`, `complaint_count`, `return_count`를 반환하세요. 필터링에는 `EXISTS`를 사용하고, 건수 집계에는 서브쿼리 집계 또는 JOIN을 사용하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT
         c.id    AS customer_id,
@@ -207,10 +211,10 @@ Identify customers who have submitted a complaint AND have a return on record. R
     ORDER BY complaint_count DESC;
     ```
 
-### Exercise 3
-Use `NOT EXISTS` to find customers who have placed 5 or more orders but have never written a review. Return `customer_id`, `name`, `grade`, and `order_count`.
+### 연습 3
+`NOT EXISTS`를 사용하여 한 번도 리뷰를 작성하지 않은 고객 중 5건 이상 주문한 고객을 찾으세요. `customer_id`, `name`, `grade`, `order_count`를 반환하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT
         c.id AS customer_id,
@@ -230,10 +234,10 @@ Use `NOT EXISTS` to find customers who have placed 5 or more orders but have nev
     LIMIT 20;
     ```
 
-### Exercise 4
-Use `EXISTS` to find customers who have used every available payment method at least once. Return `customer_id` and `name`. Hint: use `NOT EXISTS` with `EXCEPT` to check that no payment method is missing.
+### 연습 4
+`EXISTS`를 사용하여 모든 결제 수단(credit_card, bank_transfer, cash 등)으로 한 번 이상 결제한 적이 있는 고객을 찾으세요. `customer_id`, `name`을 반환하세요. 힌트: 결제 수단 종류 수와 해당 고객이 사용한 결제 수단 수를 비교하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT c.id AS customer_id, c.name
     FROM customers AS c
@@ -258,10 +262,10 @@ Use `EXISTS` to find customers who have used every available payment method at l
     ORDER BY c.name;
     ```
 
-### Exercise 5
-Use `EXISTS` with correlated subqueries to find products that have received both a 5-star and a 1-star review. Return `product_id`, `product_name`, and `price`.
+### 연습 5
+`EXISTS`와 상관 서브쿼리를 사용하여 같은 상품에 대해 리뷰 평점 5점과 1점이 모두 존재하는 상품을 찾으세요. `product_id`, `product_name`, `price`를 반환하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT
         p.id    AS product_id,
@@ -277,10 +281,10 @@ Use `EXISTS` with correlated subqueries to find products that have received both
     ORDER BY p.name;
     ```
 
-### Exercise 6
-Use `NOT EXISTS` as an anti-join to find orders that have a shipping record but have not yet been delivered (`delivered_at IS NULL`). Return `order_number`, `ordered_at`, `status`, `carrier`, and `shipped_at`.
+### 연습 6
+`NOT EXISTS`로 안티 조인을 구현하여, 배송(shipping)이 생성되었지만 아직 배송 완료(delivered_at IS NULL)되지 않은 주문을 찾으세요. `order_number`, `ordered_at`, `status`, `carrier`, `shipped_at`을 반환하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT
         o.order_number,
@@ -300,10 +304,10 @@ Use `NOT EXISTS` as an anti-join to find orders that have a shipping record but 
     LIMIT 20;
     ```
 
-### Exercise 7
-Combine `EXISTS` with an aggregate condition in `HAVING` to find categories that contain at least one product with an average review rating of 4.0 or higher. Return `category_name` and `product_count`.
+### 연습 7
+`EXISTS`와 집계 조건을 결합하여, 평균 리뷰 평점이 4.0 이상인 상품을 하나 이상 보유한 카테고리를 찾으세요. `category_name`, `product_count`를 반환하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT
         cat.name AS category_name,
@@ -323,10 +327,10 @@ Combine `EXISTS` with an aggregate condition in `HAVING` to find categories that
     ORDER BY category_name;
     ```
 
-### Exercise 8
-Use correlated subqueries to show each staff member alongside their largest order. Return `staff_name`, `department`, `max_order_amount`, and `max_order_number` (the order number matching that highest amount).
+### 연습 8
+상관 서브쿼리를 사용하여 각 직원이 처리한 주문 중 가장 금액이 큰 주문의 정보를 함께 표시하세요. `staff_name`, `department`, `max_order_amount`, `max_order_number`를 반환하세요. `max_order_number`는 해당 금액과 일치하는 주문 번호입니다.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT
         s.name AS staff_name,
@@ -344,10 +348,10 @@ Use correlated subqueries to show each staff member alongside their largest orde
     LIMIT 15;
     ```
 
-### Exercise 9
-Use `NOT EXISTS` to find products that every customer who ordered in 2024 has purchased. In other words, there is no 2024-ordering customer who has NOT bought this product. Return `product_id` and `product_name`.
+### 연습 9
+`NOT EXISTS`를 사용하여 2024년에 주문한 모든 고객이 공통으로 구매한 상품을 찾으세요. 즉, 2024년에 주문한 고객 중 해당 상품을 구매하지 않은 고객이 한 명도 없는 상품입니다. `product_id`, `product_name`을 반환하세요.
 
-??? success "Answer"
+??? success "정답"
     ```sql
     SELECT p.id AS product_id, p.name AS product_name
     FROM products AS p
@@ -374,4 +378,4 @@ Use `NOT EXISTS` to find products that every customer who ordered in 2024 has pu
     ```
 
 ---
-Next: [Lesson 20: Views](20-views.md)
+다음: [강의 21: 뷰(Views)](21-views.md)

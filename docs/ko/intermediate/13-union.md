@@ -19,6 +19,8 @@ flowchart LR
 
 ## UNION vs. UNION ALL
 
+![UNION](../img/set-union.svg){ .off-glb width="280"  }
+
 | 연산자 | 중복 처리 | 속도 |
 |--------|-----------|------|
 | `UNION` | 제거 (`DISTINCT`처럼 동작) | 느림 — 중복 제거를 위한 정렬/해시 필요 |

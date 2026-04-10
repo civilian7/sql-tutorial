@@ -1,4 +1,4 @@
-# Lesson 22: Triggers
+# Lesson 23: Triggers
 
 A **trigger** is a database object that automatically executes a block of SQL in response to a data modification event (`INSERT`, `UPDATE`, or `DELETE`) on a specific table. Triggers enforce business rules, maintain audit trails, and keep derived data in sync — all without application code.
 
@@ -701,4 +701,4 @@ Drop all triggers and tables you created in exercises 3 through 6 to restore the
 
 You have completed the tutorial series. Ready for a challenge?
 
-Next: [Sales Analysis Exercises](../exercises/advanced-01-sales-analysis.md)
+Next: [Lesson 24: Querying JSON Data](24-json.md)

@@ -8,6 +8,7 @@ flowchart LR
         C["CREATE TABLE\n+ new table"]
         A["ALTER TABLE\n~ modify table"]
         D["DROP TABLE\n- remove table"]
+        T["TRUNCATE TABLE\n∅ remove all rows"]
     end
     subgraph "DML — Data"
         I["INSERT / UPDATE / DELETE"]
@@ -18,7 +19,7 @@ flowchart LR
 
 | Category | Statements | What changes |
 |----------|-----------|-------------|
-| DDL | CREATE, ALTER, DROP | Table structure (columns, constraints, indexes) |
+| DDL | CREATE, ALTER, DROP, TRUNCATE | Table structure (columns, constraints, indexes) |
 | DML | INSERT, UPDATE, DELETE | Rows inside tables |
 | DQL | SELECT | Nothing (read-only) |
 
@@ -422,6 +423,58 @@ DROP TABLE IF EXISTS temp_products;
 
 > **Drop order matters.** If `temp_order_items` has a foreign key referencing `temp_orders`, you must drop `temp_order_items` first, or the DROP will fail due to the foreign key constraint.
 
+## TRUNCATE TABLE
+
+`TRUNCATE TABLE` removes **all rows** from a table while keeping the table structure (columns, constraints, indexes) intact. It is similar to `DELETE FROM table_name` but works very differently under the hood.
+
+### DELETE vs TRUNCATE
+
+| Aspect | DELETE | TRUNCATE |
+|--------|--------|----------|
+| WHERE clause | Supported | Not supported |
+| Transaction rollback | Supported | Depends on the database |
+| Trigger execution | Triggers fire | Triggers do not fire |
+| Speed (large data) | Slow | Fast |
+| Auto-increment | Preserved | Reset |
+
+`DELETE` removes rows one by one and logs each deletion. `TRUNCATE` deallocates entire data pages, making it dramatically faster for large tables.
+
+### Syntax by Database
+
+=== "SQLite"
+    SQLite does not support `TRUNCATE TABLE`. Use `DELETE FROM` instead.
+
+    ```sql
+    -- Delete all rows (table structure is preserved)
+    DELETE FROM order_archive;
+
+    -- Reclaim disk space with VACUUM
+    VACUUM;
+    ```
+
+    > In SQLite, `DELETE FROM table_name` removes all rows but the file size does not shrink. Run `VACUUM` afterward to reclaim disk space.
+
+=== "MySQL"
+    ```sql
+    TRUNCATE TABLE order_archive;
+    ```
+
+    > In MySQL, `TRUNCATE` is treated as **DDL**. It implicitly commits the transaction, so you cannot `ROLLBACK`. The `AUTO_INCREMENT` counter is reset to its initial value.
+
+=== "PostgreSQL"
+    ```sql
+    -- Basic TRUNCATE
+    TRUNCATE TABLE order_archive;
+
+    -- Also reset the identity/sequence counter
+    TRUNCATE TABLE order_archive RESTART IDENTITY;
+
+    -- Also truncate child tables referenced by foreign keys
+    TRUNCATE TABLE order_archive CASCADE;
+    ```
+
+    > PostgreSQL's `TRUNCATE` is transactional — you can `ROLLBACK` within a transaction. Use `RESTART IDENTITY` to reset sequences, and `CASCADE` to truncate dependent child tables.
+
 ## CREATE TABLE AS SELECT (CTAS)
 
 Create a new table from the result of a query. The new table inherits column names and types from the SELECT, but **not** constraints (no primary key, no foreign key, no NOT NULL).
@@ -808,5 +861,37 @@ Explain the difference between `CREATE TABLE AS SELECT` and `CREATE TABLE` + `IN
     WHERE status = 'delivered';
     ```
 
+### Exercise 11
+Explain the differences between `DELETE FROM` and `TRUNCATE TABLE`. Then write the SQL to remove all data from the `order_archive` table for each database.
+
+??? success "Answer"
+    **Differences:**
+
+    - `DELETE` removes rows one at a time, logs each deletion, supports WHERE clauses, fires triggers, and preserves the auto-increment counter.
+    - `TRUNCATE` deallocates data pages in bulk (much faster), does not support WHERE, does not fire triggers, and resets the auto-increment counter.
+
+    === "SQLite"
+        ```sql
+        -- SQLite does not support TRUNCATE; use DELETE instead
+        DELETE FROM order_archive;
+
+        -- Reclaim disk space if needed
+        VACUUM;
+        ```
+
+    === "MySQL"
+        ```sql
+        TRUNCATE TABLE order_archive;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- Basic TRUNCATE
+        TRUNCATE TABLE order_archive;
+
+        -- Also reset the sequence counter
+        TRUNCATE TABLE order_archive RESTART IDENTITY;
+        ```
+
 ---
-Next: [Lesson 16: SELF JOIN and CROSS JOIN](16-self-cross-join.md)
+Next: [Lesson 16: Transactions and ACID](16-transactions.md)

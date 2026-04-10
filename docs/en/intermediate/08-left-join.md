@@ -27,6 +27,8 @@ flowchart LR
 
 > LEFT JOIN keeps all rows from the left table. Missing matches on the right become NULL.
 
+![LEFT JOIN](../img/join-left.svg){ .off-glb width="300"  }
+
 ## Basic LEFT JOIN
 
 ```sql
@@ -56,6 +58,8 @@ LIMIT 8;
 The `ASUS TUF Gaming Laptop` and `Belkin USB-C Hub` have no reviews, so their `rating` and `reviewed_at` are `NULL`.
 
 ## Finding Non-Matching Rows
+
+![LEFT JOIN — A only](../img/join-left-only.svg){ .off-glb width="300"  }
 
 The classic "anti-join" pattern: `LEFT JOIN` then filter for `WHERE right_table.id IS NULL`. This finds rows in the left table with **no** corresponding row in the right table.
 
@@ -174,6 +178,186 @@ LEFT JOIN payments AS p ON p.order_id = o.id
 WHERE o.ordered_at LIKE '2024-12%'
 LIMIT 5;
 ```
+
+## RIGHT JOIN
+
+![RIGHT JOIN](../img/join-right.svg){ .off-glb width="300"  }
+
+`RIGHT JOIN` is the opposite of LEFT JOIN. It keeps **all rows from the right table**, filling in `NULL` for left-side columns when there is no match.
+
+```mermaid
+flowchart LR
+    subgraph "orders (LEFT)"
+        O1["Cust:1 ORD-001"]
+        O3["Cust:2 ORD-003"]
+    end
+    subgraph "customers (RIGHT)"
+        C1["ID:1 Kim"]
+        C2["ID:2 Lee"]
+        C3["ID:3 Park"]
+    end
+    subgraph "RIGHT JOIN Result"
+        R1["ORD-001 + Kim"]
+        R2["ORD-003 + Lee"]
+        R3["NULL + Park"]
+    end
+    O1 --> R1
+    O3 --> R2
+    C1 --> R1
+    C2 --> R2
+    C3 --> R3
+```
+
+```sql
+-- RIGHT JOIN: include customers even if they have no orders
+SELECT
+    c.name,
+    c.email,
+    o.order_number,
+    o.total_amount
+FROM orders AS o
+RIGHT JOIN customers AS c ON c.id = o.customer_id
+ORDER BY c.name
+LIMIT 10;
+```
+
+In practice, RIGHT JOIN is rarely used. You can always swap the table order and use LEFT JOIN to get the same result:
+
+```sql
+-- Equivalent LEFT JOIN
+SELECT
+    c.name,
+    c.email,
+    o.order_number,
+    o.total_amount
+FROM customers AS c
+LEFT JOIN orders AS o ON c.id = o.customer_id
+ORDER BY c.name
+LIMIT 10;
+```
+
+> Both queries return the same result. LEFT JOIN is more intuitive, so most teams prefer it over RIGHT JOIN.
+
+## FULL OUTER JOIN
+
+![FULL OUTER JOIN](../img/join-full.svg){ .off-glb width="300"  }
+
+`FULL OUTER JOIN` keeps **all rows from both tables**. When there is no match on either side, the missing columns are filled with `NULL`. This is useful when you need to see unmatched rows from both sides — for example, customers without orders AND orders without valid customers.
+
+```mermaid
+flowchart LR
+    subgraph "customers"
+        C1["ID:1 Kim"]
+        C2["ID:2 Lee"]
+        C3["ID:3 Park"]
+    end
+    subgraph "orders"
+        O1["Cust:1 ORD-001"]
+        O2["Cust:2 ORD-003"]
+        O4["Cust:99 ORD-007"]
+    end
+    subgraph "FULL OUTER JOIN Result"
+        R1["Kim + ORD-001"]
+        R2["Lee + ORD-003"]
+        R3["Park + NULL"]
+        R4["NULL + ORD-007"]
+    end
+    C1 --> R1
+    C2 --> R2
+    C3 --> R3
+    O1 --> R1
+    O2 --> R2
+    O4 --> R4
+```
+
+Support for FULL OUTER JOIN varies by database:
+
+=== "SQLite"
+
+    SQLite 3.39.0 (2022-07-21) and later supports `FULL OUTER JOIN` natively:
+
+    ```sql
+    -- SQLite 3.39+: FULL OUTER JOIN supported
+    SELECT
+        c.name,
+        c.email,
+        o.order_number,
+        o.total_amount
+    FROM customers AS c
+    FULL OUTER JOIN orders AS o ON c.id = o.customer_id
+    ORDER BY c.name
+    LIMIT 15;
+    ```
+
+    For compatibility with older versions, use a `LEFT JOIN` + `UNION ALL` workaround:
+
+    ```sql
+    -- SQLite 3.38 and below: LEFT JOIN UNION ALL
+    SELECT
+        c.name,
+        c.email,
+        o.order_number,
+        o.total_amount
+    FROM customers AS c
+    LEFT JOIN orders AS o ON c.id = o.customer_id
+
+    UNION ALL
+
+    SELECT
+        NULL    AS name,
+        NULL    AS email,
+        o.order_number,
+        o.total_amount
+    FROM orders AS o
+    LEFT JOIN customers AS c ON c.id = o.customer_id
+    WHERE c.id IS NULL
+    ORDER BY name
+    LIMIT 15;
+    ```
+
+=== "MySQL"
+
+    MySQL does not support `FULL OUTER JOIN`. Combine `LEFT JOIN` and `RIGHT JOIN` with `UNION` instead:
+
+    ```sql
+    -- MySQL: LEFT JOIN UNION RIGHT JOIN
+    SELECT
+        c.name,
+        c.email,
+        o.order_number,
+        o.total_amount
+    FROM customers AS c
+    LEFT JOIN orders AS o ON c.id = o.customer_id
+
+    UNION
+
+    SELECT
+        c.name,
+        c.email,
+        o.order_number,
+        o.total_amount
+    FROM customers AS c
+    RIGHT JOIN orders AS o ON c.id = o.customer_id
+    ORDER BY name
+    LIMIT 15;
+    ```
+
+=== "PostgreSQL"
+
+    PostgreSQL supports `FULL OUTER JOIN` natively:
+
+    ```sql
+    -- PostgreSQL: FULL OUTER JOIN supported
+    SELECT
+        c.name,
+        c.email,
+        o.order_number,
+        o.total_amount
+    FROM customers AS c
+    FULL OUTER JOIN orders AS o ON c.id = o.customer_id
+    ORDER BY c.name
+    LIMIT 15;
+    ```
 
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
@@ -306,6 +490,73 @@ For each supplier, find the number of active products they supply (`product_coun
         AND p.is_active = 1
     GROUP BY sup.id, sup.company_name
     ORDER BY total_stock DESC;
+    ```
+
+### Exercise 9
+Using a RIGHT JOIN on the `orders` table, find every customer's name (`name`) and their order count (`order_count`). **Include customers with no orders.** Sort by order count descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        c.name,
+        COUNT(o.id) AS order_count
+    FROM orders AS o
+    RIGHT JOIN customers AS c ON c.id = o.customer_id
+    GROUP BY c.id, c.name
+    ORDER BY order_count DESC
+    LIMIT 10;
+    ```
+
+### Exercise 10
+Show all customers without orders AND all orders without a valid customer in a single query. Return `customer_name`, `order_number`, and `total_amount`. Display `'(Unknown)'` for missing customers and `'(No orders)'` for missing orders. Sort by `customer_name` ascending, limit to 15 rows.
+
+=== "SQLite"
+
+    ```sql
+    -- SQLite 3.39+
+    SELECT
+        COALESCE(c.name, '(Unknown)')          AS customer_name,
+        COALESCE(o.order_number, '(No orders)') AS order_number,
+        o.total_amount
+    FROM customers AS c
+    FULL OUTER JOIN orders AS o ON c.id = o.customer_id
+    ORDER BY customer_name
+    LIMIT 15;
+    ```
+
+=== "MySQL"
+
+    ```sql
+    SELECT
+        COALESCE(c.name, '(Unknown)')          AS customer_name,
+        COALESCE(o.order_number, '(No orders)') AS order_number,
+        o.total_amount
+    FROM customers AS c
+    LEFT JOIN orders AS o ON c.id = o.customer_id
+
+    UNION
+
+    SELECT
+        COALESCE(c.name, '(Unknown)')          AS customer_name,
+        COALESCE(o.order_number, '(No orders)') AS order_number,
+        o.total_amount
+    FROM customers AS c
+    RIGHT JOIN orders AS o ON c.id = o.customer_id
+    ORDER BY customer_name
+    LIMIT 15;
+    ```
+
+=== "PostgreSQL"
+
+    ```sql
+    SELECT
+        COALESCE(c.name, '(Unknown)')          AS customer_name,
+        COALESCE(o.order_number, '(No orders)') AS order_number,
+        o.total_amount
+    FROM customers AS c
+    FULL OUTER JOIN orders AS o ON c.id = o.customer_id
+    ORDER BY customer_name
+    LIMIT 15;
     ```
 
 ---

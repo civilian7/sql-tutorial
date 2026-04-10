@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 270" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:12px} .h{font-weight:700;font-size:13px} .sm{font-size:10px;opacity:.5}
+    .row{fill:rgba(91,141,239,0.15);rx:3}
+    .cur{fill:rgba(255,152,0,0.25);rx:3}
+    .frame{fill:rgba(232,80,80,0.1);rx:4}
+    .s{stroke:rgba(128,128,128,0.3);stroke-width:1}
+  </style>
+  <text x="210" y="20" text-anchor="middle" class="h" font-size="14">ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING</text>
+  <text x="30" y="48" class="h">Row</text><text x="100" y="48" class="h">Name</text>
+  <text x="200" y="48" class="h">Amount</text><text x="310" y="48" class="h">AVG()</text>
+
+  <rect x="10" y="56" width="280" height="22" class="row"/>
+  <text x="30" y="72">1</text><text x="100" y="72">Kim</text><text x="200" y="72">100</text>
+
+  <rect x="10" y="82" width="280" height="22" class="row"/>
+  <text x="30" y="98">2</text><text x="100" y="98">Lee</text><text x="200" y="98">200</text>
+
+  <rect x="6" y="106" width="288" height="70" class="frame"/>
+
+  <rect x="10" y="108" width="280" height="22" class="row"/>
+  <text x="30" y="124">3</text><text x="100" y="124">Park</text><text x="200" y="124">300</text>
+  <text x="310" y="124" class="sm">1 PRECEDING</text>
+
+  <rect x="10" y="134" width="280" height="22" class="cur"/>
+  <text x="30" y="150" font-weight="700">4</text><text x="100" y="150" font-weight="700">Choi</text><text x="200" y="150" font-weight="700">400</text>
+  <text x="310" y="150" class="h">CURRENT ROW</text>
+
+  <rect x="10" y="160" width="280" height="22" class="row"/>
+  <text x="30" y="176">5</text><text x="100" y="176">Yoon</text><text x="200" y="176">500</text>
+  <text x="310" y="176" class="sm">1 FOLLOWING</text>
+
+  <rect x="10" y="186" width="280" height="22" class="row"/>
+  <text x="30" y="202">6</text><text x="100" y="202">Jung</text><text x="200" y="202">600</text>
+
+  <rect x="10" y="212" width="280" height="22" class="row"/>
+  <text x="30" y="228">7</text><text x="100" y="228">Han</text><text x="200" y="228">700</text>
+
+  <line x1="4" y1="110" x2="4" y2="180" stroke="rgba(232,80,80,0.6)" stroke-width="3"/>
+  <text x="310" y="150" class="h">(300+400+500)/3 = 400</text>
+  <text x="0" y="258" class="sm">Window frame slides down with each current row</text>
+</svg>

@@ -50,6 +50,8 @@ LIMIT 5;
 
 ## IN Subqueries
 
+![IN — Intersection](../img/set-intersect.svg){ .off-glb width="280"  }
+
 When a subquery can return multiple rows, use `IN` instead of `=`.
 
 ```sql
@@ -86,6 +88,8 @@ ORDER BY name;
 
 ## NOT IN
 
+![NOT IN — Except](../img/set-except.svg){ .off-glb width="280"  }
+
 `NOT IN` finds rows that are *absent* from the subquery result — similar to the `LEFT JOIN ... IS NULL` anti-join pattern.
 
 ```sql
@@ -99,7 +103,7 @@ WHERE id NOT IN (
   AND is_active = 1;
 ```
 
-> **Caution:** `NOT IN` behaves unexpectedly when the subquery returns any NULL values (it returns no rows). Prefer `NOT EXISTS` (Lesson 19) when NULLs might appear.
+> **Caution:** `NOT IN` behaves unexpectedly when the subquery returns any NULL values (it returns no rows). Prefer `NOT EXISTS` (Lesson 20) when NULLs might appear.
 
 ## FROM Subqueries (Derived Tables)
 

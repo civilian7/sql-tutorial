@@ -211,6 +211,111 @@ COMMIT;
 | Forgetting `updated_at` | Stale audit trail | Include `updated_at = datetime('now')` in every UPDATE |
 | Inserting duplicate primary key | Constraint error | SQLite: `INSERT OR IGNORE` / MySQL: `INSERT IGNORE` / PG: `ON CONFLICT DO NOTHING` |
 
+## UPSERT (INSERT or UPDATE)
+
+A very common real-world pattern: **if the row already exists, UPDATE it; otherwise, INSERT it**. This is called an UPSERT. The catch is that every database has a completely different syntax for it.
+
+### Basic Syntax
+
+=== "SQLite"
+    SQLite supports two approaches.
+
+    **Method 1: `INSERT OR REPLACE`** — On conflict, deletes the existing row and inserts a new one. Be careful: columns you don't specify will be reset to their default values.
+    ```sql
+    INSERT OR REPLACE INTO customers (id, name, email, point_balance, updated_at)
+    VALUES (100, 'Hong Gildong', 'hong@testmail.kr', 1500, datetime('now'));
+    ```
+
+    **Method 2: `ON CONFLICT ... DO UPDATE`** — Gives you finer control. Other columns in the existing row are preserved.
+    ```sql
+    INSERT INTO customers (id, name, email, point_balance, updated_at)
+    VALUES (100, 'Hong Gildong', 'hong@testmail.kr', 1500, datetime('now'))
+    ON CONFLICT(id) DO UPDATE SET
+        point_balance = excluded.point_balance,
+        updated_at    = excluded.updated_at;
+    ```
+
+    > `excluded` is a special keyword that refers to the values you tried to insert.
+
+=== "MySQL"
+    MySQL uses `ON DUPLICATE KEY UPDATE`.
+    ```sql
+    INSERT INTO customers (id, name, email, point_balance, updated_at)
+    VALUES (100, 'Hong Gildong', 'hong@testmail.kr', 1500, NOW())
+    ON DUPLICATE KEY UPDATE
+        point_balance = VALUES(point_balance),
+        updated_at    = VALUES(updated_at);
+    ```
+
+    > `VALUES(column)` refers to the values you tried to insert. MySQL 8.0.20+ also supports the `AS new` alias syntax.
+
+=== "PostgreSQL"
+    PostgreSQL uses an `ON CONFLICT` clause similar to SQLite.
+    ```sql
+    INSERT INTO customers (id, name, email, point_balance, updated_at)
+    VALUES (100, 'Hong Gildong', 'hong@testmail.kr', 1500, NOW())
+    ON CONFLICT(id) DO UPDATE SET
+        point_balance = EXCLUDED.point_balance,
+        updated_at    = EXCLUDED.updated_at;
+    ```
+
+    > `EXCLUDED` is a special keyword that refers to the values you tried to insert.
+
+### Example: Syncing Product Inventory
+
+When syncing inventory data from an external system, update the stock if the SKU already exists, otherwise insert a new product.
+
+=== "SQLite"
+    ```sql
+    INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+    VALUES ('SKU-0042', 'Wireless Mouse X', 10, 3, 45.00, 200, 1, datetime('now'), datetime('now'))
+    ON CONFLICT(sku) DO UPDATE SET
+        stock_qty  = excluded.stock_qty,
+        updated_at = excluded.updated_at;
+    ```
+
+=== "MySQL"
+    ```sql
+    INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+    VALUES ('SKU-0042', 'Wireless Mouse X', 10, 3, 45.00, 200, 1, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE
+        stock_qty  = VALUES(stock_qty),
+        updated_at = VALUES(updated_at);
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+    VALUES ('SKU-0042', 'Wireless Mouse X', 10, 3, 45.00, 200, 1, NOW(), NOW())
+    ON CONFLICT(sku) DO UPDATE SET
+        stock_qty  = EXCLUDED.stock_qty,
+        updated_at = EXCLUDED.updated_at;
+    ```
+
+### Reference: SQL Standard MERGE
+
+The SQL standard defines a `MERGE` statement. `MERGE` is more general than UPSERT — it compares a source table against a target table and can perform INSERT, UPDATE, or DELETE based on whether rows match.
+
+```sql
+-- SQL standard MERGE (for reference — not available in SQLite or MySQL)
+MERGE INTO target_table t
+USING source_table s ON t.id = s.id
+WHEN MATCHED THEN
+    UPDATE SET t.value = s.value
+WHEN NOT MATCHED THEN
+    INSERT (id, value) VALUES (s.id, s.value);
+```
+
+However, support is limited:
+
+| DB | MERGE Support |
+|----|--------------|
+| SQLite | Not supported |
+| MySQL | Not supported |
+| PostgreSQL | 15+ supported |
+
+In practice, the **UPSERT patterns shown above are far more commonly used**. They cover most use cases and work across all major databases.
+
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
@@ -492,6 +597,71 @@ Write a `SELECT` to find active products that have never been ordered, then writ
             updated_at = NOW()
         WHERE id NOT IN (SELECT DISTINCT product_id FROM order_items)
           AND is_active = 1;
+        ```
+
+### Exercise 11
+Write an UPSERT to update the point balance of customer ID 300. If the customer exists, set `point_balance` to `2000` and update `updated_at`. If the customer doesn't exist, insert a new record with name `'Seo-yun Lee'`, email `'lee.sy@testmail.kr'`, phone `'555-0300-0001'`, grade `'BRONZE'`, `point_balance = 2000`, `is_active = 1`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, datetime('now'), datetime('now'))
+        ON CONFLICT(id) DO UPDATE SET
+            point_balance = excluded.point_balance,
+            updated_at    = excluded.updated_at;
+        ```
+
+    === "MySQL"
+        ```sql
+        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE
+            point_balance = VALUES(point_balance),
+            updated_at    = VALUES(updated_at);
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
+        ON CONFLICT(id) DO UPDATE SET
+            point_balance = EXCLUDED.point_balance,
+            updated_at    = EXCLUDED.updated_at;
+        ```
+
+### Exercise 12
+An external inventory system reports that SKU `'SKU-0099'` has 150 units in stock. Write an UPSERT that updates `stock_qty` to 150 if the SKU already exists, but **keeps the existing price if it's higher** than the incoming price. If the SKU doesn't exist, insert it with name `'USB-C Hub'`, `category_id = 10`, `supplier_id = 2`, `price = 35.00`, `stock_qty = 150`, `is_active = 1`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, datetime('now'), datetime('now'))
+        ON CONFLICT(sku) DO UPDATE SET
+            stock_qty  = excluded.stock_qty,
+            price      = MAX(products.price, excluded.price),
+            updated_at = excluded.updated_at;
+        ```
+
+    === "MySQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE
+            stock_qty  = VALUES(stock_qty),
+            price      = GREATEST(price, VALUES(price)),
+            updated_at = VALUES(updated_at);
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
+        ON CONFLICT(sku) DO UPDATE SET
+            stock_qty  = EXCLUDED.stock_qty,
+            price      = GREATEST(products.price, EXCLUDED.price),
+            updated_at = EXCLUDED.updated_at;
         ```
 
 ---

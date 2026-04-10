@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px} .h{font-weight:700;font-size:13px}
+    .node{fill:rgba(91,141,239,0.2);stroke:rgba(91,141,239,0.5);stroke-width:1.5;rx:4}
+    .leaf{fill:rgba(76,175,80,0.2);stroke:rgba(76,175,80,0.5);stroke-width:1.5;rx:4}
+    .hi{fill:rgba(255,152,0,0.25);stroke:rgba(255,152,0,0.7);stroke-width:2;rx:4}
+    .arrow{stroke:rgba(128,128,128,0.5);stroke-width:1.5;fill:none;marker-end:url(#arr)}
+    .found{stroke:rgba(232,80,80,0.7);stroke-width:2}
+    .step{font-weight:700;fill:rgba(232,80,80,0.8);font-size:12px}
+  </style>
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10" fill="rgba(128,128,128,0.5)"/></marker></defs>
+
+  <text x="240" y="18" text-anchor="middle" class="h" font-size="14">B-Tree Index Lookup</text>
+  <text x="240" y="34" text-anchor="middle" font-size="10" opacity=".5">Finding customer_id = 42 (3 steps vs full scan)</text>
+
+  <rect x="170" y="48" width="140" height="30" class="node"/>
+  <text x="240" y="68" text-anchor="middle">[20 | 50 | 80]</text>
+
+  <rect x="30" y="118" width="100" height="30" class="node"/>
+  <text x="80" y="138" text-anchor="middle">[5 | 10 | 15]</text>
+  <rect x="190" y="118" width="100" height="30" class="hi"/>
+  <text x="240" y="138" text-anchor="middle" font-weight="700">[30 | 42 | 48]</text>
+  <rect x="350" y="118" width="100" height="30" class="node"/>
+  <text x="400" y="138" text-anchor="middle">[55 | 65 | 75]</text>
+
+  <path d="M210,78 L95,116" class="arrow"/>
+  <path d="M240,78 L240,116" class="arrow found"/>
+  <path d="M270,78 L385,116" class="arrow"/>
+
+  <rect x="150" y="188" width="80" height="30" class="leaf"/>
+  <text x="190" y="208" text-anchor="middle">[35 | 38]</text>
+  <rect x="250" y="188" width="80" height="30" class="hi"/>
+  <text x="290" y="208" text-anchor="middle" font-weight="700">[42 | 45]</text>
+
+  <path d="M220,148 L195,186" class="arrow"/>
+  <path d="M260,148 L285,186" class="arrow found"/>
+
+  <rect x="250" y="248" width="80" height="28" class="hi"/>
+  <text x="290" y="267" text-anchor="middle" font-weight="700">Row #42</text>
+  <path d="M290,218 L290,246" class="arrow found"/>
+
+  <text x="400" y="68" class="step">Step 1</text>
+  <text x="400" y="138" class="step">Step 2</text>
+  <text x="400" y="208" class="step">Step 3</text>
+</svg>

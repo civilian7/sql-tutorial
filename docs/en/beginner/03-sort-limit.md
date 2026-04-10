@@ -110,6 +110,8 @@ LIMIT 5;
 
 ## OFFSET — Pagination
 
+![Pagination](../img/pagination.svg){ .off-glb width="480"  }
+
 `OFFSET n` skips the first `n` rows before starting to return results. Combined with `LIMIT`, this implements page-based navigation.
 
 ```sql

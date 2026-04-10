@@ -1,4 +1,4 @@
-# 16강: SELF JOIN과 CROSS JOIN
+# 17강: SELF JOIN과 CROSS JOIN
 
 지금까지 서로 다른 테이블 간의 JOIN을 배웠습니다. 이 강에서는 **같은 테이블을 자기 자신과 결합**하는 SELF JOIN과, **모든 행의 조합**을 만드는 CROSS JOIN을 다룹니다. 두 기법 모두 실무에서 자주 등장하며, 특히 계층 구조와 비교 분석에 필수적입니다.
 
@@ -85,7 +85,7 @@ SELF JOIN으로 부모(대분류) → 자식(소분류) 전체 경로를 만들 
 | 노트북 | 게이밍 노트북 | 노트북 > 게이밍 노트북 |
 | ... | | |
 
-> **팁:** 계층 깊이가 고정되어 있을 때는 SELF JOIN이 간결합니다. 깊이가 가변적이면 18강의 재귀 CTE를 사용하세요.
+> **팁:** 계층 깊이가 고정되어 있을 때는 SELF JOIN이 간결합니다. 깊이가 가변적이면 19강의 재귀 CTE를 사용하세요.
 
 ### 같은 카테고리 내 상품 비교
 
@@ -160,6 +160,8 @@ LIMIT 10;
 ---
 
 ## CROSS JOIN — 모든 조합 생성
+
+![CROSS JOIN Grid](../img/cross-join-grid.svg){ .off-glb width="440"  }
 
 `CROSS JOIN`은 왼쪽 테이블의 모든 행과 오른쪽 테이블의 모든 행을 결합합니다. 결과 행 수 = 왼쪽 행 수 × 오른쪽 행 수. ON 조건이 없습니다.
 
@@ -711,4 +713,4 @@ ORDER BY c.date_key;
         ORDER BY qr.q, m.method;
         ```
 
-다음: [강의 17: 윈도우 함수(Window Functions)](../advanced/17-window.md)
+다음: [강의 18: 윈도우 함수(Window Functions)](../advanced/18-window.md)

@@ -1,4 +1,4 @@
-# Lesson 20: Views
+# Lesson 21: Views
 
 A **view** is a saved query stored in the database as a named object. Querying a view feels identical to querying a table, but the underlying SQL runs each time. Views simplify complex queries, enforce consistent business logic, and provide a security layer by hiding raw table details.
 
@@ -205,6 +205,118 @@ HAVING open_complaints > 0 OR pending_returns > 0;
 ```sql
 DROP VIEW IF EXISTS v_cs_watchlist;
 ```
+
+## Materialized Views
+
+The regular views we have covered so far execute their underlying query every time you select from them. A **materialized view** stores the query result physically, dramatically speeding up reads for complex aggregation queries.
+
+### Regular View vs Materialized View
+
+| Aspect | View | Materialized View |
+|--------|------|-------------------|
+| Data storage | No (stores query only) | Yes (stores result) |
+| Query speed | Runs query each time | Pre-computed result |
+| Data freshness | Always current | Requires REFRESH |
+| Disk usage | None | Proportional to result size |
+| Indexing | Not possible | Possible (PostgreSQL) |
+
+**Advantage:** Complex aggregation queries are pre-computed, so reads are fast.
+
+**Disadvantage:** Changes to the underlying data are not reflected automatically. You must refresh manually.
+
+### Database Support
+
+Support for materialized views varies significantly across databases.
+
+=== "SQLite"
+    SQLite does not support materialized views. The workaround is to use `CREATE TABLE ... AS SELECT` (CTAS) and manually DROP + re-create whenever a refresh is needed.
+
+    ```sql
+    -- Create a monthly summary table (materialized view workaround)
+    CREATE TABLE mv_monthly_summary AS
+    SELECT
+        STRFTIME('%Y-%m', o.ordered_at) AS year_month,
+        COUNT(DISTINCT o.id)            AS order_count,
+        SUM(oi.quantity * oi.unit_price) AS revenue
+    FROM orders AS o
+    INNER JOIN order_items AS oi ON oi.order_id = o.id
+    GROUP BY STRFTIME('%Y-%m', o.ordered_at);
+
+    -- To refresh: DROP and re-create
+    DROP TABLE IF EXISTS mv_monthly_summary;
+    CREATE TABLE mv_monthly_summary AS
+    SELECT
+        STRFTIME('%Y-%m', o.ordered_at) AS year_month,
+        COUNT(DISTINCT o.id)            AS order_count,
+        SUM(oi.quantity * oi.unit_price) AS revenue
+    FROM orders AS o
+    INNER JOIN order_items AS oi ON oi.order_id = o.id
+    GROUP BY STRFTIME('%Y-%m', o.ordered_at);
+    ```
+
+=== "MySQL"
+    MySQL does not support materialized views natively. The workaround uses CTAS combined with the event scheduler for periodic refreshes.
+
+    ```sql
+    -- Create a monthly summary table (materialized view workaround)
+    CREATE TABLE mv_monthly_summary AS
+    SELECT
+        DATE_FORMAT(o.ordered_at, '%Y-%m') AS year_month,
+        COUNT(DISTINCT o.id)               AS order_count,
+        SUM(oi.quantity * oi.unit_price)    AS revenue
+    FROM orders AS o
+    INNER JOIN order_items AS oi ON oi.order_id = o.id
+    GROUP BY DATE_FORMAT(o.ordered_at, '%Y-%m');
+
+    -- Event scheduler to refresh daily at 3 AM
+    CREATE EVENT refresh_monthly_summary
+    ON SCHEDULE EVERY 1 DAY
+    STARTS CURRENT_DATE + INTERVAL 3 HOUR
+    DO
+    BEGIN
+        TRUNCATE TABLE mv_monthly_summary;
+        INSERT INTO mv_monthly_summary
+        SELECT
+            DATE_FORMAT(o.ordered_at, '%Y-%m') AS year_month,
+            COUNT(DISTINCT o.id)               AS order_count,
+            SUM(oi.quantity * oi.unit_price)    AS revenue
+        FROM orders AS o
+        INNER JOIN order_items AS oi ON oi.order_id = o.id
+        GROUP BY DATE_FORMAT(o.ordered_at, '%Y-%m');
+    END;
+    ```
+
+=== "PostgreSQL"
+    PostgreSQL supports materialized views natively.
+
+    ```sql
+    -- Create a monthly summary materialized view
+    CREATE MATERIALIZED VIEW mv_monthly_summary AS
+    SELECT
+        TO_CHAR(o.ordered_at, 'YYYY-MM')  AS year_month,
+        COUNT(DISTINCT o.id)              AS order_count,
+        SUM(oi.quantity * oi.unit_price)   AS revenue
+    FROM orders AS o
+    INNER JOIN order_items AS oi ON oi.order_id = o.id
+    GROUP BY TO_CHAR(o.ordered_at, 'YYYY-MM');
+
+    -- You can create indexes on materialized views
+    CREATE INDEX idx_mv_monthly_year_month
+    ON mv_monthly_summary (year_month);
+
+    -- Refresh the data
+    REFRESH MATERIALIZED VIEW mv_monthly_summary;
+
+    -- Concurrent refresh (requires a UNIQUE index)
+    CREATE UNIQUE INDEX idx_mv_monthly_unique
+    ON mv_monthly_summary (year_month);
+    REFRESH MATERIALIZED VIEW CONCURRENTLY mv_monthly_summary;
+
+    -- Drop
+    DROP MATERIALIZED VIEW IF EXISTS mv_monthly_summary;
+    ```
+
+    > The `CONCURRENTLY` option allows queries to read existing data while the refresh is in progress. It requires a UNIQUE index on the materialized view.
 
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
@@ -474,5 +586,78 @@ Drop all the views you created in exercises 5 through 7.
     DROP VIEW IF EXISTS v_category_monthly_revenue;
     ```
 
+### Exercise 10
+Create a materialized view `mv_category_sales` that aggregates total revenue and total quantity sold per category. Include `category_name`, `total_revenue`, and `total_qty`. Use the appropriate approach for each database.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- SQLite: CTAS workaround (no native materialized views)
+        CREATE TABLE mv_category_sales AS
+        SELECT
+            c.name                                  AS category_name,
+            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
+            COALESCE(SUM(oi.quantity), 0)            AS total_qty
+        FROM categories AS c
+        LEFT JOIN products    AS p  ON p.category_id = c.id
+        LEFT JOIN order_items AS oi ON oi.product_id = p.id
+        GROUP BY c.name;
+
+        -- To refresh: DROP and re-create
+        DROP TABLE IF EXISTS mv_category_sales;
+        CREATE TABLE mv_category_sales AS
+        SELECT
+            c.name                                  AS category_name,
+            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
+            COALESCE(SUM(oi.quantity), 0)            AS total_qty
+        FROM categories AS c
+        LEFT JOIN products    AS p  ON p.category_id = c.id
+        LEFT JOIN order_items AS oi ON oi.product_id = p.id
+        GROUP BY c.name;
+        ```
+
+    === "MySQL"
+        ```sql
+        -- MySQL: CTAS workaround (no native materialized views)
+        CREATE TABLE mv_category_sales AS
+        SELECT
+            c.name                                  AS category_name,
+            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
+            COALESCE(SUM(oi.quantity), 0)            AS total_qty
+        FROM categories AS c
+        LEFT JOIN products    AS p  ON p.category_id = c.id
+        LEFT JOIN order_items AS oi ON oi.product_id = p.id
+        GROUP BY c.name;
+
+        -- To refresh: TRUNCATE + INSERT
+        TRUNCATE TABLE mv_category_sales;
+        INSERT INTO mv_category_sales
+        SELECT
+            c.name                                  AS category_name,
+            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
+            COALESCE(SUM(oi.quantity), 0)            AS total_qty
+        FROM categories AS c
+        LEFT JOIN products    AS p  ON p.category_id = c.id
+        LEFT JOIN order_items AS oi ON oi.product_id = p.id
+        GROUP BY c.name;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- PostgreSQL: native materialized view
+        CREATE MATERIALIZED VIEW mv_category_sales AS
+        SELECT
+            c.name                                  AS category_name,
+            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
+            COALESCE(SUM(oi.quantity), 0)            AS total_qty
+        FROM categories AS c
+        LEFT JOIN products    AS p  ON p.category_id = c.id
+        LEFT JOIN order_items AS oi ON oi.product_id = p.id
+        GROUP BY c.name;
+
+        -- Refresh
+        REFRESH MATERIALIZED VIEW mv_category_sales;
+        ```
+
 ---
-Next: [Lesson 21: Indexes and Query Planning](21-indexes.md)
+Next: [Lesson 22: Indexes and Query Planning](22-indexes.md)

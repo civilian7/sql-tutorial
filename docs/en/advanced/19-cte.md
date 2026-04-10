@@ -1,4 +1,4 @@
-# Lesson 18: Common Table Expressions (WITH)
+# Lesson 19: Common Table Expressions (WITH)
 
 A Common Table Expression (CTE) is a named, temporary result set defined with the `WITH` keyword before the main query. CTEs make complex queries dramatically easier to read, debug, and reuse — each CTE is like a named subquery you can reference multiple times.
 
@@ -973,4 +973,4 @@ Use a recursive CTE to walk the category tree, then aggregate the number of subc
         ```
 
 ---
-Next: [Lesson 19: EXISTS and Correlated Subqueries](19-exists.md)
+Next: [Lesson 20: EXISTS and Correlated Subqueries](20-exists.md)

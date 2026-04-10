@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 190" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px} .h{font-weight:700;font-size:12px}
+    .t{fill:rgba(76,175,80,0.25);rx:2} .f{fill:rgba(232,80,80,0.25);rx:2}
+    .u{fill:rgba(255,193,7,0.25);rx:2} .hdr{fill:rgba(91,141,239,0.15);rx:2}
+    .s{stroke:rgba(128,128,128,0.3);stroke-width:1}
+  </style>
+  <text x="200" y="18" text-anchor="middle" class="h" font-size="13">Three-Valued Logic (NULL)</text>
+
+  <text x="90" y="38" text-anchor="middle" class="h">AND</text>
+  <rect x="15" y="44" width="50" height="20" class="hdr s"/><text x="40" y="58" text-anchor="middle" class="h">AND</text>
+  <rect x="65" y="44" width="50" height="20" class="hdr s"/><text x="90" y="58" text-anchor="middle">TRUE</text>
+  <rect x="115" y="44" width="50" height="20" class="hdr s"/><text x="140" y="58" text-anchor="middle">FALSE</text>
+  <rect x="165" y="44" width="50" height="20" class="hdr s"/><text x="190" y="58" text-anchor="middle">NULL</text>
+
+  <rect x="15" y="64" width="50" height="20" class="hdr s"/><text x="40" y="78" text-anchor="middle">TRUE</text>
+  <rect x="65" y="64" width="50" height="20" class="t s"/><text x="90" y="78" text-anchor="middle">TRUE</text>
+  <rect x="115" y="64" width="50" height="20" class="f s"/><text x="140" y="78" text-anchor="middle">FALSE</text>
+  <rect x="165" y="64" width="50" height="20" class="u s"/><text x="190" y="78" text-anchor="middle">NULL</text>
+
+  <rect x="15" y="84" width="50" height="20" class="hdr s"/><text x="40" y="98" text-anchor="middle">FALSE</text>
+  <rect x="65" y="84" width="50" height="20" class="f s"/><text x="90" y="98" text-anchor="middle">FALSE</text>
+  <rect x="115" y="84" width="50" height="20" class="f s"/><text x="140" y="98" text-anchor="middle">FALSE</text>
+  <rect x="165" y="84" width="50" height="20" class="f s"/><text x="190" y="98" text-anchor="middle">FALSE</text>
+
+  <rect x="15" y="104" width="50" height="20" class="hdr s"/><text x="40" y="118" text-anchor="middle">NULL</text>
+  <rect x="65" y="104" width="50" height="20" class="u s"/><text x="90" y="118" text-anchor="middle">NULL</text>
+  <rect x="115" y="104" width="50" height="20" class="f s"/><text x="140" y="118" text-anchor="middle">FALSE</text>
+  <rect x="165" y="104" width="50" height="20" class="u s"/><text x="190" y="118" text-anchor="middle">NULL</text>
+
+  <text x="310" y="38" text-anchor="middle" class="h">OR</text>
+  <rect x="235" y="44" width="50" height="20" class="hdr s"/><text x="260" y="58" text-anchor="middle" class="h">OR</text>
+  <rect x="285" y="44" width="50" height="20" class="hdr s"/><text x="310" y="58" text-anchor="middle">TRUE</text>
+  <rect x="335" y="44" width="50" height="20" class="hdr s"/><text x="360" y="58" text-anchor="middle">FALSE</text>
+
+  <rect x="235" y="64" width="50" height="20" class="hdr s"/><text x="260" y="78" text-anchor="middle">TRUE</text>
+  <rect x="285" y="64" width="50" height="20" class="t s"/><text x="310" y="78" text-anchor="middle">TRUE</text>
+  <rect x="335" y="64" width="50" height="20" class="t s"/><text x="360" y="78" text-anchor="middle">TRUE</text>
+
+  <rect x="235" y="84" width="50" height="20" class="hdr s"/><text x="260" y="98" text-anchor="middle">FALSE</text>
+  <rect x="285" y="84" width="50" height="20" class="t s"/><text x="310" y="98" text-anchor="middle">TRUE</text>
+  <rect x="335" y="84" width="50" height="20" class="f s"/><text x="360" y="98" text-anchor="middle">FALSE</text>
+
+  <rect x="235" y="104" width="50" height="20" class="hdr s"/><text x="260" y="118" text-anchor="middle">NULL</text>
+  <rect x="285" y="104" width="50" height="20" class="t s"/><text x="310" y="118" text-anchor="middle">TRUE</text>
+  <rect x="335" y="104" width="50" height="20" class="u s"/><text x="360" y="118" text-anchor="middle">NULL</text>
+
+  <text x="200" y="148" text-anchor="middle" font-size="10" opacity=".5">WHERE keeps only TRUE — both NULL and FALSE are excluded</text>
+  <rect x="80" y="158" width="14" height="12" class="t" stroke="rgba(76,175,80,0.5)" stroke-width="1"/><text x="100" y="168" font-size="10">TRUE</text>
+  <rect x="140" y="158" width="14" height="12" class="f" stroke="rgba(232,80,80,0.5)" stroke-width="1"/><text x="160" y="168" font-size="10">FALSE</text>
+  <rect x="200" y="158" width="14" height="12" class="u" stroke="rgba(255,193,7,0.5)" stroke-width="1"/><text x="220" y="168" font-size="10">NULL</text>
+</svg>

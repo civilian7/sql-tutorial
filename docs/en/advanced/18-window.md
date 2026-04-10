@@ -1,8 +1,8 @@
-# 강의 17: 윈도우 함수(Window Functions)
+# Lesson 18: Window Functions
 
-윈도우 함수는 `GROUP BY`처럼 결과를 하나로 합치지 않으면서, 현재 행과 연관된 행들을 대상으로 계산을 수행합니다. 각 행은 고유한 정체성을 유지하면서 집계나 순위 정보에 접근할 수 있습니다.
+Window functions perform calculations across a set of rows that are related to the current row — without collapsing the result set like `GROUP BY` does. Each row keeps its identity while gaining access to aggregate or ranking information.
 
-구문: `function() OVER (PARTITION BY ... ORDER BY ...)`
+The syntax is: `function() OVER (PARTITION BY ... ORDER BY ...)`
 
 ```mermaid
 flowchart LR
@@ -21,20 +21,22 @@ flowchart LR
     W --> O3["110,000"]
 ```
 
-> 윈도우 함수는 행을 그룹화하지 않고, 각 행에서 주변 행들을 참조하여 계산합니다. 결과 행 수가 줄어들지 않습니다.
+> Window functions compute across related rows without grouping. The number of result rows stays the same.
+
+![Window Frame](../img/window-frame.svg){ .off-glb width="520"  }
 
 ## ROW_NUMBER, RANK, DENSE_RANK
 
-순위 함수는 파티션 내에서 각 행에 순위를 부여합니다.
+These ranking functions assign a position to each row within a partition.
 
-| 함수 | 동점 처리 | 순위 건너뜀 |
+| Function | Ties | Gaps after ties |
 |----------|------|-----------------|
-| `ROW_NUMBER()` | 임의로 순위 부여 | — |
-| `RANK()` | 같은 순위 | 있음 (1,1,3) |
-| `DENSE_RANK()` | 같은 순위 | 없음 (1,1,2) |
+| `ROW_NUMBER()` | Arbitrary tie-breaking | — |
+| `RANK()` | Same rank | Yes (1,1,3) |
+| `DENSE_RANK()` | Same rank | No (1,1,2) |
 
 ```sql
--- 카테고리별 가격 기준으로 상품 순위 매기기
+-- Rank products by price within each category
 SELECT
     cat.name            AS category,
     p.name              AS product_name,
@@ -50,24 +52,24 @@ ORDER BY cat.name, price_rank
 LIMIT 12;
 ```
 
-**결과:**
+**Result:**
 
 | category | product_name | price | price_rank |
 |----------|--------------|------:|-----------:|
-| 데스크톱 | ASUS ROG 게이밍 데스크톱 | 1899.00 | 1 |
-| 데스크톱 | CyberPowerPC Gamer Xtreme | 1299.00 | 2 |
-| 데스크톱 | Acer Aspire TC | 549.00 | 3 |
-| 노트북 | Dell XPS 17 | 1999.00 | 1 |
-| 노트북 | MacBook Pro 16" M3 | 1799.00 | 2 |
-| 노트북 | Dell XPS 15 | 1299.99 | 3 |
+| Desktops | ASUS ROG Gaming Desktop | 1899.00 | 1 |
+| Desktops | CyberPowerPC Gamer Xtreme | 1299.00 | 2 |
+| Desktops | Acer Aspire TC | 549.00 | 3 |
+| Laptops | Dell XPS 17 Laptop | 1999.00 | 1 |
+| Laptops | MacBook Pro 16" M3 | 1799.00 | 2 |
+| Laptops | Dell XPS 15 Laptop | 1299.99 | 3 |
 | ... | | | |
 
-## 그룹별 상위 N개 (Top-N per Group)
+## Top-N per Group
 
-순위가 매겨진 쿼리를 CTE나 서브쿼리로 감싸면 파티션별 상위 N개를 추출할 수 있습니다.
+Wrap a ranked query in a CTE or subquery to pick the top N per partition.
 
 ```sql
--- 카테고리별 판매량 기준 상위 3개 상품 (판매 수량 기준)
+-- Top 3 best-selling products per category (by units sold)
 WITH ranked_sales AS (
     SELECT
         cat.name                        AS category,
@@ -90,12 +92,12 @@ WHERE sales_rank <= 3
 ORDER BY category, sales_rank;
 ```
 
-## SUM OVER — 누적 합계(Running Totals)
+## SUM OVER — Running Totals
 
-`SUM() OVER (ORDER BY ...)`는 누적 합계를 계산합니다.
+`SUM() OVER (ORDER BY ...)` computes a cumulative total.
 
 ```sql
--- 2024년 월별 누적 매출
+-- Cumulative revenue by month for 2024
 SELECT
     SUBSTR(ordered_at, 1, 7) AS year_month,
     SUM(total_amount)        AS monthly_revenue,
@@ -109,7 +111,7 @@ GROUP BY SUBSTR(ordered_at, 1, 7)
 ORDER BY year_month;
 ```
 
-**결과:**
+**Result:**
 
 | year_month | monthly_revenue | cumulative_revenue |
 |------------|----------------:|------------------:|
@@ -119,12 +121,12 @@ ORDER BY year_month;
 | 2024-04 | 178912.30 | 667158.50 |
 | ... | | |
 
-## LAG와 LEAD — 인접 행 참조
+## LAG and LEAD — Accessing Adjacent Rows
 
-`LAG(col, n)`은 `n`개 이전 행을, `LEAD(col, n)`은 `n`개 이후 행을 참조합니다. 참조 행이 없을 때 사용할 기본값도 지정할 수 있습니다.
+`LAG(col, n)` looks back `n` rows; `LEAD(col, n)` looks forward. Both accept a default value when the reference row doesn't exist.
 
 ```sql
--- 2024년 월별 매출 전월 대비 증감률(MoM)
+-- Month-over-month revenue growth for 2024
 SELECT
     year_month,
     monthly_revenue,
@@ -146,7 +148,7 @@ FROM (
 ORDER BY year_month;
 ```
 
-**결과:**
+**Result:**
 
 | year_month | monthly_revenue | prev_month_revenue | mom_growth_pct |
 |------------|----------------:|-------------------|----------------|
@@ -156,11 +158,11 @@ ORDER BY year_month;
 | 2024-04 | 178912.30 | 204123.70 | -12.4 |
 | ... | | | |
 
-## PARTITION BY와 LEAD 함께 사용하기
+## PARTITION BY with LEAD
 
 === "SQLite"
     ```sql
-    -- VIP 고객별 주문 목록과 다음 주문까지의 일수
+    -- For each customer, show their orders with the days until their next order
     SELECT
         c.name          AS customer_name,
         o.order_number,
@@ -184,7 +186,7 @@ ORDER BY year_month;
 
 === "MySQL"
     ```sql
-    -- VIP 고객별 주문 목록과 다음 주문까지의 일수
+    -- For each customer, show their orders with the days until their next order
     SELECT
         c.name          AS customer_name,
         o.order_number,
@@ -206,7 +208,7 @@ ORDER BY year_month;
 
 === "PostgreSQL"
     ```sql
-    -- VIP 고객별 주문 목록과 다음 주문까지의 일수
+    -- For each customer, show their orders with the days until their next order
     SELECT
         c.name          AS customer_name,
         o.order_number,
@@ -225,11 +227,11 @@ ORDER BY year_month;
     LIMIT 10;
     ```
 
-## 윈도우 함수 추가 활용
+## More Window Function Examples
 
-### 포인트 잔액 검증 (SUM OVER)
+### Point Balance Verification (SUM OVER)
 
-`point_transactions`의 `balance_after`가 올바른지 `SUM() OVER()`로 검증합니다.
+Verify that `balance_after` in `point_transactions` is correct using `SUM() OVER()`.
 
 ```sql
 SELECT
@@ -252,9 +254,9 @@ WHERE customer_id = 42
 ORDER BY created_at, id;
 ```
 
-### 등급 변동 추적 (LAG)
+### Grade Change Tracking (LAG)
 
-`customer_grade_history`에서 이전 등급과 현재 등급의 변화를 추적합니다.
+Track grade transitions in `customer_grade_history` using LAG and LEAD.
 
 ```sql
 SELECT
@@ -274,15 +276,15 @@ WHERE customer_id = 42
 ORDER BY changed_at;
 ```
 
-!!! note "레슨 복습 문제"
-    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
+!!! note "Lesson Review"
+    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
-## 연습 문제
+## Practice Exercises
 
-### 연습 1
-`DENSE_RANK()`를 사용하여 활성 상품 전체를 `price` 기준 내림차순으로 순위를 매기세요. `product_name`, `price`, `overall_rank`를 반환하고 상위 10개를 보여주세요.
+### Exercise 1
+Rank all active products by `price` descending using `DENSE_RANK()`. Return `product_name`, `price`, and `overall_rank`. Show the top 10.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         name    AS product_name,
@@ -294,10 +296,10 @@ ORDER BY changed_at;
     LIMIT 10;
     ```
 
-### 연습 2
-연도별 신규 고객 가입 수의 누적 합계를 계산하세요 (쇼핑몰 개업부터 각 연도까지의 누적 고객 수). `year`, `new_signups`, `cumulative_customers`를 반환하세요.
+### Exercise 2
+Calculate the running total of new customer signups by year (cumulative customer count from the beginning of TechShop through each year). Return `year`, `new_signups`, and `cumulative_customers`.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         year,
@@ -313,10 +315,10 @@ ORDER BY changed_at;
     ORDER BY year;
     ```
 
-### 연습 3
-2023년과 2024년의 각 월별로 전년 동월 대비 매출 증감률(YoY)을 계산하세요. `LAG(revenue, 12)`를 사용하여 전년 동월과 비교합니다. `year_month`, `revenue`, `same_month_last_year`, `yoy_growth_pct`를 반환하세요.
+### Exercise 3
+For each month in 2023 and 2024, compute the year-over-year (YoY) revenue growth. Use `LAG(revenue, 12)` to compare the same month in the prior year. Return `year_month`, `revenue`, `same_month_last_year`, and `yoy_growth_pct`.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         year_month,
@@ -340,10 +342,10 @@ ORDER BY changed_at;
     ORDER BY year_month;
     ```
 
-### 연습 4
-`ROW_NUMBER()`를 사용하여 각 고객의 주문에 순번을 매기고, 첫 번째 주문만 추출하세요. `customer_id`, `name`, `order_number`, `ordered_at`, `total_amount`를 반환하세요.
+### Exercise 4
+Use `ROW_NUMBER()` to number each customer's orders chronologically and extract only the first order per customer. Return `customer_id`, `name`, `order_number`, `ordered_at`, and `total_amount`.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         customer_id,
@@ -371,10 +373,10 @@ ORDER BY changed_at;
     LIMIT 15;
     ```
 
-### 연습 5
-`RANK()`와 `DENSE_RANK()`를 함께 사용하여 카테고리별 상품 가격 순위를 매기세요. `category_name`, `product_name`, `price`, `rank`, `dense_rank`를 반환하고 상위 15개를 보여주세요. 두 순위 함수의 차이를 결과에서 확인할 수 있습니다.
+### Exercise 5
+Use both `RANK()` and `DENSE_RANK()` to rank products by price within each category. Return `category_name`, `product_name`, `price`, `rank`, and `dense_rank`. Show the top 15 rows so you can observe the difference between the two ranking functions.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         cat.name AS category_name,
@@ -389,10 +391,10 @@ ORDER BY changed_at;
     LIMIT 15;
     ```
 
-### 연습 6
-2024년 월별 매출의 3개월 이동 평균을 계산하세요. `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` 프레임을 사용합니다. `year_month`, `monthly_revenue`, `moving_avg_3m`을 반환하세요.
+### Exercise 6
+Calculate a 3-month moving average of monthly revenue for 2024 using `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW`. Return `year_month`, `monthly_revenue`, and `moving_avg_3m`.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         year_month,
@@ -415,10 +417,10 @@ ORDER BY changed_at;
     ORDER BY year_month;
     ```
 
-### 연습 7
-`NTILE(4)`를 사용하여 고객을 총 구매 금액 기준으로 4개 분위(quartile)로 나누세요. `name`, `grade`, `total_spent`, `quartile`을 반환하고 `quartile`과 `total_spent` 내림차순으로 정렬하세요. 상위 20개를 보여주세요.
+### Exercise 7
+Use `NTILE(4)` to divide customers into 4 quartiles based on their total spending. Return `name`, `grade`, `total_spent`, and `quartile`. Order by `quartile` then `total_spent` descending. Show the top 20.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         name,
@@ -440,10 +442,10 @@ ORDER BY changed_at;
     LIMIT 20;
     ```
 
-### 연습 8
-각 상품별로 주문 시점 기준 누적 판매 수량을 계산하세요. `product_name`, `ordered_at`, `quantity`, `cumulative_qty`를 반환하세요. 특정 상품 하나(id = 1)에 대해 조회하세요.
+### Exercise 8
+For a specific product (id = 1), calculate the cumulative quantity sold over time. Return `product_name`, `ordered_at`, `quantity`, and `cumulative_qty`.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         p.name       AS product_name,
@@ -461,10 +463,10 @@ ORDER BY changed_at;
     ORDER BY o.ordered_at;
     ```
 
-### 연습 9
-부서별로 직원 급여(hire 순서 기준) 누적 합계와 부서 평균 대비 차이를 함께 표시하세요. `department`, `name`, `role`, `hired_at`, `running_headcount`, `dept_avg_headcount`를 반환하세요. `running_headcount`는 `COUNT(*) OVER`로, `dept_avg_headcount`는 `COUNT(*) OVER (PARTITION BY department)`으로 구합니다.
+### Exercise 9
+Show a running headcount per department (by hire date order) alongside the department total. Return `department`, `name`, `role`, `hired_at`, `running_headcount`, and `dept_total_headcount`. Use `COUNT(*) OVER` with and without an `ORDER BY` frame.
 
-??? success "정답"
+??? success "Answer"
     ```sql
     SELECT
         department,
@@ -484,10 +486,10 @@ ORDER BY changed_at;
     ORDER BY department, hired_at;
     ```
 
-### 연습 10
-각 고객의 주문 간 간격(일)을 계산하고, 고객별 평균 주문 간격을 구하세요. `LAG`로 이전 주문일을 참조합니다. `customer_id`, `name`, `order_count`, `avg_days_between_orders`를 반환하세요.
+### Exercise 10
+Calculate the number of days between consecutive orders for each customer using `LAG`, then find each customer's average order gap. Return `customer_id`, `name`, `order_count`, and `avg_days_between_orders`. Only include customers with 5 or more orders.
 
-??? success "정답"
+??? success "Answer"
     === "SQLite"
         ```sql
         SELECT
@@ -576,4 +578,4 @@ ORDER BY changed_at;
         ```
 
 ---
-다음: [강의 18: 공통 테이블 식(WITH)](18-cte.md)
+Next: [Lesson 19: Common Table Expressions (WITH)](19-cte.md)

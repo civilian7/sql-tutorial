@@ -110,6 +110,8 @@ LIMIT 5;
 
 ## OFFSET — 페이지네이션(Pagination)
 
+![Pagination](../img/pagination.svg){ .off-glb width="480"  }
+
 `OFFSET n`은 앞의 `n`개 행을 건너뛰고 이후부터 반환합니다. `LIMIT`과 함께 사용하면 페이지 기반 탐색을 구현할 수 있습니다.
 
 ```sql

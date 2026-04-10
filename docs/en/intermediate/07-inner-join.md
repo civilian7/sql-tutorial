@@ -29,6 +29,8 @@ flowchart LR
 
 > INNER JOIN returns only rows that match in both tables. Park (ID:3) has no orders and is excluded.
 
+![INNER JOIN](../img/join-inner.svg){ .off-glb width="300"  }
+
 ## Joining Two Tables
 
 The syntax is `FROM table_a INNER JOIN table_b ON table_a.key = table_b.key`. The `ON` clause specifies the matching condition.

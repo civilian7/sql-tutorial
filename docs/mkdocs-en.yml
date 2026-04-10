@@ -64,14 +64,17 @@ nav:
     - "13. UNION & Set Operations": intermediate/13-union.md
     - "14. INSERT, UPDATE, DELETE": intermediate/14-dml.md
     - "15. DDL": intermediate/15-ddl.md
-    - "16. SELF JOIN & CROSS JOIN": intermediate/16-self-cross-join.md
+    - "16. Transactions & ACID": intermediate/16-transactions.md
+    - "17. SELF JOIN & CROSS JOIN": intermediate/17-self-cross-join.md
   - Advanced:
-    - "17. Window Functions": advanced/17-window.md
-    - "18. CTE & Recursive CTE": advanced/18-cte.md
-    - "19. EXISTS & Correlated Subqueries": advanced/19-exists.md
-    - "20. Views": advanced/20-views.md
-    - "21. Indexes & Performance": advanced/21-indexes.md
-    - "22. Triggers": advanced/22-triggers.md
+    - "18. Window Functions": advanced/18-window.md
+    - "19. CTE & Recursive CTE": advanced/19-cte.md
+    - "20. EXISTS & Correlated Subqueries": advanced/20-exists.md
+    - "21. Views": advanced/21-views.md
+    - "22. Indexes & Performance": advanced/22-indexes.md
+    - "23. Triggers": advanced/23-triggers.md
+    - "24. Querying JSON Data": advanced/24-json.md
+    - "25. Stored Procedures": advanced/25-stored-procedures.md
   - Reference:
     - "Generator Reference": generator-guide.md
     - "SQL Across Databases": dialect-comparison.md
@@ -107,6 +110,7 @@ nav:
 
 plugins:
   - search
+  - glightbox
   - exporter:
       formats:
         pdf:

@@ -8,6 +8,7 @@ flowchart LR
         C["CREATE\nTable"]
         A["ALTER\nTable"]
         D["DROP\nTable"]
+        T["TRUNCATE\nTable"]
     end
     subgraph "DML"
         S["SELECT"]
@@ -22,7 +23,7 @@ flowchart LR
 | 분류 | 주요 문 | 대상 |
 |------|---------|------|
 | DML | SELECT, INSERT, UPDATE, DELETE | 행(데이터) |
-| DDL | CREATE, ALTER, DROP | 테이블, 인덱스, 뷰 등(구조) |
+| DDL | CREATE, ALTER, DROP, TRUNCATE | 테이블, 인덱스, 뷰 등(구조) |
 
 ## CREATE TABLE
 
@@ -368,6 +369,58 @@ DROP TABLE IF EXISTS order_archive;
 
 > **주의:** `DROP TABLE`은 되돌릴 수 없습니다. 운영 환경에서는 반드시 백업을 확인한 후 실행하세요. 외래 키로 참조되는 테이블은 자식 테이블을 먼저 삭제하거나 외래 키를 제거해야 합니다.
 
+## TRUNCATE TABLE
+
+`TRUNCATE TABLE`은 테이블의 **모든 행을 삭제**하되, 테이블 구조(칼럼, 제약조건, 인덱스)는 그대로 유지합니다. `DELETE FROM table_name`과 비슷하지만 동작 방식이 다릅니다.
+
+### DELETE와 TRUNCATE 비교
+
+| 항목 | DELETE | TRUNCATE |
+|------|--------|----------|
+| WHERE 조건 | 가능 | 불가 |
+| 트랜잭션 롤백 | 가능 | DB에 따라 다름 |
+| 트리거 실행 | 실행됨 | 실행 안 됨 |
+| 속도 (대량 데이터) | 느림 | 빠름 |
+| Auto-increment | 유지 | 리셋 |
+
+`DELETE`는 행을 하나씩 삭제하며 각 행마다 로그를 기록하지만, `TRUNCATE`는 데이터 페이지를 통째로 해제하므로 대량 데이터에서 훨씬 빠릅니다.
+
+### DB별 구문
+
+=== "SQLite"
+    SQLite는 `TRUNCATE TABLE` 문을 지원하지 않습니다. `DELETE FROM`으로 대체합니다.
+
+    ```sql
+    -- 모든 행 삭제 (테이블 구조는 유지)
+    DELETE FROM order_archive;
+
+    -- 디스크 공간까지 회수하려면 VACUUM 실행
+    VACUUM;
+    ```
+
+    > SQLite에서 `DELETE FROM table_name`은 모든 행을 삭제하지만, 파일 크기는 줄어들지 않습니다. `VACUUM`을 실행해야 실제 디스크 공간이 회수됩니다.
+
+=== "MySQL"
+    ```sql
+    TRUNCATE TABLE order_archive;
+    ```
+
+    > MySQL에서 `TRUNCATE`는 **DDL로 취급**됩니다. 암묵적으로 COMMIT이 실행되므로 `ROLLBACK`으로 되돌릴 수 없습니다. `AUTO_INCREMENT` 값이 리셋됩니다.
+
+=== "PostgreSQL"
+    ```sql
+    -- 기본 TRUNCATE
+    TRUNCATE TABLE order_archive;
+
+    -- 시퀀스(자동 증가 값)도 함께 리셋
+    TRUNCATE TABLE order_archive RESTART IDENTITY;
+
+    -- 외래 키로 참조하는 자식 테이블도 함께 TRUNCATE
+    TRUNCATE TABLE order_archive CASCADE;
+    ```
+
+    > PostgreSQL의 `TRUNCATE`는 트랜잭션 안에서 `ROLLBACK`이 가능합니다. `RESTART IDENTITY`로 시퀀스를 리셋하고, `CASCADE`로 참조하는 자식 테이블까지 함께 비울 수 있습니다.
+
 ## CREATE TABLE AS SELECT (CTAS)
 
 기존 쿼리의 결과로 새 테이블을 만듭니다. 데이터 백업, 분석용 스냅샷, 임시 작업 테이블을 만들 때 유용합니다.
@@ -418,6 +471,7 @@ DROP TABLE IF EXISTS order_archive;
 | ALTER TABLE DROP COLUMN | 칼럼 삭제 | `ALTER TABLE t DROP COLUMN col` |
 | ALTER TABLE RENAME TO | 테이블 이름 변경 | `ALTER TABLE t RENAME TO new_t` |
 | DROP TABLE | 테이블 삭제 | `DROP TABLE IF EXISTS t` |
+| TRUNCATE TABLE | 모든 행 삭제 (구조 유지) | `TRUNCATE TABLE t` |
 | CREATE TABLE AS SELECT | 쿼리 결과로 테이블 생성 | `CREATE TABLE t AS SELECT ...` |
 
 !!! note "레슨 복습 문제"
@@ -629,5 +683,37 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
         );
         ```
 
+### 연습 11
+`DELETE FROM`과 `TRUNCATE TABLE`의 차이를 설명하세요. 그리고 `order_archive` 테이블의 모든 데이터를 삭제하는 구문을 DB별로 작성하세요.
+
+??? success "정답"
+    **차이점:**
+
+    - `DELETE`는 행 단위로 삭제하며 트랜잭션 로그에 기록되고, WHERE 조건으로 일부만 삭제할 수 있습니다. 트리거가 실행되며, auto-increment 값은 유지됩니다.
+    - `TRUNCATE`는 데이터 페이지를 통째로 해제하여 훨씬 빠르고, WHERE 조건을 사용할 수 없습니다. 트리거가 실행되지 않으며, auto-increment 값이 리셋됩니다.
+
+    === "SQLite"
+        ```sql
+        -- SQLite는 TRUNCATE를 지원하지 않으므로 DELETE로 대체
+        DELETE FROM order_archive;
+
+        -- 디스크 공간 회수가 필요하면
+        VACUUM;
+        ```
+
+    === "MySQL"
+        ```sql
+        TRUNCATE TABLE order_archive;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- 기본 TRUNCATE
+        TRUNCATE TABLE order_archive;
+
+        -- 시퀀스도 리셋하려면
+        TRUNCATE TABLE order_archive RESTART IDENTITY;
+        ```
+
 ---
-다음: [16강: SELF JOIN과 CROSS JOIN](16-self-cross-join.md)
+다음: [16강: 트랜잭션과 ACID](16-transactions.md)

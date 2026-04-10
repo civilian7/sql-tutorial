@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" font-family="system-ui,sans-serif">
+  <style>
+    .b{fill:rgba(240,192,64,0.35)} .hi{fill:rgba(232,80,80,0.5)}
+    .s{stroke:rgba(128,128,128,0.6);stroke-width:2;fill:none}
+    .mask{fill:rgba(128,128,128,0.15)}
+    text{font-size:16px;font-weight:700} .sub{font-size:10px;font-weight:400;opacity:.6}
+  </style>
+  <circle cx="78" cy="52" r="42" class="hi"/><circle cx="122" cy="52" r="42" class="b"/>
+  <clipPath id="c"><circle cx="122" cy="52" r="42"/></clipPath>
+  <circle cx="78" cy="52" r="42" clip-path="url(#c)" class="mask"/>
+  <circle cx="78" cy="52" r="42" class="s"/><circle cx="122" cy="52" r="42" class="s"/>
+  <text x="62" y="57" text-anchor="middle">A</text>
+  <text x="138" y="57" text-anchor="middle">B</text>
+  <text x="100" y="110" text-anchor="middle" class="sub">LEFT JOIN WHERE B IS NULL</text>
+</svg>

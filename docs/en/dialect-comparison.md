@@ -539,7 +539,7 @@ Store reusable logic on the server and call it by name. SQLite does not support 
 
 ## Trigger Syntax
 
-Triggers execute automatically when data changes. See [Lesson 22](advanced/22-triggers.md) for details.
+Triggers execute automatically when data changes. See [Lesson 23](advanced/23-triggers.md) for details.
 
 === "SQLite"
 

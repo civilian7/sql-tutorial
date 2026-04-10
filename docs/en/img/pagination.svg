@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 160" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px}
+    .h{font-weight:700;font-size:12px}
+    .page{fill:rgba(92,107,192,0.25);stroke:rgba(92,107,192,0.6);stroke-width:1.5;rx:4}
+    .cur{fill:rgba(255,152,0,0.25);stroke:rgba(255,152,0,0.7);stroke-width:2;rx:4}
+    .bar{fill:rgba(128,128,128,0.2);stroke:rgba(128,128,128,0.4);stroke-width:1;rx:3}
+    .sm{font-size:9px;opacity:.6}
+  </style>
+  <text x="180" y="16" text-anchor="middle" class="h" font-size="13">LIMIT and OFFSET — Pagination</text>
+
+  <rect x="10" y="30" width="340" height="20" class="bar"/>
+  <text x="180" y="44" text-anchor="middle" class="sm">All rows (sorted by ORDER BY)</text>
+
+  <rect x="10" y="65" width="100" height="35" class="page"/>
+  <text x="60" y="80" text-anchor="middle" class="h">Page 1</text>
+  <text x="60" y="94" text-anchor="middle" class="sm">LIMIT 10</text>
+
+  <rect x="120" y="65" width="100" height="35" class="cur"/>
+  <text x="170" y="80" text-anchor="middle" class="h">Page 2</text>
+  <text x="170" y="94" text-anchor="middle" class="sm">LIMIT 10 OFFSET 10</text>
+
+  <rect x="230" y="65" width="100" height="35" class="page"/>
+  <text x="280" y="80" text-anchor="middle" class="h">Page 3</text>
+  <text x="280" y="94" text-anchor="middle" class="sm">LIMIT 10 OFFSET 20</text>
+
+  <text x="60" y="120" text-anchor="middle" class="sm">skip 0</text>
+  <text x="170" y="120" text-anchor="middle" class="sm">skip 10</text>
+  <text x="280" y="120" text-anchor="middle" class="sm">skip 20</text>
+
+  <text x="180" y="145" text-anchor="middle" font-size="10" opacity=".5">OFFSET = (page - 1) x LIMIT</text>
+</svg>

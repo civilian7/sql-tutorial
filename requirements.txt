@@ -8,6 +8,9 @@ PyYAML>=6.0
 mkdocs>=1.6.0,<2.0.0
 mkdocs-material>=9.5.0
 
+# Image lightbox (click to enlarge)
+mkdocs-glightbox>=0.4.0
+
 # PDF export (pdf.bat)
 mkdocs-exporter>=6.0.0
 

@@ -19,6 +19,8 @@ flowchart LR
 
 ## UNION vs. UNION ALL
 
+![UNION](../img/set-union.svg){ .off-glb width="280"  }
+
 | Operator | Duplicates | Speed |
 |----------|-----------|-------|
 | `UNION` | Removed (like `DISTINCT`) | Slower — must sort/hash to deduplicate |

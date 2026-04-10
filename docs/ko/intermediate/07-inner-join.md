@@ -29,6 +29,8 @@ flowchart LR
 
 > INNER JOIN은 양쪽 테이블에 모두 매칭되는 행만 반환합니다. Park(ID:3)은 주문이 없어 결과에서 제외됩니다.
 
+![INNER JOIN](../img/join-inner.svg){ .off-glb width="300"  }
+
 ## 두 테이블 조인하기
 
 문법은 `FROM table_a INNER JOIN table_b ON table_a.key = table_b.key`입니다. `ON` 절에서 일치 조건을 지정합니다.

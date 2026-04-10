@@ -184,6 +184,8 @@ Aggregate functions (`SUM`, `AVG`, `COUNT(column)`, `MIN`, `MAX`) silently ignor
 
 ## NULL in Expressions
 
+![Three-Valued Logic](../img/null-logic.svg){ .off-glb width="400" }
+
 Any arithmetic involving NULL produces NULL.
 
 ```sql

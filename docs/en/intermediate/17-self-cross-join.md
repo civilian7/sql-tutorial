@@ -1,4 +1,4 @@
-# Lesson 16: SELF JOIN and CROSS JOIN
+# Lesson 17: SELF JOIN and CROSS JOIN
 
 So far you have learned to JOIN different tables together. This lesson covers **SELF JOIN** — joining a table to itself — and **CROSS JOIN** — producing every combination of rows from two sets. Both are essential for hierarchy queries and comparison analysis.
 
@@ -85,7 +85,7 @@ A SELF JOIN builds the full path from parent (top) → child (sub) category.
 | Laptop | Gaming | Laptop > Gaming |
 | ... | | |
 
-> **Tip:** SELF JOIN works well when the hierarchy depth is fixed. For variable depth, use the recursive CTE from Lesson 18.
+> **Tip:** SELF JOIN works well when the hierarchy depth is fixed. For variable depth, use the recursive CTE from Lesson 19.
 
 ### Comparing Products in the Same Category
 
@@ -160,6 +160,8 @@ LIMIT 10;
 ---
 
 ## CROSS JOIN — Generate Every Combination
+
+![CROSS JOIN Grid](../img/cross-join-grid.svg){ .off-glb width="440"  }
 
 `CROSS JOIN` combines every row from the left table with every row from the right table. Result rows = left rows × right rows. There is no ON condition.
 
@@ -711,4 +713,4 @@ Generate every combination of 2024 quarters (Q1-Q4) and payment methods (`DISTIN
         ORDER BY qr.q, m.method;
         ```
 
-Next: [Lesson 17: Window Functions](../advanced/17-window.md)
+Next: [Lesson 18: Window Functions](../advanced/18-window.md)

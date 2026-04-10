@@ -184,6 +184,8 @@ GROUP BY grade;
 
 ## 표현식에서의 NULL 전파
 
+![3값 논리](../img/null-logic.svg){ .off-glb width="400" }
+
 NULL이 포함된 산술 연산은 결과도 NULL이 됩니다.
 
 ```sql

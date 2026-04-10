@@ -50,6 +50,8 @@ LIMIT 5;
 
 ## IN 서브쿼리
 
+![IN — 교집합](../img/set-intersect.svg){ .off-glb width="280"  }
+
 서브쿼리가 여러 행을 반환할 수 있을 때는 `=` 대신 `IN`을 사용하세요.
 
 ```sql
@@ -86,6 +88,8 @@ ORDER BY name;
 
 ## NOT IN
 
+![NOT IN — 차집합](../img/set-except.svg){ .off-glb width="280"  }
+
 `NOT IN`은 서브쿼리 결과에 **없는** 행을 찾습니다 — `LEFT JOIN ... IS NULL` 안티 조인 패턴과 유사합니다.
 
 ```sql
@@ -99,7 +103,7 @@ WHERE id NOT IN (
   AND is_active = 1;
 ```
 
-> **주의:** 서브쿼리가 NULL 값을 하나라도 반환하면 `NOT IN`이 예상치 못하게 동작합니다(행이 하나도 반환되지 않음). NULL이 포함될 수 있는 경우에는 `NOT EXISTS`(19강)를 사용하세요.
+> **주의:** 서브쿼리가 NULL 값을 하나라도 반환하면 `NOT IN`이 예상치 못하게 동작합니다(행이 하나도 반환되지 않음). NULL이 포함될 수 있는 경우에는 `NOT EXISTS`(20강)를 사용하세요.
 
 ## FROM 서브쿼리 (파생 테이블)
 
