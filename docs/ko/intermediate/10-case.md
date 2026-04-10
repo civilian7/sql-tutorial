@@ -250,8 +250,94 @@ LIMIT 10;
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
-
 ### 연습 1
+주문의 `notes` 칼럼이 NULL인 경우 `'메모 없음'`으로 표시하세요. CASE 표현식을 사용하여 `order_number`, `status`, `memo`(notes가 NULL이면 `'메모 없음'`, 아니면 notes 값)를 반환하세요. 최근 주문 15건으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        order_number,
+        status,
+        CASE
+            WHEN notes IS NULL THEN '메모 없음'
+            ELSE notes
+        END AS memo
+    FROM orders
+    ORDER BY ordered_at DESC
+    LIMIT 15;
+    ```
+
+    **결과 (예시):**
+
+    | order_number       | status    | memo               |
+    | ------------------ | --------- | ------------------ |
+    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
+    | ORD-20250630-34905 | pending   | 메모 없음              |
+    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
+    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
+    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
+    | ...                | ...       | ...                |
+
+
+### 연습 2
+직원(`staff`) 목록을 정렬하되, `role`이 `'manager'`인 직원이 먼저, 그 다음 `'staff'`, 나머지가 마지막에 오도록 하세요. 같은 역할 내에서는 `name` 오름차순으로 정렬합니다. `name`, `department`, `role`을 반환하고, 활성 직원만 포함하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, department, role
+    FROM staff
+    WHERE is_active = 1
+    ORDER BY
+        CASE role
+            WHEN 'manager' THEN 1
+            WHEN 'staff'   THEN 2
+            ELSE 3
+        END,
+        name ASC;
+    ```
+
+    **결과 (예시):**
+
+    | name | department | role    |
+    | ---- | ---------- | ------- |
+    | 권영희  | 마케팅        | manager |
+    | 이준혁  | 영업         | manager |
+    | 박경수  | 경영         | admin   |
+    | 장주원  | 경영         | admin   |
+    | 한민재  | 경영         | admin   |
+
+
+### 연습 3
+결제 수단(`payments.method`)을 단순 CASE로 한글 레이블로 변환하세요: `'card'` → `'신용카드'`, `'bank_transfer'` → `'계좌이체'`, `'cash'` → `'현금'`, 그 외 → `'기타'`. `id`, `amount`, `method_label`을 반환하고 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        id,
+        amount,
+        CASE method
+            WHEN 'card'          THEN '신용카드'
+            WHEN 'bank_transfer' THEN '계좌이체'
+            WHEN 'cash'          THEN '현금'
+            ELSE '기타'
+        END AS method_label
+    FROM payments
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | id | amount | method_label |
+    | -: | -----: | ------------ |
+    |  1 | 130700 | 신용카드         |
+    |  2 | 130700 | 신용카드         |
+    |  3 | 265400 | 신용카드         |
+    |  4 | 130700 | 기타           |
+    |  5 | 131390 | 기타           |
+    | ... | ...    | ...          |
+
+
+### 연습 4
 상품 목록에 `stock_status` 칼럼을 추가하세요: `stock_qty = 0`이면 `'품절'`, `1~10`이면 `'재고 부족'`, `11~100`이면 `'재고 있음'`, 100 초과면 `'재고 충분'`. 활성 상품 전체의 `name`, `stock_qty`, `stock_status`를 반환하세요.
 
 ??? success "정답"
@@ -270,7 +356,8 @@ LIMIT 10;
     ORDER BY stock_qty ASC;
     ```
 
-### 연습 2
+
+### 연습 5
 세대별 분포 보고서를 만드세요: 활성 고객이 각 세대(Z세대: 1997년 이후 출생, 밀레니얼: 1981~1996, X세대: 1965~1980, 베이비붐+: 1965년 이전, 미확인: birth_date가 NULL)에 몇 명씩 있는지 집계하세요. `generation`과 `customer_count`를 반환하세요.
 
 ??? success "정답"
@@ -336,99 +423,6 @@ LIMIT 10;
         ORDER BY customer_count DESC;
         ```
 
-### 연습 3
-각 상품의 2024년 분기별 매출을 별도 칼럼(`q1_revenue`, `q2_revenue`, `q3_revenue`, `q4_revenue`)으로 계산하세요. 조건부 집계(`SUM(CASE WHEN ... THEN ... END)`)를 사용하고, 2024년 판매 실적이 있는 상품만 포함합니다. 2024년 총 매출 내림차순으로 10행까지 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        p.name AS product_name,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q1_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-04-01' AND '2024-06-30 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q2_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-07-01' AND '2024-09-30 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q3_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-10-01' AND '2024-12-31 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q4_revenue
-    FROM order_items AS oi
-    INNER JOIN orders    AS o ON oi.order_id   = o.id
-    INNER JOIN products  AS p ON oi.product_id = p.id
-    WHERE o.ordered_at LIKE '2024%'
-      AND o.status NOT IN ('cancelled', 'returned')
-    GROUP BY p.id, p.name
-    ORDER BY (q1_revenue + q2_revenue + q3_revenue + q4_revenue) DESC
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | product_name                 | q1_revenue | q2_revenue | q3_revenue | q4_revenue |
-    | ---------------------------- | ---------: | ---------: | ---------: | ---------: |
-    | Razer Blade 18 블랙            |   37638900 |   29274700 |   41821000 |   37638900 |
-    | Razer Blade 18 화이트           |   29886300 |   53131200 |   29886300 |   33207000 |
-    | Razer Blade 16 실버            |   45361800 |   24742800 |   20619000 |   20619000 |
-    | Razer Blade 18 블랙            |   29875000 |   17925000 |   29875000 |   32862500 |
-    | SAPPHIRE PULSE RX 7800 XT 실버 |   35413200 |   22297200 |   14427600 |   31478400 |
-    | ...                          | ...        | ...        | ...        | ...        |
-
-
-### 연습 4
-결제 수단(`payments.method`)을 단순 CASE로 한글 레이블로 변환하세요: `'card'` → `'신용카드'`, `'bank_transfer'` → `'계좌이체'`, `'cash'` → `'현금'`, 그 외 → `'기타'`. `id`, `amount`, `method_label`을 반환하고 10행으로 제한하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        id,
-        amount,
-        CASE method
-            WHEN 'card'          THEN '신용카드'
-            WHEN 'bank_transfer' THEN '계좌이체'
-            WHEN 'cash'          THEN '현금'
-            ELSE '기타'
-        END AS method_label
-    FROM payments
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | id | amount | method_label |
-    | -: | -----: | ------------ |
-    |  1 | 130700 | 신용카드         |
-    |  2 | 130700 | 신용카드         |
-    |  3 | 265400 | 신용카드         |
-    |  4 | 130700 | 기타           |
-    |  5 | 131390 | 기타           |
-    | ... | ...    | ...          |
-
-
-### 연습 5
-고객의 `point_balance`를 3단계로 분류하세요: 10만 이상 `'헤비 유저'`, 1만 이상 `'일반'`, 그 외 `'라이트'`. `grade`별로 각 단계에 해당하는 고객 수를 집계하세요. `grade`, `heavy_count`, `regular_count`, `light_count`를 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        grade,
-        COUNT(CASE WHEN point_balance >= 100000 THEN 1 END) AS heavy_count,
-        COUNT(CASE WHEN point_balance >= 10000
-                    AND point_balance < 100000 THEN 1 END) AS regular_count,
-        COUNT(CASE WHEN point_balance < 10000 THEN 1 END)  AS light_count
-    FROM customers
-    WHERE is_active = 1
-    GROUP BY grade
-    ORDER BY grade;
-    ```
-
-    **결과 (예시):**
-
-    | grade  | heavy_count | regular_count | light_count |
-    | ------ | ----------: | ------------: | ----------: |
-    | BRONZE |         198 |           570 |        1780 |
-    | GOLD   |         206 |           278 |           0 |
-    | SILVER |         117 |           292 |          60 |
-    | VIP    |         251 |            64 |           0 |
-
 
 ### 연습 6
 리뷰의 `rating`을 텍스트 레이블로 변환하세요: 5 → `'최고'`, 4 → `'좋음'`, 3 → `'보통'`, 2 → `'불만'`, 1 → `'최악'`. 레이블별 리뷰 수와 평균 평점을 구하세요. `rating_label`, `review_count`, `avg_rating`을 `avg_rating` 내림차순으로 반환하세요.
@@ -462,32 +456,30 @@ LIMIT 10;
 
 
 ### 연습 7
-주문의 `notes` 칼럼이 NULL인 경우 `'메모 없음'`으로 표시하세요. CASE 표현식을 사용하여 `order_number`, `status`, `memo`(notes가 NULL이면 `'메모 없음'`, 아니면 notes 값)를 반환하세요. 최근 주문 15건으로 제한하세요.
+고객의 `point_balance`를 3단계로 분류하세요: 10만 이상 `'헤비 유저'`, 1만 이상 `'일반'`, 그 외 `'라이트'`. `grade`별로 각 단계에 해당하는 고객 수를 집계하세요. `grade`, `heavy_count`, `regular_count`, `light_count`를 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        order_number,
-        status,
-        CASE
-            WHEN notes IS NULL THEN '메모 없음'
-            ELSE notes
-        END AS memo
-    FROM orders
-    ORDER BY ordered_at DESC
-    LIMIT 15;
+        grade,
+        COUNT(CASE WHEN point_balance >= 100000 THEN 1 END) AS heavy_count,
+        COUNT(CASE WHEN point_balance >= 10000
+                    AND point_balance < 100000 THEN 1 END) AS regular_count,
+        COUNT(CASE WHEN point_balance < 10000 THEN 1 END)  AS light_count
+    FROM customers
+    WHERE is_active = 1
+    GROUP BY grade
+    ORDER BY grade;
     ```
 
     **결과 (예시):**
 
-    | order_number       | status    | memo               |
-    | ------------------ | --------- | ------------------ |
-    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
-    | ORD-20250630-34905 | pending   | 메모 없음              |
-    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
-    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
-    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
-    | ...                | ...       | ...                |
+    | grade  | heavy_count | regular_count | light_count |
+    | ------ | ----------: | ------------: | ----------: |
+    | BRONZE |         198 |           570 |        1780 |
+    | GOLD   |         206 |           278 |           0 |
+    | SILVER |         117 |           292 |          60 |
+    | VIP    |         251 |            64 |           0 |
 
 
 ### 연습 8
@@ -522,34 +514,6 @@ LIMIT 10;
 
 
 ### 연습 9
-직원(`staff`) 목록을 정렬하되, `role`이 `'manager'`인 직원이 먼저, 그 다음 `'staff'`, 나머지가 마지막에 오도록 하세요. 같은 역할 내에서는 `name` 오름차순으로 정렬합니다. `name`, `department`, `role`을 반환하고, 활성 직원만 포함하세요.
-
-??? success "정답"
-    ```sql
-    SELECT name, department, role
-    FROM staff
-    WHERE is_active = 1
-    ORDER BY
-        CASE role
-            WHEN 'manager' THEN 1
-            WHEN 'staff'   THEN 2
-            ELSE 3
-        END,
-        name ASC;
-    ```
-
-    **결과 (예시):**
-
-    | name | department | role    |
-    | ---- | ---------- | ------- |
-    | 권영희  | 마케팅        | manager |
-    | 이준혁  | 영업         | manager |
-    | 박경수  | 경영         | admin   |
-    | 장주원  | 경영         | admin   |
-    | 한민재  | 경영         | admin   |
-
-
-### 연습 10
 결제 수단별 `'성공'`(status = `'completed'`)과 `'실패'`(그 외) 건수를 피벗하세요. `method`, `success_count`, `fail_count`, `success_rate`(성공률, 소수점 1자리)를 반환하고, 성공률 내림차순으로 정렬하세요.
 
 ??? success "정답"
@@ -578,6 +542,43 @@ LIMIT 10;
     | kakao_pay       |          6359 |        543 |         92.1 |
     | bank_transfer   |          3194 |        289 |         91.7 |
     | ...             | ...           | ...        | ...          |
+
+
+### 연습 10
+각 상품의 2024년 분기별 매출을 별도 칼럼(`q1_revenue`, `q2_revenue`, `q3_revenue`, `q4_revenue`)으로 계산하세요. 조건부 집계(`SUM(CASE WHEN ... THEN ... END)`)를 사용하고, 2024년 판매 실적이 있는 상품만 포함합니다. 2024년 총 매출 내림차순으로 10행까지 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        p.name AS product_name,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q1_revenue,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-04-01' AND '2024-06-30 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q2_revenue,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-07-01' AND '2024-09-30 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q3_revenue,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-10-01' AND '2024-12-31 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q4_revenue
+    FROM order_items AS oi
+    INNER JOIN orders    AS o ON oi.order_id   = o.id
+    INNER JOIN products  AS p ON oi.product_id = p.id
+    WHERE o.ordered_at LIKE '2024%'
+      AND o.status NOT IN ('cancelled', 'returned')
+    GROUP BY p.id, p.name
+    ORDER BY (q1_revenue + q2_revenue + q3_revenue + q4_revenue) DESC
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | product_name                 | q1_revenue | q2_revenue | q3_revenue | q4_revenue |
+    | ---------------------------- | ---------: | ---------: | ---------: | ---------: |
+    | Razer Blade 18 블랙            |   37638900 |   29274700 |   41821000 |   37638900 |
+    | Razer Blade 18 화이트           |   29886300 |   53131200 |   29886300 |   33207000 |
+    | Razer Blade 16 실버            |   45361800 |   24742800 |   20619000 |   20619000 |
+    | Razer Blade 18 블랙            |   29875000 |   17925000 |   29875000 |   32862500 |
+    | SAPPHIRE PULSE RX 7800 XT 실버 |   35413200 |   22297200 |   14427600 |   31478400 |
+    | ...                          | ...        | ...        | ...        | ...        |
 
 
 ---

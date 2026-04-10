@@ -320,8 +320,29 @@ DROP VIEW IF EXISTS v_cs_watchlist;
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
-
 ### 연습 1
+`v_customer_stats` 뷰를 조회하여 주문 건수가 5건 이상이고 평균 주문 금액이 300 이상인 고객을 `lifetime_value` 내림차순으로 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT *
+    FROM v_customer_stats
+    WHERE order_count >= 5
+      AND avg_order_value >= 300
+    ORDER BY lifetime_value DESC;
+    ```
+
+
+### 연습 2
+`v_cs_watchlist` 뷰를 삭제한 뒤, 존재하지 않는 뷰를 삭제할 때 에러가 발생하지 않도록 작성하세요.
+
+??? success "정답"
+    ```sql
+    DROP VIEW IF EXISTS v_cs_watchlist;
+    ```
+
+
+### 연습 3
 `v_product_sales`를 조회하여 `total_revenue` 기준 상위 10개 상품을 찾으세요. `product_name`, `category`, `units_sold`, `total_revenue`, `avg_rating`을 반환하고, 리뷰가 5개 이상인 상품만 포함하세요.
 
 ??? success "정답"
@@ -338,7 +359,8 @@ DROP VIEW IF EXISTS v_cs_watchlist;
     LIMIT 10;
     ```
 
-### 연습 2
+
+### 연습 4
 시스템 카탈로그를 사용하여 18개의 뷰 전체를 알파벳 순으로 나열하세요. 각 뷰의 이름만 표시합니다. 이후 관심 있는 뷰를 하나 골라 정의를 살펴보세요.
 
 ??? success "정답"
@@ -387,27 +409,64 @@ DROP VIEW IF EXISTS v_cs_watchlist;
           AND viewname = 'v_monthly_revenue';
         ```
 
-### 연습 3
-`v_customer_stats` 뷰를 조회하여 주문 건수가 5건 이상이고 평균 주문 금액이 300 이상인 고객을 `lifetime_value` 내림차순으로 조회하세요.
-
-??? success "정답"
-    ```sql
-    SELECT *
-    FROM v_customer_stats
-    WHERE order_count >= 5
-      AND avg_order_value >= 300
-    ORDER BY lifetime_value DESC;
-    ```
-
-### 연습 4
-`v_cs_watchlist` 뷰를 삭제한 뒤, 존재하지 않는 뷰를 삭제할 때 에러가 발생하지 않도록 작성하세요.
-
-??? success "정답"
-    ```sql
-    DROP VIEW IF EXISTS v_cs_watchlist;
-    ```
 
 ### 연습 5
+`v_supplier_performance` 뷰를 조회하여 반품률이 가장 높은 공급업체를 찾으세요. 이어서, 이 뷰의 정의를 시스템 카탈로그로 확인하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        -- 1단계: 반품률이 가장 높은 공급업체
+        SELECT *
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
+        LIMIT 1;
+
+        -- 2단계: 뷰 정의 확인
+        SELECT sql
+        FROM sqlite_master
+        WHERE type = 'view'
+          AND name = 'v_supplier_performance';
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT *
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
+        LIMIT 1;
+
+        SELECT VIEW_DEFINITION
+        FROM INFORMATION_SCHEMA.VIEWS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'v_supplier_performance';
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT *
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
+        LIMIT 1;
+
+        SELECT definition
+        FROM pg_views
+        WHERE schemaname = 'public'
+          AND viewname = 'v_supplier_performance';
+        ```
+
+
+### 연습 6
+연습 5~7에서 만든 뷰들을 모두 삭제하세요.
+
+??? success "정답"
+    ```sql
+    DROP VIEW IF EXISTS v_product_total_sales;
+    DROP VIEW IF EXISTS v_category_monthly_revenue;
+    ```
+
+
+### 연습 7
 `products` 테이블과 `order_items` 테이블을 JOIN하여 상품별 총 판매 수량(`total_qty`)과 총 매출(`total_sales`)을 계산하는 `v_product_total_sales` 뷰를 생성하세요. `product_id`, `product_name`, `total_qty`, `total_sales` 칼럼을 포함합니다.
 
 ??? success "정답"
@@ -423,7 +482,8 @@ DROP VIEW IF EXISTS v_cs_watchlist;
     GROUP BY p.id, p.name;
     ```
 
-### 연습 6
+
+### 연습 8
 기존 뷰 `v_product_total_sales`를 수정하여 `category_name` 칼럼을 추가하세요 (categories 테이블 JOIN). SQLite는 `CREATE OR REPLACE`를 지원하지 않으므로 DB별 방법이 다릅니다.
 
 ??? success "정답"
@@ -477,7 +537,8 @@ DROP VIEW IF EXISTS v_cs_watchlist;
         GROUP BY p.id, p.name, c.name;
         ```
 
-### 연습 7
+
+### 연습 9
 카테고리별 월간 매출 집계 뷰 `v_category_monthly_revenue`를 만드세요. `category_name`, `year_month` (주문일 기준, 'YYYY-MM' 형식), `revenue`, `order_count` 칼럼을 포함합니다.
 
 ??? success "정답"
@@ -526,59 +587,6 @@ DROP VIEW IF EXISTS v_cs_watchlist;
         GROUP BY c.name, TO_CHAR(o.ordered_at, 'YYYY-MM');
         ```
 
-### 연습 8
-`v_supplier_performance` 뷰를 조회하여 반품률이 가장 높은 공급업체를 찾으세요. 이어서, 이 뷰의 정의를 시스템 카탈로그로 확인하세요.
-
-??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 1단계: 반품률이 가장 높은 공급업체
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        -- 2단계: 뷰 정의 확인
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'view'
-          AND name = 'v_supplier_performance';
-        ```
-
-    === "MySQL"
-        ```sql
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        SELECT VIEW_DEFINITION
-        FROM INFORMATION_SCHEMA.VIEWS
-        WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME = 'v_supplier_performance';
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        SELECT definition
-        FROM pg_views
-        WHERE schemaname = 'public'
-          AND viewname = 'v_supplier_performance';
-        ```
-
-### 연습 9
-연습 5~7에서 만든 뷰들을 모두 삭제하세요.
-
-??? success "정답"
-    ```sql
-    DROP VIEW IF EXISTS v_product_total_sales;
-    DROP VIEW IF EXISTS v_category_monthly_revenue;
-    ```
 
 ### 연습 10
 카테고리별 총 매출과 판매 수량을 집계하는 구체화된 뷰 `mv_category_sales`를 생성하세요. `category_name`, `total_revenue`, `total_qty` 칼럼을 포함합니다. DB별로 적절한 방법을 사용하세요.
@@ -652,6 +660,7 @@ DROP VIEW IF EXISTS v_cs_watchlist;
         -- 갱신
         REFRESH MATERIALIZED VIEW mv_category_sales;
         ```
+
 
 ---
 다음: [강의 22: 인덱스와 쿼리 실행 계획](22-indexes.md)

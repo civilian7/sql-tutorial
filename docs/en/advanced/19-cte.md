@@ -374,8 +374,176 @@ Recursively trace the question → answer → follow-up chain.
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Use a recursive CTE to generate a sequence of month numbers from 1 to 12, then LEFT JOIN with orders to get the order count for each month of 2024. Months with no orders should show 0. Return `month_num`, `year_month`, and `order_count`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        WITH RECURSIVE months AS (
+            SELECT 1 AS month_num
+            UNION ALL
+            SELECT month_num + 1
+            FROM months
+            WHERE month_num < 12
+        )
+        SELECT
+            m.month_num,
+            '2024-' || SUBSTR('0' || m.month_num, -2) AS year_month,
+            COUNT(o.id) AS order_count
+        FROM months AS m
+        LEFT JOIN orders AS o
+            ON SUBSTR(o.ordered_at, 1, 7) = '2024-' || SUBSTR('0' || m.month_num, -2)
+            AND o.status NOT IN ('cancelled', 'returned')
+        GROUP BY m.month_num
+        ORDER BY m.month_num;
+        ```
+
+        **Expected result:**
+
+        | month_num | year_month | order_count |
+        | --------: | ---------- | ----------: |
+        |         1 | 2024-01    |         371 |
+        |         2 | 2024-02    |         367 |
+        |         3 | 2024-03    |         582 |
+        |         4 | 2024-04    |         393 |
+        |         5 | 2024-05    |         387 |
+        | ...       | ...        | ...         |
+
+
+    === "MySQL"
+        ```sql
+        WITH RECURSIVE months AS (
+            SELECT 1 AS month_num
+            UNION ALL
+            SELECT month_num + 1
+            FROM months
+            WHERE month_num < 12
+        )
+        SELECT
+            m.month_num,
+            CONCAT('2024-', LPAD(m.month_num, 2, '0')) AS year_month,
+            COUNT(o.id) AS order_count
+        FROM months AS m
+        LEFT JOIN orders AS o
+            ON DATE_FORMAT(o.ordered_at, '%Y-%m') = CONCAT('2024-', LPAD(m.month_num, 2, '0'))
+            AND o.status NOT IN ('cancelled', 'returned')
+        GROUP BY m.month_num
+        ORDER BY m.month_num;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        WITH RECURSIVE months AS (
+            SELECT 1 AS month_num
+            UNION ALL
+            SELECT month_num + 1
+            FROM months
+            WHERE month_num < 12
+        )
+        SELECT
+            m.month_num,
+            '2024-' || LPAD(m.month_num::text, 2, '0') AS year_month,
+            COUNT(o.id) AS order_count
+        FROM months AS m
+        LEFT JOIN orders AS o
+            ON TO_CHAR(o.ordered_at, 'YYYY-MM') = '2024-' || LPAD(m.month_num::text, 2, '0')
+            AND o.status NOT IN ('cancelled', 'returned')
+        GROUP BY m.month_num
+        ORDER BY m.month_num;
+        ```
+
+
+### Exercise 2
+Use a CTE to identify "at-risk" customers: those who have placed at least 3 orders but whose most recent order was more than 180 days ago. Return `customer_id`, `name`, `grade`, `order_count`, and `last_order_date`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        WITH customer_recency AS (
+            SELECT
+                customer_id,
+                COUNT(*)        AS order_count,
+                MAX(ordered_at) AS last_order_date
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned')
+            GROUP BY customer_id
+        )
+        SELECT
+            c.id    AS customer_id,
+            c.name,
+            c.grade,
+            cr.order_count,
+            cr.last_order_date
+        FROM customer_recency AS cr
+        INNER JOIN customers AS c ON cr.customer_id = c.id
+        WHERE cr.order_count >= 3
+          AND julianday('now') - julianday(cr.last_order_date) > 180
+        ORDER BY cr.last_order_date ASC;
+        ```
+
+        **Expected result:**
+
+        | customer_id | name | grade  | order_count | last_order_date     |
+        | ----------: | ---- | ------ | ----------: | ------------------- |
+        |         997 | 문지우  | BRONZE |           6 | 2020-10-08 12:37:15 |
+        |         349 | 박현정  | BRONZE |           7 | 2020-12-19 20:55:15 |
+        |         350 | 홍성호  | BRONZE |           5 | 2021-02-24 09:22:46 |
+        |         317 | 김영철  | BRONZE |           4 | 2021-03-16 19:36:41 |
+        |         191 | 조지현  | BRONZE |           8 | 2021-04-17 21:58:02 |
+        | ...         | ...  | ...    | ...         | ...                 |
+
+
+    === "MySQL"
+        ```sql
+        WITH customer_recency AS (
+            SELECT
+                customer_id,
+                COUNT(*)        AS order_count,
+                MAX(ordered_at) AS last_order_date
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned')
+            GROUP BY customer_id
+        )
+        SELECT
+            c.id    AS customer_id,
+            c.name,
+            c.grade,
+            cr.order_count,
+            cr.last_order_date
+        FROM customer_recency AS cr
+        INNER JOIN customers AS c ON cr.customer_id = c.id
+        WHERE cr.order_count >= 3
+          AND DATEDIFF(NOW(), cr.last_order_date) > 180
+        ORDER BY cr.last_order_date ASC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        WITH customer_recency AS (
+            SELECT
+                customer_id,
+                COUNT(*)        AS order_count,
+                MAX(ordered_at) AS last_order_date
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned')
+            GROUP BY customer_id
+        )
+        SELECT
+            c.id    AS customer_id,
+            c.name,
+            c.grade,
+            cr.order_count,
+            cr.last_order_date
+        FROM customer_recency AS cr
+        INNER JOIN customers AS c ON cr.customer_id = c.id
+        WHERE cr.order_count >= 3
+          AND CURRENT_DATE - cr.last_order_date::date > 180
+        ORDER BY cr.last_order_date ASC;
+        ```
+
+
+### Exercise 3
 Using two CTEs, find the monthly revenue for 2024, then compute the month-over-month change in revenue. CTE 1: monthly totals. CTE 2: add `LAG` for previous month. Main query: return all columns plus the computed `mom_change` and `mom_pct`.
 
 ??? success "Answer"
@@ -477,95 +645,43 @@ Using two CTEs, find the monthly revenue for 2024, then compute the month-over-m
         ORDER BY year_month;
         ```
 
-### Exercise 2
-Use a CTE to identify "at-risk" customers: those who have placed at least 3 orders but whose most recent order was more than 180 days ago. Return `customer_id`, `name`, `grade`, `order_count`, and `last_order_date`.
+
+### Exercise 4
+Use a CTE to compare each category's average product price against the overall average. Return `category_name`, `avg_price`, `overall_avg`, and `diff_from_overall`. Use one CTE for the overall average and a `CROSS JOIN` in the main query.
 
 ??? success "Answer"
-    === "SQLite"
-        ```sql
-        WITH customer_recency AS (
-            SELECT
-                customer_id,
-                COUNT(*)        AS order_count,
-                MAX(ordered_at) AS last_order_date
-            FROM orders
-            WHERE status NOT IN ('cancelled', 'returned')
-            GROUP BY customer_id
-        )
-        SELECT
-            c.id    AS customer_id,
-            c.name,
-            c.grade,
-            cr.order_count,
-            cr.last_order_date
-        FROM customer_recency AS cr
-        INNER JOIN customers AS c ON cr.customer_id = c.id
-        WHERE cr.order_count >= 3
-          AND julianday('now') - julianday(cr.last_order_date) > 180
-        ORDER BY cr.last_order_date ASC;
-        ```
+    ```sql
+    WITH overall AS (
+        SELECT ROUND(AVG(price), 2) AS overall_avg
+        FROM products
+        WHERE is_active = 1
+    )
+    SELECT
+        cat.name AS category_name,
+        ROUND(AVG(p.price), 2) AS avg_price,
+        o.overall_avg,
+        ROUND(AVG(p.price) - o.overall_avg, 2) AS diff_from_overall
+    FROM products AS p
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    CROSS JOIN overall AS o
+    WHERE p.is_active = 1
+    GROUP BY cat.id, cat.name, o.overall_avg
+    ORDER BY avg_price DESC;
+    ```
 
-        **Expected result:**
+    **Expected result:**
 
-        | customer_id | name | grade  | order_count | last_order_date     |
-        | ----------: | ---- | ------ | ----------: | ------------------- |
-        |         997 | 문지우  | BRONZE |           6 | 2020-10-08 12:37:15 |
-        |         349 | 박현정  | BRONZE |           7 | 2020-12-19 20:55:15 |
-        |         350 | 홍성호  | BRONZE |           5 | 2021-02-24 09:22:46 |
-        |         317 | 김영철  | BRONZE |           4 | 2021-03-16 19:36:41 |
-        |         191 | 조지현  | BRONZE |           8 | 2021-04-17 21:58:02 |
-        | ...         | ...  | ...    | ...         | ...                 |
+    | category_name | avg_price  | overall_avg | diff_from_overall |
+    | ------------- | ---------: | ----------: | ----------------: |
+    | 맥북            |    3774700 |   665404.59 |        3109295.41 |
+    | 게이밍 노트북       |    3169700 |   665404.59 |        2504295.41 |
+    | NVIDIA        |    2045440 |   665404.59 |        1380035.41 |
+    | 일반 노트북        |  1856837.5 |   665404.59 |        1191432.91 |
+    | 조립PC          | 1795033.33 |   665404.59 |        1129628.74 |
+    | ...           | ...        | ...         | ...               |
 
 
-    === "MySQL"
-        ```sql
-        WITH customer_recency AS (
-            SELECT
-                customer_id,
-                COUNT(*)        AS order_count,
-                MAX(ordered_at) AS last_order_date
-            FROM orders
-            WHERE status NOT IN ('cancelled', 'returned')
-            GROUP BY customer_id
-        )
-        SELECT
-            c.id    AS customer_id,
-            c.name,
-            c.grade,
-            cr.order_count,
-            cr.last_order_date
-        FROM customer_recency AS cr
-        INNER JOIN customers AS c ON cr.customer_id = c.id
-        WHERE cr.order_count >= 3
-          AND DATEDIFF(NOW(), cr.last_order_date) > 180
-        ORDER BY cr.last_order_date ASC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH customer_recency AS (
-            SELECT
-                customer_id,
-                COUNT(*)        AS order_count,
-                MAX(ordered_at) AS last_order_date
-            FROM orders
-            WHERE status NOT IN ('cancelled', 'returned')
-            GROUP BY customer_id
-        )
-        SELECT
-            c.id    AS customer_id,
-            c.name,
-            c.grade,
-            cr.order_count,
-            cr.last_order_date
-        FROM customer_recency AS cr
-        INNER JOIN customers AS c ON cr.customer_id = c.id
-        WHERE cr.order_count >= 3
-          AND CURRENT_DATE - cr.last_order_date::date > 180
-        ORDER BY cr.last_order_date ASC;
-        ```
-
-### Exercise 3
+### Exercise 5
 Use a recursive CTE to build the full breadcrumb path for every leaf category (categories with no children). Return `category_id`, `category_name`, and `full_path`.
 
 ??? success "Answer"
@@ -641,42 +757,132 @@ Use a recursive CTE to build the full breadcrumb path for every leaf category (c
         ORDER BY ct.full_path;
         ```
 
-### Exercise 4
-Use a CTE to compare each category's average product price against the overall average. Return `category_name`, `avg_price`, `overall_avg`, and `diff_from_overall`. Use one CTE for the overall average and a `CROSS JOIN` in the main query.
+
+### Exercise 6
+Use a recursive CTE to walk the category tree, then aggregate the number of subcategories and products under each root (top-level) category. Return `root_category`, `subcategory_count`, and `product_count`.
 
 ??? success "Answer"
-    ```sql
-    WITH overall AS (
-        SELECT ROUND(AVG(price), 2) AS overall_avg
-        FROM products
-        WHERE is_active = 1
-    )
-    SELECT
-        cat.name AS category_name,
-        ROUND(AVG(p.price), 2) AS avg_price,
-        o.overall_avg,
-        ROUND(AVG(p.price) - o.overall_avg, 2) AS diff_from_overall
-    FROM products AS p
-    INNER JOIN categories AS cat ON p.category_id = cat.id
-    CROSS JOIN overall AS o
-    WHERE p.is_active = 1
-    GROUP BY cat.id, cat.name, o.overall_avg
-    ORDER BY avg_price DESC;
-    ```
+    === "SQLite / PostgreSQL"
+        ```sql
+        WITH RECURSIVE tree AS (
+            SELECT id, name AS root_name, id AS root_id
+            FROM categories
+            WHERE parent_id IS NULL
 
-    **Expected result:**
+            UNION ALL
 
-    | category_name | avg_price  | overall_avg | diff_from_overall |
-    | ------------- | ---------: | ----------: | ----------------: |
-    | 맥북            |    3774700 |   665404.59 |        3109295.41 |
-    | 게이밍 노트북       |    3169700 |   665404.59 |        2504295.41 |
-    | NVIDIA        |    2045440 |   665404.59 |        1380035.41 |
-    | 일반 노트북        |  1856837.5 |   665404.59 |        1191432.91 |
-    | 조립PC          | 1795033.33 |   665404.59 |        1129628.74 |
-    | ...           | ...        | ...         | ...               |
+            SELECT c.id, t.root_name, t.root_id
+            FROM categories AS c
+            INNER JOIN tree AS t ON c.parent_id = t.id
+        )
+        SELECT
+            t.root_name AS root_category,
+            COUNT(DISTINCT t.id) - 1 AS subcategory_count,
+            COUNT(DISTINCT p.id)     AS product_count
+        FROM tree AS t
+        LEFT JOIN products AS p ON p.category_id = t.id
+        GROUP BY t.root_id, t.root_name
+        ORDER BY product_count DESC;
+        ```
+
+        **Expected result:**
+
+        | root_category | subcategory_count | product_count |
+        | ------------- | ----------------: | ------------: |
+        | 노트북           |                 4 |            29 |
+        | 키보드           |                 3 |            27 |
+        | 메인보드          |                 2 |            23 |
+        | 모니터           |                 3 |            22 |
+        | 네트워크 장비       |                 3 |            22 |
+        | ...           | ...               | ...           |
 
 
-### Exercise 5
+    === "MySQL"
+        ```sql
+        WITH RECURSIVE tree AS (
+            SELECT id, name AS root_name, id AS root_id
+            FROM categories
+            WHERE parent_id IS NULL
+
+            UNION ALL
+
+            SELECT c.id, t.root_name, t.root_id
+            FROM categories AS c
+            INNER JOIN tree AS t ON c.parent_id = t.id
+        )
+        SELECT
+            t.root_name AS root_category,
+            COUNT(DISTINCT t.id) - 1 AS subcategory_count,
+            COUNT(DISTINCT p.id)     AS product_count
+        FROM tree AS t
+        LEFT JOIN products AS p ON p.category_id = t.id
+        GROUP BY t.root_id, t.root_name
+        ORDER BY product_count DESC;
+        ```
+
+
+### Exercise 7
+Use a recursive CTE to walk the staff org chart and find each manager's depth level and direct report count. Return `manager_name`, `level`, and `direct_reports`. Only include staff who have at least one direct report.
+
+??? success "Answer"
+    === "SQLite / PostgreSQL"
+        ```sql
+        WITH RECURSIVE org AS (
+            SELECT id, name, manager_id, 0 AS level
+            FROM staff
+            WHERE manager_id IS NULL
+
+            UNION ALL
+
+            SELECT s.id, s.name, s.manager_id, o.level + 1
+            FROM staff AS s
+            INNER JOIN org AS o ON s.manager_id = o.id
+        )
+        SELECT
+            m.name AS manager_name,
+            m.level,
+            COUNT(s.id) AS direct_reports
+        FROM org AS m
+        LEFT JOIN staff AS s ON s.manager_id = m.id
+        GROUP BY m.id, m.name, m.level
+        HAVING COUNT(s.id) > 0
+        ORDER BY m.level, direct_reports DESC;
+        ```
+
+        **Expected result:**
+
+        | manager_name | level | direct_reports |
+        | ------------ | ----: | -------------: |
+        | 한민재          |     0 |              3 |
+        | 박경수          |     1 |              1 |
+
+
+    === "MySQL"
+        ```sql
+        WITH RECURSIVE org AS (
+            SELECT id, name, manager_id, 0 AS level
+            FROM staff
+            WHERE manager_id IS NULL
+
+            UNION ALL
+
+            SELECT s.id, s.name, s.manager_id, o.level + 1
+            FROM staff AS s
+            INNER JOIN org AS o ON s.manager_id = o.id
+        )
+        SELECT
+            m.name AS manager_name,
+            m.level,
+            COUNT(s.id) AS direct_reports
+        FROM org AS m
+        LEFT JOIN staff AS s ON s.manager_id = m.id
+        GROUP BY m.id, m.name, m.level
+        HAVING COUNT(s.id) > 0
+        ORDER BY m.level, direct_reports DESC;
+        ```
+
+
+### Exercise 8
 Use multiple CTEs to find the share of each payment method in monthly revenue for 2024. CTE 1: monthly amount per payment method. CTE 2: monthly total. Main query: return `year_month`, `method`, `amount`, `monthly_total`, and `pct`.
 
 ??? success "Answer"
@@ -787,7 +993,8 @@ Use multiple CTEs to find the share of each payment method in monthly revenue fo
         ORDER BY mm.year_month, mm.amount DESC;
         ```
 
-### Exercise 6
+
+### Exercise 9
 Combine a CTE with a window function to find the top 2 highest-rated products per category. Return `category_name`, `product_name`, `avg_rating`, `review_count`, and `rnk`. Only include products with at least 3 reviews.
 
 ??? success "Answer"
@@ -836,146 +1043,7 @@ Combine a CTE with a window function to find the top 2 highest-rated products pe
     | ...           | ...                    | ...        | ...          | ... |
 
 
-### Exercise 7
-Use a recursive CTE to generate a sequence of month numbers from 1 to 12, then LEFT JOIN with orders to get the order count for each month of 2024. Months with no orders should show 0. Return `month_num`, `year_month`, and `order_count`.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        WITH RECURSIVE months AS (
-            SELECT 1 AS month_num
-            UNION ALL
-            SELECT month_num + 1
-            FROM months
-            WHERE month_num < 12
-        )
-        SELECT
-            m.month_num,
-            '2024-' || SUBSTR('0' || m.month_num, -2) AS year_month,
-            COUNT(o.id) AS order_count
-        FROM months AS m
-        LEFT JOIN orders AS o
-            ON SUBSTR(o.ordered_at, 1, 7) = '2024-' || SUBSTR('0' || m.month_num, -2)
-            AND o.status NOT IN ('cancelled', 'returned')
-        GROUP BY m.month_num
-        ORDER BY m.month_num;
-        ```
-
-        **Expected result:**
-
-        | month_num | year_month | order_count |
-        | --------: | ---------- | ----------: |
-        |         1 | 2024-01    |         371 |
-        |         2 | 2024-02    |         367 |
-        |         3 | 2024-03    |         582 |
-        |         4 | 2024-04    |         393 |
-        |         5 | 2024-05    |         387 |
-        | ...       | ...        | ...         |
-
-
-    === "MySQL"
-        ```sql
-        WITH RECURSIVE months AS (
-            SELECT 1 AS month_num
-            UNION ALL
-            SELECT month_num + 1
-            FROM months
-            WHERE month_num < 12
-        )
-        SELECT
-            m.month_num,
-            CONCAT('2024-', LPAD(m.month_num, 2, '0')) AS year_month,
-            COUNT(o.id) AS order_count
-        FROM months AS m
-        LEFT JOIN orders AS o
-            ON DATE_FORMAT(o.ordered_at, '%Y-%m') = CONCAT('2024-', LPAD(m.month_num, 2, '0'))
-            AND o.status NOT IN ('cancelled', 'returned')
-        GROUP BY m.month_num
-        ORDER BY m.month_num;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH RECURSIVE months AS (
-            SELECT 1 AS month_num
-            UNION ALL
-            SELECT month_num + 1
-            FROM months
-            WHERE month_num < 12
-        )
-        SELECT
-            m.month_num,
-            '2024-' || LPAD(m.month_num::text, 2, '0') AS year_month,
-            COUNT(o.id) AS order_count
-        FROM months AS m
-        LEFT JOIN orders AS o
-            ON TO_CHAR(o.ordered_at, 'YYYY-MM') = '2024-' || LPAD(m.month_num::text, 2, '0')
-            AND o.status NOT IN ('cancelled', 'returned')
-        GROUP BY m.month_num
-        ORDER BY m.month_num;
-        ```
-
-### Exercise 8
-Use a recursive CTE to walk the staff org chart and find each manager's depth level and direct report count. Return `manager_name`, `level`, and `direct_reports`. Only include staff who have at least one direct report.
-
-??? success "Answer"
-    === "SQLite / PostgreSQL"
-        ```sql
-        WITH RECURSIVE org AS (
-            SELECT id, name, manager_id, 0 AS level
-            FROM staff
-            WHERE manager_id IS NULL
-
-            UNION ALL
-
-            SELECT s.id, s.name, s.manager_id, o.level + 1
-            FROM staff AS s
-            INNER JOIN org AS o ON s.manager_id = o.id
-        )
-        SELECT
-            m.name AS manager_name,
-            m.level,
-            COUNT(s.id) AS direct_reports
-        FROM org AS m
-        LEFT JOIN staff AS s ON s.manager_id = m.id
-        GROUP BY m.id, m.name, m.level
-        HAVING COUNT(s.id) > 0
-        ORDER BY m.level, direct_reports DESC;
-        ```
-
-        **Expected result:**
-
-        | manager_name | level | direct_reports |
-        | ------------ | ----: | -------------: |
-        | 한민재          |     0 |              3 |
-        | 박경수          |     1 |              1 |
-
-
-    === "MySQL"
-        ```sql
-        WITH RECURSIVE org AS (
-            SELECT id, name, manager_id, 0 AS level
-            FROM staff
-            WHERE manager_id IS NULL
-
-            UNION ALL
-
-            SELECT s.id, s.name, s.manager_id, o.level + 1
-            FROM staff AS s
-            INNER JOIN org AS o ON s.manager_id = o.id
-        )
-        SELECT
-            m.name AS manager_name,
-            m.level,
-            COUNT(s.id) AS direct_reports
-        FROM org AS m
-        LEFT JOIN staff AS s ON s.manager_id = m.id
-        GROUP BY m.id, m.name, m.level
-        HAVING COUNT(s.id) > 0
-        ORDER BY m.level, direct_reports DESC;
-        ```
-
-### Exercise 9
+### Exercise 10
 Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold and revenue per product. CTE 2: average review rating per product. CTE 3: JOIN both. Main query: return `product_name`, `units_sold`, `revenue`, and `avg_rating`, showing the top 10 by revenue.
 
 ??? success "Answer"
@@ -1025,68 +1093,6 @@ Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold
     | 삼성 오디세이 G5 27 블랙   |        264 | 676262400 |       3.09 |
     | ...                | ...        | ...       | ...        |
 
-
-### Exercise 10
-Use a recursive CTE to walk the category tree, then aggregate the number of subcategories and products under each root (top-level) category. Return `root_category`, `subcategory_count`, and `product_count`.
-
-??? success "Answer"
-    === "SQLite / PostgreSQL"
-        ```sql
-        WITH RECURSIVE tree AS (
-            SELECT id, name AS root_name, id AS root_id
-            FROM categories
-            WHERE parent_id IS NULL
-
-            UNION ALL
-
-            SELECT c.id, t.root_name, t.root_id
-            FROM categories AS c
-            INNER JOIN tree AS t ON c.parent_id = t.id
-        )
-        SELECT
-            t.root_name AS root_category,
-            COUNT(DISTINCT t.id) - 1 AS subcategory_count,
-            COUNT(DISTINCT p.id)     AS product_count
-        FROM tree AS t
-        LEFT JOIN products AS p ON p.category_id = t.id
-        GROUP BY t.root_id, t.root_name
-        ORDER BY product_count DESC;
-        ```
-
-        **Expected result:**
-
-        | root_category | subcategory_count | product_count |
-        | ------------- | ----------------: | ------------: |
-        | 노트북           |                 4 |            29 |
-        | 키보드           |                 3 |            27 |
-        | 메인보드          |                 2 |            23 |
-        | 모니터           |                 3 |            22 |
-        | 네트워크 장비       |                 3 |            22 |
-        | ...           | ...               | ...           |
-
-
-    === "MySQL"
-        ```sql
-        WITH RECURSIVE tree AS (
-            SELECT id, name AS root_name, id AS root_id
-            FROM categories
-            WHERE parent_id IS NULL
-
-            UNION ALL
-
-            SELECT c.id, t.root_name, t.root_id
-            FROM categories AS c
-            INNER JOIN tree AS t ON c.parent_id = t.id
-        )
-        SELECT
-            t.root_name AS root_category,
-            COUNT(DISTINCT t.id) - 1 AS subcategory_count,
-            COUNT(DISTINCT p.id)     AS product_count
-        FROM tree AS t
-        LEFT JOIN products AS p ON p.category_id = t.id
-        GROUP BY t.root_id, t.root_name
-        ORDER BY product_count DESC;
-        ```
 
 ---
 Next: [Lesson 20: EXISTS and Correlated Subqueries](20-exists.md)

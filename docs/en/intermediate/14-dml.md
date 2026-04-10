@@ -320,45 +320,7 @@ In practice, the **UPSERT patterns shown above are far more commonly used**. The
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
-A supplier has changed the price of all products they supply. Update the `price` column for all active products from `supplier_id = 7` to increase by 8%. Also update `updated_at`. First write the `SELECT` to verify which rows will change, then write the `UPDATE`.
-
-??? success "Answer"
-    ```sql
-    -- Verify first
-    SELECT id, name, price, ROUND(price * 1.08, 2) AS new_price
-    FROM products
-    WHERE supplier_id = 7 AND is_active = 1;
-
-    -- Then update
-    UPDATE products
-    SET
-        price      = ROUND(price * 1.08, 2),
-        updated_at = datetime('now')
-    WHERE supplier_id = 7
-      AND is_active = 1;
-    ```
-
-### Exercise 2
-Insert a new customer record for a walk-in registration. Use: name `'Sam Rivera'`, email `'s.rivera@testmail.com'`, phone `'555-0199-7823'`, grade `'BRONZE'`, `point_balance = 0`, `is_active = 1`, and set both `created_at` and `updated_at` to the current time.
-
-??? success "Answer"
-    ```sql
-    INSERT INTO customers (name, email, phone, grade, point_balance, is_active, created_at, updated_at)
-    VALUES (
-        'Sam Rivera',
-        's.rivera@testmail.com',
-        '555-0199-7823',
-        'BRONZE',
-        0,
-        1,
-        datetime('now'),
-        datetime('now')
-    );
-    ```
-
-### Exercise 3
 Insert 3 products into the `products` table at once. All share `category_id = 9` (Keyboards), `supplier_id = 1`, `is_active = 1`, and `stock_qty = 30`.
 
 | sku | name | price |
@@ -386,7 +348,178 @@ Insert 3 products into the `products` table at once. All share `category_id = 9`
             ('SKU-TEST-103', 'Wireless Keyboard C', 9, 1, 99.99, 30, 1, NOW(), NOW());
         ```
 
+
+### Exercise 2
+Explain what happens if you omit the `WHERE` clause in this scenario, then write the correct `UPDATE`: "Change the phone number of customer ID 500 to `'555-0555-1234'`."
+
+??? success "Answer"
+    Without `WHERE`, **every customer** in the table would have their phone changed to `'555-0555-1234'`. The correct query:
+
+    === "SQLite"
+        ```sql
+        UPDATE customers
+        SET
+            phone      = '555-0555-1234',
+            updated_at = datetime('now')
+        WHERE id = 500;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        UPDATE customers
+        SET
+            phone      = '555-0555-1234',
+            updated_at = NOW()
+        WHERE id = 500;
+        ```
+
+
+### Exercise 3
+Write an UPSERT to update the point balance of customer ID 300. If the customer exists, set `point_balance` to `2000` and update `updated_at`. If the customer doesn't exist, insert a new record with name `'Seo-yun Lee'`, email `'lee.sy@testmail.kr'`, phone `'555-0300-0001'`, grade `'BRONZE'`, `point_balance = 2000`, `is_active = 1`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, datetime('now'), datetime('now'))
+        ON CONFLICT(id) DO UPDATE SET
+            point_balance = excluded.point_balance,
+            updated_at    = excluded.updated_at;
+        ```
+
+    === "MySQL"
+        ```sql
+        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE
+            point_balance = VALUES(point_balance),
+            updated_at    = VALUES(updated_at);
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
+        ON CONFLICT(id) DO UPDATE SET
+            point_balance = EXCLUDED.point_balance,
+            updated_at    = EXCLUDED.updated_at;
+        ```
+
+
 ### Exercise 4
+An external inventory system reports that SKU `'SKU-0099'` has 150 units in stock. Write an UPSERT that updates `stock_qty` to 150 if the SKU already exists, but **keeps the existing price if it's higher** than the incoming price. If the SKU doesn't exist, insert it with name `'USB-C Hub'`, `category_id = 10`, `supplier_id = 2`, `price = 35.00`, `stock_qty = 150`, `is_active = 1`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, datetime('now'), datetime('now'))
+        ON CONFLICT(sku) DO UPDATE SET
+            stock_qty  = excluded.stock_qty,
+            price      = MAX(products.price, excluded.price),
+            updated_at = excluded.updated_at;
+        ```
+
+    === "MySQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
+        ON DUPLICATE KEY UPDATE
+            stock_qty  = VALUES(stock_qty),
+            price      = GREATEST(price, VALUES(price)),
+            updated_at = VALUES(updated_at);
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
+        ON CONFLICT(sku) DO UPDATE SET
+            stock_qty  = EXCLUDED.stock_qty,
+            price      = GREATEST(products.price, EXCLUDED.price),
+            updated_at = EXCLUDED.updated_at;
+        ```
+
+
+### Exercise 5
+Insert a new customer record for a walk-in registration. Use: name `'Sam Rivera'`, email `'s.rivera@testmail.com'`, phone `'555-0199-7823'`, grade `'BRONZE'`, `point_balance = 0`, `is_active = 1`, and set both `created_at` and `updated_at` to the current time.
+
+??? success "Answer"
+    ```sql
+    INSERT INTO customers (name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+    VALUES (
+        'Sam Rivera',
+        's.rivera@testmail.com',
+        '555-0199-7823',
+        'BRONZE',
+        0,
+        1,
+        datetime('now'),
+        datetime('now')
+    );
+    ```
+
+
+### Exercise 6
+A supplier has changed the price of all products they supply. Update the `price` column for all active products from `supplier_id = 7` to increase by 8%. Also update `updated_at`. First write the `SELECT` to verify which rows will change, then write the `UPDATE`.
+
+??? success "Answer"
+    ```sql
+    -- Verify first
+    SELECT id, name, price, ROUND(price * 1.08, 2) AS new_price
+    FROM products
+    WHERE supplier_id = 7 AND is_active = 1;
+
+    -- Then update
+    UPDATE products
+    SET
+        price      = ROUND(price * 1.08, 2),
+        updated_at = datetime('now')
+    WHERE supplier_id = 7
+      AND is_active = 1;
+    ```
+
+
+### Exercise 7
+Set `stock_qty` to 0 for all inactive (`is_active = 0`) and discontinued (`discontinued_at IS NOT NULL`) products. Also update `updated_at`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Verify first
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
+
+        -- Update
+        UPDATE products
+        SET
+            stock_qty  = 0,
+            updated_at = datetime('now')
+        WHERE is_active = 0
+          AND discontinued_at IS NOT NULL
+          AND stock_qty > 0;
+        ```
+
+    === "MySQL / PostgreSQL"
+        ```sql
+        -- Verify first
+        SELECT id, name, stock_qty
+        FROM products
+        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
+
+        -- Update
+        UPDATE products
+        SET
+            stock_qty  = 0,
+            updated_at = NOW()
+        WHERE is_active = 0
+          AND discontinued_at IS NOT NULL
+          AND stock_qty > 0;
+        ```
+
+
+### Exercise 8
 Update all active BRONZE customers with a `point_balance` of 0: change their grade to `'SILVER'` and set their points to `500`. Also update `updated_at`.
 
 ??? success "Answer"
@@ -426,7 +559,8 @@ Update all active BRONZE customers with a `point_balance` of 0: change their gra
           AND is_active = 1;
         ```
 
-### Exercise 5
+
+### Exercise 9
 Delete reviews where `rating` is 1 and `content` is NULL. First write a `SELECT` to check how many rows will be affected.
 
 ??? success "Answer"
@@ -442,45 +576,8 @@ Delete reviews where `rating` is 1 and `content` is NULL. First write a `SELECT`
       AND content IS NULL;
     ```
 
-### Exercise 6
-Set `stock_qty` to 0 for all inactive (`is_active = 0`) and discontinued (`discontinued_at IS NOT NULL`) products. Also update `updated_at`.
 
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        -- Verify first
-        SELECT id, name, stock_qty
-        FROM products
-        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
-
-        -- Update
-        UPDATE products
-        SET
-            stock_qty  = 0,
-            updated_at = datetime('now')
-        WHERE is_active = 0
-          AND discontinued_at IS NOT NULL
-          AND stock_qty > 0;
-        ```
-
-    === "MySQL / PostgreSQL"
-        ```sql
-        -- Verify first
-        SELECT id, name, stock_qty
-        FROM products
-        WHERE is_active = 0 AND discontinued_at IS NOT NULL AND stock_qty > 0;
-
-        -- Update
-        UPDATE products
-        SET
-            stock_qty  = 0,
-            updated_at = NOW()
-        WHERE is_active = 0
-          AND discontinued_at IS NOT NULL
-          AND stock_qty > 0;
-        ```
-
-### Exercise 7
+### Exercise 10
 Using `INSERT ... SELECT`, create refurbished versions of all active products priced at 1000 or above. Prefix the SKU with `'REF-'`, append `' (Refurbished)'` to the name, set the price to 60% of the original, and set `stock_qty` to 5.
 
 ??? success "Answer"
@@ -520,7 +617,8 @@ Using `INSERT ... SELECT`, create refurbished versions of all active products pr
           AND is_active = 1;
         ```
 
-### Exercise 8
+
+### Exercise 11
 Delete resolved complaints (`status = 'resolved'`) that were created before 2022 (`created_at < '2022-01-01'`). First verify the count and date range with a `SELECT`.
 
 ??? success "Answer"
@@ -537,31 +635,8 @@ Delete resolved complaints (`status = 'resolved'`) that were created before 2022
       AND created_at < '2022-01-01';
     ```
 
-### Exercise 9
-Explain what happens if you omit the `WHERE` clause in this scenario, then write the correct `UPDATE`: "Change the phone number of customer ID 500 to `'555-0555-1234'`."
 
-??? success "Answer"
-    Without `WHERE`, **every customer** in the table would have their phone changed to `'555-0555-1234'`. The correct query:
-
-    === "SQLite"
-        ```sql
-        UPDATE customers
-        SET
-            phone      = '555-0555-1234',
-            updated_at = datetime('now')
-        WHERE id = 500;
-        ```
-
-    === "MySQL / PostgreSQL"
-        ```sql
-        UPDATE customers
-        SET
-            phone      = '555-0555-1234',
-            updated_at = NOW()
-        WHERE id = 500;
-        ```
-
-### Exercise 10
+### Exercise 12
 Write a `SELECT` to find active products that have never been ordered, then write an `UPDATE` to deactivate them (`is_active = 0`). Use a subquery.
 
 ??? success "Answer"
@@ -599,70 +674,6 @@ Write a `SELECT` to find active products that have never been ordered, then writ
           AND is_active = 1;
         ```
 
-### Exercise 11
-Write an UPSERT to update the point balance of customer ID 300. If the customer exists, set `point_balance` to `2000` and update `updated_at`. If the customer doesn't exist, insert a new record with name `'Seo-yun Lee'`, email `'lee.sy@testmail.kr'`, phone `'555-0300-0001'`, grade `'BRONZE'`, `point_balance = 2000`, `is_active = 1`.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
-        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, datetime('now'), datetime('now'))
-        ON CONFLICT(id) DO UPDATE SET
-            point_balance = excluded.point_balance,
-            updated_at    = excluded.updated_at;
-        ```
-
-    === "MySQL"
-        ```sql
-        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
-        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
-        ON DUPLICATE KEY UPDATE
-            point_balance = VALUES(point_balance),
-            updated_at    = VALUES(updated_at);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
-        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
-        ON CONFLICT(id) DO UPDATE SET
-            point_balance = EXCLUDED.point_balance,
-            updated_at    = EXCLUDED.updated_at;
-        ```
-
-### Exercise 12
-An external inventory system reports that SKU `'SKU-0099'` has 150 units in stock. Write an UPSERT that updates `stock_qty` to 150 if the SKU already exists, but **keeps the existing price if it's higher** than the incoming price. If the SKU doesn't exist, insert it with name `'USB-C Hub'`, `category_id = 10`, `supplier_id = 2`, `price = 35.00`, `stock_qty = 150`, `is_active = 1`.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, datetime('now'), datetime('now'))
-        ON CONFLICT(sku) DO UPDATE SET
-            stock_qty  = excluded.stock_qty,
-            price      = MAX(products.price, excluded.price),
-            updated_at = excluded.updated_at;
-        ```
-
-    === "MySQL"
-        ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
-        ON DUPLICATE KEY UPDATE
-            stock_qty  = VALUES(stock_qty),
-            price      = GREATEST(price, VALUES(price)),
-            updated_at = VALUES(updated_at);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
-        ON CONFLICT(sku) DO UPDATE SET
-            stock_qty  = EXCLUDED.stock_qty,
-            price      = GREATEST(products.price, EXCLUDED.price),
-            updated_at = EXCLUDED.updated_at;
-        ```
 
 ---
 Next: [Lesson 15: DDL — Creating and Altering Tables](15-ddl.md)

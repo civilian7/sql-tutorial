@@ -242,21 +242,88 @@ Use `COALESCE` to guard against this:
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
-Count how many customers are missing a birth date, have no recorded gender, and have never logged in. Show separate counts for each condition plus the total customer count.
+Find the top-level managers in the `staff` table — employees whose `manager_id` is NULL. Show their `name`, `department`, and `role`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, department, role
+    FROM staff
+    WHERE manager_id IS NULL;
+    ```
+
+    **Expected result:**
+
+    | name | department | role  |
+    | ---- | ---------- | ----- |
+    | 한민재  | 경영         | admin |
+
+
+### Exercise 2
+Find customers whose `phone` is NULL. Show their `name` and `email`, but replace NULL emails with `'No contact'` using COALESCE.
 
 ??? success "Answer"
     ```sql
     SELECT
-        COUNT(*)                                         AS total_customers,
-        COUNT(*) - COUNT(birth_date)                    AS missing_birth_date,
-        COUNT(*) - COUNT(gender)                        AS missing_gender,
-        SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in
-    FROM customers;
+        name,
+        COALESCE(email, 'No contact') AS email
+    FROM customers
+    WHERE phone IS NULL;
     ```
 
-### Exercise 2
+
+### Exercise 3
+Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `name`, `price`, `stock_qty`, and `price / NULLIF(stock_qty, 0)` as `price_per_unit`. Limit to 5 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        price,
+        stock_qty,
+        price / NULLIF(stock_qty, 0) AS price_per_unit
+    FROM products
+    LIMIT 5;
+    ```
+
+    **Expected result:**
+
+    | name                                     | price   | stock_qty | price_per_unit |
+    | ---------------------------------------- | ------: | --------: | -------------: |
+    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
+    | Dell U2724D                              |  853600 |       337 |        2532.94 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
+
+
+### Exercise 4
+List customers who have never logged in (`last_login_at IS NULL`). Show `name`, `email`, and `created_at`, replacing NULL `email` with `'N/A'` and NULL `created_at` with `'Unknown'`. Limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        COALESCE(email, 'N/A')       AS email,
+        COALESCE(created_at, 'Unknown') AS created_at
+    FROM customers
+    WHERE last_login_at IS NULL
+    LIMIT 10;
+    ```
+
+    **Expected result:**
+
+    | name | email              | created_at          |
+    | ---- | ------------------ | ------------------- |
+    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
+    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
+    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
+    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
+    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
+    | ...  | ...                | ...                 |
+
+
+### Exercise 5
 List all orders where `staff_id IS NULL` (no customer service rep assigned). For each order show `order_number`, `status`, and the notes — but replace NULL notes with the text `'—'`.
 
 ??? success "Answer"
@@ -283,119 +350,7 @@ List all orders where `staff_id IS NULL` (no customer service rep assigned). For
     | ...                | ...       | ...                |
 
 
-### Exercise 3
-Count how many orders in the `orders` table have a NULL `cancelled_at` (not cancelled) and how many have a non-NULL `cancelled_at` (cancelled). Use aliases `not_cancelled` and `cancelled`.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        COUNT(CASE WHEN cancelled_at IS NULL THEN 1 END)     AS not_cancelled,
-        COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
-    FROM orders;
-    ```
-
-    **Expected result:**
-
-    | not_cancelled | cancelled |
-    | ------------: | --------: |
-    |         33154 |      1754 |
-
-
-### Exercise 4
-Find customers whose `phone` is NULL. Show their `name` and `email`, but replace NULL emails with `'No contact'` using COALESCE.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        name,
-        COALESCE(email, 'No contact') AS email
-    FROM customers
-    WHERE phone IS NULL;
-    ```
-
-### Exercise 5
-From the `products` table, count the total products, how many are missing a `weight_grams`, and what percentage that is (1 decimal place). Use aliases `total_products`, `missing_weight`, `pct_missing`.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        COUNT(*)                                AS total_products,
-        COUNT(*) - COUNT(weight_grams)                AS missing_weight,
-        ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
-    FROM products;
-    ```
-
-    **Expected result:**
-
-    | total_products | missing_weight | pct_missing |
-    | -------------: | -------------: | ----------: |
-    |            280 |             12 |         4.3 |
-
-
 ### Exercise 6
-Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `name`, `price`, `stock_qty`, and `price / NULLIF(stock_qty, 0)` as `price_per_unit`. Limit to 5 rows.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        name,
-        price,
-        stock_qty,
-        price / NULLIF(stock_qty, 0) AS price_per_unit
-    FROM products
-    LIMIT 5;
-    ```
-
-    **Expected result:**
-
-    | name                                     | price   | stock_qty | price_per_unit |
-    | ---------------------------------------- | ------: | --------: | -------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
-    | Dell U2724D                              |  853600 |       337 |        2532.94 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
-
-
-### Exercise 7
-In the `reviews` table, compare the average `rating` of reviews that have `content` (not NULL) vs. reviews without content (NULL). Show `COUNT(*)` and `AVG(rating)` for each group.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END AS content_status,
-        COUNT(*)        AS review_count,
-        AVG(rating)     AS avg_rating
-    FROM reviews
-    GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
-    ```
-
-    **Expected result:**
-
-    | content_status | review_count | avg_rating |
-    | -------------- | -----------: | ---------: |
-    | Has Content    |         7156 |       3.91 |
-    | No Content     |          789 |       3.93 |
-
-
-### Exercise 8
-Find the top-level managers in the `staff` table — employees whose `manager_id` is NULL. Show their `name`, `department`, and `role`.
-
-??? success "Answer"
-    ```sql
-    SELECT name, department, role
-    FROM staff
-    WHERE manager_id IS NULL;
-    ```
-
-    **Expected result:**
-
-    | name | department | role  |
-    | ---- | ---------- | ----- |
-    | 한민재  | 경영         | admin |
-
-
-### Exercise 9
 For each membership `grade`, show how many customers have a known gender vs. an unknown gender. Use `COALESCE(gender, 'Unknown')` as the grouping column.
 
 ??? success "Answer"
@@ -421,30 +376,76 @@ For each membership `grade`, show how many customers have a known gender vs. an 
     | ...    | ...           | ...            |
 
 
-### Exercise 10
-List customers who have never logged in (`last_login_at IS NULL`). Show `name`, `email`, and `created_at`, replacing NULL `email` with `'N/A'` and NULL `created_at` with `'Unknown'`. Limit to 10 rows.
+### Exercise 7
+Count how many orders in the `orders` table have a NULL `cancelled_at` (not cancelled) and how many have a non-NULL `cancelled_at` (cancelled). Use aliases `not_cancelled` and `cancelled`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        name,
-        COALESCE(email, 'N/A')       AS email,
-        COALESCE(created_at, 'Unknown') AS created_at
-    FROM customers
-    WHERE last_login_at IS NULL
-    LIMIT 10;
+        COUNT(CASE WHEN cancelled_at IS NULL THEN 1 END)     AS not_cancelled,
+        COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
+    FROM orders;
     ```
 
     **Expected result:**
 
-    | name | email              | created_at          |
-    | ---- | ------------------ | ------------------- |
-    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
-    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
-    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
-    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
-    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
-    | ...  | ...                | ...                 |
+    | not_cancelled | cancelled |
+    | ------------: | --------: |
+    |         33154 |      1754 |
+
+
+### Exercise 8
+From the `products` table, count the total products, how many are missing a `weight_grams`, and what percentage that is (1 decimal place). Use aliases `total_products`, `missing_weight`, `pct_missing`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        COUNT(*)                                AS total_products,
+        COUNT(*) - COUNT(weight_grams)                AS missing_weight,
+        ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
+    FROM products;
+    ```
+
+    **Expected result:**
+
+    | total_products | missing_weight | pct_missing |
+    | -------------: | -------------: | ----------: |
+    |            280 |             12 |         4.3 |
+
+
+### Exercise 9
+In the `reviews` table, compare the average `rating` of reviews that have `content` (not NULL) vs. reviews without content (NULL). Show `COUNT(*)` and `AVG(rating)` for each group.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END AS content_status,
+        COUNT(*)        AS review_count,
+        AVG(rating)     AS avg_rating
+    FROM reviews
+    GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
+    ```
+
+    **Expected result:**
+
+    | content_status | review_count | avg_rating |
+    | -------------- | -----------: | ---------: |
+    | Has Content    |         7156 |       3.91 |
+    | No Content     |          789 |       3.93 |
+
+
+### Exercise 10
+Count how many customers are missing a birth date, have no recorded gender, and have never logged in. Show separate counts for each condition plus the total customer count.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        COUNT(*)                                         AS total_customers,
+        COUNT(*) - COUNT(birth_date)                    AS missing_birth_date,
+        COUNT(*) - COUNT(gender)                        AS missing_gender,
+        SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in
+    FROM customers;
+    ```
 
 
 ---

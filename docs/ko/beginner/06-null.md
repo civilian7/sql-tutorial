@@ -242,21 +242,88 @@ SELECT
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
-
 ### 문제 1
-생년월일 미입력, 성별 미입력, 로그인 이력 없음 각각의 고객 수와 전체 고객 수를 함께 조회하세요.
+`staff` 테이블에서 `manager_id`가 NULL인 직원(최고 관리자)의 `name`, `department`, `role`을 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, department, role
+    FROM staff
+    WHERE manager_id IS NULL;
+    ```
+
+    **결과 (예시):**
+
+    | name | department | role  |
+    | ---- | ---------- | ----- |
+    | 한민재  | 경영         | admin |
+
+
+### 문제 2
+`customers` 테이블에서 `phone`이 NULL인 고객의 `name`, `email`을 조회하되, `email`도 NULL이면 `'연락처 없음'`으로 대체하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        COUNT(*)                                         AS total_customers,
-        COUNT(*) - COUNT(birth_date)                    AS missing_birth_date,
-        COUNT(*) - COUNT(gender)                        AS missing_gender,
-        SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in
-    FROM customers;
+        name,
+        COALESCE(email, '연락처 없음') AS email
+    FROM customers
+    WHERE phone IS NULL;
     ```
 
-### 문제 2
+
+### 문제 3
+`NULLIF`를 사용하여 `products` 테이블에서 `stock_qty`가 0인 상품의 가격 대비 재고 비율을 안전하게 계산하세요. `name`, `price`, `stock_qty`, `price / NULLIF(stock_qty, 0)`을 `price_per_unit`이라는 별칭으로 반환하세요. 결과를 5행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        price,
+        stock_qty,
+        price / NULLIF(stock_qty, 0) AS price_per_unit
+    FROM products
+    LIMIT 5;
+    ```
+
+    **결과 (예시):**
+
+    | name                                     | price   | stock_qty | price_per_unit |
+    | ---------------------------------------- | ------: | --------: | -------------: |
+    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
+    | Dell U2724D                              |  853600 |       337 |        2532.94 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
+
+
+### 문제 4
+`customers` 테이블에서 `last_login_at`이 NULL인 고객의 `name`, `email`, `created_at`을 조회하세요. `email`이 NULL이면 `'없음'`, `created_at`이 NULL이면 `'알 수 없음'`으로 대체하세요. 결과를 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        COALESCE(email, '없음')        AS email,
+        COALESCE(created_at, '알 수 없음') AS created_at
+    FROM customers
+    WHERE last_login_at IS NULL
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | name | email              | created_at          |
+    | ---- | ------------------ | ------------------- |
+    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
+    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
+    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
+    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
+    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
+    | ...  | ...                | ...                 |
+
+
+### 문제 5
 담당 직원이 없는(`staff_id IS NULL`) 주문을 모두 조회하세요. `order_number`, `status`, `notes`를 표시하되, notes가 NULL이면 `'—'`으로 대체하세요.
 
 ??? success "정답"
@@ -283,119 +350,7 @@ SELECT
     | ...                | ...       | ...                |
 
 
-### 문제 3
-`orders` 테이블에서 `cancelled_at`이 NULL인(취소되지 않은) 주문 수와 NULL이 아닌(취소된) 주문 수를 각각 구하세요. 별칭은 `not_cancelled`, `cancelled`로 지정하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        COUNT(CASE WHEN cancelled_at IS NULL THEN 1 END)     AS not_cancelled,
-        COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
-    FROM orders;
-    ```
-
-    **결과 (예시):**
-
-    | not_cancelled | cancelled |
-    | ------------: | --------: |
-    |         33154 |      1754 |
-
-
-### 문제 4
-`customers` 테이블에서 `phone`이 NULL인 고객의 `name`, `email`을 조회하되, `email`도 NULL이면 `'연락처 없음'`으로 대체하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        name,
-        COALESCE(email, '연락처 없음') AS email
-    FROM customers
-    WHERE phone IS NULL;
-    ```
-
-### 문제 5
-`products` 테이블에서 `weight_grams` 칼럼이 NULL인 상품 수와 전체 상품 수를 구하고, NULL 비율(소수점 1자리)을 계산하세요. 별칭은 `total_products`, `missing_weight`, `pct_missing`으로 지정하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        COUNT(*)                                AS total_products,
-        COUNT(*) - COUNT(weight_grams)                AS missing_weight,
-        ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
-    FROM products;
-    ```
-
-    **결과 (예시):**
-
-    | total_products | missing_weight | pct_missing |
-    | -------------: | -------------: | ----------: |
-    |            280 |             12 |         4.3 |
-
-
 ### 문제 6
-`NULLIF`를 사용하여 `products` 테이블에서 `stock_qty`가 0인 상품의 가격 대비 재고 비율을 안전하게 계산하세요. `name`, `price`, `stock_qty`, `price / NULLIF(stock_qty, 0)`을 `price_per_unit`이라는 별칭으로 반환하세요. 결과를 5행으로 제한하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        name,
-        price,
-        stock_qty,
-        price / NULLIF(stock_qty, 0) AS price_per_unit
-    FROM products
-    LIMIT 5;
-    ```
-
-    **결과 (예시):**
-
-    | name                                     | price   | stock_qty | price_per_unit |
-    | ---------------------------------------- | ------: | --------: | -------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
-    | Dell U2724D                              |  853600 |       337 |        2532.94 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
-
-
-### 문제 7
-`reviews` 테이블에서 `content`가 NULL인 리뷰와 NULL이 아닌 리뷰의 평균 `rating`을 각각 구하세요. `COUNT(*)`와 `AVG(rating)`을 함께 표시하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END AS content_status,
-        COUNT(*)        AS review_count,
-        AVG(rating)     AS avg_rating
-    FROM reviews
-    GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
-    ```
-
-    **결과 (예시):**
-
-    | content_status | review_count | avg_rating |
-    | -------------- | -----------: | ---------: |
-    | Has Content    |         7156 |       3.91 |
-    | No Content     |          789 |       3.93 |
-
-
-### 문제 8
-`staff` 테이블에서 `manager_id`가 NULL인 직원(최고 관리자)의 `name`, `department`, `role`을 조회하세요.
-
-??? success "정답"
-    ```sql
-    SELECT name, department, role
-    FROM staff
-    WHERE manager_id IS NULL;
-    ```
-
-    **결과 (예시):**
-
-    | name | department | role  |
-    | ---- | ---------- | ----- |
-    | 한민재  | 경영         | admin |
-
-
-### 문제 9
 멤버십 `grade`별로 성별이 확인된 고객 수와 성별 미입력 고객 수를 함께 조회하세요. 그룹화 기준으로 `COALESCE(gender, 'Unknown')`을 사용하세요.
 
 ??? success "정답"
@@ -421,30 +376,76 @@ SELECT
     | ...    | ...           | ...            |
 
 
-### 문제 10
-`customers` 테이블에서 `last_login_at`이 NULL인 고객의 `name`, `email`, `created_at`을 조회하세요. `email`이 NULL이면 `'없음'`, `created_at`이 NULL이면 `'알 수 없음'`으로 대체하세요. 결과를 10행으로 제한하세요.
+### 문제 7
+`orders` 테이블에서 `cancelled_at`이 NULL인(취소되지 않은) 주문 수와 NULL이 아닌(취소된) 주문 수를 각각 구하세요. 별칭은 `not_cancelled`, `cancelled`로 지정하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        name,
-        COALESCE(email, '없음')        AS email,
-        COALESCE(created_at, '알 수 없음') AS created_at
-    FROM customers
-    WHERE last_login_at IS NULL
-    LIMIT 10;
+        COUNT(CASE WHEN cancelled_at IS NULL THEN 1 END)     AS not_cancelled,
+        COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
+    FROM orders;
     ```
 
     **결과 (예시):**
 
-    | name | email              | created_at          |
-    | ---- | ------------------ | ------------------- |
-    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
-    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
-    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
-    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
-    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
-    | ...  | ...                | ...                 |
+    | not_cancelled | cancelled |
+    | ------------: | --------: |
+    |         33154 |      1754 |
+
+
+### 문제 8
+`products` 테이블에서 `weight_grams` 칼럼이 NULL인 상품 수와 전체 상품 수를 구하고, NULL 비율(소수점 1자리)을 계산하세요. 별칭은 `total_products`, `missing_weight`, `pct_missing`으로 지정하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        COUNT(*)                                AS total_products,
+        COUNT(*) - COUNT(weight_grams)                AS missing_weight,
+        ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
+    FROM products;
+    ```
+
+    **결과 (예시):**
+
+    | total_products | missing_weight | pct_missing |
+    | -------------: | -------------: | ----------: |
+    |            280 |             12 |         4.3 |
+
+
+### 문제 9
+`reviews` 테이블에서 `content`가 NULL인 리뷰와 NULL이 아닌 리뷰의 평균 `rating`을 각각 구하세요. `COUNT(*)`와 `AVG(rating)`을 함께 표시하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END AS content_status,
+        COUNT(*)        AS review_count,
+        AVG(rating)     AS avg_rating
+    FROM reviews
+    GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
+    ```
+
+    **결과 (예시):**
+
+    | content_status | review_count | avg_rating |
+    | -------------- | -----------: | ---------: |
+    | Has Content    |         7156 |       3.91 |
+    | No Content     |          789 |       3.93 |
+
+
+### 문제 10
+생년월일 미입력, 성별 미입력, 로그인 이력 없음 각각의 고객 수와 전체 고객 수를 함께 조회하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        COUNT(*)                                         AS total_customers,
+        COUNT(*) - COUNT(birth_date)                    AS missing_birth_date,
+        COUNT(*) - COUNT(gender)                        AS missing_gender,
+        SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in
+    FROM customers;
+    ```
 
 
 ---

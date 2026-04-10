@@ -742,8 +742,102 @@ Functions return a value and can be used directly inside `SELECT` statements.
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Write a query to view the definition of the `fn_customer_grade` function created in the earlier exercises.
+
+??? success "Answer"
+    === "MySQL"
+        ```sql
+        SHOW CREATE FUNCTION fn_customer_grade;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT prosrc
+        FROM pg_proc
+        WHERE proname = 'fn_customer_grade';
+        ```
+
+
+### Exercise 2
+Write a query to list all stored procedures and functions registered in the current database. Display the name and type (PROCEDURE/FUNCTION).
+
+??? success "Answer"
+    === "MySQL"
+        ```sql
+        SELECT
+            ROUTINE_NAME,
+            ROUTINE_TYPE
+        FROM INFORMATION_SCHEMA.ROUTINES
+        WHERE ROUTINE_SCHEMA = DATABASE()
+        ORDER BY ROUTINE_TYPE, ROUTINE_NAME;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            routine_name,
+            routine_type
+        FROM information_schema.routines
+        WHERE routine_schema = 'public'
+        ORDER BY routine_type, routine_name;
+        ```
+
+
+### Exercise 3
+Write a procedure that accepts an order ID, raises an error if the order does not exist, and sets the order status to `'cancelled'` if it does.
+
+??? success "Answer"
+    === "MySQL"
+        ```sql
+        DELIMITER //
+        CREATE PROCEDURE sp_cancel_order(
+            IN p_order_id INT
+        )
+        BEGIN
+            DECLARE v_exists INT;
+
+            SELECT COUNT(*) INTO v_exists
+            FROM orders
+            WHERE id = p_order_id;
+
+            IF v_exists = 0 THEN
+                SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Order not found.';
+            END IF;
+
+            UPDATE orders
+            SET status = 'cancelled'
+            WHERE id = p_order_id;
+        END //
+        DELIMITER ;
+
+        CALL sp_cancel_order(9999);
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE OR REPLACE PROCEDURE sp_cancel_order(
+            p_order_id INT
+        )
+        LANGUAGE plpgsql
+        AS $$
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM orders WHERE id = p_order_id) THEN
+                RAISE EXCEPTION 'Order not found: %', p_order_id;
+            END IF;
+
+            UPDATE orders
+            SET status = 'cancelled'
+            WHERE id = p_order_id;
+        END;
+        $$;
+
+        CALL sp_cancel_order(9999);
+        ```
+
+
+### Exercise 4
 Write a procedure (MySQL) or function (PostgreSQL) that accepts a category ID and returns the product count, average price, and maximum price for that category.
 
 ??? success "Answer"
@@ -789,7 +883,138 @@ Write a procedure (MySQL) or function (PostgreSQL) that accepts a category ID an
         SELECT * FROM fn_category_stats(1);
         ```
 
-### Exercise 2
+
+### Exercise 5
+Using IF/ELSE, write a function that accepts a product ID and quantity. If stock is sufficient, deduct it and return 'OK'. If insufficient, return 'INSUFFICIENT STOCK'.
+
+??? success "Answer"
+    === "MySQL"
+        ```sql
+        DELIMITER //
+        CREATE FUNCTION fn_deduct_stock(
+            p_product_id INT,
+            p_quantity INT
+        )
+        RETURNS VARCHAR(50)
+        DETERMINISTIC
+        MODIFIES SQL DATA
+        BEGIN
+            DECLARE v_stock INT;
+
+            SELECT stock_qty INTO v_stock
+            FROM products
+            WHERE id = p_product_id;
+
+            IF v_stock IS NULL THEN
+                RETURN 'PRODUCT NOT FOUND';
+            ELSEIF v_stock < p_quantity THEN
+                RETURN 'INSUFFICIENT STOCK';
+            ELSE
+                UPDATE products
+                SET stock_qty = stock_qty - p_quantity
+                WHERE id = p_product_id;
+                RETURN 'OK';
+            END IF;
+        END //
+        DELIMITER ;
+
+        SELECT fn_deduct_stock(1, 5);
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE OR REPLACE FUNCTION fn_deduct_stock(
+            p_product_id INT,
+            p_quantity INT
+        )
+        RETURNS VARCHAR(50)
+        LANGUAGE plpgsql
+        AS $$
+        DECLARE
+            v_stock INT;
+        BEGIN
+            SELECT stock_qty INTO v_stock
+            FROM products
+            WHERE id = p_product_id;
+
+            IF v_stock IS NULL THEN
+                RETURN 'PRODUCT NOT FOUND';
+            ELSIF v_stock < p_quantity THEN
+                RETURN 'INSUFFICIENT STOCK';
+            ELSE
+                UPDATE products
+                SET stock_qty = stock_qty - p_quantity
+                WHERE id = p_product_id;
+                RETURN 'OK';
+            END IF;
+        END;
+        $$;
+
+        SELECT fn_deduct_stock(1, 5);
+        ```
+
+
+### Exercise 6
+Write a procedure that accepts a start date and end date, and returns the daily order count and total revenue for that period.
+
+??? success "Answer"
+    === "MySQL"
+        ```sql
+        DELIMITER //
+        CREATE PROCEDURE sp_daily_sales(
+            IN p_start_date DATE,
+            IN p_end_date DATE
+        )
+        BEGIN
+            SELECT
+                DATE(o.order_date) AS sale_date,
+                COUNT(*) AS order_count,
+                SUM(o.total_amount) AS daily_revenue
+            FROM orders AS o
+            WHERE o.order_date >= p_start_date
+              AND o.order_date < DATE_ADD(p_end_date, INTERVAL 1 DAY)
+              AND o.status <> 'cancelled'
+            GROUP BY DATE(o.order_date)
+            ORDER BY sale_date;
+        END //
+        DELIMITER ;
+
+        CALL sp_daily_sales('2024-12-01', '2024-12-31');
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE OR REPLACE FUNCTION fn_daily_sales(
+            p_start_date DATE,
+            p_end_date DATE
+        )
+        RETURNS TABLE (
+            sale_date DATE,
+            order_count BIGINT,
+            daily_revenue NUMERIC
+        )
+        LANGUAGE plpgsql
+        AS $$
+        BEGIN
+            RETURN QUERY
+            SELECT
+                o.order_date::DATE,
+                COUNT(*),
+                SUM(o.total_amount)
+            FROM orders AS o
+            WHERE o.order_date >= p_start_date
+              AND o.order_date < p_end_date + 1
+              AND o.status <> 'cancelled'
+            GROUP BY o.order_date::DATE
+            ORDER BY o.order_date::DATE;
+        END;
+        $$;
+
+        SELECT * FROM fn_daily_sales('2024-12-01', '2024-12-31');
+        ```
+
+
+### Exercise 7
 Write a **function** that accepts a customer ID and returns their grade as a string. Use total order amount thresholds: 5,000,000+ is 'VIP', 1,000,000+ is 'GOLD', 300,000+ is 'SILVER', otherwise 'BRONZE'.
 
 ??? success "Answer"
@@ -864,225 +1089,6 @@ Write a **function** that accepts a customer ID and returns their grade as a str
         LIMIT 10;
         ```
 
-### Exercise 3
-Write a procedure that accepts an order ID, raises an error if the order does not exist, and sets the order status to `'cancelled'` if it does.
-
-??? success "Answer"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE PROCEDURE sp_cancel_order(
-            IN p_order_id INT
-        )
-        BEGIN
-            DECLARE v_exists INT;
-
-            SELECT COUNT(*) INTO v_exists
-            FROM orders
-            WHERE id = p_order_id;
-
-            IF v_exists = 0 THEN
-                SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'Order not found.';
-            END IF;
-
-            UPDATE orders
-            SET status = 'cancelled'
-            WHERE id = p_order_id;
-        END //
-        DELIMITER ;
-
-        CALL sp_cancel_order(9999);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE PROCEDURE sp_cancel_order(
-            p_order_id INT
-        )
-        LANGUAGE plpgsql
-        AS $$
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM orders WHERE id = p_order_id) THEN
-                RAISE EXCEPTION 'Order not found: %', p_order_id;
-            END IF;
-
-            UPDATE orders
-            SET status = 'cancelled'
-            WHERE id = p_order_id;
-        END;
-        $$;
-
-        CALL sp_cancel_order(9999);
-        ```
-
-### Exercise 4
-Using IF/ELSE, write a function that accepts a product ID and quantity. If stock is sufficient, deduct it and return 'OK'. If insufficient, return 'INSUFFICIENT STOCK'.
-
-??? success "Answer"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE FUNCTION fn_deduct_stock(
-            p_product_id INT,
-            p_quantity INT
-        )
-        RETURNS VARCHAR(50)
-        DETERMINISTIC
-        MODIFIES SQL DATA
-        BEGIN
-            DECLARE v_stock INT;
-
-            SELECT stock_qty INTO v_stock
-            FROM products
-            WHERE id = p_product_id;
-
-            IF v_stock IS NULL THEN
-                RETURN 'PRODUCT NOT FOUND';
-            ELSEIF v_stock < p_quantity THEN
-                RETURN 'INSUFFICIENT STOCK';
-            ELSE
-                UPDATE products
-                SET stock_qty = stock_qty - p_quantity
-                WHERE id = p_product_id;
-                RETURN 'OK';
-            END IF;
-        END //
-        DELIMITER ;
-
-        SELECT fn_deduct_stock(1, 5);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_deduct_stock(
-            p_product_id INT,
-            p_quantity INT
-        )
-        RETURNS VARCHAR(50)
-        LANGUAGE plpgsql
-        AS $$
-        DECLARE
-            v_stock INT;
-        BEGIN
-            SELECT stock_qty INTO v_stock
-            FROM products
-            WHERE id = p_product_id;
-
-            IF v_stock IS NULL THEN
-                RETURN 'PRODUCT NOT FOUND';
-            ELSIF v_stock < p_quantity THEN
-                RETURN 'INSUFFICIENT STOCK';
-            ELSE
-                UPDATE products
-                SET stock_qty = stock_qty - p_quantity
-                WHERE id = p_product_id;
-                RETURN 'OK';
-            END IF;
-        END;
-        $$;
-
-        SELECT fn_deduct_stock(1, 5);
-        ```
-
-### Exercise 5
-Write a procedure that accepts a start date and end date, and returns the daily order count and total revenue for that period.
-
-??? success "Answer"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE PROCEDURE sp_daily_sales(
-            IN p_start_date DATE,
-            IN p_end_date DATE
-        )
-        BEGIN
-            SELECT
-                DATE(o.order_date) AS sale_date,
-                COUNT(*) AS order_count,
-                SUM(o.total_amount) AS daily_revenue
-            FROM orders AS o
-            WHERE o.order_date >= p_start_date
-              AND o.order_date < DATE_ADD(p_end_date, INTERVAL 1 DAY)
-              AND o.status <> 'cancelled'
-            GROUP BY DATE(o.order_date)
-            ORDER BY sale_date;
-        END //
-        DELIMITER ;
-
-        CALL sp_daily_sales('2024-12-01', '2024-12-31');
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_daily_sales(
-            p_start_date DATE,
-            p_end_date DATE
-        )
-        RETURNS TABLE (
-            sale_date DATE,
-            order_count BIGINT,
-            daily_revenue NUMERIC
-        )
-        LANGUAGE plpgsql
-        AS $$
-        BEGIN
-            RETURN QUERY
-            SELECT
-                o.order_date::DATE,
-                COUNT(*),
-                SUM(o.total_amount)
-            FROM orders AS o
-            WHERE o.order_date >= p_start_date
-              AND o.order_date < p_end_date + 1
-              AND o.status <> 'cancelled'
-            GROUP BY o.order_date::DATE
-            ORDER BY o.order_date::DATE;
-        END;
-        $$;
-
-        SELECT * FROM fn_daily_sales('2024-12-01', '2024-12-31');
-        ```
-
-### Exercise 6
-Write a query to list all stored procedures and functions registered in the current database. Display the name and type (PROCEDURE/FUNCTION).
-
-??? success "Answer"
-    === "MySQL"
-        ```sql
-        SELECT
-            ROUTINE_NAME,
-            ROUTINE_TYPE
-        FROM INFORMATION_SCHEMA.ROUTINES
-        WHERE ROUTINE_SCHEMA = DATABASE()
-        ORDER BY ROUTINE_TYPE, ROUTINE_NAME;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            routine_name,
-            routine_type
-        FROM information_schema.routines
-        WHERE routine_schema = 'public'
-        ORDER BY routine_type, routine_name;
-        ```
-
-### Exercise 7
-Write a query to view the definition of the `fn_customer_grade` function created in the earlier exercises.
-
-??? success "Answer"
-    === "MySQL"
-        ```sql
-        SHOW CREATE FUNCTION fn_customer_grade;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT prosrc
-        FROM pg_proc
-        WHERE proname = 'fn_customer_grade';
-        ```
 
 ### Exercise 8
 Drop all procedures and functions you created in exercises 1 through 5 to restore the database to its original state.
@@ -1105,6 +1111,7 @@ Drop all procedures and functions you created in exercises 1 through 5 to restor
         DROP FUNCTION IF EXISTS fn_deduct_stock(INT, INT);
         DROP FUNCTION IF EXISTS fn_daily_sales(DATE, DATE);
         ```
+
 
 ---
 

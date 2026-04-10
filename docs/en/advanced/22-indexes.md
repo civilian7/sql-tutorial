@@ -250,60 +250,38 @@ DROP INDEX IF EXISTS idx_orders_status_date;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
-Run `EXPLAIN QUERY PLAN` on a query that finds all orders for a specific customer sorted by date. Check whether an index is used. Then run the same check for a query filtering by `notes IS NOT NULL`.
+Drop the `idx_reviews_rating` index you created in Exercise 3.
 
 ??? success "Answer"
     === "SQLite"
         ```sql
-        -- Should use idx_orders_customer_id
-        EXPLAIN QUERY PLAN
-        SELECT order_number, ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 100
-        ORDER BY ordered_at DESC;
-
-        -- Likely a full scan (no index on notes)
-        EXPLAIN QUERY PLAN
-        SELECT order_number, notes
-        FROM orders
-        WHERE notes IS NOT NULL;
+        DROP INDEX IF EXISTS idx_reviews_rating;
         ```
 
     === "MySQL"
         ```sql
-        -- Should use idx_orders_customer_id
-        EXPLAIN
-        SELECT order_number, ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 100
-        ORDER BY ordered_at DESC;
-
-        -- Likely a full scan (no index on notes)
-        EXPLAIN
-        SELECT order_number, notes
-        FROM orders
-        WHERE notes IS NOT NULL;
+        DROP INDEX idx_reviews_rating ON reviews;
         ```
 
     === "PostgreSQL"
         ```sql
-        -- Should use idx_orders_customer_id
-        EXPLAIN ANALYZE
-        SELECT order_number, ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 100
-        ORDER BY ordered_at DESC;
-
-        -- Likely a full scan (no index on notes)
-        EXPLAIN ANALYZE
-        SELECT order_number, notes
-        FROM orders
-        WHERE notes IS NOT NULL;
+        DROP INDEX IF EXISTS idx_reviews_rating;
         ```
 
+
 ### Exercise 2
+Create a unique index on the `email` column of the `customers` table. Think about how a unique index differs from a regular index.
+
+??? success "Answer"
+    ```sql
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_customers_email_unique
+    ON customers (email);
+    ```
+    A unique index prevents duplicate values from being inserted into the column. Beyond improving search performance, it also enforces a data integrity constraint.
+
+
+### Exercise 3
 List all indexes in the database using `sqlite_master`. For each index, identify whether it is on a single column or a composite (multi-column) index by examining the `sql` column. How many composite indexes exist?
 
 ??? success "Answer"
@@ -357,7 +335,84 @@ List all indexes in the database using `sqlite_master`. For each index, identify
         ORDER BY tablename, indexname;
         ```
 
-### Exercise 3
+
+### Exercise 4
+Drop both `idx_payments_method_status` (from Exercise 4) and `idx_customers_email_unique` (from Exercise 6) to restore the database to its original state.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        DROP INDEX IF EXISTS idx_payments_method_status;
+        DROP INDEX IF EXISTS idx_customers_email_unique;
+        ```
+
+    === "MySQL"
+        ```sql
+        DROP INDEX idx_payments_method_status ON payments;
+        DROP INDEX idx_customers_email_unique ON customers;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        DROP INDEX IF EXISTS idx_payments_method_status;
+        DROP INDEX IF EXISTS idx_customers_email_unique;
+        ```
+
+
+### Exercise 5
+Run `EXPLAIN QUERY PLAN` on a query that finds all orders for a specific customer sorted by date. Check whether an index is used. Then run the same check for a query filtering by `notes IS NOT NULL`.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Should use idx_orders_customer_id
+        EXPLAIN QUERY PLAN
+        SELECT order_number, ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 100
+        ORDER BY ordered_at DESC;
+
+        -- Likely a full scan (no index on notes)
+        EXPLAIN QUERY PLAN
+        SELECT order_number, notes
+        FROM orders
+        WHERE notes IS NOT NULL;
+        ```
+
+    === "MySQL"
+        ```sql
+        -- Should use idx_orders_customer_id
+        EXPLAIN
+        SELECT order_number, ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 100
+        ORDER BY ordered_at DESC;
+
+        -- Likely a full scan (no index on notes)
+        EXPLAIN
+        SELECT order_number, notes
+        FROM orders
+        WHERE notes IS NOT NULL;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- Should use idx_orders_customer_id
+        EXPLAIN ANALYZE
+        SELECT order_number, ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 100
+        ORDER BY ordered_at DESC;
+
+        -- Likely a full scan (no index on notes)
+        EXPLAIN ANALYZE
+        SELECT order_number, notes
+        FROM orders
+        WHERE notes IS NOT NULL;
+        ```
+
+
+### Exercise 6
 Create an index on the `rating` column of the `reviews` table. Then run `EXPLAIN QUERY PLAN` on a query that filters `rating = 5` to verify the index is used.
 
 ??? success "Answer"
@@ -395,7 +450,8 @@ Create an index on the `rating` column of the `reviews` table. Then run `EXPLAIN
         WHERE rating = 5;
         ```
 
-### Exercise 4
+
+### Exercise 7
 Create a composite index `idx_payments_method_status` on the `payments` table covering `method` and `status`. Then verify the index is used when querying with `method = 'card' AND status = 'completed'`.
 
 ??? success "Answer"
@@ -436,36 +492,60 @@ Create a composite index `idx_payments_method_status` on the `payments` table co
           AND status = 'completed';
         ```
 
-### Exercise 5
-Drop the `idx_reviews_rating` index you created in Exercise 3.
+
+### Exercise 8
+Create a composite index on `orders(customer_id, ordered_at)`. Verify with `EXPLAIN QUERY PLAN` that a query finding a specific customer's orders in 2024 uses this index. Then drop the index.
 
 ??? success "Answer"
     === "SQLite"
         ```sql
-        DROP INDEX IF EXISTS idx_reviews_rating;
+        CREATE INDEX IF NOT EXISTS idx_orders_customer_date
+        ON orders (customer_id, ordered_at);
+
+        -- Verify the composite index is used
+        EXPLAIN QUERY PLAN
+        SELECT order_number, total_amount
+        FROM orders
+        WHERE customer_id = 42
+          AND ordered_at >= '2024-01-01'
+          AND ordered_at < '2025-01-01';
+        -- SEARCH orders USING INDEX idx_orders_customer_date (customer_id=? AND ordered_at>? AND ordered_at<?)
+
+        DROP INDEX IF EXISTS idx_orders_customer_date;
         ```
 
     === "MySQL"
         ```sql
-        DROP INDEX idx_reviews_rating ON reviews;
+        CREATE INDEX idx_orders_customer_date
+        ON orders (customer_id, ordered_at);
+
+        EXPLAIN
+        SELECT order_number, total_amount
+        FROM orders
+        WHERE customer_id = 42
+          AND ordered_at >= '2024-01-01'
+          AND ordered_at < '2025-01-01';
+
+        DROP INDEX idx_orders_customer_date ON orders;
         ```
 
     === "PostgreSQL"
         ```sql
-        DROP INDEX IF EXISTS idx_reviews_rating;
+        CREATE INDEX IF NOT EXISTS idx_orders_customer_date
+        ON orders (customer_id, ordered_at);
+
+        EXPLAIN ANALYZE
+        SELECT order_number, total_amount
+        FROM orders
+        WHERE customer_id = 42
+          AND ordered_at >= '2024-01-01'
+          AND ordered_at < '2025-01-01';
+
+        DROP INDEX IF EXISTS idx_orders_customer_date;
         ```
 
-### Exercise 6
-Create a unique index on the `email` column of the `customers` table. Think about how a unique index differs from a regular index.
 
-??? success "Answer"
-    ```sql
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_customers_email_unique
-    ON customers (email);
-    ```
-    A unique index prevents duplicate values from being inserted into the column. Beyond improving search performance, it also enforces a data integrity constraint.
-
-### Exercise 7
+### Exercise 9
 Run `EXPLAIN QUERY PLAN` on two queries and explain the difference in index usage: (1) `WHERE name LIKE 'Samsung%'` (2) `WHERE name LIKE '%Samsung%'`. Assume there is an index on the `name` column of the `products` table.
 
 ??? success "Answer"
@@ -525,78 +605,6 @@ Run `EXPLAIN QUERY PLAN` on two queries and explain the difference in index usag
         ```
     `LIKE 'prefix%'` can be resolved as a range scan on a B-tree index, but `LIKE '%string%'` has a leading wildcard and requires a full table scan.
 
-### Exercise 8
-Create a composite index on `orders(customer_id, ordered_at)`. Verify with `EXPLAIN QUERY PLAN` that a query finding a specific customer's orders in 2024 uses this index. Then drop the index.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_orders_customer_date
-        ON orders (customer_id, ordered_at);
-
-        -- Verify the composite index is used
-        EXPLAIN QUERY PLAN
-        SELECT order_number, total_amount
-        FROM orders
-        WHERE customer_id = 42
-          AND ordered_at >= '2024-01-01'
-          AND ordered_at < '2025-01-01';
-        -- SEARCH orders USING INDEX idx_orders_customer_date (customer_id=? AND ordered_at>? AND ordered_at<?)
-
-        DROP INDEX IF EXISTS idx_orders_customer_date;
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE INDEX idx_orders_customer_date
-        ON orders (customer_id, ordered_at);
-
-        EXPLAIN
-        SELECT order_number, total_amount
-        FROM orders
-        WHERE customer_id = 42
-          AND ordered_at >= '2024-01-01'
-          AND ordered_at < '2025-01-01';
-
-        DROP INDEX idx_orders_customer_date ON orders;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_orders_customer_date
-        ON orders (customer_id, ordered_at);
-
-        EXPLAIN ANALYZE
-        SELECT order_number, total_amount
-        FROM orders
-        WHERE customer_id = 42
-          AND ordered_at >= '2024-01-01'
-          AND ordered_at < '2025-01-01';
-
-        DROP INDEX IF EXISTS idx_orders_customer_date;
-        ```
-
-### Exercise 9
-Drop both `idx_payments_method_status` (from Exercise 4) and `idx_customers_email_unique` (from Exercise 6) to restore the database to its original state.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        DROP INDEX IF EXISTS idx_payments_method_status;
-        DROP INDEX IF EXISTS idx_customers_email_unique;
-        ```
-
-    === "MySQL"
-        ```sql
-        DROP INDEX idx_payments_method_status ON payments;
-        DROP INDEX idx_customers_email_unique ON customers;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        DROP INDEX IF EXISTS idx_payments_method_status;
-        DROP INDEX IF EXISTS idx_customers_email_unique;
-        ```
 
 ---
 Next: [Lesson 23: Triggers](23-triggers.md)

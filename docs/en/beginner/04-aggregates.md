@@ -160,44 +160,37 @@ FROM reviews;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
-Count how many **active** products TechShop currently carries, and find the total inventory value (sum of `price * stock_qty`) for those products.
+Calculate the average review rating from the `reviews` table, rounded to 2 decimal places. Use the alias `avg_rating`.
 
 ??? success "Answer"
     ```sql
-    SELECT
-        COUNT(*)                AS active_product_count,
-        SUM(price * stock_qty)  AS total_inventory_value
-    FROM products
-    WHERE is_active = 1;
+    SELECT ROUND(AVG(rating), 2) AS avg_rating
+    FROM reviews;
     ```
 
     **Expected result:**
 
-    | active_product_count | total_inventory_value |
-    | -------------------: | --------------------: |
-    |                  218 |           39496278500 |
+    | avg_rating |
+    | ---------: |
+    |       3.91 |
 
 
 ### Exercise 2
-Calculate the average, minimum, and maximum `total_amount` for orders that were not cancelled or returned. Use aliases `avg_order`, `min_order`, and `max_order`.
+Find the total revenue (`SUM` of `total_amount`) from completed orders (status is `'delivered'` or `'confirmed'`). Use the alias `total_revenue`.
 
 ??? success "Answer"
     ```sql
-    SELECT
-        AVG(total_amount) AS avg_order,
-        MIN(total_amount) AS min_order,
-        MAX(total_amount) AS max_order
+    SELECT SUM(total_amount) AS total_revenue
     FROM orders
-    WHERE status NOT IN ('cancelled', 'returned', 'return_requested');
+    WHERE status IN ('delivered', 'confirmed');
     ```
 
     **Expected result:**
 
-    | avg_order | min_order | max_order |
-    | --------: | --------: | --------: |
-    | 1007109.8 |     10910 |  58039800 |
+    | total_revenue |
+    | ------------: |
+    |   32371516748 |
 
 
 ### Exercise 3
@@ -219,81 +212,45 @@ Count the total number of customers and the number of customers who have a `birt
 
 
 ### Exercise 4
-Find the total revenue (`SUM` of `total_amount`) from completed orders (status is `'delivered'` or `'confirmed'`). Use the alias `total_revenue`.
-
-??? success "Answer"
-    ```sql
-    SELECT SUM(total_amount) AS total_revenue
-    FROM orders
-    WHERE status IN ('delivered', 'confirmed');
-    ```
-
-    **Expected result:**
-
-    | total_revenue |
-    | ------------: |
-    |   32371516748 |
-
-
-### Exercise 5
-Calculate the average review rating from the `reviews` table, rounded to 2 decimal places. Use the alias `avg_rating`.
-
-??? success "Answer"
-    ```sql
-    SELECT ROUND(AVG(rating), 2) AS avg_rating
-    FROM reviews;
-    ```
-
-    **Expected result:**
-
-    | avg_rating |
-    | ---------: |
-    |       3.91 |
-
-
-### Exercise 6
-Find the minimum price, maximum price, and the price range (difference between max and min) for active products (`is_active = 1`). Use aliases `min_price`, `max_price`, and `price_range`.
+Count how many **active** products TechShop currently carries, and find the total inventory value (sum of `price * stock_qty`) for those products.
 
 ??? success "Answer"
     ```sql
     SELECT
-        MIN(price)             AS min_price,
-        MAX(price)             AS max_price,
-        MAX(price) - MIN(price) AS price_range
+        COUNT(*)                AS active_product_count,
+        SUM(price * stock_qty)  AS total_inventory_value
     FROM products
     WHERE is_active = 1;
     ```
 
     **Expected result:**
 
-    | min_price | max_price | price_range |
-    | --------: | --------: | ----------: |
-    |     13100 |   4314800 |     4301700 |
+    | active_product_count | total_inventory_value |
+    | -------------------: | --------------------: |
+    |                  218 |           39496278500 |
 
 
-### Exercise 7
-How many orders have delivery instructions (`notes IS NOT NULL`)? What percentage of all orders is that? Return `orders_with_notes`, `total_orders`, and `pct_with_notes` (rounded to 1 decimal place).
+### Exercise 5
+Calculate the average, minimum, and maximum `total_amount` for orders that were not cancelled or returned. Use aliases `avg_order`, `min_order`, and `max_order`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        COUNT(CASE WHEN notes IS NOT NULL THEN 1 END)  AS orders_with_notes,
-        COUNT(*)                                        AS total_orders,
-        ROUND(
-            100.0 * COUNT(CASE WHEN notes IS NOT NULL THEN 1 END) / COUNT(*),
-            1
-        ) AS pct_with_notes
-    FROM orders;
+        AVG(total_amount) AS avg_order,
+        MIN(total_amount) AS min_order,
+        MAX(total_amount) AS max_order
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned', 'return_requested');
     ```
 
     **Expected result:**
 
-    | orders_with_notes | total_orders | pct_with_notes |
-    | ----------------: | -----------: | -------------: |
-    |             12365 |        34908 |           35.4 |
+    | avg_order | min_order | max_order |
+    | --------: | --------: | --------: |
+    | 1007109.8 |     10910 |  58039800 |
 
 
-### Exercise 8
+### Exercise 6
 For active products, calculate the average price (rounded to 0 decimals), average cost_price (rounded to 0 decimals), and average margin percentage (rounded to 1 decimal). Margin = `(price - cost_price) / price * 100`. Compute the average of each product's margin. Use aliases `avg_price`, `avg_cost`, `avg_margin_pct`.
 
 ??? success "Answer"
@@ -313,7 +270,27 @@ For active products, calculate the average price (rounded to 0 decimals), averag
     |    665405 |   504305 |           22.9 |
 
 
-### Exercise 9
+### Exercise 7
+Find the minimum price, maximum price, and the price range (difference between max and min) for active products (`is_active = 1`). Use aliases `min_price`, `max_price`, and `price_range`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        MIN(price)             AS min_price,
+        MAX(price)             AS max_price,
+        MAX(price) - MIN(price) AS price_range
+    FROM products
+    WHERE is_active = 1;
+    ```
+
+    **Expected result:**
+
+    | min_price | max_price | price_range |
+    | --------: | --------: | ----------: |
+    |     13100 |   4314800 |     4301700 |
+
+
+### Exercise 8
 From the `order_items` table, find the total number of rows, total quantity sum, average unit price (2 decimals), and the maximum quantity in a single line item. Use aliases `total_items`, `total_qty`, `avg_unit_price`, `max_qty`.
 
 ??? success "Answer"
@@ -333,7 +310,7 @@ From the `order_items` table, find the total number of rows, total quantity sum,
     |       84270 |     93356 |      398818.65 |      10 |
 
 
-### Exercise 10
+### Exercise 9
 For completed payments (`status = 'completed'`) in the `payments` table, calculate the count, total amount, average amount (0 decimals), minimum, and maximum in a single query. Use aliases `payment_count`, `total_amount`, `avg_amount`, `min_amount`, `max_amount`.
 
 ??? success "Answer"
@@ -353,6 +330,28 @@ For completed payments (`status = 'completed'`) in the `payments` table, calcula
     | payment_count | total_amount | avg_amount | min_amount | max_amount |
     | ------------: | -----------: | ---------: | ---------: | ---------: |
     |         32171 |  32403716933 |    1007234 |      10910 |   58039800 |
+
+
+### Exercise 10
+How many orders have delivery instructions (`notes IS NOT NULL`)? What percentage of all orders is that? Return `orders_with_notes`, `total_orders`, and `pct_with_notes` (rounded to 1 decimal place).
+
+??? success "Answer"
+    ```sql
+    SELECT
+        COUNT(CASE WHEN notes IS NOT NULL THEN 1 END)  AS orders_with_notes,
+        COUNT(*)                                        AS total_orders,
+        ROUND(
+            100.0 * COUNT(CASE WHEN notes IS NOT NULL THEN 1 END) / COUNT(*),
+            1
+        ) AS pct_with_notes
+    FROM orders;
+    ```
+
+    **Expected result:**
+
+    | orders_with_notes | total_orders | pct_with_notes |
+    | ----------------: | -----------: | -------------: |
+    |             12365 |        34908 |           35.4 |
 
 
 ---

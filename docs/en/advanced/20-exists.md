@@ -160,82 +160,95 @@ ORDER BY category;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
-Find all wishlist items where the product has **not yet been purchased** by that same customer. Return `customer_name`, `product_name`, and `added_at` (when the item was wishlisted). Use `NOT EXISTS` with a correlated subquery that checks `order_items` + `orders` for a matching `customer_id` and `product_id`.
+Use `NOT EXISTS` as an anti-join to find orders that have a shipping record but have not yet been delivered (`delivered_at IS NULL`). Return `order_number`, `ordered_at`, `status`, `carrier`, and `shipped_at`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        c.name  AS customer_name,
-        p.name  AS product_name,
-        w.created_at
-    FROM wishlists AS w
-    INNER JOIN customers AS c ON w.customer_id = c.id
-    INNER JOIN products  AS p ON w.product_id  = p.id
+        o.order_number,
+        o.ordered_at,
+        o.status,
+        s.carrier,
+        s.shipped_at
+    FROM orders AS o
+    INNER JOIN shipping AS s ON s.order_id = o.id
     WHERE NOT EXISTS (
         SELECT 1
-        FROM order_items AS oi
-        INNER JOIN orders AS o ON oi.order_id = o.id
-        WHERE o.customer_id  = w.customer_id
-          AND oi.product_id  = w.product_id
-          AND o.status NOT IN ('cancelled', 'returned')
+        FROM shipping AS s2
+        WHERE s2.order_id = o.id
+          AND s2.delivered_at IS NOT NULL
     )
-    ORDER BY w.created_at DESC
+    ORDER BY s.shipped_at DESC
     LIMIT 20;
     ```
 
     **Expected result:**
 
-    | customer_name | product_name                                    | created_at          |
-    | ------------- | ----------------------------------------------- | ------------------- |
-    | 윤예준           | 엡손 L6290 블랙                                     | 2025-12-30 20:40:58 |
-    | 나병철           | CORSAIR Dominator Titanium DDR5 32GB 7200MHz 실버 | 2025-12-30 05:21:30 |
-    | 김영미           | MSI MEG Ai1300P PCIE5 화이트                       | 2025-12-28 09:52:47 |
-    | 김민지           | APC Back-UPS Pro Gaming BGM1500B 블랙             | 2025-12-28 07:10:13 |
-    | 김주원           | MSI MEG Z790 ACE 실버                             | 2025-12-26 17:47:03 |
-    | ...           | ...                                             | ...                 |
+    | order_number       | ordered_at          | status  | carrier | shipped_at          |
+    | ------------------ | ------------------- | ------- | ------- | ------------------- |
+    | ORD-20250624-34824 | 2025-06-24 19:12:48 | shipped | 한진택배    | 2025-06-27 19:12:48 |
+    | ORD-20250624-34828 | 2025-06-24 19:43:51 | shipped | CJ대한통운  | 2025-06-26 19:43:51 |
+    | ORD-20250624-34826 | 2025-06-24 19:48:54 | shipped | 한진택배    | 2025-06-25 19:48:54 |
+    | ORD-20250623-34821 | 2025-06-23 19:04:07 | shipped | 한진택배    | 2025-06-25 19:04:07 |
+    | ORD-20250622-34810 | 2025-06-22 08:01:21 | shipped | 우체국택배   | 2025-06-25 08:01:21 |
+    | ...                | ...                 | ...     | ...     | ...                 |
 
 
 ### Exercise 2
-Identify customers who have submitted a complaint AND have a return on record. Return `customer_id`, `name`, `grade`, `complaint_count`, and `return_count`. Use `EXISTS` for filtering, and subquery aggregation or joins for the counts.
+Use `EXISTS` with correlated subqueries to find products that have received both a 5-star and a 1-star review. Return `product_id`, `product_name`, and `price`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        c.id    AS customer_id,
-        c.name,
-        c.grade,
-        (SELECT COUNT(*) FROM complaints WHERE customer_id = c.id) AS complaint_count,
-        (SELECT COUNT(*) FROM orders AS o
-                        INNER JOIN returns AS r ON r.order_id = o.id
-                        WHERE o.customer_id = c.id)               AS return_count
-    FROM customers AS c
+        p.id    AS product_id,
+        p.name  AS product_name,
+        p.price
+    FROM products AS p
     WHERE EXISTS (
-        SELECT 1 FROM complaints WHERE customer_id = c.id
+        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 5
     )
     AND EXISTS (
-        SELECT 1
-        FROM orders AS o
-        INNER JOIN returns AS r ON r.order_id = o.id
-        WHERE o.customer_id = c.id
+        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 1
     )
-    ORDER BY complaint_count DESC;
+    ORDER BY p.name;
     ```
 
     **Expected result:**
 
-    | customer_id | name | grade | complaint_count | return_count |
-    | ----------: | ---- | ----- | --------------: | -----------: |
-    |          98 | 이영자  | VIP   |              44 |           13 |
-    |          97 | 김병철  | VIP   |              33 |            8 |
-    |         227 | 김성민  | VIP   |              26 |            8 |
-    |         549 | 이미정  | VIP   |              22 |           11 |
-    |         226 | 박정수  | VIP   |              18 |            9 |
-    | ...         | ...  | ...   | ...             | ...          |
+    | product_id | product_name                        | price  |
+    | ---------: | ----------------------------------- | -----: |
+    |         44 | AMD Ryzen 9 9900X                   | 244800 |
+    |        171 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 408800 |
+    |        140 | ASRock B850M Pro RS 블랙              | 201900 |
+    |         47 | ASRock B850M Pro RS 실버              | 533600 |
+    |        164 | ASRock B850M Pro RS 화이트             | 426500 |
+    | ...        | ...                                 | ...    |
 
 
 ### Exercise 3
+Use correlated subqueries to show each staff member alongside their largest order. Return `staff_name`, `department`, `max_order_amount`, and `max_order_number` (the order number matching that highest amount).
+
+??? success "Answer"
+    ```sql
+    SELECT
+        s.name AS staff_name,
+        s.department,
+        (SELECT MAX(o.total_amount) FROM orders AS o WHERE o.staff_id = s.id) AS max_order_amount,
+        (SELECT o.order_number FROM orders AS o
+         WHERE o.staff_id = s.id
+         ORDER BY o.total_amount DESC
+         LIMIT 1) AS max_order_number
+    FROM staff AS s
+    WHERE EXISTS (
+        SELECT 1 FROM orders WHERE staff_id = s.id
+    )
+    ORDER BY max_order_amount DESC
+    LIMIT 15;
+    ```
+
+
+### Exercise 4
 Use `NOT EXISTS` to find customers who have placed 5 or more orders but have never written a review. Return `customer_id`, `name`, `grade`, and `order_count`.
 
 ??? success "Answer"
@@ -270,7 +283,7 @@ Use `NOT EXISTS` to find customers who have placed 5 or more orders but have nev
     | ...         | ...  | ...    | ...         |
 
 
-### Exercise 4
+### Exercise 5
 Use `EXISTS` to find customers who have used every available payment method at least once. Return `customer_id` and `name`. Hint: use `NOT EXISTS` with `EXCEPT` to check that no payment method is missing.
 
 ??? success "Answer"
@@ -310,73 +323,7 @@ Use `EXISTS` to find customers who have used every available payment method at l
     | ...         | ...  |
 
 
-### Exercise 5
-Use `EXISTS` with correlated subqueries to find products that have received both a 5-star and a 1-star review. Return `product_id`, `product_name`, and `price`.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        p.id    AS product_id,
-        p.name  AS product_name,
-        p.price
-    FROM products AS p
-    WHERE EXISTS (
-        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 5
-    )
-    AND EXISTS (
-        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 1
-    )
-    ORDER BY p.name;
-    ```
-
-    **Expected result:**
-
-    | product_id | product_name                        | price  |
-    | ---------: | ----------------------------------- | -----: |
-    |         44 | AMD Ryzen 9 9900X                   | 244800 |
-    |        171 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 408800 |
-    |        140 | ASRock B850M Pro RS 블랙              | 201900 |
-    |         47 | ASRock B850M Pro RS 실버              | 533600 |
-    |        164 | ASRock B850M Pro RS 화이트             | 426500 |
-    | ...        | ...                                 | ...    |
-
-
 ### Exercise 6
-Use `NOT EXISTS` as an anti-join to find orders that have a shipping record but have not yet been delivered (`delivered_at IS NULL`). Return `order_number`, `ordered_at`, `status`, `carrier`, and `shipped_at`.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        o.order_number,
-        o.ordered_at,
-        o.status,
-        s.carrier,
-        s.shipped_at
-    FROM orders AS o
-    INNER JOIN shipping AS s ON s.order_id = o.id
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM shipping AS s2
-        WHERE s2.order_id = o.id
-          AND s2.delivered_at IS NOT NULL
-    )
-    ORDER BY s.shipped_at DESC
-    LIMIT 20;
-    ```
-
-    **Expected result:**
-
-    | order_number       | ordered_at          | status  | carrier | shipped_at          |
-    | ------------------ | ------------------- | ------- | ------- | ------------------- |
-    | ORD-20250624-34824 | 2025-06-24 19:12:48 | shipped | 한진택배    | 2025-06-27 19:12:48 |
-    | ORD-20250624-34828 | 2025-06-24 19:43:51 | shipped | CJ대한통운  | 2025-06-26 19:43:51 |
-    | ORD-20250624-34826 | 2025-06-24 19:48:54 | shipped | 한진택배    | 2025-06-25 19:48:54 |
-    | ORD-20250623-34821 | 2025-06-23 19:04:07 | shipped | 한진택배    | 2025-06-25 19:04:07 |
-    | ORD-20250622-34810 | 2025-06-22 08:01:21 | shipped | 우체국택배   | 2025-06-25 08:01:21 |
-    | ...                | ...                 | ...     | ...     | ...                 |
-
-
-### Exercise 7
 Combine `EXISTS` with an aggregate condition in `HAVING` to find categories that contain at least one product with an average review rating of 4.0 or higher. Return `category_name` and `product_count`.
 
 ??? success "Answer"
@@ -411,28 +358,43 @@ Combine `EXISTS` with an aggregate condition in `HAVING` to find categories that
     | ...           | ...           |
 
 
-### Exercise 8
-Use correlated subqueries to show each staff member alongside their largest order. Return `staff_name`, `department`, `max_order_amount`, and `max_order_number` (the order number matching that highest amount).
+### Exercise 7
+Find all wishlist items where the product has **not yet been purchased** by that same customer. Return `customer_name`, `product_name`, and `added_at` (when the item was wishlisted). Use `NOT EXISTS` with a correlated subquery that checks `order_items` + `orders` for a matching `customer_id` and `product_id`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        s.name AS staff_name,
-        s.department,
-        (SELECT MAX(o.total_amount) FROM orders AS o WHERE o.staff_id = s.id) AS max_order_amount,
-        (SELECT o.order_number FROM orders AS o
-         WHERE o.staff_id = s.id
-         ORDER BY o.total_amount DESC
-         LIMIT 1) AS max_order_number
-    FROM staff AS s
-    WHERE EXISTS (
-        SELECT 1 FROM orders WHERE staff_id = s.id
+        c.name  AS customer_name,
+        p.name  AS product_name,
+        w.created_at
+    FROM wishlists AS w
+    INNER JOIN customers AS c ON w.customer_id = c.id
+    INNER JOIN products  AS p ON w.product_id  = p.id
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        WHERE o.customer_id  = w.customer_id
+          AND oi.product_id  = w.product_id
+          AND o.status NOT IN ('cancelled', 'returned')
     )
-    ORDER BY max_order_amount DESC
-    LIMIT 15;
+    ORDER BY w.created_at DESC
+    LIMIT 20;
     ```
 
-### Exercise 9
+    **Expected result:**
+
+    | customer_name | product_name                                    | created_at          |
+    | ------------- | ----------------------------------------------- | ------------------- |
+    | 윤예준           | 엡손 L6290 블랙                                     | 2025-12-30 20:40:58 |
+    | 나병철           | CORSAIR Dominator Titanium DDR5 32GB 7200MHz 실버 | 2025-12-30 05:21:30 |
+    | 김영미           | MSI MEG Ai1300P PCIE5 화이트                       | 2025-12-28 09:52:47 |
+    | 김민지           | APC Back-UPS Pro Gaming BGM1500B 블랙             | 2025-12-28 07:10:13 |
+    | 김주원           | MSI MEG Z790 ACE 실버                             | 2025-12-26 17:47:03 |
+    | ...           | ...                                             | ...                 |
+
+
+### Exercise 8
 Use `NOT EXISTS` to find products that every customer who ordered in 2024 has purchased. In other words, there is no 2024-ordering customer who has NOT bought this product. Return `product_id` and `product_name`.
 
 ??? success "Answer"
@@ -460,6 +422,45 @@ Use `NOT EXISTS` to find products that every customer who ordered in 2024 has pu
     )
     ORDER BY p.name;
     ```
+
+
+### Exercise 9
+Identify customers who have submitted a complaint AND have a return on record. Return `customer_id`, `name`, `grade`, `complaint_count`, and `return_count`. Use `EXISTS` for filtering, and subquery aggregation or joins for the counts.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        c.id    AS customer_id,
+        c.name,
+        c.grade,
+        (SELECT COUNT(*) FROM complaints WHERE customer_id = c.id) AS complaint_count,
+        (SELECT COUNT(*) FROM orders AS o
+                        INNER JOIN returns AS r ON r.order_id = o.id
+                        WHERE o.customer_id = c.id)               AS return_count
+    FROM customers AS c
+    WHERE EXISTS (
+        SELECT 1 FROM complaints WHERE customer_id = c.id
+    )
+    AND EXISTS (
+        SELECT 1
+        FROM orders AS o
+        INNER JOIN returns AS r ON r.order_id = o.id
+        WHERE o.customer_id = c.id
+    )
+    ORDER BY complaint_count DESC;
+    ```
+
+    **Expected result:**
+
+    | customer_id | name | grade | complaint_count | return_count |
+    | ----------: | ---- | ----- | --------------: | -----------: |
+    |          98 | 이영자  | VIP   |              44 |           13 |
+    |          97 | 김병철  | VIP   |              33 |            8 |
+    |         227 | 김성민  | VIP   |              26 |            8 |
+    |         549 | 이미정  | VIP   |              22 |           11 |
+    |         226 | 박정수  | VIP   |              18 |            9 |
+    | ...         | ...  | ...   | ...             | ...          |
+
 
 ---
 Next: [Lesson 21: Views](21-views.md)

@@ -306,8 +306,132 @@ DROP TABLE IF EXISTS price_change_log;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Query the system catalog to retrieve the full SQL definition of the `trg_earn_points_on_order` trigger. Explain which table it fires on, what event triggers it, and which table it modifies.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT sql
+        FROM sqlite_master
+        WHERE type = 'trigger'
+          AND name = 'trg_earn_points_on_order';
+        ```
+
+    === "MySQL"
+        ```sql
+        SHOW CREATE TRIGGER trg_earn_points_on_order;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT pg_get_triggerdef(oid)
+        FROM pg_trigger
+        WHERE tgname = 'trg_earn_points_on_order';
+        ```
+    This trigger fires on the `orders` table when a new row is INSERTed. It modifies the `customers` table by increasing `point_balance` by the value of `NEW.point_earned`.
+
+
+### Exercise 2
+Write a trigger `trg_log_expensive_price_change` that uses a WHEN condition to log price changes only when the new price is 1,000,000 or above. Assume the `price_change_log` table already exists.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        CREATE TRIGGER IF NOT EXISTS trg_log_expensive_price_change
+        AFTER UPDATE OF price ON products
+        WHEN NEW.price >= 1000000 AND OLD.price <> NEW.price
+        BEGIN
+            INSERT INTO price_change_log (product_id, old_price, new_price)
+            VALUES (NEW.id, OLD.price, NEW.price);
+        END;
+        ```
+
+    === "MySQL"
+        ```sql
+        DELIMITER //
+        CREATE TRIGGER trg_log_expensive_price_change
+        AFTER UPDATE ON products
+        FOR EACH ROW
+        BEGIN
+            IF NEW.price >= 1000000 AND OLD.price <> NEW.price THEN
+                INSERT INTO price_change_log (product_id, old_price, new_price)
+                VALUES (NEW.id, OLD.price, NEW.price);
+            END IF;
+        END //
+        DELIMITER ;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE OR REPLACE FUNCTION fn_log_expensive_price_change()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            IF NEW.price >= 1000000 AND OLD.price <> NEW.price THEN
+                INSERT INTO price_change_log (product_id, old_price, new_price)
+                VALUES (NEW.id, OLD.price, NEW.price);
+            END IF;
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+
+        CREATE TRIGGER trg_log_expensive_price_change
+        AFTER UPDATE OF price ON products
+        FOR EACH ROW
+        EXECUTE FUNCTION fn_log_expensive_price_change();
+        ```
+
+
+### Exercise 3
+Write an AFTER INSERT trigger `trg_review_created_at` on the `reviews` table that automatically sets `created_at` to the current timestamp when a new review is inserted.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        CREATE TRIGGER IF NOT EXISTS trg_review_created_at
+        AFTER INSERT ON reviews
+        WHEN NEW.created_at IS NULL
+        BEGIN
+            UPDATE reviews
+            SET created_at = datetime('now')
+            WHERE id = NEW.id;
+        END;
+        ```
+
+    === "MySQL"
+        ```sql
+        DELIMITER //
+        CREATE TRIGGER trg_review_created_at
+        BEFORE INSERT ON reviews
+        FOR EACH ROW
+        BEGIN
+            IF NEW.created_at IS NULL THEN
+                SET NEW.created_at = NOW();
+            END IF;
+        END //
+        DELIMITER ;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE OR REPLACE FUNCTION fn_review_created_at()
+        RETURNS TRIGGER AS $$
+        BEGIN
+            IF NEW.created_at IS NULL THEN
+                NEW.created_at := NOW();
+            END IF;
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+
+        CREATE TRIGGER trg_review_created_at
+        BEFORE INSERT ON reviews
+        FOR EACH ROW
+        EXECUTE FUNCTION fn_review_created_at();
+        ```
+
+
+### Exercise 4
 List all 5 built-in triggers using the system catalog (`sqlite_master` in SQLite). For each trigger, show the name, target table, and whether it fires on `INSERT`, `UPDATE`, or `DELETE`.
 
 ??? success "Answer"
@@ -372,85 +496,36 @@ List all 5 built-in triggers using the system catalog (`sqlite_master` in SQLite
         ORDER BY tgname;
         ```
 
-### Exercise 2
-Study the `trg_restore_stock_on_cancel` trigger by querying its definition from the system catalog (`sqlite_master` in SQLite). Then verify its logic by querying the stock of any product that appears in a cancelled order -- confirm the stock was restored when the cancellation happened.
+
+### Exercise 5
+Write a BEFORE DELETE trigger `trg_prevent_staff_delete` on the `staff` table that prevents deletion if the staff member has active (non-delivered, non-cancelled) orders.
 
 ??? success "Answer"
     === "SQLite"
         ```sql
-        -- Step 1: See the trigger definition
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'trigger'
-          AND name = 'trg_restore_stock_on_cancel';
-
-        -- Step 2: Find a cancelled order with order items
-        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
-        FROM orders AS o
-        INNER JOIN order_items AS oi ON oi.order_id = o.id
-        INNER JOIN products    AS p  ON p.id = oi.product_id
-        WHERE o.status = 'cancelled'
-        LIMIT 5;
-        -- The stock_qty should already reflect the restored quantity
-        ```
-
-    === "MySQL"
-        ```sql
-        -- Step 1: See the trigger definition
-        SHOW CREATE TRIGGER trg_restore_stock_on_cancel;
-
-        -- Step 2: Find a cancelled order with order items
-        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
-        FROM orders AS o
-        INNER JOIN order_items AS oi ON oi.order_id = o.id
-        INNER JOIN products    AS p  ON p.id = oi.product_id
-        WHERE o.status = 'cancelled'
-        LIMIT 5;
-        -- The stock_qty should already reflect the restored quantity
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- Step 1: See the trigger definition
-        SELECT pg_get_triggerdef(oid)
-        FROM pg_trigger
-        WHERE tgname = 'trg_restore_stock_on_cancel';
-
-        -- Step 2: Find a cancelled order with order items
-        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
-        FROM orders AS o
-        INNER JOIN order_items AS oi ON oi.order_id = o.id
-        INNER JOIN products    AS p  ON p.id = oi.product_id
-        WHERE o.status = 'cancelled'
-        LIMIT 5;
-        -- The stock_qty should already reflect the restored quantity
-        ```
-
-### Exercise 3
-Write an AFTER INSERT trigger `trg_review_created_at` on the `reviews` table that automatically sets `created_at` to the current timestamp when a new review is inserted.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        CREATE TRIGGER IF NOT EXISTS trg_review_created_at
-        AFTER INSERT ON reviews
-        WHEN NEW.created_at IS NULL
+        CREATE TRIGGER IF NOT EXISTS trg_prevent_staff_delete
+        BEFORE DELETE ON staff
+        WHEN (SELECT COUNT(*) FROM orders WHERE staff_id = OLD.id AND status NOT IN ('delivered', 'cancelled')) > 0
         BEGIN
-            UPDATE reviews
-            SET created_at = datetime('now')
-            WHERE id = NEW.id;
+            SELECT RAISE(ABORT, 'Cannot delete staff with active orders.');
         END;
         ```
 
     === "MySQL"
         ```sql
         DELIMITER //
-        CREATE TRIGGER trg_review_created_at
-        BEFORE INSERT ON reviews
+        CREATE TRIGGER trg_prevent_staff_delete
+        BEFORE DELETE ON staff
         FOR EACH ROW
         BEGIN
-            IF NEW.created_at IS NULL THEN
-                SET NEW.created_at = NOW();
+            DECLARE active_orders INT;
+            SELECT COUNT(*) INTO active_orders
+            FROM orders
+            WHERE staff_id = OLD.id
+              AND status NOT IN ('delivered', 'cancelled');
+            IF active_orders > 0 THEN
+                SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'Cannot delete staff with active orders.';
             END IF;
         END //
         DELIMITER ;
@@ -458,23 +533,24 @@ Write an AFTER INSERT trigger `trg_review_created_at` on the `reviews` table tha
 
     === "PostgreSQL"
         ```sql
-        CREATE OR REPLACE FUNCTION fn_review_created_at()
+        CREATE OR REPLACE FUNCTION fn_prevent_staff_delete()
         RETURNS TRIGGER AS $$
         BEGIN
-            IF NEW.created_at IS NULL THEN
-                NEW.created_at := NOW();
+            IF (SELECT COUNT(*) FROM orders WHERE staff_id = OLD.id AND status NOT IN ('delivered', 'cancelled')) > 0 THEN
+                RAISE EXCEPTION 'Cannot delete staff with active orders.';
             END IF;
-            RETURN NEW;
+            RETURN OLD;
         END;
         $$ LANGUAGE plpgsql;
 
-        CREATE TRIGGER trg_review_created_at
-        BEFORE INSERT ON reviews
+        CREATE TRIGGER trg_prevent_staff_delete
+        BEFORE DELETE ON staff
         FOR EACH ROW
-        EXECUTE FUNCTION fn_review_created_at();
+        EXECUTE FUNCTION fn_prevent_staff_delete();
         ```
 
-### Exercise 4
+
+### Exercise 6
 Implement an audit log for customer grade changes. First, create a `grade_change_log` table with columns `customer_id`, `old_grade`, `new_grade`, and `changed_at`. Then write an AFTER UPDATE trigger on the `customers` table that records grade changes using `OLD` and `NEW` references.
 
 ??? success "Answer"
@@ -547,133 +623,8 @@ Implement an audit log for customer grade changes. First, create a `grade_change
         EXECUTE FUNCTION fn_log_grade_change();
         ```
 
-### Exercise 5
-Write a BEFORE DELETE trigger `trg_prevent_staff_delete` on the `staff` table that prevents deletion if the staff member has active (non-delivered, non-cancelled) orders.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        CREATE TRIGGER IF NOT EXISTS trg_prevent_staff_delete
-        BEFORE DELETE ON staff
-        WHEN (SELECT COUNT(*) FROM orders WHERE staff_id = OLD.id AND status NOT IN ('delivered', 'cancelled')) > 0
-        BEGIN
-            SELECT RAISE(ABORT, 'Cannot delete staff with active orders.');
-        END;
-        ```
-
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE TRIGGER trg_prevent_staff_delete
-        BEFORE DELETE ON staff
-        FOR EACH ROW
-        BEGIN
-            DECLARE active_orders INT;
-            SELECT COUNT(*) INTO active_orders
-            FROM orders
-            WHERE staff_id = OLD.id
-              AND status NOT IN ('delivered', 'cancelled');
-            IF active_orders > 0 THEN
-                SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'Cannot delete staff with active orders.';
-            END IF;
-        END //
-        DELIMITER ;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_prevent_staff_delete()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF (SELECT COUNT(*) FROM orders WHERE staff_id = OLD.id AND status NOT IN ('delivered', 'cancelled')) > 0 THEN
-                RAISE EXCEPTION 'Cannot delete staff with active orders.';
-            END IF;
-            RETURN OLD;
-        END;
-        $$ LANGUAGE plpgsql;
-
-        CREATE TRIGGER trg_prevent_staff_delete
-        BEFORE DELETE ON staff
-        FOR EACH ROW
-        EXECUTE FUNCTION fn_prevent_staff_delete();
-        ```
-
-### Exercise 6
-Write a trigger `trg_log_expensive_price_change` that uses a WHEN condition to log price changes only when the new price is 1,000,000 or above. Assume the `price_change_log` table already exists.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        CREATE TRIGGER IF NOT EXISTS trg_log_expensive_price_change
-        AFTER UPDATE OF price ON products
-        WHEN NEW.price >= 1000000 AND OLD.price <> NEW.price
-        BEGIN
-            INSERT INTO price_change_log (product_id, old_price, new_price)
-            VALUES (NEW.id, OLD.price, NEW.price);
-        END;
-        ```
-
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE TRIGGER trg_log_expensive_price_change
-        AFTER UPDATE ON products
-        FOR EACH ROW
-        BEGIN
-            IF NEW.price >= 1000000 AND OLD.price <> NEW.price THEN
-                INSERT INTO price_change_log (product_id, old_price, new_price)
-                VALUES (NEW.id, OLD.price, NEW.price);
-            END IF;
-        END //
-        DELIMITER ;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_log_expensive_price_change()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF NEW.price >= 1000000 AND OLD.price <> NEW.price THEN
-                INSERT INTO price_change_log (product_id, old_price, new_price)
-                VALUES (NEW.id, OLD.price, NEW.price);
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-
-        CREATE TRIGGER trg_log_expensive_price_change
-        AFTER UPDATE OF price ON products
-        FOR EACH ROW
-        EXECUTE FUNCTION fn_log_expensive_price_change();
-        ```
 
 ### Exercise 7
-Query the system catalog to retrieve the full SQL definition of the `trg_earn_points_on_order` trigger. Explain which table it fires on, what event triggers it, and which table it modifies.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'trigger'
-          AND name = 'trg_earn_points_on_order';
-        ```
-
-    === "MySQL"
-        ```sql
-        SHOW CREATE TRIGGER trg_earn_points_on_order;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT pg_get_triggerdef(oid)
-        FROM pg_trigger
-        WHERE tgname = 'trg_earn_points_on_order';
-        ```
-    This trigger fires on the `orders` table when a new row is INSERTed. It modifies the `customers` table by increasing `point_balance` by the value of `NEW.point_earned`.
-
-### Exercise 8
 Drop all triggers and tables you created in exercises 3 through 6 to restore the database to its original state.
 
 ??? success "Answer"
@@ -707,6 +658,62 @@ Drop all triggers and tables you created in exercises 3 through 6 to restore the
         DROP FUNCTION IF EXISTS fn_log_expensive_price_change();
         DROP TABLE IF EXISTS grade_change_log;
         ```
+
+
+### Exercise 8
+Study the `trg_restore_stock_on_cancel` trigger by querying its definition from the system catalog (`sqlite_master` in SQLite). Then verify its logic by querying the stock of any product that appears in a cancelled order -- confirm the stock was restored when the cancellation happened.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Step 1: See the trigger definition
+        SELECT sql
+        FROM sqlite_master
+        WHERE type = 'trigger'
+          AND name = 'trg_restore_stock_on_cancel';
+
+        -- Step 2: Find a cancelled order with order items
+        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
+        FROM orders AS o
+        INNER JOIN order_items AS oi ON oi.order_id = o.id
+        INNER JOIN products    AS p  ON p.id = oi.product_id
+        WHERE o.status = 'cancelled'
+        LIMIT 5;
+        -- The stock_qty should already reflect the restored quantity
+        ```
+
+    === "MySQL"
+        ```sql
+        -- Step 1: See the trigger definition
+        SHOW CREATE TRIGGER trg_restore_stock_on_cancel;
+
+        -- Step 2: Find a cancelled order with order items
+        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
+        FROM orders AS o
+        INNER JOIN order_items AS oi ON oi.order_id = o.id
+        INNER JOIN products    AS p  ON p.id = oi.product_id
+        WHERE o.status = 'cancelled'
+        LIMIT 5;
+        -- The stock_qty should already reflect the restored quantity
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- Step 1: See the trigger definition
+        SELECT pg_get_triggerdef(oid)
+        FROM pg_trigger
+        WHERE tgname = 'trg_restore_stock_on_cancel';
+
+        -- Step 2: Find a cancelled order with order items
+        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
+        FROM orders AS o
+        INNER JOIN order_items AS oi ON oi.order_id = o.id
+        INNER JOIN products    AS p  ON p.id = oi.product_id
+        WHERE o.status = 'cancelled'
+        LIMIT 5;
+        -- The stock_qty should already reflect the restored quantity
+        ```
+
 
 ---
 

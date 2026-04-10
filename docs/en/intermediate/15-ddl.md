@@ -589,8 +589,18 @@ GROUP BY cat.name;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Add a `phone` column (text, optional) to the `temp_employees` table, then rename the `department` column to `dept`.
+
+??? success "Answer"
+    ```sql
+    ALTER TABLE temp_employees ADD COLUMN phone TEXT;
+
+    ALTER TABLE temp_employees RENAME COLUMN department TO dept;
+    ```
+
+
+### Exercise 2
 Create a table called `temp_employees` with the following columns: `id` (auto-increment primary key), `name` (required, text), `email` (required, unique, text), `department` (text, default `'General'`), and `hire_date` (text/date).
 
 ??? success "Answer"
@@ -627,7 +637,79 @@ Create a table called `temp_employees` with the following columns: `id` (auto-in
         );
         ```
 
-### Exercise 2
+
+### Exercise 3
+Create a table called `temp_order_log` with a **composite primary key** on (`order_id`, `log_seq`). Include columns: `order_id` (integer, required), `log_seq` (integer, required), `action` (text, required, must be one of `'created'`, `'shipped'`, `'delivered'`, `'cancelled'`), and `logged_at` (default to current timestamp).
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        CREATE TABLE temp_order_log (
+            order_id  INTEGER NOT NULL,
+            log_seq   INTEGER NOT NULL,
+            action    TEXT    NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+            logged_at TEXT    DEFAULT (datetime('now')),
+            PRIMARY KEY (order_id, log_seq)
+        );
+        ```
+
+    === "MySQL"
+        ```sql
+        CREATE TABLE temp_order_log (
+            order_id  INT         NOT NULL,
+            log_seq   INT         NOT NULL,
+            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+            logged_at DATETIME    DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (order_id, log_seq)
+        );
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE TABLE temp_order_log (
+            order_id  INTEGER     NOT NULL,
+            log_seq   INTEGER     NOT NULL,
+            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+            logged_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (order_id, log_seq)
+        );
+        ```
+
+
+### Exercise 4
+Explain the differences between `DELETE FROM` and `TRUNCATE TABLE`. Then write the SQL to remove all data from the `order_archive` table for each database.
+
+??? success "Answer"
+    **Differences:**
+
+    - `DELETE` removes rows one at a time, logs each deletion, supports WHERE clauses, fires triggers, and preserves the auto-increment counter.
+    - `TRUNCATE` deallocates data pages in bulk (much faster), does not support WHERE, does not fire triggers, and resets the auto-increment counter.
+
+    === "SQLite"
+        ```sql
+        -- SQLite does not support TRUNCATE; use DELETE instead
+        DELETE FROM order_archive;
+
+        -- Reclaim disk space if needed
+        VACUUM;
+        ```
+
+    === "MySQL"
+        ```sql
+        TRUNCATE TABLE order_archive;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- Basic TRUNCATE
+        TRUNCATE TABLE order_archive;
+
+        -- Also reset the sequence counter
+        TRUNCATE TABLE order_archive RESTART IDENTITY;
+        ```
+
+
+### Exercise 5
 Create a table called `temp_product_reviews` with: `id` (auto-increment primary key), `product_id` (integer, required, foreign key to `products`), `customer_id` (integer, required), `rating` (integer, required, must be between 1 and 5), `comment` (text), and `created_at` (default to current timestamp). If a product is deleted, its reviews should be deleted automatically.
 
 ??? success "Answer"
@@ -673,7 +755,8 @@ Create a table called `temp_product_reviews` with: `id` (auto-increment primary 
         );
         ```
 
-### Exercise 3
+
+### Exercise 6
 What is wrong with the following table definition? Fix it.
 
 ```sql
@@ -699,60 +782,25 @@ CREATE TABLE temp_inventory (
     );
     ```
 
-### Exercise 4
-Add a `phone` column (text, optional) to the `temp_employees` table, then rename the `department` column to `dept`.
+
+### Exercise 7
+Write a single `DROP TABLE IF EXISTS` statement for each of these tables in the correct order: `temp_product_reviews`, `temp_vip_customers`, `temp_employees`, `order_totals_by_month`, `temp_inventory`. (Consider foreign key dependencies.)
 
 ??? success "Answer"
-    ```sql
-    ALTER TABLE temp_employees ADD COLUMN phone TEXT;
+    `temp_product_reviews` references `products` and `customers` (external tables, not being dropped), so order among these tables does not matter — none reference each other. Any order is valid:
 
-    ALTER TABLE temp_employees RENAME COLUMN department TO dept;
+    ```sql
+    DROP TABLE IF EXISTS temp_product_reviews;
+    DROP TABLE IF EXISTS temp_vip_customers;
+    DROP TABLE IF EXISTS temp_employees;
+    DROP TABLE IF EXISTS order_totals_by_month;
+    DROP TABLE IF EXISTS temp_inventory;
     ```
 
-### Exercise 5
-Create a table called `order_totals_by_month` using CTAS that contains: the year and month of each order, the number of orders, and the total revenue. Use the existing `orders` table.
+    > If one of these tables had a foreign key referencing another table in the list, you would drop the child table first.
 
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        CREATE TABLE order_totals_by_month AS
-        SELECT
-            strftime('%Y', order_date)    AS order_year,
-            strftime('%m', order_date)    AS order_month,
-            COUNT(*)                      AS order_count,
-            ROUND(SUM(total_amount), 2)   AS total_revenue
-        FROM orders
-        GROUP BY strftime('%Y', order_date),
-                 strftime('%m', order_date);
-        ```
 
-    === "MySQL"
-        ```sql
-        CREATE TABLE order_totals_by_month AS
-        SELECT
-            YEAR(order_date)              AS order_year,
-            MONTH(order_date)             AS order_month,
-            COUNT(*)                      AS order_count,
-            ROUND(SUM(total_amount), 2)   AS total_revenue
-        FROM orders
-        GROUP BY YEAR(order_date),
-                 MONTH(order_date);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE order_totals_by_month AS
-        SELECT
-            EXTRACT(YEAR FROM order_date)::INTEGER  AS order_year,
-            EXTRACT(MONTH FROM order_date)::INTEGER AS order_month,
-            COUNT(*)::INTEGER                       AS order_count,
-            ROUND(SUM(total_amount), 2)             AS total_revenue
-        FROM orders
-        GROUP BY EXTRACT(YEAR FROM order_date),
-                 EXTRACT(MONTH FROM order_date);
-        ```
-
-### Exercise 6
+### Exercise 8
 Create a `temp_vip_customers` table with: `id` (primary key), `name` (required), `email` (required, unique), and `total_spent` (decimal, must be positive). Then populate it using a SELECT from `customers` and `orders` for customers whose total spending exceeds 1,000,000.
 
 ??? success "Answer"
@@ -819,58 +867,6 @@ Create a `temp_vip_customers` table with: `id` (primary key), `name` (required),
         HAVING SUM(o.total_amount) > 1000000;
         ```
 
-### Exercise 7
-Write a single `DROP TABLE IF EXISTS` statement for each of these tables in the correct order: `temp_product_reviews`, `temp_vip_customers`, `temp_employees`, `order_totals_by_month`, `temp_inventory`. (Consider foreign key dependencies.)
-
-??? success "Answer"
-    `temp_product_reviews` references `products` and `customers` (external tables, not being dropped), so order among these tables does not matter — none reference each other. Any order is valid:
-
-    ```sql
-    DROP TABLE IF EXISTS temp_product_reviews;
-    DROP TABLE IF EXISTS temp_vip_customers;
-    DROP TABLE IF EXISTS temp_employees;
-    DROP TABLE IF EXISTS order_totals_by_month;
-    DROP TABLE IF EXISTS temp_inventory;
-    ```
-
-    > If one of these tables had a foreign key referencing another table in the list, you would drop the child table first.
-
-### Exercise 8
-Create a table called `temp_order_log` with a **composite primary key** on (`order_id`, `log_seq`). Include columns: `order_id` (integer, required), `log_seq` (integer, required), `action` (text, required, must be one of `'created'`, `'shipped'`, `'delivered'`, `'cancelled'`), and `logged_at` (default to current timestamp).
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        CREATE TABLE temp_order_log (
-            order_id  INTEGER NOT NULL,
-            log_seq   INTEGER NOT NULL,
-            action    TEXT    NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
-            logged_at TEXT    DEFAULT (datetime('now')),
-            PRIMARY KEY (order_id, log_seq)
-        );
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE TABLE temp_order_log (
-            order_id  INT         NOT NULL,
-            log_seq   INT         NOT NULL,
-            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
-            logged_at DATETIME    DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (order_id, log_seq)
-        );
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE temp_order_log (
-            order_id  INTEGER     NOT NULL,
-            log_seq   INTEGER     NOT NULL,
-            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
-            logged_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (order_id, log_seq)
-        );
-        ```
 
 ### Exercise 9
 Using ALTER TABLE, add a `discount_rate` column (decimal, default 0, must be between 0 and 100) to the `temp_employees` table. Then drop the `phone` column you added in Exercise 4.
@@ -897,6 +893,7 @@ Using ALTER TABLE, add a `discount_rate` column (decimal, default 0, must be bet
 
         ALTER TABLE temp_employees DROP COLUMN phone;
         ```
+
 
 ### Exercise 10
 Explain the difference between `CREATE TABLE AS SELECT` and `CREATE TABLE` + `INSERT INTO ... SELECT`. When would you prefer one over the other?
@@ -935,37 +932,50 @@ Explain the difference between `CREATE TABLE AS SELECT` and `CREATE TABLE` + `IN
     WHERE status = 'delivered';
     ```
 
+
 ### Exercise 11
-Explain the differences between `DELETE FROM` and `TRUNCATE TABLE`. Then write the SQL to remove all data from the `order_archive` table for each database.
+Create a table called `order_totals_by_month` using CTAS that contains: the year and month of each order, the number of orders, and the total revenue. Use the existing `orders` table.
 
 ??? success "Answer"
-    **Differences:**
-
-    - `DELETE` removes rows one at a time, logs each deletion, supports WHERE clauses, fires triggers, and preserves the auto-increment counter.
-    - `TRUNCATE` deallocates data pages in bulk (much faster), does not support WHERE, does not fire triggers, and resets the auto-increment counter.
-
     === "SQLite"
         ```sql
-        -- SQLite does not support TRUNCATE; use DELETE instead
-        DELETE FROM order_archive;
-
-        -- Reclaim disk space if needed
-        VACUUM;
+        CREATE TABLE order_totals_by_month AS
+        SELECT
+            strftime('%Y', order_date)    AS order_year,
+            strftime('%m', order_date)    AS order_month,
+            COUNT(*)                      AS order_count,
+            ROUND(SUM(total_amount), 2)   AS total_revenue
+        FROM orders
+        GROUP BY strftime('%Y', order_date),
+                 strftime('%m', order_date);
         ```
 
     === "MySQL"
         ```sql
-        TRUNCATE TABLE order_archive;
+        CREATE TABLE order_totals_by_month AS
+        SELECT
+            YEAR(order_date)              AS order_year,
+            MONTH(order_date)             AS order_month,
+            COUNT(*)                      AS order_count,
+            ROUND(SUM(total_amount), 2)   AS total_revenue
+        FROM orders
+        GROUP BY YEAR(order_date),
+                 MONTH(order_date);
         ```
 
     === "PostgreSQL"
         ```sql
-        -- Basic TRUNCATE
-        TRUNCATE TABLE order_archive;
-
-        -- Also reset the sequence counter
-        TRUNCATE TABLE order_archive RESTART IDENTITY;
+        CREATE TABLE order_totals_by_month AS
+        SELECT
+            EXTRACT(YEAR FROM order_date)::INTEGER  AS order_year,
+            EXTRACT(MONTH FROM order_date)::INTEGER AS order_month,
+            COUNT(*)::INTEGER                       AS order_count,
+            ROUND(SUM(total_amount), 2)             AS total_revenue
+        FROM orders
+        GROUP BY EXTRACT(YEAR FROM order_date),
+                 EXTRACT(MONTH FROM order_date);
         ```
+
 
 ---
 Next: [Lesson 16: Transactions and ACID](16-transactions.md)

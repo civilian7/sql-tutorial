@@ -321,8 +321,29 @@ Support for materialized views varies significantly across databases.
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Query `v_customer_stats` to find customers who placed 5 or more orders and have an average order value of 300 or above. Sort by `lifetime_value` descending.
+
+??? success "Answer"
+    ```sql
+    SELECT *
+    FROM v_customer_stats
+    WHERE order_count >= 5
+      AND avg_order_value >= 300
+    ORDER BY lifetime_value DESC;
+    ```
+
+
+### Exercise 2
+Drop the `v_cs_watchlist` view. Write the statement so that it does not raise an error if the view does not exist.
+
+??? success "Answer"
+    ```sql
+    DROP VIEW IF EXISTS v_cs_watchlist;
+    ```
+
+
+### Exercise 3
 Query `v_product_sales` to find the top 10 products by `total_revenue`. Return `product_name`, `category`, `units_sold`, `total_revenue`, and `avg_rating`. Filter for products with at least 5 reviews.
 
 ??? success "Answer"
@@ -339,7 +360,8 @@ Query `v_product_sales` to find the top 10 products by `total_revenue`. Return `
     LIMIT 10;
     ```
 
-### Exercise 2
+
+### Exercise 4
 Use the system catalog to list all 18 views alphabetically. For each view, show only the name. Then pick one view that interests you and inspect its definition.
 
 ??? success "Answer"
@@ -388,27 +410,64 @@ Use the system catalog to list all 18 views alphabetically. For each view, show 
           AND viewname = 'v_monthly_revenue';
         ```
 
-### Exercise 3
-Query `v_customer_stats` to find customers who placed 5 or more orders and have an average order value of 300 or above. Sort by `lifetime_value` descending.
-
-??? success "Answer"
-    ```sql
-    SELECT *
-    FROM v_customer_stats
-    WHERE order_count >= 5
-      AND avg_order_value >= 300
-    ORDER BY lifetime_value DESC;
-    ```
-
-### Exercise 4
-Drop the `v_cs_watchlist` view. Write the statement so that it does not raise an error if the view does not exist.
-
-??? success "Answer"
-    ```sql
-    DROP VIEW IF EXISTS v_cs_watchlist;
-    ```
 
 ### Exercise 5
+Query `v_supplier_performance` to find the supplier with the highest return rate. Then use the system catalog to inspect the view's definition.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Step 1: supplier with highest return rate
+        SELECT *
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
+        LIMIT 1;
+
+        -- Step 2: inspect the view definition
+        SELECT sql
+        FROM sqlite_master
+        WHERE type = 'view'
+          AND name = 'v_supplier_performance';
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT *
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
+        LIMIT 1;
+
+        SELECT VIEW_DEFINITION
+        FROM INFORMATION_SCHEMA.VIEWS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'v_supplier_performance';
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT *
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
+        LIMIT 1;
+
+        SELECT definition
+        FROM pg_views
+        WHERE schemaname = 'public'
+          AND viewname = 'v_supplier_performance';
+        ```
+
+
+### Exercise 6
+Drop all the views you created in exercises 5 through 7.
+
+??? success "Answer"
+    ```sql
+    DROP VIEW IF EXISTS v_product_total_sales;
+    DROP VIEW IF EXISTS v_category_monthly_revenue;
+    ```
+
+
+### Exercise 7
 Create a view called `v_product_total_sales` that joins `products` and `order_items` to calculate total quantity sold (`total_qty`) and total sales amount (`total_sales`) per product. Include `product_id`, `product_name`, `total_qty`, and `total_sales`.
 
 ??? success "Answer"
@@ -424,7 +483,8 @@ Create a view called `v_product_total_sales` that joins `products` and `order_it
     GROUP BY p.id, p.name;
     ```
 
-### Exercise 6
+
+### Exercise 8
 Modify the existing `v_product_total_sales` view to add a `category_name` column by joining the `categories` table. Note that SQLite does not support `CREATE OR REPLACE VIEW`, so the approach differs by database.
 
 ??? success "Answer"
@@ -478,7 +538,8 @@ Modify the existing `v_product_total_sales` view to add a `category_name` column
         GROUP BY p.id, p.name, c.name;
         ```
 
-### Exercise 7
+
+### Exercise 9
 Create a view `v_category_monthly_revenue` that aggregates monthly revenue by category. Include `category_name`, `year_month` (based on order date, 'YYYY-MM' format), `revenue`, and `order_count`.
 
 ??? success "Answer"
@@ -527,59 +588,6 @@ Create a view `v_category_monthly_revenue` that aggregates monthly revenue by ca
         GROUP BY c.name, TO_CHAR(o.ordered_at, 'YYYY-MM');
         ```
 
-### Exercise 8
-Query `v_supplier_performance` to find the supplier with the highest return rate. Then use the system catalog to inspect the view's definition.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        -- Step 1: supplier with highest return rate
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        -- Step 2: inspect the view definition
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'view'
-          AND name = 'v_supplier_performance';
-        ```
-
-    === "MySQL"
-        ```sql
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        SELECT VIEW_DEFINITION
-        FROM INFORMATION_SCHEMA.VIEWS
-        WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME = 'v_supplier_performance';
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        SELECT definition
-        FROM pg_views
-        WHERE schemaname = 'public'
-          AND viewname = 'v_supplier_performance';
-        ```
-
-### Exercise 9
-Drop all the views you created in exercises 5 through 7.
-
-??? success "Answer"
-    ```sql
-    DROP VIEW IF EXISTS v_product_total_sales;
-    DROP VIEW IF EXISTS v_category_monthly_revenue;
-    ```
 
 ### Exercise 10
 Create a materialized view `mv_category_sales` that aggregates total revenue and total quantity sold per category. Include `category_name`, `total_revenue`, and `total_qty`. Use the appropriate approach for each database.
@@ -653,6 +661,7 @@ Create a materialized view `mv_category_sales` that aggregates total revenue and
         -- Refresh
         REFRESH MATERIALIZED VIEW mv_category_sales;
         ```
+
 
 ---
 Next: [Lesson 22: Indexes and Query Planning](22-indexes.md)

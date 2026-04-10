@@ -250,8 +250,94 @@ LIMIT 10;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Display `'No memo'` when an order's `notes` column is NULL. Use a CASE expression to return `order_number`, `status`, and `memo` (the notes value if not NULL, otherwise `'No memo'`). Limit to the 15 most recent orders.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        order_number,
+        status,
+        CASE
+            WHEN notes IS NULL THEN 'No memo'
+            ELSE notes
+        END AS memo
+    FROM orders
+    ORDER BY ordered_at DESC
+    LIMIT 15;
+    ```
+
+    **Expected result:**
+
+    | order_number       | status    | memo               |
+    | ------------------ | --------- | ------------------ |
+    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
+    | ORD-20250630-34905 | pending   | No memo            |
+    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
+    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
+    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
+    | ...                | ...       | ...                |
+
+
+### Exercise 2
+Sort active staff so that `'manager'` roles appear first, then `'staff'`, then any other role. Within the same role, sort by `name` ascending. Return `name`, `department`, and `role`.
+
+??? success "Answer"
+    ```sql
+    SELECT name, department, role
+    FROM staff
+    WHERE is_active = 1
+    ORDER BY
+        CASE role
+            WHEN 'manager' THEN 1
+            WHEN 'staff'   THEN 2
+            ELSE 3
+        END,
+        name ASC;
+    ```
+
+    **Expected result:**
+
+    | name | department | role    |
+    | ---- | ---------- | ------- |
+    | 권영희  | 마케팅        | manager |
+    | 이준혁  | 영업         | manager |
+    | 박경수  | 경영         | admin   |
+    | 장주원  | 경영         | admin   |
+    | 한민재  | 경영         | admin   |
+
+
+### Exercise 3
+Translate `payments.method` to a readable label using a simple CASE: `'card'` → `'Credit Card'`, `'bank_transfer'` → `'Bank Transfer'`, `'cash'` → `'Cash'`, anything else → `'Other'`. Return `id`, `amount`, and `method_label`. Limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        id,
+        amount,
+        CASE method
+            WHEN 'card'          THEN 'Credit Card'
+            WHEN 'bank_transfer' THEN 'Bank Transfer'
+            WHEN 'cash'          THEN 'Cash'
+            ELSE 'Other'
+        END AS method_label
+    FROM payments
+    LIMIT 10;
+    ```
+
+    **Expected result:**
+
+    | id | amount | method_label |
+    | -: | -----: | ------------ |
+    |  1 | 130700 | Credit Card  |
+    |  2 | 130700 | Credit Card  |
+    |  3 | 265400 | Credit Card  |
+    |  4 | 130700 | Other        |
+    |  5 | 131390 | Other        |
+    | ... | ...    | ...          |
+
+
+### Exercise 4
 Add a `stock_status` column to a product listing: `'Out of Stock'` when `stock_qty = 0`, `'Low Stock'` when `1–10`, `'In Stock'` when `11–100`, and `'Well Stocked'` when over 100. Return `name`, `stock_qty`, and `stock_status` for all active products.
 
 ??? success "Answer"
@@ -270,7 +356,8 @@ Add a `stock_status` column to a product listing: `'Out of Stock'` when `stock_q
     ORDER BY stock_qty ASC;
     ```
 
-### Exercise 2
+
+### Exercise 5
 Create a generation breakdown report: count how many active customers fall into each generation (Gen Z: born 1997+, Millennial: 1981–1996, Gen X: 1965–1980, Boomer+: before 1965, Unknown: NULL birth_date). Return `generation` and `customer_count`.
 
 ??? success "Answer"
@@ -336,99 +423,6 @@ Create a generation breakdown report: count how many active customers fall into 
         ORDER BY customer_count DESC;
         ```
 
-### Exercise 3
-For each product, calculate the revenue earned in each quarter of 2024 as separate columns (`q1_revenue`, `q2_revenue`, `q3_revenue`, `q4_revenue`) using conditional aggregation (`SUM(CASE WHEN ... THEN ... END)`). Only show products with any 2024 sales. Limit to 10 rows by total 2024 revenue descending.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        p.name AS product_name,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q1_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-04-01' AND '2024-06-30 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q2_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-07-01' AND '2024-09-30 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q3_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-10-01' AND '2024-12-31 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q4_revenue
-    FROM order_items AS oi
-    INNER JOIN orders    AS o ON oi.order_id   = o.id
-    INNER JOIN products  AS p ON oi.product_id = p.id
-    WHERE o.ordered_at LIKE '2024%'
-      AND o.status NOT IN ('cancelled', 'returned')
-    GROUP BY p.id, p.name
-    ORDER BY (q1_revenue + q2_revenue + q3_revenue + q4_revenue) DESC
-    LIMIT 10;
-    ```
-
-    **Expected result:**
-
-    | product_name                 | q1_revenue | q2_revenue | q3_revenue | q4_revenue |
-    | ---------------------------- | ---------: | ---------: | ---------: | ---------: |
-    | Razer Blade 18 블랙            |   37638900 |   29274700 |   41821000 |   37638900 |
-    | Razer Blade 18 화이트           |   29886300 |   53131200 |   29886300 |   33207000 |
-    | Razer Blade 16 실버            |   45361800 |   24742800 |   20619000 |   20619000 |
-    | Razer Blade 18 블랙            |   29875000 |   17925000 |   29875000 |   32862500 |
-    | SAPPHIRE PULSE RX 7800 XT 실버 |   35413200 |   22297200 |   14427600 |   31478400 |
-    | ...                          | ...        | ...        | ...        | ...        |
-
-
-### Exercise 4
-Translate `payments.method` to a readable label using a simple CASE: `'card'` → `'Credit Card'`, `'bank_transfer'` → `'Bank Transfer'`, `'cash'` → `'Cash'`, anything else → `'Other'`. Return `id`, `amount`, and `method_label`. Limit to 10 rows.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        id,
-        amount,
-        CASE method
-            WHEN 'card'          THEN 'Credit Card'
-            WHEN 'bank_transfer' THEN 'Bank Transfer'
-            WHEN 'cash'          THEN 'Cash'
-            ELSE 'Other'
-        END AS method_label
-    FROM payments
-    LIMIT 10;
-    ```
-
-    **Expected result:**
-
-    | id | amount | method_label |
-    | -: | -----: | ------------ |
-    |  1 | 130700 | Credit Card  |
-    |  2 | 130700 | Credit Card  |
-    |  3 | 265400 | Credit Card  |
-    |  4 | 130700 | Other        |
-    |  5 | 131390 | Other        |
-    | ... | ...    | ...          |
-
-
-### Exercise 5
-Classify customers by `point_balance` into three tiers: 100,000+ as `'Heavy User'`, 10,000+ as `'Regular'`, and the rest as `'Light'`. For each `grade`, count the number of customers in each tier. Return `grade`, `heavy_count`, `regular_count`, and `light_count`.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        grade,
-        COUNT(CASE WHEN point_balance >= 100000 THEN 1 END) AS heavy_count,
-        COUNT(CASE WHEN point_balance >= 10000
-                    AND point_balance < 100000 THEN 1 END) AS regular_count,
-        COUNT(CASE WHEN point_balance < 10000 THEN 1 END)  AS light_count
-    FROM customers
-    WHERE is_active = 1
-    GROUP BY grade
-    ORDER BY grade;
-    ```
-
-    **Expected result:**
-
-    | grade  | heavy_count | regular_count | light_count |
-    | ------ | ----------: | ------------: | ----------: |
-    | BRONZE |         198 |           570 |        1780 |
-    | GOLD   |         206 |           278 |           0 |
-    | SILVER |         117 |           292 |          60 |
-    | VIP    |         251 |            64 |           0 |
-
 
 ### Exercise 6
 Convert `rating` in the `reviews` table to a text label: 5 → `'Excellent'`, 4 → `'Good'`, 3 → `'Average'`, 2 → `'Poor'`, 1 → `'Terrible'`. Show the review count and average rating per label. Return `rating_label`, `review_count`, `avg_rating`, sorted by `avg_rating` descending.
@@ -462,32 +456,30 @@ Convert `rating` in the `reviews` table to a text label: 5 → `'Excellent'`, 4 
 
 
 ### Exercise 7
-Display `'No memo'` when an order's `notes` column is NULL. Use a CASE expression to return `order_number`, `status`, and `memo` (the notes value if not NULL, otherwise `'No memo'`). Limit to the 15 most recent orders.
+Classify customers by `point_balance` into three tiers: 100,000+ as `'Heavy User'`, 10,000+ as `'Regular'`, and the rest as `'Light'`. For each `grade`, count the number of customers in each tier. Return `grade`, `heavy_count`, `regular_count`, and `light_count`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        order_number,
-        status,
-        CASE
-            WHEN notes IS NULL THEN 'No memo'
-            ELSE notes
-        END AS memo
-    FROM orders
-    ORDER BY ordered_at DESC
-    LIMIT 15;
+        grade,
+        COUNT(CASE WHEN point_balance >= 100000 THEN 1 END) AS heavy_count,
+        COUNT(CASE WHEN point_balance >= 10000
+                    AND point_balance < 100000 THEN 1 END) AS regular_count,
+        COUNT(CASE WHEN point_balance < 10000 THEN 1 END)  AS light_count
+    FROM customers
+    WHERE is_active = 1
+    GROUP BY grade
+    ORDER BY grade;
     ```
 
     **Expected result:**
 
-    | order_number       | status    | memo               |
-    | ------------------ | --------- | ------------------ |
-    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
-    | ORD-20250630-34905 | pending   | No memo            |
-    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
-    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
-    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
-    | ...                | ...       | ...                |
+    | grade  | heavy_count | regular_count | light_count |
+    | ------ | ----------: | ------------: | ----------: |
+    | BRONZE |         198 |           570 |        1780 |
+    | GOLD   |         206 |           278 |           0 |
+    | SILVER |         117 |           292 |          60 |
+    | VIP    |         251 |            64 |           0 |
 
 
 ### Exercise 8
@@ -522,34 +514,6 @@ Bucket orders by `total_amount` into tiers: under 100 as `'Small'`, 100 to under
 
 
 ### Exercise 9
-Sort active staff so that `'manager'` roles appear first, then `'staff'`, then any other role. Within the same role, sort by `name` ascending. Return `name`, `department`, and `role`.
-
-??? success "Answer"
-    ```sql
-    SELECT name, department, role
-    FROM staff
-    WHERE is_active = 1
-    ORDER BY
-        CASE role
-            WHEN 'manager' THEN 1
-            WHEN 'staff'   THEN 2
-            ELSE 3
-        END,
-        name ASC;
-    ```
-
-    **Expected result:**
-
-    | name | department | role    |
-    | ---- | ---------- | ------- |
-    | 권영희  | 마케팅        | manager |
-    | 이준혁  | 영업         | manager |
-    | 박경수  | 경영         | admin   |
-    | 장주원  | 경영         | admin   |
-    | 한민재  | 경영         | admin   |
-
-
-### Exercise 10
 Pivot payment outcomes by method: count `'completed'` payments as successes and all others as failures. Return `method`, `success_count`, `fail_count`, and `success_rate` (percentage rounded to 1 decimal). Sort by `success_rate` descending.
 
 ??? success "Answer"
@@ -578,6 +542,43 @@ Pivot payment outcomes by method: count `'completed'` payments as successes and 
     | kakao_pay       |          6359 |        543 |         92.1 |
     | bank_transfer   |          3194 |        289 |         91.7 |
     | ...             | ...           | ...        | ...          |
+
+
+### Exercise 10
+For each product, calculate the revenue earned in each quarter of 2024 as separate columns (`q1_revenue`, `q2_revenue`, `q3_revenue`, `q4_revenue`) using conditional aggregation (`SUM(CASE WHEN ... THEN ... END)`). Only show products with any 2024 sales. Limit to 10 rows by total 2024 revenue descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        p.name AS product_name,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q1_revenue,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-04-01' AND '2024-06-30 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q2_revenue,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-07-01' AND '2024-09-30 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q3_revenue,
+        SUM(CASE WHEN o.ordered_at BETWEEN '2024-10-01' AND '2024-12-31 23:59:59'
+                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q4_revenue
+    FROM order_items AS oi
+    INNER JOIN orders    AS o ON oi.order_id   = o.id
+    INNER JOIN products  AS p ON oi.product_id = p.id
+    WHERE o.ordered_at LIKE '2024%'
+      AND o.status NOT IN ('cancelled', 'returned')
+    GROUP BY p.id, p.name
+    ORDER BY (q1_revenue + q2_revenue + q3_revenue + q4_revenue) DESC
+    LIMIT 10;
+    ```
+
+    **Expected result:**
+
+    | product_name                 | q1_revenue | q2_revenue | q3_revenue | q4_revenue |
+    | ---------------------------- | ---------: | ---------: | ---------: | ---------: |
+    | Razer Blade 18 블랙            |   37638900 |   29274700 |   41821000 |   37638900 |
+    | Razer Blade 18 화이트           |   29886300 |   53131200 |   29886300 |   33207000 |
+    | Razer Blade 16 실버            |   45361800 |   24742800 |   20619000 |   20619000 |
+    | Razer Blade 18 블랙            |   29875000 |   17925000 |   29875000 |   32862500 |
+    | SAPPHIRE PULSE RX 7800 XT 실버 |   35413200 |   22297200 |   14427600 |   31478400 |
+    | ...                          | ...        | ...        | ...        | ...        |
 
 
 ---

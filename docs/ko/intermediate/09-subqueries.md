@@ -237,8 +237,92 @@ LIMIT 8;
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
-
 ### 연습 1
+한 번도 결제가 완료되지 않은 주문을 찾으세요. `NOT IN` 서브쿼리를 사용하여 `payments` 테이블에서 `status = 'completed'`인 `order_id`를 제외하세요. `order_number`, `total_amount`, `status`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT order_number, total_amount, status
+    FROM orders
+    WHERE id NOT IN (
+        SELECT order_id
+        FROM payments
+        WHERE status = 'completed'
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | order_number       | total_amount | status           |
+    | ------------------ | -----------: | ---------------- |
+    | ORD-20230504-22760 |     19613300 | return_requested |
+    | ORD-20240908-29994 |     14691400 | returned         |
+    | ORD-20220923-19607 |     14400000 | cancelled        |
+    | ORD-20250309-33168 |     13528400 | cancelled        |
+    | ORD-20190726-03947 |     11884300 | cancelled        |
+    | ...                | ...          | ...              |
+
+
+### 연습 2
+전체 주문의 평균 금액보다 큰 주문을 조회하세요. `order_number`, `total_amount`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요. `WHERE` 절에 스칼라 서브쿼리를 사용하세요.
+
+??? success "정답"
+    ```sql
+    SELECT order_number, total_amount
+    FROM orders
+    WHERE total_amount > (
+        SELECT AVG(total_amount) FROM orders
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | order_number       | total_amount |
+    | ------------------ | -----------: |
+    | ORD-20210628-12574 |     58039800 |
+    | ORD-20230809-24046 |     55047300 |
+    | ORD-20210321-11106 |     48718000 |
+    | ORD-20200605-07165 |     47954000 |
+    | ORD-20231020-25036 |     46945700 |
+    | ...                | ...          |
+
+
+### 연습 3
+각 상품의 이름과 해당 상품의 리뷰 수를 `SELECT` 절의 스칼라 서브쿼리로 구하세요. `product_name`, `price`, `review_count`를 반환하고, `review_count` 내림차순으로 정렬하여 10행으로 제한하세요. 활성 상품만 대상으로 하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        p.name  AS product_name,
+        p.price,
+        (
+            SELECT COUNT(*)
+            FROM reviews AS r
+            WHERE r.product_id = p.id
+        ) AS review_count
+    FROM products AS p
+    WHERE p.is_active = 1
+    ORDER BY review_count DESC
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | product_name                    | price  | review_count |
+    | ------------------------------- | -----: | -----------: |
+    | SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |
+    | SteelSeries Prime Wireless 블랙   |  75900 |           93 |
+    | JBL Flip 6 블랙                   | 195900 |           92 |
+    | 녹투아 NH-L12S                     |  49400 |           88 |
+    | 삼성 DDR4 32GB PC4-25600          |  49100 |           87 |
+    | ...                             | ...    | ...          |
+
+
+### 연습 4
 같은 카테고리 내 평균 가격보다 비싼 상품을 모두 찾으세요. 외부 쿼리의 `category_id`를 참조하는 스칼라 서브쿼리를 `WHERE` 절에 사용하고, `product_name`, `price`, `category_id`를 반환하세요.
 
 ??? success "정답"
@@ -258,7 +342,97 @@ LIMIT 8;
     ORDER BY p.category_id, p.price DESC;
     ```
 
-### 연습 2
+
+### 연습 5
+최소 한 명의 고객 위시리스트에 있지만 **한 번도 주문된 적 없는** 상품을 찾으세요. `IN`과 `NOT IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name AS product_name, price
+    FROM products
+    WHERE id IN (
+        SELECT DISTINCT product_id FROM wishlists
+    )
+      AND id NOT IN (
+        SELECT DISTINCT product_id FROM order_items
+    )
+    ORDER BY price DESC;
+    ```
+
+    **결과 (예시):**
+
+    | product_name                  | price  |
+    | ----------------------------- | -----: |
+    | 삼성 오디세이 OLED G8               | 693300 |
+    | ASRock X870E Taichi 실버        | 583500 |
+    | 보스 SoundLink Flex 블랙          | 516000 |
+    | MSI MAG B860 TOMAHAWK WIFI    | 440900 |
+    | be quiet! Dark Power 13 1000W | 359500 |
+    | ...                           | ...    |
+
+
+### 연습 6
+`FROM` 서브쿼리를 사용하여 카테고리별 평균 상품 가격을 먼저 계산한 뒤, 외부 쿼리에서 `categories` 테이블과 조인하여 카테고리명(`category_name`)과 `avg_price`를 반환하세요. `avg_price` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        cat.name       AS category_name,
+        price_stats.avg_price
+    FROM (
+        SELECT
+            category_id,
+            ROUND(AVG(price), 2) AS avg_price
+        FROM products
+        WHERE is_active = 1
+        GROUP BY category_id
+    ) AS price_stats
+    INNER JOIN categories AS cat ON price_stats.category_id = cat.id
+    ORDER BY price_stats.avg_price DESC;
+    ```
+
+    **결과 (예시):**
+
+    | category_name | avg_price  |
+    | ------------- | ---------: |
+    | 맥북            |    3774700 |
+    | 게이밍 노트북       |    3169700 |
+    | NVIDIA        |    2045440 |
+    | 일반 노트북        |  1856837.5 |
+    | 조립PC          | 1795033.33 |
+    | ...           | ...        |
+
+
+### 연습 7
+`'VIP'` 등급 고객이 한 번이라도 주문한 상품을 모두 찾으세요. `IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요. 가격 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT p.name AS product_name, p.price
+    FROM products AS p
+    WHERE p.id IN (
+        SELECT DISTINCT oi.product_id
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE c.grade = 'VIP'
+    )
+    ORDER BY p.price DESC;
+    ```
+
+    **결과 (예시):**
+
+    | product_name                                                  | price   |
+    | ------------------------------------------------------------- | ------: |
+    | ASUS ROG Strix GT35                                           | 4314800 |
+    | ASUS ROG Zephyrus G16                                         | 4284100 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+    | Razer Blade 18 블랙                                             | 4182100 |
+    | Razer Blade 16 실버                                             | 4123800 |
+    | ...                                                           | ...     |
+
+
+### 연습 8
 `FROM` 서브쿼리를 사용하여 완료된 주문 수 기준 상위 10명의 고객을 구하세요. 내부 쿼리에서 고객별 주문 수를 세고, 외부 쿼리에서 `customers` 테이블과 조인하여 `name`과 `grade`를 추가하세요.
 
 ??? success "정답"
@@ -292,180 +466,6 @@ LIMIT 8;
     | 강명자  | VIP   |         240 |   296857745 |
     | 김성민  | VIP   |         210 |   220361434 |
     | ...  | ...   | ...         | ...         |
-
-
-### 연습 3
-최소 한 명의 고객 위시리스트에 있지만 **한 번도 주문된 적 없는** 상품을 찾으세요. `IN`과 `NOT IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT name AS product_name, price
-    FROM products
-    WHERE id IN (
-        SELECT DISTINCT product_id FROM wishlists
-    )
-      AND id NOT IN (
-        SELECT DISTINCT product_id FROM order_items
-    )
-    ORDER BY price DESC;
-    ```
-
-    **결과 (예시):**
-
-    | product_name                  | price  |
-    | ----------------------------- | -----: |
-    | 삼성 오디세이 OLED G8               | 693300 |
-    | ASRock X870E Taichi 실버        | 583500 |
-    | 보스 SoundLink Flex 블랙          | 516000 |
-    | MSI MAG B860 TOMAHAWK WIFI    | 440900 |
-    | be quiet! Dark Power 13 1000W | 359500 |
-    | ...                           | ...    |
-
-
-### 연습 4
-전체 주문의 평균 금액보다 큰 주문을 조회하세요. `order_number`, `total_amount`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요. `WHERE` 절에 스칼라 서브쿼리를 사용하세요.
-
-??? success "정답"
-    ```sql
-    SELECT order_number, total_amount
-    FROM orders
-    WHERE total_amount > (
-        SELECT AVG(total_amount) FROM orders
-    )
-    ORDER BY total_amount DESC
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | order_number       | total_amount |
-    | ------------------ | -----------: |
-    | ORD-20210628-12574 |     58039800 |
-    | ORD-20230809-24046 |     55047300 |
-    | ORD-20210321-11106 |     48718000 |
-    | ORD-20200605-07165 |     47954000 |
-    | ORD-20231020-25036 |     46945700 |
-    | ...                | ...          |
-
-
-### 연습 5
-`'VIP'` 등급 고객이 한 번이라도 주문한 상품을 모두 찾으세요. `IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요. 가격 내림차순으로 정렬하세요.
-
-??? success "정답"
-    ```sql
-    SELECT p.name AS product_name, p.price
-    FROM products AS p
-    WHERE p.id IN (
-        SELECT DISTINCT oi.product_id
-        FROM order_items AS oi
-        INNER JOIN orders AS o ON oi.order_id = o.id
-        INNER JOIN customers AS c ON o.customer_id = c.id
-        WHERE c.grade = 'VIP'
-    )
-    ORDER BY p.price DESC;
-    ```
-
-    **결과 (예시):**
-
-    | product_name                                                  | price   |
-    | ------------------------------------------------------------- | ------: |
-    | ASUS ROG Strix GT35                                           | 4314800 |
-    | ASUS ROG Zephyrus G16                                         | 4284100 |
-    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
-    | Razer Blade 18 블랙                                             | 4182100 |
-    | Razer Blade 16 실버                                             | 4123800 |
-    | ...                                                           | ...     |
-
-
-### 연습 6
-한 번도 결제가 완료되지 않은 주문을 찾으세요. `NOT IN` 서브쿼리를 사용하여 `payments` 테이블에서 `status = 'completed'`인 `order_id`를 제외하세요. `order_number`, `total_amount`, `status`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요.
-
-??? success "정답"
-    ```sql
-    SELECT order_number, total_amount, status
-    FROM orders
-    WHERE id NOT IN (
-        SELECT order_id
-        FROM payments
-        WHERE status = 'completed'
-    )
-    ORDER BY total_amount DESC
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | order_number       | total_amount | status           |
-    | ------------------ | -----------: | ---------------- |
-    | ORD-20230504-22760 |     19613300 | return_requested |
-    | ORD-20240908-29994 |     14691400 | returned         |
-    | ORD-20220923-19607 |     14400000 | cancelled        |
-    | ORD-20250309-33168 |     13528400 | cancelled        |
-    | ORD-20190726-03947 |     11884300 | cancelled        |
-    | ...                | ...          | ...              |
-
-
-### 연습 7
-`FROM` 서브쿼리를 사용하여 카테고리별 평균 상품 가격을 먼저 계산한 뒤, 외부 쿼리에서 `categories` 테이블과 조인하여 카테고리명(`category_name`)과 `avg_price`를 반환하세요. `avg_price` 내림차순으로 정렬하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        cat.name       AS category_name,
-        price_stats.avg_price
-    FROM (
-        SELECT
-            category_id,
-            ROUND(AVG(price), 2) AS avg_price
-        FROM products
-        WHERE is_active = 1
-        GROUP BY category_id
-    ) AS price_stats
-    INNER JOIN categories AS cat ON price_stats.category_id = cat.id
-    ORDER BY price_stats.avg_price DESC;
-    ```
-
-    **결과 (예시):**
-
-    | category_name | avg_price  |
-    | ------------- | ---------: |
-    | 맥북            |    3774700 |
-    | 게이밍 노트북       |    3169700 |
-    | NVIDIA        |    2045440 |
-    | 일반 노트북        |  1856837.5 |
-    | 조립PC          | 1795033.33 |
-    | ...           | ...        |
-
-
-### 연습 8
-각 상품의 이름과 해당 상품의 리뷰 수를 `SELECT` 절의 스칼라 서브쿼리로 구하세요. `product_name`, `price`, `review_count`를 반환하고, `review_count` 내림차순으로 정렬하여 10행으로 제한하세요. 활성 상품만 대상으로 하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        p.name  AS product_name,
-        p.price,
-        (
-            SELECT COUNT(*)
-            FROM reviews AS r
-            WHERE r.product_id = p.id
-        ) AS review_count
-    FROM products AS p
-    WHERE p.is_active = 1
-    ORDER BY review_count DESC
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | product_name                    | price  | review_count |
-    | ------------------------------- | -----: | -----------: |
-    | SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |
-    | SteelSeries Prime Wireless 블랙   |  75900 |           93 |
-    | JBL Flip 6 블랙                   | 195900 |           92 |
-    | 녹투아 NH-L12S                     |  49400 |           88 |
-    | 삼성 DDR4 32GB PC4-25600          |  49100 |           87 |
-    | ...                             | ...    | ...          |
 
 
 ### 연습 9

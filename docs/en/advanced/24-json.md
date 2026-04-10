@@ -381,8 +381,48 @@ JSON columns are powerful but not a silver bullet.
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Find all products with `'16GB'` RAM. Show the name, price, and RAM value, sorted by price in descending order.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT name, price, specs->>'$.ram' AS ram
+        FROM products
+        WHERE specs->>'$.ram' = '16GB'
+        ORDER BY price DESC;
+        ```
+
+        **Expected result:**
+
+        | name                                                             | price   | ram  |
+        | ---------------------------------------------------------------- | ------: | ---- |
+        | ASUS ROG Zephyrus G16                                            | 4284100 | 16GB |
+        | ASUS ROG Strix G16CH 화이트                                         | 2988700 | 16GB |
+        | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 2389100 | 16GB |
+        | Razer Blade 18                                                   | 2349600 | 16GB |
+        | LG 그램 17 실버                                                      | 2336200 | 16GB |
+        | ...                                                              | ...     | ...  |
+
+
+    === "MySQL"
+        ```sql
+        SELECT name, price, specs->>'$.ram' AS ram
+        FROM products
+        WHERE specs->>'$.ram' = '16GB'
+        ORDER BY price DESC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT name, price, specs->>'ram' AS ram
+        FROM products
+        WHERE specs->>'ram' = '16GB'
+        ORDER BY price DESC;
+        ```
+
+
+### Exercise 2
 Extract the product name and CPU value from the `products` table where the `specs` column is not NULL. Show only products that have a CPU value, and limit the results to 5 rows.
 
 ??? success "Answer"
@@ -424,47 +464,261 @@ Extract the product name and CPU value from the `products` table where the `spec
         LIMIT 5;
         ```
 
-### Exercise 2
-Find all products with `'16GB'` RAM. Show the name, price, and RAM value, sorted by price in descending order.
+
+### Exercise 3
+List all distinct keys used in the `specs` column across all products, in alphabetical order.
 
 ??? success "Answer"
     === "SQLite"
         ```sql
-        SELECT name, price, specs->>'$.ram' AS ram
-        FROM products
-        WHERE specs->>'$.ram' = '16GB'
-        ORDER BY price DESC;
+        SELECT DISTINCT j.key
+        FROM products, json_each(products.specs) AS j
+        WHERE products.specs IS NOT NULL
+        ORDER BY j.key;
         ```
 
         **Expected result:**
 
-        | name                                                             | price   | ram  |
-        | ---------------------------------------------------------------- | ------: | ---- |
-        | ASUS ROG Zephyrus G16                                            | 4284100 | 16GB |
-        | ASUS ROG Strix G16CH 화이트                                         | 2988700 | 16GB |
-        | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 2389100 | 16GB |
-        | Razer Blade 18                                                   | 2349600 | 16GB |
-        | LG 그램 17 실버                                                      | 2336200 | 16GB |
-        | ...                                                              | ...     | ...  |
+        | key             |
+        | --------------- |
+        | base_clock_ghz  |
+        | battery_hours   |
+        | boost_clock_ghz |
+        | capacity_gb     |
+        | clock_mhz       |
+        | ...             |
 
 
     === "MySQL"
         ```sql
-        SELECT name, price, specs->>'$.ram' AS ram
-        FROM products
-        WHERE specs->>'$.ram' = '16GB'
-        ORDER BY price DESC;
+        SELECT DISTINCT jk.key_name
+        FROM products,
+             JSON_TABLE(
+                 JSON_KEYS(specs), '$[*]'
+                 COLUMNS (key_name VARCHAR(100) PATH '$')
+             ) AS jk
+        WHERE specs IS NOT NULL
+        ORDER BY jk.key_name;
         ```
 
     === "PostgreSQL"
         ```sql
-        SELECT name, price, specs->>'ram' AS ram
-        FROM products
-        WHERE specs->>'ram' = '16GB'
-        ORDER BY price DESC;
+        SELECT DISTINCT k
+        FROM products, jsonb_object_keys(specs) AS k
+        WHERE specs IS NOT NULL
+        ORDER BY k;
         ```
 
-### Exercise 3
+
+### Exercise 4
+Among products that have a `cpu` key in their specs, find the 3 most expensive ones. Show the name, CPU, and price.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT name, specs->>'$.cpu' AS cpu, price
+        FROM products
+        WHERE specs->>'$.cpu' IS NOT NULL
+        ORDER BY price DESC
+        LIMIT 3;
+        ```
+
+        **Expected result:**
+
+        | name                  | cpu                  | price   |
+        | --------------------- | -------------------- | ------: |
+        | ASUS ROG Strix GT35   | Intel Core i7-13700K | 4314800 |
+        | ASUS ROG Zephyrus G16 | Apple M3             | 4284100 |
+        | Razer Blade 18 블랙     | Intel Core i7-13700H | 4182100 |
+
+
+    === "MySQL"
+        ```sql
+        SELECT name, specs->>'$.cpu' AS cpu, price
+        FROM products
+        WHERE specs->>'$.cpu' IS NOT NULL
+        ORDER BY price DESC
+        LIMIT 3;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT name, specs->>'cpu' AS cpu, price
+        FROM products
+        WHERE specs->>'cpu' IS NOT NULL
+        ORDER BY price DESC
+        LIMIT 3;
+        ```
+
+
+### Exercise 5
+Find laptops with a battery life of 12 hours or more. Show the name, price, and battery hours, sorted by battery hours descending.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            price,
+            json_extract(specs, '$.battery_hours') AS battery_hours
+        FROM products
+        WHERE json_extract(specs, '$.battery_hours') >= 12
+        ORDER BY json_extract(specs, '$.battery_hours') DESC;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            price,
+            JSON_EXTRACT(specs, '$.battery_hours') AS battery_hours
+        FROM products
+        WHERE JSON_EXTRACT(specs, '$.battery_hours') >= 12
+        ORDER BY JSON_EXTRACT(specs, '$.battery_hours') DESC;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            price,
+            (specs->>'battery_hours')::int AS battery_hours
+        FROM products
+        WHERE (specs->>'battery_hours')::int >= 12
+        ORDER BY (specs->>'battery_hours')::int DESC;
+        ```
+
+
+### Exercise 6
+Find GPU products with VRAM of `'16GB'` or more. Show the name, price, VRAM, and TDP (power consumption), sorted by TDP ascending.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        SELECT
+            name,
+            price,
+            specs->>'$.vram'      AS vram,
+            json_extract(specs, '$.tdp_watts') AS tdp_watts
+        FROM products
+        WHERE specs->>'$.vram' IN ('16GB', '24GB')
+        ORDER BY json_extract(specs, '$.tdp_watts');
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            name,
+            price,
+            specs->>'$.vram'      AS vram,
+            JSON_EXTRACT(specs, '$.tdp_watts') AS tdp_watts
+        FROM products
+        WHERE specs->>'$.vram' IN ('16GB', '24GB')
+        ORDER BY JSON_EXTRACT(specs, '$.tdp_watts');
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            name,
+            price,
+            specs->>'vram'      AS vram,
+            (specs->>'tdp_watts')::int AS tdp_watts
+        FROM products
+        WHERE specs->>'vram' IN ('16GB', '24GB')
+        ORDER BY (specs->>'tdp_watts')::int;
+        ```
+
+
+### Exercise 7
+Write an UPDATE statement to add a `"color"` key with value `"Space Gray"` to the specs of product ID 1. Then query the product to verify the addition.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Add the key
+        UPDATE products
+        SET specs = json_set(specs, '$.color', 'Space Gray')
+        WHERE id = 1;
+
+        -- Verify
+        SELECT name, specs->>'$.color' AS color
+        FROM products
+        WHERE id = 1;
+        ```
+
+    === "MySQL"
+        ```sql
+        -- Add the key
+        UPDATE products
+        SET specs = JSON_SET(specs, '$.color', 'Space Gray')
+        WHERE id = 1;
+
+        -- Verify
+        SELECT name, specs->>'$.color' AS color
+        FROM products
+        WHERE id = 1;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- Add the key
+        UPDATE products
+        SET specs = specs || '{"color": "Space Gray"}'::jsonb
+        WHERE id = 1;
+
+        -- Verify
+        SELECT name, specs->>'color' AS color
+        FROM products
+        WHERE id = 1;
+        ```
+
+
+### Exercise 8
+Write an UPDATE statement to remove the `"color"` key added in Exercise 8 from the specs of product ID 1. Verify the removal.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        -- Remove the key
+        UPDATE products
+        SET specs = json_remove(specs, '$.color')
+        WHERE id = 1;
+
+        -- Verify (should be NULL)
+        SELECT name, specs->>'$.color' AS color
+        FROM products
+        WHERE id = 1;
+        ```
+
+    === "MySQL"
+        ```sql
+        -- Remove the key
+        UPDATE products
+        SET specs = JSON_REMOVE(specs, '$.color')
+        WHERE id = 1;
+
+        -- Verify (should be NULL)
+        SELECT name, specs->>'$.color' AS color
+        FROM products
+        WHERE id = 1;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- Remove the key
+        UPDATE products
+        SET specs = specs - 'color'
+        WHERE id = 1;
+
+        -- Verify (should be NULL)
+        SELECT name, specs->>'color' AS color
+        FROM products
+        WHERE id = 1;
+        ```
+
+
+### Exercise 9
 Group products that have a `screen_size` key in their specs by screen size. Show the product count and average price for each group, sorted by product count descending.
 
 ??? success "Answer"
@@ -516,128 +770,8 @@ Group products that have a `screen_size` key in their specs by screen size. Show
         ORDER BY product_count DESC;
         ```
 
-### Exercise 4
-Find laptops with a battery life of 12 hours or more. Show the name, price, and battery hours, sorted by battery hours descending.
 
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            price,
-            json_extract(specs, '$.battery_hours') AS battery_hours
-        FROM products
-        WHERE json_extract(specs, '$.battery_hours') >= 12
-        ORDER BY json_extract(specs, '$.battery_hours') DESC;
-        ```
-
-    === "MySQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            JSON_EXTRACT(specs, '$.battery_hours') AS battery_hours
-        FROM products
-        WHERE JSON_EXTRACT(specs, '$.battery_hours') >= 12
-        ORDER BY JSON_EXTRACT(specs, '$.battery_hours') DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            (specs->>'battery_hours')::int AS battery_hours
-        FROM products
-        WHERE (specs->>'battery_hours')::int >= 12
-        ORDER BY (specs->>'battery_hours')::int DESC;
-        ```
-
-### Exercise 5
-Find GPU products with VRAM of `'16GB'` or more. Show the name, price, VRAM, and TDP (power consumption), sorted by TDP ascending.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            price,
-            specs->>'$.vram'      AS vram,
-            json_extract(specs, '$.tdp_watts') AS tdp_watts
-        FROM products
-        WHERE specs->>'$.vram' IN ('16GB', '24GB')
-        ORDER BY json_extract(specs, '$.tdp_watts');
-        ```
-
-    === "MySQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            specs->>'$.vram'      AS vram,
-            JSON_EXTRACT(specs, '$.tdp_watts') AS tdp_watts
-        FROM products
-        WHERE specs->>'$.vram' IN ('16GB', '24GB')
-        ORDER BY JSON_EXTRACT(specs, '$.tdp_watts');
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            specs->>'vram'      AS vram,
-            (specs->>'tdp_watts')::int AS tdp_watts
-        FROM products
-        WHERE specs->>'vram' IN ('16GB', '24GB')
-        ORDER BY (specs->>'tdp_watts')::int;
-        ```
-
-### Exercise 6
-List all distinct keys used in the `specs` column across all products, in alphabetical order.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        SELECT DISTINCT j.key
-        FROM products, json_each(products.specs) AS j
-        WHERE products.specs IS NOT NULL
-        ORDER BY j.key;
-        ```
-
-        **Expected result:**
-
-        | key             |
-        | --------------- |
-        | base_clock_ghz  |
-        | battery_hours   |
-        | boost_clock_ghz |
-        | capacity_gb     |
-        | clock_mhz       |
-        | ...             |
-
-
-    === "MySQL"
-        ```sql
-        SELECT DISTINCT jk.key_name
-        FROM products,
-             JSON_TABLE(
-                 JSON_KEYS(specs), '$[*]'
-                 COLUMNS (key_name VARCHAR(100) PATH '$')
-             ) AS jk
-        WHERE specs IS NOT NULL
-        ORDER BY jk.key_name;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT DISTINCT k
-        FROM products, jsonb_object_keys(specs) AS k
-        WHERE specs IS NOT NULL
-        ORDER BY k;
-        ```
-
-### Exercise 7
+### Exercise 10
 Aggregate monitors by panel type (`panel`). Show the product count, average refresh rate (`refresh_rate`), and maximum refresh rate for each panel type.
 
 ??? success "Answer"
@@ -680,131 +814,6 @@ Aggregate monitors by panel type (`panel`). Show the product count, average refr
         ORDER BY avg_refresh_rate DESC;
         ```
 
-### Exercise 8
-Write an UPDATE statement to add a `"color"` key with value `"Space Gray"` to the specs of product ID 1. Then query the product to verify the addition.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        -- Add the key
-        UPDATE products
-        SET specs = json_set(specs, '$.color', 'Space Gray')
-        WHERE id = 1;
-
-        -- Verify
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "MySQL"
-        ```sql
-        -- Add the key
-        UPDATE products
-        SET specs = JSON_SET(specs, '$.color', 'Space Gray')
-        WHERE id = 1;
-
-        -- Verify
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- Add the key
-        UPDATE products
-        SET specs = specs || '{"color": "Space Gray"}'::jsonb
-        WHERE id = 1;
-
-        -- Verify
-        SELECT name, specs->>'color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-### Exercise 9
-Among products that have a `cpu` key in their specs, find the 3 most expensive ones. Show the name, CPU, and price.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        SELECT name, specs->>'$.cpu' AS cpu, price
-        FROM products
-        WHERE specs->>'$.cpu' IS NOT NULL
-        ORDER BY price DESC
-        LIMIT 3;
-        ```
-
-        **Expected result:**
-
-        | name                  | cpu                  | price   |
-        | --------------------- | -------------------- | ------: |
-        | ASUS ROG Strix GT35   | Intel Core i7-13700K | 4314800 |
-        | ASUS ROG Zephyrus G16 | Apple M3             | 4284100 |
-        | Razer Blade 18 블랙     | Intel Core i7-13700H | 4182100 |
-
-
-    === "MySQL"
-        ```sql
-        SELECT name, specs->>'$.cpu' AS cpu, price
-        FROM products
-        WHERE specs->>'$.cpu' IS NOT NULL
-        ORDER BY price DESC
-        LIMIT 3;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT name, specs->>'cpu' AS cpu, price
-        FROM products
-        WHERE specs->>'cpu' IS NOT NULL
-        ORDER BY price DESC
-        LIMIT 3;
-        ```
-
-### Exercise 10
-Write an UPDATE statement to remove the `"color"` key added in Exercise 8 from the specs of product ID 1. Verify the removal.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        -- Remove the key
-        UPDATE products
-        SET specs = json_remove(specs, '$.color')
-        WHERE id = 1;
-
-        -- Verify (should be NULL)
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "MySQL"
-        ```sql
-        -- Remove the key
-        UPDATE products
-        SET specs = JSON_REMOVE(specs, '$.color')
-        WHERE id = 1;
-
-        -- Verify (should be NULL)
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- Remove the key
-        UPDATE products
-        SET specs = specs - 'color'
-        WHERE id = 1;
-
-        -- Verify (should be NULL)
-        SELECT name, specs->>'color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
 
 ---
 

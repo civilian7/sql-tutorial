@@ -197,8 +197,53 @@ ORDER BY sort_key, revenue DESC;
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
-
 ### 연습 1
+VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을 `UNION`으로 합쳐서 하나의 목록으로 조회하세요. 이름순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name, grade FROM customers WHERE grade = 'VIP'
+    UNION
+    SELECT name, grade FROM customers WHERE grade = 'GOLD'
+    ORDER BY name;
+    ```
+
+    **결과 (예시):**
+
+    | name | grade |
+    | ---- | ----- |
+    | 강경희  | GOLD  |
+    | 강도윤  | VIP   |
+    | 강도현  | GOLD  |
+    | 강명자  | VIP   |
+    | 강미숙  | VIP   |
+    | ...  | ...   |
+
+
+### 연습 2
+모든 활성 상품(`is_active = 1`)의 `name`과 모든 카테고리의 `name`을 `UNION`으로 합쳐서 중복 없는 이름 목록을 만드세요. 결과 칼럼명은 `name`으로 하세요.
+
+??? success "정답"
+    ```sql
+    SELECT name FROM products WHERE is_active = 1
+    UNION
+    SELECT name FROM categories
+    ORDER BY name;
+    ```
+
+    **결과 (예시):**
+
+    | name                                |
+    | ----------------------------------- |
+    | 2in1                                |
+    | AMD                                 |
+    | AMD Ryzen 9 9900X                   |
+    | AMD 소켓                              |
+    | APC Back-UPS Pro Gaming BGM1500B 블랙 |
+    | ...                                 |
+
+
+### 연습 3
 2023~2024년의 취소 주문과 반품 주문을 합친 "부정 이벤트" 목록을 만드세요. `UNION ALL`을 사용하고, `event_type`('cancellation' 또는 'return'), `order_number`, `customer_id`, `event_date`(취소는 `cancelled_at`, 반품은 `completed_at` 사용)를 포함하세요. `event_date` 내림차순으로 정렬하세요.
 
 ??? success "정답"
@@ -226,92 +271,8 @@ ORDER BY sort_key, revenue DESC;
     ORDER BY event_date DESC;
     ```
 
-### 연습 2
-고객 참여도 요약을 만드세요. `UNION ALL`을 사용하여 고객별 총 주문 수, 총 리뷰 수, 총 불만 수를 집계하세요. 유니온 결과를 서브쿼리(파생 테이블)로 감싸서 고객별 한 행으로 집계하고, 총 활동 수 기준 상위 10명을 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        customer_id,
-        SUM(activity_count) AS total_activity
-    FROM (
-        SELECT customer_id, COUNT(*) AS activity_count
-        FROM orders GROUP BY customer_id
-
-        UNION ALL
-
-        SELECT customer_id, COUNT(*) AS activity_count
-        FROM reviews GROUP BY customer_id
-
-        UNION ALL
-
-        SELECT customer_id, COUNT(*) AS activity_count
-        FROM complaints GROUP BY customer_id
-    ) AS all_activity
-    GROUP BY customer_id
-    ORDER BY total_activity DESC
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | customer_id | total_activity |
-    | ----------: | -------------: |
-    |          98 |            469 |
-    |          97 |            453 |
-    |         226 |            423 |
-    |         162 |            328 |
-    |         227 |            326 |
-    | ...         | ...            |
-
-
-### 연습 3
-VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을 `UNION`으로 합쳐서 하나의 목록으로 조회하세요. 이름순으로 정렬하세요.
-
-??? success "정답"
-    ```sql
-    SELECT name, grade FROM customers WHERE grade = 'VIP'
-    UNION
-    SELECT name, grade FROM customers WHERE grade = 'GOLD'
-    ORDER BY name;
-    ```
-
-    **결과 (예시):**
-
-    | name | grade |
-    | ---- | ----- |
-    | 강경희  | GOLD  |
-    | 강도윤  | VIP   |
-    | 강도현  | GOLD  |
-    | 강명자  | VIP   |
-    | 강미숙  | VIP   |
-    | ...  | ...   |
-
 
 ### 연습 4
-모든 활성 상품(`is_active = 1`)의 `name`과 모든 카테고리의 `name`을 `UNION`으로 합쳐서 중복 없는 이름 목록을 만드세요. 결과 칼럼명은 `name`으로 하세요.
-
-??? success "정답"
-    ```sql
-    SELECT name FROM products WHERE is_active = 1
-    UNION
-    SELECT name FROM categories
-    ORDER BY name;
-    ```
-
-    **결과 (예시):**
-
-    | name                                |
-    | ----------------------------------- |
-    | 2in1                                |
-    | AMD                                 |
-    | AMD Ryzen 9 9900X                   |
-    | AMD 소켓                              |
-    | APC Back-UPS Pro Gaming BGM1500B 블랙 |
-    | ...                                 |
-
-
-### 연습 5
 2024년 리뷰와 2024년 상품 Q&A(질문만, `parent_id IS NULL`)를 합친 "고객 피드백" 목록을 만드세요. `UNION ALL`을 사용하고, `feedback_type`('review' 또는 'qna'), `product_id`, `customer_id`, `created_at`을 포함하세요. `created_at` 내림차순으로 정렬하고 상위 20건만 표시하세요.
 
 ??? success "정답"
@@ -351,7 +312,7 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     | ...           | ...        | ...         | ...                 |
 
 
-### 연습 6
+### 연습 5
 결제 수단별 건수를 집계한 뒤, `UNION ALL`로 합계 행을 추가하세요. 합계 행의 `method`는 `'합계'`로 표시합니다. `status = 'completed'`인 결제만 대상입니다.
 
 ??? success "정답"
@@ -388,7 +349,7 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     | ...      | ...             | ...      |
 
 
-### 연습 7
+### 연습 6
 고객 등급별 인원수를 집계한 뒤, `UNION ALL`로 전체 합계 행(`'전체'`)을 추가하세요. `is_active = 1`인 고객만 대상입니다. 합계 행이 마지막에 오도록 정렬하세요.
 
 ??? success "정답"
@@ -424,44 +385,46 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     |        1 | 전체     | 3816 |
 
 
-### 연습 8
-공급업체별 활성 상품 수와 비활성 상품 수를 각각 집계하고, `UNION ALL`로 합친 뒤 서브쿼리로 감싸서 공급업체별 한 행(활성 수, 비활성 수)으로 만드세요. `suppliers` 테이블과 JOIN하여 회사명도 표시하세요.
+### 연습 7
+고객 참여도 요약을 만드세요. `UNION ALL`을 사용하여 고객별 총 주문 수, 총 리뷰 수, 총 불만 수를 집계하세요. 유니온 결과를 서브쿼리(파생 테이블)로 감싸서 고객별 한 행으로 집계하고, 총 활동 수 기준 상위 10명을 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        s.company_name,
-        SUM(CASE WHEN t.status_type = 'active' THEN t.cnt ELSE 0 END) AS active_count,
-        SUM(CASE WHEN t.status_type = 'inactive' THEN t.cnt ELSE 0 END) AS inactive_count
+        customer_id,
+        SUM(activity_count) AS total_activity
     FROM (
-        SELECT supplier_id, 'active' AS status_type, COUNT(*) AS cnt
-        FROM products WHERE is_active = 1
-        GROUP BY supplier_id
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM orders GROUP BY customer_id
 
         UNION ALL
 
-        SELECT supplier_id, 'inactive' AS status_type, COUNT(*) AS cnt
-        FROM products WHERE is_active = 0
-        GROUP BY supplier_id
-    ) AS t
-    INNER JOIN suppliers AS s ON t.supplier_id = s.id
-    GROUP BY s.company_name
-    ORDER BY active_count DESC;
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM reviews GROUP BY customer_id
+
+        UNION ALL
+
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM complaints GROUP BY customer_id
+    ) AS all_activity
+    GROUP BY customer_id
+    ORDER BY total_activity DESC
+    LIMIT 10;
     ```
 
     **결과 (예시):**
 
-    | company_name | active_count | inactive_count |
-    | ------------ | -----------: | -------------: |
-    | 에이수스코리아      |           21 |              5 |
-    | 삼성전자 공식 유통   |           21 |              4 |
-    | MSI코리아       |           12 |              1 |
-    | 서린시스테크       |           11 |              1 |
-    | 로지텍코리아       |           11 |              6 |
-    | ...          | ...          | ...            |
+    | customer_id | total_activity |
+    | ----------: | -------------: |
+    |          98 |            469 |
+    |          97 |            453 |
+    |         226 |            423 |
+    |         162 |            328 |
+    |         227 |            326 |
+    | ...         | ...            |
 
 
-### 연습 9
+### 연습 8
 주문 상태별 건수와 평균 금액을 집계한 뒤, `UNION ALL`로 전체 합계 행을 추가하세요. 결과를 서브쿼리로 감싸서 `pct`(각 상태의 건수가 전체 건수에서 차지하는 비율, 소수 첫째 자리까지)를 계산하세요.
 
 ??? success "정답"
@@ -502,6 +465,43 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     | returned         |         459 | 1382638.93 |  0.7 |
     | delivered        |          77 |  876186.49 |  0.1 |
     | ...              | ...         | ...        | ...  |
+
+
+### 연습 9
+공급업체별 활성 상품 수와 비활성 상품 수를 각각 집계하고, `UNION ALL`로 합친 뒤 서브쿼리로 감싸서 공급업체별 한 행(활성 수, 비활성 수)으로 만드세요. `suppliers` 테이블과 JOIN하여 회사명도 표시하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        s.company_name,
+        SUM(CASE WHEN t.status_type = 'active' THEN t.cnt ELSE 0 END) AS active_count,
+        SUM(CASE WHEN t.status_type = 'inactive' THEN t.cnt ELSE 0 END) AS inactive_count
+    FROM (
+        SELECT supplier_id, 'active' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 1
+        GROUP BY supplier_id
+
+        UNION ALL
+
+        SELECT supplier_id, 'inactive' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 0
+        GROUP BY supplier_id
+    ) AS t
+    INNER JOIN suppliers AS s ON t.supplier_id = s.id
+    GROUP BY s.company_name
+    ORDER BY active_count DESC;
+    ```
+
+    **결과 (예시):**
+
+    | company_name | active_count | inactive_count |
+    | ------------ | -----------: | -------------: |
+    | 에이수스코리아      |           21 |              5 |
+    | 삼성전자 공식 유통   |           21 |              4 |
+    | MSI코리아       |           12 |              1 |
+    | 서린시스테크       |           11 |              1 |
+    | 로지텍코리아       |           11 |              6 |
+    | ...          | ...          | ...            |
 
 
 ---

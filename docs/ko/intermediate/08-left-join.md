@@ -363,230 +363,7 @@ FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
 ## 연습 문제
-
 ### 연습 1
-위시리스트에 상품을 담았지만 **주문을 한 번도 하지 않은** 고객을 모두 구하세요. `customer_name`, `email`, `wishlist_items`(위시리스트 항목 수)를 반환하고, `wishlist_items` 내림차순으로 정렬하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        c.name  AS customer_name,
-        c.email,
-        COUNT(w.id) AS wishlist_items
-    FROM customers AS c
-    LEFT JOIN orders    AS o ON c.id = o.customer_id
-    INNER JOIN wishlists AS w ON c.id = w.customer_id
-    WHERE o.id IS NULL
-    GROUP BY c.id, c.name, c.email
-    ORDER BY wishlist_items DESC;
-    ```
-
-### 연습 2
-모든 상품에 대해 상품명, 가격, 총 판매 수량(`SUM(order_items.quantity)`), 해당 상품이 등장한 주문 수를 보여주세요. **한 번도 주문되지 않은 상품도 포함**하고 그 경우 0으로 표시하세요. 판매 수량 내림차순으로 20행까지 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        p.name              AS product_name,
-        p.price,
-        COALESCE(SUM(oi.quantity), 0)    AS units_sold,
-        COUNT(DISTINCT oi.order_id)       AS order_appearances
-    FROM products AS p
-    LEFT JOIN order_items AS oi ON p.id = oi.product_id
-    GROUP BY p.id, p.name, p.price
-    ORDER BY units_sold DESC
-    LIMIT 20;
-    ```
-
-    **결과 (예시):**
-
-    | product_name                    | price  | units_sold | order_appearances |
-    | ------------------------------- | -----: | ---------: | ----------------: |
-    | Crucial T700 2TB 실버             | 323700 |       1486 |              1436 |
-    | AMD Ryzen 9 9900X               | 244800 |       1323 |              1274 |
-    | SK하이닉스 Platinum P41 2TB 실버      | 256500 |       1308 |              1267 |
-    | SteelSeries Aerox 5 Wireless 실버 | 119000 |       1088 |               998 |
-    | SteelSeries Prime Wireless 실버   |  69300 |       1049 |               932 |
-    | ...                             | ...    | ...        | ...               |
-
-
-### 연습 3
-`inventory_transactions` 테이블에 **재고 거래 내역이 전혀 없는** 활성 상품을 모두 구하세요. `product_id`, `name`, `stock_qty`를 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        p.id        AS product_id,
-        p.name,
-        p.stock_qty
-    FROM products AS p
-    LEFT JOIN inventory_transactions AS it ON p.id = it.product_id
-    WHERE p.is_active = 1
-      AND it.id IS NULL
-    ORDER BY p.name;
-    ```
-
-### 연습 4
-모든 고객의 이름, 이메일, 가장 최근 주문 상태(`status`)를 조회하세요. 주문이 없는 고객의 상태는 `'주문 없음'`으로 표시하세요. `COALESCE`를 사용하고, 고객명 오름차순으로 정렬하여 15행까지 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        c.name,
-        c.email,
-        COALESCE(o.status, '주문 없음') AS last_order_status
-    FROM customers AS c
-    LEFT JOIN orders AS o ON c.id = o.customer_id
-        AND o.ordered_at = (
-            SELECT MAX(o2.ordered_at)
-            FROM orders AS o2
-            WHERE o2.customer_id = c.id
-        )
-    ORDER BY c.name
-    LIMIT 15;
-    ```
-
-    **결과 (예시):**
-
-    | name | email                | last_order_status |
-    | ---- | -------------------- | ----------------- |
-    | 강건우  | user4737@testmail.kr | 주문 없음             |
-    | 강경수  | user3281@testmail.kr | 주문 없음             |
-    | 강경숙  | user2384@testmail.kr | 주문 없음             |
-    | 강경숙  | user3645@testmail.kr | 주문 없음             |
-    | 강경자  | user1109@testmail.kr | confirmed         |
-    | ...  | ...                  | ...               |
-
-
-### 연습 5
-**리뷰를 남기지 않은** 고객 수를 구하세요. `no_review_customers`라는 단일 값을 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT COUNT(*) AS no_review_customers
-    FROM customers AS c
-    LEFT JOIN reviews AS r ON c.id = r.customer_id
-    WHERE r.id IS NULL;
-    ```
-
-    **결과 (예시):**
-
-    | no_review_customers |
-    | ------------------: |
-    |                3388 |
-
-
-### 연습 6
-모든 카테고리에 대해 카테고리명과 해당 카테고리에 속한 상품 수(`product_count`)를 구하세요. **상품이 하나도 없는 카테고리도 포함**하여 0으로 표시하세요. `product_count` 내림차순, 같으면 카테고리명 오름차순으로 정렬하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        cat.name        AS category_name,
-        COUNT(p.id)     AS product_count
-    FROM categories AS cat
-    LEFT JOIN products AS p ON cat.id = p.category_id
-    GROUP BY cat.id, cat.name
-    ORDER BY product_count DESC, category_name ASC;
-    ```
-
-    **결과 (예시):**
-
-    | category_name | product_count |
-    | ------------- | ------------: |
-    | Intel 소켓      |            13 |
-    | 파워서플라이(PSU)   |            13 |
-    | 스피커/헤드셋       |            12 |
-    | 기계식           |            11 |
-    | 멤브레인          |            11 |
-    | ...           | ...           |
-
-
-### 연습 7
-모든 주문에 대해 주문번호, 총액, 결제 수단(`payments.method`), 배송 운송사(`shipping.carrier`)를 보여주세요. 결제나 배송 정보가 없는 주문도 포함하고, 그 경우 `COALESCE`로 `'미결제'`, `'미배송'`으로 표시하세요. 주문 총액 내림차순으로 10행까지 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        o.order_number,
-        o.total_amount,
-        COALESCE(p.method, '미결제')   AS payment_method,
-        COALESCE(s.carrier, '미배송')  AS carrier
-    FROM orders AS o
-    LEFT JOIN payments AS p ON o.id = p.order_id
-    LEFT JOIN shipping AS s ON o.id = s.order_id
-    ORDER BY o.total_amount DESC
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | order_number       | total_amount | payment_method | carrier |
-    | ------------------ | -----------: | -------------- | ------- |
-    | ORD-20210628-12574 |     58039800 | bank_transfer  | 로젠택배    |
-    | ORD-20230809-24046 |     55047300 | card           | 로젠택배    |
-    | ORD-20210321-11106 |     48718000 | card           | CJ대한통운  |
-    | ORD-20200605-07165 |     47954000 | card           | CJ대한통운  |
-    | ORD-20231020-25036 |     46945700 | kakao_pay      | 한진택배    |
-    | ...                | ...          | ...            | ...     |
-
-
-### 연습 8
-공급업체(`suppliers`)별로 공급하는 활성 상품 수(`product_count`)와 총 재고(`total_stock`)를 구하세요. **상품이 없는 공급업체도 포함**하고, 해당 값은 0으로 표시하세요. `total_stock` 내림차순으로 정렬하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        sup.company_name,
-        COUNT(p.id)                     AS product_count,
-        COALESCE(SUM(p.stock_qty), 0)   AS total_stock
-    FROM suppliers AS sup
-    LEFT JOIN products AS p ON sup.id = p.supplier_id
-        AND p.is_active = 1
-    GROUP BY sup.id, sup.company_name
-    ORDER BY total_stock DESC;
-    ```
-
-    **결과 (예시):**
-
-    | company_name | product_count | total_stock |
-    | ------------ | ------------: | ----------: |
-    | 삼성전자 공식 유통   |            21 |        6174 |
-    | 에이수스코리아      |            21 |        5828 |
-    | MSI코리아       |            12 |        4070 |
-    | ASRock코리아    |             9 |        3084 |
-    | TP-Link코리아   |            11 |        3081 |
-    | ...          | ...           | ...         |
-
-
-### 연습 9
-`orders` 테이블을 기준으로 RIGHT JOIN을 사용하여, 모든 고객의 이름(`name`)과 주문 횟수(`order_count`)를 구하세요. **주문이 없는 고객도 포함**하고, 주문 횟수 내림차순으로 정렬하여 10행까지 반환하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        c.name,
-        COUNT(o.id) AS order_count
-    FROM orders AS o
-    RIGHT JOIN customers AS c ON c.id = o.customer_id
-    GROUP BY c.id, c.name
-    ORDER BY order_count DESC
-    LIMIT 10;
-    ```
-
-    **결과 (예시):**
-
-    | name | order_count |
-    | ---- | ----------: |
-    | 이영자  |         346 |
-    | 김병철  |         342 |
-    | 박정수  |         340 |
-    | 강명자  |         254 |
-    | 김성민  |         232 |
-    | ...  | ...         |
-
-
-### 연습 10
 주문이 없는 고객과 고객 정보가 누락된 주문을 **모두** 포함하여 `customer_name`, `order_number`, `total_amount`를 조회하세요. 고객이 없으면 `'(알 수 없음)'`, 주문이 없으면 `'(주문 없음)'`으로 표시하세요. `customer_name` 오름차순으로 정렬하여 15행까지 반환하세요.
 
 ??? success "정답"
@@ -638,6 +415,231 @@ FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
     ORDER BY customer_name
     LIMIT 15;
     ```
+
+
+### 연습 2
+**리뷰를 남기지 않은** 고객 수를 구하세요. `no_review_customers`라는 단일 값을 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT COUNT(*) AS no_review_customers
+    FROM customers AS c
+    LEFT JOIN reviews AS r ON c.id = r.customer_id
+    WHERE r.id IS NULL;
+    ```
+
+    **결과 (예시):**
+
+    | no_review_customers |
+    | ------------------: |
+    |                3388 |
+
+
+### 연습 3
+`inventory_transactions` 테이블에 **재고 거래 내역이 전혀 없는** 활성 상품을 모두 구하세요. `product_id`, `name`, `stock_qty`를 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        p.id        AS product_id,
+        p.name,
+        p.stock_qty
+    FROM products AS p
+    LEFT JOIN inventory_transactions AS it ON p.id = it.product_id
+    WHERE p.is_active = 1
+      AND it.id IS NULL
+    ORDER BY p.name;
+    ```
+
+
+### 연습 4
+모든 카테고리에 대해 카테고리명과 해당 카테고리에 속한 상품 수(`product_count`)를 구하세요. **상품이 하나도 없는 카테고리도 포함**하여 0으로 표시하세요. `product_count` 내림차순, 같으면 카테고리명 오름차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        cat.name        AS category_name,
+        COUNT(p.id)     AS product_count
+    FROM categories AS cat
+    LEFT JOIN products AS p ON cat.id = p.category_id
+    GROUP BY cat.id, cat.name
+    ORDER BY product_count DESC, category_name ASC;
+    ```
+
+    **결과 (예시):**
+
+    | category_name | product_count |
+    | ------------- | ------------: |
+    | Intel 소켓      |            13 |
+    | 파워서플라이(PSU)   |            13 |
+    | 스피커/헤드셋       |            12 |
+    | 기계식           |            11 |
+    | 멤브레인          |            11 |
+    | ...           | ...           |
+
+
+### 연습 5
+`orders` 테이블을 기준으로 RIGHT JOIN을 사용하여, 모든 고객의 이름(`name`)과 주문 횟수(`order_count`)를 구하세요. **주문이 없는 고객도 포함**하고, 주문 횟수 내림차순으로 정렬하여 10행까지 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.name,
+        COUNT(o.id) AS order_count
+    FROM orders AS o
+    RIGHT JOIN customers AS c ON c.id = o.customer_id
+    GROUP BY c.id, c.name
+    ORDER BY order_count DESC
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | name | order_count |
+    | ---- | ----------: |
+    | 이영자  |         346 |
+    | 김병철  |         342 |
+    | 박정수  |         340 |
+    | 강명자  |         254 |
+    | 김성민  |         232 |
+    | ...  | ...         |
+
+
+### 연습 6
+공급업체(`suppliers`)별로 공급하는 활성 상품 수(`product_count`)와 총 재고(`total_stock`)를 구하세요. **상품이 없는 공급업체도 포함**하고, 해당 값은 0으로 표시하세요. `total_stock` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        sup.company_name,
+        COUNT(p.id)                     AS product_count,
+        COALESCE(SUM(p.stock_qty), 0)   AS total_stock
+    FROM suppliers AS sup
+    LEFT JOIN products AS p ON sup.id = p.supplier_id
+        AND p.is_active = 1
+    GROUP BY sup.id, sup.company_name
+    ORDER BY total_stock DESC;
+    ```
+
+    **결과 (예시):**
+
+    | company_name | product_count | total_stock |
+    | ------------ | ------------: | ----------: |
+    | 삼성전자 공식 유통   |            21 |        6174 |
+    | 에이수스코리아      |            21 |        5828 |
+    | MSI코리아       |            12 |        4070 |
+    | ASRock코리아    |             9 |        3084 |
+    | TP-Link코리아   |            11 |        3081 |
+    | ...          | ...           | ...         |
+
+
+### 연습 7
+모든 상품에 대해 상품명, 가격, 총 판매 수량(`SUM(order_items.quantity)`), 해당 상품이 등장한 주문 수를 보여주세요. **한 번도 주문되지 않은 상품도 포함**하고 그 경우 0으로 표시하세요. 판매 수량 내림차순으로 20행까지 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        p.name              AS product_name,
+        p.price,
+        COALESCE(SUM(oi.quantity), 0)    AS units_sold,
+        COUNT(DISTINCT oi.order_id)       AS order_appearances
+    FROM products AS p
+    LEFT JOIN order_items AS oi ON p.id = oi.product_id
+    GROUP BY p.id, p.name, p.price
+    ORDER BY units_sold DESC
+    LIMIT 20;
+    ```
+
+    **결과 (예시):**
+
+    | product_name                    | price  | units_sold | order_appearances |
+    | ------------------------------- | -----: | ---------: | ----------------: |
+    | Crucial T700 2TB 실버             | 323700 |       1486 |              1436 |
+    | AMD Ryzen 9 9900X               | 244800 |       1323 |              1274 |
+    | SK하이닉스 Platinum P41 2TB 실버      | 256500 |       1308 |              1267 |
+    | SteelSeries Aerox 5 Wireless 실버 | 119000 |       1088 |               998 |
+    | SteelSeries Prime Wireless 실버   |  69300 |       1049 |               932 |
+    | ...                             | ...    | ...        | ...               |
+
+
+### 연습 8
+모든 주문에 대해 주문번호, 총액, 결제 수단(`payments.method`), 배송 운송사(`shipping.carrier`)를 보여주세요. 결제나 배송 정보가 없는 주문도 포함하고, 그 경우 `COALESCE`로 `'미결제'`, `'미배송'`으로 표시하세요. 주문 총액 내림차순으로 10행까지 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        o.order_number,
+        o.total_amount,
+        COALESCE(p.method, '미결제')   AS payment_method,
+        COALESCE(s.carrier, '미배송')  AS carrier
+    FROM orders AS o
+    LEFT JOIN payments AS p ON o.id = p.order_id
+    LEFT JOIN shipping AS s ON o.id = s.order_id
+    ORDER BY o.total_amount DESC
+    LIMIT 10;
+    ```
+
+    **결과 (예시):**
+
+    | order_number       | total_amount | payment_method | carrier |
+    | ------------------ | -----------: | -------------- | ------- |
+    | ORD-20210628-12574 |     58039800 | bank_transfer  | 로젠택배    |
+    | ORD-20230809-24046 |     55047300 | card           | 로젠택배    |
+    | ORD-20210321-11106 |     48718000 | card           | CJ대한통운  |
+    | ORD-20200605-07165 |     47954000 | card           | CJ대한통운  |
+    | ORD-20231020-25036 |     46945700 | kakao_pay      | 한진택배    |
+    | ...                | ...          | ...            | ...     |
+
+
+### 연습 9
+모든 고객의 이름, 이메일, 가장 최근 주문 상태(`status`)를 조회하세요. 주문이 없는 고객의 상태는 `'주문 없음'`으로 표시하세요. `COALESCE`를 사용하고, 고객명 오름차순으로 정렬하여 15행까지 반환하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.name,
+        c.email,
+        COALESCE(o.status, '주문 없음') AS last_order_status
+    FROM customers AS c
+    LEFT JOIN orders AS o ON c.id = o.customer_id
+        AND o.ordered_at = (
+            SELECT MAX(o2.ordered_at)
+            FROM orders AS o2
+            WHERE o2.customer_id = c.id
+        )
+    ORDER BY c.name
+    LIMIT 15;
+    ```
+
+    **결과 (예시):**
+
+    | name | email                | last_order_status |
+    | ---- | -------------------- | ----------------- |
+    | 강건우  | user4737@testmail.kr | 주문 없음             |
+    | 강경수  | user3281@testmail.kr | 주문 없음             |
+    | 강경숙  | user2384@testmail.kr | 주문 없음             |
+    | 강경숙  | user3645@testmail.kr | 주문 없음             |
+    | 강경자  | user1109@testmail.kr | confirmed         |
+    | ...  | ...                  | ...               |
+
+
+### 연습 10
+위시리스트에 상품을 담았지만 **주문을 한 번도 하지 않은** 고객을 모두 구하세요. `customer_name`, `email`, `wishlist_items`(위시리스트 항목 수)를 반환하고, `wishlist_items` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.name  AS customer_name,
+        c.email,
+        COUNT(w.id) AS wishlist_items
+    FROM customers AS c
+    LEFT JOIN orders    AS o ON c.id = o.customer_id
+    INNER JOIN wishlists AS w ON c.id = w.customer_id
+    WHERE o.id IS NULL
+    GROUP BY c.id, c.name, c.email
+    ORDER BY wishlist_items DESC;
+    ```
+
 
 ---
 다음: [9강: 서브쿼리](09-subqueries.md)

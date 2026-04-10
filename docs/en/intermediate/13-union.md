@@ -197,8 +197,53 @@ ORDER BY sort_key, revenue DESC;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Combine VIP-grade customers and GOLD-grade customers into one list using `UNION`. Show `name` and `grade`. Sort by name.
+
+??? success "Answer"
+    ```sql
+    SELECT name, grade FROM customers WHERE grade = 'VIP'
+    UNION
+    SELECT name, grade FROM customers WHERE grade = 'GOLD'
+    ORDER BY name;
+    ```
+
+    **Expected result:**
+
+    | name | grade |
+    | ---- | ----- |
+    | 강경희  | GOLD  |
+    | 강도윤  | VIP   |
+    | 강도현  | GOLD  |
+    | 강명자  | VIP   |
+    | 강미숙  | VIP   |
+    | ...  | ...   |
+
+
+### Exercise 2
+Combine all active product names (`is_active = 1`) and all category names into a single deduplicated list using `UNION`. The result column should be called `name`.
+
+??? success "Answer"
+    ```sql
+    SELECT name FROM products WHERE is_active = 1
+    UNION
+    SELECT name FROM categories
+    ORDER BY name;
+    ```
+
+    **Expected result:**
+
+    | name                                |
+    | ----------------------------------- |
+    | 2in1                                |
+    | AMD                                 |
+    | AMD Ryzen 9 9900X                   |
+    | AMD 소켓                              |
+    | APC Back-UPS Pro Gaming BGM1500B 블랙 |
+    | ...                                 |
+
+
+### Exercise 3
 Build a "negative events" list combining cancelled orders and returned orders for 2023 and 2024. Use `UNION ALL`. Include `event_type` ('cancellation' or 'return'), `order_number`, `customer_id`, and `event_date` (use `cancelled_at` for cancellations and `completed_at` for returns). Sort by `event_date` descending.
 
 ??? success "Answer"
@@ -226,92 +271,8 @@ Build a "negative events" list combining cancelled orders and returned orders fo
     ORDER BY event_date DESC;
     ```
 
-### Exercise 2
-Create a customer engagement summary. Use `UNION ALL` to count, per customer: their total orders, total reviews, and total complaints. Aggregate into one row per customer by wrapping the union in a subquery (derived table). Show the top 10 most engaged customers by total activity count.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        customer_id,
-        SUM(activity_count) AS total_activity
-    FROM (
-        SELECT customer_id, COUNT(*) AS activity_count
-        FROM orders GROUP BY customer_id
-
-        UNION ALL
-
-        SELECT customer_id, COUNT(*) AS activity_count
-        FROM reviews GROUP BY customer_id
-
-        UNION ALL
-
-        SELECT customer_id, COUNT(*) AS activity_count
-        FROM complaints GROUP BY customer_id
-    ) AS all_activity
-    GROUP BY customer_id
-    ORDER BY total_activity DESC
-    LIMIT 10;
-    ```
-
-    **Expected result:**
-
-    | customer_id | total_activity |
-    | ----------: | -------------: |
-    |          98 |            469 |
-    |          97 |            453 |
-    |         226 |            423 |
-    |         162 |            328 |
-    |         227 |            326 |
-    | ...         | ...            |
-
-
-### Exercise 3
-Combine VIP-grade customers and GOLD-grade customers into one list using `UNION`. Show `name` and `grade`. Sort by name.
-
-??? success "Answer"
-    ```sql
-    SELECT name, grade FROM customers WHERE grade = 'VIP'
-    UNION
-    SELECT name, grade FROM customers WHERE grade = 'GOLD'
-    ORDER BY name;
-    ```
-
-    **Expected result:**
-
-    | name | grade |
-    | ---- | ----- |
-    | 강경희  | GOLD  |
-    | 강도윤  | VIP   |
-    | 강도현  | GOLD  |
-    | 강명자  | VIP   |
-    | 강미숙  | VIP   |
-    | ...  | ...   |
-
 
 ### Exercise 4
-Combine all active product names (`is_active = 1`) and all category names into a single deduplicated list using `UNION`. The result column should be called `name`.
-
-??? success "Answer"
-    ```sql
-    SELECT name FROM products WHERE is_active = 1
-    UNION
-    SELECT name FROM categories
-    ORDER BY name;
-    ```
-
-    **Expected result:**
-
-    | name                                |
-    | ----------------------------------- |
-    | 2in1                                |
-    | AMD                                 |
-    | AMD Ryzen 9 9900X                   |
-    | AMD 소켓                              |
-    | APC Back-UPS Pro Gaming BGM1500B 블랙 |
-    | ...                                 |
-
-
-### Exercise 5
 Build a "customer feedback" list combining 2024 reviews and 2024 product Q&A questions (top-level only, `parent_id IS NULL`). Use `UNION ALL`. Include `feedback_type` ('review' or 'qna'), `product_id`, `customer_id`, and `created_at`. Sort by `created_at` descending, limit to 20 rows.
 
 ??? success "Answer"
@@ -351,7 +312,7 @@ Build a "customer feedback" list combining 2024 reviews and 2024 product Q&A que
     | ...           | ...        | ...         | ...                 |
 
 
-### Exercise 6
+### Exercise 5
 Count transactions by payment method, then add a grand total row using `UNION ALL`. The total row should show `'TOTAL'` as the `method`. Only include payments where `status = 'completed'`.
 
 ??? success "Answer"
@@ -388,7 +349,7 @@ Count transactions by payment method, then add a grand total row using `UNION AL
     | ...      | ...             | ...      |
 
 
-### Exercise 7
+### Exercise 6
 Count active customers (`is_active = 1`) by grade, then add a grand total row (`'ALL'`) using `UNION ALL`. Ensure the total row appears last.
 
 ??? success "Answer"
@@ -424,44 +385,46 @@ Count active customers (`is_active = 1`) by grade, then add a grand total row (`
     |        1 | ALL    | 3816 |
 
 
-### Exercise 8
-Count active and inactive products per supplier separately, combine them with `UNION ALL`, then wrap in a subquery to pivot into one row per supplier with `active_count` and `inactive_count`. JOIN with `suppliers` to show the company name.
+### Exercise 7
+Create a customer engagement summary. Use `UNION ALL` to count, per customer: their total orders, total reviews, and total complaints. Aggregate into one row per customer by wrapping the union in a subquery (derived table). Show the top 10 most engaged customers by total activity count.
 
 ??? success "Answer"
     ```sql
     SELECT
-        s.company_name,
-        SUM(CASE WHEN t.status_type = 'active' THEN t.cnt ELSE 0 END) AS active_count,
-        SUM(CASE WHEN t.status_type = 'inactive' THEN t.cnt ELSE 0 END) AS inactive_count
+        customer_id,
+        SUM(activity_count) AS total_activity
     FROM (
-        SELECT supplier_id, 'active' AS status_type, COUNT(*) AS cnt
-        FROM products WHERE is_active = 1
-        GROUP BY supplier_id
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM orders GROUP BY customer_id
 
         UNION ALL
 
-        SELECT supplier_id, 'inactive' AS status_type, COUNT(*) AS cnt
-        FROM products WHERE is_active = 0
-        GROUP BY supplier_id
-    ) AS t
-    INNER JOIN suppliers AS s ON t.supplier_id = s.id
-    GROUP BY s.company_name
-    ORDER BY active_count DESC;
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM reviews GROUP BY customer_id
+
+        UNION ALL
+
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM complaints GROUP BY customer_id
+    ) AS all_activity
+    GROUP BY customer_id
+    ORDER BY total_activity DESC
+    LIMIT 10;
     ```
 
     **Expected result:**
 
-    | company_name | active_count | inactive_count |
-    | ------------ | -----------: | -------------: |
-    | 에이수스코리아      |           21 |              5 |
-    | 삼성전자 공식 유통   |           21 |              4 |
-    | MSI코리아       |           12 |              1 |
-    | 서린시스테크       |           11 |              1 |
-    | 로지텍코리아       |           11 |              6 |
-    | ...          | ...          | ...            |
+    | customer_id | total_activity |
+    | ----------: | -------------: |
+    |          98 |            469 |
+    |          97 |            453 |
+    |         226 |            423 |
+    |         162 |            328 |
+    |         227 |            326 |
+    | ...         | ...            |
 
 
-### Exercise 9
+### Exercise 8
 Summarize order counts and average amounts by status, then add a grand total row with `UNION ALL`. Wrap the result in a subquery and calculate `pct` — each status's share of the total order count, rounded to one decimal place.
 
 ??? success "Answer"
@@ -502,6 +465,43 @@ Summarize order counts and average amounts by status, then add a grand total row
     | returned         |         459 | 1382638.93 |  0.7 |
     | delivered        |          77 |  876186.49 |  0.1 |
     | ...              | ...         | ...        | ...  |
+
+
+### Exercise 9
+Count active and inactive products per supplier separately, combine them with `UNION ALL`, then wrap in a subquery to pivot into one row per supplier with `active_count` and `inactive_count`. JOIN with `suppliers` to show the company name.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        s.company_name,
+        SUM(CASE WHEN t.status_type = 'active' THEN t.cnt ELSE 0 END) AS active_count,
+        SUM(CASE WHEN t.status_type = 'inactive' THEN t.cnt ELSE 0 END) AS inactive_count
+    FROM (
+        SELECT supplier_id, 'active' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 1
+        GROUP BY supplier_id
+
+        UNION ALL
+
+        SELECT supplier_id, 'inactive' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 0
+        GROUP BY supplier_id
+    ) AS t
+    INNER JOIN suppliers AS s ON t.supplier_id = s.id
+    GROUP BY s.company_name
+    ORDER BY active_count DESC;
+    ```
+
+    **Expected result:**
+
+    | company_name | active_count | inactive_count |
+    | ------------ | -----------: | -------------: |
+    | 에이수스코리아      |           21 |              5 |
+    | 삼성전자 공식 유통   |           21 |              4 |
+    | MSI코리아       |           12 |              1 |
+    | 서린시스테크       |           11 |              1 |
+    | 로지텍코리아       |           11 |              6 |
+    | ...          | ...          | ...            |
 
 
 ---

@@ -237,8 +237,92 @@ LIMIT 8;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Practice Exercises
-
 ### Exercise 1
+Find orders that have never had a completed payment. Use a `NOT IN` subquery to exclude `order_id` values from `payments` where `status = 'completed'`. Return `order_number`, `total_amount`, and `status`. Sort by `total_amount` descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT order_number, total_amount, status
+    FROM orders
+    WHERE id NOT IN (
+        SELECT order_id
+        FROM payments
+        WHERE status = 'completed'
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+    **Expected result:**
+
+    | order_number       | total_amount | status           |
+    | ------------------ | -----------: | ---------------- |
+    | ORD-20230504-22760 |     19613300 | return_requested |
+    | ORD-20240908-29994 |     14691400 | returned         |
+    | ORD-20220923-19607 |     14400000 | cancelled        |
+    | ORD-20250309-33168 |     13528400 | cancelled        |
+    | ORD-20190726-03947 |     11884300 | cancelled        |
+    | ...                | ...          | ...              |
+
+
+### Exercise 2
+Find all orders whose `total_amount` exceeds the overall average order amount. Return `order_number` and `total_amount`, sorted by `total_amount` descending. Limit to 10 rows. Use a scalar subquery in the `WHERE` clause.
+
+??? success "Answer"
+    ```sql
+    SELECT order_number, total_amount
+    FROM orders
+    WHERE total_amount > (
+        SELECT AVG(total_amount) FROM orders
+    )
+    ORDER BY total_amount DESC
+    LIMIT 10;
+    ```
+
+    **Expected result:**
+
+    | order_number       | total_amount |
+    | ------------------ | -----------: |
+    | ORD-20210628-12574 |     58039800 |
+    | ORD-20230809-24046 |     55047300 |
+    | ORD-20210321-11106 |     48718000 |
+    | ORD-20200605-07165 |     47954000 |
+    | ORD-20231020-25036 |     46945700 |
+    | ...                | ...          |
+
+
+### Exercise 3
+For each active product, show its name, price, and the number of reviews it has received using a scalar subquery in the `SELECT` clause. Return `product_name`, `price`, and `review_count`. Sort by `review_count` descending and limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        p.name  AS product_name,
+        p.price,
+        (
+            SELECT COUNT(*)
+            FROM reviews AS r
+            WHERE r.product_id = p.id
+        ) AS review_count
+    FROM products AS p
+    WHERE p.is_active = 1
+    ORDER BY review_count DESC
+    LIMIT 10;
+    ```
+
+    **Expected result:**
+
+    | product_name                    | price  | review_count |
+    | ------------------------------- | -----: | -----------: |
+    | SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |
+    | SteelSeries Prime Wireless 블랙   |  75900 |           93 |
+    | JBL Flip 6 블랙                   | 195900 |           92 |
+    | 녹투아 NH-L12S                     |  49400 |           88 |
+    | 삼성 DDR4 32GB PC4-25600          |  49100 |           87 |
+    | ...                             | ...    | ...          |
+
+
+### Exercise 4
 Find all products whose price is higher than the average price of products in their own category. Return `product_name`, `price`, and `category_id`. Use a scalar subquery in the `WHERE` clause that references the outer query's `category_id`.
 
 ??? success "Answer"
@@ -258,7 +342,97 @@ Find all products whose price is higher than the average price of products in th
     ORDER BY p.category_id, p.price DESC;
     ```
 
-### Exercise 2
+
+### Exercise 5
+Find products that are in the wishlist of at least one customer but have **never appeared in any order**. Use `IN` and `NOT IN` subqueries. Return `product_name` and `price`.
+
+??? success "Answer"
+    ```sql
+    SELECT name AS product_name, price
+    FROM products
+    WHERE id IN (
+        SELECT DISTINCT product_id FROM wishlists
+    )
+      AND id NOT IN (
+        SELECT DISTINCT product_id FROM order_items
+    )
+    ORDER BY price DESC;
+    ```
+
+    **Expected result:**
+
+    | product_name                  | price  |
+    | ----------------------------- | -----: |
+    | 삼성 오디세이 OLED G8               | 693300 |
+    | ASRock X870E Taichi 실버        | 583500 |
+    | 보스 SoundLink Flex 블랙          | 516000 |
+    | MSI MAG B860 TOMAHAWK WIFI    | 440900 |
+    | be quiet! Dark Power 13 1000W | 359500 |
+    | ...                           | ...    |
+
+
+### Exercise 6
+Use a `FROM` subquery to compute the average product price per category, then join with `categories` in the outer query to show `category_name` and `avg_price`. Sort by `avg_price` descending.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        cat.name       AS category_name,
+        price_stats.avg_price
+    FROM (
+        SELECT
+            category_id,
+            ROUND(AVG(price), 2) AS avg_price
+        FROM products
+        WHERE is_active = 1
+        GROUP BY category_id
+    ) AS price_stats
+    INNER JOIN categories AS cat ON price_stats.category_id = cat.id
+    ORDER BY price_stats.avg_price DESC;
+    ```
+
+    **Expected result:**
+
+    | category_name | avg_price  |
+    | ------------- | ---------: |
+    | 맥북            |    3774700 |
+    | 게이밍 노트북       |    3169700 |
+    | NVIDIA        |    2045440 |
+    | 일반 노트북        |  1856837.5 |
+    | 조립PC          | 1795033.33 |
+    | ...           | ...        |
+
+
+### Exercise 7
+Find all products that have been ordered at least once by a `'VIP'` customer. Use an `IN` subquery. Return `product_name` and `price`, sorted by price descending.
+
+??? success "Answer"
+    ```sql
+    SELECT p.name AS product_name, p.price
+    FROM products AS p
+    WHERE p.id IN (
+        SELECT DISTINCT oi.product_id
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE c.grade = 'VIP'
+    )
+    ORDER BY p.price DESC;
+    ```
+
+    **Expected result:**
+
+    | product_name                                                  | price   |
+    | ------------------------------------------------------------- | ------: |
+    | ASUS ROG Strix GT35                                           | 4314800 |
+    | ASUS ROG Zephyrus G16                                         | 4284100 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+    | Razer Blade 18 블랙                                             | 4182100 |
+    | Razer Blade 16 실버                                             | 4123800 |
+    | ...                                                           | ...     |
+
+
+### Exercise 8
 Use a `FROM` subquery to find the top 10 customers by number of completed orders. The inner query should count orders per customer; the outer query adds the customer's `name` and `grade` by joining to `customers`.
 
 ??? success "Answer"
@@ -292,180 +466,6 @@ Use a `FROM` subquery to find the top 10 customers by number of completed orders
     | 강명자  | VIP   |         240 |   296857745 |
     | 김성민  | VIP   |         210 |   220361434 |
     | ...  | ...   | ...         | ...         |
-
-
-### Exercise 3
-Find products that are in the wishlist of at least one customer but have **never appeared in any order**. Use `IN` and `NOT IN` subqueries. Return `product_name` and `price`.
-
-??? success "Answer"
-    ```sql
-    SELECT name AS product_name, price
-    FROM products
-    WHERE id IN (
-        SELECT DISTINCT product_id FROM wishlists
-    )
-      AND id NOT IN (
-        SELECT DISTINCT product_id FROM order_items
-    )
-    ORDER BY price DESC;
-    ```
-
-    **Expected result:**
-
-    | product_name                  | price  |
-    | ----------------------------- | -----: |
-    | 삼성 오디세이 OLED G8               | 693300 |
-    | ASRock X870E Taichi 실버        | 583500 |
-    | 보스 SoundLink Flex 블랙          | 516000 |
-    | MSI MAG B860 TOMAHAWK WIFI    | 440900 |
-    | be quiet! Dark Power 13 1000W | 359500 |
-    | ...                           | ...    |
-
-
-### Exercise 4
-Find all orders whose `total_amount` exceeds the overall average order amount. Return `order_number` and `total_amount`, sorted by `total_amount` descending. Limit to 10 rows. Use a scalar subquery in the `WHERE` clause.
-
-??? success "Answer"
-    ```sql
-    SELECT order_number, total_amount
-    FROM orders
-    WHERE total_amount > (
-        SELECT AVG(total_amount) FROM orders
-    )
-    ORDER BY total_amount DESC
-    LIMIT 10;
-    ```
-
-    **Expected result:**
-
-    | order_number       | total_amount |
-    | ------------------ | -----------: |
-    | ORD-20210628-12574 |     58039800 |
-    | ORD-20230809-24046 |     55047300 |
-    | ORD-20210321-11106 |     48718000 |
-    | ORD-20200605-07165 |     47954000 |
-    | ORD-20231020-25036 |     46945700 |
-    | ...                | ...          |
-
-
-### Exercise 5
-Find all products that have been ordered at least once by a `'VIP'` customer. Use an `IN` subquery. Return `product_name` and `price`, sorted by price descending.
-
-??? success "Answer"
-    ```sql
-    SELECT p.name AS product_name, p.price
-    FROM products AS p
-    WHERE p.id IN (
-        SELECT DISTINCT oi.product_id
-        FROM order_items AS oi
-        INNER JOIN orders AS o ON oi.order_id = o.id
-        INNER JOIN customers AS c ON o.customer_id = c.id
-        WHERE c.grade = 'VIP'
-    )
-    ORDER BY p.price DESC;
-    ```
-
-    **Expected result:**
-
-    | product_name                                                  | price   |
-    | ------------------------------------------------------------- | ------: |
-    | ASUS ROG Strix GT35                                           | 4314800 |
-    | ASUS ROG Zephyrus G16                                         | 4284100 |
-    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
-    | Razer Blade 18 블랙                                             | 4182100 |
-    | Razer Blade 16 실버                                             | 4123800 |
-    | ...                                                           | ...     |
-
-
-### Exercise 6
-Find orders that have never had a completed payment. Use a `NOT IN` subquery to exclude `order_id` values from `payments` where `status = 'completed'`. Return `order_number`, `total_amount`, and `status`. Sort by `total_amount` descending and limit to 10 rows.
-
-??? success "Answer"
-    ```sql
-    SELECT order_number, total_amount, status
-    FROM orders
-    WHERE id NOT IN (
-        SELECT order_id
-        FROM payments
-        WHERE status = 'completed'
-    )
-    ORDER BY total_amount DESC
-    LIMIT 10;
-    ```
-
-    **Expected result:**
-
-    | order_number       | total_amount | status           |
-    | ------------------ | -----------: | ---------------- |
-    | ORD-20230504-22760 |     19613300 | return_requested |
-    | ORD-20240908-29994 |     14691400 | returned         |
-    | ORD-20220923-19607 |     14400000 | cancelled        |
-    | ORD-20250309-33168 |     13528400 | cancelled        |
-    | ORD-20190726-03947 |     11884300 | cancelled        |
-    | ...                | ...          | ...              |
-
-
-### Exercise 7
-Use a `FROM` subquery to compute the average product price per category, then join with `categories` in the outer query to show `category_name` and `avg_price`. Sort by `avg_price` descending.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        cat.name       AS category_name,
-        price_stats.avg_price
-    FROM (
-        SELECT
-            category_id,
-            ROUND(AVG(price), 2) AS avg_price
-        FROM products
-        WHERE is_active = 1
-        GROUP BY category_id
-    ) AS price_stats
-    INNER JOIN categories AS cat ON price_stats.category_id = cat.id
-    ORDER BY price_stats.avg_price DESC;
-    ```
-
-    **Expected result:**
-
-    | category_name | avg_price  |
-    | ------------- | ---------: |
-    | 맥북            |    3774700 |
-    | 게이밍 노트북       |    3169700 |
-    | NVIDIA        |    2045440 |
-    | 일반 노트북        |  1856837.5 |
-    | 조립PC          | 1795033.33 |
-    | ...           | ...        |
-
-
-### Exercise 8
-For each active product, show its name, price, and the number of reviews it has received using a scalar subquery in the `SELECT` clause. Return `product_name`, `price`, and `review_count`. Sort by `review_count` descending and limit to 10 rows.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        p.name  AS product_name,
-        p.price,
-        (
-            SELECT COUNT(*)
-            FROM reviews AS r
-            WHERE r.product_id = p.id
-        ) AS review_count
-    FROM products AS p
-    WHERE p.is_active = 1
-    ORDER BY review_count DESC
-    LIMIT 10;
-    ```
-
-    **Expected result:**
-
-    | product_name                    | price  | review_count |
-    | ------------------------------- | -----: | -----------: |
-    | SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |
-    | SteelSeries Prime Wireless 블랙   |  75900 |           93 |
-    | JBL Flip 6 블랙                   | 195900 |           92 |
-    | 녹투아 NH-L12S                     |  49400 |           88 |
-    | 삼성 DDR4 32GB PC4-25600          |  49100 |           87 |
-    | ...                             | ...    | ...          |
 
 
 ### Exercise 9

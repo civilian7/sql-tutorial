@@ -336,8 +336,92 @@ ORDER BY c.date_key;
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
 
 ## Exercises
+### Exercise 1: Staff Org Chart
 
-### Exercise 1: Product Pairs from the Same Supplier
+Use a SELF JOIN on the `staff` table to show each employee's name, department, role, and their manager's name. Include employees who have no manager (e.g., CEO).
+
+??? success "Answer"
+    ```sql
+    SELECT
+        s.name       AS employee,
+        s.department,
+        s.role,
+        m.name       AS manager
+    FROM staff AS s
+    LEFT JOIN staff AS m ON s.manager_id = m.id
+    ORDER BY s.department, s.name;
+    ```
+
+    **Expected result:**
+
+    | employee | department | role    | manager |
+    | -------- | ---------- | ------- | ------- |
+    | 박경수      | 경영         | admin   | 한민재     |
+    | 장주원      | 경영         | admin   | 한민재     |
+    | 한민재      | 경영         | admin   | (NULL)  |
+    | 권영희      | 마케팅        | manager | 박경수     |
+    | 이준혁      | 영업         | manager | 한민재     |
+
+
+### Exercise 2: Staff Pairs in the Same Department
+
+Find pairs of staff members who belong to the same department. Remove duplicate pairs (`id < id`). Show the department and both names.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        s1.department,
+        s1.name AS staff_a,
+        s2.name AS staff_b
+    FROM staff AS s1
+    INNER JOIN staff AS s2
+        ON s1.department = s2.department
+       AND s1.id < s2.id
+    ORDER BY s1.department, s1.name;
+    ```
+
+    **Expected result:**
+
+    | department | staff_a | staff_b |
+    | ---------- | ------- | ------- |
+    | 경영         | 장주원     | 박경수     |
+    | 경영         | 한민재     | 박경수     |
+    | 경영         | 한민재     | 장주원     |
+
+
+### Exercise 3: Customer Pairs of the Same Grade
+
+Find pairs of active customers who share the same grade. Eliminate duplicate pairs using `id < id`. Show grade, customer A name, and customer B name. Limit to 10 rows.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        c1.grade,
+        c1.name AS customer_a,
+        c2.name AS customer_b
+    FROM customers AS c1
+    INNER JOIN customers AS c2
+        ON c1.grade = c2.grade
+       AND c1.id < c2.id
+    WHERE c1.is_active = 1
+      AND c2.is_active = 1
+    ORDER BY c1.grade, c1.name
+    LIMIT 10;
+    ```
+
+    **Expected result:**
+
+    | grade  | customer_a | customer_b |
+    | ------ | ---------- | ---------- |
+    | BRONZE | 강건우        | 강성수        |
+    | BRONZE | 강건우        | 강성진        |
+    | BRONZE | 강건우        | 강성훈        |
+    | BRONZE | 강건우        | 강영미        |
+    | BRONZE | 강건우        | 강영희        |
+    | ...    | ...        | ...        |
+
+
+### Exercise 4: Product Pairs from the Same Supplier
 
 Find product pairs from the same supplier with their price difference. Remove duplicate pairs.
 
@@ -359,7 +443,8 @@ Find product pairs from the same supplier with their price difference. Remove du
     LIMIT 10;
     ```
 
-### Exercise 2: Customers with Multiple Shipping Addresses
+
+### Exercise 5: Customers with Multiple Shipping Addresses
 
 Find customers who have different addresses. (SELF JOIN on `customer_addresses`)
 
@@ -392,257 +477,7 @@ Find customers who have different addresses. (SELF JOIN on `customer_addresses`)
     | ...  | ...                            | ...                            |
 
 
-### Exercise 3: Month-Supplier CROSS JOIN Report
-
-For each month of 2024 and each supplier, show the inbound quantity. Display 0 for months with no inbound.
-
-??? success "Answer"
-    === "SQLite"
-        ```sql
-        WITH months AS (
-            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
-            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
-            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
-            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
-            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
-            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
-        ),
-        supplier_inbound AS (
-            SELECT
-                SUBSTR(it.created_at, 1, 7) AS year_month,
-                p.supplier_id,
-                SUM(it.quantity) AS inbound_qty
-            FROM inventory_transactions AS it
-            INNER JOIN products AS p ON it.product_id = p.id
-            WHERE it.type = 'inbound' AND it.created_at LIKE '2024%'
-            GROUP BY SUBSTR(it.created_at, 1, 7), p.supplier_id
-        )
-        SELECT
-            m.m AS year_month,
-            s.company_name AS supplier,
-            COALESCE(si.inbound_qty, 0) AS inbound_qty
-        FROM months AS m
-        CROSS JOIN suppliers AS s
-        LEFT JOIN supplier_inbound AS si
-            ON m.m = si.year_month AND s.id = si.supplier_id
-        ORDER BY m.m, s.company_name
-        LIMIT 30;
-        ```
-
-        **Expected result:**
-
-        | year_month | supplier   | inbound_qty |
-        | ---------- | ---------- | ----------: |
-        | 2024-01    | AMD코리아     |           0 |
-        | 2024-01    | APC코리아     |           0 |
-        | 2024-01    | ASRock코리아  |           0 |
-        | 2024-01    | HP코리아      |           0 |
-        | 2024-01    | LG전자 공식 유통 |           0 |
-        | ...        | ...        | ...         |
-
-
-    === "MySQL"
-        ```sql
-        WITH months AS (
-            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
-            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
-            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
-            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
-            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
-            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
-        ),
-        supplier_inbound AS (
-            SELECT
-                DATE_FORMAT(it.created_at, '%Y-%m') AS year_month,
-                p.supplier_id,
-                SUM(it.quantity) AS inbound_qty
-            FROM inventory_transactions AS it
-            INNER JOIN products AS p ON it.product_id = p.id
-            WHERE it.type = 'inbound'
-              AND it.created_at >= '2024-01-01'
-              AND it.created_at <  '2025-01-01'
-            GROUP BY DATE_FORMAT(it.created_at, '%Y-%m'), p.supplier_id
-        )
-        SELECT
-            m.m AS year_month,
-            s.company_name AS supplier,
-            COALESCE(si.inbound_qty, 0) AS inbound_qty
-        FROM months AS m
-        CROSS JOIN suppliers AS s
-        LEFT JOIN supplier_inbound AS si
-            ON m.m = si.year_month AND s.id = si.supplier_id
-        ORDER BY m.m, s.company_name
-        LIMIT 30;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH months AS (
-            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
-            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
-            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
-            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
-            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
-            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
-        ),
-        supplier_inbound AS (
-            SELECT
-                TO_CHAR(it.created_at, 'YYYY-MM') AS year_month,
-                p.supplier_id,
-                SUM(it.quantity) AS inbound_qty
-            FROM inventory_transactions AS it
-            INNER JOIN products AS p ON it.product_id = p.id
-            WHERE it.type = 'inbound'
-              AND it.created_at >= '2024-01-01'
-              AND it.created_at <  '2025-01-01'
-            GROUP BY TO_CHAR(it.created_at, 'YYYY-MM'), p.supplier_id
-        )
-        SELECT
-            m.m AS year_month,
-            s.company_name AS supplier,
-            COALESCE(si.inbound_qty, 0) AS inbound_qty
-        FROM months AS m
-        CROSS JOIN suppliers AS s
-        LEFT JOIN supplier_inbound AS si
-            ON m.m = si.year_month AND s.id = si.supplier_id
-        ORDER BY m.m, s.company_name
-        LIMIT 30;
-        ```
-
-### Exercise 4: Staff Org Chart
-
-Use a SELF JOIN on the `staff` table to show each employee's name, department, role, and their manager's name. Include employees who have no manager (e.g., CEO).
-
-??? success "Answer"
-    ```sql
-    SELECT
-        s.name       AS employee,
-        s.department,
-        s.role,
-        m.name       AS manager
-    FROM staff AS s
-    LEFT JOIN staff AS m ON s.manager_id = m.id
-    ORDER BY s.department, s.name;
-    ```
-
-    **Expected result:**
-
-    | employee | department | role    | manager |
-    | -------- | ---------- | ------- | ------- |
-    | 박경수      | 경영         | admin   | 한민재     |
-    | 장주원      | 경영         | admin   | 한민재     |
-    | 한민재      | 경영         | admin   | (NULL)  |
-    | 권영희      | 마케팅        | manager | 박경수     |
-    | 이준혁      | 영업         | manager | 한민재     |
-
-
-### Exercise 5: Customer Pairs of the Same Grade
-
-Find pairs of active customers who share the same grade. Eliminate duplicate pairs using `id < id`. Show grade, customer A name, and customer B name. Limit to 10 rows.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        c1.grade,
-        c1.name AS customer_a,
-        c2.name AS customer_b
-    FROM customers AS c1
-    INNER JOIN customers AS c2
-        ON c1.grade = c2.grade
-       AND c1.id < c2.id
-    WHERE c1.is_active = 1
-      AND c2.is_active = 1
-    ORDER BY c1.grade, c1.name
-    LIMIT 10;
-    ```
-
-    **Expected result:**
-
-    | grade  | customer_a | customer_b |
-    | ------ | ---------- | ---------- |
-    | BRONZE | 강건우        | 강성수        |
-    | BRONZE | 강건우        | 강성진        |
-    | BRONZE | 강건우        | 강성훈        |
-    | BRONZE | 강건우        | 강영미        |
-    | BRONZE | 강건우        | 강영희        |
-    | ...    | ...        | ...        |
-
-
-### Exercise 6: Staff Pairs in the Same Department
-
-Find pairs of staff members who belong to the same department. Remove duplicate pairs (`id < id`). Show the department and both names.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        s1.department,
-        s1.name AS staff_a,
-        s2.name AS staff_b
-    FROM staff AS s1
-    INNER JOIN staff AS s2
-        ON s1.department = s2.department
-       AND s1.id < s2.id
-    ORDER BY s1.department, s1.name;
-    ```
-
-    **Expected result:**
-
-    | department | staff_a | staff_b |
-    | ---------- | ------- | ------- |
-    | 경영         | 장주원     | 박경수     |
-    | 경영         | 한민재     | 박경수     |
-    | 경영         | 한민재     | 장주원     |
-
-
-### Exercise 7: Grade-Category CROSS JOIN
-
-Generate every combination of customer grades (`DISTINCT grade`) and top-level categories (`depth = 0`) using CROSS JOIN, then LEFT JOIN to get the order count for each combination. Show 0 for combinations with no orders.
-
-??? success "Answer"
-    ```sql
-    WITH grades AS (
-        SELECT DISTINCT grade FROM customers WHERE grade IS NOT NULL
-    ),
-    top_cats AS (
-        SELECT id, name FROM categories WHERE depth = 0
-    ),
-    grade_cat_orders AS (
-        SELECT
-            c.grade,
-            COALESCE(pcat.id, cat.id) AS category_id,
-            COUNT(DISTINCT o.id) AS order_count
-        FROM orders AS o
-        INNER JOIN customers AS c ON o.customer_id = c.id
-        INNER JOIN order_items AS oi ON o.id = oi.order_id
-        INNER JOIN products AS p ON oi.product_id = p.id
-        INNER JOIN categories AS cat ON p.category_id = cat.id
-        LEFT  JOIN categories AS pcat ON cat.parent_id = pcat.id
-        GROUP BY c.grade, COALESCE(pcat.id, cat.id)
-    )
-    SELECT
-        g.grade,
-        tc.name AS category,
-        COALESCE(gco.order_count, 0) AS order_count
-    FROM grades AS g
-    CROSS JOIN top_cats AS tc
-    LEFT JOIN grade_cat_orders AS gco
-        ON g.grade = gco.grade AND tc.id = gco.category_id
-    ORDER BY g.grade, tc.name;
-    ```
-
-    **Expected result:**
-
-    | grade  | category | order_count |
-    | ------ | -------- | ----------: |
-    | BRONZE | CPU      |         853 |
-    | BRONZE | UPS/전원   |         132 |
-    | BRONZE | 그래픽카드    |         782 |
-    | BRONZE | 네트워크 장비  |        1148 |
-    | BRONZE | 노트북      |         827 |
-    | ...    | ...      | ...         |
-
-
-### Exercise 8: Percentage with CROSS JOIN
+### Exercise 6: Percentage with CROSS JOIN
 
 Calculate each customer grade's percentage of total active customers. Use CROSS JOIN to attach the grand total to every row. Round to one decimal place.
 
@@ -673,7 +508,7 @@ Calculate each customer grade's percentage of total active customers. Use CROSS 
     | VIP    |         315 |  8.3 |
 
 
-### Exercise 9: Quarter-Payment Method CROSS JOIN Report
+### Exercise 7: Quarter-Payment Method CROSS JOIN Report
 
 Generate every combination of 2024 quarters (Q1-Q4) and payment methods (`DISTINCT method`) using CROSS JOIN, then LEFT JOIN to get the total payment amount for each combination. Show 0 for empty cells.
 
@@ -804,3 +639,169 @@ Generate every combination of 2024 quarters (Q1-Q4) and payment methods (`DISTIN
         ```
 
 Next: [Lesson 18: Window Functions](../advanced/18-window.md)
+
+
+### Exercise 8: Month-Supplier CROSS JOIN Report
+
+For each month of 2024 and each supplier, show the inbound quantity. Display 0 for months with no inbound.
+
+??? success "Answer"
+    === "SQLite"
+        ```sql
+        WITH months AS (
+            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
+            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
+            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
+            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
+            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
+            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
+        ),
+        supplier_inbound AS (
+            SELECT
+                SUBSTR(it.created_at, 1, 7) AS year_month,
+                p.supplier_id,
+                SUM(it.quantity) AS inbound_qty
+            FROM inventory_transactions AS it
+            INNER JOIN products AS p ON it.product_id = p.id
+            WHERE it.type = 'inbound' AND it.created_at LIKE '2024%'
+            GROUP BY SUBSTR(it.created_at, 1, 7), p.supplier_id
+        )
+        SELECT
+            m.m AS year_month,
+            s.company_name AS supplier,
+            COALESCE(si.inbound_qty, 0) AS inbound_qty
+        FROM months AS m
+        CROSS JOIN suppliers AS s
+        LEFT JOIN supplier_inbound AS si
+            ON m.m = si.year_month AND s.id = si.supplier_id
+        ORDER BY m.m, s.company_name
+        LIMIT 30;
+        ```
+
+        **Expected result:**
+
+        | year_month | supplier   | inbound_qty |
+        | ---------- | ---------- | ----------: |
+        | 2024-01    | AMD코리아     |           0 |
+        | 2024-01    | APC코리아     |           0 |
+        | 2024-01    | ASRock코리아  |           0 |
+        | 2024-01    | HP코리아      |           0 |
+        | 2024-01    | LG전자 공식 유통 |           0 |
+        | ...        | ...        | ...         |
+
+
+    === "MySQL"
+        ```sql
+        WITH months AS (
+            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
+            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
+            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
+            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
+            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
+            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
+        ),
+        supplier_inbound AS (
+            SELECT
+                DATE_FORMAT(it.created_at, '%Y-%m') AS year_month,
+                p.supplier_id,
+                SUM(it.quantity) AS inbound_qty
+            FROM inventory_transactions AS it
+            INNER JOIN products AS p ON it.product_id = p.id
+            WHERE it.type = 'inbound'
+              AND it.created_at >= '2024-01-01'
+              AND it.created_at <  '2025-01-01'
+            GROUP BY DATE_FORMAT(it.created_at, '%Y-%m'), p.supplier_id
+        )
+        SELECT
+            m.m AS year_month,
+            s.company_name AS supplier,
+            COALESCE(si.inbound_qty, 0) AS inbound_qty
+        FROM months AS m
+        CROSS JOIN suppliers AS s
+        LEFT JOIN supplier_inbound AS si
+            ON m.m = si.year_month AND s.id = si.supplier_id
+        ORDER BY m.m, s.company_name
+        LIMIT 30;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        WITH months AS (
+            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
+            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
+            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
+            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
+            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
+            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
+        ),
+        supplier_inbound AS (
+            SELECT
+                TO_CHAR(it.created_at, 'YYYY-MM') AS year_month,
+                p.supplier_id,
+                SUM(it.quantity) AS inbound_qty
+            FROM inventory_transactions AS it
+            INNER JOIN products AS p ON it.product_id = p.id
+            WHERE it.type = 'inbound'
+              AND it.created_at >= '2024-01-01'
+              AND it.created_at <  '2025-01-01'
+            GROUP BY TO_CHAR(it.created_at, 'YYYY-MM'), p.supplier_id
+        )
+        SELECT
+            m.m AS year_month,
+            s.company_name AS supplier,
+            COALESCE(si.inbound_qty, 0) AS inbound_qty
+        FROM months AS m
+        CROSS JOIN suppliers AS s
+        LEFT JOIN supplier_inbound AS si
+            ON m.m = si.year_month AND s.id = si.supplier_id
+        ORDER BY m.m, s.company_name
+        LIMIT 30;
+        ```
+
+
+### Exercise 9: Grade-Category CROSS JOIN
+
+Generate every combination of customer grades (`DISTINCT grade`) and top-level categories (`depth = 0`) using CROSS JOIN, then LEFT JOIN to get the order count for each combination. Show 0 for combinations with no orders.
+
+??? success "Answer"
+    ```sql
+    WITH grades AS (
+        SELECT DISTINCT grade FROM customers WHERE grade IS NOT NULL
+    ),
+    top_cats AS (
+        SELECT id, name FROM categories WHERE depth = 0
+    ),
+    grade_cat_orders AS (
+        SELECT
+            c.grade,
+            COALESCE(pcat.id, cat.id) AS category_id,
+            COUNT(DISTINCT o.id) AS order_count
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        INNER JOIN order_items AS oi ON o.id = oi.order_id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        LEFT  JOIN categories AS pcat ON cat.parent_id = pcat.id
+        GROUP BY c.grade, COALESCE(pcat.id, cat.id)
+    )
+    SELECT
+        g.grade,
+        tc.name AS category,
+        COALESCE(gco.order_count, 0) AS order_count
+    FROM grades AS g
+    CROSS JOIN top_cats AS tc
+    LEFT JOIN grade_cat_orders AS gco
+        ON g.grade = gco.grade AND tc.id = gco.category_id
+    ORDER BY g.grade, tc.name;
+    ```
+
+    **Expected result:**
+
+    | grade  | category | order_count |
+    | ------ | -------- | ----------: |
+    | BRONZE | CPU      |         853 |
+    | BRONZE | UPS/전원   |         132 |
+    | BRONZE | 그래픽카드    |         782 |
+    | BRONZE | 네트워크 장비  |        1148 |
+    | BRONZE | 노트북      |         827 |
+    | ...    | ...      | ...         |
