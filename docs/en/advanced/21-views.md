@@ -75,7 +75,6 @@ Here are some highlights:
 | `v_category_performance` | Revenue and units sold per category |
 | `v_top_customers` | Top 100 customers by lifetime value |
 | `v_inventory_status` | Products with stock level classification |
-| `v_shipping_performance` | Average delivery times per carrier |
 
 ## Querying Views
 
@@ -529,52 +528,48 @@ Create a view `v_category_monthly_revenue` that aggregates monthly revenue by ca
         ```
 
 ### Exercise 8
-Query `v_shipping_performance` to find the carrier with the longest average delivery time. Then use the system catalog to inspect the view's definition and identify which tables and columns it uses.
+Query `v_supplier_performance` to find the supplier with the highest return rate. Then use the system catalog to inspect the view's definition.
 
 ??? success "Answer"
     === "SQLite"
         ```sql
-        -- Step 1: carrier with longest average delivery time
+        -- Step 1: supplier with highest return rate
         SELECT *
-        FROM v_shipping_performance
-        ORDER BY avg_delivery_days DESC
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
         LIMIT 1;
 
         -- Step 2: inspect the view definition
         SELECT sql
         FROM sqlite_master
         WHERE type = 'view'
-          AND name = 'v_shipping_performance';
+          AND name = 'v_supplier_performance';
         ```
 
     === "MySQL"
         ```sql
-        -- Step 1: carrier with longest average delivery time
         SELECT *
-        FROM v_shipping_performance
-        ORDER BY avg_delivery_days DESC
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
         LIMIT 1;
 
-        -- Step 2: inspect the view definition
         SELECT VIEW_DEFINITION
         FROM INFORMATION_SCHEMA.VIEWS
         WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME = 'v_shipping_performance';
+          AND TABLE_NAME = 'v_supplier_performance';
         ```
 
     === "PostgreSQL"
         ```sql
-        -- Step 1: carrier with longest average delivery time
         SELECT *
-        FROM v_shipping_performance
-        ORDER BY avg_delivery_days DESC
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
         LIMIT 1;
 
-        -- Step 2: inspect the view definition
         SELECT definition
         FROM pg_views
         WHERE schemaname = 'public'
-          AND viewname = 'v_shipping_performance';
+          AND viewname = 'v_supplier_performance';
         ```
 
 ### Exercise 9

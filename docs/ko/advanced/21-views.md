@@ -75,8 +75,6 @@ SELECT * FROM view_name WHERE ...;
 | `v_category_performance` | 카테고리별 매출 및 판매 수량 |
 | `v_top_customers` | LTV 기준 상위 100명 고객 |
 | `v_inventory_status` | 재고 수준 분류를 포함한 상품 정보 |
-| `v_shipping_performance` | 택배사별 평균 배송 소요 시간 |
-
 ## 뷰 조회하기
 
 ```sql
@@ -529,52 +527,48 @@ DROP VIEW IF EXISTS v_cs_watchlist;
         ```
 
 ### 연습 8
-`v_shipping_performance` 뷰를 조회하여 평균 배송 소요 시간이 가장 긴 택배사를 찾으세요. 이어서, 이 뷰가 어떤 테이블과 칼럼을 사용하는지 시스템 카탈로그로 정의를 확인하세요.
+`v_supplier_performance` 뷰를 조회하여 반품률이 가장 높은 공급업체를 찾으세요. 이어서, 이 뷰의 정의를 시스템 카탈로그로 확인하세요.
 
 ??? success "정답"
     === "SQLite"
         ```sql
-        -- 1단계: 평균 배송 소요 시간이 가장 긴 택배사
+        -- 1단계: 반품률이 가장 높은 공급업체
         SELECT *
-        FROM v_shipping_performance
-        ORDER BY avg_delivery_days DESC
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
         LIMIT 1;
 
         -- 2단계: 뷰 정의 확인
         SELECT sql
         FROM sqlite_master
         WHERE type = 'view'
-          AND name = 'v_shipping_performance';
+          AND name = 'v_supplier_performance';
         ```
 
     === "MySQL"
         ```sql
-        -- 1단계: 평균 배송 소요 시간이 가장 긴 택배사
         SELECT *
-        FROM v_shipping_performance
-        ORDER BY avg_delivery_days DESC
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
         LIMIT 1;
 
-        -- 2단계: 뷰 정의 확인
         SELECT VIEW_DEFINITION
         FROM INFORMATION_SCHEMA.VIEWS
         WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME = 'v_shipping_performance';
+          AND TABLE_NAME = 'v_supplier_performance';
         ```
 
     === "PostgreSQL"
         ```sql
-        -- 1단계: 평균 배송 소요 시간이 가장 긴 택배사
         SELECT *
-        FROM v_shipping_performance
-        ORDER BY avg_delivery_days DESC
+        FROM v_supplier_performance
+        ORDER BY return_rate_pct DESC
         LIMIT 1;
 
-        -- 2단계: 뷰 정의 확인
         SELECT definition
         FROM pg_views
         WHERE schemaname = 'public'
-          AND viewname = 'v_shipping_performance';
+          AND viewname = 'v_supplier_performance';
         ```
 
 ### 연습 9
