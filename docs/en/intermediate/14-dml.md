@@ -332,20 +332,20 @@ Insert 3 products into the `products` table at once. All share `category_id = 9`
 ??? success "Answer"
     === "SQLite"
         ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
         VALUES
-            ('SKU-TEST-101', 'Wireless Keyboard A', 9, 1, 59.99, 30, 1, datetime('now'), datetime('now')),
-            ('SKU-TEST-102', 'Wireless Keyboard B', 9, 1, 79.99, 30, 1, datetime('now'), datetime('now')),
-            ('SKU-TEST-103', 'Wireless Keyboard C', 9, 1, 99.99, 30, 1, datetime('now'), datetime('now'));
+            ('SKU-TEST-101', 'Wireless Keyboard A', 'Logitech', 9, 1, 59.99, 35.00, 30, 1, datetime('now'), datetime('now')),
+            ('SKU-TEST-102', 'Wireless Keyboard B', 'Logitech', 9, 1, 79.99, 45.00, 30, 1, datetime('now'), datetime('now')),
+            ('SKU-TEST-103', 'Wireless Keyboard C', 'Logitech', 9, 1, 99.99, 55.00, 30, 1, datetime('now'), datetime('now'));
         ```
 
     === "MySQL / PostgreSQL"
         ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
         VALUES
-            ('SKU-TEST-101', 'Wireless Keyboard A', 9, 1, 59.99, 30, 1, NOW(), NOW()),
-            ('SKU-TEST-102', 'Wireless Keyboard B', 9, 1, 79.99, 30, 1, NOW(), NOW()),
-            ('SKU-TEST-103', 'Wireless Keyboard C', 9, 1, 99.99, 30, 1, NOW(), NOW());
+            ('SKU-TEST-101', 'Wireless Keyboard A', 'Logitech', 9, 1, 59.99, 35.00, 30, 1, NOW(), NOW()),
+            ('SKU-TEST-102', 'Wireless Keyboard B', 'Logitech', 9, 1, 79.99, 45.00, 30, 1, NOW(), NOW()),
+            ('SKU-TEST-103', 'Wireless Keyboard C', 'Logitech', 9, 1, 99.99, 55.00, 30, 1, NOW(), NOW());
         ```
 
 
@@ -380,8 +380,8 @@ Write an UPSERT to update the point balance of customer ID 300. If the customer 
 ??? success "Answer"
     === "SQLite"
         ```sql
-        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
-        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, datetime('now'), datetime('now'))
+        INSERT INTO customers (id, name, email, password_hash, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', 'hash_placeholder', '555-0300-0001', 'BRONZE', 2000, 1, datetime('now'), datetime('now'))
         ON CONFLICT(id) DO UPDATE SET
             point_balance = excluded.point_balance,
             updated_at    = excluded.updated_at;
@@ -389,8 +389,8 @@ Write an UPSERT to update the point balance of customer ID 300. If the customer 
 
     === "MySQL"
         ```sql
-        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
-        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
+        INSERT INTO customers (id, name, email, password_hash, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', 'hash_placeholder', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
         ON DUPLICATE KEY UPDATE
             point_balance = VALUES(point_balance),
             updated_at    = VALUES(updated_at);
@@ -398,8 +398,8 @@ Write an UPSERT to update the point balance of customer ID 300. If the customer 
 
     === "PostgreSQL"
         ```sql
-        INSERT INTO customers (id, name, email, phone, grade, point_balance, is_active, created_at, updated_at)
-        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
+        INSERT INTO customers (id, name, email, password_hash, phone, grade, point_balance, is_active, created_at, updated_at)
+        VALUES (300, 'Seo-yun Lee', 'lee.sy@testmail.kr', 'hash_placeholder', '555-0300-0001', 'BRONZE', 2000, 1, NOW(), NOW())
         ON CONFLICT(id) DO UPDATE SET
             point_balance = EXCLUDED.point_balance,
             updated_at    = EXCLUDED.updated_at;
@@ -412,8 +412,8 @@ An external inventory system reports that SKU `'SKU-0099'` has 150 units in stoc
 ??? success "Answer"
     === "SQLite"
         ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, datetime('now'), datetime('now'))
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 'Anker', 10, 2, 35.00, 20.00, 150, 1, datetime('now'), datetime('now'))
         ON CONFLICT(sku) DO UPDATE SET
             stock_qty  = excluded.stock_qty,
             price      = MAX(products.price, excluded.price),
@@ -422,8 +422,8 @@ An external inventory system reports that SKU `'SKU-0099'` has 150 units in stoc
 
     === "MySQL"
         ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 'Anker', 10, 2, 35.00, 20.00, 150, 1, NOW(), NOW())
         ON DUPLICATE KEY UPDATE
             stock_qty  = VALUES(stock_qty),
             price      = GREATEST(price, VALUES(price)),
@@ -432,8 +432,8 @@ An external inventory system reports that SKU `'SKU-0099'` has 150 units in stoc
 
     === "PostgreSQL"
         ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
-        VALUES ('SKU-0099', 'USB-C Hub', 10, 2, 35.00, 150, 1, NOW(), NOW())
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-0099', 'USB-C Hub', 'Anker', 10, 2, 35.00, 20.00, 150, 1, NOW(), NOW())
         ON CONFLICT(sku) DO UPDATE SET
             stock_qty  = EXCLUDED.stock_qty,
             price      = GREATEST(products.price, EXCLUDED.price),
@@ -446,10 +446,11 @@ Insert a new customer record for a walk-in registration. Use: name `'Sam Rivera'
 
 ??? success "Answer"
     ```sql
-    INSERT INTO customers (name, email, phone, grade, point_balance, is_active, created_at, updated_at)
+    INSERT INTO customers (name, email, password_hash, phone, grade, point_balance, is_active, created_at, updated_at)
     VALUES (
         'Sam Rivera',
         's.rivera@testmail.com',
+        'hash_placeholder',
         '555-0199-7823',
         'BRONZE',
         0,
@@ -583,13 +584,15 @@ Using `INSERT ... SELECT`, create refurbished versions of all active products pr
 ??? success "Answer"
     === "SQLite / PostgreSQL"
         ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
         SELECT
             'REF-' || sku,
             name || ' (Refurbished)',
+            brand,
             category_id,
             supplier_id,
             ROUND(price * 0.6, 2),
+            ROUND(cost_price * 0.6, 2),
             5,
             1,
             datetime('now'),
@@ -601,13 +604,15 @@ Using `INSERT ... SELECT`, create refurbished versions of all active products pr
 
     === "MySQL"
         ```sql
-        INSERT INTO products (sku, name, category_id, supplier_id, price, stock_qty, is_active, created_at, updated_at)
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
         SELECT
             CONCAT('REF-', sku),
             CONCAT(name, ' (Refurbished)'),
+            brand,
             category_id,
             supplier_id,
             ROUND(price * 0.6, 2),
+            ROUND(cost_price * 0.6, 2),
             5,
             1,
             NOW(),

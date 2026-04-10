@@ -941,39 +941,39 @@ Create a table called `order_totals_by_month` using CTAS that contains: the year
         ```sql
         CREATE TABLE order_totals_by_month AS
         SELECT
-            strftime('%Y', order_date)    AS order_year,
-            strftime('%m', order_date)    AS order_month,
+            strftime('%Y', ordered_at)    AS order_year,
+            strftime('%m', ordered_at)    AS order_month,
             COUNT(*)                      AS order_count,
             ROUND(SUM(total_amount), 2)   AS total_revenue
         FROM orders
-        GROUP BY strftime('%Y', order_date),
-                 strftime('%m', order_date);
+        GROUP BY strftime('%Y', ordered_at),
+                 strftime('%m', ordered_at);
         ```
 
     === "MySQL"
         ```sql
         CREATE TABLE order_totals_by_month AS
         SELECT
-            YEAR(order_date)              AS order_year,
-            MONTH(order_date)             AS order_month,
+            YEAR(ordered_at)              AS order_year,
+            MONTH(ordered_at)             AS order_month,
             COUNT(*)                      AS order_count,
             ROUND(SUM(total_amount), 2)   AS total_revenue
         FROM orders
-        GROUP BY YEAR(order_date),
-                 MONTH(order_date);
+        GROUP BY YEAR(ordered_at),
+                 MONTH(ordered_at);
         ```
 
     === "PostgreSQL"
         ```sql
         CREATE TABLE order_totals_by_month AS
         SELECT
-            EXTRACT(YEAR FROM order_date)::INTEGER  AS order_year,
-            EXTRACT(MONTH FROM order_date)::INTEGER AS order_month,
+            EXTRACT(YEAR FROM ordered_at)::INTEGER  AS order_year,
+            EXTRACT(MONTH FROM ordered_at)::INTEGER AS order_month,
             COUNT(*)::INTEGER                       AS order_count,
             ROUND(SUM(total_amount), 2)             AS total_revenue
         FROM orders
-        GROUP BY EXTRACT(YEAR FROM order_date),
-                 EXTRACT(MONTH FROM order_date);
+        GROUP BY EXTRACT(YEAR FROM ordered_at),
+                 EXTRACT(MONTH FROM ordered_at);
         ```
 
 
