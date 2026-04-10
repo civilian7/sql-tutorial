@@ -292,6 +292,166 @@ def compare_results(expected: list[list[str]], actual_cols: list, actual_rows: l
 
 
 # ---------------------------------------------------------------------------
+# Result Table Generation
+# ---------------------------------------------------------------------------
+
+def format_value(val) -> str:
+    """Format a value for markdown table display."""
+    if val is None:
+        return '(NULL)'
+    if isinstance(val, float):
+        # Remove trailing zeros but keep at least 1 decimal for money
+        if val == int(val) and abs(val) > 100:
+            return str(int(val))
+        return f'{val:.2f}'.rstrip('0').rstrip('.')
+    return str(val)
+
+
+def is_numeric_column(rows, col_idx) -> bool:
+    """Determine if a column contains numeric values."""
+    for row in rows:
+        val = row[col_idx]
+        if val is None:
+            continue
+        if isinstance(val, (int, float)):
+            return True
+        try:
+            float(str(val))
+            return True
+        except (ValueError, TypeError):
+            return False
+    return False
+
+
+def generate_md_table(columns, rows, max_rows=None, has_ellipsis=False) -> list[str]:
+    """Generate markdown table lines from query results."""
+    if not columns:
+        return []
+
+    # Determine numeric columns for right-alignment
+    numeric = [is_numeric_column(rows[:20], i) for i in range(len(columns))]
+
+    # Format all values
+    display_rows = rows[:max_rows] if max_rows else rows
+    formatted = []
+    for row in display_rows:
+        formatted.append([format_value(row[i]) for i in range(len(columns))])
+
+    # Calculate column widths
+    widths = [len(c) for c in columns]
+    for row in formatted:
+        for i, val in enumerate(row):
+            widths[i] = max(widths[i], len(val))
+
+    # Build table lines
+    lines = []
+    # Header
+    header = '| ' + ' | '.join(c.ljust(widths[i]) for i, c in enumerate(columns)) + ' |'
+    lines.append(header)
+
+    # Separator with alignment
+    sep_parts = []
+    for i in range(len(columns)):
+        if numeric[i]:
+            sep_parts.append('-' * (widths[i] - 1) + ':')
+        else:
+            sep_parts.append('-' * widths[i])
+    sep = '| ' + ' | '.join(sep_parts) + ' |'
+    lines.append(sep)
+
+    # Data rows
+    for row in formatted:
+        cells = []
+        for i, val in enumerate(row):
+            if numeric[i]:
+                cells.append(val.rjust(widths[i]))
+            else:
+                cells.append(val.ljust(widths[i]))
+        lines.append('| ' + ' | '.join(cells) + ' |')
+
+    # Ellipsis row if truncated
+    if has_ellipsis or (max_rows and len(rows) > max_rows):
+        cells = ['...' + ' ' * (widths[i] - 3) if widths[i] >= 3 else '...' for i in range(len(columns))]
+        lines.append('| ' + ' | '.join(cells) + ' |')
+
+    return lines
+
+
+def fix_result_tables(filepath, conn, dry_run=False):
+    """Fix result tables in a markdown file with actual query results."""
+    blocks = extract_sql_blocks(filepath)
+    lines = Path(filepath).read_text(encoding='utf-8').splitlines()
+    fixes = []
+
+    for block in blocks:
+        skip, _ = should_skip(block)
+        if skip or not block.result_table or block.result_line == 0:
+            continue
+
+        success, error, cols, rows = execute_sql(conn, block.sql)
+        if not success or not cols:
+            continue
+
+        # Determine how many rows the original table showed
+        orig_data_rows = len(block.result_table) - 1  # minus header
+        has_ellipsis = any('...' in str(cell) for row in block.result_table for cell in row)
+        max_rows = orig_data_rows if orig_data_rows > 0 else min(len(rows), 5)
+        if has_ellipsis and max_rows > 0:
+            max_rows = max(max_rows - 1, 1)  # ellipsis took one row
+
+        new_table = generate_md_table(cols, rows, max_rows, has_ellipsis)
+
+        # Find the old table extent in lines
+        table_start = block.result_line  # 0-indexed in result_table, 1-indexed in file
+        # The result_line points to the header line (after **결과:**)
+        # Find actual table start and end
+        i = table_start - 1  # convert to 0-indexed
+        while i < len(lines) and '|' not in lines[i]:
+            i += 1
+        if i >= len(lines):
+            continue
+        table_begin = i
+
+        # Find table end
+        j = table_begin
+        while j < len(lines) and ('|' in lines[j] or lines[j].strip() == ''):
+            if lines[j].strip() == '' and j > table_begin + 1:
+                break
+            j += 1
+        table_end = j
+
+        # Check if table actually differs
+        old_table = lines[table_begin:table_end]
+        if old_table == new_table:
+            continue
+
+        fixes.append({
+            'start': table_begin,
+            'end': table_end,
+            'old': old_table,
+            'new': new_table,
+            'file': filepath,
+            'line': table_begin + 1,
+        })
+
+    if not fixes:
+        return 0
+
+    if dry_run:
+        for fix in fixes:
+            rel = os.path.relpath(fix['file'], '.')
+            print(f"  WOULD FIX {rel}:{fix['line']}")
+        return len(fixes)
+
+    # Apply fixes in reverse order to preserve line numbers
+    for fix in sorted(fixes, key=lambda f: f['start'], reverse=True):
+        lines[fix['start']:fix['end']] = fix['new']
+
+    Path(filepath).write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    return len(fixes)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -416,6 +576,30 @@ def main():
             print(f"    {r.error}")
             print(f"    SQL: {r.block.sql[:100]}...")
             print()
+
+    # Fix result tables if requested
+    if args.fix_results and result_mismatch > 0:
+        print("=" * 70)
+        print("Fixing result tables...")
+        total_fixed = 0
+        for filepath in md_files:
+            fixed = fix_result_tables(filepath, conn)
+            if fixed > 0:
+                rel = os.path.relpath(filepath, args.docs)
+                print(f"  Fixed {fixed} tables in {rel}")
+                total_fixed += fixed
+
+        # Also fix English counterparts
+        en_docs = args.docs.replace('/ko', '/en').replace('\\ko', '\\en')
+        en_files = find_md_files(en_docs, args.chapter)
+        for filepath in en_files:
+            fixed = fix_result_tables(filepath, conn)
+            if fixed > 0:
+                rel = os.path.relpath(filepath, en_docs)
+                print(f"  Fixed {fixed} tables in en/{rel}")
+                total_fixed += fixed
+
+        print(f"\nTotal tables fixed: {total_fixed}")
 
     conn.close()
     sys.exit(1 if failed > 0 else 0)

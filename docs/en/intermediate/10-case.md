@@ -39,13 +39,13 @@ LIMIT 5;
 
 **Result:**
 
-| order_number | total_amount | status_label |
-|--------------|-------------:|--------------|
-| ORD-20241231-09842 | 2349.00 | Complete |
-| ORD-20241231-09841 | 149.99 | Delivered |
-| ORD-20241231-09840 | 89.99 | In Transit |
-| ORD-20241230-09839 | 749.00 | Complete |
-| ORD-20241230-09838 | 329.97 | Cancelled |
+| order_number       | total_amount | status_label     |
+| ------------------ | -----------: | ---------------- |
+| ORD-20250630-34900 |      1483000 | Awaiting Payment |
+| ORD-20250630-34905 |       152600 | Awaiting Payment |
+| ORD-20250630-34903 |       401800 | Cancelled        |
+| ORD-20250630-34899 |       167500 | Awaiting Payment |
+| ORD-20250630-34896 |      1646400 | Awaiting Payment |
 
 ## Searched CASE
 
@@ -70,16 +70,16 @@ LIMIT 10;
 
 **Result:**
 
-| name | price | price_tier |
-|------|------:|------------|
-| USB-C Cable 2m | 9.99 | Budget |
-| Microfiber Cleaning Kit | 12.99 | Budget |
-| Screen Protector 15" | 14.99 | Budget |
-| SteelSeries Gaming Headset | 79.99 | Mid-range |
-| Logitech MX Master 3 | 99.99 | Mid-range |
-| Corsair 16GB DDR5 RAM | 129.99 | Mid-range |
-| Samsung 27" Monitor | 449.99 | Premium |
-| ... | | |
+| name                            | price | price_tier |
+| ------------------------------- | ----: | ---------- |
+| TP-Link TG-3468 블랙              | 13100 | High-end   |
+| Microsoft Ergonomic Keyboard 실버 | 23000 | High-end   |
+| TP-Link Archer TBE400E 화이트      | 23300 | High-end   |
+| 삼성 SPA-KFG0BUB                  | 26200 | High-end   |
+| 삼성 SPA-KFG0BUB 실버               | 27500 | High-end   |
+| V3 Endpoint Security 블랙         | 28500 | High-end   |
+| Arctic Freezer 36 A-RGB 화이트     | 29800 | High-end   |
+| ...                             | ...   | ...        |
 
 ## CASE for Age Groups
 

@@ -27,12 +27,12 @@ WHERE price > 500;
 
 **Result:**
 
-| name | price |
-|------|------:|
-| Dell XPS 15 Laptop | 1299.99 |
-| Samsung 27" Monitor | 449.99 |
-| ASUS ROG Gaming Desktop | 1899.00 |
-| ... | |
+| name                                   | price   |
+| -------------------------------------- | ------: |
+| Razer Blade 18 블랙                      | 2987500 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+| 삼성 DDR4 32GB PC4-25600                 |   49100 |
+| ...                                    | ...     |
 
 ```sql
 -- Only active products
@@ -57,11 +57,7 @@ WHERE is_active = 1
 **Result:**
 
 | name | price |
-|------|------:|
-| Samsung 27" Monitor | 449.99 |
-| Corsair 16GB DDR5 RAM | 129.99 |
-| WD Black 1TB SSD | 189.99 |
-| ... | |
+| ---- | ----- |
 
 ```sql
 -- VIP or GOLD customers
@@ -88,11 +84,11 @@ WHERE grade IN ('GOLD', 'VIP');
 **Result:**
 
 | name | grade |
-|------|-------|
-| Jennifer Martinez | VIP |
-| Robert Kim | GOLD |
-| Sarah Johnson | VIP |
-| ... | |
+| ---- | ----- |
+| 김경수  | VIP   |
+| 김민재  | VIP   |
+| 진정자  | VIP   |
+| ...  | ...   |
 
 ```sql
 -- Orders in terminal states
@@ -115,11 +111,7 @@ WHERE price BETWEEN 50 AND 200;
 **Result:**
 
 | name | price |
-|------|------:|
-| Logitech MX Master 3 | 99.99 |
-| Corsair 16GB DDR5 RAM | 129.99 |
-| WD Black 1TB SSD | 189.99 |
-| ... | |
+| ---- | ----- |
 
 ```sql
 -- Orders placed in Q1 2024
@@ -141,12 +133,12 @@ WHERE name LIKE '%Gaming%';
 
 **Result:**
 
-| name | price |
-|------|------:|
-| ASUS ROG Gaming Desktop | 1899.00 |
-| Razer BlackWidow Gaming Keyboard | 149.99 |
-| SteelSeries Gaming Headset | 79.99 |
-| ... | |
+| name                                   | price   |
+| -------------------------------------- | ------: |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+| ASUS TUF Gaming RTX 5080 화이트           | 3812000 |
+| MSI Radeon RX 7900 XTX GAMING X 화이트    | 1478100 |
+| ...                                    | ...     |
 
 ```sql
 -- Customers whose email is on testmail.com
@@ -168,11 +160,11 @@ WHERE birth_date IS NULL;
 
 **Result:**
 
-| name | email |
-|------|-------|
-| Alex Chen | alex.chen@testmail.com |
-| Maria Santos | m.santos@testmail.com |
-| ... | |
+| name | email              |
+| ---- | ------------------ |
+| 김명자  | user7@testmail.kr  |
+| 김정식  | user13@testmail.kr |
+| ...  | ...                |
 
 ```sql
 -- Orders that have delivery instructions

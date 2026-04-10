@@ -31,12 +31,12 @@ ORDER BY price ASC;
 
 **Result:**
 
-| name | price |
-|------|------:|
-| Corsair 32GB DDR5 Kit | 419.99 |
-| Samsung 27" Monitor | 449.99 |
-| ASUS ROG Swift 27" Monitor | 799.00 |
-| ... | |
+| name                            | price  |
+| ------------------------------- | -----: |
+| 삼성 오디세이 OLED G8                 | 693300 |
+| 엡손 L15160                       | 742100 |
+| ASUS ROG Swift OLED PG27AQDM 실버 | 754300 |
+| ...                             | ...    |
 
 The inner query `(SELECT AVG(price) FROM products WHERE is_active = 1)` computes the average once, and the outer query compares each product's price against that number.
 
@@ -68,11 +68,11 @@ ORDER BY name;
 
 **Result:**
 
-| name | email | grade |
-|------|-------|-------|
-| Alex Chen | alex.chen@testmail.com | SILVER |
-| Diana Walsh | d.walsh@testmail.com | BRONZE |
-| ... | | |
+| name | email                | grade |
+| ---- | -------------------- | ----- |
+| 강명자  | user162@testmail.kr  | VIP   |
+| 강미숙  | user2129@testmail.kr | VIP   |
+| ...  | ...                  | ...   |
 
 ```sql
 -- Products that appear in at least one active cart right now
@@ -130,12 +130,12 @@ ORDER BY avg_order_value DESC;
 
 **Result:**
 
-| grade | avg_order_value |
-|-------|----------------:|
-| VIP | 892.34 |
-| GOLD | 614.22 |
-| SILVER | 421.87 |
-| BRONZE | 312.49 |
+| grade  | avg_order_value |
+| ------ | --------------: |
+| VIP    |      1297607.02 |
+| GOLD   |      1206233.73 |
+| SILVER |       873016.36 |
+| BRONZE |       702221.89 |
 
 === "SQLite"
     ```sql

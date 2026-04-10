@@ -23,12 +23,12 @@ ORDER BY price ASC;
 
 **결과:**
 
-| name | price |
-|------|------:|
-| USB-C Cable 2m | 9.99 |
-| Microfiber Cleaning Kit | 12.99 |
-| Screen Protector 15" | 14.99 |
-| ... | |
+| name                            | price |
+| ------------------------------- | ----: |
+| TP-Link TG-3468 블랙              | 13100 |
+| Microsoft Ergonomic Keyboard 실버 | 23000 |
+| TP-Link Archer TBE400E 화이트      | 23300 |
+| ...                             | ...   |
 
 ```sql
 -- 가격이 높은 상품부터 정렬
@@ -40,12 +40,12 @@ ORDER BY price DESC;
 
 **결과:**
 
-| name | price |
-|------|------:|
-| ASUS ProArt 32" 4K Monitor | 2199.00 |
-| Dell XPS 17 Laptop | 1999.00 |
-| ASUS ROG Gaming Desktop | 1899.00 |
-| ... | |
+| name                                                          | price   |
+| ------------------------------------------------------------- | ------: |
+| ASUS ROG Strix GT35                                           | 4314800 |
+| ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+| Razer Blade 18 블랙                                             | 4182100 |
+| ...                                                           | ...     |
 
 ## ORDER BY — 다중 칼럼
 
@@ -61,13 +61,12 @@ ORDER BY grade ASC, name ASC;
 
 **결과:**
 
-| name | grade | point_balance |
-|------|-------|--------------:|
-| 강민준 | BRONZE | 120 |
-| 김서연 | BRONZE | 450 |
-| 박지우 | BRONZE | 80 |
-| ... | | |
-| ... | SILVER | ... |
+| name | grade  | point_balance |
+| ---- | ------ | ------------: |
+| 강건우  | BRONZE |             0 |
+| 강경자  | BRONZE |        139947 |
+| 강광수  | BRONZE |             0 |
+| ...  | ...    | ...           |
 
 ```sql
 -- 최신 주문부터 정렬, 같은 시각이면 주문 금액 내림차순
@@ -78,12 +77,12 @@ ORDER BY ordered_at DESC, total_amount DESC;
 
 **결과:**
 
-| order_number | ordered_at | total_amount |
-|--------------|------------|-------------:|
-| ORD-20241231-09842 | 2024-12-31 23:58:01 | 2349.00 |
-| ORD-20241231-09841 | 2024-12-31 23:41:17 | 149.99 |
-| ORD-20241231-09840 | 2024-12-31 22:59:44 | 89.99 |
-| ... | | |
+| order_number       | ordered_at          | total_amount |
+| ------------------ | ------------------- | -----------: |
+| ORD-20250630-34900 | 2025-06-30 23:02:18 |      1483000 |
+| ORD-20250630-34905 | 2025-06-30 22:33:25 |       152600 |
+| ORD-20250630-34903 | 2025-06-30 20:51:27 |       401800 |
+| ...                | ...                 | ...          |
 
 ## LIMIT
 
@@ -100,13 +99,13 @@ LIMIT 5;
 
 **결과:**
 
-| name | price |
-|------|------:|
-| ASUS ProArt 32" 4K Monitor | 2199.00 |
-| Dell XPS 17 Laptop | 1999.00 |
-| ASUS ROG Gaming Desktop | 1899.00 |
-| MacBook Pro 16" M3 | 1799.00 |
-| Dell XPS 15 Laptop | 1299.99 |
+| name                                                          | price   |
+| ------------------------------------------------------------- | ------: |
+| ASUS ROG Strix GT35                                           | 4314800 |
+| ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+| Razer Blade 18 블랙                                             | 4182100 |
+| Razer Blade 16 실버                                             | 4123800 |
+| MacBook Air 15 M3 실버                                          | 3774700 |
 
 ## OFFSET — 페이지네이션(Pagination)
 
@@ -164,12 +163,10 @@ LIMIT 5;
 **결과:**
 
 | name | birth_date |
-|------|------------|
-| 최준혁 | (NULL) |
-| 강소연 | (NULL) |
-| ... | (NULL) |
-| 김영철 | 1955-03-12 |
-| ... | |
+| ---- | ---------- |
+| 김명자  | (NULL)     |
+| 김정식  | (NULL)     |
+| ...  | ...        |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.

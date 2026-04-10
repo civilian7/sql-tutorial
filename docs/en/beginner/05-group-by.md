@@ -22,12 +22,12 @@ GROUP BY grade;
 
 **Result:**
 
-| grade | customer_count |
-|-------|---------------:|
-| BRONZE | 2614 |
-| SILVER | 1569 |
-| GOLD | 785 |
-| VIP | 262 |
+| grade  | customer_count |
+| ------ | -------------: |
+| BRONZE |           3962 |
+| GOLD   |            484 |
+| SILVER |            469 |
+| VIP    |            315 |
 
 The database collects all rows that share the same `grade` value into a bucket, then counts the rows in each bucket.
 
@@ -44,13 +44,13 @@ ORDER BY total_revenue DESC;
 
 **Result:**
 
-| status | order_count | total_revenue |
-|--------|------------:|--------------:|
-| confirmed | 8423 | 7291847.20 |
-| delivered | 6812 | 5904329.10 |
-| shipped | 4103 | 3287650.88 |
-| cancelled | 3891 | 0.00 |
-| ... | | |
+| status           | order_count | total_revenue |
+| ---------------- | ----------: | ------------: |
+| confirmed        |       32053 |   32304050388 |
+| cancelled        |        1754 |    1749179196 |
+| return_requested |         477 |     721313512 |
+| returned         |         459 |     634631268 |
+| ...              | ...         | ...           |
 
 ## GROUP BY — Multiple Columns
 
@@ -70,16 +70,16 @@ ORDER BY grade, gender;
 
 **Result:**
 
-| grade | gender | cnt |
-|-------|--------|----:|
-| BRONZE | F | 922 |
-| BRONZE | M | 1580 |
-| GOLD | F | 271 |
-| GOLD | M | 494 |
-| SILVER | F | 543 |
-| SILVER | M | 990 |
-| VIP | F | 91 |
-| VIP | M | 163 |
+| grade  | gender | cnt  |
+| ------ | ------ | ---: |
+| BRONZE | F      | 1332 |
+| BRONZE | M      | 2194 |
+| GOLD   | F      |  136 |
+| GOLD   | M      |  316 |
+| SILVER | F      |  126 |
+| SILVER | M      |  306 |
+| VIP    | F      |   76 |
+| VIP    | M      |  221 |
 
 ## Monthly Order Counts
 
@@ -173,11 +173,11 @@ ORDER BY avg_price DESC;
 **Result:**
 
 | category_id | product_count | avg_price |
-|------------:|--------------:|----------:|
-| 3 | 22 | 987.45 |
-| 5 | 18 | 412.30 |
-| 2 | 15 | 248.90 |
-| ... | | |
+| ----------: | ------------: | --------: |
+|          12 |            10 |   1184410 |
+|          18 |            10 |    508150 |
+|          30 |            11 | 249681.82 |
+| ...         | ...           | ...       |
 
 ## WHERE vs. HAVING
 

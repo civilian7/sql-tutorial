@@ -60,11 +60,11 @@ LIMIT 10;
 
 **Result:**
 
-| id | name | email | created_at |
-|---:|------|-------|------------|
-| 5228 | Tyler Brooks | t.brooks@testmail.com | 2024-12-28 |
-| 5221 | Grace Liu | g.liu@testmail.com | 2024-12-19 |
-| ... | | | |
+| id   | name | email                | created_at          |
+| ---: | ---- | -------------------- | ------------------- |
+| 4933 | 윤예준  | user4933@testmail.kr | 2025-12-30 20:40:58 |
+| 5222 | 유동현  | user5222@testmail.kr | 2025-12-30 10:18:14 |
+| ...  | ...  | ...                  | ...                 |
 
 ```sql
 -- Products in someone's wishlist that have NEVER been purchased
@@ -81,11 +81,11 @@ ORDER BY p.price DESC;
 
 **Result:**
 
-| id | name | price |
-|---:|------|------:|
-| 214 | Limited Edition Gaming Chair | 899.00 |
-| 187 | 8K HDMI Cable 3m | 79.99 |
-| ... | | |
+| id  | name                   | price  |
+| --: | ---------------------- | -----: |
+| 260 | 삼성 오디세이 OLED G8        | 693300 |
+| 277 | ASRock X870E Taichi 실버 | 583500 |
+| ... | ...                    | ...    |
 
 ## Correlated Subqueries for Conditional Logic
 

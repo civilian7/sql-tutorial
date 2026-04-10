@@ -95,13 +95,13 @@ LIMIT 6;
 
 **Result:**
 
-| item_id | order_number | product_name | category | quantity | unit_price |
-|--------:|--------------|--------------|----------|---------:|-----------:|
-| 74513 | ORD-20241231-09842 | Dell XPS 15 Laptop | Laptops | 1 | 1299.99 |
-| 74512 | ORD-20241231-09842 | Logitech MX Master 3 | Mice | 2 | 99.99 |
-| 74511 | ORD-20241231-09841 | Samsung 27" Monitor | Monitors | 1 | 149.99 |
-| 74510 | ORD-20241230-09840 | USB-C Hub 7-in-1 | Accessories | 1 | 89.99 |
-| ... | | | | | |
+| item_id | order_number       | product_name                                     | category | quantity | unit_price |
+| ------: | ------------------ | ------------------------------------------------ | -------- | -------: | ---------: |
+|   84249 | ORD-20250630-34900 | AMD Ryzen 9 9900X                                | AMD      |        1 |     244800 |
+|   84250 | ORD-20250630-34900 | 기가바이트 X870 AORUS ELITE AX 실버                     | AMD 소켓   |        1 |     429700 |
+|   84251 | ORD-20250630-34900 | TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz 실버 | DDR5     |        1 |     178800 |
+|   84252 | ORD-20250630-34900 | SK하이닉스 Platinum P41 1TB                          | SSD      |        1 |     217400 |
+| ...     | ...                | ...                                              | ...      | ...      | ...        |
 
 ## Aggregating After Joining
 
@@ -127,11 +127,11 @@ LIMIT 8;
 **Result:**
 
 | category | order_count | units_sold | gross_revenue |
-|----------|------------:|-----------:|--------------:|
-| Laptops | 6241 | 6312 | 7849201.88 |
-| Desktops | 2841 | 2958 | 4293847.00 |
-| Monitors | 5103 | 5587 | 2341920.45 |
-| ... | | | |
+| -------- | ----------: | ---------: | ------------: |
+| 게이밍 노트북  |        1526 |       1578 |    5079102000 |
+| 게이밍 모니터  |        1986 |       2129 |    2774777100 |
+| AMD      |        2976 |       3443 |    2588771300 |
+| ...      | ...         | ...        | ...           |
 
 ## Filtering Across Joined Tables
 

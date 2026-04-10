@@ -46,14 +46,14 @@ LIMIT 8;
 
 **Result:**
 
-| product_name | price | rating | reviewed_at |
-|--------------|------:|--------|-------------|
-| ASUS ProArt 32" 4K Monitor | 2199.00 | 5 | 2023-08-14 |
-| ASUS ProArt 32" 4K Monitor | 2199.00 | 4 | 2024-01-22 |
-| ASUS ROG Gaming Desktop | 1899.00 | 5 | 2022-11-03 |
-| ASUS TUF Gaming Laptop | 1099.00 | (NULL) | (NULL) |
-| Belkin USB-C Hub | 49.99 | (NULL) | (NULL) |
-| ... | | | |
+| product_name      | price  | rating | reviewed_at         |
+| ----------------- | -----: | -----: | ------------------- |
+| AMD Ryzen 9 9900X | 244800 |      1 | 2018-05-12 09:22:49 |
+| AMD Ryzen 9 9900X | 244800 |      1 | 2018-08-24 10:40:58 |
+| AMD Ryzen 9 9900X | 244800 |      1 | 2018-10-12 17:15:03 |
+| AMD Ryzen 9 9900X | 244800 |      1 | 2019-10-26 12:33:53 |
+| AMD Ryzen 9 9900X | 244800 |      1 | 2021-03-29 21:06:08 |
+| ...               | ...    | ...    | ...                 |
 
 The `ASUS TUF Gaming Laptop` and `Belkin USB-C Hub` have no reviews, so their `rating` and `reviewed_at` are `NULL`.
 
@@ -77,12 +77,12 @@ ORDER BY p.name;
 
 **Result:**
 
-| id | name | price |
-|---:|------|------:|
-| 47 | ASUS TUF Gaming Laptop | 1099.00 |
-| 83 | Belkin USB-C Hub | 49.99 |
-| 116 | Corsair K60 RGB Keyboard | 89.99 |
-| ... | | |
+| id  | name                                                          | price   |
+| --: | ------------------------------------------------------------- | ------: |
+| 277 | ASRock X870E Taichi 실버                                        |  583500 |
+| 268 | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+| 276 | ASUS ROG MAXIMUS Z890 HERO 블랙                                 | 1048400 |
+| ... | ...                                                           | ...     |
 
 ```sql
 -- Customers who have NEVER placed an order
@@ -100,11 +100,11 @@ LIMIT 10;
 
 **Result:**
 
-| id | name | email | created_at |
-|---:|------|-------|------------|
-| 5228 | Tyler Brooks | t.brooks@testmail.com | 2024-12-28 |
-| 5221 | Grace Liu | g.liu@testmail.com | 2024-12-19 |
-| ... | | | |
+| id   | name | email                | created_at          |
+| ---: | ---- | -------------------- | ------------------- |
+| 4933 | 윤예준  | user4933@testmail.kr | 2025-12-30 20:40:58 |
+| 5222 | 유동현  | user5222@testmail.kr | 2025-12-30 10:18:14 |
+| ...  | ...  | ...                  | ...                 |
 
 > These are likely very new customers who have browsed but not yet purchased.
 
@@ -129,12 +129,12 @@ LIMIT 10;
 
 **Result:**
 
-| product_name | price | review_count | avg_rating |
-|--------------|------:|-------------:|-----------:|
-| Dell XPS 15 Laptop | 1299.99 | 87 | 4.21 |
-| Logitech MX Master 3 | 99.99 | 74 | 4.56 |
-| Samsung 27" Monitor | 449.99 | 68 | 4.03 |
-| ... | | | |
+| product_name                    | price  | review_count | avg_rating |
+| ------------------------------- | -----: | -----------: | ---------: |
+| SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |          4 |
+| SteelSeries Prime Wireless 블랙   |  75900 |           93 |       3.82 |
+| JBL Flip 6 블랙                   | 195900 |           92 |       3.93 |
+| ...                             | ...    | ...          | ...        |
 
 ```sql
 -- Customers with order statistics (including those with 0 orders)

@@ -19,12 +19,10 @@ SELECT * FROM products;
 
 **Result:**
 
-| id | sku | name | category_id | supplier_id | price | stock_qty | is_active | ... |
-|---:|-----|------|------------:|------------:|------:|----------:|----------:|-----|
-| 1 | SKU-0001 | Dell XPS 15 Laptop | 3 | 12 | 1299.99 | 42 | 1 | ... |
-| 2 | SKU-0002 | Logitech MX Master 3 | 8 | 7 | 99.99 | 156 | 1 | ... |
-| 3 | SKU-0003 | Samsung 27" Monitor | 5 | 3 | 449.99 | 38 | 1 | ... |
-| ... | | | | | | | | |
+| id | category_id | supplier_id | successor_id | name              | sku              | brand | model_number | description                             | specs                                                                                                                 | price   | cost_price | stock_qty | weight_grams | is_active | discontinued_at | created_at          | updated_at          |
+| -: | ----------: | ----------: | -----------: | ----------------- | ---------------- | ----- | ------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------: | ---------: | --------: | -----------: | --------: | --------------- | ------------------- | ------------------- |
+|  1 |           7 |          20 |       (NULL) | Razer Blade 18 블랙 | LA-GAM-RAZ-00001 | Razer | RAZ-00001    | Razer Razer Blade 18 블랙 - 고성능, 최신 기술 탑재 | {"screen_size": "14 inch", "cpu": "Apple M3", "ram": "8GB", "storage": "256GB", "weight_kg": 1.7, "battery_hours": 6} | 2987500 |    3086700 |       107 |         2556 |         1 | (NULL)          | 2016-11-20 02:59:21 | 2016-11-20 02:59:21 |
+| ... | ...         | ...         | ...          | ...               | ...              | ...   | ...          | ...                                     | ...                                                                                                                   | ...     | ...        | ...       | ...          | ...       | ...             | ...                 | ...                 |
 
 > **Tip:** `SELECT *` pulls all columns, which can be slow on large tables. In production, list only the columns you need.
 
@@ -39,12 +37,12 @@ FROM products;
 
 **Result:**
 
-| name | price | stock_qty |
-|------|------:|----------:|
-| Dell XPS 15 Laptop | 1299.99 | 42 |
-| Logitech MX Master 3 | 99.99 | 156 |
-| Samsung 27" Monitor | 449.99 | 38 |
-| ... | | |
+| name                                   | price   | stock_qty |
+| -------------------------------------- | ------: | --------: |
+| Razer Blade 18 블랙                      | 2987500 |       107 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |       499 |
+| 삼성 DDR4 32GB PC4-25600                 |   49100 |       359 |
+| ...                                    | ...     | ...       |
 
 ## Column Aliases (AS)
 
@@ -60,12 +58,12 @@ FROM products;
 
 **Result:**
 
-| product_name | unit_price | in_stock |
-|--------------|-----------:|---------:|
-| Dell XPS 15 Laptop | 1299.99 | 42 |
-| Logitech MX Master 3 | 99.99 | 156 |
-| Samsung 27" Monitor | 449.99 | 38 |
-| ... | | |
+| product_name                           | unit_price | in_stock |
+| -------------------------------------- | ---------: | -------: |
+| Razer Blade 18 블랙                      |    2987500 |      107 |
+| MSI GeForce RTX 4070 Ti Super GAMING X |    1744000 |      499 |
+| 삼성 DDR4 32GB PC4-25600                 |      49100 |      359 |
+| ...                                    | ...        | ...      |
 
 You can also alias expressions:
 
@@ -78,11 +76,11 @@ FROM products;
 
 **Result:**
 
-| name | price_with_tax |
-|------|---------------:|
-| Dell XPS 15 Laptop | 1429.989 |
-| Logitech MX Master 3 | 109.989 |
-| ... | |
+| name                                   | price_with_tax |
+| -------------------------------------- | -------------: |
+| Razer Blade 18 블랙                      |        3286250 |
+| MSI GeForce RTX 4070 Ti Super GAMING X |        1918400 |
+| ...                                    | ...            |
 
 ## DISTINCT
 
@@ -96,12 +94,12 @@ FROM customers;
 
 **Result:**
 
-| grade |
-|-------|
+| grade  |
+| ------ |
 | BRONZE |
+| VIP    |
 | SILVER |
-| GOLD |
-| VIP |
+| GOLD   |
 
 ```sql
 -- Unique gender values (including NULL)
@@ -112,10 +110,10 @@ FROM customers;
 **Result:**
 
 | gender |
-|--------|
-| M |
-| F |
+| ------ |
+| M      |
 | (NULL) |
+| F      |
 
 ## Combining Techniques
 
@@ -129,9 +127,9 @@ ORDER BY is_active;
 **Result:**
 
 | status |
-|--------|
-| 0 |
-| 1 |
+| -----: |
+|      0 |
+|      1 |
 
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.

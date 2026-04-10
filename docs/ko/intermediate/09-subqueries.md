@@ -31,12 +31,12 @@ ORDER BY price ASC;
 
 **결과:**
 
-| name | price |
-|------|------:|
-| Corsair 32GB DDR5 Kit | 419.99 |
-| Samsung 27" Monitor | 449.99 |
-| ASUS ROG Swift 27" Monitor | 799.00 |
-| ... | |
+| name                            | price  |
+| ------------------------------- | -----: |
+| 삼성 오디세이 OLED G8                 | 693300 |
+| 엡손 L15160                       | 742100 |
+| ASUS ROG Swift OLED PG27AQDM 실버 | 754300 |
+| ...                             | ...    |
 
 내부 쿼리 `(SELECT AVG(price) FROM products WHERE is_active = 1)`가 평균을 한 번 계산하면, 외부 쿼리가 각 상품 가격을 그 값과 비교합니다.
 
@@ -68,11 +68,11 @@ ORDER BY name;
 
 **결과:**
 
-| name | email | grade |
-|------|-------|-------|
-| 강지훈 | k.jihun@testmail.kr | SILVER |
-| 윤서연 | y.seoyeon@testmail.kr | BRONZE |
-| ... | | |
+| name | email                | grade |
+| ---- | -------------------- | ----- |
+| 강명자  | user162@testmail.kr  | VIP   |
+| 강미숙  | user2129@testmail.kr | VIP   |
+| ...  | ...                  | ...   |
 
 ```sql
 -- 현재 장바구니에 담긴 활성 상품
@@ -130,12 +130,12 @@ ORDER BY avg_order_value DESC;
 
 **결과:**
 
-| grade | avg_order_value |
-|-------|----------------:|
-| VIP | 892.34 |
-| GOLD | 614.22 |
-| SILVER | 421.87 |
-| BRONZE | 312.49 |
+| grade  | avg_order_value |
+| ------ | --------------: |
+| VIP    |      1297607.02 |
+| GOLD   |      1206233.73 |
+| SILVER |       873016.36 |
+| BRONZE |       702221.89 |
 
 === "SQLite"
     ```sql

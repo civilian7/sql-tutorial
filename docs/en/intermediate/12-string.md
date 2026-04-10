@@ -21,11 +21,12 @@ LIMIT 5;
 
 **Result:**
 
-| order_number | ordered_at | order_date | year_month |
-|--------------|------------|------------|------------|
-| ORD-20150314-00001 | 2015-03-14 08:23:11 | 2015-03-14 | 2015-03 |
-| ORD-20150314-00002 | 2015-03-14 11:47:33 | 2015-03-14 | 2015-03 |
-| ORD-20150315-00003 | 2015-03-15 09:12:05 | 2015-03-15 | 2015-03 |
+| order_number       | ordered_at          | order_date | year_month |
+| ------------------ | ------------------- | ---------- | ---------- |
+| ORD-20160101-00001 | 2016-01-17 03:39:08 | 2016-01-17 | 2016-01    |
+| ORD-20160102-00002 | 2016-01-11 05:08:34 | 2016-01-11 | 2016-01    |
+| ORD-20160102-00003 | 2016-01-09 15:08:34 | 2016-01-09 | 2016-01    |
+| ...                | ...                 | ...        | ...        |
 
 ```sql
 -- Parse the year from an order number: ORD-20240315-00001
@@ -52,11 +53,11 @@ LIMIT 5;
 
 **Result:**
 
-| name | name_length |
-|------|------------:|
-| Razer BlackWidow V3 Pro Wireless TKL Gaming Keyboard | 52 |
-| ASUS ProArt PA329CRV 32" 4K HDR Professional Monitor | 51 |
-| ... | |
+| name                                                             | name_length |
+| ---------------------------------------------------------------- | ----------: |
+| HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 |          64 |
+| ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장    |          61 |
+| ...                                                              | ...         |
 
 ## UPPER and LOWER
 
@@ -72,10 +73,11 @@ LIMIT 5;
 
 **Result:**
 
-| name | email_lower | grade_display |
-|------|-------------|---------------|
-| Jennifer Martinez | jennifer.m@testmail.com | VIP |
-| Alex Chen | alex.chen@testmail.com | SILVER |
+| name | email_lower       | grade_display |
+| ---- | ----------------- | ------------- |
+| 정준호  | user1@testmail.kr | BRONZE        |
+| 김경수  | user2@testmail.kr | VIP           |
+| ...  | ...               | ...           |
 
 ## REPLACE
 
@@ -103,11 +105,11 @@ FROM orders;
 
 **Result:**
 
-| status | status_readable |
-|--------|-----------------|
-| pending | pending |
-| return_requested | return requested |
-| ... | |
+| status    | status_readable |
+| --------- | --------------- |
+| cancelled | cancelled       |
+| confirmed | confirmed       |
+| ...       | ...             |
 
 ## String Concatenation
 

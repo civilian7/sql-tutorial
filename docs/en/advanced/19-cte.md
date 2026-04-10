@@ -177,13 +177,13 @@ ORDER BY grade, rnk;
 
 **Result:**
 
-| grade | name | total_spent | rnk |
-|-------|------|------------:|----:|
-| BRONZE | Marcus Williams | 3241.50 | 1 |
-| BRONZE | Tina Foster | 3089.90 | 2 |
-| BRONZE | Derek Chang | 2944.20 | 3 |
-| GOLD | Jennifer Martinez | 12891.00 | 1 |
-| ... | | | |
+| grade  | name | total_spent | rnk |
+| ------ | ---- | ----------: | --: |
+| BRONZE | 이정남  |   107052173 |   1 |
+| BRONZE | 배종수  |    93476435 |   2 |
+| BRONZE | 김선영  |    56829558 |   3 |
+| GOLD   | 이옥순  |   160926628 |   1 |
+| ...    | ...  | ...         | ... |
 
 ## Recursive CTE — Category Tree
 

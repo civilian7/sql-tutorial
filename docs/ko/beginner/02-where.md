@@ -27,11 +27,11 @@ WHERE price > 500;
 
 **결과:**
 
-| name | price |
-|------|------:|
-| Dell XPS 15 Laptop | 1299.99 |
-| ASUS ROG Gaming Desktop | 1899.00 |
-| ... | |
+| name                                   | price   |
+| -------------------------------------- | ------: |
+| Razer Blade 18 블랙                      | 2987500 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+| ...                                    | ...     |
 
 ```sql
 -- 판매 중인 상품만 조회
@@ -56,11 +56,7 @@ WHERE is_active = 1
 **결과:**
 
 | name | price |
-|------|------:|
-| Samsung 27" Monitor | 449.99 |
-| Corsair 16GB DDR5 RAM | 129.99 |
-| WD Black 1TB SSD | 189.99 |
-| ... | |
+| ---- | ----- |
 
 ```sql
 -- VIP 또는 GOLD 등급 고객
@@ -87,11 +83,11 @@ WHERE grade IN ('GOLD', 'VIP');
 **결과:**
 
 | name | grade |
-|------|-------|
-| 김민수 | VIP |
-| 이영희 | GOLD |
-| 박지훈 | VIP |
-| ... | |
+| ---- | ----- |
+| 김경수  | VIP   |
+| 김민재  | VIP   |
+| 진정자  | VIP   |
+| ...  | ...   |
 
 ```sql
 -- 처리가 완료된 상태의 주문 조회
@@ -114,11 +110,7 @@ WHERE price BETWEEN 50 AND 200;
 **결과:**
 
 | name | price |
-|------|------:|
-| Logitech MX Master 3 | 99.99 |
-| Corsair 16GB DDR5 RAM | 129.99 |
-| WD Black 1TB SSD | 189.99 |
-| ... | |
+| ---- | ----- |
 
 ```sql
 -- 2024년 1분기에 접수된 주문
@@ -140,12 +132,12 @@ WHERE name LIKE '%Gaming%';
 
 **결과:**
 
-| name | price |
-|------|------:|
-| ASUS ROG Gaming Desktop | 1899.00 |
-| Razer BlackWidow Gaming Keyboard | 149.99 |
-| SteelSeries Gaming Headset | 79.99 |
-| ... | |
+| name                                   | price   |
+| -------------------------------------- | ------: |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+| ASUS TUF Gaming RTX 5080 화이트           | 3812000 |
+| MSI Radeon RX 7900 XTX GAMING X 화이트    | 1478100 |
+| ...                                    | ...     |
 
 ```sql
 -- testmail.kr 도메인을 사용하는 고객
@@ -167,11 +159,11 @@ WHERE birth_date IS NULL;
 
 **결과:**
 
-| name | email |
-|------|-------|
-| 최준혁 | choi.junhyuk@testmail.kr |
-| 강소연 | kang.soyeon@testmail.kr |
-| ... | |
+| name | email              |
+| ---- | ------------------ |
+| 김명자  | user7@testmail.kr  |
+| 김정식  | user13@testmail.kr |
+| ...  | ...                |
 
 ```sql
 -- 배송 메모가 있는 주문

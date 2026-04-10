@@ -22,8 +22,8 @@ FROM customers;
 **Result:**
 
 | total_customers |
-|-----------------|
-| 5230 |
+| --------------: |
+|            5230 |
 
 ```sql
 -- Customers who provided their birth date
@@ -37,8 +37,8 @@ FROM customers;
 **Result:**
 
 | total_customers | with_birth_date | missing_birth_date |
-|----------------:|---------------:|-------------------:|
-| 5230 | 4445 | 785 |
+| --------------: | --------------: | -----------------: |
+|            5230 |            4450 |                780 |
 
 ## SUM
 
@@ -54,8 +54,8 @@ WHERE status IN ('delivered', 'confirmed');
 **Result:**
 
 | total_revenue |
-|---------------|
-| 18473920.55 |
+| ------------: |
+|   32371516748 |
 
 ```sql
 -- Total points currently held by all customers
@@ -67,8 +67,8 @@ WHERE is_active = 1;
 **Result:**
 
 | total_points_outstanding |
-|--------------------------|
-| 2847340 |
+| -----------------------: |
+|                315697474 |
 
 ## AVG
 
@@ -86,8 +86,8 @@ WHERE is_active = 1;
 **Result:**
 
 | avg_price | avg_stock |
-|----------:|----------:|
-| 387.42 | 68.3 |
+| --------: | --------: |
+| 665404.59 |    272.41 |
 
 ```sql
 -- Average order value
@@ -99,8 +99,8 @@ WHERE status NOT IN ('cancelled', 'returned');
 **Result:**
 
 | avg_order_value |
-|-----------------|
-| 532.17 |
+| --------------: |
+|      1014478.57 |
 
 ## MIN and MAX
 
@@ -118,8 +118,8 @@ WHERE is_active = 1;
 **Result:**
 
 | cheapest | most_expensive |
-|---------:|---------------:|
-| 9.99 | 2199.00 |
+| -------: | -------------: |
+|    13100 |        4314800 |
 
 ```sql
 -- Earliest and latest order dates
@@ -131,9 +131,9 @@ FROM orders;
 
 **Result:**
 
-| first_order | latest_order |
-|-------------|--------------|
-| 2015-03-14 08:23:11 | 2024-12-31 23:58:01 |
+| first_order         | latest_order        |
+| ------------------- | ------------------- |
+| 2016-01-09 10:19:26 | 2025-06-30 23:02:18 |
 
 ## Combining Multiple Aggregates
 
@@ -153,8 +153,8 @@ FROM reviews;
 **Result:**
 
 | total_reviews | avg_rating | lowest_rating | highest_rating | five_star_count |
-|--------------:|-----------:|--------------:|---------------:|----------------:|
-| 7947 | 3.87 | 1 | 5 | 2341 |
+| ------------: | ---------: | ------------: | -------------: | --------------: |
+|          7945 |       3.91 |             1 |              5 |            3221 |
 
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.

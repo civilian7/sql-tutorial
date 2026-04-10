@@ -23,12 +23,12 @@ ORDER BY price ASC;
 
 **Result:**
 
-| name | price |
-|------|------:|
-| USB-C Cable 2m | 9.99 |
-| Microfiber Cleaning Kit | 12.99 |
-| Screen Protector 15" | 14.99 |
-| ... | |
+| name                            | price |
+| ------------------------------- | ----: |
+| TP-Link TG-3468 블랙              | 13100 |
+| Microsoft Ergonomic Keyboard 실버 | 23000 |
+| TP-Link Archer TBE400E 화이트      | 23300 |
+| ...                             | ...   |
 
 ```sql
 -- Most expensive products first
@@ -40,12 +40,12 @@ ORDER BY price DESC;
 
 **Result:**
 
-| name | price |
-|------|------:|
-| ASUS ProArt 32" 4K Monitor | 2199.00 |
-| Dell XPS 17 Laptop | 1999.00 |
-| ASUS ROG Gaming Desktop | 1899.00 |
-| ... | |
+| name                                                          | price   |
+| ------------------------------------------------------------- | ------: |
+| ASUS ROG Strix GT35                                           | 4314800 |
+| ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+| Razer Blade 18 블랙                                             | 4182100 |
+| ...                                                           | ...     |
 
 ## ORDER BY — Multiple Columns
 
@@ -61,13 +61,12 @@ ORDER BY grade ASC, name ASC;
 
 **Result:**
 
-| name | grade | point_balance |
-|------|-------|--------------:|
-| Aaron Brooks | BRONZE | 120 |
-| Alice Ward | BRONZE | 450 |
-| Amanda Lee | BRONZE | 80 |
-| ... | | |
-| ... | SILVER | ... |
+| name | grade  | point_balance |
+| ---- | ------ | ------------: |
+| 강건우  | BRONZE |             0 |
+| 강경자  | BRONZE |        139947 |
+| 강광수  | BRONZE |             0 |
+| ...  | ...    | ...           |
 
 ```sql
 -- Most recent orders first, then by total amount descending for ties
@@ -78,12 +77,12 @@ ORDER BY ordered_at DESC, total_amount DESC;
 
 **Result:**
 
-| order_number | ordered_at | total_amount |
-|--------------|------------|-------------:|
-| ORD-20241231-09842 | 2024-12-31 23:58:01 | 2349.00 |
-| ORD-20241231-09841 | 2024-12-31 23:41:17 | 149.99 |
-| ORD-20241231-09840 | 2024-12-31 22:59:44 | 89.99 |
-| ... | | |
+| order_number       | ordered_at          | total_amount |
+| ------------------ | ------------------- | -----------: |
+| ORD-20250630-34900 | 2025-06-30 23:02:18 |      1483000 |
+| ORD-20250630-34905 | 2025-06-30 22:33:25 |       152600 |
+| ORD-20250630-34903 | 2025-06-30 20:51:27 |       401800 |
+| ...                | ...                 | ...          |
 
 ## LIMIT
 
@@ -100,13 +99,13 @@ LIMIT 5;
 
 **Result:**
 
-| name | price |
-|------|------:|
-| ASUS ProArt 32" 4K Monitor | 2199.00 |
-| Dell XPS 17 Laptop | 1999.00 |
-| ASUS ROG Gaming Desktop | 1899.00 |
-| MacBook Pro 16" M3 | 1799.00 |
-| Dell XPS 15 Laptop | 1299.99 |
+| name                                                          | price   |
+| ------------------------------------------------------------- | ------: |
+| ASUS ROG Strix GT35                                           | 4314800 |
+| ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+| Razer Blade 18 블랙                                             | 4182100 |
+| Razer Blade 16 실버                                             | 4123800 |
+| MacBook Air 15 M3 실버                                          | 3774700 |
 
 ## OFFSET — Pagination
 
@@ -164,12 +163,10 @@ LIMIT 5;
 **Result:**
 
 | name | birth_date |
-|------|------------|
-| Alex Chen | (NULL) |
-| Maria Santos | (NULL) |
-| ... | (NULL) |
-| Robert Kim | 1955-03-12 |
-| ... | |
+| ---- | ---------- |
+| 김명자  | (NULL)     |
+| 김정식  | (NULL)     |
+| ...  | ...        |
 
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
