@@ -625,18 +625,41 @@ GROUP BY cat.name;
 ## 연습 문제
 
 ### 연습 1
-이벤트 참가자를 저장하는 `event_participants` 테이블을 만드세요. 칼럼: `id`(정수, 기본 키), `event_name`(문자열, NOT NULL), `participant_name`(문자열, NOT NULL), `email`(문자열, UNIQUE), `registered_at`(문자열, NOT NULL).
+`temp_employees` 테이블을 만드세요. 칼럼: `id`(자동 증가 기본 키), `name`(필수, 문자열), `email`(필수, UNIQUE, 문자열), `department`(문자열, 기본값 `'General'`), `hire_date`(문자열/날짜).
 
 ??? success "정답"
-    ```sql
-    CREATE TABLE event_participants (
-        id               INTEGER PRIMARY KEY,
-        event_name       TEXT NOT NULL,
-        participant_name TEXT NOT NULL,
-        email            TEXT UNIQUE,
-        registered_at    TEXT NOT NULL
-    );
-    ```
+    === "SQLite"
+        ```sql
+        CREATE TABLE temp_employees (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            name       TEXT NOT NULL,
+            email      TEXT NOT NULL UNIQUE,
+            department TEXT DEFAULT 'General',
+            hire_date  TEXT
+        );
+        ```
+
+    === "MySQL"
+        ```sql
+        CREATE TABLE temp_employees (
+            id         INT AUTO_INCREMENT PRIMARY KEY,
+            name       VARCHAR(200) NOT NULL,
+            email      VARCHAR(200) NOT NULL UNIQUE,
+            department VARCHAR(100) DEFAULT 'General',
+            hire_date  DATE
+        );
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE TABLE temp_employees (
+            id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+            name       VARCHAR(200) NOT NULL,
+            email      VARCHAR(200) NOT NULL UNIQUE,
+            department VARCHAR(100) DEFAULT 'General',
+            hire_date  DATE
+        );
+        ```
 
 ### 연습 2
 상품 가격 이력을 저장하는 `price_history` 테이블을 만드세요. 칼럼: `id`(정수, 자동 증가 기본 키), `product_id`(정수, NOT NULL), `old_price`, `new_price`(둘 다 실수, NOT NULL), `changed_at`(NOT NULL). `new_price`는 0 이상이어야 합니다(CHECK). `product_id`는 `products(id)`를 참조하는 외래 키입니다.
@@ -679,49 +702,83 @@ GROUP BY cat.name;
         ```
 
 ### 연습 3
-다음 `CREATE TABLE` 문에서 잘못된 부분을 찾고 올바르게 수정하세요:
+다음 테이블 정의에서 잘못된 부분을 찾고 수정하세요.
 
 ```sql
-CREATE TABLE temp_staff (
-    id    INTEGER,
-    name  TEXT,
-    email TEXT,
-    salary REAL CHECK (salary > 0)
+CREATE TABLE temp_inventory (
+    product_id INTEGER,
+    warehouse  TEXT,
+    quantity   INTEGER DEFAULT -1,
+    updated_at TEXT
 );
 ```
 
-힌트: 기본 키가 없고, 필수 칼럼에 NOT NULL이 빠져 있고, 이메일 중복이 가능합니다.
-
 ??? success "정답"
+    세 가지 문제: (1) 기본 키가 없음, (2) quantity 기본값이 -1로 비현실적, (3) product_id에 NOT NULL이 빠져 있음. 수정된 버전:
+
     ```sql
-    CREATE TABLE temp_staff (
-        id     INTEGER PRIMARY KEY,
-        name   TEXT    NOT NULL,
-        email  TEXT    NOT NULL UNIQUE,
-        salary REAL    NOT NULL CHECK (salary > 0)
+    CREATE TABLE temp_inventory (
+        id         INTEGER PRIMARY KEY,
+        product_id INTEGER NOT NULL,
+        warehouse  TEXT    NOT NULL,
+        quantity   INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+        updated_at TEXT,
+        FOREIGN KEY (product_id) REFERENCES products (id)
     );
     ```
-    - `id`에 `PRIMARY KEY` 추가 — 각 행을 고유하게 식별
-    - `name`에 `NOT NULL` 추가 — 이름은 필수
-    - `email`에 `NOT NULL UNIQUE` 추가 — 필수이고 중복 불가
-    - `salary`에 `NOT NULL` 추가 — 급여는 필수
 
 ### 연습 4
-`event_participants` 테이블에 `phone` 칼럼(문자열)과 `is_vip` 칼럼(정수, NOT NULL, 기본값 0)을 추가하세요.
+`temp_employees` 테이블에 `phone` 칼럼(문자열, 선택)을 추가한 뒤, `department` 칼럼의 이름을 `dept`로 변경하세요.
 
 ??? success "정답"
     ```sql
-    ALTER TABLE event_participants ADD COLUMN phone TEXT;
-    ALTER TABLE event_participants ADD COLUMN is_vip INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE temp_employees ADD COLUMN phone TEXT;
+
+    ALTER TABLE temp_employees RENAME COLUMN department TO dept;
     ```
 
 ### 연습 5
-`event_participants` 테이블의 `participant_name` 칼럼 이름을 `full_name`으로 변경하세요.
+CTAS(CREATE TABLE AS SELECT)를 사용하여 `order_totals_by_month` 테이블을 만드세요. 포함할 칼럼: 주문 연도, 주문 월, 주문 건수, 총 매출. 기존 `orders` 테이블을 사용합니다.
 
 ??? success "정답"
-    ```sql
-    ALTER TABLE event_participants RENAME COLUMN participant_name TO full_name;
-    ```
+    === "SQLite"
+        ```sql
+        CREATE TABLE order_totals_by_month AS
+        SELECT
+            strftime('%Y', order_date)    AS order_year,
+            strftime('%m', order_date)    AS order_month,
+            COUNT(*)                      AS order_count,
+            ROUND(SUM(total_amount), 2)   AS total_revenue
+        FROM orders
+        GROUP BY strftime('%Y', order_date),
+                 strftime('%m', order_date);
+        ```
+
+    === "MySQL"
+        ```sql
+        CREATE TABLE order_totals_by_month AS
+        SELECT
+            YEAR(order_date)              AS order_year,
+            MONTH(order_date)             AS order_month,
+            COUNT(*)                      AS order_count,
+            ROUND(SUM(total_amount), 2)   AS total_revenue
+        FROM orders
+        GROUP BY YEAR(order_date),
+                 MONTH(order_date);
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE TABLE order_totals_by_month AS
+        SELECT
+            EXTRACT(YEAR FROM order_date)::INTEGER  AS order_year,
+            EXTRACT(MONTH FROM order_date)::INTEGER AS order_month,
+            COUNT(*)::INTEGER                       AS order_count,
+            ROUND(SUM(total_amount), 2)             AS total_revenue
+        FROM orders
+        GROUP BY EXTRACT(YEAR FROM order_date),
+                 EXTRACT(MONTH FROM order_date);
+        ```
 
 ### 연습 6
 주문 아이템을 저장하는 테이블을 만드세요. `quantity`는 1 이상, `unit_price`는 0 이상이어야 합니다. `order_id`는 `orders(id)`를, `product_id`는 `products(id)`를 참조합니다. 주문이 삭제되면 주문 아이템도 함께 삭제되어야 하고(CASCADE), 상품이 삭제되면 `product_id`는 NULL로 변경되어야 합니다(SET NULL).
@@ -749,15 +806,41 @@ CREATE TABLE temp_staff (
     ```
 
 ### 연습 8
-`reviews` 테이블에서 `rating`이 4 이상인 리뷰만 모아 `top_reviews` 테이블을 만드세요. `id`, `product_id`, `customer_id`, `rating`, `content` 칼럼을 포함합니다.
+**복합 기본 키**를 사용하는 `temp_order_log` 테이블을 만드세요. (`order_id`, `log_seq`)가 복합 기본 키입니다. 칼럼: `order_id`(정수, 필수), `log_seq`(정수, 필수), `action`(문자열, 필수, `'created'`, `'shipped'`, `'delivered'`, `'cancelled'` 중 하나만 허용), `logged_at`(기본값: 현재 시각).
 
 ??? success "정답"
-    ```sql
-    CREATE TABLE top_reviews AS
-    SELECT id, product_id, customer_id, rating, content
-    FROM reviews
-    WHERE rating >= 4;
-    ```
+    === "SQLite"
+        ```sql
+        CREATE TABLE temp_order_log (
+            order_id  INTEGER NOT NULL,
+            log_seq   INTEGER NOT NULL,
+            action    TEXT    NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+            logged_at TEXT    DEFAULT (datetime('now')),
+            PRIMARY KEY (order_id, log_seq)
+        );
+        ```
+
+    === "MySQL"
+        ```sql
+        CREATE TABLE temp_order_log (
+            order_id  INT         NOT NULL,
+            log_seq   INT         NOT NULL,
+            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+            logged_at DATETIME    DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (order_id, log_seq)
+        );
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        CREATE TABLE temp_order_log (
+            order_id  INTEGER     NOT NULL,
+            log_seq   INTEGER     NOT NULL,
+            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+            logged_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (order_id, log_seq)
+        );
+        ```
 
 ### 연습 9
 GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 테이블을 CTAS로 만든 뒤, `ALTER TABLE`로 `note` 칼럼(문자열, 기본값 없음)을 추가하세요.
