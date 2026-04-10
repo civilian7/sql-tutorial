@@ -1,4 +1,4 @@
-name: Verify Tutorial
+name: Verify & Deploy
 
 on:
   push:
@@ -11,8 +11,18 @@ on:
       - 'generate.py'
       - 'verify_*.py'
       - 'requirements.txt'
+      - '.github/workflows/**'
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   verify:
@@ -39,16 +49,45 @@ jobs:
         run: python verify_sql.py
 
       - name: Verify content quality
-        run: python verify_quality.py || true  # warnings OK, errors fail
+        run: python verify_quality.py || true
 
       - name: Verify difficulty curve
         run: python verify_difficulty.py
 
       - name: Verify DML/DDL answers
-        run: python verify_dml.py || true  # script parsing limits OK
+        run: python verify_dml.py || true
 
       - name: Build docs (Korean)
         run: cd docs && mkdocs build -f mkdocs-ko.yml -q
 
       - name: Build docs (English)
         run: cd docs && mkdocs build -f mkdocs-en.yml -q
+
+      - name: Create index redirect
+        run: |
+          cat > output/docs/index.html << 'HEREDOC'
+          <!DOCTYPE html>
+          <html>
+          <head><meta http-equiv="refresh" content="0; url=ko/"></head>
+          <body><a href="ko/">한국어</a> | <a href="en/">English</a></body>
+          </html>
+          HEREDOC
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: output/docs
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
