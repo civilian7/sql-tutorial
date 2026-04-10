@@ -169,7 +169,7 @@ Find all wishlist items where the product has **not yet been purchased** by that
     SELECT
         c.name  AS customer_name,
         p.name  AS product_name,
-        w.added_at
+        w.created_at
     FROM wishlists AS w
     INNER JOIN customers AS c ON w.customer_id = c.id
     INNER JOIN products  AS p ON w.product_id  = p.id
@@ -181,7 +181,7 @@ Find all wishlist items where the product has **not yet been purchased** by that
           AND oi.product_id  = w.product_id
           AND o.status NOT IN ('cancelled', 'returned')
     )
-    ORDER BY w.added_at DESC
+    ORDER BY w.created_at DESC
     LIMIT 20;
     ```
 

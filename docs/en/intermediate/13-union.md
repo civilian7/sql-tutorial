@@ -155,6 +155,7 @@ LIMIT 10;
 ```sql
 -- Revenue summary: individual categories + a grand total row
 SELECT
+    0 AS sort_key,
     cat.name AS category,
     SUM(oi.quantity * oi.unit_price) AS revenue
 FROM order_items AS oi
@@ -168,6 +169,7 @@ GROUP BY cat.name
 UNION ALL
 
 SELECT
+    1 AS sort_key,
     'TOTAL' AS category,
     SUM(oi.quantity * oi.unit_price) AS revenue
 FROM order_items AS oi
@@ -175,20 +177,21 @@ INNER JOIN orders AS o ON oi.order_id = o.id
 WHERE o.status IN ('delivered', 'confirmed')
   AND o.ordered_at LIKE '2024%'
 
-ORDER BY
-    CASE WHEN category = 'TOTAL' THEN 1 ELSE 0 END,
-    revenue DESC;
+ORDER BY sort_key, revenue DESC;
 ```
+
+> **SQLite note:** You cannot use a `CASE` expression directly in `ORDER BY` with `UNION` / `UNION ALL`.
+> Instead, add a sort key column to each `SELECT` as shown above — it is the simplest workaround.
 
 **Result (abridged):**
 
-| category | revenue |
-|----------|--------:|
-| Laptops | 1849201.88 |
-| Desktops | 943847.00 |
-| Monitors | 541920.45 |
-| ... | |
-| TOTAL | 4218807.10 |
+| sort_key | category | revenue |
+|---------:|----------|--------:|
+| 0 | Laptops | 1849201.88 |
+| 0 | Desktops | 943847.00 |
+| 0 | Monitors | 541920.45 |
+| ... | | |
+| 1 | TOTAL | 4218807.10 |
 
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
@@ -306,6 +309,7 @@ Count transactions by payment method, then add a grand total row using `UNION AL
 ??? success "Answer"
     ```sql
     SELECT
+        0 AS sort_key,
         method,
         COUNT(*) AS tx_count
     FROM payments
@@ -315,14 +319,13 @@ Count transactions by payment method, then add a grand total row using `UNION AL
     UNION ALL
 
     SELECT
+        1 AS sort_key,
         'TOTAL' AS method,
         COUNT(*) AS tx_count
     FROM payments
     WHERE status = 'completed'
 
-    ORDER BY
-        CASE WHEN method = 'TOTAL' THEN 1 ELSE 0 END,
-        tx_count DESC;
+    ORDER BY sort_key, tx_count DESC;
     ```
 
 ### Exercise 7
@@ -331,6 +334,7 @@ Count active customers (`is_active = 1`) by grade, then add a grand total row (`
 ??? success "Answer"
     ```sql
     SELECT
+        0 AS sort_key,
         grade,
         COUNT(*) AS cnt
     FROM customers
@@ -340,14 +344,13 @@ Count active customers (`is_active = 1`) by grade, then add a grand total row (`
     UNION ALL
 
     SELECT
+        1 AS sort_key,
         'ALL' AS grade,
         COUNT(*) AS cnt
     FROM customers
     WHERE is_active = 1
 
-    ORDER BY
-        CASE WHEN grade = 'ALL' THEN 1 ELSE 0 END,
-        cnt DESC;
+    ORDER BY sort_key, cnt DESC;
     ```
 
 ### Exercise 8
@@ -387,6 +390,7 @@ Summarize order counts and average amounts by status, then add a grand total row
         ROUND(100.0 * order_count / SUM(order_count) OVER (), 1) AS pct
     FROM (
         SELECT
+            0 AS sort_key,
             status,
             COUNT(*)            AS order_count,
             ROUND(AVG(total_amount), 2) AS avg_amount
@@ -396,14 +400,13 @@ Summarize order counts and average amounts by status, then add a grand total row
         UNION ALL
 
         SELECT
+            1 AS sort_key,
             'TOTAL' AS status,
             COUNT(*)            AS order_count,
             ROUND(AVG(total_amount), 2) AS avg_amount
         FROM orders
     ) AS t
-    ORDER BY
-        CASE WHEN status = 'TOTAL' THEN 1 ELSE 0 END,
-        order_count DESC;
+    ORDER BY sort_key, order_count DESC;
     ```
 
 ---

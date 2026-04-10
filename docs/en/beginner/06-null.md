@@ -295,14 +295,14 @@ Find customers whose `phone` is NULL. Show their `name` and `email`, but replace
     ```
 
 ### Exercise 5
-From the `products` table, count the total products, how many are missing a `weight`, and what percentage that is (1 decimal place). Use aliases `total_products`, `missing_weight`, `pct_missing`.
+From the `products` table, count the total products, how many are missing a `weight_grams`, and what percentage that is (1 decimal place). Use aliases `total_products`, `missing_weight`, `pct_missing`.
 
 ??? success "Answer"
     ```sql
     SELECT
         COUNT(*)                                AS total_products,
-        COUNT(*) - COUNT(weight)                AS missing_weight,
-        ROUND(100.0 * (COUNT(*) - COUNT(weight)) / COUNT(*), 1) AS pct_missing
+        COUNT(*) - COUNT(weight_grams)                AS missing_weight,
+        ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
     FROM products;
     ```
 

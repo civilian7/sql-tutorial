@@ -232,13 +232,13 @@ LIMIT 5;
     ```
 
 ### 문제 6
-`products` 테이블에서 `name`, `price`, `cost`를 조회하고, 마진(`price - cost`)이 큰 순서대로 정렬하세요. 상위 10개만 반환하세요.
+`products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)이 큰 순서대로 정렬하세요. 상위 10개만 반환하세요.
 
 ??? success "정답"
     ```sql
-    SELECT name, price, cost
+    SELECT name, price, cost_price
     FROM products
-    ORDER BY price - cost DESC
+    ORDER BY price - cost_price DESC
     LIMIT 10;
     ```
 

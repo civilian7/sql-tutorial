@@ -232,13 +232,13 @@ List `name` and `price` from `products`, sorted by price ascending. When prices 
     ```
 
 ### Exercise 6
-Select `name`, `price`, and `cost` from `products`, sorted by margin (`price - cost`) in descending order. Return only the top 10 rows.
+Select `name`, `price`, and `cost_price` from `products`, sorted by margin (`price - cost_price`) in descending order. Return only the top 10 rows.
 
 ??? success "Answer"
     ```sql
-    SELECT name, price, cost
+    SELECT name, price, cost_price
     FROM products
-    ORDER BY price - cost DESC
+    ORDER BY price - cost_price DESC
     LIMIT 10;
     ```
 

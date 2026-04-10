@@ -232,16 +232,16 @@ Find all distinct combinations of `contact_name` and `company_name` from the `su
     ```
 
 ### Exercise 10
-From `products`, select `name`, `price`, and `cost`. Add a computed column `margin` (`price - cost`) and another `margin_pct` (`(price - cost) / price * 100`).
+From `products`, select `name`, `price`, and `cost_price`. Add a computed column `margin` (`price - cost_price`) and another `margin_pct` (`(price - cost_price) / price * 100`).
 
 ??? success "Answer"
     ```sql
     SELECT
         name,
         price,
-        cost,
-        price - cost                    AS margin,
-        (price - cost) / price * 100    AS margin_pct
+        cost_price,
+        price - cost_price                    AS margin,
+        (price - cost_price) / price * 100    AS margin_pct
     FROM products;
     ```
 

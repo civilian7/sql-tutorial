@@ -295,14 +295,14 @@ SELECT
     ```
 
 ### 문제 5
-`products` 테이블에서 `weight` 칼럼이 NULL인 상품 수와 전체 상품 수를 구하고, NULL 비율(소수점 1자리)을 계산하세요. 별칭은 `total_products`, `missing_weight`, `pct_missing`으로 지정하세요.
+`products` 테이블에서 `weight_grams` 칼럼이 NULL인 상품 수와 전체 상품 수를 구하고, NULL 비율(소수점 1자리)을 계산하세요. 별칭은 `total_products`, `missing_weight`, `pct_missing`으로 지정하세요.
 
 ??? success "정답"
     ```sql
     SELECT
         COUNT(*)                                AS total_products,
-        COUNT(*) - COUNT(weight)                AS missing_weight,
-        ROUND(100.0 * (COUNT(*) - COUNT(weight)) / COUNT(*), 1) AS pct_missing
+        COUNT(*) - COUNT(weight_grams)                AS missing_weight,
+        ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
     FROM products;
     ```
 

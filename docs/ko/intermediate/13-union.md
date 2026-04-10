@@ -155,6 +155,7 @@ LIMIT 10;
 ```sql
 -- 카테고리별 매출 + 합계 행 추가
 SELECT
+    0 AS sort_key,
     cat.name AS category,
     SUM(oi.quantity * oi.unit_price) AS revenue
 FROM order_items AS oi
@@ -168,6 +169,7 @@ GROUP BY cat.name
 UNION ALL
 
 SELECT
+    1 AS sort_key,
     '합계' AS category,
     SUM(oi.quantity * oi.unit_price) AS revenue
 FROM order_items AS oi
@@ -175,20 +177,21 @@ INNER JOIN orders AS o ON oi.order_id = o.id
 WHERE o.status IN ('delivered', 'confirmed')
   AND o.ordered_at LIKE '2024%'
 
-ORDER BY
-    CASE WHEN category = '합계' THEN 1 ELSE 0 END,
-    revenue DESC;
+ORDER BY sort_key, revenue DESC;
 ```
+
+> **SQLite 참고:** `UNION` / `UNION ALL`의 `ORDER BY`에서는 `CASE` 표현식을 직접 사용할 수 없습니다.
+> 대신 위처럼 정렬용 칼럼(`sort_key`)을 각 `SELECT`에 추가하는 것이 가장 간결합니다.
 
 **결과 (일부):**
 
-| category | revenue |
-|----------|--------:|
-| Laptops | 1849201.88 |
-| Desktops | 943847.00 |
-| Monitors | 541920.45 |
-| ... | |
-| 합계 | 4218807.10 |
+| sort_key | category | revenue |
+|---------:|----------|--------:|
+| 0 | Laptops | 1849201.88 |
+| 0 | Desktops | 943847.00 |
+| 0 | Monitors | 541920.45 |
+| ... | | |
+| 1 | 합계 | 4218807.10 |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -306,6 +309,7 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
 ??? success "정답"
     ```sql
     SELECT
+        0 AS sort_key,
         method,
         COUNT(*) AS tx_count
     FROM payments
@@ -315,14 +319,13 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     UNION ALL
 
     SELECT
+        1 AS sort_key,
         '합계' AS method,
         COUNT(*) AS tx_count
     FROM payments
     WHERE status = 'completed'
 
-    ORDER BY
-        CASE WHEN method = '합계' THEN 1 ELSE 0 END,
-        tx_count DESC;
+    ORDER BY sort_key, tx_count DESC;
     ```
 
 ### 연습 7
@@ -331,6 +334,7 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
 ??? success "정답"
     ```sql
     SELECT
+        0 AS sort_key,
         grade,
         COUNT(*) AS cnt
     FROM customers
@@ -340,14 +344,13 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     UNION ALL
 
     SELECT
+        1 AS sort_key,
         '전체' AS grade,
         COUNT(*) AS cnt
     FROM customers
     WHERE is_active = 1
 
-    ORDER BY
-        CASE WHEN grade = '전체' THEN 1 ELSE 0 END,
-        cnt DESC;
+    ORDER BY sort_key, cnt DESC;
     ```
 
 ### 연습 8
@@ -387,6 +390,7 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
         ROUND(100.0 * order_count / SUM(order_count) OVER (), 1) AS pct
     FROM (
         SELECT
+            0 AS sort_key,
             status,
             COUNT(*)            AS order_count,
             ROUND(AVG(total_amount), 2) AS avg_amount
@@ -396,14 +400,13 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
         UNION ALL
 
         SELECT
+            1 AS sort_key,
             '합계' AS status,
             COUNT(*)            AS order_count,
             ROUND(AVG(total_amount), 2) AS avg_amount
         FROM orders
     ) AS t
-    ORDER BY
-        CASE WHEN status = '합계' THEN 1 ELSE 0 END,
-        order_count DESC;
+    ORDER BY sort_key, order_count DESC;
     ```
 
 ---

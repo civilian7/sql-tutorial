@@ -162,14 +162,14 @@ ORDER BY category;
 ## 연습 문제
 
 ### 연습 1
-해당 고객이 아직 **구매하지 않은** 찜 목록 상품을 모두 찾으세요. `customer_name`, `product_name`, `added_at`(찜 등록 일시)을 반환하세요. `order_items`와 `orders`에서 `customer_id`와 `product_id`가 일치하는지 확인하는 상관 서브쿼리와 함께 `NOT EXISTS`를 사용하세요.
+해당 고객이 아직 **구매하지 않은** 찜 목록 상품을 모두 찾으세요. `customer_name`, `product_name`, `created_at`(찜 등록 일시)을 반환하세요. `order_items`와 `orders`에서 `customer_id`와 `product_id`가 일치하는지 확인하는 상관 서브쿼리와 함께 `NOT EXISTS`를 사용하세요.
 
 ??? success "정답"
     ```sql
     SELECT
         c.name  AS customer_name,
         p.name  AS product_name,
-        w.added_at
+        w.created_at
     FROM wishlists AS w
     INNER JOIN customers AS c ON w.customer_id = c.id
     INNER JOIN products  AS p ON w.product_id  = p.id
@@ -181,7 +181,7 @@ ORDER BY category;
           AND oi.product_id  = w.product_id
           AND o.status NOT IN ('cancelled', 'returned')
     )
-    ORDER BY w.added_at DESC
+    ORDER BY w.created_at DESC
     LIMIT 20;
     ```
 

@@ -245,14 +245,14 @@ How many orders have delivery instructions (`notes IS NOT NULL`)? What percentag
     ```
 
 ### Exercise 8
-For active products, calculate the average price (rounded to 0 decimals), average cost (rounded to 0 decimals), and average margin percentage (rounded to 1 decimal). Margin = `(price - cost) / price * 100`. Compute the average of each product's margin. Use aliases `avg_price`, `avg_cost`, `avg_margin_pct`.
+For active products, calculate the average price (rounded to 0 decimals), average cost_price (rounded to 0 decimals), and average margin percentage (rounded to 1 decimal). Margin = `(price - cost_price) / price * 100`. Compute the average of each product's margin. Use aliases `avg_price`, `avg_cost`, `avg_margin_pct`.
 
 ??? success "Answer"
     ```sql
     SELECT
         ROUND(AVG(price), 0)                          AS avg_price,
-        ROUND(AVG(cost), 0)                           AS avg_cost,
-        ROUND(AVG((price - cost) / price * 100), 1)   AS avg_margin_pct
+        ROUND(AVG(cost_price), 0)                           AS avg_cost,
+        ROUND(AVG((price - cost_price) / price * 100), 1)   AS avg_margin_pct
     FROM products
     WHERE is_active = 1;
     ```

@@ -69,7 +69,7 @@ SELECT * FROM products WHERE sku = 'SKU-TEST-001';
 
 ```sql
 -- Add several coupon codes at once
-INSERT INTO coupons (code, discount_type, discount_value, min_order_amount, is_active, expires_at)
+INSERT INTO coupons (code, type, discount_value, min_order_amount, is_active, expires_at)
 VALUES
     ('SAVE10', 'percentage', 10, 50.00,  1, '2025-12-31'),
     ('FLAT20', 'fixed',      20, 100.00, 1, '2025-06-30'),

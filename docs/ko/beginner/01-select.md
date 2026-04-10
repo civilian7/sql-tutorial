@@ -232,16 +232,16 @@ ORDER BY is_active;
     ```
 
 ### 문제 10
-`products` 테이블에서 `name`, `price`, `cost`를 조회하고, 마진(`price - cost`)을 `margin`으로, 마진율(`(price - cost) / price * 100`)을 `margin_pct`라는 별칭으로 함께 출력하세요.
+`products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)을 `margin`으로, 마진율(`(price - cost_price) / price * 100`)을 `margin_pct`라는 별칭으로 함께 출력하세요.
 
 ??? success "정답"
     ```sql
     SELECT
         name,
         price,
-        cost,
-        price - cost                    AS margin,
-        (price - cost) / price * 100    AS margin_pct
+        cost_price,
+        price - cost_price                    AS margin,
+        (price - cost_price) / price * 100    AS margin_pct
     FROM products;
     ```
 
