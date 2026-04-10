@@ -510,7 +510,8 @@ Using a RIGHT JOIN on the `orders` table, find every customer's name (`name`) an
 ### Exercise 10
 Show all customers without orders AND all orders without a valid customer in a single query. Return `customer_name`, `order_number`, and `total_amount`. Display `'(Unknown)'` for missing customers and `'(No orders)'` for missing orders. Sort by `customer_name` ascending, limit to 15 rows.
 
-=== "SQLite"
+??? success "Answer"
+    === "SQLite"
 
     ```sql
     -- SQLite 3.39+

@@ -510,7 +510,8 @@ FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
 ### 연습 10
 주문이 없는 고객과 고객 정보가 누락된 주문을 **모두** 포함하여 `customer_name`, `order_number`, `total_amount`를 조회하세요. 고객이 없으면 `'(알 수 없음)'`, 주문이 없으면 `'(주문 없음)'`으로 표시하세요. `customer_name` 오름차순으로 정렬하여 15행까지 반환하세요.
 
-=== "SQLite"
+??? success "정답"
+    === "SQLite"
 
     ```sql
     -- SQLite 3.39+
