@@ -115,23 +115,57 @@ NON_SQLITE = re.compile(
 )
 
 
-def execute_dml(db_path, sql):
-    """Execute DML/DDL SQL on a writable database."""
-    conn = sqlite3.connect(db_path)
-    conn.execute("PRAGMA foreign_keys = ON")
-
-    errors = []
-    # Split by semicolons and execute each statement
+def split_statements(sql):
+    """Split SQL into statements, respecting BEGIN...END and transaction blocks."""
     statements = []
     current = []
+    depth = 0  # track BEGIN...END nesting (triggers)
+    in_transaction = False
+
     for line in sql.splitlines():
         stripped = line.strip()
-        # Skip comments
+        # Skip pure comment lines
         if stripped.startswith('--'):
             continue
+        if not stripped:
+            continue
+
+        upper = stripped.upper()
+
+        # Track trigger BEGIN...END depth
+        # Only count BEGIN that's part of a trigger (not BEGIN TRANSACTION)
+        if upper == 'BEGIN' and depth > 0:
+            depth += 1
+        elif 'CREATE TRIGGER' in upper:
+            depth = 1  # trigger body will have BEGIN...END
+        if (upper == 'END;' or upper == 'END') and depth > 0:
+            depth = max(0, depth - 1)
+
+        # Track transaction blocks: BEGIN TRANSACTION → COMMIT/ROLLBACK
+        if upper.startswith('BEGIN') and ('TRANSACTION' in upper or (upper == 'BEGIN;' and depth == 0)):
+            in_transaction = True
+
         current.append(line)
-        if stripped.endswith(';'):
-            stmt = '\n'.join(current).strip().rstrip(';').strip()
+
+        if stripped.endswith(';') and depth == 0:
+            stmt = '\n'.join(current).strip()
+
+            # Check if this ends a transaction
+            if in_transaction and (upper.startswith('COMMIT') or upper.startswith('ROLLBACK')):
+                in_transaction = False
+                # Keep the full transaction as one statement
+                if stmt:
+                    statements.append(stmt)
+                current = []
+                continue
+
+            # If inside transaction, keep accumulating
+            if in_transaction:
+                continue
+
+            # Normal statement boundary
+            if stmt.endswith(';') and not stmt.upper().endswith('END;'):
+                stmt = stmt[:-1].strip()
             if stmt:
                 statements.append(stmt)
             current = []
@@ -142,6 +176,17 @@ def execute_dml(db_path, sql):
         if stmt:
             statements.append(stmt)
 
+    return statements
+
+
+def execute_dml(db_path, sql):
+    """Execute DML/DDL SQL on a writable database."""
+    conn = sqlite3.connect(db_path)
+    conn.execute("PRAGMA foreign_keys = ON")
+
+    errors = []
+    statements = split_statements(sql)
+
     for stmt in statements:
         # Skip non-SQLite syntax
         if NON_SQLITE.search(stmt):
@@ -150,7 +195,11 @@ def execute_dml(db_path, sql):
         if stmt.upper().startswith('VACUUM'):
             continue
         try:
-            conn.execute(stmt)
+            # Use executescript for multi-statement blocks (transactions, triggers)
+            if stmt.count(';') > 1 or 'BEGIN' in stmt.upper():
+                conn.executescript(stmt)
+            else:
+                conn.execute(stmt)
         except Exception as e:
             errors.append((stmt[:80], str(e)))
 
@@ -203,15 +252,18 @@ def main():
         basename = os.path.basename(filepath)
         file_errors = 0
 
-        for ans in answers:
-            total += 1
+        # Use ONE temp DB per file — exercises may depend on each other
+        # (e.g., Ex#2 CREATE TABLE, Ex#1 ALTER TABLE)
+        # Sort by exercise number to execute in order
+        answers.sort(key=lambda a: a['exercise'])
 
-            # Create temp copy of DB for each test
-            with tempfile.NamedTemporaryFile(suffix='.db', delete=False) as tmp:
-                tmp_path = tmp.name
-            shutil.copy2(args.db, tmp_path)
+        with tempfile.NamedTemporaryFile(suffix='.db', delete=False) as tmp:
+            tmp_path = tmp.name
+        shutil.copy2(args.db, tmp_path)
 
-            try:
+        try:
+            for ans in answers:
+                total += 1
                 errors = execute_dml(tmp_path, ans['sql'])
                 if errors:
                     failed += 1
@@ -221,8 +273,8 @@ def main():
                         print(f"  FAIL {basename} Ex#{ans['exercise']}:{ans['line']} - {err}")
                 else:
                     passed += 1
-            finally:
-                os.unlink(tmp_path)
+        finally:
+            os.unlink(tmp_path)
 
         if file_errors == 0 and answers:
             print(f"  OK   {basename} ({len(answers)} DML/DDL answers)")

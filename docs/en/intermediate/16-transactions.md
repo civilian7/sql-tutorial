@@ -414,10 +414,10 @@ Identify the problem in the following SQL and rewrite it safely using a transact
 
 ```sql
 INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-VALUES (7001, 'ORD-7001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
+VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
 
 INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-VALUES (7001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
+VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
 
 UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
 ```
@@ -430,10 +430,10 @@ UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
         BEGIN TRANSACTION;
 
         INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (7001, 'ORD-7001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
+        VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
 
         INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (7001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
+        VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
 
         UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
 
@@ -445,10 +445,10 @@ UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
         START TRANSACTION;
 
         INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (7001, 'ORD-7001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
+        VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
 
         INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (7001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
+        VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
 
         UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
 
@@ -460,10 +460,10 @@ UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
         BEGIN;
 
         INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (7001, 'ORD-7001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
+        VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
 
         INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (7001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
+        VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
 
         UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
 
@@ -471,26 +471,26 @@ UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
         ```
 
 ### Exercise 5
-Using SAVEPOINT, write a transaction that adds three items to order id=6001. After inserting the second item, a problem is discovered — cancel only the second item while keeping the first and third, then commit.
+Using SAVEPOINT, write a transaction that adds three items to order id=99002. After inserting the second item, a problem is discovered — cancel only the second item while keeping the first and third, then commit.
 
 ??? success "Answer"
     ```sql
     BEGIN;
 
     INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-    VALUES (6001, 301, 1, 45000, 0, 45000);
+    VALUES (100, 10, 1, 45000, 0, 45000);
 
     SAVEPOINT sp_item2;
 
     INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-    VALUES (6001, 302, 1, 32000, 0, 32000);
+    VALUES (100, 20, 1, 32000, 0, 32000);
 
     -- Problem found with second item → undo it
     ROLLBACK TO SAVEPOINT sp_item2;
 
     -- Third item is fine
     INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-    VALUES (6001, 303, 2, 18000, 0, 36000);
+    VALUES (100, 30, 2, 18000, 0, 36000);
 
     COMMIT;
     ```
@@ -578,15 +578,15 @@ Write a complete order processing transaction. Customer id=45 orders 3 units of 
 
         -- Order
         INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (9501, 'ORD-9501', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, datetime('now'), datetime('now'), datetime('now'));
+        VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, datetime('now'), datetime('now'), datetime('now'));
 
         -- Order item
         INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-        VALUES (9501, 120, 3, 55000, 0, 165000);
+        VALUES (99003, 120, 3, 55000, 0, 165000);
 
         -- Payment
         INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (9501, 'credit_card', 165000, 'completed', datetime('now'), datetime('now'));
+        VALUES (99003, 'credit_card', 165000, 'completed', datetime('now'), datetime('now'));
 
         -- Deduct inventory
         UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;
@@ -604,15 +604,15 @@ Write a complete order processing transaction. Customer id=45 orders 3 units of 
 
         -- Order
         INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (9501, 'ORD-9501', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, NOW(), NOW(), NOW());
+        VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, NOW(), NOW(), NOW());
 
         -- Order item
         INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-        VALUES (9501, 120, 3, 55000, 0, 165000);
+        VALUES (99003, 120, 3, 55000, 0, 165000);
 
         -- Payment
         INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (9501, 'credit_card', 165000, 'completed', NOW(), NOW());
+        VALUES (99003, 'credit_card', 165000, 'completed', NOW(), NOW());
 
         -- Deduct inventory
         UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;
@@ -630,15 +630,15 @@ Write a complete order processing transaction. Customer id=45 orders 3 units of 
 
         -- Order
         INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (9501, 'ORD-9501', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, NOW(), NOW(), NOW());
+        VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, NOW(), NOW(), NOW());
 
         -- Order item
         INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-        VALUES (9501, 120, 3, 55000, 0, 165000);
+        VALUES (99003, 120, 3, 55000, 0, 165000);
 
         -- Payment
         INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (9501, 'credit_card', 165000, 'completed', NOW(), NOW());
+        VALUES (99003, 'credit_card', 165000, 'completed', NOW(), NOW());
 
         -- Deduct inventory
         UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;

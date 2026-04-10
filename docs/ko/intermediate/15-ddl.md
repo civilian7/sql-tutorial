@@ -624,17 +624,6 @@ GROUP BY cat.name;
 
 ## 연습 문제
 ### 연습 1
-`temp_employees` 테이블에 `phone` 칼럼(문자열, 선택)을 추가한 뒤, `department` 칼럼의 이름을 `dept`로 변경하세요.
-
-??? success "정답"
-    ```sql
-    ALTER TABLE temp_employees ADD COLUMN phone TEXT;
-
-    ALTER TABLE temp_employees RENAME COLUMN department TO dept;
-    ```
-
-
-### 연습 2
 `temp_employees` 테이블을 만드세요. 칼럼: `id`(자동 증가 기본 키), `name`(필수, 문자열), `email`(필수, UNIQUE, 문자열), `department`(문자열, 기본값 `'General'`), `hire_date`(문자열/날짜).
 
 ??? success "정답"
@@ -670,6 +659,17 @@ GROUP BY cat.name;
             hire_date  DATE
         );
         ```
+
+
+### 연습 2
+`temp_employees` 테이블에 `phone` 칼럼(문자열, 선택)을 추가한 뒤, `department` 칼럼의 이름을 `dept`로 변경하세요.
+
+??? success "정답"
+    ```sql
+    ALTER TABLE temp_employees ADD COLUMN phone TEXT;
+
+    ALTER TABLE temp_employees RENAME COLUMN department TO dept;
+    ```
 
 
 ### 연습 3

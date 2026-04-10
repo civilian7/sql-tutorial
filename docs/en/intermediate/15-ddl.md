@@ -590,17 +590,6 @@ GROUP BY cat.name;
 
 ## Practice Exercises
 ### Exercise 1
-Add a `phone` column (text, optional) to the `temp_employees` table, then rename the `department` column to `dept`.
-
-??? success "Answer"
-    ```sql
-    ALTER TABLE temp_employees ADD COLUMN phone TEXT;
-
-    ALTER TABLE temp_employees RENAME COLUMN department TO dept;
-    ```
-
-
-### Exercise 2
 Create a table called `temp_employees` with the following columns: `id` (auto-increment primary key), `name` (required, text), `email` (required, unique, text), `department` (text, default `'General'`), and `hire_date` (text/date).
 
 ??? success "Answer"
@@ -636,6 +625,17 @@ Create a table called `temp_employees` with the following columns: `id` (auto-in
             hire_date  DATE
         );
         ```
+
+
+### Exercise 2
+Add a `phone` column (text, optional) to the `temp_employees` table, then rename the `department` column to `dept`.
+
+??? success "Answer"
+    ```sql
+    ALTER TABLE temp_employees ADD COLUMN phone TEXT;
+
+    ALTER TABLE temp_employees RENAME COLUMN department TO dept;
+    ```
 
 
 ### Exercise 3
