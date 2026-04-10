@@ -25,7 +25,17 @@ flowchart LR
 
 ## CREATE TABLE
 
-The basic syntax defines a table name, columns with data types, and optional constraints.
+### Basic Syntax
+
+```sql
+CREATE TABLE table_name (
+    column1  datatype  constraints,
+    column2  datatype  constraints,
+    ...
+);
+```
+
+A simple example -- let's create an order archive table:
 
 ```sql
 CREATE TABLE order_archive (
@@ -362,7 +372,11 @@ After a table is created, ALTER TABLE lets you modify its structure without recr
     ALTER TABLE temp_products ADD COLUMN discount_pct REAL DEFAULT 0;
     ```
 
-    > SQLite's ALTER TABLE is limited. You can ADD COLUMN and RENAME COLUMN, but DROP COLUMN was only added in version 3.35.0 (2021).
+    > In SQLite, you cannot add a column with `NOT NULL` unless you also provide a `DEFAULT` value (existing rows would have NULL).
+
+    ```sql
+    ALTER TABLE temp_products ADD COLUMN status TEXT NOT NULL DEFAULT 'active';
+    ```
 
 === "MySQL"
     ```sql
@@ -381,10 +395,22 @@ After a table is created, ALTER TABLE lets you modify its structure without recr
 
 ### RENAME COLUMN
 
-```sql
--- Rename a column
-ALTER TABLE temp_products RENAME COLUMN discount_pct TO discount_rate;
-```
+=== "SQLite"
+    ```sql
+    -- SQLite 3.25.0+ (September 2018) supported
+    ALTER TABLE temp_products RENAME COLUMN discount_pct TO discount_rate;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- MySQL 8.0+ supported
+    ALTER TABLE temp_products RENAME COLUMN discount_pct TO discount_rate;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    ALTER TABLE temp_products RENAME COLUMN discount_pct TO discount_rate;
+    ```
 
 ### DROP COLUMN
 
@@ -406,22 +432,38 @@ ALTER TABLE temp_products RENAME COLUMN discount_pct TO discount_rate;
 
 ### RENAME TABLE
 
-```sql
-ALTER TABLE temp_products RENAME TO archived_products;
-```
+=== "SQLite"
+    ```sql
+    ALTER TABLE temp_products RENAME TO archived_products;
+    ```
+
+=== "MySQL"
+    ```sql
+    ALTER TABLE temp_products RENAME TO archived_products;
+    -- Or alternatively:
+    RENAME TABLE temp_products TO archived_products;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    ALTER TABLE temp_products RENAME TO archived_products;
+    ```
 
 ## DROP TABLE
 
-DROP TABLE permanently removes a table and all its data. Use `IF EXISTS` to avoid errors when the table might not exist.
+DROP TABLE permanently removes a table and all its data.
 
 ```sql
--- Safe drop — no error if the table does not exist
-DROP TABLE IF EXISTS temp_order_items;
-DROP TABLE IF EXISTS temp_orders;
-DROP TABLE IF EXISTS temp_products;
+DROP TABLE order_archive;
 ```
 
-> **Drop order matters.** If `temp_order_items` has a foreign key referencing `temp_orders`, you must drop `temp_order_items` first, or the DROP will fail due to the foreign key constraint.
+If the table does not exist, this produces an error. Use `IF EXISTS` for a safe drop:
+
+```sql
+DROP TABLE IF EXISTS order_archive;
+```
+
+> **Caution:** `DROP TABLE` is irreversible. In production environments, always verify your backups before executing. If the table is referenced by foreign keys, you must drop the child table first or remove the foreign key constraint.
 
 ## TRUNCATE TABLE
 
@@ -479,22 +521,41 @@ DROP TABLE IF EXISTS temp_products;
 
 Create a new table from the result of a query. The new table inherits column names and types from the SELECT, but **not** constraints (no primary key, no foreign key, no NOT NULL).
 
-```sql
--- Archive all completed orders from 2023
-CREATE TABLE orders_2023_archive AS
-SELECT
-    o.id,
-    o.customer_id,
-    c.name AS customer_name,
-    o.total_amount,
-    o.order_date,
-    o.status
-FROM orders o
-JOIN customers c ON c.id = o.customer_id
-WHERE o.order_date >= '2023-01-01'
-  AND o.order_date <  '2024-01-01'
-  AND o.status = 'delivered';
-```
+=== "SQLite / PostgreSQL"
+    ```sql
+    -- Archive completed orders from 2023
+    CREATE TABLE orders_2023_archive AS
+    SELECT
+        o.id,
+        o.customer_id,
+        c.name AS customer_name,
+        o.total_amount,
+        o.order_date,
+        o.status
+    FROM orders o
+    JOIN customers c ON c.id = o.customer_id
+    WHERE o.order_date >= '2023-01-01'
+      AND o.order_date <  '2024-01-01'
+      AND o.status = 'delivered';
+    ```
+
+=== "MySQL"
+    ```sql
+    -- Archive completed orders from 2023
+    CREATE TABLE orders_2023_archive AS
+    SELECT
+        o.id,
+        o.customer_id,
+        c.name AS customer_name,
+        o.total_amount,
+        o.order_date,
+        o.status
+    FROM orders o
+    JOIN customers c ON c.id = o.customer_id
+    WHERE o.order_date >= '2023-01-01'
+      AND o.order_date <  '2024-01-01'
+      AND o.status = 'delivered';
+    ```
 
 ```sql
 -- Create a summary table for reporting
@@ -510,6 +571,19 @@ GROUP BY cat.name;
 ```
 
 > CTAS is useful for archiving, creating reporting snapshots, or materializing complex queries. Remember to add constraints manually afterward if needed.
+
+## Summary
+
+| DDL Statement | Purpose | Example |
+|---------------|---------|---------|
+| CREATE TABLE | Create a new table | `CREATE TABLE t (id INT PRIMARY KEY, ...)` |
+| ALTER TABLE ADD COLUMN | Add a column | `ALTER TABLE t ADD COLUMN col TEXT` |
+| ALTER TABLE RENAME COLUMN | Rename a column | `ALTER TABLE t RENAME COLUMN a TO b` |
+| ALTER TABLE DROP COLUMN | Remove a column | `ALTER TABLE t DROP COLUMN col` |
+| ALTER TABLE RENAME TO | Rename a table | `ALTER TABLE t RENAME TO new_t` |
+| DROP TABLE | Remove a table | `DROP TABLE IF EXISTS t` |
+| TRUNCATE TABLE | Remove all rows (keep structure) | `TRUNCATE TABLE t` |
+| CREATE TABLE AS SELECT | Create a table from a query | `CREATE TABLE t AS SELECT ...` |
 
 !!! note "Lesson Review"
     Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.

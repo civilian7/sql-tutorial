@@ -53,43 +53,77 @@ CREATE TABLE order_archive (
 
 데이터베이스마다 지원하는 데이터 타입이 다릅니다. 가장 자주 쓰이는 타입을 정리합니다.
 
-### SQLite
+=== "SQLite"
+    SQLite는 동적 타입 시스템(**타입 어피니티**)을 사용합니다. 칼럼에 어떤 타입을 선언하든 실제로는 5가지 저장 클래스 중 하나로 저장됩니다.
 
-SQLite는 동적 타입 시스템을 사용합니다. 칼럼에 어떤 타입을 선언하든 실제로는 5가지 저장 클래스 중 하나로 저장됩니다.
+    | 저장 클래스 | 용도 | 예시 |
+    |-------------|------|------|
+    | TEXT | 문자열, 날짜 | 이름, 이메일, ISO 날짜 |
+    | INTEGER | 정수, 불리언 | ID, 수량, 0/1 플래그 |
+    | REAL | 부동소수점 | 가격, 비율 |
+    | BLOB | 바이너리 데이터 | 이미지, 파일 |
+    | NUMERIC | 유연한 타입 | INTEGER 또는 REAL로 저장 |
 
-| 저장 클래스 | 용도 | 예시 |
-|-------------|------|------|
-| TEXT | 문자열 | 이름, 이메일, 날짜 문자열 |
-| INTEGER | 정수 | ID, 수량, 불리언(0/1) |
-| REAL | 부동소수점 | 가격, 비율 |
-| BLOB | 바이너리 데이터 | 이미지, 파일 |
-| NULL | 값 없음 | — |
+    ```sql
+    CREATE TABLE temp_products (
+        id          INTEGER PRIMARY KEY,
+        name        TEXT    NOT NULL,
+        price       REAL    NOT NULL,
+        stock_qty   INTEGER DEFAULT 0,
+        is_active   INTEGER DEFAULT 1,
+        created_at  TEXT    DEFAULT (datetime('now'))
+    );
+    ```
 
-### MySQL
+=== "MySQL"
+    MySQL은 엄격한 타입 시스템을 사용하며, 다양한 특화 타입을 제공합니다.
 
-| 타입 | 용도 | 예시 |
-|------|------|------|
-| VARCHAR(n) | 가변 길이 문자열 (최대 n자) | 이름, 이메일 |
-| INT | 정수 (-2^31 ~ 2^31-1) | ID, 수량 |
-| BIGINT | 큰 정수 | 대용량 ID |
-| DECIMAL(p,s) | 고정 소수점 (전체 p자리, 소수 s자리) | 가격, 금액 |
-| DATE | 날짜 (YYYY-MM-DD) | 생년월일 |
-| DATETIME | 날짜+시각 | 주문 시각 |
-| BOOLEAN | 참/거짓 (내부적으로 TINYINT(1)) | 활성 여부 |
-| TEXT | 긴 문자열 | 리뷰 본문 |
+    | 타입 | 용도 | 비고 |
+    |------|------|------|
+    | VARCHAR(n) | 가변 길이 문자열 | 최대 65,535바이트 |
+    | INT | 정수 | 4바이트, -2B ~ +2B |
+    | BIGINT | 큰 정수 | 8바이트 |
+    | DECIMAL(p,s) | 고정 소수점 | `DECIMAL(10,2)` — 가격용 |
+    | DATE | 날짜 | `'2025-03-15'` |
+    | DATETIME | 날짜+시각 | `'2025-03-15 14:30:00'` |
+    | BOOLEAN | 참/거짓 | TINYINT(1)의 별칭 |
+    | TEXT | 긴 문자열 | 최대 65,535바이트 |
 
-### PostgreSQL
+    ```sql
+    CREATE TABLE temp_products (
+        id          INT AUTO_INCREMENT PRIMARY KEY,
+        name        VARCHAR(200)   NOT NULL,
+        price       DECIMAL(10, 2) NOT NULL,
+        stock_qty   INT            DEFAULT 0,
+        is_active   BOOLEAN        DEFAULT TRUE,
+        created_at  DATETIME       DEFAULT CURRENT_TIMESTAMP
+    );
+    ```
 
-| 타입 | 용도 | 예시 |
-|------|------|------|
-| VARCHAR(n) | 가변 길이 문자열 (최대 n자) | 이름, 이메일 |
-| INTEGER | 정수 (-2^31 ~ 2^31-1) | ID, 수량 |
-| BIGINT | 큰 정수 | 대용량 ID |
-| NUMERIC(p,s) | 고정 소수점 | 가격, 금액 |
-| DATE | 날짜 | 생년월일 |
-| TIMESTAMP | 날짜+시각 | 주문 시각 |
-| BOOLEAN | 참/거짓 (true/false) | 활성 여부 |
-| TEXT | 길이 제한 없는 문자열 | 리뷰 본문 |
+=== "PostgreSQL"
+    PostgreSQL은 풍부한 타입 시스템과 엄격한 타입 검사를 제공합니다.
+
+    | 타입 | 용도 | 비고 |
+    |------|------|------|
+    | VARCHAR(n) | 가변 길이 문자열 | 또는 TEXT (제한 없음) |
+    | INTEGER | 정수 | 4바이트 |
+    | BIGINT | 큰 정수 | 8바이트 |
+    | NUMERIC(p,s) | 고정 소수점 | `NUMERIC(10,2)` — 가격용 |
+    | DATE | 날짜 | `'2025-03-15'` |
+    | TIMESTAMP | 날짜+시각 | 타임존 유무 선택 가능 |
+    | BOOLEAN | 참/거짓 | TRUE / FALSE 리터럴 |
+    | TEXT | 길이 제한 없는 문자열 | PG에서는 VARCHAR보다 선호 |
+
+    ```sql
+    CREATE TABLE temp_products (
+        id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        name        VARCHAR(200)   NOT NULL,
+        price       NUMERIC(10, 2) NOT NULL,
+        stock_qty   INTEGER        DEFAULT 0,
+        is_active   BOOLEAN        DEFAULT TRUE,
+        created_at  TIMESTAMP      DEFAULT CURRENT_TIMESTAMP
+    );
+    ```
 
 ## 칼럼 제약조건
 
@@ -102,46 +136,94 @@ SQLite는 동적 타입 시스템을 사용합니다. 칼럼에 어떤 타입을
 | UNIQUE | 중복 값 불허 | `email VARCHAR(200) UNIQUE` |
 | CHECK | 조건식을 만족해야 삽입/수정 가능 | `CHECK (price >= 0)` |
 
-### NOT NULL과 DEFAULT
+### NOT NULL
 
-```sql
-CREATE TABLE temp_products (
-    id         INTEGER PRIMARY KEY,
-    name       TEXT    NOT NULL,
-    price      REAL    NOT NULL DEFAULT 0,
-    stock_qty  INTEGER NOT NULL DEFAULT 0,
-    is_active  INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT    NOT NULL
-);
-```
-
-`price`에 값을 넣지 않으면 자동으로 `0`이 됩니다. 하지만 `name`이나 `created_at`은 반드시 값을 넣어야 합니다.
-
-### UNIQUE
+`NOT NULL`로 지정한 칼럼은 NULL 값을 가질 수 없습니다. INSERT 또는 UPDATE에서 NULL을 넣으려 하면 오류가 발생합니다.
 
 ```sql
 CREATE TABLE temp_customers (
     id    INTEGER PRIMARY KEY,
-    email TEXT    NOT NULL UNIQUE,
-    phone TEXT    UNIQUE
+    name  TEXT NOT NULL,       -- 필수
+    email TEXT NOT NULL,       -- 필수
+    phone TEXT                 -- 선택 (NULL 허용)
 );
 ```
 
-같은 이메일이나 전화번호를 가진 행이 이미 있으면 삽입이 거부됩니다. `UNIQUE`는 NULL을 허용합니다 — `phone`이 NULL인 행은 여러 개 존재할 수 있습니다.
+### DEFAULT
+
+값을 지정하지 않을 때 사용할 기본값을 정의합니다.
+
+=== "SQLite"
+    ```sql
+    CREATE TABLE temp_orders (
+        id         INTEGER PRIMARY KEY,
+        status     TEXT    NOT NULL DEFAULT 'pending',
+        quantity   INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT    DEFAULT (datetime('now'))
+    );
+
+    -- status, quantity, created_at을 지정하지 않고 삽입
+    INSERT INTO temp_orders (id) VALUES (1);
+    -- 결과: status='pending', quantity=1, created_at=현재 시각
+    ```
+
+=== "MySQL"
+    ```sql
+    CREATE TABLE temp_orders (
+        id         INT AUTO_INCREMENT PRIMARY KEY,
+        status     VARCHAR(20) NOT NULL DEFAULT 'pending',
+        quantity   INT         NOT NULL DEFAULT 1,
+        created_at DATETIME    DEFAULT CURRENT_TIMESTAMP
+    );
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    CREATE TABLE temp_orders (
+        id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        status     VARCHAR(20) NOT NULL DEFAULT 'pending',
+        quantity   INTEGER     NOT NULL DEFAULT 1,
+        created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+    );
+    ```
+
+### UNIQUE
+
+중복 값을 허용하지 않습니다. 대부분의 데이터베이스에서 NULL은 유니크 검사에서 제외됩니다.
+
+```sql
+CREATE TABLE temp_users (
+    id       INTEGER PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    email    TEXT NOT NULL UNIQUE
+);
+
+-- 성공
+INSERT INTO temp_users VALUES (1, 'alice', 'alice@testmail.kr');
+
+-- 실패: username 중복
+INSERT INTO temp_users VALUES (2, 'alice', 'bob@testmail.kr');
+```
 
 ### CHECK
 
-```sql
-CREATE TABLE temp_order_items (
-    id         INTEGER PRIMARY KEY,
-    order_id   INTEGER NOT NULL,
-    product_id INTEGER NOT NULL,
-    quantity   INTEGER NOT NULL CHECK (quantity > 0),
-    unit_price REAL    NOT NULL CHECK (unit_price >= 0)
-);
-```
+값이 조건을 만족해야 행의 삽입/수정이 허용됩니다.
 
-`quantity`가 0 이하이거나 `unit_price`가 음수이면 삽입/수정이 거부됩니다.
+```sql
+CREATE TABLE temp_products (
+    id        INTEGER PRIMARY KEY,
+    name      TEXT    NOT NULL,
+    price     REAL    NOT NULL CHECK (price > 0),
+    stock_qty INTEGER NOT NULL CHECK (stock_qty >= 0),
+    rating    REAL    CHECK (rating BETWEEN 1.0 AND 5.0)
+);
+
+-- 성공
+INSERT INTO temp_products VALUES (1, 'Keyboard', 49.99, 100, 4.5);
+
+-- 실패: price는 0보다 커야 함
+INSERT INTO temp_products VALUES (2, 'Mouse', -10.00, 50, 3.0);
+```
 
 ## PRIMARY KEY와 자동 증가
 
@@ -192,6 +274,20 @@ CREATE TABLE temp_order_items (
     ```
 
     > PostgreSQL에서 `SERIAL` 타입도 자동 증가를 지원하지만, `GENERATED ALWAYS AS IDENTITY`가 SQL 표준에 더 가깝고 권장됩니다.
+
+### 복합 기본 키
+
+단일 칼럼으로 행을 고유하게 식별할 수 없을 때, 여러 칼럼을 조합합니다.
+
+```sql
+-- 한 학생은 같은 강좌에 한 번만 등록 가능
+CREATE TABLE enrollments (
+    student_id  INTEGER NOT NULL,
+    course_id   INTEGER NOT NULL,
+    enrolled_at TEXT,
+    PRIMARY KEY (student_id, course_id)
+);
+```
 
 ## FOREIGN KEY — 참조 무결성
 
@@ -263,6 +359,42 @@ CREATE TABLE temp_reviews (
 
 - 상품이 삭제되면 해당 상품의 리뷰도 **함께 삭제**됩니다 (CASCADE).
 - 고객이 삭제되면 리뷰는 남지만 `customer_id`가 **NULL**로 변경됩니다 (SET NULL).
+
+### DB별 외래 키 설정
+
+=== "SQLite"
+    ```sql
+    -- SQLite는 연결마다 외래 키 검사를 활성화해야 함
+    PRAGMA foreign_keys = ON;
+    ```
+
+    > SQLite는 외래 키가 **기본적으로 꺼져** 있습니다. 매 세션 시작 시 `PRAGMA foreign_keys = ON;`을 실행해야 합니다.
+
+=== "MySQL"
+    ```sql
+    -- InnoDB 엔진에서는 외래 키가 기본적으로 활성화됨
+    CREATE TABLE temp_order_items (
+        id          INT AUTO_INCREMENT PRIMARY KEY,
+        order_id    INT NOT NULL,
+        product_id  INT NOT NULL,
+        quantity    INT NOT NULL DEFAULT 1,
+        FOREIGN KEY (order_id)   REFERENCES orders (id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
+    ) ENGINE=InnoDB;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- PostgreSQL은 외래 키가 항상 활성화됨
+    CREATE TABLE temp_order_items (
+        id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id    INTEGER NOT NULL,
+        product_id  INTEGER NOT NULL,
+        quantity    INTEGER NOT NULL DEFAULT 1,
+        FOREIGN KEY (order_id)   REFERENCES orders (id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
+    );
+    ```
 
 ## ALTER TABLE
 
@@ -459,7 +591,20 @@ DROP TABLE IF EXISTS order_archive;
       AND o.ordered_at <  '2025-01-01';
     ```
 
-> **참고:** CTAS로 만든 테이블은 원본 테이블의 제약조건(PRIMARY KEY, FOREIGN KEY, NOT NULL 등)을 상속하지 않습니다. 필요하면 `ALTER TABLE`로 별도로 추가해야 합니다.
+```sql
+-- 리포팅용 요약 테이블 생성
+CREATE TABLE category_summary AS
+SELECT
+    cat.name            AS category,
+    COUNT(p.id)         AS product_count,
+    ROUND(AVG(p.price), 2) AS avg_price,
+    SUM(p.stock_qty)    AS total_stock
+FROM categories cat
+LEFT JOIN products p ON p.category_id = cat.id
+GROUP BY cat.name;
+```
+
+> **참고:** CTAS로 만든 테이블은 원본 테이블의 제약조건(PRIMARY KEY, FOREIGN KEY, NOT NULL 등)을 상속하지 않습니다. 아카이브, 리포팅 스냅샷, 복잡한 쿼리 결과 저장에 유용합니다. 필요하면 `ALTER TABLE`로 제약조건을 별도로 추가하세요.
 
 ## 요약
 
