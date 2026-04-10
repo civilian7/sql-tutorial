@@ -2,42 +2,63 @@
 
 You can generate the database and run your first query in 5 minutes.
 
-## 1. Install Python
+## 1. Download the Project
 
-Python 3.10 or higher is required.
+=== "Git"
+    ```bash
+    git clone https://github.com/civilian7/sql-tutorial.git
+    cd sql-tutorial
+    ```
+
+=== "ZIP Download"
+    [Download ZIP from GitHub](https://github.com/civilian7/sql-tutorial/archive/refs/heads/main.zip), extract it, and open the folder.
+
+## 2. Install Python
+
+Python 3.10 or higher is required. Skip this step if already installed.
 
 === "Windows"
     Download from [python.org](https://www.python.org/downloads/) and install.
-    Make sure to check **"Add Python to PATH"** during installation.
 
+    !!! warning "Important during installation"
+        Check **"Add Python to PATH"** on the first screen. Without this, `python` won't work in the terminal.
+
+    After installing, open **Command Prompt** (search `cmd` in Start menu) and verify:
     ```
     python --version
     ```
 
 === "macOS"
+    Open **Terminal** (search `Terminal` in Spotlight):
     ```bash
     brew install python@3.12
+    python3 --version
     ```
 
 === "Linux (Ubuntu/Debian)"
     ```bash
     sudo apt update && sudo apt install python3 python3-pip python3-venv
+    python3 --version
     ```
 
-## 2. Generate the Database
+## 3. Generate the Database
+
+Navigate to the project folder in your terminal, then run:
 
 ```bash
 pip install -r requirements.txt
 python generate.py --size small
 ```
 
-This creates `output/ecommerce.db` (~80MB, 687K rows).
+This creates `output/ecommerce.db` (~80MB, 687K rows). Takes about 20 seconds.
 
-??? info "Virtual Environment (recommended)"
+!!! tip "If you get errors"
+    - `pip: command not found` → try `pip3` instead
+    - `Permission denied` → use a virtual environment:
     ```bash
     python -m venv .venv
-    source .venv/bin/activate   # macOS/Linux
     .venv\Scripts\activate      # Windows
+    source .venv/bin/activate   # macOS/Linux
     pip install -r requirements.txt
     python generate.py --size small
     ```
@@ -51,30 +72,39 @@ This creates `output/ecommerce.db` (~80MB, 687K rows).
     ```
     See the [Generator Reference](generator-guide.md) for all options.
 
-## 3. Open in a SQL Tool
+## 4. Open in a SQL Tool
 
-Open the generated `output/ecommerce.db` in any SQL tool.
+Open the generated `output/ecommerce.db` in a SQL tool. **If this is your first time, we recommend DB Browser for SQLite** — it's free and easy to install.
 
-| Tool | How |
-|------|-----|
-| ezQuery (in development) | File > Open DB > ecommerce.db |
-| DB Browser for SQLite | Open Database |
-| DBeaver | New Connection > SQLite > select file |
-| Command line | `sqlite3 output/ecommerce.db` |
+| Tool | Install | Open File |
+|------|---------|-----------|
+| **DB Browser for SQLite** (recommended) | [sqlitebrowser.org](https://sqlitebrowser.org/dl/) | Open Database > ecommerce.db |
+| DBeaver | [dbeaver.io](https://dbeaver.io/download/) | New Connection > SQLite > select file |
+| Command line | (no install needed) | `sqlite3 output/ecommerce.db` |
 
-## 4. Run Your First Queries
+## 5. Run Your First Queries
 
-Verify the database was created correctly.
+Verify the database was created correctly. Type the following in your SQL tool and execute.
 
 ```sql
--- Table list (30 tables = success)
+-- Check table list
 SELECT name FROM sqlite_master
 WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
 ORDER BY name;
 ```
 
+You should see 30 tables:
+
+| name |
+|------|
+| calendar |
+| cart_items |
+| carts |
+| categories |
+| ... (30 total) |
+
 ```sql
--- Sample 5 customers
+-- Sample customer data
 SELECT name, email, grade, point_balance
 FROM customers
 LIMIT 5;
@@ -100,8 +130,8 @@ If you see results, you're ready to go.
 | Step | Lessons | Topics |
 |------|---------|--------|
 | Step 1 | Beginner 01–06 | SELECT, WHERE, sorting, aggregates, GROUP BY, NULL |
-| Step 2 | Intermediate 07–16 | JOINs, subqueries, CASE, date/string, DML, DDL, SELF/CROSS JOIN |
-| Step 3 | Advanced 17–22 | Window functions, CTE, EXISTS, views, indexes, triggers |
+| Step 2 | Intermediate 07–17 | JOINs, subqueries, CASE, date/string, DML, DDL, transactions, SELF/CROSS JOIN |
+| Step 3 | Advanced 18–25 | Window functions, CTE, EXISTS, views, indexes, triggers, JSON, stored procedures |
 
 Follow lessons **in order**. Each one builds on the previous.
 

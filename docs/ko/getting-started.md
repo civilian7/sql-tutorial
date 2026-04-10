@@ -2,42 +2,63 @@
 
 5분이면 데이터베이스를 만들고 첫 쿼리를 실행할 수 있습니다.
 
-## 1. Python 설치
+## 1. 프로젝트 다운로드
 
-Python 3.10 이상이 필요합니다.
+=== "Git"
+    ```bash
+    git clone https://github.com/civilian7/sql-tutorial.git
+    cd sql-tutorial
+    ```
+
+=== "ZIP 다운로드"
+    [GitHub에서 ZIP 다운로드](https://github.com/civilian7/sql-tutorial/archive/refs/heads/main.zip) 후 압축을 풀고, 해당 폴더로 이동합니다.
+
+## 2. Python 설치
+
+Python 3.10 이상이 필요합니다. 이미 설치되어 있다면 이 단계를 건너뛰세요.
 
 === "Windows"
     [python.org](https://www.python.org/downloads/)에서 다운로드하여 설치합니다.
-    설치 화면에서 **"Add Python to PATH"** 체크박스를 반드시 선택하세요.
 
+    !!! warning "설치 시 반드시 체크"
+        설치 첫 화면에서 **"Add Python to PATH"** 체크박스를 선택하세요. 이걸 놓치면 터미널에서 `python` 명령이 작동하지 않습니다.
+
+    설치 후 **명령 프롬프트**(시작 메뉴에서 `cmd` 검색)를 열고 확인합니다:
     ```
     python --version
     ```
 
 === "macOS"
+    **터미널**(Spotlight에서 `Terminal` 검색)을 열고:
     ```bash
     brew install python@3.12
+    python3 --version
     ```
 
 === "Linux (Ubuntu/Debian)"
     ```bash
     sudo apt update && sudo apt install python3 python3-pip python3-venv
+    python3 --version
     ```
 
-## 2. 데이터베이스 생성
+## 3. 데이터베이스 생성
+
+터미널에서 프로젝트 폴더로 이동한 뒤 실행합니다:
 
 ```bash
 pip install -r requirements.txt
 python generate.py --size small
 ```
 
-`output/ecommerce.db` 파일이 생성됩니다 (약 80MB, 68만 건).
+`output/ecommerce.db` 파일이 생성됩니다 (약 80MB, 68만 건). 약 20초 소요됩니다.
 
-??? info "가상환경 사용 (권장)"
+!!! tip "오류가 발생하면"
+    - `pip: command not found` → `pip3`으로 대체하세요
+    - `Permission denied` → 가상환경을 사용하세요:
     ```bash
     python -m venv .venv
-    source .venv/bin/activate   # macOS/Linux
     .venv\Scripts\activate      # Windows
+    source .venv/bin/activate   # macOS/Linux
     pip install -r requirements.txt
     python generate.py --size small
     ```
@@ -51,30 +72,39 @@ python generate.py --size small
     ```
     전체 옵션은 [생성기 상세 가이드](generator-guide.md)를 참고하세요.
 
-## 3. SQL 도구에서 열기
+## 4. SQL 도구에서 열기
 
-생성된 `output/ecommerce.db`를 아무 SQL 도구에서 열면 됩니다.
+생성된 `output/ecommerce.db`를 SQL 도구에서 엽니다. **처음이라면 DB Browser for SQLite를 추천합니다** — 무료이고 설치가 간단합니다.
 
-| 도구 | 방법 |
-|------|------|
-| ezQuery (개발중) | 파일 > DB 열기 > ecommerce.db |
-| DB Browser for SQLite | 데이터베이스 열기 |
-| DBeaver | 새 연결 > SQLite > 파일 선택 |
-| 명령줄 | `sqlite3 output/ecommerce.db` |
+| 도구 | 설치 | 파일 열기 |
+|------|------|----------|
+| **DB Browser for SQLite** (추천) | [sqlitebrowser.org](https://sqlitebrowser.org/dl/) | 데이터베이스 열기 > ecommerce.db |
+| DBeaver | [dbeaver.io](https://dbeaver.io/download/) | 새 연결 > SQLite > 파일 선택 |
+| 명령줄 | (설치 불필요) | `sqlite3 output/ecommerce.db` |
 
-## 4. 첫 쿼리 실행
+## 5. 첫 쿼리 실행
 
-데이터베이스가 잘 만들어졌는지 확인합니다.
+데이터베이스가 잘 만들어졌는지 확인합니다. SQL 도구에서 아래 쿼리를 입력하고 실행하세요.
 
 ```sql
--- 테이블 목록 (30개면 정상)
+-- 테이블 목록 확인
 SELECT name FROM sqlite_master
 WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
 ORDER BY name;
 ```
 
+30개 테이블이 표시되면 정상입니다:
+
+| name |
+|------|
+| calendar |
+| cart_items |
+| carts |
+| categories |
+| ... (총 30개) |
+
 ```sql
--- 고객 5명 조회
+-- 고객 데이터 맛보기
 SELECT name, email, grade, point_balance
 FROM customers
 LIMIT 5;
@@ -100,8 +130,8 @@ SELECT
 | 단계 | 레슨 | 설명 |
 |------|------|------|
 | 1단계 | 초급 01~06 | SELECT, WHERE, 정렬, 집계, GROUP BY, NULL |
-| 2단계 | 중급 07~16 | JOIN, 서브쿼리, CASE, 날짜/문자열, DML, DDL, SELF/CROSS JOIN |
-| 3단계 | 고급 17~22 | 윈도우 함수, CTE, EXISTS, 뷰, 인덱스, 트리거 |
+| 2단계 | 중급 07~17 | JOIN, 서브쿼리, CASE, 날짜/문자열, DML, DDL, 트랜잭션, SELF/CROSS JOIN |
+| 3단계 | 고급 18~25 | 윈도우 함수, CTE, EXISTS, 뷰, 인덱스, 트리거, JSON, 저장 프로시저 |
 
 레슨은 **순서대로** 따라하세요. 앞 레슨이 뒤 레슨의 기초가 됩니다.
 
