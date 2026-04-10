@@ -49,13 +49,13 @@ jobs:
         run: python verify_sql.py
 
       - name: Verify content quality
-        run: python verify_quality.py || true
+        run: python verify_quality.py
 
       - name: Verify difficulty curve
         run: python verify_difficulty.py
 
       - name: Verify DML/DDL answers
-        run: python verify_dml.py || true
+        run: python verify_dml.py
 
       - name: Build docs (Korean)
         run: cd docs && mkdocs build -f mkdocs-ko.yml -q
