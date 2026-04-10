@@ -2,6 +2,8 @@
 
 # SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v2.0</small>
 
+[![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
+
 [변경 이력](#변경-이력) | [GitHub](https://github.com/civilian7/sql-tutorial)
 
 컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (22개 레슨, 208개 연습문제)을 제공하는 프로젝트입니다.

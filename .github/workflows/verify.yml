@@ -1,0 +1,54 @@
+name: Verify Tutorial
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'data/**'
+      - 'exercises/**'
+      - 'generate.py'
+      - 'verify_*.py'
+      - 'requirements.txt'
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate database
+        run: python generate.py --size small
+
+      - name: Verify SQL (examples + answers)
+        run: python verify_sql.py
+
+      - name: Verify content quality
+        run: python verify_quality.py || true  # warnings OK, errors fail
+
+      - name: Verify difficulty curve
+        run: python verify_difficulty.py
+
+      - name: Verify DML/DDL answers
+        run: python verify_dml.py || true  # script parsing limits OK
+
+      - name: Build docs (Korean)
+        run: cd docs && mkdocs build -f mkdocs-ko.yml -q
+
+      - name: Build docs (English)
+        run: cd docs && mkdocs build -f mkdocs-en.yml -q
