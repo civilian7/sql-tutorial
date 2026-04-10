@@ -259,6 +259,13 @@ Find the top-level managers in the `staff` table — employees whose `manager_id
     | 한민재  | 경영         | admin |
 
 
+    **Expected result:**
+
+    | name | department | role  |
+    | ---- | ---------- | ----- |
+    | 한민재  | 경영         | admin |
+
+
 ### Exercise 2
 Find customers whose `phone` is NULL. Show their `name` and `email`, but replace NULL emails with `'No contact'` using COALESCE.
 
@@ -297,6 +304,17 @@ Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `na
     | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
 
 
+    **Expected result:**
+
+    | name                                     | price   | stock_qty | price_per_unit |
+    | ---------------------------------------- | ------: | --------: | -------------: |
+    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
+    | Dell U2724D                              |  853600 |       337 |        2532.94 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
+
+
 ### Exercise 4
 List customers who have never logged in (`last_login_at IS NULL`). Show `name`, `email`, and `created_at`, replacing NULL `email` with `'N/A'` and NULL `created_at` with `'Unknown'`. Limit to 10 rows.
 
@@ -310,6 +328,18 @@ List customers who have never logged in (`last_login_at IS NULL`). Show `name`, 
     WHERE last_login_at IS NULL
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | name | email              | created_at          |
+    | ---- | ------------------ | ------------------- |
+    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
+    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
+    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
+    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
+    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
+    | ...  | ...                | ...                 |
+
 
     **Expected result:**
 
@@ -350,6 +380,18 @@ List all orders where `staff_id IS NULL` (no customer service rep assigned). For
     | ...                | ...       | ...                |
 
 
+    **Expected result:**
+
+    | order_number       | status    | notes              |
+    | ------------------ | --------- | ------------------ |
+    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
+    | ORD-20250630-34905 | pending   | —                  |
+    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
+    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
+    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
+    | ...                | ...       | ...                |
+
+
 ### Exercise 6
 For each membership `grade`, show how many customers have a known gender vs. an unknown gender. Use `COALESCE(gender, 'Unknown')` as the grouping column.
 
@@ -363,6 +405,18 @@ For each membership `grade`, show how many customers have a known gender vs. an 
     GROUP BY grade, COALESCE(gender, 'Unknown')
     ORDER BY grade, gender_status;
     ```
+
+    **Expected result:**
+
+    | grade  | gender_status | customer_count |
+    | ------ | ------------- | -------------: |
+    | BRONZE | F             |           1332 |
+    | BRONZE | M             |           2194 |
+    | BRONZE | Unknown       |            436 |
+    | GOLD   | F             |            136 |
+    | GOLD   | M             |            316 |
+    | ...    | ...           | ...            |
+
 
     **Expected result:**
 
@@ -394,6 +448,13 @@ Count how many orders in the `orders` table have a NULL `cancelled_at` (not canc
     |         33154 |      1754 |
 
 
+    **Expected result:**
+
+    | not_cancelled | cancelled |
+    | ------------: | --------: |
+    |         33154 |      1754 |
+
+
 ### Exercise 8
 From the `products` table, count the total products, how many are missing a `weight_grams`, and what percentage that is (1 decimal place). Use aliases `total_products`, `missing_weight`, `pct_missing`.
 
@@ -405,6 +466,13 @@ From the `products` table, count the total products, how many are missing a `wei
         ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
     FROM products;
     ```
+
+    **Expected result:**
+
+    | total_products | missing_weight | pct_missing |
+    | -------------: | -------------: | ----------: |
+    |            280 |             12 |         4.3 |
+
 
     **Expected result:**
 
@@ -434,6 +502,14 @@ In the `reviews` table, compare the average `rating` of reviews that have `conte
     | No Content     |          789 |       3.93 |
 
 
+    **Expected result:**
+
+    | content_status | review_count | avg_rating |
+    | -------------- | -----------: | ---------: |
+    | Has Content    |         7156 |       3.91 |
+    | No Content     |          789 |       3.93 |
+
+
 ### Exercise 10
 Count how many customers are missing a birth date, have no recorded gender, and have never logged in. Show separate counts for each condition plus the total customer count.
 
@@ -446,6 +522,13 @@ Count how many customers are missing a birth date, have no recorded gender, and 
         SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in
     FROM customers;
     ```
+
+    **Expected result:**
+
+    | total_customers | missing_birth_date | missing_gender | never_logged_in |
+    | --------------: | -----------------: | -------------: | --------------: |
+    |            5230 |                780 |            523 |             289 |
+
 
 
 ---

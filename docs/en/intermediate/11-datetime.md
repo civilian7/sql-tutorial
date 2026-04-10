@@ -434,6 +434,18 @@ Retrieve orders placed in March 2024. Return `order_number`, `ordered_at`, and `
     | ...                | ...                 | ...          |
 
 
+    **Expected result:**
+
+    | order_number       | ordered_at          | total_amount |
+    | ------------------ | ------------------- | -----------: |
+    | ORD-20240301-27091 | 2024-03-01 07:36:13 |        57000 |
+    | ORD-20240301-27097 | 2024-03-01 09:11:37 |       114800 |
+    | ORD-20240301-27092 | 2024-03-01 09:47:39 |       189100 |
+    | ORD-20240301-27099 | 2024-03-01 09:52:24 |      2568500 |
+    | ORD-20240301-27103 | 2024-03-01 10:15:18 |      2433600 |
+    | ...                | ...                 | ...          |
+
+
 ### Exercise 2
 Calculate each active staff member's tenure in years. Return `name`, `hired_at`, and `years_worked`. Sort by tenure descending.
 
@@ -450,6 +462,17 @@ Calculate each active staff member's tenure in years. Return `name`, `hired_at`,
         WHERE is_active = 1
         ORDER BY years_worked DESC;
         ```
+
+        **Expected result:**
+
+        | name | hired_at   | years_worked |
+        | ---- | ---------- | -----------: |
+        | 한민재  | 2016-05-23 |            9 |
+        | 장주원  | 2017-08-20 |            8 |
+        | 이준혁  | 2022-03-02 |            4 |
+        | 박경수  | 2022-10-12 |            3 |
+        | 권영희  | 2024-08-05 |            1 |
+
 
         **Expected result:**
 
@@ -502,6 +525,18 @@ Calculate each customer's age from `birth_date`. Return `name`, `birth_date`, an
         ORDER BY age DESC
         LIMIT 10;
         ```
+
+        **Expected result:**
+
+        | name | birth_date | age |
+        | ---- | ---------- | --: |
+        | 강성민  | 1960-04-02 |  66 |
+        | 박예지  | 1960-01-11 |  66 |
+        | 양중수  | 1960-02-22 |  66 |
+        | 김정순  | 1960-04-09 |  66 |
+        | 박승민  | 1960-02-04 |  66 |
+        | ...  | ...        | ... |
+
 
         **Expected result:**
 
@@ -570,6 +605,18 @@ Calculate the number of days between a customer's `created_at` and `last_login_a
         | ...  | ...                 | ...                 | ...         |
 
 
+        **Expected result:**
+
+        | name | created_at          | last_login_at       | active_days |
+        | ---- | ------------------- | ------------------- | ----------: |
+        | 강은서  | 2016-01-14 06:39:08 | 2025-06-29 16:32:45 |        3454 |
+        | 유현지  | 2016-01-05 22:02:29 | 2025-06-13 23:18:42 |        3447 |
+        | 이명자  | 2016-01-31 06:55:50 | 2025-06-23 17:07:32 |        3431 |
+        | 이영자  | 2016-01-09 06:08:34 | 2025-05-06 04:21:40 |        3404 |
+        | 김준서  | 2016-02-11 06:00:14 | 2025-05-13 15:45:24 |        3379 |
+        | ...  | ...                 | ...                 | ...         |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -612,6 +659,18 @@ Show the number of new customers who signed up each year since TechShop opened. 
     ORDER BY year;
     ```
 
+    **Expected result:**
+
+    | year | new_customers |
+    | ---: | ------------: |
+    | 2016 |           100 |
+    | 2017 |           180 |
+    | 2018 |           300 |
+    | 2019 |           450 |
+    | 2020 |           700 |
+    | ...  | ...           |
+
+
 
 ### Exercise 6
 Extract the year and month from orders and count orders per month for 2023 only. Return `order_year`, `order_month`, and `order_count`, sorted by month ascending.
@@ -628,6 +687,18 @@ Extract the year and month from orders and count orders per month for 2023 only.
         GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)
         ORDER BY order_month ASC;
         ```
+
+        **Expected result:**
+
+        | order_year | order_month | order_count |
+        | ---------: | ----------: | ----------: |
+        |       2023 |          01 |         317 |
+        |       2023 |          02 |         314 |
+        |       2023 |          03 |         470 |
+        |       2023 |          04 |         369 |
+        |       2023 |          05 |         415 |
+        | ...        | ...         | ...         |
+
 
         **Expected result:**
 
@@ -696,6 +767,18 @@ Count reviews and calculate the average rating per month for 2024. Return `revie
         | ...          | ...          | ...        |
 
 
+        **Expected result:**
+
+        | review_month | review_count | avg_rating |
+        | -----------: | -----------: | ---------: |
+        |           01 |          108 |       3.97 |
+        |           02 |           82 |       3.82 |
+        |           03 |          112 |       3.93 |
+        |           04 |          116 |       4.01 |
+        |           05 |           92 |       3.84 |
+        | ...          | ...          | ...        |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -739,6 +822,18 @@ Find delivered orders where the delivery took 7 or more days. Return `order_numb
         ORDER BY delivery_days DESC
         LIMIT 10;
         ```
+
+        **Expected result:**
+
+        | order_number       | ordered_at          | delivered_at        | delivery_days |
+        | ------------------ | ------------------- | ------------------- | ------------: |
+        | ORD-20160111-00016 | 2016-01-11 11:26:10 | 2016-01-18 11:26:10 |             7 |
+        | ORD-20160114-00020 | 2016-01-14 10:32:57 | 2016-01-21 10:32:57 |             7 |
+        | ORD-20160118-00025 | 2016-01-18 17:56:53 | 2016-01-25 17:56:53 |             7 |
+        | ORD-20160130-00037 | 2016-02-03 04:55:50 | 2016-02-10 04:55:50 |             7 |
+        | ORD-20160223-00062 | 2016-02-23 15:01:49 | 2016-03-01 15:01:49 |             7 |
+        | ...                | ...                 | ...                 | ...           |
+
 
         **Expected result:**
 
@@ -819,6 +914,18 @@ Find the day-of-week with the highest average order value. Use `strftime('%w', o
         | ...         | ...         | ...             |
 
 
+        **Expected result:**
+
+        | day_of_week | order_count | avg_order_value |
+        | ----------- | ----------: | --------------: |
+        | Monday      |        5187 |      1037883.42 |
+        | Wednesday   |        4194 |      1020696.87 |
+        | Friday      |        4380 |         1016079 |
+        | Thursday    |        4200 |      1014212.87 |
+        | Sunday      |        5144 |      1011256.01 |
+        | ...         | ...         | ...             |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -879,6 +986,16 @@ Calculate the average number of days between `ordered_at` and `shipped_at` (in t
         GROUP BY s.carrier
         ORDER BY avg_processing_days ASC;
         ```
+
+        **Expected result:**
+
+        | carrier | shipment_count | avg_processing_days |
+        | ------- | -------------: | ------------------: |
+        | CJ대한통운  |          13083 |                   2 |
+        | 로젠택배    |           6678 |                   2 |
+        | 우체국택배   |           4985 |                   2 |
+        | 한진택배    |           8340 |                   2 |
+
 
         **Expected result:**
 

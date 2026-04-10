@@ -172,6 +172,18 @@ List every customer's `name`, `email`, and `grade`. Give the columns the aliases
     | ...       | ...               | ...             |
 
 
+    **Expected result:**
+
+    | full_name | email_address     | membership_tier |
+    | --------- | ----------------- | --------------- |
+    | 정준호       | user1@testmail.kr | BRONZE          |
+    | 김경수       | user2@testmail.kr | VIP             |
+    | 김민재       | user3@testmail.kr | VIP             |
+    | 진정자       | user4@testmail.kr | VIP             |
+    | 이정수       | user5@testmail.kr | SILVER          |
+    | ...       | ...               | ...             |
+
+
 ### Exercise 2
 Show all distinct `method` values from the `payments` table to find out which payment methods TechShop accepts.
 
@@ -180,6 +192,18 @@ Show all distinct `method` values from the `payments` table to find out which pa
     SELECT DISTINCT method
     FROM payments;
     ```
+
+    **Expected result:**
+
+    | method        |
+    | ------------- |
+    | card          |
+    | point         |
+    | kakao_pay     |
+    | bank_transfer |
+    | naver_pay     |
+    | ...           |
+
 
     **Expected result:**
 
@@ -242,6 +266,18 @@ Select `name`, `price`, and `stock_qty` from `products`. Add a computed column c
     | ...                                      | ...     | ...       | ...             |
 
 
+    **Expected result:**
+
+    | name                                     | price   | stock_qty | inventory_value |
+    | ---------------------------------------- | ------: | --------: | --------------: |
+    | Razer Blade 18 블랙                        | 2987500 |       107 |       319662500 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |       870256000 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |        17626900 |
+    | Dell U2724D                              |  853600 |       337 |       287663200 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |         7711300 |
+    | ...                                      | ...     | ...       | ...             |
+
+
 ### Exercise 4
 Retrieve all columns from the `categories` table.
 
@@ -249,6 +285,18 @@ Retrieve all columns from the `categories` table.
     ```sql
     SELECT * FROM categories;
     ```
+
+    **Expected result:**
+
+    | id | parent_id | name    | slug             | depth | sort_order | is_active | created_at          | updated_at          |
+    | -: | --------: | ------- | ---------------- | ----: | ---------: | --------: | ------------------- | ------------------- |
+    |  1 |    (NULL) | 데스크톱 PC | desktop-pc       |     0 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    |  2 |         1 | 완제품     | desktop-prebuilt |     1 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    |  3 |         1 | 조립PC    | desktop-custom   |     1 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    |  4 |         1 | 베어본     | desktop-barebone |     1 |          3 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    |  5 |    (NULL) | 노트북     | laptop           |     0 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | ... | ...       | ...     | ...              | ...   | ...        | ...       | ...                 | ...                 |
+
 
     **Expected result:**
 
@@ -305,6 +353,17 @@ Select `name`, `department`, and `role` from the `staff` table, but rearrange th
     | 마케팅        | manager | 권영희  |
 
 
+    **Expected result:**
+
+    | department | role    | name |
+    | ---------- | ------- | ---- |
+    | 경영         | admin   | 한민재  |
+    | 경영         | admin   | 장주원  |
+    | 경영         | admin   | 박경수  |
+    | 영업         | manager | 이준혁  |
+    | 마케팅        | manager | 권영희  |
+
+
 ### Exercise 6
 Find all distinct `status` values in the `orders` table.
 
@@ -313,6 +372,18 @@ Find all distinct `status` values in the `orders` table.
     SELECT DISTINCT status
     FROM orders;
     ```
+
+    **Expected result:**
+
+    | status    |
+    | --------- |
+    | cancelled |
+    | confirmed |
+    | delivered |
+    | paid      |
+    | pending   |
+    | ...       |
+
 
     **Expected result:**
 
@@ -374,6 +445,18 @@ List product `name` and `price` from `products`, and add a column `discounted_pr
     | ...                                      | ...     | ...              |
 
 
+    **Expected result:**
+
+    | name                                     | price   | discounted_price |
+    | ---------------------------------------- | ------: | ---------------: |
+    | Razer Blade 18 블랙                        | 2987500 |          2688750 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |          1569600 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |            44190 |
+    | Dell U2724D                              |  853600 |           768240 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |           117630 |
+    | ...                                      | ...     | ...              |
+
+
 ### Exercise 8
 Select `name` and `price` from `products`, and add a string literal `'KRW'` as a column aliased `currency` on every row.
 
@@ -385,6 +468,18 @@ Select `name` and `price` from `products`, and add a string literal `'KRW'` as a
         'KRW' AS currency
     FROM products;
     ```
+
+    **Expected result:**
+
+    | name                                     | price   | currency |
+    | ---------------------------------------- | ------: | -------- |
+    | Razer Blade 18 블랙                        | 2987500 | KRW      |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 | KRW      |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 | KRW      |
+    | Dell U2724D                              |  853600 | KRW      |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 | KRW      |
+    | ...                                      | ...     | ...      |
+
 
     **Expected result:**
 
@@ -443,6 +538,18 @@ Find all distinct combinations of `contact_name` and `company_name` from the `su
     | ...          | ...          |
 
 
+    **Expected result:**
+
+    | contact_name | company_name |
+    | ------------ | ------------ |
+    | 김수민          | 삼성전자 공식 유통   |
+    | 김예준          | LG전자 공식 유통   |
+    | 이상현          | 인텔코리아        |
+    | 강중수          | AMD코리아       |
+    | 이정남          | 엔비디아코리아      |
+    | ...          | ...          |
+
+
 ### Exercise 10
 From `products`, select `name`, `price`, and `cost_price`. Add a computed column `margin` (`price - cost_price`) and another `margin_pct` (`(price - cost_price) / price * 100`).
 
@@ -456,6 +563,18 @@ From `products`, select `name`, `price`, and `cost_price`. Add a computed column
         (price - cost_price) / price * 100    AS margin_pct
     FROM products;
     ```
+
+    **Expected result:**
+
+    | name                                     | price   | cost_price | margin | margin_pct |
+    | ---------------------------------------- | ------: | ---------: | -----: | ---------: |
+    | Razer Blade 18 블랙                        | 2987500 |    3086700 | -99200 |      -3.32 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |    1360300 | 383700 |         22 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |      37900 |  11200 |      22.81 |
+    | Dell U2724D                              |  853600 |     565700 | 287900 |      33.73 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |     121400 |   9300 |       7.12 |
+    | ...                                      | ...     | ...        | ...    | ...        |
+
 
     **Expected result:**
 

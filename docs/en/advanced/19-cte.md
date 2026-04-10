@@ -411,6 +411,18 @@ Use a recursive CTE to generate a sequence of month numbers from 1 to 12, then L
         | ...       | ...        | ...         |
 
 
+        **Expected result:**
+
+        | month_num | year_month | order_count |
+        | --------: | ---------- | ----------: |
+        |         1 | 2024-01    |         371 |
+        |         2 | 2024-02    |         367 |
+        |         3 | 2024-03    |         582 |
+        |         4 | 2024-04    |         393 |
+        |         5 | 2024-05    |         387 |
+        | ...       | ...        | ...         |
+
+
     === "MySQL"
         ```sql
         WITH RECURSIVE months AS (
@@ -481,6 +493,18 @@ Use a CTE to identify "at-risk" customers: those who have placed at least 3 orde
           AND julianday('now') - julianday(cr.last_order_date) > 180
         ORDER BY cr.last_order_date ASC;
         ```
+
+        **Expected result:**
+
+        | customer_id | name | grade  | order_count | last_order_date     |
+        | ----------: | ---- | ------ | ----------: | ------------------- |
+        |         997 | 문지우  | BRONZE |           6 | 2020-10-08 12:37:15 |
+        |         349 | 박현정  | BRONZE |           7 | 2020-12-19 20:55:15 |
+        |         350 | 홍성호  | BRONZE |           5 | 2021-02-24 09:22:46 |
+        |         317 | 김영철  | BRONZE |           4 | 2021-03-16 19:36:41 |
+        |         191 | 조지현  | BRONZE |           8 | 2021-04-17 21:58:02 |
+        | ...         | ...  | ...    | ...         | ...                 |
+
 
         **Expected result:**
 
@@ -574,6 +598,18 @@ Using two CTEs, find the monthly revenue for 2024, then compute the month-over-m
         FROM with_lag
         ORDER BY year_month;
         ```
+
+        **Expected result:**
+
+        | year_month | revenue   | prev_revenue | mom_change | mom_pct |
+        | ---------- | --------: | -----------: | ---------: | ------: |
+        | 2024-01    | 363769660 |       (NULL) |     (NULL) |  (NULL) |
+        | 2024-02    | 383853446 |    363769660 |   20083786 |     5.5 |
+        | 2024-03    | 553727467 |    383853446 |  169874021 |    44.3 |
+        | 2024-04    | 392480419 |    553727467 | -161247048 |   -29.1 |
+        | 2024-05    | 352236014 |    392480419 |  -40244405 |   -10.3 |
+        | ...        | ...       | ...          | ...        | ...     |
+
 
         **Expected result:**
 
@@ -681,6 +717,18 @@ Use a CTE to compare each category's average product price against the overall a
     | ...           | ...        | ...         | ...               |
 
 
+    **Expected result:**
+
+    | category_name | avg_price  | overall_avg | diff_from_overall |
+    | ------------- | ---------: | ----------: | ----------------: |
+    | 맥북            |    3774700 |   665404.59 |        3109295.41 |
+    | 게이밍 노트북       |    3169700 |   665404.59 |        2504295.41 |
+    | NVIDIA        |    2045440 |   665404.59 |        1380035.41 |
+    | 일반 노트북        |  1856837.5 |   665404.59 |        1191432.91 |
+    | 조립PC          | 1795033.33 |   665404.59 |        1129628.74 |
+    | ...           | ...        | ...         | ...               |
+
+
 ### Exercise 5
 Use a recursive CTE to build the full breadcrumb path for every leaf category (categories with no children). Return `category_id`, `category_name`, and `full_path`.
 
@@ -714,6 +762,18 @@ Use a recursive CTE to build the full breadcrumb path for every leaf category (c
         WHERE ct.id NOT IN (SELECT parent_id FROM categories WHERE parent_id IS NOT NULL)
         ORDER BY ct.full_path;
         ```
+
+        **Expected result:**
+
+        | category_id | category_name | full_path      |
+        | ----------: | ------------- | -------------- |
+        |          16 | AMD           | CPU > AMD      |
+        |          15 | Intel         | CPU > Intel    |
+        |          49 | UPS/전원        | UPS/전원         |
+        |          29 | AMD           | 그래픽카드 > AMD    |
+        |          28 | NVIDIA        | 그래픽카드 > NVIDIA |
+        | ...         | ...           | ...            |
+
 
         **Expected result:**
 
@@ -797,6 +857,18 @@ Use a recursive CTE to walk the category tree, then aggregate the number of subc
         | ...           | ...               | ...           |
 
 
+        **Expected result:**
+
+        | root_category | subcategory_count | product_count |
+        | ------------- | ----------------: | ------------: |
+        | 노트북           |                 4 |            29 |
+        | 키보드           |                 3 |            27 |
+        | 메인보드          |                 2 |            23 |
+        | 모니터           |                 3 |            22 |
+        | 네트워크 장비       |                 3 |            22 |
+        | ...           | ...               | ...           |
+
+
     === "MySQL"
         ```sql
         WITH RECURSIVE tree AS (
@@ -848,6 +920,14 @@ Use a recursive CTE to walk the staff org chart and find each manager's depth le
         HAVING COUNT(s.id) > 0
         ORDER BY m.level, direct_reports DESC;
         ```
+
+        **Expected result:**
+
+        | manager_name | level | direct_reports |
+        | ------------ | ----: | -------------: |
+        | 한민재          |     0 |              3 |
+        | 박경수          |     1 |              1 |
+
 
         **Expected result:**
 
@@ -916,6 +996,18 @@ Use multiple CTEs to find the share of each payment method in monthly revenue fo
         INNER JOIN monthly_total AS mt ON mm.year_month = mt.year_month
         ORDER BY mm.year_month, mm.amount DESC;
         ```
+
+        **Expected result:**
+
+        | year_month | method        | amount    | monthly_total | pct  |
+        | ---------- | ------------- | --------: | ------------: | ---: |
+        | 2024-01    | card          | 139383923 |     354498356 | 39.3 |
+        | 2024-01    | kakao_pay     |  85739363 |     354498356 | 24.2 |
+        | 2024-01    | naver_pay     |  52942978 |     354498356 | 14.9 |
+        | 2024-01    | bank_transfer |  37382699 |     354498356 | 10.5 |
+        | 2024-01    | point         |  22001403 |     354498356 |  6.2 |
+        | ...        | ...           | ...       | ...           | ...  |
+
 
         **Expected result:**
 
@@ -1043,6 +1135,18 @@ Combine a CTE with a window function to find the top 2 highest-rated products pe
     | ...           | ...                    | ...        | ...          | ... |
 
 
+    **Expected result:**
+
+    | category_name | product_name           | avg_rating | review_count | rnk |
+    | ------------- | ---------------------- | ---------: | -----------: | --: |
+    | 2in1          | HP Envy x360 15 실버     |       4.08 |           39 |   1 |
+    | 2in1          | 삼성 갤럭시북4 360 블랙        |          4 |            7 |   2 |
+    | 2in1          | 삼성 갤럭시북5 360 블랙        |          4 |           11 |   2 |
+    | 2in1          | 레노버 IdeaPad Flex 5 화이트 |          4 |            5 |   2 |
+    | AMD           | AMD Ryzen 9 9900X      |        3.8 |           60 |   1 |
+    | ...           | ...                    | ...        | ...          | ... |
+
+
 ### Exercise 10
 Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold and revenue per product. CTE 2: average review rating per product. CTE 3: JOIN both. Main query: return `product_name`, `units_sold`, `revenue`, and `avg_rating`, showing the top 10 by revenue.
 
@@ -1081,6 +1185,18 @@ Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold
     ORDER BY revenue DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | product_name       | units_sold | revenue   | avg_rating |
+    | ------------------ | ---------: | --------: | ---------: |
+    | Razer Blade 18 화이트 |        288 | 956361600 |       3.65 |
+    | Razer Blade 16 실버  |        227 | 936102600 |       4.18 |
+    | Razer Blade 18 블랙  |        223 | 932608300 |       3.57 |
+    | Razer Blade 18 블랙  |        295 | 881312500 |       3.55 |
+    | 삼성 오디세이 G5 27 블랙   |        264 | 676262400 |       3.09 |
+    | ...                | ...        | ...       | ...        |
+
 
     **Expected result:**
 

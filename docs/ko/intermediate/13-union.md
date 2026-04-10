@@ -271,6 +271,18 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ORDER BY event_date DESC;
     ```
 
+    **결과 (예시):**
+
+    | event_type   | order_number       | customer_id | event_date          |
+    | ------------ | ------------------ | ----------: | ------------------- |
+    | cancellation | ORD-20241229-32059 |        3033 | 2024-12-31 03:16:33 |
+    | cancellation | ORD-20241230-32061 |        1101 | 2024-12-31 00:20:24 |
+    | cancellation | ORD-20241228-32027 |         124 | 2024-12-30 03:07:39 |
+    | cancellation | ORD-20241229-32055 |        3852 | 2024-12-29 19:21:00 |
+    | cancellation | ORD-20241228-32025 |         355 | 2024-12-29 14:56:49 |
+    | ...          | ...                | ...         | ...                 |
+
+
 
 ### 연습 4
 2024년 리뷰와 2024년 상품 Q&A(질문만, `parent_id IS NULL`)를 합친 "고객 피드백" 목록을 만드세요. `UNION ALL`을 사용하고, `feedback_type`('review' 또는 'qna'), `product_id`, `customer_id`, `created_at`을 포함하세요. `created_at` 내림차순으로 정렬하고 상위 20건만 표시하세요.

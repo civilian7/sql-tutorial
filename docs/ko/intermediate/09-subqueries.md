@@ -342,6 +342,18 @@ LIMIT 8;
     ORDER BY p.category_id, p.price DESC;
     ```
 
+    **결과 (예시):**
+
+    | product_name             | price   | category_id |
+    | ------------------------ | ------: | ----------: |
+    | LG 일체형PC 27V70Q 실버       | 1292200 |           2 |
+    | HP Z2 Mini G1a 블랙        | 1166400 |           2 |
+    | ASUS ROG Strix GT35      | 4314800 |           3 |
+    | ASUS ROG Strix G16CH 화이트 | 2988700 |           3 |
+    | 주연 리오나인 R7 시스템           | 1829000 |           3 |
+    | ...                      | ...     | ...         |
+
+
 
 ### 연습 5
 최소 한 명의 고객 위시리스트에 있지만 **한 번도 주문된 적 없는** 상품을 찾으세요. `IN`과 `NOT IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요.

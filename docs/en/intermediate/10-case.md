@@ -279,6 +279,18 @@ Display `'No memo'` when an order's `notes` column is NULL. Use a CASE expressio
     | ...                | ...       | ...                |
 
 
+    **Expected result:**
+
+    | order_number       | status    | memo               |
+    | ------------------ | --------- | ------------------ |
+    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
+    | ORD-20250630-34905 | pending   | No memo            |
+    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
+    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
+    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
+    | ...                | ...       | ...                |
+
+
 ### Exercise 2
 Sort active staff so that `'manager'` roles appear first, then `'staff'`, then any other role. Within the same role, sort by `name` ascending. Return `name`, `department`, and `role`.
 
@@ -295,6 +307,17 @@ Sort active staff so that `'manager'` roles appear first, then `'staff'`, then a
         END,
         name ASC;
     ```
+
+    **Expected result:**
+
+    | name | department | role    |
+    | ---- | ---------- | ------- |
+    | 권영희  | 마케팅        | manager |
+    | 이준혁  | 영업         | manager |
+    | 박경수  | 경영         | admin   |
+    | 장주원  | 경영         | admin   |
+    | 한민재  | 경영         | admin   |
+
 
     **Expected result:**
 
@@ -337,6 +360,18 @@ Translate `payments.method` to a readable label using a simple CASE: `'card'` �
     | ... | ...    | ...          |
 
 
+    **Expected result:**
+
+    | id | amount | method_label |
+    | -: | -----: | ------------ |
+    |  1 | 130700 | Credit Card  |
+    |  2 | 130700 | Credit Card  |
+    |  3 | 265400 | Credit Card  |
+    |  4 | 130700 | Other        |
+    |  5 | 131390 | Other        |
+    | ... | ...    | ...          |
+
+
 ### Exercise 4
 Add a `stock_status` column to a product listing: `'Out of Stock'` when `stock_qty = 0`, `'Low Stock'` when `1–10`, `'In Stock'` when `11–100`, and `'Well Stocked'` when over 100. Return `name`, `stock_qty`, and `stock_status` for all active products.
 
@@ -355,6 +390,18 @@ Add a `stock_status` column to a product listing: `'Out of Stock'` when `stock_q
     WHERE is_active = 1
     ORDER BY stock_qty ASC;
     ```
+
+    **Expected result:**
+
+    | name                         | stock_qty | stock_status |
+    | ---------------------------- | --------: | ------------ |
+    | Arctic Freezer 36 A-RGB 화이트  |         0 | Out of Stock |
+    | 삼성 SPA-KFG0BUB               |         4 | Low Stock    |
+    | 로지텍 G502 HERO 실버             |         8 | Low Stock    |
+    | ASUS ROG Strix Scar 16       |        18 | In Stock     |
+    | MSI MPG X870E CARBON WIFI 블랙 |        21 | In Stock     |
+    | ...                          | ...       | ...          |
+
 
 
 ### Exercise 5
@@ -377,6 +424,17 @@ Create a generation breakdown report: count how many active customers fall into 
         GROUP BY generation
         ORDER BY customer_count DESC;
         ```
+
+        **Expected result:**
+
+        | generation | customer_count |
+        | ---------- | -------------: |
+        | Millennial |           1808 |
+        | Gen Z      |            829 |
+        | Unknown    |            560 |
+        | Gen X      |            558 |
+        | Boomer+    |             61 |
+
 
         **Expected result:**
 
@@ -455,6 +513,17 @@ Convert `rating` in the `reviews` table to a text label: 5 → `'Excellent'`, 4 
     | Terrible     |          395 |          1 |
 
 
+    **Expected result:**
+
+    | rating_label | review_count | avg_rating |
+    | ------------ | -----------: | ---------: |
+    | Excellent    |         3221 |          5 |
+    | Good         |         2362 |          4 |
+    | Average      |         1193 |          3 |
+    | Poor         |          774 |          2 |
+    | Terrible     |          395 |          1 |
+
+
 ### Exercise 7
 Classify customers by `point_balance` into three tiers: 100,000+ as `'Heavy User'`, 10,000+ as `'Regular'`, and the rest as `'Light'`. For each `grade`, count the number of customers in each tier. Return `grade`, `heavy_count`, `regular_count`, and `light_count`.
 
@@ -471,6 +540,16 @@ Classify customers by `point_balance` into three tiers: 100,000+ as `'Heavy User
     GROUP BY grade
     ORDER BY grade;
     ```
+
+    **Expected result:**
+
+    | grade  | heavy_count | regular_count | light_count |
+    | ------ | ----------: | ------------: | ----------: |
+    | BRONZE |         198 |           570 |        1780 |
+    | GOLD   |         206 |           278 |           0 |
+    | SILVER |         117 |           292 |          60 |
+    | VIP    |         251 |            64 |           0 |
+
 
     **Expected result:**
 
@@ -513,6 +592,13 @@ Bucket orders by `total_amount` into tiers: under 100 as `'Small'`, 100 to under
     | Large       |       32695 |   33168376925 |
 
 
+    **Expected result:**
+
+    | amount_tier | order_count | total_revenue |
+    | ----------- | ----------: | ------------: |
+    | Large       |       32695 |   33168376925 |
+
+
 ### Exercise 9
 Pivot payment outcomes by method: count `'completed'` payments as successes and all others as failures. Return `method`, `success_count`, `fail_count`, and `success_rate` (percentage rounded to 1 decimal). Sort by `success_rate` descending.
 
@@ -531,6 +617,18 @@ Pivot payment outcomes by method: count `'completed'` payments as successes and 
     GROUP BY method
     ORDER BY success_rate DESC;
     ```
+
+    **Expected result:**
+
+    | method          | success_count | fail_count | success_rate |
+    | --------------- | ------------: | ---------: | -----------: |
+    | virtual_account |          1638 |        134 |         92.4 |
+    | card            |         14522 |       1206 |         92.3 |
+    | naver_pay       |          4835 |        417 |         92.1 |
+    | kakao_pay       |          6359 |        543 |         92.1 |
+    | bank_transfer   |          3194 |        289 |         91.7 |
+    | ...             | ...           | ...        | ...          |
+
 
     **Expected result:**
 
@@ -568,6 +666,18 @@ For each product, calculate the revenue earned in each quarter of 2024 as separa
     ORDER BY (q1_revenue + q2_revenue + q3_revenue + q4_revenue) DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | product_name                 | q1_revenue | q2_revenue | q3_revenue | q4_revenue |
+    | ---------------------------- | ---------: | ---------: | ---------: | ---------: |
+    | Razer Blade 18 블랙            |   37638900 |   29274700 |   41821000 |   37638900 |
+    | Razer Blade 18 화이트           |   29886300 |   53131200 |   29886300 |   33207000 |
+    | Razer Blade 16 실버            |   45361800 |   24742800 |   20619000 |   20619000 |
+    | Razer Blade 18 블랙            |   29875000 |   17925000 |   29875000 |   32862500 |
+    | SAPPHIRE PULSE RX 7800 XT 실버 |   35413200 |   22297200 |   14427600 |   31478400 |
+    | ...                          | ...        | ...        | ...        | ...        |
+
 
     **Expected result:**
 

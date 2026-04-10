@@ -363,6 +363,17 @@ Use a SELF JOIN on the `staff` table to show each employee's name, department, r
     | 이준혁      | 영업         | manager | 한민재     |
 
 
+    **Expected result:**
+
+    | employee | department | role    | manager |
+    | -------- | ---------- | ------- | ------- |
+    | 박경수      | 경영         | admin   | 한민재     |
+    | 장주원      | 경영         | admin   | 한민재     |
+    | 한민재      | 경영         | admin   | (NULL)  |
+    | 권영희      | 마케팅        | manager | 박경수     |
+    | 이준혁      | 영업         | manager | 한민재     |
+
+
 ### Exercise 2: Staff Pairs in the Same Department
 
 Find pairs of staff members who belong to the same department. Remove duplicate pairs (`id < id`). Show the department and both names.
@@ -379,6 +390,15 @@ Find pairs of staff members who belong to the same department. Remove duplicate 
        AND s1.id < s2.id
     ORDER BY s1.department, s1.name;
     ```
+
+    **Expected result:**
+
+    | department | staff_a | staff_b |
+    | ---------- | ------- | ------- |
+    | 경영         | 장주원     | 박경수     |
+    | 경영         | 한민재     | 박경수     |
+    | 경영         | 한민재     | 장주원     |
+
 
     **Expected result:**
 
@@ -421,6 +441,18 @@ Find pairs of active customers who share the same grade. Eliminate duplicate pai
     | ...    | ...        | ...        |
 
 
+    **Expected result:**
+
+    | grade  | customer_a | customer_b |
+    | ------ | ---------- | ---------- |
+    | BRONZE | 강건우        | 강성수        |
+    | BRONZE | 강건우        | 강성진        |
+    | BRONZE | 강건우        | 강성훈        |
+    | BRONZE | 강건우        | 강영미        |
+    | BRONZE | 강건우        | 강영희        |
+    | ...    | ...        | ...        |
+
+
 ### Exercise 4: Product Pairs from the Same Supplier
 
 Find product pairs from the same supplier with their price difference. Remove duplicate pairs.
@@ -442,6 +474,18 @@ Find product pairs from the same supplier with their price difference. Remove du
     ORDER BY price_diff DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | supplier | product_a             | product_b             | price_a | price_b | price_diff |
+    | -------- | --------------------- | --------------------- | ------: | ------: | ---------: |
+    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Strix GT35   |   48800 | 4314800 |    4266000 |
+    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS PCE-BE92BT 블랙    | 4314800 |   57200 |    4257600 |
+    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Zephyrus G16 |   48800 | 4284100 |    4235300 |
+    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS XG-C100C 블랙      | 4314800 |   83500 |    4231300 |
+    | 에이수스코리아  | ASUS ROG Zephyrus G16 | ASUS PCE-BE92BT 블랙    | 4284100 |   57200 |    4226900 |
+    | ...      | ...                   | ...                   | ...     | ...     | ...        |
+
 
 
 ### Exercise 5: Customers with Multiple Shipping Addresses
@@ -477,6 +521,18 @@ Find customers who have different addresses. (SELF JOIN on `customer_addresses`)
     | ...  | ...                            | ...                            |
 
 
+    **Expected result:**
+
+    | name | address_1                      | address_2                      |
+    | ---- | ------------------------------ | ------------------------------ |
+    | 강경수  | 경기도 청양군 선릉로 626-76 (중수김최리)     | 강원도 부천시 원미구 서초대14길 929 (정남송김동) |
+    | 강경숙  | 경상북도 용인시 테헤란거리 958-21 (정웅박리)   | 전라북도 과천시 선릉6로 지하563 (옥순김리)     |
+    | 강경자  | 세종특별자치시 관악구 잠실로 542 (영미최동)     | 서울특별시 용산구 학동길 500-28           |
+    | 강경자  | 충청남도 부여군 삼성817길 453-98 (상호박이리) | 서울특별시 용산구 학동길 500-28           |
+    | 강경자  | 충청남도 부여군 삼성817길 453-98 (상호박이리) | 세종특별자치시 관악구 잠실로 542 (영미최동)     |
+    | ...  | ...                            | ...                            |
+
+
 ### Exercise 6: Percentage with CROSS JOIN
 
 Calculate each customer grade's percentage of total active customers. Use CROSS JOIN to attach the grand total to every row. Round to one decimal place.
@@ -497,6 +553,16 @@ Calculate each customer grade's percentage of total active customers. Use CROSS 
     GROUP BY grade, gt.total
     ORDER BY pct DESC;
     ```
+
+    **Expected result:**
+
+    | grade  | grade_count | pct  |
+    | ------ | ----------: | ---: |
+    | BRONZE |        2548 | 66.8 |
+    | GOLD   |         484 | 12.7 |
+    | SILVER |         469 | 12.3 |
+    | VIP    |         315 |  8.3 |
+
 
     **Expected result:**
 
@@ -549,6 +615,18 @@ Generate every combination of 2024 quarters (Q1-Q4) and payment methods (`DISTIN
             ON qr.q = qp.q AND m.method = qp.method
         ORDER BY qr.q, m.method;
         ```
+
+        **Expected result:**
+
+        | q  | method        | total_amount |
+        | -- | ------------- | -----------: |
+        | Q1 | bank_transfer |    116631296 |
+        | Q1 | card          |    609763898 |
+        | Q1 | kakao_pay     |    245675166 |
+        | Q1 | naver_pay     |    166861740 |
+        | Q1 | point         |     87019317 |
+        | ... | ...           | ...          |
+
 
         **Expected result:**
 
@@ -690,6 +768,18 @@ For each month of 2024 and each supplier, show the inbound quantity. Display 0 f
         | ...        | ...        | ...         |
 
 
+        **Expected result:**
+
+        | year_month | supplier   | inbound_qty |
+        | ---------- | ---------- | ----------: |
+        | 2024-01    | AMD코리아     |           0 |
+        | 2024-01    | APC코리아     |           0 |
+        | 2024-01    | ASRock코리아  |           0 |
+        | 2024-01    | HP코리아      |           0 |
+        | 2024-01    | LG전자 공식 유통 |           0 |
+        | ...        | ...        | ...         |
+
+
     === "MySQL"
         ```sql
         WITH months AS (
@@ -794,6 +884,18 @@ Generate every combination of customer grades (`DISTINCT grade`) and top-level c
         ON g.grade = gco.grade AND tc.id = gco.category_id
     ORDER BY g.grade, tc.name;
     ```
+
+    **Expected result:**
+
+    | grade  | category | order_count |
+    | ------ | -------- | ----------: |
+    | BRONZE | CPU      |         853 |
+    | BRONZE | UPS/전원   |         132 |
+    | BRONZE | 그래픽카드    |         782 |
+    | BRONZE | 네트워크 장비  |        1148 |
+    | BRONZE | 노트북      |         827 |
+    | ...    | ...      | ...         |
+
 
     **Expected result:**
 

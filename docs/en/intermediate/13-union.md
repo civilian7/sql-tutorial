@@ -220,6 +220,18 @@ Combine VIP-grade customers and GOLD-grade customers into one list using `UNION`
     | ...  | ...   |
 
 
+    **Expected result:**
+
+    | name | grade |
+    | ---- | ----- |
+    | 강경희  | GOLD  |
+    | 강도윤  | VIP   |
+    | 강도현  | GOLD  |
+    | 강명자  | VIP   |
+    | 강미숙  | VIP   |
+    | ...  | ...   |
+
+
 ### Exercise 2
 Combine all active product names (`is_active = 1`) and all category names into a single deduplicated list using `UNION`. The result column should be called `name`.
 
@@ -230,6 +242,18 @@ Combine all active product names (`is_active = 1`) and all category names into a
     SELECT name FROM categories
     ORDER BY name;
     ```
+
+    **Expected result:**
+
+    | name                                |
+    | ----------------------------------- |
+    | 2in1                                |
+    | AMD                                 |
+    | AMD Ryzen 9 9900X                   |
+    | AMD 소켓                              |
+    | APC Back-UPS Pro Gaming BGM1500B 블랙 |
+    | ...                                 |
+
 
     **Expected result:**
 
@@ -271,6 +295,18 @@ Build a "negative events" list combining cancelled orders and returned orders fo
     ORDER BY event_date DESC;
     ```
 
+    **Expected result:**
+
+    | event_type   | order_number       | customer_id | event_date          |
+    | ------------ | ------------------ | ----------: | ------------------- |
+    | cancellation | ORD-20241229-32059 |        3033 | 2024-12-31 03:16:33 |
+    | cancellation | ORD-20241230-32061 |        1101 | 2024-12-31 00:20:24 |
+    | cancellation | ORD-20241228-32027 |         124 | 2024-12-30 03:07:39 |
+    | cancellation | ORD-20241229-32055 |        3852 | 2024-12-29 19:21:00 |
+    | cancellation | ORD-20241228-32025 |         355 | 2024-12-29 14:56:49 |
+    | ...          | ...                | ...         | ...                 |
+
+
 
 ### Exercise 4
 Build a "customer feedback" list combining 2024 reviews and 2024 product Q&A questions (top-level only, `parent_id IS NULL`). Use `UNION ALL`. Include `feedback_type` ('review' or 'qna'), `product_id`, `customer_id`, and `created_at`. Sort by `created_at` descending, limit to 20 rows.
@@ -299,6 +335,18 @@ Build a "customer feedback" list combining 2024 reviews and 2024 product Q&A que
     ORDER BY created_at DESC
     LIMIT 20;
     ```
+
+    **Expected result:**
+
+    | feedback_type | product_id | customer_id | created_at          |
+    | ------------- | ---------: | ----------: | ------------------- |
+    | review        |        136 |         425 | 2024-12-31 21:40:46 |
+    | review        |        163 |        1429 | 2024-12-31 14:52:52 |
+    | review        |        250 |         275 | 2024-12-30 22:21:51 |
+    | review        |        152 |         784 | 2024-12-30 18:34:28 |
+    | review        |         11 |         646 | 2024-12-30 13:36:27 |
+    | ...           | ...        | ...         | ...                 |
+
 
     **Expected result:**
 
@@ -349,6 +397,18 @@ Count transactions by payment method, then add a grand total row using `UNION AL
     | ...      | ...             | ...      |
 
 
+    **Expected result:**
+
+    | sort_key | method          | tx_count |
+    | -------: | --------------- | -------: |
+    |        0 | card            |    14522 |
+    |        0 | kakao_pay       |     6359 |
+    |        0 | naver_pay       |     4835 |
+    |        0 | bank_transfer   |     3194 |
+    |        0 | virtual_account |     1638 |
+    | ...      | ...             | ...      |
+
+
 ### Exercise 6
 Count active customers (`is_active = 1`) by grade, then add a grand total row (`'ALL'`) using `UNION ALL`. Ensure the total row appears last.
 
@@ -373,6 +433,17 @@ Count active customers (`is_active = 1`) by grade, then add a grand total row (`
 
     ORDER BY sort_key, cnt DESC;
     ```
+
+    **Expected result:**
+
+    | sort_key | grade  | cnt  |
+    | -------: | ------ | ---: |
+    |        0 | BRONZE | 2548 |
+    |        0 | GOLD   |  484 |
+    |        0 | SILVER |  469 |
+    |        0 | VIP    |  315 |
+    |        1 | ALL    | 3816 |
+
 
     **Expected result:**
 
@@ -411,6 +482,18 @@ Create a customer engagement summary. Use `UNION ALL` to count, per customer: th
     ORDER BY total_activity DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | customer_id | total_activity |
+    | ----------: | -------------: |
+    |          98 |            469 |
+    |          97 |            453 |
+    |         226 |            423 |
+    |         162 |            328 |
+    |         227 |            326 |
+    | ...         | ...            |
+
 
     **Expected result:**
 
@@ -467,6 +550,18 @@ Summarize order counts and average amounts by status, then add a grand total row
     | ...              | ...         | ...        | ...  |
 
 
+    **Expected result:**
+
+    | status           | order_count | avg_amount | pct  |
+    | ---------------- | ----------: | ---------: | ---: |
+    | confirmed        |       32053 | 1007832.35 | 45.9 |
+    | cancelled        |        1754 |  997251.54 |  2.5 |
+    | return_requested |         477 | 1512187.66 |  0.7 |
+    | returned         |         459 | 1382638.93 |  0.7 |
+    | delivered        |          77 |  876186.49 |  0.1 |
+    | ...              | ...         | ...        | ...  |
+
+
 ### Exercise 9
 Count active and inactive products per supplier separately, combine them with `UNION ALL`, then wrap in a subquery to pivot into one row per supplier with `active_count` and `inactive_count`. JOIN with `suppliers` to show the company name.
 
@@ -491,6 +586,18 @@ Count active and inactive products per supplier separately, combine them with `U
     GROUP BY s.company_name
     ORDER BY active_count DESC;
     ```
+
+    **Expected result:**
+
+    | company_name | active_count | inactive_count |
+    | ------------ | -----------: | -------------: |
+    | 에이수스코리아      |           21 |              5 |
+    | 삼성전자 공식 유통   |           21 |              4 |
+    | MSI코리아       |           12 |              1 |
+    | 서린시스테크       |           11 |              1 |
+    | 로지텍코리아       |           11 |              6 |
+    | ...          | ...          | ...            |
+
 
     **Expected result:**
 

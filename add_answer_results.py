@@ -144,25 +144,30 @@ def process_file(filepath, conn, dry_run=False):
     i = 0
     n = len(lines)
     in_answer = False
-    answer_indent = ''
     current_dialect = 'common'
+    answer_got_result = False
 
     while i < n:
         line = lines[i]
 
+        # Exit answer block on next exercise/section header
+        if in_answer and line.strip() and not line.startswith(' ') and not line.startswith('\t'):
+            if re.match(r'^###\s+', line) or re.match(r'^---', line) or re.match(r'^##\s+', line):
+                in_answer = False
+                current_dialect = 'common'
+
         # Track answer blocks
         if re.match(r'\?\?\?\s+success', line):
             in_answer = True
-            answer_indent = '    '  # default indent inside ???
+            current_dialect = 'common'
+            answer_got_result = False
 
         # Track dialect tabs inside answers
         tab_match = re.match(r'(\s*)===\s*"([^"]+)"', line)
-        if tab_match:
-            tab_indent = tab_match.group(1)
+        if tab_match and in_answer:
             tab_name = tab_match.group(2)
             if 'SQLite' in tab_name:
                 current_dialect = 'SQLite'
-                answer_indent = tab_indent + '    '
             elif 'MySQL' in tab_name:
                 current_dialect = 'MySQL'
             elif 'PostgreSQL' in tab_name:
@@ -172,16 +177,15 @@ def process_file(filepath, conn, dry_run=False):
 
         # Find SQL code blocks inside answers
         fence_match = re.match(r'(\s*)```sql', line)
-        if fence_match and in_answer:
+        if fence_match and in_answer and not answer_got_result:
             indent = fence_match.group(1)
             sql_lines = []
-            block_start = i
             i += 1
             while i < n and not re.match(rf'{indent}```\s*$', lines[i]):
-                sql_line = lines[i]
-                if sql_line.startswith(indent):
-                    sql_line = sql_line[len(indent):]
-                sql_lines.append(sql_line)
+                sl = lines[i]
+                if sl.startswith(indent):
+                    sl = sl[len(indent):]
+                sql_lines.append(sl)
                 i += 1
             block_end = i  # closing ```
 
@@ -191,24 +195,18 @@ def process_file(filepath, conn, dry_run=False):
             j = block_end + 1
             while j < n and not lines[j].strip():
                 j += 1
-            has_result = j < n and ('**' in lines[j] and ('결과' in lines[j] or 'Result' in lines[j] or '예시' in lines[j]))
+            has_result = j < n and ('**' in lines[j] and
+                ('결과' in lines[j] or 'Result' in lines[j] or '예시' in lines[j]))
 
-            if not has_result and can_execute(sql, current_dialect):
+            if has_result:
+                answer_got_result = True
+            elif can_execute(sql, current_dialect):
                 cols, rows = execute(conn, sql)
                 if cols and rows:
                     table = make_table(cols, rows)
                     if table:
                         insertions.append((block_end + 1, indent, table))
-
-            # Reset dialect after non-tabbed block
-            if not any(re.match(r'\s*===', lines[j]) for j in range(max(0, block_start - 3), block_start)):
-                current_dialect = 'common'
-
-        # Exit answer block
-        if in_answer and line.strip() and not line.startswith(' ') and not line.startswith('\t'):
-            if re.match(r'^###\s+', line) or re.match(r'^---', line):
-                in_answer = False
-                current_dialect = 'common'
+                        answer_got_result = True
 
         i += 1
 

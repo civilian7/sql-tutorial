@@ -195,6 +195,18 @@ Use `NOT EXISTS` as an anti-join to find orders that have a shipping record but 
     | ...                | ...                 | ...     | ...     | ...                 |
 
 
+    **Expected result:**
+
+    | order_number       | ordered_at          | status  | carrier | shipped_at          |
+    | ------------------ | ------------------- | ------- | ------- | ------------------- |
+    | ORD-20250624-34824 | 2025-06-24 19:12:48 | shipped | 한진택배    | 2025-06-27 19:12:48 |
+    | ORD-20250624-34828 | 2025-06-24 19:43:51 | shipped | CJ대한통운  | 2025-06-26 19:43:51 |
+    | ORD-20250624-34826 | 2025-06-24 19:48:54 | shipped | 한진택배    | 2025-06-25 19:48:54 |
+    | ORD-20250623-34821 | 2025-06-23 19:04:07 | shipped | 한진택배    | 2025-06-25 19:04:07 |
+    | ORD-20250622-34810 | 2025-06-22 08:01:21 | shipped | 우체국택배   | 2025-06-25 08:01:21 |
+    | ...                | ...                 | ...     | ...     | ...                 |
+
+
 ### Exercise 2
 Use `EXISTS` with correlated subqueries to find products that have received both a 5-star and a 1-star review. Return `product_id`, `product_name`, and `price`.
 
@@ -213,6 +225,18 @@ Use `EXISTS` with correlated subqueries to find products that have received both
     )
     ORDER BY p.name;
     ```
+
+    **Expected result:**
+
+    | product_id | product_name                        | price  |
+    | ---------: | ----------------------------------- | -----: |
+    |         44 | AMD Ryzen 9 9900X                   | 244800 |
+    |        171 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 408800 |
+    |        140 | ASRock B850M Pro RS 블랙              | 201900 |
+    |         47 | ASRock B850M Pro RS 실버              | 533600 |
+    |        164 | ASRock B850M Pro RS 화이트             | 426500 |
+    | ...        | ...                                 | ...    |
+
 
     **Expected result:**
 
@@ -283,6 +307,18 @@ Use `NOT EXISTS` to find customers who have placed 5 or more orders but have nev
     | ...         | ...  | ...    | ...         |
 
 
+    **Expected result:**
+
+    | customer_id | name | grade  | order_count |
+    | ----------: | ---- | ------ | ----------: |
+    |        3132 | 이진호  | VIP    |          16 |
+    |         380 | 김영환  | SILVER |          14 |
+    |        2358 | 김민준  | SILVER |          14 |
+    |         982 | 남성민  | BRONZE |          13 |
+    |        1525 | 배민석  | BRONZE |          13 |
+    | ...         | ...  | ...    | ...         |
+
+
 ### Exercise 5
 Use `EXISTS` to find customers who have used every available payment method at least once. Return `customer_id` and `name`. Hint: use `NOT EXISTS` with `EXCEPT` to check that no payment method is missing.
 
@@ -310,6 +346,18 @@ Use `EXISTS` to find customers who have used every available payment method at l
     )
     ORDER BY c.name;
     ```
+
+    **Expected result:**
+
+    | customer_id | name |
+    | ----------: | ---- |
+    |        1492 | 강도윤  |
+    |         162 | 강명자  |
+    |        2129 | 강미숙  |
+    |        1516 | 강민재  |
+    |         912 | 강서현  |
+    | ...         | ...  |
+
 
     **Expected result:**
 
@@ -358,6 +406,18 @@ Combine `EXISTS` with an aggregate condition in `HAVING` to find categories that
     | ...           | ...           |
 
 
+    **Expected result:**
+
+    | category_name | product_count |
+    | ------------- | ------------: |
+    | 2in1          |             7 |
+    | AMD           |             6 |
+    | AMD 소켓        |             9 |
+    | DDR4          |             5 |
+    | DDR5          |             8 |
+    | ...           | ...           |
+
+
 ### Exercise 7
 Find all wishlist items where the product has **not yet been purchased** by that same customer. Return `customer_name`, `product_name`, and `added_at` (when the item was wishlisted). Use `NOT EXISTS` with a correlated subquery that checks `order_items` + `orders` for a matching `customer_id` and `product_id`.
 
@@ -381,6 +441,18 @@ Find all wishlist items where the product has **not yet been purchased** by that
     ORDER BY w.created_at DESC
     LIMIT 20;
     ```
+
+    **Expected result:**
+
+    | customer_name | product_name                                    | created_at          |
+    | ------------- | ----------------------------------------------- | ------------------- |
+    | 윤예준           | 엡손 L6290 블랙                                     | 2025-12-30 20:40:58 |
+    | 나병철           | CORSAIR Dominator Titanium DDR5 32GB 7200MHz 실버 | 2025-12-30 05:21:30 |
+    | 김영미           | MSI MEG Ai1300P PCIE5 화이트                       | 2025-12-28 09:52:47 |
+    | 김민지           | APC Back-UPS Pro Gaming BGM1500B 블랙             | 2025-12-28 07:10:13 |
+    | 김주원           | MSI MEG Z790 ACE 실버                             | 2025-12-26 17:47:03 |
+    | ...           | ...                                             | ...                 |
+
 
     **Expected result:**
 
@@ -449,6 +521,18 @@ Identify customers who have submitted a complaint AND have a return on record. R
     )
     ORDER BY complaint_count DESC;
     ```
+
+    **Expected result:**
+
+    | customer_id | name | grade | complaint_count | return_count |
+    | ----------: | ---- | ----- | --------------: | -----------: |
+    |          98 | 이영자  | VIP   |              44 |           13 |
+    |          97 | 김병철  | VIP   |              33 |            8 |
+    |         227 | 김성민  | VIP   |              26 |            8 |
+    |         549 | 이미정  | VIP   |              22 |           11 |
+    |         226 | 박정수  | VIP   |              18 |            9 |
+    | ...         | ...  | ...   | ...             | ...          |
+
 
     **Expected result:**
 

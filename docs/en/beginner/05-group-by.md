@@ -216,6 +216,14 @@ Count the number of orders for each `status` value. Show only statuses that have
     ORDER BY order_count DESC;
     ```
 
+    **Expected result:**
+
+    | status    | order_count |
+    | --------- | ----------: |
+    | confirmed |       32053 |
+    | cancelled |        1754 |
+
+
 ### Exercise 2
 For each `method` in the `payments` table, calculate the total `amount` collected and the number of transactions. Order by total amount descending.
 
@@ -243,6 +251,18 @@ For each `method` in the `payments` table, calculate the total `amount` collecte
     | ...           | ...               | ...             |
 
 
+    **Expected result:**
+
+    | method        | transaction_count | total_collected |
+    | ------------- | ----------------: | --------------: |
+    | card          |             14522 |     14526925164 |
+    | kakao_pay     |              6359 |      6652523392 |
+    | naver_pay     |              4835 |      4563329993 |
+    | bank_transfer |              3194 |      3243186244 |
+    | point         |              1623 |      1743665807 |
+    | ...           | ...               | ...             |
+
+
 ### Exercise 3
 Calculate the average `point_balance` for each `grade` in the `customers` table. Sort by average points descending.
 
@@ -255,6 +275,16 @@ Calculate the average `point_balance` for each `grade` in the `customers` table.
     GROUP BY grade
     ORDER BY avg_points DESC;
     ```
+
+    **Expected result:**
+
+    | grade  | avg_points |
+    | ------ | ---------: |
+    | VIP    |  423073.75 |
+    | GOLD   |  158543.32 |
+    | SILVER |   85614.41 |
+    | BRONZE |   16542.43 |
+
 
     **Expected result:**
 
@@ -292,6 +322,18 @@ Group customers by both `grade` and `gender`, and count the number of customers 
     | ...    | ...    | ...            |
 
 
+    **Expected result:**
+
+    | grade  | gender | customer_count |
+    | ------ | ------ | -------------: |
+    | BRONZE | (NULL) |            436 |
+    | BRONZE | F      |           1332 |
+    | BRONZE | M      |           2194 |
+    | GOLD   | (NULL) |             32 |
+    | GOLD   | F      |            136 |
+    | ...    | ...    | ...            |
+
+
 ### Exercise 5
 Count the number of reviews for each `rating` value in the `reviews` table. Show only ratings that have 100 or more reviews. Sort by `rating`.
 
@@ -305,6 +347,17 @@ Count the number of reviews for each `rating` value in the `reviews` table. Show
     HAVING COUNT(*) >= 100
     ORDER BY rating;
     ```
+
+    **Expected result:**
+
+    | rating | review_count |
+    | -----: | -----------: |
+    |      1 |          395 |
+    |      2 |          774 |
+    |      3 |         1193 |
+    |      4 |         2362 |
+    |      5 |         3221 |
+
 
     **Expected result:**
 
@@ -345,6 +398,18 @@ For active orders only (`status NOT IN ('cancelled', 'returned')`), find the cou
     | ...              | ...         | ...        |
 
 
+    **Expected result:**
+
+    | status           | order_count | avg_amount |
+    | ---------------- | ----------: | ---------: |
+    | return_requested |         477 |    1512188 |
+    | preparing        |           7 |    1208178 |
+    | confirmed        |       32053 |    1007832 |
+    | pending          |          47 |     922266 |
+    | delivered        |          77 |     876186 |
+    | ...              | ...         | ...        |
+
+
 ### Exercise 7
 Find all months (from the `orders` table) in 2023 and 2024 where monthly revenue exceeded $500,000. Return `year_month` and `monthly_revenue`, sorted chronologically.
 
@@ -361,6 +426,18 @@ Find all months (from the `orders` table) in 2023 and 2024 where monthly revenue
         HAVING SUM(total_amount) > 500000
         ORDER BY year_month;
         ```
+
+        **Expected result:**
+
+        | year_month | monthly_revenue |
+        | ---------- | --------------: |
+        | 2023-01    |       287003017 |
+        | 2023-02    |       247903157 |
+        | 2023-03    |       464329421 |
+        | 2023-04    |       292003281 |
+        | 2023-05    |       456140850 |
+        | ...        | ...             |
+
 
         **Expected result:**
 
@@ -427,6 +504,18 @@ Find the number of unique orders per payment `method` in the `payments` table us
     | ...             | ...           |
 
 
+    **Expected result:**
+
+    | method          | unique_orders |
+    | --------------- | ------------: |
+    | card            |         15728 |
+    | kakao_pay       |          6902 |
+    | naver_pay       |          5252 |
+    | bank_transfer   |          3483 |
+    | virtual_account |          1772 |
+    | ...             | ...           |
+
+
 ### Exercise 9
 Calculate yearly order count and total revenue from the `orders` table. Exclude cancelled and returned orders.
 
@@ -442,6 +531,18 @@ Calculate yearly order count and total revenue from the `orders` table. Exclude 
         GROUP BY SUBSTR(ordered_at, 1, 4)
         ORDER BY order_year;
         ```
+
+        **Expected result:**
+
+        | order_year | order_count | yearly_revenue |
+        | ---------: | ----------: | -------------: |
+        |       2016 |         399 |      306223187 |
+        |       2017 |         608 |      628189049 |
+        |       2018 |        1444 |     1390778028 |
+        |       2019 |        2502 |     2419434488 |
+        |       2020 |        4244 |     4773995795 |
+        | ...        | ...         | ...            |
+
 
         **Expected result:**
 
@@ -495,6 +596,18 @@ For each `category_id` in the `products` table, find the product count, average 
        AND AVG(price) >= 50
     ORDER BY product_count DESC;
     ```
+
+    **Expected result:**
+
+    | category_id | product_count | avg_price | total_stock |
+    | ----------: | ------------: | --------: | ----------: |
+    |          18 |            13 |    520038 |        3826 |
+    |          30 |            13 |    227223 |        3812 |
+    |          43 |            12 |    247892 |        3085 |
+    |           3 |            11 |   1716582 |        2241 |
+    |          31 |            11 |    146564 |        2681 |
+    | ...         | ...           | ...       | ...         |
+
 
     **Expected result:**
 

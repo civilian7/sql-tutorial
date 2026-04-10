@@ -443,6 +443,18 @@ ORDER BY c.date_key;
     LIMIT 10;
     ```
 
+    **결과 (예시):**
+
+    | supplier | product_a             | product_b             | price_a | price_b | price_diff |
+    | -------- | --------------------- | --------------------- | ------: | ------: | ---------: |
+    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Strix GT35   |   48800 | 4314800 |    4266000 |
+    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS PCE-BE92BT 블랙    | 4314800 |   57200 |    4257600 |
+    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Zephyrus G16 |   48800 | 4284100 |    4235300 |
+    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS XG-C100C 블랙      | 4314800 |   83500 |    4231300 |
+    | 에이수스코리아  | ASUS ROG Zephyrus G16 | ASUS PCE-BE92BT 블랙    | 4284100 |   57200 |    4226900 |
+    | ...      | ...                   | ...                   | ...     | ...     | ...        |
+
+
 
 ### 연습 5: 배송지 여러 개인 고객
 

@@ -310,6 +310,18 @@ List all indexes in the database using `sqlite_master`. For each index, identify
         | ...                        | ...        | ...                                                                | ...        |
 
 
+        **Expected result:**
+
+        | name                       | tbl_name   | sql                                                                | index_type |
+        | -------------------------- | ---------- | ------------------------------------------------------------------ | ---------- |
+        | idx_calendar_year_month    | calendar   | CREATE INDEX idx_calendar_year_month ON calendar(year, month)      | Composite  |
+        | idx_cart_items_cart_id     | cart_items | CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id)         | Single     |
+        | idx_carts_customer_id      | carts      | CREATE INDEX idx_carts_customer_id ON carts(customer_id)           | Single     |
+        | idx_complaints_category    | complaints | CREATE INDEX idx_complaints_category ON complaints(category)       | Single     |
+        | idx_complaints_customer_id | complaints | CREATE INDEX idx_complaints_customer_id ON complaints(customer_id) | Single     |
+        | ...                        | ...        | ...                                                                | ...        |
+
+
     === "MySQL"
         ```sql
         SELECT

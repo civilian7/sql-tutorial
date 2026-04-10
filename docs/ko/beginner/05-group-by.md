@@ -216,6 +216,14 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY order_count DESC;
     ```
 
+    **결과 (예시):**
+
+    | status    | order_count |
+    | --------- | ----------: |
+    | confirmed |       32053 |
+    | cancelled |        1754 |
+
+
 ### 문제 2
 `payments` 테이블에서 결제 수단(`method`)별로 수집된 총 금액과 거래 건수를 구하세요. 총 금액 내림차순으로 정렬하세요.
 

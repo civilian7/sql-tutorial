@@ -265,6 +265,18 @@ Find orders that have never had a completed payment. Use a `NOT IN` subquery to 
     | ...                | ...          | ...              |
 
 
+    **Expected result:**
+
+    | order_number       | total_amount | status           |
+    | ------------------ | -----------: | ---------------- |
+    | ORD-20230504-22760 |     19613300 | return_requested |
+    | ORD-20240908-29994 |     14691400 | returned         |
+    | ORD-20220923-19607 |     14400000 | cancelled        |
+    | ORD-20250309-33168 |     13528400 | cancelled        |
+    | ORD-20190726-03947 |     11884300 | cancelled        |
+    | ...                | ...          | ...              |
+
+
 ### Exercise 2
 Find all orders whose `total_amount` exceeds the overall average order amount. Return `order_number` and `total_amount`, sorted by `total_amount` descending. Limit to 10 rows. Use a scalar subquery in the `WHERE` clause.
 
@@ -278,6 +290,18 @@ Find all orders whose `total_amount` exceeds the overall average order amount. R
     ORDER BY total_amount DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | order_number       | total_amount |
+    | ------------------ | -----------: |
+    | ORD-20210628-12574 |     58039800 |
+    | ORD-20230809-24046 |     55047300 |
+    | ORD-20210321-11106 |     48718000 |
+    | ORD-20200605-07165 |     47954000 |
+    | ORD-20231020-25036 |     46945700 |
+    | ...                | ...          |
+
 
     **Expected result:**
 
@@ -322,6 +346,18 @@ For each active product, show its name, price, and the number of reviews it has 
     | ...                             | ...    | ...          |
 
 
+    **Expected result:**
+
+    | product_name                    | price  | review_count |
+    | ------------------------------- | -----: | -----------: |
+    | SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |
+    | SteelSeries Prime Wireless 블랙   |  75900 |           93 |
+    | JBL Flip 6 블랙                   | 195900 |           92 |
+    | 녹투아 NH-L12S                     |  49400 |           88 |
+    | 삼성 DDR4 32GB PC4-25600          |  49100 |           87 |
+    | ...                             | ...    | ...          |
+
+
 ### Exercise 4
 Find all products whose price is higher than the average price of products in their own category. Return `product_name`, `price`, and `category_id`. Use a scalar subquery in the `WHERE` clause that references the outer query's `category_id`.
 
@@ -342,6 +378,18 @@ Find all products whose price is higher than the average price of products in th
     ORDER BY p.category_id, p.price DESC;
     ```
 
+    **Expected result:**
+
+    | product_name             | price   | category_id |
+    | ------------------------ | ------: | ----------: |
+    | LG 일체형PC 27V70Q 실버       | 1292200 |           2 |
+    | HP Z2 Mini G1a 블랙        | 1166400 |           2 |
+    | ASUS ROG Strix GT35      | 4314800 |           3 |
+    | ASUS ROG Strix G16CH 화이트 | 2988700 |           3 |
+    | 주연 리오나인 R7 시스템           | 1829000 |           3 |
+    | ...                      | ...     | ...         |
+
+
 
 ### Exercise 5
 Find products that are in the wishlist of at least one customer but have **never appeared in any order**. Use `IN` and `NOT IN` subqueries. Return `product_name` and `price`.
@@ -358,6 +406,18 @@ Find products that are in the wishlist of at least one customer but have **never
     )
     ORDER BY price DESC;
     ```
+
+    **Expected result:**
+
+    | product_name                  | price  |
+    | ----------------------------- | -----: |
+    | 삼성 오디세이 OLED G8               | 693300 |
+    | ASRock X870E Taichi 실버        | 583500 |
+    | 보스 SoundLink Flex 블랙          | 516000 |
+    | MSI MAG B860 TOMAHAWK WIFI    | 440900 |
+    | be quiet! Dark Power 13 1000W | 359500 |
+    | ...                           | ...    |
+
 
     **Expected result:**
 
@@ -403,6 +463,18 @@ Use a `FROM` subquery to compute the average product price per category, then jo
     | ...           | ...        |
 
 
+    **Expected result:**
+
+    | category_name | avg_price  |
+    | ------------- | ---------: |
+    | 맥북            |    3774700 |
+    | 게이밍 노트북       |    3169700 |
+    | NVIDIA        |    2045440 |
+    | 일반 노트북        |  1856837.5 |
+    | 조립PC          | 1795033.33 |
+    | ...           | ...        |
+
+
 ### Exercise 7
 Find all products that have been ordered at least once by a `'VIP'` customer. Use an `IN` subquery. Return `product_name` and `price`, sorted by price descending.
 
@@ -419,6 +491,18 @@ Find all products that have been ordered at least once by a `'VIP'` customer. Us
     )
     ORDER BY p.price DESC;
     ```
+
+    **Expected result:**
+
+    | product_name                                                  | price   |
+    | ------------------------------------------------------------- | ------: |
+    | ASUS ROG Strix GT35                                           | 4314800 |
+    | ASUS ROG Zephyrus G16                                         | 4284100 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+    | Razer Blade 18 블랙                                             | 4182100 |
+    | Razer Blade 16 실버                                             | 4123800 |
+    | ...                                                           | ...     |
+
 
     **Expected result:**
 
@@ -468,6 +552,18 @@ Use a `FROM` subquery to find the top 10 customers by number of completed orders
     | ...  | ...   | ...         | ...         |
 
 
+    **Expected result:**
+
+    | name | grade | order_count | total_spent |
+    | ---- | ----- | ----------: | ----------: |
+    | 김병철  | VIP   |         319 |   291265567 |
+    | 이영자  | VIP   |         315 |   284481704 |
+    | 박정수  | VIP   |         305 |   339169936 |
+    | 강명자  | VIP   |         240 |   296857745 |
+    | 김성민  | VIP   |         210 |   220361434 |
+    | ...  | ...   | ...         | ...         |
+
+
 ### Exercise 9
 Find customers whose order count is above the average number of orders per customer. Use a `FROM` subquery to count orders per customer, and a scalar subquery in `WHERE` to compare against the average. Return `customer_id` and `order_count`, sorted by `order_count` descending. Limit to 10 rows.
 
@@ -494,6 +590,18 @@ Find customers whose order count is above the average number of orders per custo
     ORDER BY order_count DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | customer_id | order_count |
+    | ----------: | ----------: |
+    |          98 |         346 |
+    |          97 |         342 |
+    |         226 |         340 |
+    |         162 |         254 |
+    |         227 |         232 |
+    | ...         | ...         |
+
 
     **Expected result:**
 

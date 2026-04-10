@@ -356,6 +356,18 @@ LIMIT 10;
     ORDER BY stock_qty ASC;
     ```
 
+    **결과 (예시):**
+
+    | name                         | stock_qty | stock_status |
+    | ---------------------------- | --------: | ------------ |
+    | Arctic Freezer 36 A-RGB 화이트  |         0 | 품절           |
+    | 삼성 SPA-KFG0BUB               |         4 | 재고 부족        |
+    | 로지텍 G502 HERO 실버             |         8 | 재고 부족        |
+    | ASUS ROG Strix Scar 16       |        18 | 재고 있음        |
+    | MSI MPG X870E CARBON WIFI 블랙 |        21 | 재고 있음        |
+    | ...                          | ...       | ...          |
+
+
 
 ### 연습 5
 세대별 분포 보고서를 만드세요: 활성 고객이 각 세대(Z세대: 1997년 이후 출생, 밀레니얼: 1981~1996, X세대: 1965~1980, 베이비붐+: 1965년 이전, 미확인: birth_date가 NULL)에 몇 명씩 있는지 집계하세요. `generation`과 `customer_count`를 반환하세요.

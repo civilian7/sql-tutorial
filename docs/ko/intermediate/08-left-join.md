@@ -640,6 +640,18 @@ FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
     ORDER BY wishlist_items DESC;
     ```
 
+    **결과 (예시):**
+
+    | customer_name | email                | wishlist_items |
+    | ------------- | -------------------- | -------------: |
+    | 김춘자           | user2989@testmail.kr |              4 |
+    | 김지연           | user4571@testmail.kr |              4 |
+    | 박영일           | user3193@testmail.kr |              3 |
+    | 김정남           | user3316@testmail.kr |              3 |
+    | 김정호           | user3677@testmail.kr |              3 |
+    | ...           | ...                  | ...            |
+
+
 
 ---
 다음: [9강: 서브쿼리](09-subqueries.md)

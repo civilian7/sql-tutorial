@@ -447,6 +447,13 @@ SELECT
     FROM customers;
     ```
 
+    **결과 (예시):**
+
+    | total_customers | missing_birth_date | missing_gender | never_logged_in |
+    | --------------: | -----------------: | -------------: | --------------: |
+    |            5230 |                780 |            523 |             289 |
+
+
 
 ---
 다음: [7강: INNER JOIN](../intermediate/07-inner-join.md)
