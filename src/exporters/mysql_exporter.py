@@ -171,7 +171,7 @@ CREATE TABLE staff (
 -- =============================================
 CREATE TABLE orders (
     id              INT NOT NULL AUTO_INCREMENT,
-    order_number    VARCHAR(30) NOT NULL UNIQUE,
+    order_number    VARCHAR(30) NOT NULL,
     customer_id     INT NOT NULL,
     address_id      INT NOT NULL,
     staff_id        INT NULL,
@@ -188,6 +188,7 @@ CREATE TABLE orders (
     created_at      DATETIME NOT NULL,
     updated_at      DATETIME NOT NULL,
     PRIMARY KEY (id, ordered_at),
+    UNIQUE KEY uq_order_number (order_number, ordered_at),
     INDEX idx_orders_customer (customer_id),
     INDEX idx_orders_status (status),
     INDEX idx_orders_ordered_at (ordered_at)
