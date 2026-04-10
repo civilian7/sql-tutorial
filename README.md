@@ -6,6 +6,8 @@
 
 [**Live Tutorial**](https://civilian7.github.io/sql-tutorial/) | [Changelog](#changelog) | [GitHub](https://github.com/civilian7/sql-tutorial)
 
+> If you find this useful, please give it a :star: — it helps others discover this project!
+
 A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (22 lessons, 208 exercises).
 
 > **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **687,000 rows of realistic data** + full tutorial + exercises you can actually execute.
