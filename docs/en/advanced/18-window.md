@@ -315,6 +315,18 @@ Calculate the running total of new customer signups by year (cumulative customer
     ORDER BY year;
     ```
 
+    **Expected result:**
+
+    | year | new_signups | cumulative_customers |
+    | ---: | ----------: | -------------------: |
+    | 2016 |         100 |                  100 |
+    | 2017 |         180 |                  280 |
+    | 2018 |         300 |                  580 |
+    | 2019 |         450 |                 1030 |
+    | 2020 |         700 |                 1730 |
+    | ...  | ...         | ...                  |
+
+
 ### Exercise 3
 For each month in 2023 and 2024, compute the year-over-year (YoY) revenue growth. Use `LAG(revenue, 12)` to compare the same month in the prior year. Return `year_month`, `revenue`, `same_month_last_year`, and `yoy_growth_pct`.
 
@@ -341,6 +353,18 @@ For each month in 2023 and 2024, compute the year-over-year (YoY) revenue growth
     WHERE year_month >= '2023-01'
     ORDER BY year_month;
     ```
+
+    **Expected result:**
+
+    | year_month | revenue   | same_month_last_year | yoy_growth_pct |
+    | ---------- | --------: | -------------------- | -------------- |
+    | 2023-01    | 287003017 | (NULL)               | (NULL)         |
+    | 2023-02    | 247903157 | (NULL)               | (NULL)         |
+    | 2023-03    | 464329421 | (NULL)               | (NULL)         |
+    | 2023-04    | 292003281 | (NULL)               | (NULL)         |
+    | 2023-05    | 456140850 | (NULL)               | (NULL)         |
+    | ...        | ...       | ...                  | ...            |
+
 
 ### Exercise 4
 Use `ROW_NUMBER()` to number each customer's orders chronologically and extract only the first order per customer. Return `customer_id`, `name`, `order_number`, `ordered_at`, and `total_amount`.
@@ -373,6 +397,18 @@ Use `ROW_NUMBER()` to number each customer's orders chronologically and extract 
     LIMIT 15;
     ```
 
+    **Expected result:**
+
+    | customer_id | name | order_number       | ordered_at          | total_amount |
+    | ----------: | ---- | ------------------ | ------------------- | -----------: |
+    |          98 | 이영자  | ORD-20160109-00013 | 2016-01-09 10:19:26 |       130700 |
+    |          61 | 이승민  | ORD-20160110-00015 | 2016-01-10 12:16:12 |       134700 |
+    |          15 | 강은서  | ORD-20160111-00017 | 2016-01-17 00:39:08 |       801875 |
+    |          72 | 윤정남  | ORD-20160116-00022 | 2016-01-18 02:44:23 |       537800 |
+    |          90 | 유현지  | ORD-20160202-00041 | 2016-02-02 13:30:42 |       134700 |
+    | ...         | ...  | ...                | ...                 | ...          |
+
+
 ### Exercise 5
 Use both `RANK()` and `DENSE_RANK()` to rank products by price within each category. Return `category_name`, `product_name`, `price`, `rank`, and `dense_rank`. Show the top 15 rows so you can observe the difference between the two ranking functions.
 
@@ -390,6 +426,18 @@ Use both `RANK()` and `DENSE_RANK()` to rank products by price within each categ
     ORDER BY cat.name, rank
     LIMIT 15;
     ```
+
+    **Expected result:**
+
+    | category_name | product_name            | price   | rank | dense_rank |
+    | ------------- | ----------------------- | ------: | ---: | ---------: |
+    | 2in1          | 레노버 IdeaPad Flex 5 화이트  | 1995100 |    1 |          1 |
+    | 2in1          | 레노버 ThinkPad X1 2in1 실버 | 1900500 |    2 |          2 |
+    | 2in1          | 삼성 갤럭시북4 360 블랙         | 1857600 |    3 |          3 |
+    | 2in1          | 삼성 갤럭시북4 360 블랙         | 1536800 |    4 |          4 |
+    | 2in1          | 삼성 갤럭시북5 360 블랙         | 1484600 |    5 |          5 |
+    | ...           | ...                     | ...     | ...  | ...        |
+
 
 ### Exercise 6
 Calculate a 3-month moving average of monthly revenue for 2024 using `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW`. Return `year_month`, `monthly_revenue`, and `moving_avg_3m`.
@@ -417,6 +465,18 @@ Calculate a 3-month moving average of monthly revenue for 2024 using `ROWS BETWE
     ORDER BY year_month;
     ```
 
+    **Expected result:**
+
+    | year_month | monthly_revenue | moving_avg_3m |
+    | ---------- | --------------: | ------------: |
+    | 2024-01    |       363769660 |     363769660 |
+    | 2024-02    |       383853446 |     373811553 |
+    | 2024-03    |       553727467 |  433783524.33 |
+    | 2024-04    |       392480419 |  443353777.33 |
+    | 2024-05    |       352236014 |  432814633.33 |
+    | ...        | ...             | ...           |
+
+
 ### Exercise 7
 Use `NTILE(4)` to divide customers into 4 quartiles based on their total spending. Return `name`, `grade`, `total_spent`, and `quartile`. Order by `quartile` then `total_spent` descending. Show the top 20.
 
@@ -442,6 +502,18 @@ Use `NTILE(4)` to divide customers into 4 quartiles based on their total spendin
     LIMIT 20;
     ```
 
+    **Expected result:**
+
+    | name | grade | total_spent | quartile |
+    | ---- | ----- | ----------: | -------: |
+    | 박정수  | VIP   |   351855703 |        1 |
+    | 강명자  | VIP   |   301838245 |        1 |
+    | 김병철  | VIP   |   297684080 |        1 |
+    | 이영자  | VIP   |   288994451 |        1 |
+    | 이미정  | VIP   |   240949338 |        1 |
+    | ...  | ...   | ...         | ...      |
+
+
 ### Exercise 8
 For a specific product (id = 1), calculate the cumulative quantity sold over time. Return `product_name`, `ordered_at`, `quantity`, and `cumulative_qty`.
 
@@ -462,6 +534,18 @@ For a specific product (id = 1), calculate the cumulative quantity sold over tim
       AND o.status NOT IN ('cancelled', 'returned')
     ORDER BY o.ordered_at;
     ```
+
+    **Expected result:**
+
+    | product_name      | ordered_at          | quantity | cumulative_qty |
+    | ----------------- | ------------------- | -------: | -------------: |
+    | Razer Blade 18 블랙 | 2016-11-10 13:56:06 |        1 |              1 |
+    | Razer Blade 18 블랙 | 2016-11-14 08:54:25 |        1 |              2 |
+    | Razer Blade 18 블랙 | 2016-11-28 07:10:23 |        1 |              3 |
+    | Razer Blade 18 블랙 | 2016-12-04 06:36:51 |        1 |              4 |
+    | Razer Blade 18 블랙 | 2016-12-16 21:38:06 |        1 |              5 |
+    | ...               | ...                 | ...      | ...            |
+
 
 ### Exercise 9
 Show a running headcount per department (by hire date order) alongside the department total. Return `department`, `name`, `role`, `hired_at`, `running_headcount`, and `dept_total_headcount`. Use `COUNT(*) OVER` with and without an `ORDER BY` frame.
@@ -485,6 +569,17 @@ Show a running headcount per department (by hire date order) alongside the depar
     WHERE is_active = 1
     ORDER BY department, hired_at;
     ```
+
+    **Expected result:**
+
+    | department | name | role    | hired_at   | running_headcount | dept_total_headcount |
+    | ---------- | ---- | ------- | ---------- | ----------------: | -------------------: |
+    | 경영         | 한민재  | admin   | 2016-05-23 |                 1 |                    3 |
+    | 경영         | 장주원  | admin   | 2017-08-20 |                 2 |                    3 |
+    | 경영         | 박경수  | admin   | 2022-10-12 |                 3 |                    3 |
+    | 마케팅        | 권영희  | manager | 2024-08-05 |                 1 |                    1 |
+    | 영업         | 이준혁  | manager | 2022-03-02 |                 1 |                    1 |
+
 
 ### Exercise 10
 Calculate the number of days between consecutive orders for each customer using `LAG`, then find each customer's average order gap. Return `customer_id`, `name`, `order_count`, and `avg_days_between_orders`. Only include customers with 5 or more orders.
@@ -519,6 +614,18 @@ Calculate the number of days between consecutive orders for each customer using 
         ORDER BY avg_days_between_orders
         LIMIT 15;
         ```
+
+        **Expected result:**
+
+        | customer_id | name | order_count | avg_days_between_orders |
+        | ----------: | ---- | ----------: | ----------------------: |
+        |        4710 | 박은영  |           5 |                     9.5 |
+        |          97 | 김병철  |         325 |                     9.9 |
+        |         226 | 박정수  |         312 |                     9.9 |
+        |          98 | 이영자  |         322 |                    10.8 |
+        |         549 | 이미정  |         215 |                    11.4 |
+        | ...         | ...  | ...         | ...                     |
+
 
     === "MySQL"
         ```sql

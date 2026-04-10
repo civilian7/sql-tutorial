@@ -246,6 +246,18 @@ Build a customer contact card: concatenate each customer's `name`, `phone`, and 
         LIMIT 10;
         ```
 
+        **Expected result:**
+
+        | customer_id | contact_card                            | grade  |
+        | ----------: | --------------------------------------- | ------ |
+        |           2 | 김경수 | 020-4423-5167 | user2@testmail.kr | VIP    |
+        |           3 | 김민재 | 020-0806-0711 | user3@testmail.kr | VIP    |
+        |           4 | 진정자 | 020-9666-8856 | user4@testmail.kr | VIP    |
+        |           5 | 이정수 | 020-0239-9503 | user5@testmail.kr | SILVER |
+        |           8 | 성민석 | 020-8951-7989 | user8@testmail.kr | BRONZE |
+        | ...         | ...                                     | ...    |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -271,6 +283,18 @@ For each order, extract the sequence number (the last 5 digits of `order_number`
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | order_number       | sequence_no | total_amount |
+    | ------------------ | ----------: | -----------: |
+    | ORD-20250630-34908 |       34908 |       387900 |
+    | ORD-20250630-34907 |       34907 |      4222961 |
+    | ORD-20250630-34906 |       34906 |        52400 |
+    | ORD-20250630-34905 |       34905 |       152600 |
+    | ORD-20250630-34904 |       34904 |      1411900 |
+    | ...                | ...         | ...          |
+
+
 ### Exercise 3
 Find the 5 customers with the longest names. Return `name` and `name_length`, sorted by `name_length` descending.
 
@@ -284,6 +308,17 @@ Find the 5 customers with the longest names. Return `name` and `name_length`, so
     LIMIT 5;
     ```
 
+    **Expected result:**
+
+    | name | name_length |
+    | ---- | ----------: |
+    | 정준호  |           3 |
+    | 김경수  |           3 |
+    | 김민재  |           3 |
+    | 진정자  |           3 |
+    | 이정수  |           3 |
+
+
 ### Exercise 4
 Replace underscores with spaces in order `status` values and convert them to uppercase. Show only distinct values. Return the original `status` and `display_status`.
 
@@ -295,6 +330,18 @@ Replace underscores with spaces in order `status` values and convert them to upp
     FROM orders;
     ```
 
+    **Expected result:**
+
+    | status    | display_status |
+    | --------- | -------------- |
+    | cancelled | CANCELLED      |
+    | confirmed | CONFIRMED      |
+    | delivered | DELIVERED      |
+    | paid      | PAID           |
+    | pending   | PENDING        |
+    | ...       | ...            |
+
+
 ### Exercise 5
 Find products whose name contains the word `'Gaming'`. Return `name` and `price`, sorted by price descending. Use a LIKE pattern.
 
@@ -305,6 +352,17 @@ Find products whose name contains the word `'Gaming'`. Return `name` and `price`
     WHERE name LIKE '%Gaming%'
     ORDER BY price DESC;
     ```
+
+    **Expected result:**
+
+    | name                                   | price   |
+    | -------------------------------------- | ------: |
+    | ASUS TUF Gaming RTX 5080 화이트           | 3812000 |
+    | MSI Radeon RX 9070 XT GAMING X         | 1788500 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+    | MSI Radeon RX 7900 XTX GAMING X 화이트    | 1478100 |
+    | APC Back-UPS Pro Gaming BGM1500B 블랙    |  408800 |
+
 
 ### Exercise 6
 Extract the user ID part of each customer's email (everything before the `@`). Return `name`, `email`, and `user_id`. Limit to 10 rows.
@@ -319,6 +377,18 @@ Extract the user ID part of each customer's email (everything before the `@`). R
         FROM customers
         LIMIT 10;
         ```
+
+        **Expected result:**
+
+        | name | email             | user_id |
+        | ---- | ----------------- | ------- |
+        | 정준호  | user1@testmail.kr | user1   |
+        | 김경수  | user2@testmail.kr | user2   |
+        | 김민재  | user3@testmail.kr | user3   |
+        | 진정자  | user4@testmail.kr | user4   |
+        | 이정수  | user5@testmail.kr | user5   |
+        | ...  | ...               | ...     |
+
 
     === "MySQL"
         ```sql
@@ -358,6 +428,18 @@ Truncate product names to 20 characters and append `'...'` if the name is longer
         LIMIT 10;
         ```
 
+        **Expected result:**
+
+        | name                                                             | short_name              |
+        | ---------------------------------------------------------------- | ----------------------- |
+        | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | HP EliteBook 840 G10... |
+        | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장    | ASUS Dual RTX 5070 T... |
+        | ASUS ExpertBook B5 [특별 한정판 에디션] RGB 라이팅 탑재, 소프트웨어 커스터마이징 지원      | ASUS ExpertBook B5 [... |
+        | ASUS ExpertBook B5 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장       | ASUS ExpertBook B5 [... |
+        | TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz 실버                 | TeamGroup T-Force De... |
+        | ...                                                              | ...                     |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -386,6 +468,18 @@ Build a display string in the format `"GRADE: grade - Name"` for each customer, 
         LIMIT 10;
         ```
 
+        **Expected result:**
+
+        | id | display_text         |
+        | -: | -------------------- |
+        |  2 | VIP: vip - 김경수       |
+        |  3 | VIP: vip - 김민재       |
+        |  4 | VIP: vip - 진정자       |
+        |  5 | SILVER: silver - 이정수 |
+        |  8 | BRONZE: bronze - 성민석 |
+        | ... | ...                  |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -410,6 +504,18 @@ From orders starting with `'ORD-2024'`, extract the date portion embedded in the
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | order_number       | date_part | total_amount |
+    | ------------------ | --------: | -----------: |
+    | ORD-20240101-26304 |  20240101 |      3250600 |
+    | ORD-20240101-26305 |  20240101 |      1465600 |
+    | ORD-20240101-26306 |  20240101 |        82700 |
+    | ORD-20240101-26307 |  20240101 |       419600 |
+    | ORD-20240101-26308 |  20240101 |      2860850 |
+    | ...                | ...       | ...          |
+
+
 ### Exercise 10
 Find the position of the first space in product names. Only include products whose name contains a space. Return `name` and `space_pos`. Limit to 10 rows.
 
@@ -423,6 +529,18 @@ Find the position of the first space in product names. Only include products who
         WHERE INSTR(name, ' ') > 0
         LIMIT 10;
         ```
+
+        **Expected result:**
+
+        | name                                | space_pos |
+        | ----------------------------------- | --------: |
+        | AMD Ryzen 9 9900X                   |         4 |
+        | AMD Ryzen 9 9900X                   |         4 |
+        | APC Back-UPS Pro Gaming BGM1500B 블랙 |         4 |
+        | ASRock B850M Pro RS 블랙              |         7 |
+        | ASRock B850M Pro RS 실버              |         7 |
+        | ...                                 | ...       |
+
 
     === "MySQL"
         ```sql

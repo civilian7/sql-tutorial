@@ -246,6 +246,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
         LIMIT 10;
         ```
 
+        **결과 (예시):**
+
+        | customer_id | contact_card                            | grade  |
+        | ----------: | --------------------------------------- | ------ |
+        |           2 | 김경수 | 020-4423-5167 | user2@testmail.kr | VIP    |
+        |           3 | 김민재 | 020-0806-0711 | user3@testmail.kr | VIP    |
+        |           4 | 진정자 | 020-9666-8856 | user4@testmail.kr | VIP    |
+        |           5 | 이정수 | 020-0239-9503 | user5@testmail.kr | SILVER |
+        |           8 | 성민석 | 020-8951-7989 | user8@testmail.kr | BRONZE |
+        | ...         | ...                                     | ...    |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -271,6 +283,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
     LIMIT 10;
     ```
 
+    **결과 (예시):**
+
+    | order_number       | sequence_no | total_amount |
+    | ------------------ | ----------: | -----------: |
+    | ORD-20250630-34908 |       34908 |       387900 |
+    | ORD-20250630-34907 |       34907 |      4222961 |
+    | ORD-20250630-34906 |       34906 |        52400 |
+    | ORD-20250630-34905 |       34905 |       152600 |
+    | ORD-20250630-34904 |       34904 |      1411900 |
+    | ...                | ...         | ...          |
+
+
 ### 연습 3
 고객 이름의 길이를 구하고, 이름이 가장 긴 상위 5명을 반환하세요. `name`, `name_length`를 `name_length` 내림차순으로 정렬하세요.
 
@@ -284,6 +308,17 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
     LIMIT 5;
     ```
 
+    **결과 (예시):**
+
+    | name | name_length |
+    | ---- | ----------: |
+    | 정준호  |           3 |
+    | 김경수  |           3 |
+    | 김민재  |           3 |
+    | 진정자  |           3 |
+    | 이정수  |           3 |
+
+
 ### 연습 4
 주문 상태(`status`)의 밑줄(`_`)을 공백으로 바꾸고 대문자로 변환하세요. 고유한 상태값만 표시합니다. `status`(원본)와 `display_status`를 반환하세요.
 
@@ -295,6 +330,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
     FROM orders;
     ```
 
+    **결과 (예시):**
+
+    | status    | display_status |
+    | --------- | -------------- |
+    | cancelled | CANCELLED      |
+    | confirmed | CONFIRMED      |
+    | delivered | DELIVERED      |
+    | paid      | PAID           |
+    | pending   | PENDING        |
+    | ...       | ...            |
+
+
 ### 연습 5
 상품 이름에 `'Gaming'`이라는 단어가 포함된 상품의 `name`, `price`를 가격 내림차순으로 조회하세요. LIKE 패턴을 사용하세요.
 
@@ -305,6 +352,17 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
     WHERE name LIKE '%Gaming%'
     ORDER BY price DESC;
     ```
+
+    **결과 (예시):**
+
+    | name                                   | price   |
+    | -------------------------------------- | ------: |
+    | ASUS TUF Gaming RTX 5080 화이트           | 3812000 |
+    | MSI Radeon RX 9070 XT GAMING X         | 1788500 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+    | MSI Radeon RX 7900 XTX GAMING X 화이트    | 1478100 |
+    | APC Back-UPS Pro Gaming BGM1500B 블랙    |  408800 |
+
 
 ### 연습 6
 고객 이메일에서 `@` 앞의 사용자 ID 부분만 추출하세요. `name`, `email`, `user_id`를 반환하고 10행으로 제한하세요.
@@ -319,6 +377,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
         FROM customers
         LIMIT 10;
         ```
+
+        **결과 (예시):**
+
+        | name | email             | user_id |
+        | ---- | ----------------- | ------- |
+        | 정준호  | user1@testmail.kr | user1   |
+        | 김경수  | user2@testmail.kr | user2   |
+        | 김민재  | user3@testmail.kr | user3   |
+        | 진정자  | user4@testmail.kr | user4   |
+        | 이정수  | user5@testmail.kr | user5   |
+        | ...  | ...               | ...     |
+
 
     === "MySQL"
         ```sql
@@ -358,6 +428,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
         LIMIT 10;
         ```
 
+        **결과 (예시):**
+
+        | name                                                             | short_name              |
+        | ---------------------------------------------------------------- | ----------------------- |
+        | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | HP EliteBook 840 G10... |
+        | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장    | ASUS Dual RTX 5070 T... |
+        | ASUS ExpertBook B5 [특별 한정판 에디션] RGB 라이팅 탑재, 소프트웨어 커스터마이징 지원      | ASUS ExpertBook B5 [... |
+        | ASUS ExpertBook B5 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장       | ASUS ExpertBook B5 [... |
+        | TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz 실버                 | TeamGroup T-Force De... |
+        | ...                                                              | ...                     |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -386,6 +468,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
         LIMIT 10;
         ```
 
+        **결과 (예시):**
+
+        | id | display_text         |
+        | -: | -------------------- |
+        |  2 | VIP: vip - 김경수       |
+        |  3 | VIP: vip - 김민재       |
+        |  4 | VIP: vip - 진정자       |
+        |  5 | SILVER: silver - 이정수 |
+        |  8 | BRONZE: bronze - 성민석 |
+        | ... | ...                  |
+
+
     === "MySQL"
         ```sql
         SELECT
@@ -410,6 +504,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
     LIMIT 10;
     ```
 
+    **결과 (예시):**
+
+    | order_number       | date_part | total_amount |
+    | ------------------ | --------: | -----------: |
+    | ORD-20240101-26304 |  20240101 |      3250600 |
+    | ORD-20240101-26305 |  20240101 |      1465600 |
+    | ORD-20240101-26306 |  20240101 |        82700 |
+    | ORD-20240101-26307 |  20240101 |       419600 |
+    | ORD-20240101-26308 |  20240101 |      2860850 |
+    | ...                | ...       | ...          |
+
+
 ### 연습 10
 상품 이름에서 `@` 기호의 위치를 찾아보세요 (존재하지 않으면 0). 이름에 공백이 포함된 상품만 대상으로 `name`, `space_pos`(첫 번째 공백 위치)를 반환하고, 10행으로 제한하세요.
 
@@ -423,6 +529,18 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
         WHERE INSTR(name, ' ') > 0
         LIMIT 10;
         ```
+
+        **결과 (예시):**
+
+        | name                                | space_pos |
+        | ----------------------------------- | --------: |
+        | AMD Ryzen 9 9900X                   |         4 |
+        | AMD Ryzen 9 9900X                   |         4 |
+        | APC Back-UPS Pro Gaming BGM1500B 블랙 |         4 |
+        | ASRock B850M Pro RS 블랙              |         7 |
+        | ASRock B850M Pro RS 실버              |         7 |
+        | ...                                 | ...       |
+
 
     === "MySQL"
         ```sql

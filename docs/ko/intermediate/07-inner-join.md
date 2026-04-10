@@ -175,6 +175,18 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
+    **결과 (예시):**
+
+    | review_id | customer_name | product_name                     | rating | created_at          |
+    | --------: | ------------- | -------------------------------- | -----: | ------------------- |
+    |      7935 | 안지원           | 녹투아 NH-D15 G2 실버                 |      5 | 2025-07-14 13:30:30 |
+    |      7943 | 박종수           | 시소닉 VERTEX GX-1200 화이트           |      5 | 2025-07-10 13:58:14 |
+    |      7942 | 이승민           | MSI Radeon RX 9070 VENTUS 3X 화이트 |      5 | 2025-07-08 22:13:45 |
+    |      7917 | 김재현           | SteelSeries Arctis Nova 1 실버     |      5 | 2025-07-05 00:42:20 |
+    |      7941 | 곽은지           | 필립스 27E1N5300AE 화이트              |      5 | 2025-07-02 19:10:28 |
+    | ...       | ...           | ...                              | ...    | ...                 |
+
+
 ### 연습 2
 결제 수단별로 해당 수단을 사용한 고유 고객 수를 구하세요. `method`와 `unique_customers`를 반환하고, `unique_customers` 내림차순으로 정렬하세요.
 
@@ -189,6 +201,18 @@ ORDER BY o.total_amount DESC;
     GROUP BY p.method
     ORDER BY unique_customers DESC;
     ```
+
+    **결과 (예시):**
+
+    | method        | unique_customers |
+    | ------------- | ---------------: |
+    | card          |             2212 |
+    | kakao_pay     |             1694 |
+    | naver_pay     |             1532 |
+    | bank_transfer |             1240 |
+    | point         |              858 |
+    | ...           | ...              |
+
 
 ### 연습 3
 총 구매액(취소·반품 제외 주문의 `total_amount` 합계) 기준 상위 5명의 고객을 구하세요. `customer_name`, `grade`, `order_count`, `total_spent`를 반환하세요.
@@ -208,6 +232,17 @@ ORDER BY o.total_amount DESC;
     LIMIT 5;
     ```
 
+    **결과 (예시):**
+
+    | customer_name | grade | order_count | total_spent |
+    | ------------- | ----- | ----------: | ----------: |
+    | 박정수           | VIP   |         305 |   339169936 |
+    | 강명자           | VIP   |         240 |   296857745 |
+    | 김병철           | VIP   |         319 |   291265567 |
+    | 이영자           | VIP   |         316 |   284642204 |
+    | 이미정           | VIP   |         210 |   233243838 |
+
+
 ### 연습 4
 주문번호(`order_number`), 고객명(`customer_name`), 주문 상태(`status`)를 조회하되, 주문 상태가 `'shipped'`인 것만 필터링하세요. 주문일(`ordered_at`) 내림차순으로 정렬하고 10행으로 제한하세요.
 
@@ -223,6 +258,18 @@ ORDER BY o.total_amount DESC;
     ORDER BY o.ordered_at DESC
     LIMIT 10;
     ```
+
+    **결과 (예시):**
+
+    | order_number       | customer_name | status  |
+    | ------------------ | ------------- | ------- |
+    | ORD-20250624-34826 | 황정자           | shipped |
+    | ORD-20250624-34828 | 조현주           | shipped |
+    | ORD-20250624-34824 | 김보람           | shipped |
+    | ORD-20250623-34821 | 박민재           | shipped |
+    | ORD-20250623-34811 | 김현주           | shipped |
+    | ...                | ...           | ...     |
+
 
 ### 연습 5
 배송(`shipping`) 테이블과 주문(`orders`) 테이블을 조인하여, 배송 완료(`delivered`)된 주문의 `order_number`, `carrier`, `tracking_number`, `delivered_at`을 조회하세요. `delivered_at` 내림차순으로 정렬하고 10행으로 제한하세요.
@@ -241,6 +288,18 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
+    **결과 (예시):**
+
+    | order_number       | carrier | tracking_number | delivered_at        |
+    | ------------------ | ------- | --------------: | ------------------- |
+    | ORD-20250624-34830 | CJ대한통운  |    103333059906 | 2025-07-01 20:10:25 |
+    | ORD-20250624-34829 | 로젠택배    |    614503009436 | 2025-06-30 18:35:39 |
+    | ORD-20250622-34800 | 우체국택배   |    416412176078 | 2025-06-29 21:54:10 |
+    | ORD-20250623-34813 | CJ대한통운  |    262906125281 | 2025-06-29 18:51:58 |
+    | ORD-20250624-34825 | CJ대한통운  |    467378588800 | 2025-06-28 22:21:44 |
+    | ...                | ...     | ...             | ...                 |
+
+
 ### 연습 6
 주문 항목(`order_items`)에서 상품명(`products.name`), 공급업체명(`suppliers.company_name`), 수량(`quantity`), 단가(`unit_price`)를 조회하세요. 3개 테이블을 조인하고, 단가 내림차순으로 정렬하여 10행으로 제한하세요.
 
@@ -258,6 +317,18 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
+    **결과 (예시):**
+
+    | product_name        | supplier_name | quantity | unit_price |
+    | ------------------- | ------------- | -------: | ---------: |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        9 |    4314800 |
+    | ...                 | ...           | ...      | ...        |
+
+
 ### 연습 7
 공급업체별로 해당 업체의 상품이 포함된 총 주문 건수(`order_count`)와 총 판매 수량(`total_qty`)을 구하세요. `company_name`, `order_count`, `total_qty`를 반환하고, `total_qty` 내림차순으로 정렬하세요.
 
@@ -273,6 +344,18 @@ ORDER BY o.total_amount DESC;
     GROUP BY sup.id, sup.company_name
     ORDER BY total_qty DESC;
     ```
+
+    **결과 (예시):**
+
+    | company_name | order_count | total_qty |
+    | ------------ | ----------: | --------: |
+    | 삼성전자 공식 유통   |        6587 |      7743 |
+    | 로지텍코리아       |        6238 |      7573 |
+    | 서린시스테크       |        4842 |      6278 |
+    | 스틸시리즈코리아     |        4755 |      5483 |
+    | 에이수스코리아      |        4611 |      5242 |
+    | ...          | ...         | ...       |
+
 
 ### 연습 8
 담당 직원(`staff`)별로 처리한 주문 수(`order_count`)와 총 매출(`total_revenue`)을 구하세요. 취소·반품 주문은 제외하고, `staff_name`, `department`, `order_count`, `total_revenue`를 반환하세요. `total_revenue` 내림차순으로 정렬하고 상위 10명만 반환하세요.

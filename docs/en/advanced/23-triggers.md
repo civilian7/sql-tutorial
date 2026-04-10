@@ -329,6 +329,17 @@ List all 5 built-in triggers using the system catalog (`sqlite_master` in SQLite
         ORDER BY name;
         ```
 
+        **Expected result:**
+
+        | name                      | tbl_name  | fires_on     |
+        | ------------------------- | --------- | ------------ |
+        | trg_customers_updated_at  | customers | AFTER UPDATE |
+        | trg_orders_updated_at     | orders    | AFTER UPDATE |
+        | trg_product_price_history | products  | AFTER UPDATE |
+        | trg_products_updated_at   | products  | AFTER UPDATE |
+        | trg_reviews_updated_at    | reviews   | AFTER UPDATE |
+
+
     === "MySQL"
         ```sql
         SELECT

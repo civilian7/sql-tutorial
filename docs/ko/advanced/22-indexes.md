@@ -320,6 +320,18 @@ DROP INDEX IF EXISTS idx_orders_status_date;
         ORDER BY tbl_name, name;
         ```
 
+        **결과 (예시):**
+
+        | name                       | tbl_name   | sql                                                                | index_type |
+        | -------------------------- | ---------- | ------------------------------------------------------------------ | ---------- |
+        | idx_calendar_year_month    | calendar   | CREATE INDEX idx_calendar_year_month ON calendar(year, month)      | 복합         |
+        | idx_cart_items_cart_id     | cart_items | CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id)         | 단일         |
+        | idx_carts_customer_id      | carts      | CREATE INDEX idx_carts_customer_id ON carts(customer_id)           | 단일         |
+        | idx_complaints_category    | complaints | CREATE INDEX idx_complaints_category ON complaints(category)       | 단일         |
+        | idx_complaints_customer_id | complaints | CREATE INDEX idx_complaints_customer_id ON complaints(customer_id) | 단일         |
+        | ...                        | ...        | ...                                                                | ...        |
+
+
     === "MySQL"
         ```sql
         SELECT

@@ -188,6 +188,18 @@ WHERE notes IS NOT NULL;
       AND grade IN ('SILVER', 'GOLD');
     ```
 
+    **결과 (예시):**
+
+    | name | grade  | point_balance |
+    | ---- | ------ | ------------: |
+    | 김건우  | SILVER |         87084 |
+    | 이영일  | SILVER |         87917 |
+    | 남예준  | SILVER |         87589 |
+    | 윤현주  | SILVER |        576801 |
+    | 구영호  | GOLD   |        318534 |
+    | ...  | ...    | ...           |
+
+
 ### 문제 2
 판매 중(`is_active = 1`)이고 가격이 200~800 사이인 상품을 조회하세요. `name`과 `price`를 반환하되, 가격 내림차순으로 정렬하세요.
 
@@ -211,6 +223,18 @@ WHERE notes IS NOT NULL;
       AND last_login_at IS NULL;
     ```
 
+    **결과 (예시):**
+
+    | name | created_at          |
+    | ---- | ------------------- |
+    | 이영식  | 2016-02-23 17:09:54 |
+    | 최성수  | 2017-05-04 04:39:09 |
+    | 김명자  | 2019-04-21 10:06:38 |
+    | 박광수  | 2019-05-18 00:02:05 |
+    | 장영호  | 2020-06-07 17:56:26 |
+    | ...  | ...                 |
+
+
 ### 문제 4
 가격이 1,000 이상인 상품의 `name`과 `price`를 조회하세요.
 
@@ -221,6 +245,18 @@ WHERE notes IS NOT NULL;
     WHERE price >= 1000;
     ```
 
+    **결과 (예시):**
+
+    | name                                     | price   |
+    | ---------------------------------------- | ------: |
+    | Razer Blade 18 블랙                        | 2987500 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |
+    | Dell U2724D                              |  853600 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |
+    | ...                                      | ...     |
+
+
 ### 문제 5
 재고가 0이 아닌 상품(`stock_qty <> 0`)의 `name`과 `stock_qty`를 조회하세요.
 
@@ -230,6 +266,18 @@ WHERE notes IS NOT NULL;
     FROM products
     WHERE stock_qty <> 0;
     ```
+
+    **결과 (예시):**
+
+    | name                                     | stock_qty |
+    | ---------------------------------------- | --------: |
+    | Razer Blade 18 블랙                        |       107 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   |       499 |
+    | 삼성 DDR4 32GB PC4-25600                   |       359 |
+    | Dell U2724D                              |       337 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |        59 |
+    | ...                                      | ...       |
+
 
 ### 문제 6
 `customers` 테이블에서 포인트 잔액이 500에서 2000 사이인 GOLD 등급 고객의 `name`과 `point_balance`를 조회하세요.
@@ -252,6 +300,18 @@ WHERE notes IS NOT NULL;
     WHERE status IN ('pending', 'processing');
     ```
 
+    **결과 (예시):**
+
+    | order_number       | status  |
+    | ------------------ | ------- |
+    | ORD-20250627-34856 | pending |
+    | ORD-20250627-34857 | pending |
+    | ORD-20250627-34858 | pending |
+    | ORD-20250627-34859 | pending |
+    | ORD-20250627-34860 | pending |
+    | ...                | ...     |
+
+
 ### 문제 8
 상품명이 "Keyboard"로 끝나는 상품의 `name`과 `price`를 조회하세요.
 
@@ -273,6 +333,17 @@ WHERE notes IS NOT NULL;
       AND department <> 'Sales';
     ```
 
+    **결과 (예시):**
+
+    | name | department |
+    | ---- | ---------- |
+    | 한민재  | 경영         |
+    | 장주원  | 경영         |
+    | 박경수  | 경영         |
+    | 이준혁  | 영업         |
+    | 권영희  | 마케팅        |
+
+
 ### 문제 10
 `customers` 테이블에서 VIP 등급이면서 비활성(`is_active = 0`)이거나, 포인트 잔액이 5000 이상인 고객의 `name`, `grade`, `point_balance`, `is_active`를 조회하세요. 괄호를 사용하여 조건 우선순위를 명확히 하세요.
 
@@ -283,6 +354,18 @@ WHERE notes IS NOT NULL;
     WHERE (grade = 'VIP' AND is_active = 0)
        OR point_balance >= 5000;
     ```
+
+    **결과 (예시):**
+
+    | name | grade  | point_balance | is_active |
+    | ---- | ------ | ------------: | --------: |
+    | 김경수  | VIP    |        772799 |         1 |
+    | 김민재  | VIP    |       1110634 |         1 |
+    | 진정자  | VIP    |        687929 |         1 |
+    | 이정수  | SILVER |       1012866 |         1 |
+    | 성민석  | BRONZE |        264487 |         1 |
+    | ...  | ...    | ...           | ...       |
+
 
 ---
 다음: [3강: 정렬과 페이지네이션](03-sort-limit.md)

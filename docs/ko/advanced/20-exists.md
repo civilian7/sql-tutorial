@@ -185,6 +185,18 @@ ORDER BY category;
     LIMIT 20;
     ```
 
+    **결과 (예시):**
+
+    | customer_name | product_name                                    | created_at          |
+    | ------------- | ----------------------------------------------- | ------------------- |
+    | 윤예준           | 엡손 L6290 블랙                                     | 2025-12-30 20:40:58 |
+    | 나병철           | CORSAIR Dominator Titanium DDR5 32GB 7200MHz 실버 | 2025-12-30 05:21:30 |
+    | 김영미           | MSI MEG Ai1300P PCIE5 화이트                       | 2025-12-28 09:52:47 |
+    | 김민지           | APC Back-UPS Pro Gaming BGM1500B 블랙             | 2025-12-28 07:10:13 |
+    | 김주원           | MSI MEG Z790 ACE 실버                             | 2025-12-26 17:47:03 |
+    | ...           | ...                                             | ...                 |
+
+
 ### 연습 2
 불만을 접수한 적 있고 반품 이력도 있는 고객을 찾으세요. `customer_id`, `name`, `grade`, `complaint_count`, `return_count`를 반환하세요. 필터링에는 `EXISTS`를 사용하고, 건수 집계에는 서브쿼리 집계 또는 JOIN을 사용하세요.
 
@@ -211,6 +223,18 @@ ORDER BY category;
     ORDER BY complaint_count DESC;
     ```
 
+    **결과 (예시):**
+
+    | customer_id | name | grade | complaint_count | return_count |
+    | ----------: | ---- | ----- | --------------: | -----------: |
+    |          98 | 이영자  | VIP   |              44 |           13 |
+    |          97 | 김병철  | VIP   |              33 |            8 |
+    |         227 | 김성민  | VIP   |              26 |            8 |
+    |         549 | 이미정  | VIP   |              22 |           11 |
+    |         226 | 박정수  | VIP   |              18 |            9 |
+    | ...         | ...  | ...   | ...             | ...          |
+
+
 ### 연습 3
 `NOT EXISTS`를 사용하여 한 번도 리뷰를 작성하지 않은 고객 중 5건 이상 주문한 고객을 찾으세요. `customer_id`, `name`, `grade`, `order_count`를 반환하세요.
 
@@ -233,6 +257,18 @@ ORDER BY category;
     ORDER BY order_count DESC
     LIMIT 20;
     ```
+
+    **결과 (예시):**
+
+    | customer_id | name | grade  | order_count |
+    | ----------: | ---- | ------ | ----------: |
+    |        3132 | 이진호  | VIP    |          16 |
+    |         380 | 김영환  | SILVER |          14 |
+    |        2358 | 김민준  | SILVER |          14 |
+    |         982 | 남성민  | BRONZE |          13 |
+    |        1525 | 배민석  | BRONZE |          13 |
+    | ...         | ...  | ...    | ...         |
+
 
 ### 연습 4
 `EXISTS`를 사용하여 모든 결제 수단(credit_card, bank_transfer, cash 등)으로 한 번 이상 결제한 적이 있는 고객을 찾으세요. `customer_id`, `name`을 반환하세요. 힌트: 결제 수단 종류 수와 해당 고객이 사용한 결제 수단 수를 비교하세요.
@@ -262,6 +298,18 @@ ORDER BY category;
     ORDER BY c.name;
     ```
 
+    **결과 (예시):**
+
+    | customer_id | name |
+    | ----------: | ---- |
+    |        1492 | 강도윤  |
+    |         162 | 강명자  |
+    |        2129 | 강미숙  |
+    |        1516 | 강민재  |
+    |         912 | 강서현  |
+    | ...         | ...  |
+
+
 ### 연습 5
 `EXISTS`와 상관 서브쿼리를 사용하여 같은 상품에 대해 리뷰 평점 5점과 1점이 모두 존재하는 상품을 찾으세요. `product_id`, `product_name`, `price`를 반환하세요.
 
@@ -280,6 +328,18 @@ ORDER BY category;
     )
     ORDER BY p.name;
     ```
+
+    **결과 (예시):**
+
+    | product_id | product_name                        | price  |
+    | ---------: | ----------------------------------- | -----: |
+    |         44 | AMD Ryzen 9 9900X                   | 244800 |
+    |        171 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 408800 |
+    |        140 | ASRock B850M Pro RS 블랙              | 201900 |
+    |         47 | ASRock B850M Pro RS 실버              | 533600 |
+    |        164 | ASRock B850M Pro RS 화이트             | 426500 |
+    | ...        | ...                                 | ...    |
+
 
 ### 연습 6
 `NOT EXISTS`로 안티 조인을 구현하여, 배송(shipping)이 생성되었지만 아직 배송 완료(delivered_at IS NULL)되지 않은 주문을 찾으세요. `order_number`, `ordered_at`, `status`, `carrier`, `shipped_at`을 반환하세요.
@@ -304,6 +364,18 @@ ORDER BY category;
     LIMIT 20;
     ```
 
+    **결과 (예시):**
+
+    | order_number       | ordered_at          | status  | carrier | shipped_at          |
+    | ------------------ | ------------------- | ------- | ------- | ------------------- |
+    | ORD-20250624-34824 | 2025-06-24 19:12:48 | shipped | 한진택배    | 2025-06-27 19:12:48 |
+    | ORD-20250624-34828 | 2025-06-24 19:43:51 | shipped | CJ대한통운  | 2025-06-26 19:43:51 |
+    | ORD-20250624-34826 | 2025-06-24 19:48:54 | shipped | 한진택배    | 2025-06-25 19:48:54 |
+    | ORD-20250623-34821 | 2025-06-23 19:04:07 | shipped | 한진택배    | 2025-06-25 19:04:07 |
+    | ORD-20250622-34810 | 2025-06-22 08:01:21 | shipped | 우체국택배   | 2025-06-25 08:01:21 |
+    | ...                | ...                 | ...     | ...     | ...                 |
+
+
 ### 연습 7
 `EXISTS`와 집계 조건을 결합하여, 평균 리뷰 평점이 4.0 이상인 상품을 하나 이상 보유한 카테고리를 찾으세요. `category_name`, `product_count`를 반환하세요.
 
@@ -326,6 +398,18 @@ ORDER BY category;
     )
     ORDER BY category_name;
     ```
+
+    **결과 (예시):**
+
+    | category_name | product_count |
+    | ------------- | ------------: |
+    | 2in1          |             7 |
+    | AMD           |             6 |
+    | AMD 소켓        |             9 |
+    | DDR4          |             5 |
+    | DDR5          |             8 |
+    | ...           | ...           |
+
 
 ### 연습 8
 상관 서브쿼리를 사용하여 각 직원이 처리한 주문 중 가장 금액이 큰 주문의 정보를 함께 표시하세요. `staff_name`, `department`, `max_order_amount`, `max_order_number`를 반환하세요. `max_order_number`는 해당 금액과 일치하는 주문 번호입니다.

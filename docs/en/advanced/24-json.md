@@ -395,6 +395,17 @@ Extract the product name and CPU value from the `products` table where the `spec
         LIMIT 5;
         ```
 
+        **Expected result:**
+
+        | name                     | cpu                  |
+        | ------------------------ | -------------------- |
+        | Razer Blade 18 블랙        | Apple M3             |
+        | LG 일체형PC 27V70Q 실버       | Intel Core i5-13600K |
+        | Razer Blade 18 화이트       | Intel Core i9-13900H |
+        | 한성 보스몬스터 DX9900 실버       | AMD Ryzen 5 7600X    |
+        | ASUS ROG Strix G16CH 화이트 | AMD Ryzen 5 7600X    |
+
+
     === "MySQL"
         ```sql
         SELECT name, specs->>'$.cpu' AS cpu
@@ -424,6 +435,18 @@ Find all products with `'16GB'` RAM. Show the name, price, and RAM value, sorted
         WHERE specs->>'$.ram' = '16GB'
         ORDER BY price DESC;
         ```
+
+        **Expected result:**
+
+        | name                                                             | price   | ram  |
+        | ---------------------------------------------------------------- | ------: | ---- |
+        | ASUS ROG Zephyrus G16                                            | 4284100 | 16GB |
+        | ASUS ROG Strix G16CH 화이트                                         | 2988700 | 16GB |
+        | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 2389100 | 16GB |
+        | Razer Blade 18                                                   | 2349600 | 16GB |
+        | LG 그램 17 실버                                                      | 2336200 | 16GB |
+        | ...                                                              | ...     | ...  |
+
 
     === "MySQL"
         ```sql
@@ -456,6 +479,18 @@ Group products that have a `screen_size` key in their specs by screen size. Show
         GROUP BY specs->>'$.screen_size'
         ORDER BY product_count DESC;
         ```
+
+        **Expected result:**
+
+        | screen_size | product_count | avg_price |
+        | ----------- | ------------: | --------: |
+        | 14 inch     |            13 |   2264508 |
+        | 27 inch     |            12 |   1167542 |
+        | 15.6 inch   |            10 |   1947630 |
+        | 32 inch     |             6 |   1001150 |
+        | 16 inch     |             6 |   2453700 |
+        | ...         | ...           | ...       |
+
 
     === "MySQL"
         ```sql
@@ -569,6 +604,18 @@ List all distinct keys used in the `specs` column across all products, in alphab
         WHERE products.specs IS NOT NULL
         ORDER BY j.key;
         ```
+
+        **Expected result:**
+
+        | key             |
+        | --------------- |
+        | base_clock_ghz  |
+        | battery_hours   |
+        | boost_clock_ghz |
+        | capacity_gb     |
+        | clock_mhz       |
+        | ...             |
+
 
     === "MySQL"
         ```sql
@@ -688,6 +735,15 @@ Among products that have a `cpu` key in their specs, find the 3 most expensive o
         ORDER BY price DESC
         LIMIT 3;
         ```
+
+        **Expected result:**
+
+        | name                  | cpu                  | price   |
+        | --------------------- | -------------------- | ------: |
+        | ASUS ROG Strix GT35   | Intel Core i7-13700K | 4314800 |
+        | ASUS ROG Zephyrus G16 | Apple M3             | 4284100 |
+        | Razer Blade 18 블랙     | Intel Core i7-13700H | 4182100 |
+
 
     === "MySQL"
         ```sql

@@ -271,6 +271,18 @@ SELECT
     LIMIT 20;
     ```
 
+    **결과 (예시):**
+
+    | order_number       | status    | notes              |
+    | ------------------ | --------- | ------------------ |
+    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
+    | ORD-20250630-34905 | pending   | —                  |
+    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
+    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
+    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
+    | ...                | ...       | ...                |
+
+
 ### 문제 3
 `orders` 테이블에서 `cancelled_at`이 NULL인(취소되지 않은) 주문 수와 NULL이 아닌(취소된) 주문 수를 각각 구하세요. 별칭은 `not_cancelled`, `cancelled`로 지정하세요.
 
@@ -281,6 +293,13 @@ SELECT
         COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
     FROM orders;
     ```
+
+    **결과 (예시):**
+
+    | not_cancelled | cancelled |
+    | ------------: | --------: |
+    |         33154 |      1754 |
+
 
 ### 문제 4
 `customers` 테이블에서 `phone`이 NULL인 고객의 `name`, `email`을 조회하되, `email`도 NULL이면 `'연락처 없음'`으로 대체하세요.
@@ -306,6 +325,13 @@ SELECT
     FROM products;
     ```
 
+    **결과 (예시):**
+
+    | total_products | missing_weight | pct_missing |
+    | -------------: | -------------: | ----------: |
+    |            280 |             12 |         4.3 |
+
+
 ### 문제 6
 `NULLIF`를 사용하여 `products` 테이블에서 `stock_qty`가 0인 상품의 가격 대비 재고 비율을 안전하게 계산하세요. `name`, `price`, `stock_qty`, `price / NULLIF(stock_qty, 0)`을 `price_per_unit`이라는 별칭으로 반환하세요. 결과를 5행으로 제한하세요.
 
@@ -320,6 +346,17 @@ SELECT
     LIMIT 5;
     ```
 
+    **결과 (예시):**
+
+    | name                                     | price   | stock_qty | price_per_unit |
+    | ---------------------------------------- | ------: | --------: | -------------: |
+    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
+    | Dell U2724D                              |  853600 |       337 |        2532.94 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
+
+
 ### 문제 7
 `reviews` 테이블에서 `content`가 NULL인 리뷰와 NULL이 아닌 리뷰의 평균 `rating`을 각각 구하세요. `COUNT(*)`와 `AVG(rating)`을 함께 표시하세요.
 
@@ -333,6 +370,14 @@ SELECT
     GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
     ```
 
+    **결과 (예시):**
+
+    | content_status | review_count | avg_rating |
+    | -------------- | -----------: | ---------: |
+    | Has Content    |         7156 |       3.91 |
+    | No Content     |          789 |       3.93 |
+
+
 ### 문제 8
 `staff` 테이블에서 `manager_id`가 NULL인 직원(최고 관리자)의 `name`, `department`, `role`을 조회하세요.
 
@@ -342,6 +387,13 @@ SELECT
     FROM staff
     WHERE manager_id IS NULL;
     ```
+
+    **결과 (예시):**
+
+    | name | department | role  |
+    | ---- | ---------- | ----- |
+    | 한민재  | 경영         | admin |
+
 
 ### 문제 9
 멤버십 `grade`별로 성별이 확인된 고객 수와 성별 미입력 고객 수를 함께 조회하세요. 그룹화 기준으로 `COALESCE(gender, 'Unknown')`을 사용하세요.
@@ -357,6 +409,18 @@ SELECT
     ORDER BY grade, gender_status;
     ```
 
+    **결과 (예시):**
+
+    | grade  | gender_status | customer_count |
+    | ------ | ------------- | -------------: |
+    | BRONZE | F             |           1332 |
+    | BRONZE | M             |           2194 |
+    | BRONZE | Unknown       |            436 |
+    | GOLD   | F             |            136 |
+    | GOLD   | M             |            316 |
+    | ...    | ...           | ...            |
+
+
 ### 문제 10
 `customers` 테이블에서 `last_login_at`이 NULL인 고객의 `name`, `email`, `created_at`을 조회하세요. `email`이 NULL이면 `'없음'`, `created_at`이 NULL이면 `'알 수 없음'`으로 대체하세요. 결과를 10행으로 제한하세요.
 
@@ -370,6 +434,18 @@ SELECT
     WHERE last_login_at IS NULL
     LIMIT 10;
     ```
+
+    **결과 (예시):**
+
+    | name | email              | created_at          |
+    | ---- | ------------------ | ------------------- |
+    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
+    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
+    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
+    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
+    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
+    | ...  | ...                | ...                 |
+
 
 ---
 다음: [7강: INNER JOIN](../intermediate/07-inner-join.md)

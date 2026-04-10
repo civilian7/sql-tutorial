@@ -175,6 +175,18 @@ List each review with the customer's `name` and the product's `name`. Return `re
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | review_id | customer_name | product_name                     | rating | created_at          |
+    | --------: | ------------- | -------------------------------- | -----: | ------------------- |
+    |      7935 | 안지원           | 녹투아 NH-D15 G2 실버                 |      5 | 2025-07-14 13:30:30 |
+    |      7943 | 박종수           | 시소닉 VERTEX GX-1200 화이트           |      5 | 2025-07-10 13:58:14 |
+    |      7942 | 이승민           | MSI Radeon RX 9070 VENTUS 3X 화이트 |      5 | 2025-07-08 22:13:45 |
+    |      7917 | 김재현           | SteelSeries Arctis Nova 1 실버     |      5 | 2025-07-05 00:42:20 |
+    |      7941 | 곽은지           | 필립스 27E1N5300AE 화이트              |      5 | 2025-07-02 19:10:28 |
+    | ...       | ...           | ...                              | ...    | ...                 |
+
+
 ### Exercise 2
 For each payment method, count how many distinct customers have used it. Return `method` and `unique_customers`, sorted by `unique_customers` descending.
 
@@ -189,6 +201,18 @@ For each payment method, count how many distinct customers have used it. Return 
     GROUP BY p.method
     ORDER BY unique_customers DESC;
     ```
+
+    **Expected result:**
+
+    | method        | unique_customers |
+    | ------------- | ---------------: |
+    | card          |             2212 |
+    | kakao_pay     |             1694 |
+    | naver_pay     |             1532 |
+    | bank_transfer |             1240 |
+    | point         |              858 |
+    | ...           | ...              |
+
 
 ### Exercise 3
 Find the top 5 customers by total amount spent (sum of `total_amount` for non-cancelled, non-returned orders). Return `customer_name`, `grade`, `order_count`, and `total_spent`.
@@ -208,6 +232,17 @@ Find the top 5 customers by total amount spent (sum of `total_amount` for non-ca
     LIMIT 5;
     ```
 
+    **Expected result:**
+
+    | customer_name | grade | order_count | total_spent |
+    | ------------- | ----- | ----------: | ----------: |
+    | 박정수           | VIP   |         305 |   339169936 |
+    | 강명자           | VIP   |         240 |   296857745 |
+    | 김병철           | VIP   |         319 |   291265567 |
+    | 이영자           | VIP   |         316 |   284642204 |
+    | 이미정           | VIP   |         210 |   233243838 |
+
+
 ### Exercise 4
 Show the `order_number`, `customer_name`, and `status` for orders whose status is `'shipped'`. Sort by `ordered_at` descending and limit to 10 rows.
 
@@ -223,6 +258,18 @@ Show the `order_number`, `customer_name`, and `status` for orders whose status i
     ORDER BY o.ordered_at DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | order_number       | customer_name | status  |
+    | ------------------ | ------------- | ------- |
+    | ORD-20250624-34826 | 황정자           | shipped |
+    | ORD-20250624-34828 | 조현주           | shipped |
+    | ORD-20250624-34824 | 김보람           | shipped |
+    | ORD-20250623-34821 | 박민재           | shipped |
+    | ORD-20250623-34811 | 김현주           | shipped |
+    | ...                | ...           | ...     |
+
 
 ### Exercise 5
 Join the `shipping` and `orders` tables to list delivered shipments. Return `order_number`, `carrier`, `tracking_number`, and `delivered_at`. Sort by `delivered_at` descending and limit to 10 rows.
@@ -241,6 +288,18 @@ Join the `shipping` and `orders` tables to list delivered shipments. Return `ord
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | order_number       | carrier | tracking_number | delivered_at        |
+    | ------------------ | ------- | --------------: | ------------------- |
+    | ORD-20250624-34830 | CJ대한통운  |    103333059906 | 2025-07-01 20:10:25 |
+    | ORD-20250624-34829 | 로젠택배    |    614503009436 | 2025-06-30 18:35:39 |
+    | ORD-20250622-34800 | 우체국택배   |    416412176078 | 2025-06-29 21:54:10 |
+    | ORD-20250623-34813 | CJ대한통운  |    262906125281 | 2025-06-29 18:51:58 |
+    | ORD-20250624-34825 | CJ대한통운  |    467378588800 | 2025-06-28 22:21:44 |
+    | ...                | ...     | ...             | ...                 |
+
+
 ### Exercise 6
 From `order_items`, show the product name (`products.name`), supplier name (`suppliers.company_name`), quantity, and unit price. Join three tables and sort by unit price descending. Limit to 10 rows.
 
@@ -258,6 +317,18 @@ From `order_items`, show the product name (`products.name`), supplier name (`sup
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | product_name        | supplier_name | quantity | unit_price |
+    | ------------------- | ------------- | -------: | ---------: |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        1 |    4314800 |
+    | ASUS ROG Strix GT35 | 에이수스코리아       |        9 |    4314800 |
+    | ...                 | ...           | ...      | ...        |
+
+
 ### Exercise 7
 For each supplier, find the total number of orders containing their products (`order_count`) and the total quantity sold (`total_qty`). Return `company_name`, `order_count`, and `total_qty`, sorted by `total_qty` descending.
 
@@ -273,6 +344,18 @@ For each supplier, find the total number of orders containing their products (`o
     GROUP BY sup.id, sup.company_name
     ORDER BY total_qty DESC;
     ```
+
+    **Expected result:**
+
+    | company_name | order_count | total_qty |
+    | ------------ | ----------: | --------: |
+    | 삼성전자 공식 유통   |        6587 |      7743 |
+    | 로지텍코리아       |        6238 |      7573 |
+    | 서린시스테크       |        4842 |      6278 |
+    | 스틸시리즈코리아     |        4755 |      5483 |
+    | 에이수스코리아      |        4611 |      5242 |
+    | ...          | ...         | ...       |
+
 
 ### Exercise 8
 For each staff member, count the orders they handled (`order_count`) and total revenue (`total_revenue`). Exclude cancelled and returned orders. Return `staff_name`, `department`, `order_count`, and `total_revenue`. Sort by `total_revenue` descending and limit to 10.

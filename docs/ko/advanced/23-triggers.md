@@ -329,6 +329,17 @@ DROP TABLE IF EXISTS price_change_log;
         ORDER BY name;
         ```
 
+        **결과 (예시):**
+
+        | name                      | tbl_name  | fires_on     |
+        | ------------------------- | --------- | ------------ |
+        | trg_customers_updated_at  | customers | AFTER UPDATE |
+        | trg_orders_updated_at     | orders    | AFTER UPDATE |
+        | trg_product_price_history | products  | AFTER UPDATE |
+        | trg_products_updated_at   | products  | AFTER UPDATE |
+        | trg_reviews_updated_at    | reviews   | AFTER UPDATE |
+
+
     === "MySQL"
         ```sql
         SELECT

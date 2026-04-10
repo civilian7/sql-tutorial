@@ -315,6 +315,18 @@ ORDER BY changed_at;
     ORDER BY year;
     ```
 
+    **결과 (예시):**
+
+    | year | new_signups | cumulative_customers |
+    | ---: | ----------: | -------------------: |
+    | 2016 |         100 |                  100 |
+    | 2017 |         180 |                  280 |
+    | 2018 |         300 |                  580 |
+    | 2019 |         450 |                 1030 |
+    | 2020 |         700 |                 1730 |
+    | ...  | ...         | ...                  |
+
+
 ### 연습 3
 2023년과 2024년의 각 월별로 전년 동월 대비 매출 증감률(YoY)을 계산하세요. `LAG(revenue, 12)`를 사용하여 전년 동월과 비교합니다. `year_month`, `revenue`, `same_month_last_year`, `yoy_growth_pct`를 반환하세요.
 
@@ -341,6 +353,18 @@ ORDER BY changed_at;
     WHERE year_month >= '2023-01'
     ORDER BY year_month;
     ```
+
+    **결과 (예시):**
+
+    | year_month | revenue   | same_month_last_year | yoy_growth_pct |
+    | ---------- | --------: | -------------------- | -------------- |
+    | 2023-01    | 287003017 | (NULL)               | (NULL)         |
+    | 2023-02    | 247903157 | (NULL)               | (NULL)         |
+    | 2023-03    | 464329421 | (NULL)               | (NULL)         |
+    | 2023-04    | 292003281 | (NULL)               | (NULL)         |
+    | 2023-05    | 456140850 | (NULL)               | (NULL)         |
+    | ...        | ...       | ...                  | ...            |
+
 
 ### 연습 4
 `ROW_NUMBER()`를 사용하여 각 고객의 주문에 순번을 매기고, 첫 번째 주문만 추출하세요. `customer_id`, `name`, `order_number`, `ordered_at`, `total_amount`를 반환하세요.
@@ -373,6 +397,18 @@ ORDER BY changed_at;
     LIMIT 15;
     ```
 
+    **결과 (예시):**
+
+    | customer_id | name | order_number       | ordered_at          | total_amount |
+    | ----------: | ---- | ------------------ | ------------------- | -----------: |
+    |          98 | 이영자  | ORD-20160109-00013 | 2016-01-09 10:19:26 |       130700 |
+    |          61 | 이승민  | ORD-20160110-00015 | 2016-01-10 12:16:12 |       134700 |
+    |          15 | 강은서  | ORD-20160111-00017 | 2016-01-17 00:39:08 |       801875 |
+    |          72 | 윤정남  | ORD-20160116-00022 | 2016-01-18 02:44:23 |       537800 |
+    |          90 | 유현지  | ORD-20160202-00041 | 2016-02-02 13:30:42 |       134700 |
+    | ...         | ...  | ...                | ...                 | ...          |
+
+
 ### 연습 5
 `RANK()`와 `DENSE_RANK()`를 함께 사용하여 카테고리별 상품 가격 순위를 매기세요. `category_name`, `product_name`, `price`, `rank`, `dense_rank`를 반환하고 상위 15개를 보여주세요. 두 순위 함수의 차이를 결과에서 확인할 수 있습니다.
 
@@ -390,6 +426,18 @@ ORDER BY changed_at;
     ORDER BY cat.name, rank
     LIMIT 15;
     ```
+
+    **결과 (예시):**
+
+    | category_name | product_name            | price   | rank | dense_rank |
+    | ------------- | ----------------------- | ------: | ---: | ---------: |
+    | 2in1          | 레노버 IdeaPad Flex 5 화이트  | 1995100 |    1 |          1 |
+    | 2in1          | 레노버 ThinkPad X1 2in1 실버 | 1900500 |    2 |          2 |
+    | 2in1          | 삼성 갤럭시북4 360 블랙         | 1857600 |    3 |          3 |
+    | 2in1          | 삼성 갤럭시북4 360 블랙         | 1536800 |    4 |          4 |
+    | 2in1          | 삼성 갤럭시북5 360 블랙         | 1484600 |    5 |          5 |
+    | ...           | ...                     | ...     | ...  | ...        |
+
 
 ### 연습 6
 2024년 월별 매출의 3개월 이동 평균을 계산하세요. `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` 프레임을 사용합니다. `year_month`, `monthly_revenue`, `moving_avg_3m`을 반환하세요.
@@ -417,6 +465,18 @@ ORDER BY changed_at;
     ORDER BY year_month;
     ```
 
+    **결과 (예시):**
+
+    | year_month | monthly_revenue | moving_avg_3m |
+    | ---------- | --------------: | ------------: |
+    | 2024-01    |       363769660 |     363769660 |
+    | 2024-02    |       383853446 |     373811553 |
+    | 2024-03    |       553727467 |  433783524.33 |
+    | 2024-04    |       392480419 |  443353777.33 |
+    | 2024-05    |       352236014 |  432814633.33 |
+    | ...        | ...             | ...           |
+
+
 ### 연습 7
 `NTILE(4)`를 사용하여 고객을 총 구매 금액 기준으로 4개 분위(quartile)로 나누세요. `name`, `grade`, `total_spent`, `quartile`을 반환하고 `quartile`과 `total_spent` 내림차순으로 정렬하세요. 상위 20개를 보여주세요.
 
@@ -442,6 +502,18 @@ ORDER BY changed_at;
     LIMIT 20;
     ```
 
+    **결과 (예시):**
+
+    | name | grade | total_spent | quartile |
+    | ---- | ----- | ----------: | -------: |
+    | 박정수  | VIP   |   351855703 |        1 |
+    | 강명자  | VIP   |   301838245 |        1 |
+    | 김병철  | VIP   |   297684080 |        1 |
+    | 이영자  | VIP   |   288994451 |        1 |
+    | 이미정  | VIP   |   240949338 |        1 |
+    | ...  | ...   | ...         | ...      |
+
+
 ### 연습 8
 각 상품별로 주문 시점 기준 누적 판매 수량을 계산하세요. `product_name`, `ordered_at`, `quantity`, `cumulative_qty`를 반환하세요. 특정 상품 하나(id = 1)에 대해 조회하세요.
 
@@ -462,6 +534,18 @@ ORDER BY changed_at;
       AND o.status NOT IN ('cancelled', 'returned')
     ORDER BY o.ordered_at;
     ```
+
+    **결과 (예시):**
+
+    | product_name      | ordered_at          | quantity | cumulative_qty |
+    | ----------------- | ------------------- | -------: | -------------: |
+    | Razer Blade 18 블랙 | 2016-11-10 13:56:06 |        1 |              1 |
+    | Razer Blade 18 블랙 | 2016-11-14 08:54:25 |        1 |              2 |
+    | Razer Blade 18 블랙 | 2016-11-28 07:10:23 |        1 |              3 |
+    | Razer Blade 18 블랙 | 2016-12-04 06:36:51 |        1 |              4 |
+    | Razer Blade 18 블랙 | 2016-12-16 21:38:06 |        1 |              5 |
+    | ...               | ...                 | ...      | ...            |
+
 
 ### 연습 9
 부서별로 직원 급여(hire 순서 기준) 누적 합계와 부서 평균 대비 차이를 함께 표시하세요. `department`, `name`, `role`, `hired_at`, `running_headcount`, `dept_avg_headcount`를 반환하세요. `running_headcount`는 `COUNT(*) OVER`로, `dept_avg_headcount`는 `COUNT(*) OVER (PARTITION BY department)`으로 구합니다.
@@ -485,6 +569,17 @@ ORDER BY changed_at;
     WHERE is_active = 1
     ORDER BY department, hired_at;
     ```
+
+    **결과 (예시):**
+
+    | department | name | role    | hired_at   | running_headcount | dept_total_headcount |
+    | ---------- | ---- | ------- | ---------- | ----------------: | -------------------: |
+    | 경영         | 한민재  | admin   | 2016-05-23 |                 1 |                    3 |
+    | 경영         | 장주원  | admin   | 2017-08-20 |                 2 |                    3 |
+    | 경영         | 박경수  | admin   | 2022-10-12 |                 3 |                    3 |
+    | 마케팅        | 권영희  | manager | 2024-08-05 |                 1 |                    1 |
+    | 영업         | 이준혁  | manager | 2022-03-02 |                 1 |                    1 |
+
 
 ### 연습 10
 각 고객의 주문 간 간격(일)을 계산하고, 고객별 평균 주문 간격을 구하세요. `LAG`로 이전 주문일을 참조합니다. `customer_id`, `name`, `order_count`, `avg_days_between_orders`를 반환하세요.
@@ -519,6 +614,18 @@ ORDER BY changed_at;
         ORDER BY avg_days_between_orders
         LIMIT 15;
         ```
+
+        **결과 (예시):**
+
+        | customer_id | name | order_count | avg_days_between_orders |
+        | ----------: | ---- | ----------: | ----------------------: |
+        |        4710 | 박은영  |           5 |                     9.5 |
+        |          97 | 김병철  |         325 |                     9.9 |
+        |         226 | 박정수  |         312 |                     9.9 |
+        |          98 | 이영자  |         322 |                    10.8 |
+        |         549 | 이미정  |         215 |                    11.4 |
+        | ...         | ...  | ...         | ...                     |
+
 
     === "MySQL"
         ```sql

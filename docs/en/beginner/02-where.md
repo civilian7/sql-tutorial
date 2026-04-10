@@ -189,6 +189,18 @@ Find all female customers (`gender = 'F'`) who hold a SILVER or GOLD membership 
       AND grade IN ('SILVER', 'GOLD');
     ```
 
+    **Expected result:**
+
+    | name | grade  | point_balance |
+    | ---- | ------ | ------------: |
+    | 김건우  | SILVER |         87084 |
+    | 이영일  | SILVER |         87917 |
+    | 남예준  | SILVER |         87589 |
+    | 윤현주  | SILVER |        576801 |
+    | 구영호  | GOLD   |        318534 |
+    | ...  | ...    | ...           |
+
+
 ### Exercise 2
 List products that are active (`is_active = 1`) and priced between $200 and $800. Return `name` and `price`, ordered by price descending.
 
@@ -212,6 +224,18 @@ Find all customers whose gender is unknown (NULL) and who have never logged in (
       AND last_login_at IS NULL;
     ```
 
+    **Expected result:**
+
+    | name | created_at          |
+    | ---- | ------------------- |
+    | 이영식  | 2016-02-23 17:09:54 |
+    | 최성수  | 2017-05-04 04:39:09 |
+    | 김명자  | 2019-04-21 10:06:38 |
+    | 박광수  | 2019-05-18 00:02:05 |
+    | 장영호  | 2020-06-07 17:56:26 |
+    | ...  | ...                 |
+
+
 ### Exercise 4
 Find all products with a price of $1,000 or more. Return `name` and `price`.
 
@@ -222,6 +246,18 @@ Find all products with a price of $1,000 or more. Return `name` and `price`.
     WHERE price >= 1000;
     ```
 
+    **Expected result:**
+
+    | name                                     | price   |
+    | ---------------------------------------- | ------: |
+    | Razer Blade 18 블랙                        | 2987500 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |
+    | Dell U2724D                              |  853600 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |
+    | ...                                      | ...     |
+
+
 ### Exercise 5
 List products whose stock quantity is not zero (`stock_qty <> 0`). Return `name` and `stock_qty`.
 
@@ -231,6 +267,18 @@ List products whose stock quantity is not zero (`stock_qty <> 0`). Return `name`
     FROM products
     WHERE stock_qty <> 0;
     ```
+
+    **Expected result:**
+
+    | name                                     | stock_qty |
+    | ---------------------------------------- | --------: |
+    | Razer Blade 18 블랙                        |       107 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   |       499 |
+    | 삼성 DDR4 32GB PC4-25600                   |       359 |
+    | Dell U2724D                              |       337 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |        59 |
+    | ...                                      | ...       |
+
 
 ### Exercise 6
 Find GOLD-grade customers whose point balance is between 500 and 2000. Return `name` and `point_balance`.
@@ -253,6 +301,18 @@ List orders whose status is either `'pending'` or `'processing'`. Return `order_
     WHERE status IN ('pending', 'processing');
     ```
 
+    **Expected result:**
+
+    | order_number       | status  |
+    | ------------------ | ------- |
+    | ORD-20250627-34856 | pending |
+    | ORD-20250627-34857 | pending |
+    | ORD-20250627-34858 | pending |
+    | ORD-20250627-34859 | pending |
+    | ORD-20250627-34860 | pending |
+    | ...                | ...     |
+
+
 ### Exercise 8
 Find products whose name ends with "Keyboard". Return `name` and `price`.
 
@@ -274,6 +334,17 @@ From the `staff` table, find active employees (`is_active = 1`) who are not in t
       AND department <> 'Sales';
     ```
 
+    **Expected result:**
+
+    | name | department |
+    | ---- | ---------- |
+    | 한민재  | 경영         |
+    | 장주원  | 경영         |
+    | 박경수  | 경영         |
+    | 이준혁  | 영업         |
+    | 권영희  | 마케팅        |
+
+
 ### Exercise 10
 Find customers who are either VIP-grade and inactive (`is_active = 0`), or have a point balance of 5,000 or more. Return `name`, `grade`, `point_balance`, and `is_active`. Use parentheses to make the condition precedence clear.
 
@@ -284,6 +355,18 @@ Find customers who are either VIP-grade and inactive (`is_active = 0`), or have 
     WHERE (grade = 'VIP' AND is_active = 0)
        OR point_balance >= 5000;
     ```
+
+    **Expected result:**
+
+    | name | grade  | point_balance | is_active |
+    | ---- | ------ | ------------: | --------: |
+    | 김경수  | VIP    |        772799 |         1 |
+    | 김민재  | VIP    |       1110634 |         1 |
+    | 진정자  | VIP    |        687929 |         1 |
+    | 이정수  | SILVER |       1012866 |         1 |
+    | 성민석  | BRONZE |        264487 |         1 |
+    | ...  | ...    | ...           | ...       |
+
 
 ---
 Next: [Lesson 3: Sorting and Pagination](03-sort-limit.md)

@@ -231,6 +231,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY total_collected DESC;
     ```
 
+    **결과 (예시):**
+
+    | method        | transaction_count | total_collected |
+    | ------------- | ----------------: | --------------: |
+    | card          |             14522 |     14526925164 |
+    | kakao_pay     |              6359 |      6652523392 |
+    | naver_pay     |              4835 |      4563329993 |
+    | bank_transfer |              3194 |      3243186244 |
+    | point         |              1623 |      1743665807 |
+    | ...           | ...               | ...             |
+
+
 ### 문제 3
 `customers` 테이블에서 `grade`별로 평균 포인트(`point_balance`)를 구하세요. 평균 포인트 내림차순으로 정렬하세요.
 
@@ -243,6 +255,16 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     GROUP BY grade
     ORDER BY avg_points DESC;
     ```
+
+    **결과 (예시):**
+
+    | grade  | avg_points |
+    | ------ | ---------: |
+    | VIP    |  423073.75 |
+    | GOLD   |  158543.32 |
+    | SILVER |   85614.41 |
+    | BRONZE |   16542.43 |
+
 
 ### 문제 4
 `customers` 테이블에서 `grade`와 `gender` 두 칼럼으로 그룹화하여 고객 수를 구하세요. `gender`가 NULL인 행도 포함하세요.
@@ -258,6 +280,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY grade, gender;
     ```
 
+    **결과 (예시):**
+
+    | grade  | gender | customer_count |
+    | ------ | ------ | -------------: |
+    | BRONZE | (NULL) |            436 |
+    | BRONZE | F      |           1332 |
+    | BRONZE | M      |           2194 |
+    | GOLD   | (NULL) |             32 |
+    | GOLD   | F      |            136 |
+    | ...    | ...    | ...            |
+
+
 ### 문제 5
 `reviews` 테이블에서 `rating`별 리뷰 건수를 구하세요. 리뷰가 100건 이상인 평점만 표시하고, `rating` 순으로 정렬하세요.
 
@@ -271,6 +305,17 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     HAVING COUNT(*) >= 100
     ORDER BY rating;
     ```
+
+    **결과 (예시):**
+
+    | rating | review_count |
+    | -----: | -----------: |
+    |      1 |          395 |
+    |      2 |          774 |
+    |      3 |         1193 |
+    |      4 |         2362 |
+    |      5 |         3221 |
+
 
 ### 문제 6
 `orders` 테이블에서 활성 주문(`status NOT IN ('cancelled', 'returned')`)만을 대상으로, `status`별 건수와 평균 금액(소수점 0자리)을 구하세요. 평균 금액이 300 초과인 상태만 표시하세요.
@@ -288,6 +333,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY avg_amount DESC;
     ```
 
+    **결과 (예시):**
+
+    | status           | order_count | avg_amount |
+    | ---------------- | ----------: | ---------: |
+    | return_requested |         477 |    1512188 |
+    | preparing        |           7 |    1208178 |
+    | confirmed        |       32053 |    1007832 |
+    | pending          |          47 |     922266 |
+    | delivered        |          77 |     876186 |
+    | ...              | ...         | ...        |
+
+
 ### 문제 7
 2023년과 2024년의 `orders` 데이터에서 월 매출이 50만 달러를 초과한 달을 찾으세요. `year_month`와 `monthly_revenue`를 날짜순으로 반환하세요.
 
@@ -304,6 +361,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
         HAVING SUM(total_amount) > 500000
         ORDER BY year_month;
         ```
+
+        **결과 (예시):**
+
+        | year_month | monthly_revenue |
+        | ---------- | --------------: |
+        | 2023-01    |       287003017 |
+        | 2023-02    |       247903157 |
+        | 2023-03    |       464329421 |
+        | 2023-04    |       292003281 |
+        | 2023-05    |       456140850 |
+        | ...        | ...             |
+
 
     === "MySQL"
         ```sql
@@ -346,6 +415,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY unique_orders DESC;
     ```
 
+    **결과 (예시):**
+
+    | method          | unique_orders |
+    | --------------- | ------------: |
+    | card            |         15728 |
+    | kakao_pay       |          6902 |
+    | naver_pay       |          5252 |
+    | bank_transfer   |          3483 |
+    | virtual_account |          1772 |
+    | ...             | ...           |
+
+
 ### 문제 9
 `orders` 테이블에서 연도별 주문 건수와 총 매출을 구하세요. 취소/반품 주문은 제외하세요.
 
@@ -361,6 +442,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
         GROUP BY SUBSTR(ordered_at, 1, 4)
         ORDER BY order_year;
         ```
+
+        **결과 (예시):**
+
+        | order_year | order_count | yearly_revenue |
+        | ---------: | ----------: | -------------: |
+        |       2016 |         399 |      306223187 |
+        |       2017 |         608 |      628189049 |
+        |       2018 |        1444 |     1390778028 |
+        |       2019 |        2502 |     2419434488 |
+        |       2020 |        4244 |     4773995795 |
+        | ...        | ...         | ...            |
+
 
     === "MySQL"
         ```sql
@@ -402,6 +495,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
        AND AVG(price) >= 50
     ORDER BY product_count DESC;
     ```
+
+    **결과 (예시):**
+
+    | category_id | product_count | avg_price | total_stock |
+    | ----------: | ------------: | --------: | ----------: |
+    |          18 |            13 |    520038 |        3826 |
+    |          30 |            13 |    227223 |        3812 |
+    |          43 |            12 |    247892 |        3085 |
+    |           3 |            11 |   1716582 |        2241 |
+    |          31 |            11 |    146564 |        2681 |
+    | ...         | ...           | ...       | ...         |
+
 
 ---
 다음: [6강: NULL 다루기](06-null.md)

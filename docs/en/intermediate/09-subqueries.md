@@ -282,6 +282,18 @@ Use a `FROM` subquery to find the top 10 customers by number of completed orders
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | name | grade | order_count | total_spent |
+    | ---- | ----- | ----------: | ----------: |
+    | 김병철  | VIP   |         319 |   291265567 |
+    | 이영자  | VIP   |         315 |   284481704 |
+    | 박정수  | VIP   |         305 |   339169936 |
+    | 강명자  | VIP   |         240 |   296857745 |
+    | 김성민  | VIP   |         210 |   220361434 |
+    | ...  | ...   | ...         | ...         |
+
+
 ### Exercise 3
 Find products that are in the wishlist of at least one customer but have **never appeared in any order**. Use `IN` and `NOT IN` subqueries. Return `product_name` and `price`.
 
@@ -298,6 +310,18 @@ Find products that are in the wishlist of at least one customer but have **never
     ORDER BY price DESC;
     ```
 
+    **Expected result:**
+
+    | product_name                  | price  |
+    | ----------------------------- | -----: |
+    | 삼성 오디세이 OLED G8               | 693300 |
+    | ASRock X870E Taichi 실버        | 583500 |
+    | 보스 SoundLink Flex 블랙          | 516000 |
+    | MSI MAG B860 TOMAHAWK WIFI    | 440900 |
+    | be quiet! Dark Power 13 1000W | 359500 |
+    | ...                           | ...    |
+
+
 ### Exercise 4
 Find all orders whose `total_amount` exceeds the overall average order amount. Return `order_number` and `total_amount`, sorted by `total_amount` descending. Limit to 10 rows. Use a scalar subquery in the `WHERE` clause.
 
@@ -311,6 +335,18 @@ Find all orders whose `total_amount` exceeds the overall average order amount. R
     ORDER BY total_amount DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | order_number       | total_amount |
+    | ------------------ | -----------: |
+    | ORD-20210628-12574 |     58039800 |
+    | ORD-20230809-24046 |     55047300 |
+    | ORD-20210321-11106 |     48718000 |
+    | ORD-20200605-07165 |     47954000 |
+    | ORD-20231020-25036 |     46945700 |
+    | ...                | ...          |
+
 
 ### Exercise 5
 Find all products that have been ordered at least once by a `'VIP'` customer. Use an `IN` subquery. Return `product_name` and `price`, sorted by price descending.
@@ -329,6 +365,18 @@ Find all products that have been ordered at least once by a `'VIP'` customer. Us
     ORDER BY p.price DESC;
     ```
 
+    **Expected result:**
+
+    | product_name                                                  | price   |
+    | ------------------------------------------------------------- | ------: |
+    | ASUS ROG Strix GT35                                           | 4314800 |
+    | ASUS ROG Zephyrus G16                                         | 4284100 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+    | Razer Blade 18 블랙                                             | 4182100 |
+    | Razer Blade 16 실버                                             | 4123800 |
+    | ...                                                           | ...     |
+
+
 ### Exercise 6
 Find orders that have never had a completed payment. Use a `NOT IN` subquery to exclude `order_id` values from `payments` where `status = 'completed'`. Return `order_number`, `total_amount`, and `status`. Sort by `total_amount` descending and limit to 10 rows.
 
@@ -344,6 +392,18 @@ Find orders that have never had a completed payment. Use a `NOT IN` subquery to 
     ORDER BY total_amount DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | order_number       | total_amount | status           |
+    | ------------------ | -----------: | ---------------- |
+    | ORD-20230504-22760 |     19613300 | return_requested |
+    | ORD-20240908-29994 |     14691400 | returned         |
+    | ORD-20220923-19607 |     14400000 | cancelled        |
+    | ORD-20250309-33168 |     13528400 | cancelled        |
+    | ORD-20190726-03947 |     11884300 | cancelled        |
+    | ...                | ...          | ...              |
+
 
 ### Exercise 7
 Use a `FROM` subquery to compute the average product price per category, then join with `categories` in the outer query to show `category_name` and `avg_price`. Sort by `avg_price` descending.
@@ -365,6 +425,18 @@ Use a `FROM` subquery to compute the average product price per category, then jo
     ORDER BY price_stats.avg_price DESC;
     ```
 
+    **Expected result:**
+
+    | category_name | avg_price  |
+    | ------------- | ---------: |
+    | 맥북            |    3774700 |
+    | 게이밍 노트북       |    3169700 |
+    | NVIDIA        |    2045440 |
+    | 일반 노트북        |  1856837.5 |
+    | 조립PC          | 1795033.33 |
+    | ...           | ...        |
+
+
 ### Exercise 8
 For each active product, show its name, price, and the number of reviews it has received using a scalar subquery in the `SELECT` clause. Return `product_name`, `price`, and `review_count`. Sort by `review_count` descending and limit to 10 rows.
 
@@ -383,6 +455,18 @@ For each active product, show its name, price, and the number of reviews it has 
     ORDER BY review_count DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | product_name                    | price  | review_count |
+    | ------------------------------- | -----: | -----------: |
+    | SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |
+    | SteelSeries Prime Wireless 블랙   |  75900 |           93 |
+    | JBL Flip 6 블랙                   | 195900 |           92 |
+    | 녹투아 NH-L12S                     |  49400 |           88 |
+    | 삼성 DDR4 32GB PC4-25600          |  49100 |           87 |
+    | ...                             | ...    | ...          |
+
 
 ### Exercise 9
 Find customers whose order count is above the average number of orders per customer. Use a `FROM` subquery to count orders per customer, and a scalar subquery in `WHERE` to compare against the average. Return `customer_id` and `order_count`, sorted by `order_count` descending. Limit to 10 rows.
@@ -410,6 +494,18 @@ Find customers whose order count is above the average number of orders per custo
     ORDER BY order_count DESC
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | customer_id | order_count |
+    | ----------: | ----------: |
+    |          98 |         346 |
+    |          97 |         342 |
+    |         226 |         340 |
+    |         162 |         254 |
+    |         227 |         232 |
+    | ...         | ...         |
+
 
 ---
 Next: [Lesson 10: CASE Expressions](10-case.md)

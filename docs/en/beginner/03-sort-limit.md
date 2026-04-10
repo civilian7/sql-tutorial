@@ -184,6 +184,18 @@ Find the 10 most recently placed orders. Return `order_number`, `ordered_at`, `s
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | order_number       | ordered_at          | status    | total_amount |
+    | ------------------ | ------------------- | --------- | -----------: |
+    | ORD-20250630-34900 | 2025-06-30 23:02:18 | pending   |      1483000 |
+    | ORD-20250630-34905 | 2025-06-30 22:33:25 | pending   |       152600 |
+    | ORD-20250630-34903 | 2025-06-30 20:51:27 | cancelled |       401800 |
+    | ORD-20250630-34899 | 2025-06-30 19:05:22 | pending   |       167500 |
+    | ORD-20250630-34896 | 2025-06-30 16:48:11 | pending   |      1646400 |
+    | ...                | ...                 | ...       | ...          |
+
+
 ### Exercise 2
 List all products sorted first by `stock_qty` ascending (lowest stock first), then by `price` descending as a tiebreaker. Return `name`, `stock_qty`, and `price`. Limit to 20 rows.
 
@@ -194,6 +206,18 @@ List all products sorted first by `stock_qty` ascending (lowest stock first), th
     ORDER BY stock_qty ASC, price DESC
     LIMIT 20;
     ```
+
+    **Expected result:**
+
+    | name                        | stock_qty | price  |
+    | --------------------------- | --------: | -----: |
+    | Arctic Freezer 36 A-RGB 화이트 |         0 |  31400 |
+    | 삼성 SPA-KFG0BUB              |         4 |  26200 |
+    | 삼성 DDR4 32GB PC4-25600      |         6 | 114400 |
+    | Norton AntiVirus Plus       |         8 |  57000 |
+    | 로지텍 G502 HERO 실버            |         8 |  47900 |
+    | ...                         | ...       | ...    |
+
 
 ### Exercise 3
 Implement page 3 of a product catalog (10 items per page), sorted alphabetically by product name. Only include active products.
@@ -207,6 +231,18 @@ Implement page 3 of a product catalog (10 items per page), sorted alphabetically
     LIMIT 10 OFFSET 20;
     ```
 
+    **Expected result:**
+
+    | name                          | price   | stock_qty |
+    | ----------------------------- | ------: | --------: |
+    | ASUS PCE-BE92BT               |   48800 |       351 |
+    | ASUS PCE-BE92BT 블랙            |   57200 |        74 |
+    | ASUS ROG MAXIMUS Z890 HERO 블랙 | 1048400 |       419 |
+    | ASUS ROG STRIX RX 7900 XTX 실버 | 1267300 |       312 |
+    | ASUS ROG Strix G16CH 실버       | 1609400 |        28 |
+    | ...                           | ...     | ...       |
+
+
 ### Exercise 4
 Find the 5 customers with the highest point balance. Return `name`, `grade`, and `point_balance`.
 
@@ -218,6 +254,17 @@ Find the 5 customers with the highest point balance. Return `name`, `grade`, and
     LIMIT 5;
     ```
 
+    **Expected result:**
+
+    | name | grade | point_balance |
+    | ---- | ----- | ------------: |
+    | 박정수  | VIP   |       3341740 |
+    | 강명자  | VIP   |       2908232 |
+    | 김병철  | VIP   |       2818474 |
+    | 이영자  | VIP   |       2772254 |
+    | 이미정  | VIP   |       2282481 |
+
+
 ### Exercise 5
 List `name` and `price` from `products`, sorted by price ascending. When prices are equal, sort alphabetically by name.
 
@@ -227,6 +274,18 @@ List `name` and `price` from `products`, sorted by price ascending. When prices 
     FROM products
     ORDER BY price ASC, name ASC;
     ```
+
+    **Expected result:**
+
+    | name                            | price |
+    | ------------------------------- | ----: |
+    | TP-Link TG-3468 블랙              | 13100 |
+    | 로지텍 MX Anywhere 3S 블랙           | 18400 |
+    | Microsoft Ergonomic Keyboard 실버 | 23000 |
+    | TP-Link Archer TBE400E 화이트      | 23300 |
+    | 삼성 SPA-KFG0BUB                  | 26200 |
+    | ...                             | ...   |
+
 
 ### Exercise 6
 Select `name`, `price`, and `cost_price` from `products`, sorted by margin (`price - cost_price`) in descending order. Return only the top 10 rows.
@@ -239,6 +298,18 @@ Select `name`, `price`, and `cost_price` from `products`, sorted by margin (`pri
     LIMIT 10;
     ```
 
+    **Expected result:**
+
+    | name                  | price   | cost_price |
+    | --------------------- | ------: | ---------: |
+    | Razer Blade 16 실버     | 4123800 |    2886700 |
+    | ASUS ROG Zephyrus G16 | 4284100 |    3084600 |
+    | BenQ PD3225U          | 2500400 |    1312500 |
+    | Razer Blade 18 블랙     | 4182100 |    3047200 |
+    | ASUS ROG Strix GT35   | 4314800 |    3236100 |
+    | ...                   | ...     | ...        |
+
+
 ### Exercise 7
 From `reviews`, select `product_id`, `rating`, and `created_at`. Sort by most recent first and return the 2nd page (5 items per page, i.e., rows 6 through 10).
 
@@ -250,6 +321,17 @@ From `reviews`, select `product_id`, `rating`, and `created_at`. Sort by most re
     LIMIT 5 OFFSET 5;
     ```
 
+    **Expected result:**
+
+    | product_id | rating | created_at          |
+    | ---------: | -----: | ------------------- |
+    |        111 |      4 | 2025-07-07 08:04:36 |
+    |         90 |      2 | 2025-07-05 19:12:59 |
+    |        243 |      4 | 2025-07-05 08:38:27 |
+    |        185 |      5 | 2025-07-05 00:42:20 |
+    |        247 |      4 | 2025-07-04 20:49:23 |
+
+
 ### Exercise 8
 List `name`, `department`, and `hired_at` from the `staff` table. Sort by department alphabetically, then within each department by hire date ascending (longest-tenured first).
 
@@ -259,6 +341,17 @@ List `name`, `department`, and `hired_at` from the `staff` table. Sort by depart
     FROM staff
     ORDER BY department ASC, hired_at ASC;
     ```
+
+    **Expected result:**
+
+    | name | department | hired_at   |
+    | ---- | ---------- | ---------- |
+    | 한민재  | 경영         | 2016-05-23 |
+    | 장주원  | 경영         | 2017-08-20 |
+    | 박경수  | 경영         | 2022-10-12 |
+    | 권영희  | 마케팅        | 2024-08-05 |
+    | 이준혁  | 영업         | 2022-03-02 |
+
 
 ### Exercise 9
 Select `name` and `birth_date` from `customers`, sorted so that customers with a NULL birth date appear last. Non-NULL rows should be sorted by birth date ascending.

@@ -173,6 +173,13 @@ Count how many **active** products TechShop currently carries, and find the tota
     WHERE is_active = 1;
     ```
 
+    **Expected result:**
+
+    | active_product_count | total_inventory_value |
+    | -------------------: | --------------------: |
+    |                  218 |           39496278500 |
+
+
 ### Exercise 2
 Calculate the average, minimum, and maximum `total_amount` for orders that were not cancelled or returned. Use aliases `avg_order`, `min_order`, and `max_order`.
 
@@ -186,6 +193,13 @@ Calculate the average, minimum, and maximum `total_amount` for orders that were 
     WHERE status NOT IN ('cancelled', 'returned', 'return_requested');
     ```
 
+    **Expected result:**
+
+    | avg_order | min_order | max_order |
+    | --------: | --------: | --------: |
+    | 1007109.8 |     10910 |  58039800 |
+
+
 ### Exercise 3
 Count the total number of customers and the number of customers who have a `birth_date` registered. Use aliases `total_customers` and `with_birth_date`.
 
@@ -197,6 +211,13 @@ Count the total number of customers and the number of customers who have a `birt
     FROM customers;
     ```
 
+    **Expected result:**
+
+    | total_customers | with_birth_date |
+    | --------------: | --------------: |
+    |            5230 |            4450 |
+
+
 ### Exercise 4
 Find the total revenue (`SUM` of `total_amount`) from completed orders (status is `'delivered'` or `'confirmed'`). Use the alias `total_revenue`.
 
@@ -207,6 +228,13 @@ Find the total revenue (`SUM` of `total_amount`) from completed orders (status i
     WHERE status IN ('delivered', 'confirmed');
     ```
 
+    **Expected result:**
+
+    | total_revenue |
+    | ------------: |
+    |   32371516748 |
+
+
 ### Exercise 5
 Calculate the average review rating from the `reviews` table, rounded to 2 decimal places. Use the alias `avg_rating`.
 
@@ -215,6 +243,13 @@ Calculate the average review rating from the `reviews` table, rounded to 2 decim
     SELECT ROUND(AVG(rating), 2) AS avg_rating
     FROM reviews;
     ```
+
+    **Expected result:**
+
+    | avg_rating |
+    | ---------: |
+    |       3.91 |
+
 
 ### Exercise 6
 Find the minimum price, maximum price, and the price range (difference between max and min) for active products (`is_active = 1`). Use aliases `min_price`, `max_price`, and `price_range`.
@@ -228,6 +263,13 @@ Find the minimum price, maximum price, and the price range (difference between m
     FROM products
     WHERE is_active = 1;
     ```
+
+    **Expected result:**
+
+    | min_price | max_price | price_range |
+    | --------: | --------: | ----------: |
+    |     13100 |   4314800 |     4301700 |
+
 
 ### Exercise 7
 How many orders have delivery instructions (`notes IS NOT NULL`)? What percentage of all orders is that? Return `orders_with_notes`, `total_orders`, and `pct_with_notes` (rounded to 1 decimal place).
@@ -244,6 +286,13 @@ How many orders have delivery instructions (`notes IS NOT NULL`)? What percentag
     FROM orders;
     ```
 
+    **Expected result:**
+
+    | orders_with_notes | total_orders | pct_with_notes |
+    | ----------------: | -----------: | -------------: |
+    |             12365 |        34908 |           35.4 |
+
+
 ### Exercise 8
 For active products, calculate the average price (rounded to 0 decimals), average cost_price (rounded to 0 decimals), and average margin percentage (rounded to 1 decimal). Margin = `(price - cost_price) / price * 100`. Compute the average of each product's margin. Use aliases `avg_price`, `avg_cost`, `avg_margin_pct`.
 
@@ -257,6 +306,13 @@ For active products, calculate the average price (rounded to 0 decimals), averag
     WHERE is_active = 1;
     ```
 
+    **Expected result:**
+
+    | avg_price | avg_cost | avg_margin_pct |
+    | --------: | -------: | -------------: |
+    |    665405 |   504305 |           22.9 |
+
+
 ### Exercise 9
 From the `order_items` table, find the total number of rows, total quantity sum, average unit price (2 decimals), and the maximum quantity in a single line item. Use aliases `total_items`, `total_qty`, `avg_unit_price`, `max_qty`.
 
@@ -269,6 +325,13 @@ From the `order_items` table, find the total number of rows, total quantity sum,
         MAX(quantity)               AS max_qty
     FROM order_items;
     ```
+
+    **Expected result:**
+
+    | total_items | total_qty | avg_unit_price | max_qty |
+    | ----------: | --------: | -------------: | ------: |
+    |       84270 |     93356 |      398818.65 |      10 |
+
 
 ### Exercise 10
 For completed payments (`status = 'completed'`) in the `payments` table, calculate the count, total amount, average amount (0 decimals), minimum, and maximum in a single query. Use aliases `payment_count`, `total_amount`, `avg_amount`, `min_amount`, `max_amount`.
@@ -284,6 +347,13 @@ For completed payments (`status = 'completed'`) in the `payments` table, calcula
     FROM payments
     WHERE status = 'completed';
     ```
+
+    **Expected result:**
+
+    | payment_count | total_amount | avg_amount | min_amount | max_amount |
+    | ------------: | -----------: | ---------: | ---------: | ---------: |
+    |         32171 |  32403716933 |    1007234 |      10910 |   58039800 |
+
 
 ---
 Next: [Lesson 5: GROUP BY and HAVING](05-group-by.md)

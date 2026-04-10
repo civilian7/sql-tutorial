@@ -271,6 +271,18 @@ List all orders where `staff_id IS NULL` (no customer service rep assigned). For
     LIMIT 20;
     ```
 
+    **Expected result:**
+
+    | order_number       | status    | notes              |
+    | ------------------ | --------- | ------------------ |
+    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
+    | ORD-20250630-34905 | pending   | —                  |
+    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
+    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
+    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
+    | ...                | ...       | ...                |
+
+
 ### Exercise 3
 Count how many orders in the `orders` table have a NULL `cancelled_at` (not cancelled) and how many have a non-NULL `cancelled_at` (cancelled). Use aliases `not_cancelled` and `cancelled`.
 
@@ -281,6 +293,13 @@ Count how many orders in the `orders` table have a NULL `cancelled_at` (not canc
         COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
     FROM orders;
     ```
+
+    **Expected result:**
+
+    | not_cancelled | cancelled |
+    | ------------: | --------: |
+    |         33154 |      1754 |
+
 
 ### Exercise 4
 Find customers whose `phone` is NULL. Show their `name` and `email`, but replace NULL emails with `'No contact'` using COALESCE.
@@ -306,6 +325,13 @@ From the `products` table, count the total products, how many are missing a `wei
     FROM products;
     ```
 
+    **Expected result:**
+
+    | total_products | missing_weight | pct_missing |
+    | -------------: | -------------: | ----------: |
+    |            280 |             12 |         4.3 |
+
+
 ### Exercise 6
 Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `name`, `price`, `stock_qty`, and `price / NULLIF(stock_qty, 0)` as `price_per_unit`. Limit to 5 rows.
 
@@ -320,6 +346,17 @@ Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `na
     LIMIT 5;
     ```
 
+    **Expected result:**
+
+    | name                                     | price   | stock_qty | price_per_unit |
+    | ---------------------------------------- | ------: | --------: | -------------: |
+    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
+    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
+    | Dell U2724D                              |  853600 |       337 |        2532.94 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
+
+
 ### Exercise 7
 In the `reviews` table, compare the average `rating` of reviews that have `content` (not NULL) vs. reviews without content (NULL). Show `COUNT(*)` and `AVG(rating)` for each group.
 
@@ -333,6 +370,14 @@ In the `reviews` table, compare the average `rating` of reviews that have `conte
     GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
     ```
 
+    **Expected result:**
+
+    | content_status | review_count | avg_rating |
+    | -------------- | -----------: | ---------: |
+    | Has Content    |         7156 |       3.91 |
+    | No Content     |          789 |       3.93 |
+
+
 ### Exercise 8
 Find the top-level managers in the `staff` table — employees whose `manager_id` is NULL. Show their `name`, `department`, and `role`.
 
@@ -342,6 +387,13 @@ Find the top-level managers in the `staff` table — employees whose `manager_id
     FROM staff
     WHERE manager_id IS NULL;
     ```
+
+    **Expected result:**
+
+    | name | department | role  |
+    | ---- | ---------- | ----- |
+    | 한민재  | 경영         | admin |
+
 
 ### Exercise 9
 For each membership `grade`, show how many customers have a known gender vs. an unknown gender. Use `COALESCE(gender, 'Unknown')` as the grouping column.
@@ -357,6 +409,18 @@ For each membership `grade`, show how many customers have a known gender vs. an 
     ORDER BY grade, gender_status;
     ```
 
+    **Expected result:**
+
+    | grade  | gender_status | customer_count |
+    | ------ | ------------- | -------------: |
+    | BRONZE | F             |           1332 |
+    | BRONZE | M             |           2194 |
+    | BRONZE | Unknown       |            436 |
+    | GOLD   | F             |            136 |
+    | GOLD   | M             |            316 |
+    | ...    | ...           | ...            |
+
+
 ### Exercise 10
 List customers who have never logged in (`last_login_at IS NULL`). Show `name`, `email`, and `created_at`, replacing NULL `email` with `'N/A'` and NULL `created_at` with `'Unknown'`. Limit to 10 rows.
 
@@ -370,6 +434,18 @@ List customers who have never logged in (`last_login_at IS NULL`). Show `name`, 
     WHERE last_login_at IS NULL
     LIMIT 10;
     ```
+
+    **Expected result:**
+
+    | name | email              | created_at          |
+    | ---- | ------------------ | ------------------- |
+    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
+    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
+    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
+    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
+    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
+    | ...  | ...                | ...                 |
+
 
 ---
 Next: [Lesson 7: INNER JOIN](../intermediate/07-inner-join.md)

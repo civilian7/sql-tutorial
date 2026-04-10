@@ -282,6 +282,18 @@ LIMIT 8;
     LIMIT 10;
     ```
 
+    **결과 (예시):**
+
+    | name | grade | order_count | total_spent |
+    | ---- | ----- | ----------: | ----------: |
+    | 김병철  | VIP   |         319 |   291265567 |
+    | 이영자  | VIP   |         315 |   284481704 |
+    | 박정수  | VIP   |         305 |   339169936 |
+    | 강명자  | VIP   |         240 |   296857745 |
+    | 김성민  | VIP   |         210 |   220361434 |
+    | ...  | ...   | ...         | ...         |
+
+
 ### 연습 3
 최소 한 명의 고객 위시리스트에 있지만 **한 번도 주문된 적 없는** 상품을 찾으세요. `IN`과 `NOT IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요.
 
@@ -298,6 +310,18 @@ LIMIT 8;
     ORDER BY price DESC;
     ```
 
+    **결과 (예시):**
+
+    | product_name                  | price  |
+    | ----------------------------- | -----: |
+    | 삼성 오디세이 OLED G8               | 693300 |
+    | ASRock X870E Taichi 실버        | 583500 |
+    | 보스 SoundLink Flex 블랙          | 516000 |
+    | MSI MAG B860 TOMAHAWK WIFI    | 440900 |
+    | be quiet! Dark Power 13 1000W | 359500 |
+    | ...                           | ...    |
+
+
 ### 연습 4
 전체 주문의 평균 금액보다 큰 주문을 조회하세요. `order_number`, `total_amount`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요. `WHERE` 절에 스칼라 서브쿼리를 사용하세요.
 
@@ -311,6 +335,18 @@ LIMIT 8;
     ORDER BY total_amount DESC
     LIMIT 10;
     ```
+
+    **결과 (예시):**
+
+    | order_number       | total_amount |
+    | ------------------ | -----------: |
+    | ORD-20210628-12574 |     58039800 |
+    | ORD-20230809-24046 |     55047300 |
+    | ORD-20210321-11106 |     48718000 |
+    | ORD-20200605-07165 |     47954000 |
+    | ORD-20231020-25036 |     46945700 |
+    | ...                | ...          |
+
 
 ### 연습 5
 `'VIP'` 등급 고객이 한 번이라도 주문한 상품을 모두 찾으세요. `IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요. 가격 내림차순으로 정렬하세요.
@@ -329,6 +365,18 @@ LIMIT 8;
     ORDER BY p.price DESC;
     ```
 
+    **결과 (예시):**
+
+    | product_name                                                  | price   |
+    | ------------------------------------------------------------- | ------: |
+    | ASUS ROG Strix GT35                                           | 4314800 |
+    | ASUS ROG Zephyrus G16                                         | 4284100 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 4226200 |
+    | Razer Blade 18 블랙                                             | 4182100 |
+    | Razer Blade 16 실버                                             | 4123800 |
+    | ...                                                           | ...     |
+
+
 ### 연습 6
 한 번도 결제가 완료되지 않은 주문을 찾으세요. `NOT IN` 서브쿼리를 사용하여 `payments` 테이블에서 `status = 'completed'`인 `order_id`를 제외하세요. `order_number`, `total_amount`, `status`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요.
 
@@ -344,6 +392,18 @@ LIMIT 8;
     ORDER BY total_amount DESC
     LIMIT 10;
     ```
+
+    **결과 (예시):**
+
+    | order_number       | total_amount | status           |
+    | ------------------ | -----------: | ---------------- |
+    | ORD-20230504-22760 |     19613300 | return_requested |
+    | ORD-20240908-29994 |     14691400 | returned         |
+    | ORD-20220923-19607 |     14400000 | cancelled        |
+    | ORD-20250309-33168 |     13528400 | cancelled        |
+    | ORD-20190726-03947 |     11884300 | cancelled        |
+    | ...                | ...          | ...              |
+
 
 ### 연습 7
 `FROM` 서브쿼리를 사용하여 카테고리별 평균 상품 가격을 먼저 계산한 뒤, 외부 쿼리에서 `categories` 테이블과 조인하여 카테고리명(`category_name`)과 `avg_price`를 반환하세요. `avg_price` 내림차순으로 정렬하세요.
@@ -365,6 +425,18 @@ LIMIT 8;
     ORDER BY price_stats.avg_price DESC;
     ```
 
+    **결과 (예시):**
+
+    | category_name | avg_price  |
+    | ------------- | ---------: |
+    | 맥북            |    3774700 |
+    | 게이밍 노트북       |    3169700 |
+    | NVIDIA        |    2045440 |
+    | 일반 노트북        |  1856837.5 |
+    | 조립PC          | 1795033.33 |
+    | ...           | ...        |
+
+
 ### 연습 8
 각 상품의 이름과 해당 상품의 리뷰 수를 `SELECT` 절의 스칼라 서브쿼리로 구하세요. `product_name`, `price`, `review_count`를 반환하고, `review_count` 내림차순으로 정렬하여 10행으로 제한하세요. 활성 상품만 대상으로 하세요.
 
@@ -383,6 +455,18 @@ LIMIT 8;
     ORDER BY review_count DESC
     LIMIT 10;
     ```
+
+    **결과 (예시):**
+
+    | product_name                    | price  | review_count |
+    | ------------------------------- | -----: | -----------: |
+    | SteelSeries Aerox 5 Wireless 실버 | 119000 |          111 |
+    | SteelSeries Prime Wireless 블랙   |  75900 |           93 |
+    | JBL Flip 6 블랙                   | 195900 |           92 |
+    | 녹투아 NH-L12S                     |  49400 |           88 |
+    | 삼성 DDR4 32GB PC4-25600          |  49100 |           87 |
+    | ...                             | ...    | ...          |
+
 
 ### 연습 9
 주문 횟수가 전체 고객 평균 주문 횟수보다 많은 고객을 찾으세요. `FROM` 서브쿼리로 고객별 주문 횟수를 먼저 구하고, `WHERE` 절에 스칼라 서브쿼리로 평균을 비교하세요. `customer_id`와 `order_count`를 반환하고, `order_count` 내림차순으로 정렬하여 10행으로 제한하세요.
@@ -410,6 +494,18 @@ LIMIT 8;
     ORDER BY order_count DESC
     LIMIT 10;
     ```
+
+    **결과 (예시):**
+
+    | customer_id | order_count |
+    | ----------: | ----------: |
+    |          98 |         346 |
+    |          97 |         342 |
+    |         226 |         340 |
+    |         162 |         254 |
+    |         227 |         232 |
+    | ...         | ...         |
+
 
 ---
 다음: [10강: CASE 표현식](10-case.md)
