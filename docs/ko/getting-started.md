@@ -129,7 +129,7 @@ SELECT
 
 | 단계 | 레슨 | 설명 |
 |------|------|------|
-| 1단계 | 초급 01~06 | SELECT, WHERE, 정렬, 집계, GROUP BY, NULL |
+| 1단계 | 초급 00~06 | SELECT, WHERE, 정렬, 집계, GROUP BY, NULL |
 | 2단계 | 중급 07~17 | JOIN, 서브쿼리, CASE, 날짜/문자열, DML, DDL, 트랜잭션, SELF/CROSS JOIN |
 | 3단계 | 고급 18~25 | 윈도우 함수, CTE, EXISTS, 뷰, 인덱스, 트리거, JSON, 저장 프로시저 |
 

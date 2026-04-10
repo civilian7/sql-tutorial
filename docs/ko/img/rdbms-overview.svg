@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px}
+    .h{font-weight:700;font-size:14px}
+    .th{font-weight:700;font-size:12px}
+    .col{font-size:10px;opacity:0.7}
+    .box{rx:6;stroke-width:1.5}
+    .b1{fill:rgba(91,141,239,0.12);stroke:rgba(91,141,239,0.5)}
+    .b2{fill:rgba(76,175,80,0.12);stroke:rgba(76,175,80,0.5)}
+    .b3{fill:rgba(255,152,0,0.12);stroke:rgba(255,152,0,0.5)}
+    .b4{fill:rgba(156,39,176,0.12);stroke:rgba(156,39,176,0.5)}
+    .b5{fill:rgba(232,80,80,0.12);stroke:rgba(232,80,80,0.5)}
+    .b6{fill:rgba(0,188,212,0.12);stroke:rgba(0,188,212,0.5)}
+    .link{stroke:rgba(128,128,128,0.45);stroke-width:1.5;fill:none}
+    .dim{font-size:10px;opacity:0.5}
+    .badge{font-size:9px;font-weight:700;opacity:0.7}
+  </style>
+  <defs>
+    <marker id="dot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5">
+      <circle cx="5" cy="5" r="3" fill="rgba(128,128,128,0.5)"/>
+    </marker>
+    <marker id="crow" viewBox="0 0 12 12" refX="12" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 6 L 12 0 M 0 6 L 12 12 M 0 6 L 12 6" stroke="rgba(128,128,128,0.5)" stroke-width="1.5" fill="none"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="300" y="24" text-anchor="middle" class="h">TechShop 데이터베이스 핵심 테이블 관계도</text>
+
+  <!-- customers -->
+  <rect x="20" y="45" width="140" height="90" class="box b1"/>
+  <text x="90" y="66" text-anchor="middle" class="th">customers</text>
+  <line x1="20" y1="72" x2="160" y2="72" stroke="rgba(91,141,239,0.3)" stroke-width="1"/>
+  <text x="32" y="86" class="col">id (PK)</text>
+  <text x="32" y="99" class="col">name</text>
+  <text x="32" y="112" class="col">email, grade ...</text>
+  <text x="32" y="125" class="col">created_at</text>
+
+  <!-- orders -->
+  <rect x="230" y="45" width="140" height="90" class="box b2"/>
+  <text x="300" y="66" text-anchor="middle" class="th">orders</text>
+  <line x1="230" y1="72" x2="370" y2="72" stroke="rgba(76,175,80,0.3)" stroke-width="1"/>
+  <text x="242" y="86" class="col">id (PK)</text>
+  <text x="242" y="99" class="col">customer_id (FK)</text>
+  <text x="242" y="112" class="col">order_number</text>
+  <text x="242" y="125" class="col">total_amount, status</text>
+
+  <!-- order_items -->
+  <rect x="230" y="170" width="140" height="80" class="box b3"/>
+  <text x="300" y="191" text-anchor="middle" class="th">order_items</text>
+  <line x1="230" y1="197" x2="370" y2="197" stroke="rgba(255,152,0,0.3)" stroke-width="1"/>
+  <text x="242" y="211" class="col">id (PK)</text>
+  <text x="242" y="224" class="col">order_id (FK)</text>
+  <text x="242" y="237" class="col">product_id (FK)</text>
+
+  <!-- products -->
+  <rect x="440" y="170" width="140" height="80" class="box b4"/>
+  <text x="510" y="191" text-anchor="middle" class="th">products</text>
+  <line x1="440" y1="197" x2="580" y2="197" stroke="rgba(156,39,176,0.3)" stroke-width="1"/>
+  <text x="452" y="211" class="col">id (PK)</text>
+  <text x="452" y="224" class="col">name, price</text>
+  <text x="452" y="237" class="col">category_id (FK)</text>
+
+  <!-- reviews -->
+  <rect x="440" y="45" width="140" height="90" class="box b5"/>
+  <text x="510" y="66" text-anchor="middle" class="th">reviews</text>
+  <line x1="440" y1="72" x2="580" y2="72" stroke="rgba(232,80,80,0.3)" stroke-width="1"/>
+  <text x="452" y="86" class="col">id (PK)</text>
+  <text x="452" y="99" class="col">customer_id (FK)</text>
+  <text x="452" y="112" class="col">product_id (FK)</text>
+  <text x="452" y="125" class="col">rating, content</text>
+
+  <!-- payments -->
+  <rect x="20" y="185" width="140" height="65" class="box b6"/>
+  <text x="90" y="206" text-anchor="middle" class="th">payments</text>
+  <line x1="20" y1="212" x2="160" y2="212" stroke="rgba(0,188,212,0.3)" stroke-width="1"/>
+  <text x="32" y="226" class="col">id (PK)</text>
+  <text x="32" y="239" class="col">order_id (FK)</text>
+
+  <!-- Links: customers -> orders (1:N) -->
+  <path d="M 160 90 L 230 90" class="link" marker-start="url(#dot)" marker-end="url(#crow)"/>
+  <text x="195" y="84" text-anchor="middle" class="badge">1:N</text>
+
+  <!-- Links: orders -> order_items (1:N) -->
+  <path d="M 300 135 L 300 170" class="link" marker-start="url(#dot)" marker-end="url(#crow)"/>
+  <text x="312" y="155" class="badge">1:N</text>
+
+  <!-- Links: order_items -> products (N:1) -->
+  <path d="M 370 210 L 440 210" class="link" marker-start="url(#crow)" marker-end="url(#dot)"/>
+  <text x="405" y="204" text-anchor="middle" class="badge">N:1</text>
+
+  <!-- Links: customers -> reviews (1:N) -->
+  <path d="M 160 90 C 200 90 410 60 440 80" class="link" marker-start="url(#dot)" marker-end="url(#crow)"/>
+
+  <!-- Links: products -> reviews (1:N) -->
+  <path d="M 510 170 L 510 135" class="link" marker-start="url(#crow)" marker-end="url(#dot)"/>
+  <text x="522" y="155" class="badge">1:N</text>
+
+  <!-- Links: orders -> payments (1:1) -->
+  <path d="M 230 125 C 195 155 165 165 160 200" class="link" marker-start="url(#dot)" marker-end="url(#dot)"/>
+  <text x="182" y="160" class="badge">1:1</text>
+
+  <!-- Caption -->
+  <text x="300" y="290" text-anchor="middle" class="dim">고객이 주문하고, 주문에 상품이 포함되며, 고객이 상품에 리뷰를 남깁니다</text>
+  <text x="300" y="305" text-anchor="middle" class="dim">테이블 간 FK로 연결된 이 구조가 관계형 데이터베이스의 핵심입니다</text>
+  <text x="300" y="325" text-anchor="middle" class="dim" font-size="9">* 전체 30개 테이블 중 핵심 6개만 표시. 상세: 스키마 페이지 참고</text>
+</svg>

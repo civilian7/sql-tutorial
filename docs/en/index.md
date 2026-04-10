@@ -19,11 +19,11 @@ This tutorial was built to bridge that gap.
 
 ## What You'll Learn
 
-22 lessons with 208 practice exercises. Every exercise includes a full solution.
+26 lessons with 208 practice exercises. Every exercise includes a full solution.
 
 | Level | Topics | Lessons | Exercises |
 |-------|--------|:-------:|:---------:|
-| **Beginner** | SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL | 6 | 60 |
+| **Beginner** | SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL | 7 | 65 |
 | **Intermediate** | JOINs, Subqueries, CASE, Date/String, DML, DDL, Self/Cross JOIN | 10 | 93 |
 | **Advanced** | Window Functions, CTE, EXISTS, Views, Indexes, Triggers | 6 | 55 |
 

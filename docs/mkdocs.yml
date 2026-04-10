@@ -33,6 +33,7 @@ nav:
   - Getting Started: getting-started.md
   - Database Schema: schema.md
   - Beginner:
+    - "00. Introduction": beginner/00-introduction.md
     - "01. SELECT Basics": beginner/01-select.md
     - "02. Filtering with WHERE": beginner/02-where.md
     - "03. Sorting & Limiting": beginner/03-sort-limit.md

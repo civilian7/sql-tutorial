@@ -48,6 +48,7 @@ nav:
   - 시작하기: getting-started.md
   - 데이터베이스 스키마: schema.md
   - 초급:
+    - "00. 데이터베이스와 SQL 소개": beginner/00-introduction.md
     - "01. SELECT 기초": beginner/01-select.md
     - "02. WHERE로 필터링": beginner/02-where.md
     - "03. 정렬과 페이징": beginner/03-sort-limit.md

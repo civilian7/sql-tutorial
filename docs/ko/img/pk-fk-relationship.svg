@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 220" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px}
+    .h{font-weight:700;font-size:13px}
+    .th{font-weight:700;font-size:11px}
+    .hdr{fill:rgba(91,141,239,0.20)}
+    .pk{fill:rgba(76,175,80,0.20)}
+    .fk{fill:rgba(255,152,0,0.20)}
+    .row1{fill:rgba(128,128,128,0.06)}
+    .row2{fill:rgba(128,128,128,0.12)}
+    .s{stroke:rgba(128,128,128,0.35);stroke-width:1}
+    .label{font-size:10px;font-weight:700}
+    .pk-label{fill:rgba(76,175,80,0.9)}
+    .fk-label{fill:rgba(255,152,0,0.9)}
+    .link{stroke:rgba(232,80,80,0.6);stroke-width:2;fill:none;stroke-dasharray:6 3}
+    .dim{font-size:10px;opacity:0.55}
+  </style>
+
+  <!-- Title -->
+  <text x="280" y="20" text-anchor="middle" class="h" font-size="14">기본 키(PK)와 외래 키(FK)의 관계</text>
+
+  <!-- customers table -->
+  <text x="110" y="46" text-anchor="middle" class="h">customers</text>
+  <rect x="20" y="52" width="180" height="24" class="hdr s" rx="2"/>
+  <rect x="20" y="52" width="50" height="24" class="pk" style="opacity:0.6"/>
+  <text x="45" y="68" text-anchor="middle" class="th">id</text>
+  <text x="110" y="68" text-anchor="middle" class="th">name</text>
+  <text x="170" y="68" text-anchor="middle" class="th">grade</text>
+  <line x1="70" y1="52" x2="70" y2="76" class="s"/>
+  <line x1="140" y1="52" x2="140" y2="76" class="s"/>
+
+  <rect x="20" y="76" width="180" height="22" class="row1 s"/>
+  <rect x="20" y="76" width="50" height="22" class="pk" style="opacity:0.3"/>
+  <text x="45" y="91" text-anchor="middle">1</text>
+  <text x="110" y="91" text-anchor="middle">김민수</text>
+  <text x="170" y="91" text-anchor="middle">VIP</text>
+  <line x1="70" y1="76" x2="70" y2="98" class="s"/>
+  <line x1="140" y1="76" x2="140" y2="98" class="s"/>
+
+  <rect x="20" y="98" width="180" height="22" class="row2 s"/>
+  <rect x="20" y="98" width="50" height="22" class="pk" style="opacity:0.3"/>
+  <text x="45" y="113" text-anchor="middle">2</text>
+  <text x="110" y="113" text-anchor="middle">이영희</text>
+  <text x="170" y="113" text-anchor="middle">GOLD</text>
+  <line x1="70" y1="98" x2="70" y2="120" class="s"/>
+  <line x1="140" y1="98" x2="140" y2="120" class="s"/>
+
+  <rect x="20" y="120" width="180" height="22" class="row1 s"/>
+  <rect x="20" y="120" width="50" height="22" class="pk" style="opacity:0.3"/>
+  <text x="45" y="135" text-anchor="middle">3</text>
+  <text x="110" y="135" text-anchor="middle">박지훈</text>
+  <text x="170" y="135" text-anchor="middle">SILVER</text>
+  <line x1="70" y1="120" x2="70" y2="142" class="s"/>
+  <line x1="140" y1="120" x2="140" y2="142" class="s"/>
+
+  <!-- PK badge -->
+  <rect x="20" y="150" width="32" height="16" rx="3" class="pk" stroke="rgba(76,175,80,0.5)" stroke-width="1"/>
+  <text x="36" y="161" text-anchor="middle" class="pk-label" font-size="9">PK</text>
+  <text x="58" y="161" class="dim">기본 키 — 중복 불가</text>
+
+  <!-- orders table -->
+  <text x="420" y="46" text-anchor="middle" class="h">orders</text>
+  <rect x="290" y="52" width="260" height="24" class="hdr s" rx="2"/>
+  <rect x="290" y="52" width="50" height="24" class="pk" style="opacity:0.6"/>
+  <rect x="340" y="52" width="80" height="24" class="fk" style="opacity:0.6"/>
+  <text x="315" y="68" text-anchor="middle" class="th">id</text>
+  <text x="380" y="68" text-anchor="middle" class="th">customer_id</text>
+  <text x="480" y="68" text-anchor="middle" class="th">total_amount</text>
+  <line x1="340" y1="52" x2="340" y2="76" class="s"/>
+  <line x1="420" y1="52" x2="420" y2="76" class="s"/>
+
+  <rect x="290" y="76" width="260" height="22" class="row1 s"/>
+  <rect x="340" y="76" width="80" height="22" class="fk" style="opacity:0.3"/>
+  <text x="315" y="91" text-anchor="middle">101</text>
+  <text x="380" y="91" text-anchor="middle">1</text>
+  <text x="480" y="91" text-anchor="middle">250,000</text>
+  <line x1="340" y1="76" x2="340" y2="98" class="s"/>
+  <line x1="420" y1="76" x2="420" y2="98" class="s"/>
+
+  <rect x="290" y="98" width="260" height="22" class="row2 s"/>
+  <rect x="340" y="98" width="80" height="22" class="fk" style="opacity:0.3"/>
+  <text x="315" y="113" text-anchor="middle">102</text>
+  <text x="380" y="113" text-anchor="middle">1</text>
+  <text x="480" y="113" text-anchor="middle">89,000</text>
+  <line x1="340" y1="98" x2="340" y2="120" class="s"/>
+  <line x1="420" y1="98" x2="420" y2="120" class="s"/>
+
+  <rect x="290" y="120" width="260" height="22" class="row1 s"/>
+  <rect x="340" y="120" width="80" height="22" class="fk" style="opacity:0.3"/>
+  <text x="315" y="135" text-anchor="middle">103</text>
+  <text x="380" y="135" text-anchor="middle">3</text>
+  <text x="480" y="135" text-anchor="middle">430,000</text>
+  <line x1="340" y1="120" x2="340" y2="142" class="s"/>
+  <line x1="420" y1="120" x2="420" y2="142" class="s"/>
+
+  <!-- FK badge -->
+  <rect x="290" y="150" width="32" height="16" rx="3" class="fk" stroke="rgba(255,152,0,0.5)" stroke-width="1"/>
+  <text x="306" y="161" text-anchor="middle" class="fk-label" font-size="9">FK</text>
+  <text x="328" y="161" class="dim">외래 키 — 다른 테이블 참조</text>
+
+  <!-- Relationship arrows -->
+  <path d="M 70 87 C 210 87 230 87 340 87" class="link"/>
+  <path d="M 70 87 C 210 87 230 109 340 109" class="link"/>
+  <path d="M 70 131 C 210 131 230 131 340 131" class="link"/>
+
+  <!-- Relationship label -->
+  <text x="280" y="200" text-anchor="middle" class="dim">고객 1명이 여러 주문을 가질 수 있습니다 (1:N 관계)</text>
+</svg>

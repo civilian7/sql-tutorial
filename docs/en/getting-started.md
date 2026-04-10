@@ -129,7 +129,7 @@ If you see results, you're ready to go.
 
 | Step | Lessons | Topics |
 |------|---------|--------|
-| Step 1 | Beginner 01–06 | SELECT, WHERE, sorting, aggregates, GROUP BY, NULL |
+| Step 1 | Beginner 00–06 | SELECT, WHERE, sorting, aggregates, GROUP BY, NULL |
 | Step 2 | Intermediate 07–17 | JOINs, subqueries, CASE, date/string, DML, DDL, transactions, SELF/CROSS JOIN |
 | Step 3 | Advanced 18–25 | Window functions, CTE, EXISTS, views, indexes, triggers, JSON, stored procedures |
 

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px}
+    .h{font-weight:700;font-size:13px}
+    .th{font-weight:700;font-size:11px}
+    .box{rx:6;stroke-width:1.5}
+    .col{font-size:10px}
+  </style>
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="rgba(100,100,100,0.6)"/>
+    </marker>
+  </defs>
+
+  <text x="280" y="22" text-anchor="middle" class="h">TechShop Database -- Tables and Relationships</text>
+
+  <!-- customers box -->
+  <rect x="20" y="40" width="140" height="90" class="box" fill="rgba(91,141,239,0.10)" stroke="rgba(91,141,239,0.5)"/>
+  <text x="90" y="58" text-anchor="middle" class="th">customers</text>
+  <line x1="20" y1="64" x2="160" y2="64" stroke="rgba(91,141,239,0.3)"/>
+  <text x="30" y="78" class="col">id  (PK)</text>
+  <text x="30" y="92" class="col">name</text>
+  <text x="30" y="106" class="col">email</text>
+  <text x="30" y="120" class="col">grade</text>
+
+  <!-- orders box -->
+  <rect x="210" y="40" width="140" height="104" class="box" fill="rgba(255,152,0,0.10)" stroke="rgba(255,152,0,0.5)"/>
+  <text x="280" y="58" text-anchor="middle" class="th">orders</text>
+  <line x1="210" y1="64" x2="350" y2="64" stroke="rgba(255,152,0,0.3)"/>
+  <text x="220" y="78" class="col">id  (PK)</text>
+  <text x="220" y="92" class="col">customer_id  (FK)</text>
+  <text x="220" y="106" class="col">order_date</text>
+  <text x="220" y="120" class="col">status</text>
+  <text x="220" y="134" class="col">total_amount</text>
+
+  <!-- products box -->
+  <rect x="400" y="40" width="140" height="104" class="box" fill="rgba(76,175,80,0.10)" stroke="rgba(76,175,80,0.5)"/>
+  <text x="470" y="58" text-anchor="middle" class="th">products</text>
+  <line x1="400" y1="64" x2="540" y2="64" stroke="rgba(76,175,80,0.3)"/>
+  <text x="410" y="78" class="col">id  (PK)</text>
+  <text x="410" y="92" class="col">name</text>
+  <text x="410" y="106" class="col">price</text>
+  <text x="410" y="120" class="col">brand</text>
+  <text x="410" y="134" class="col">stock_qty</text>
+
+  <!-- order_items box (center bottom) -->
+  <rect x="270" y="170" width="140" height="76" class="box" fill="rgba(156,39,176,0.10)" stroke="rgba(156,39,176,0.5)"/>
+  <text x="340" y="188" text-anchor="middle" class="th">order_items</text>
+  <line x1="270" y1="194" x2="410" y2="194" stroke="rgba(156,39,176,0.3)"/>
+  <text x="280" y="208" class="col">order_id  (FK)</text>
+  <text x="280" y="222" class="col">product_id  (FK)</text>
+  <text x="280" y="236" class="col">quantity, unit_price</text>
+
+  <!-- reviews box -->
+  <rect x="60" y="170" width="140" height="76" class="box" fill="rgba(233,30,99,0.10)" stroke="rgba(233,30,99,0.5)"/>
+  <text x="130" y="188" text-anchor="middle" class="th">reviews</text>
+  <line x1="60" y1="194" x2="200" y2="194" stroke="rgba(233,30,99,0.3)"/>
+  <text x="70" y="208" class="col">customer_id  (FK)</text>
+  <text x="70" y="222" class="col">product_id  (FK)</text>
+  <text x="70" y="236" class="col">rating, comment</text>
+
+  <!-- Arrows -->
+  <!-- customers -> orders -->
+  <line x1="160" y1="85" x2="208" y2="85" stroke="rgba(100,100,100,0.5)" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- orders -> order_items -->
+  <line x1="300" y1="144" x2="320" y2="168" stroke="rgba(100,100,100,0.5)" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- products -> order_items -->
+  <line x1="440" y1="144" x2="390" y2="168" stroke="rgba(100,100,100,0.5)" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- customers -> reviews -->
+  <line x1="90" y1="130" x2="110" y2="168" stroke="rgba(100,100,100,0.5)" stroke-width="1.2" marker-end="url(#a)"/>
+
+  <!-- products -> reviews -->
+  <path d="M 430 144 L 430 155 L 185 155 L 185 168" stroke="rgba(100,100,100,0.4)" stroke-width="1.2" fill="none" marker-end="url(#a)"/>
+</svg>

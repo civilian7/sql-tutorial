@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 230" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px}
+    .h{font-weight:700;font-size:12px}
+    .hdr{fill:rgba(91,141,239,0.20);rx:2}
+    .row1{fill:rgba(91,141,239,0.07);rx:2}
+    .row2{fill:rgba(91,141,239,0.03);rx:2}
+    .s{stroke:rgba(128,128,128,0.3);stroke-width:1}
+    .label{font-size:11px;font-weight:700}
+    .arrow{stroke:rgba(100,100,100,0.6);stroke-width:1.2;fill:none;marker-end:url(#arrowhead)}
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="rgba(100,100,100,0.6)"/>
+    </marker>
+  </defs>
+
+  <text x="240" y="20" text-anchor="middle" class="h" font-size="14">customers Table</text>
+
+  <!-- Header row -->
+  <rect x="30" y="32" width="60" height="24" class="hdr s"/>
+  <text x="60" y="48" text-anchor="middle" class="h">id</text>
+  <rect x="90" y="32" width="110" height="24" class="hdr s"/>
+  <text x="145" y="48" text-anchor="middle" class="h">name</text>
+  <rect x="200" y="32" width="160" height="24" class="hdr s"/>
+  <text x="280" y="48" text-anchor="middle" class="h">email</text>
+  <rect x="360" y="32" width="90" height="24" class="hdr s"/>
+  <text x="405" y="48" text-anchor="middle" class="h">grade</text>
+
+  <!-- Row 1 -->
+  <rect x="30" y="56" width="60" height="24" class="row1 s"/>
+  <text x="60" y="72" text-anchor="middle">1</text>
+  <rect x="90" y="56" width="110" height="24" class="row1 s"/>
+  <text x="145" y="72" text-anchor="middle">Kim Yuna</text>
+  <rect x="200" y="56" width="160" height="24" class="row1 s"/>
+  <text x="280" y="72" text-anchor="middle">user1@testmail.kr</text>
+  <rect x="360" y="56" width="90" height="24" class="row1 s"/>
+  <text x="405" y="72" text-anchor="middle">VIP</text>
+
+  <!-- Row 2 -->
+  <rect x="30" y="80" width="60" height="24" class="row2 s"/>
+  <text x="60" y="96" text-anchor="middle">2</text>
+  <rect x="90" y="80" width="110" height="24" class="row2 s"/>
+  <text x="145" y="96" text-anchor="middle">Lee Minho</text>
+  <rect x="200" y="80" width="160" height="24" class="row2 s"/>
+  <text x="280" y="96" text-anchor="middle">user2@testmail.kr</text>
+  <rect x="360" y="80" width="90" height="24" class="row2 s"/>
+  <text x="405" y="96" text-anchor="middle">GOLD</text>
+
+  <!-- Row 3 -->
+  <rect x="30" y="104" width="60" height="24" class="row1 s"/>
+  <text x="60" y="120" text-anchor="middle">3</text>
+  <rect x="90" y="104" width="110" height="24" class="row1 s"/>
+  <text x="145" y="120" text-anchor="middle">Park Soojin</text>
+  <rect x="200" y="104" width="160" height="24" class="row1 s"/>
+  <text x="280" y="120" text-anchor="middle">user3@testmail.kr</text>
+  <rect x="360" y="104" width="90" height="24" class="row1 s"/>
+  <text x="405" y="120" text-anchor="middle">SILVER</text>
+
+  <!-- Column label -->
+  <path d="M 145 32 L 145 22 L 145 22" class="arrow" style="marker-end:none"/>
+  <line x1="90" y1="148" x2="90" y2="160" class="arrow" style="marker-end:none"/>
+  <line x1="200" y1="148" x2="200" y2="160" class="arrow" style="marker-end:none"/>
+  <path d="M 90 160 L 200 160" stroke="rgba(100,100,100,0.6)" stroke-width="1.2" fill="none"/>
+  <line x1="145" y1="160" x2="145" y2="175" class="arrow"/>
+  <text x="145" y="190" text-anchor="middle" class="label">Column</text>
+  <text x="145" y="204" text-anchor="middle" font-size="10">(attribute: name)</text>
+
+  <!-- Row label -->
+  <line x1="30" y1="68" x2="15" y2="68" stroke="rgba(100,100,100,0.6)" stroke-width="1.2" fill="none"/>
+  <line x1="15" y1="56" x2="15" y2="80" stroke="rgba(100,100,100,0.6)" stroke-width="1.2" fill="none"/>
+  <line x1="15" y1="68" x2="5" y2="68" class="arrow" style="marker-end:none"/>
+  <text x="2" y="60" text-anchor="end" class="label" transform="rotate(-90,2,68)">Row</text>
+  <text x="2" y="78" text-anchor="end" font-size="9" transform="rotate(-90,2,78)">(record)</text>
+
+  <!-- Cell label -->
+  <rect x="200" y="56" width="160" height="24" fill="rgba(255,193,7,0.25)" rx="2" stroke="rgba(255,193,7,0.6)" stroke-width="1.5"/>
+  <text x="280" y="72" text-anchor="middle">user1@testmail.kr</text>
+  <line x1="365" y1="68" x2="420" y2="68" class="arrow" style="stroke:rgba(200,160,0,0.7)"/>
+  <text x="425" y="64" class="label">Cell</text>
+  <text x="425" y="78" font-size="10">(value)</text>
+</svg>

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 200" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:11px}
+    .h{font-weight:700;font-size:12px}
+    .th{font-weight:700;font-size:11px}
+    .hdr{fill:rgba(91,141,239,0.20);rx:2}
+    .row1{fill:rgba(91,141,239,0.07);rx:2}
+    .row2{fill:rgba(91,141,239,0.03);rx:2}
+    .pk{fill:rgba(76,175,80,0.20);rx:2}
+    .fk{fill:rgba(255,152,0,0.20);rx:2}
+    .s{stroke:rgba(128,128,128,0.3);stroke-width:1}
+    .label{font-size:10px;font-weight:700}
+  </style>
+
+  <!-- customers table -->
+  <text x="110" y="18" text-anchor="middle" class="h">customers</text>
+  <rect x="10" y="26" width="50" height="22" class="hdr s"/>
+  <text x="35" y="41" text-anchor="middle" class="th">id</text>
+  <rect x="60" y="26" width="100" height="22" class="hdr s"/>
+  <text x="110" y="41" text-anchor="middle" class="th">name</text>
+  <rect x="160" y="26" width="60" height="22" class="hdr s"/>
+  <text x="190" y="41" text-anchor="middle" class="th">grade</text>
+
+  <rect x="10" y="48" width="50" height="22" class="pk s"/>
+  <text x="35" y="63" text-anchor="middle" font-weight="700">1</text>
+  <rect x="60" y="48" width="100" height="22" class="row1 s"/>
+  <text x="110" y="63" text-anchor="middle">Kim Yuna</text>
+  <rect x="160" y="48" width="60" height="22" class="row1 s"/>
+  <text x="190" y="63" text-anchor="middle">VIP</text>
+
+  <rect x="10" y="70" width="50" height="22" class="pk s"/>
+  <text x="35" y="85" text-anchor="middle" font-weight="700">2</text>
+  <rect x="60" y="70" width="100" height="22" class="row2 s"/>
+  <text x="110" y="85" text-anchor="middle">Lee Minho</text>
+  <rect x="160" y="70" width="60" height="22" class="row2 s"/>
+  <text x="190" y="85" text-anchor="middle">GOLD</text>
+
+  <rect x="10" y="92" width="50" height="22" class="pk s"/>
+  <text x="35" y="107" text-anchor="middle" font-weight="700">3</text>
+  <rect x="60" y="92" width="100" height="22" class="row1 s"/>
+  <text x="110" y="107" text-anchor="middle">Park Soojin</text>
+  <rect x="160" y="92" width="60" height="22" class="row1 s"/>
+  <text x="190" y="107" text-anchor="middle">SILVER</text>
+
+  <!-- PK label -->
+  <text x="35" y="130" text-anchor="middle" class="label" fill="rgba(56,142,60,1)">PK</text>
+  <text x="35" y="142" text-anchor="middle" font-size="9">(unique)</text>
+
+  <!-- orders table -->
+  <text x="400" y="18" text-anchor="middle" class="h">orders</text>
+  <rect x="290" y="26" width="50" height="22" class="hdr s"/>
+  <text x="315" y="41" text-anchor="middle" class="th">id</text>
+  <rect x="340" y="26" width="80" height="22" class="hdr s"/>
+  <text x="380" y="41" text-anchor="middle" class="th">customer_id</text>
+  <rect x="420" y="26" width="90" height="22" class="hdr s"/>
+  <text x="465" y="41" text-anchor="middle" class="th">total_amount</text>
+
+  <rect x="290" y="48" width="50" height="22" class="row1 s"/>
+  <text x="315" y="63" text-anchor="middle">101</text>
+  <rect x="340" y="48" width="80" height="22" class="fk s"/>
+  <text x="380" y="63" text-anchor="middle" font-weight="700">1</text>
+  <rect x="420" y="48" width="90" height="22" class="row1 s"/>
+  <text x="465" y="63" text-anchor="middle">89000</text>
+
+  <rect x="290" y="70" width="50" height="22" class="row2 s"/>
+  <text x="315" y="85" text-anchor="middle">102</text>
+  <rect x="340" y="70" width="80" height="22" class="fk s"/>
+  <text x="380" y="85" text-anchor="middle" font-weight="700">3</text>
+  <rect x="420" y="70" width="90" height="22" class="row2 s"/>
+  <text x="465" y="85" text-anchor="middle">245000</text>
+
+  <rect x="290" y="92" width="50" height="22" class="row1 s"/>
+  <text x="315" y="107" text-anchor="middle">103</text>
+  <rect x="340" y="92" width="80" height="22" class="fk s"/>
+  <text x="380" y="107" text-anchor="middle" font-weight="700">1</text>
+  <rect x="420" y="92" width="90" height="22" class="row1 s"/>
+  <text x="465" y="107" text-anchor="middle">54000</text>
+
+  <!-- FK label -->
+  <text x="380" y="130" text-anchor="middle" class="label" fill="rgba(230,120,0,1)">FK</text>
+  <text x="380" y="142" text-anchor="middle" font-size="9">(reference)</text>
+
+  <!-- Arrow PK -> FK -->
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="rgba(100,100,100,0.7)"/>
+    </marker>
+  </defs>
+  <path d="M 60 59 C 180 59, 200 59, 340 59" stroke="rgba(100,100,100,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <path d="M 60 81 C 180 95, 200 95, 340 103" stroke="rgba(100,100,100,0.35)" stroke-width="1" fill="none" stroke-dasharray="5,3"/>
+  <path d="M 60 59 C 180 59, 200 72, 340 103" stroke="rgba(100,100,100,0.35)" stroke-width="1" fill="none" stroke-dasharray="5,3"/>
+
+  <!-- Legend -->
+  <rect x="130" y="160" width="12" height="12" fill="rgba(76,175,80,0.25)" stroke="rgba(128,128,128,0.3)" stroke-width="1" rx="2"/>
+  <text x="148" y="171" font-size="10">Primary Key (PK) -- uniquely identifies each row</text>
+  <rect x="130" y="178" width="12" height="12" fill="rgba(255,152,0,0.25)" stroke="rgba(128,128,128,0.3)" stroke-width="1" rx="2"/>
+  <text x="148" y="189" font-size="10">Foreign Key (FK) -- references a PK in another table</text>
+</svg>

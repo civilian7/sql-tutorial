@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" font-family="system-ui,sans-serif">
+  <style>
+    text{font-size:12px}
+    .h{font-weight:700;font-size:13px}
+    .hdr{fill:rgba(91,141,239,0.20)}
+    .row1{fill:rgba(128,128,128,0.06)}
+    .row2{fill:rgba(128,128,128,0.12)}
+    .s{stroke:rgba(128,128,128,0.35);stroke-width:1}
+    .label{font-size:11px;font-weight:700;fill:rgba(232,80,80,0.85)}
+    .arrow{stroke:rgba(232,80,80,0.7);stroke-width:1.5;fill:none;marker-end:url(#ar)}
+    .dim{font-size:10px;opacity:0.55}
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(232,80,80,0.7)"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="220" y="22" text-anchor="middle" class="h" font-size="14">customers 테이블 구조</text>
+
+  <!-- Header row -->
+  <rect x="40" y="36" width="400" height="28" class="hdr s" rx="2"/>
+  <text x="80" y="55" text-anchor="middle" class="h">id</text>
+  <text x="170" y="55" text-anchor="middle" class="h">name</text>
+  <text x="280" y="55" text-anchor="middle" class="h">email</text>
+  <text x="390" y="55" text-anchor="middle" class="h">grade</text>
+  <line x1="120" y1="36" x2="120" y2="64" class="s"/>
+  <line x1="220" y1="36" x2="220" y2="64" class="s"/>
+  <line x1="340" y1="36" x2="340" y2="64" class="s"/>
+
+  <!-- Data row 1 -->
+  <rect x="40" y="64" width="400" height="28" class="row1 s"/>
+  <text x="80" y="83" text-anchor="middle">1</text>
+  <text x="170" y="83" text-anchor="middle">김민수</text>
+  <text x="280" y="83" text-anchor="middle">minsu@testmail.kr</text>
+  <text x="390" y="83" text-anchor="middle">VIP</text>
+  <line x1="120" y1="64" x2="120" y2="92" class="s"/>
+  <line x1="220" y1="64" x2="220" y2="92" class="s"/>
+  <line x1="340" y1="64" x2="340" y2="92" class="s"/>
+
+  <!-- Data row 2 -->
+  <rect x="40" y="92" width="400" height="28" class="row2 s"/>
+  <text x="80" y="111" text-anchor="middle">2</text>
+  <text x="170" y="111" text-anchor="middle">이영희</text>
+  <text x="280" y="111" text-anchor="middle">younghee@testmail.kr</text>
+  <text x="390" y="111" text-anchor="middle">GOLD</text>
+  <line x1="120" y1="92" x2="120" y2="120" class="s"/>
+  <line x1="220" y1="92" x2="220" y2="120" class="s"/>
+  <line x1="340" y1="92" x2="340" y2="120" class="s"/>
+
+  <!-- Data row 3 -->
+  <rect x="40" y="120" width="400" height="28" class="row1 s"/>
+  <text x="80" y="139" text-anchor="middle">3</text>
+  <text x="170" y="139" text-anchor="middle">박지훈</text>
+  <text x="280" y="139" text-anchor="middle">jihun@testmail.kr</text>
+  <text x="390" y="139" text-anchor="middle">SILVER</text>
+  <line x1="120" y1="120" x2="120" y2="148" class="s"/>
+  <line x1="220" y1="120" x2="220" y2="148" class="s"/>
+  <line x1="340" y1="120" x2="340" y2="148" class="s"/>
+
+  <!-- Column label -->
+  <text x="280" y="30" text-anchor="middle" class="label">칼럼 (Column)</text>
+  <path d="M 280 32 L 280 36" class="arrow"/>
+
+  <!-- Row label -->
+  <text x="475" y="83" class="label">행 (Row)</text>
+  <path d="M 468 80 L 442 80" class="arrow"/>
+
+  <!-- Cell label -->
+  <rect x="221" y="93" width="118" height="26" fill="none" stroke="rgba(232,80,80,0.6)" stroke-width="1.5" stroke-dasharray="4 2" rx="3"/>
+  <text x="280" y="175" text-anchor="middle" class="label">셀 (Cell)</text>
+  <path d="M 280 167 L 280 122" class="arrow"/>
+
+  <!-- Caption -->
+  <text x="220" y="210" text-anchor="middle" class="dim">테이블 = 행(가로)과 칼럼(세로)으로 구성된 2차원 구조</text>
+  <text x="220" y="225" text-anchor="middle" class="dim">각 행은 하나의 레코드, 각 칼럼은 하나의 속성을 나타냅니다</text>
+</svg>
