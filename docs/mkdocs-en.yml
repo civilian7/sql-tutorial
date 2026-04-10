@@ -105,6 +105,18 @@ nav:
       - "Challenge Problems": exercises/advanced-11-challenge.md
       - "EXPLAIN / Query Plan": exercises/advanced-12-explain-plan.md
 
+plugins:
+  - search
+  - exporter:
+      formats:
+        pdf:
+          enabled: !ENV [MKDOCS_EXPORTER_PDF, false]
+          concurrency: 4
+          aggregator:
+            enabled: true
+            output: pdf/sql-tutorial-en.pdf
+            covers: none
+
 markdown_extensions:
   - admonition
   - pymdownx.details

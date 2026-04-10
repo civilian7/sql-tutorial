@@ -105,6 +105,18 @@ nav:
       - "도전 문제": exercises/advanced-11-challenge.md
       - "실행 계획 분석": exercises/advanced-12-explain-plan.md
 
+plugins:
+  - search
+  - exporter:
+      formats:
+        pdf:
+          enabled: !ENV [MKDOCS_EXPORTER_PDF, false]
+          concurrency: 4
+          aggregator:
+            enabled: true
+            output: pdf/sql-tutorial-ko.pdf
+            covers: none
+
 markdown_extensions:
   - admonition
   - pymdownx.details

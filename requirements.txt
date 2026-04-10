@@ -8,6 +8,9 @@ PyYAML>=6.0
 mkdocs>=1.6.0,<2.0.0
 mkdocs-material>=9.5.0
 
+# PDF export (pdf.bat)
+mkdocs-exporter>=6.0.0
+
 # Optional: MySQL/MariaDB direct apply (--apply --target mysql)
 # pip install mysql-connector-python
 # mysql-connector-python>=8.0.0
