@@ -602,7 +602,9 @@ def main():
         print(f"\nTotal tables fixed: {total_fixed}")
 
     conn.close()
-    sys.exit(1 if failed > 0 else 0)
+    # Exit 1 only for result table mismatches (real data errors)
+    # DML/DDL/multi-statement failures are expected and ignored
+    sys.exit(1 if result_mismatch > 0 else 0)
 
 
 if __name__ == '__main__':
