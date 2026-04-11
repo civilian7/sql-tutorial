@@ -4,17 +4,21 @@
 
 ```mermaid
 flowchart TD
-    subgraph "Without Index (Full Scan)"
-        FS["Check row 1\nCheck row 2\n...\nCheck row 34,331\n⏱️ Slow"]
-    end
-    subgraph "With Index (B-Tree)"
-        BT["Root"] --> L["< 'M'"] --> LF["Kim ✓\nLee ✓"]
-        BT --> R[">= 'M'"] --> RF["Park\nYoon"]
-        LF --> FA["⚡ Fast"]
+    subgraph scan["인덱스 없이: 풀 스캔 O(n)"]
+        S1["행 1 확인"] --> S2["행 2 확인"] --> S3["행 3 확인"] --> S4["...\n37,000행 전부 확인"]
     end
 ```
 
-> 인덱스 없이는 모든 행을 확인합니다 (풀 스캔). 인덱스가 있으면 B-tree로 빠르게 찾습니다.
+```mermaid
+flowchart TD
+    subgraph btree["인덱스 사용: B-Tree 탐색 O(log n)"]
+        R["루트 노드\n[1000, 2000, 3000]"]
+        R -->|"customer_id=42\n42 < 1000 → 왼쪽"| N1["리프 노드\n[10, 25, 42, 88]"]
+        N1 -->|"42 발견!"| ROW["테이블 행으로\n바로 이동"]
+    end
+```
+
+> 풀 스캔은 37,000행을 모두 확인합니다. B-Tree 인덱스는 2~3단계 탐색으로 원하는 행에 도달합니다.
 
 ![B-Tree Index Lookup](../img/index-btree.svg){ .off-glb width="560"  }
 
