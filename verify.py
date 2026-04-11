@@ -70,7 +70,7 @@ class Result:
         return self.failed == 0
 
 
-def verify_sqlite(result: Result, db_path: str = "output/ecommerce.db"):
+def verify_sqlite(result: Result, db_path: str = "output/ecommerce-ko.db"):
     """SQLite 데이터베이스를 검증합니다."""
     print("\n[CHECK]SQLite 검증")
     print(f"   파일: {db_path}")
@@ -332,7 +332,7 @@ def main():
     parser.add_argument("--target", choices=["sqlite", "mysql", "postgresql"], default="sqlite",
                         help="검증할 데이터베이스 (기본: sqlite)")
     parser.add_argument("--all", action="store_true", help="모든 데이터베이스 검증")
-    parser.add_argument("--db-path", default="output/ecommerce.db", help="SQLite DB 파일 경로")
+    parser.add_argument("--db-path", default="output/ecommerce-ko.db", help="SQLite DB 파일 경로")
     parser.add_argument("--host", default="localhost", help="MySQL/PG 호스트")
     parser.add_argument("--port", type=int, help="MySQL/PG 포트")
     parser.add_argument("--user", help="MySQL/PG 사용자")

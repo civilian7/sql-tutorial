@@ -307,7 +307,7 @@ def main():
     for target in config["targets"]:
         if target == "sqlite":
             print(f"\nExporting to SQLite...")
-            exporter = SQLiteExporter(output_dir)
+            exporter = SQLiteExporter(output_dir, locale=config.get("locale", "ko_KR"))
             db_path = exporter.export(all_data)
             file_size = os.path.getsize(db_path) / (1024 * 1024)
             print(f"  -> {db_path} ({file_size:.1f} MB)")

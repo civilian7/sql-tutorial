@@ -1230,10 +1230,11 @@ END;
 
 class SQLiteExporter:
 
-    def __init__(self, output_dir: str):
+    def __init__(self, output_dir: str, locale: str = "ko"):
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
-        self.db_path = os.path.join(output_dir, "ecommerce.db")
+        lang = locale.split("_")[0] if "_" in locale else locale
+        self.db_path = os.path.join(output_dir, f"ecommerce-{lang}.db")
 
     def export(self, data: dict[str, list[dict]]) -> str:
         """Export all data to a SQLite database."""

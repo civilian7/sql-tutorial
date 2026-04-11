@@ -17,10 +17,10 @@
 ```bash
 pip install -r requirements.txt
 python generate.py --size small
-# 출력: output/ecommerce.db (~80MB, 69만 건)
+# 출력: output/ecommerce-ko.db (~80MB, 69만 건)
 ```
 
-`output/ecommerce.db`를 SQL 도구에서 열고 학습을 시작하세요.
+`output/ecommerce-ko.db`를 SQL 도구에서 열고 학습을 시작하세요.
 
 ## 포함 내용
 

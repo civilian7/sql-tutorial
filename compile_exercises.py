@@ -6,7 +6,7 @@ Usage:
     python compile_exercises.py
 
     # Compile and generate expected results from tutorial DB
-    python compile_exercises.py --tutorial-db output/ecommerce.db
+    python compile_exercises.py --tutorial-db output/ecommerce-ko.db
 
     # Validate only (no output)
     python compile_exercises.py --validate-only
@@ -338,7 +338,7 @@ def _indent(sql: str, prefix: str = "    ") -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Compile exercise YAML to mkdocs + exercise.db")
-    parser.add_argument("--tutorial-db", type=str, default="output/ecommerce.db",
+    parser.add_argument("--tutorial-db", type=str, default="output/ecommerce-ko.db",
                         help="Tutorial DB for computing expected results")
     parser.add_argument("--output-db", type=str, default=str(OUTPUT_DB),
                         help="Output exercise.db path")

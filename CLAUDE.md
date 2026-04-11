@@ -75,7 +75,8 @@ ecommerce-test-db/
 │   ├── products.json        # 상품 마스터 (브랜드, 모델명, 가격대)
 │   └── suppliers.json       # 공급업체 마스터
 └── output/                  # 생성된 DB/SQL 파일 출력 디렉토리
-    ├── ecommerce.db         # SQLite DB
+    ├── ecommerce-ko.db     # SQLite DB (한국어 로케일)
+    ├── ecommerce-en.db     # SQLite DB (영어 로케일)
     ├── mysql/
     ├── postgresql/
     ├── sqlserver/

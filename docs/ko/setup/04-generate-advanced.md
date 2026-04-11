@@ -454,7 +454,7 @@ src/
 
 ```
 output/
-├── ecommerce.db                 # SQLite 데이터베이스 (기본)
+├── ecommerce-ko.db                 # SQLite 데이터베이스 (기본)
 ├── mysql/
 │   ├── schema.sql               # 테이블/인덱스/뷰 DDL
 │   ├── data.sql                 # INSERT 문 (모든 데이터)

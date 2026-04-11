@@ -13,9 +13,9 @@
 
     | 도구 | 열기 |
     |------|------|
-    | **DBeaver** (추천) | 새 연결 > SQLite > `output/ecommerce.db` 파일 선택 |
-    | DB Browser for SQLite | [sqlitebrowser.org](https://sqlitebrowser.org/dl/) > 데이터베이스 열기 > ecommerce.db |
-    | 명령줄 | `sqlite3 output/ecommerce.db` |
+    | **DBeaver** (추천) | 새 연결 > SQLite > `output/ecommerce-ko.db` 파일 선택 |
+    | DB Browser for SQLite | [sqlitebrowser.org](https://sqlitebrowser.org/dl/) > 데이터베이스 열기 > ecommerce-ko.db |
+    | 명령줄 | `sqlite3 output/ecommerce-ko.db` |
 
 === "MySQL"
 
@@ -40,7 +40,7 @@ GUI 도구를 열지 않고, 터미널에서 바로 확인할 수 있습니다.
 === "SQLite"
 
     ```bash
-    sqlite3 output/ecommerce.db "SELECT COUNT(*) FROM customers;"
+    sqlite3 output/ecommerce-ko.db "SELECT COUNT(*) FROM customers;"
     ```
 
     `5230`이 출력되면 정상입니다.

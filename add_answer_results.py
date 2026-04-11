@@ -250,7 +250,7 @@ def find_files(docs_dir, chapter=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Add result tables to exercise answers')
-    parser.add_argument('--db', default='output/ecommerce.db')
+    parser.add_argument('--db', default='output/ecommerce-ko.db')
     parser.add_argument('--chapter', help='Filter by chapter number')
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args()

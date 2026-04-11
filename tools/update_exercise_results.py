@@ -15,7 +15,7 @@ import threading
 if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output', 'ecommerce.db')
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output', 'ecommerce-ko.db')
 EXERCISES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'docs', 'ko', 'exercises')
 
 PG_MYSQL_KEYWORDS = [

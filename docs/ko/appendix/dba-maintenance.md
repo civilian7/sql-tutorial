@@ -143,13 +143,13 @@
 
     ```bash
     # 방법 1: .backup 명령 (권장 — 실행 중에도 안전)
-    sqlite3 ecommerce.db ".backup backup_20260411.db"
+    sqlite3 ecommerce-ko.db ".backup backup_20260411.db"
 
     # 방법 2: 파일 복사 (DB가 쓰기 중이 아닐 때만 안전)
-    cp ecommerce.db ecommerce_backup.db
+    cp ecommerce-ko.db ecommerce_backup.db
 
     # 복원: 백업 파일을 원본 위치에 복사
-    cp backup_20260411.db ecommerce.db
+    cp backup_20260411.db ecommerce-ko.db
     ```
 
 === "MySQL"

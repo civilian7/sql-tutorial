@@ -473,7 +473,7 @@ def find_md_files(docs_dir: str, chapter_filter: str = None) -> list[str]:
 
 def main():
     parser = argparse.ArgumentParser(description='Verify SQL in tutorial markdown')
-    parser.add_argument('--db', default='output/ecommerce.db', help='SQLite database path')
+    parser.add_argument('--db', default='output/ecommerce-ko.db', help='SQLite database path')
     parser.add_argument('--docs', default='docs/ko', help='Docs directory')
     parser.add_argument('--chapter', help='Filter by chapter number (e.g., "07")')
     parser.add_argument('--verbose', '-v', action='store_true', help='Show all results')

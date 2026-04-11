@@ -55,7 +55,7 @@ pip install -r requirements.txt
     python generate.py --size small
     ```
 
-    Creates `output/ecommerce.db` (~80MB, 687K rows). Takes about 20 seconds.
+    Creates `output/ecommerce-en.db` (~80MB, 687K rows). Takes about 20 seconds.
 
 === "MySQL"
 
@@ -120,9 +120,9 @@ pip install -r requirements.txt
 
     | Tool | Install | Open |
     |------|---------|------|
-    | **DB Browser for SQLite** (recommended) | [sqlitebrowser.org](https://sqlitebrowser.org/dl/) | Open Database > ecommerce.db |
+    | **DB Browser for SQLite** (recommended) | [sqlitebrowser.org](https://sqlitebrowser.org/dl/) | Open Database > ecommerce-en.db |
     | DBeaver | [dbeaver.io](https://dbeaver.io/download/) | New Connection > SQLite > select file |
-    | Command line | (no install needed) | `sqlite3 output/ecommerce.db` |
+    | Command line | (no install needed) | `sqlite3 output/ecommerce-en.db` |
 
 === "MySQL"
 

@@ -168,7 +168,7 @@ pip install -r requirements.txt
     python generate.py --size small
     ```
 
-    `output/ecommerce.db` 파일이 생성됩니다 (약 80MB, 68만 건). 약 20초 소요됩니다.
+    `output/ecommerce-ko.db` 파일이 생성됩니다 (약 80MB, 68만 건). 약 20초 소요됩니다.
 
 === "MySQL"
 
@@ -220,7 +220,7 @@ pip install -r requirements.txt
 ```
 Data generation complete: 696,771 total records (12.8s)
 Exporting to SQLite...
-  -> ./output/ecommerce.db (80.7 MB)
+  -> ./output/ecommerce-ko.db (80.7 MB)
 Export complete (11.2s)
 Total elapsed time: 24.0s
 ```

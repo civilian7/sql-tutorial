@@ -3,7 +3,7 @@ import sqlite3
 import sys
 
 def main():
-    db_path = sys.argv[1] if len(sys.argv) > 1 else "./output/ecommerce.db"
+    db_path = sys.argv[1] if len(sys.argv) > 1 else "./output/ecommerce-ko.db"
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     errors = []
@@ -152,7 +152,7 @@ def main():
     # 10. Output files
     print(f"\n[10] OUTPUT FILES")
     import os
-    for path in ["output/ecommerce.db", "output/mysql/schema.sql", "output/mysql/data.sql",
+    for path in ["output/ecommerce-ko.db", "output/mysql/schema.sql", "output/mysql/data.sql",
                   "output/mysql/procedures.sql", "output/postgresql/schema.sql",
                   "output/postgresql/data.sql", "output/postgresql/procedures.sql"]:
         if os.path.exists(path):

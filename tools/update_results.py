@@ -15,7 +15,7 @@ import io
 if sys.platform == 'win32':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output', 'ecommerce.db')
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output', 'ecommerce-ko.db')
 DOCS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'docs', 'ko')
 
 # MySQL/PG 전용 키워드 — 이런 쿼리는 SQLite로 실행 불가

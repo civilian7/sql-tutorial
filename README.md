@@ -17,10 +17,10 @@ A Python tool that generates **realistic test databases** for an online computer
 ```bash
 pip install -r requirements.txt
 python generate.py --size small
-# Output: output/ecommerce.db (~80MB, 697K rows)
+# Output: output/ecommerce-en.db (~80MB, 697K rows)
 ```
 
-Open `output/ecommerce.db` in any SQL tool and start learning.
+Open `output/ecommerce-en.db` in any SQL tool and start learning.
 
 ## What's Included
 

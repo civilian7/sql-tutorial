@@ -2,7 +2,7 @@
 """
 Verify DML/DDL exercise answers using a writable copy of the database.
 
-Creates a temp copy of ecommerce.db for each test, executes DML/DDL
+Creates a temp copy of ecommerce-{locale}.db for each test, executes DML/DDL
 statements, and checks they don't error out.
 
 Usage:
@@ -224,7 +224,7 @@ def find_files(docs_dir, chapter=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Verify DML/DDL exercise answers')
-    parser.add_argument('--db', default='output/ecommerce.db')
+    parser.add_argument('--db', default='output/ecommerce-ko.db')
     parser.add_argument('--docs', default='docs/ko')
     parser.add_argument('--chapter', help='Filter by chapter')
     args = parser.parse_args()

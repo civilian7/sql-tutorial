@@ -59,13 +59,13 @@ python generate.py --size small
 
 ```bash
 # Check the SQLite file
-ls -lh output/ecommerce.db
+ls -lh output/ecommerce-en.db
 
 # List tables
-sqlite3 output/ecommerce.db ".tables"
+sqlite3 output/ecommerce-en.db ".tables"
 
 # Check row count
-sqlite3 output/ecommerce.db "SELECT COUNT(*) FROM orders;"
+sqlite3 output/ecommerce-en.db "SELECT COUNT(*) FROM orders;"
 ```
 
 !!! tip "First Run"
@@ -196,7 +196,7 @@ python generate.py --locale en
 python generate.py --target sqlite
 ```
 
-- Output: `output/ecommerce.db`
+- Output: `output/ecommerce-en.db`
 - No server required -- single file, ready to use
 - Includes views, triggers, and indexes
 
@@ -691,7 +691,7 @@ python generate.py --seed 200
 
 ```
 output/
-├── ecommerce.db                 # SQLite database (default)
+├── ecommerce-en.db                 # SQLite database (default)
 ├── mysql/
 │   ├── schema.sql               # Table/index/view DDL
 │   ├── data.sql                 # INSERT statements (all data)
@@ -703,7 +703,7 @@ output/
 ```
 
 !!! note "SQLite Database Contents"
-    `ecommerce.db` contains tables, views, triggers, and indexes. See the [Database Schema](schema/index.md) page for full details.
+    `ecommerce-en.db` contains tables, views, triggers, and indexes. See the [Database Schema](schema/index.md) page for full details.
 
 ---
 
@@ -714,7 +714,7 @@ output/
 ```bash
 python check_integrity.py
 # Or specify a specific DB file
-python check_integrity.py output/ecommerce.db
+python check_integrity.py output/ecommerce-en.db
 ```
 
 ### What Gets Checked
