@@ -1,289 +1,34 @@
-# 데이터베이스별 SQL 차이
+# 데이터베이스별 SQL 차이 — 치트시트
 
-이 튜토리얼의 SQL은 SQLite 기준으로 작성되었습니다. 다른 데이터베이스에서 같은 쿼리를 실행하려면 아래 차이점을 참고하세요.
+이 튜토리얼의 SQL은 SQLite 기준으로 작성되었습니다. 각 레슨에서 MySQL/PostgreSQL 탭으로 DB별 차이를 다루고 있으므로, 이 페이지는 **빠르게 훑어보는 종합 참조표** 역할을 합니다.
 
 > 모든 DB에서 동작하는 SQL을 작성하는 것보다, **각 DB의 네이티브 문법**을 활용하는 것이 더 효율적입니다.
 
----
-
-## 페이징 (행 제한)
-
-가장 자주 부딪히는 차이입니다. `LIMIT`은 MySQL/SQLite/PostgreSQL에서 사용하고, **ANSI SQL 표준**은 `FETCH FIRST n ROWS ONLY`입니다.
-
-=== "SQLite / MySQL / PostgreSQL"
-
-    ```sql
-    SELECT * FROM products
-    ORDER BY price DESC
-    LIMIT 10 OFFSET 20;
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    SELECT * FROM products
-    ORDER BY price DESC
-    OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
-    ```
-
-=== "Oracle"
-
-    ```sql
-    -- Oracle 12c+
-    SELECT * FROM products
-    ORDER BY price DESC
-    OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;
-
-    -- Oracle 11g 이하
-    SELECT * FROM (
-        SELECT t.*, ROWNUM AS rn
-        FROM (SELECT * FROM products ORDER BY price DESC) t
-        WHERE ROWNUM <= 30
-    ) WHERE rn > 20;
-    ```
-
----
-
-## 자동 증가 (Primary Key)
-
-=== "SQLite"
-
-    ```sql
-    CREATE TABLE products (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
-    );
-    ```
-
-=== "MySQL"
-
-    ```sql
-    CREATE TABLE products (
-        id INT PRIMARY KEY AUTO_INCREMENT,
-        name VARCHAR(200) NOT NULL
-    ) ENGINE=InnoDB;
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    -- 방법 1: GENERATED (SQL 표준)
-    CREATE TABLE products (
-        id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        name VARCHAR(200) NOT NULL
-    );
-
-    -- 방법 2: SERIAL (PG 전통)
-    CREATE TABLE products (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(200) NOT NULL
-    );
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    CREATE TABLE products (
-        id INT IDENTITY(1,1) PRIMARY KEY,
-        name NVARCHAR(200) NOT NULL
-    );
-    ```
-
-=== "Oracle"
-
-    ```sql
-    -- Oracle 12c+
-    CREATE TABLE products (
-        id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        name VARCHAR2(200) NOT NULL
-    );
-
-    -- Oracle 11g 이하: SEQUENCE + TRIGGER
-    CREATE SEQUENCE seq_products START WITH 1;
-    ```
-
----
-
-## 날짜/시간 함수
-
-### 현재 날짜/시간
-
-| DB | 현재 날짜 | 현재 시각 |
-|----|-----------|-----------|
-| SQLite | `DATE('now')` | `DATETIME('now')` |
-| MySQL | `CURDATE()` | `NOW()` |
-| PostgreSQL | `CURRENT_DATE` | `NOW()` 또는 `CURRENT_TIMESTAMP` |
-| SQL Server | `CAST(GETDATE() AS DATE)` | `GETDATE()` |
-| Oracle | `SYSDATE` | `SYSTIMESTAMP` |
-
-### 연/월/일 추출
-
-=== "SQLite"
-
-    ```sql
-    SELECT
-        SUBSTR(ordered_at, 1, 4)  AS year,
-        SUBSTR(ordered_at, 6, 2)  AS month,
-        STRFTIME('%w', ordered_at) AS day_of_week
-    FROM orders;
-    ```
-
-=== "MySQL"
-
-    ```sql
-    SELECT
-        YEAR(ordered_at)      AS year,
-        MONTH(ordered_at)     AS month,
-        DAYOFWEEK(ordered_at) AS day_of_week
-    FROM orders;
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    SELECT
-        EXTRACT(YEAR FROM ordered_at)  AS year,
-        EXTRACT(MONTH FROM ordered_at) AS month,
-        EXTRACT(DOW FROM ordered_at)   AS day_of_week
-    FROM orders;
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    SELECT
-        YEAR(ordered_at)       AS year,
-        MONTH(ordered_at)      AS month,
-        DATEPART(dw, ordered_at) AS day_of_week
-    FROM orders;
-    ```
-
-=== "Oracle"
-
-    ```sql
-    SELECT
-        EXTRACT(YEAR FROM ordered_at)  AS year,
-        EXTRACT(MONTH FROM ordered_at) AS month,
-        TO_CHAR(ordered_at, 'D')       AS day_of_week
-    FROM orders;
-    ```
-
-### 날짜 연산
-
-=== "SQLite"
-
-    ```sql
-    -- 30일 후
-    SELECT DATE('now', '+30 days');
-    -- 두 날짜 사이 일수
-    SELECT JULIANDAY('2025-12-31') - JULIANDAY('2025-01-01');
-    ```
-
-=== "MySQL"
-
-    ```sql
-    SELECT DATE_ADD(NOW(), INTERVAL 30 DAY);
-    SELECT DATEDIFF('2025-12-31', '2025-01-01');
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    SELECT CURRENT_DATE + INTERVAL '30 days';
-    SELECT '2025-12-31'::DATE - '2025-01-01'::DATE;
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    SELECT DATEADD(DAY, 30, GETDATE());
-    SELECT DATEDIFF(DAY, '2025-01-01', '2025-12-31');
-    ```
-
-=== "Oracle"
-
-    ```sql
-    SELECT SYSDATE + 30 FROM DUAL;
-    SELECT TO_DATE('2025-12-31') - TO_DATE('2025-01-01') FROM DUAL;
-    ```
-
----
-
-## 문자열 함수
-
-### 연결 (Concatenation)
-
-| DB | 문법 |
-|----|------|
-| SQLite / PostgreSQL / Oracle | `'Hello' \|\| ' ' \|\| 'World'` |
-| MySQL | `CONCAT('Hello', ' ', 'World')` |
-| SQL Server | `CONCAT('Hello', ' ', 'World')` 또는 `'Hello' + ' ' + 'World'` |
-
-### 부분 문자열
-
-| DB | 문법 |
-|----|------|
-| SQLite / PostgreSQL / Oracle | `SUBSTR(name, 1, 5)` |
-| MySQL | `SUBSTRING(name, 1, 5)` 또는 `SUBSTR(name, 1, 5)` |
-| SQL Server | `SUBSTRING(name, 1, 5)` |
-
-### 그룹 내 문자열 합치기
-
-=== "SQLite"
-
-    ```sql
-    SELECT category_id, GROUP_CONCAT(name, ', ')
-    FROM products
-    GROUP BY category_id;
-    ```
-
-=== "MySQL"
-
-    ```sql
-    SELECT category_id, GROUP_CONCAT(name SEPARATOR ', ')
-    FROM products
-    GROUP BY category_id;
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    SELECT category_id, STRING_AGG(name, ', ')
-    FROM products
-    GROUP BY category_id;
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    SELECT category_id, STRING_AGG(name, ', ')
-    FROM products
-    GROUP BY category_id;
-    ```
-
-=== "Oracle"
-
-    ```sql
-    SELECT category_id, LISTAGG(name, ', ') WITHIN GROUP (ORDER BY name)
-    FROM products
-    GROUP BY category_id;
-    ```
-
----
-
-## NULL 처리
-
-### 기본값 대체
-
-| DB | 문법 | 예시 |
-|----|------|------|
-| 모든 DB | `COALESCE(x, y)` | `COALESCE(notes, '없음')` |
-| SQLite | `IFNULL(x, y)` | `IFNULL(notes, '없음')` |
-| MySQL | `IFNULL(x, y)` | `IFNULL(notes, '없음')` |
-| SQL Server | `ISNULL(x, y)` | `ISNULL(notes, '없음')` |
-| Oracle | `NVL(x, y)` | `NVL(notes, '없음')` |
-
-> **권장:** `COALESCE`는 SQL 표준이며 모든 DB에서 동작합니다. 이식성이 중요하면 `COALESCE`를 사용하세요.
+## 레슨별 DB 차이 가이드
+
+각 레슨에서 SQLite/MySQL/PostgreSQL 탭으로 상세하게 다루는 주제입니다. 해당 레슨을 참고하세요.
+
+| 주제 | 레슨 | 핵심 차이 |
+|------|------|-----------|
+| 페이징 | [03강](beginner/03-sort-limit.md) | LIMIT vs FETCH FIRST (ANSI) |
+| NULL 처리 | [06강](beginner/06-null.md) | COALESCE(표준) vs IFNULL vs ISNULL vs NVL |
+| CASE 표현식 | [07강](beginner/07-case.md) | IIF(SQLite) vs IF(MySQL) vs CASE(PG) |
+| JOIN | [08~09강](intermediate/08-inner-join.md) | 문법은 동일, FULL OUTER JOIN 지원 여부 |
+| 서브쿼리 | [10강](intermediate/10-subqueries.md) | 문법 거의 동일 |
+| 날짜/시간 | [11강](intermediate/11-datetime.md) | SUBSTR vs YEAR() vs EXTRACT(), julianday vs DATEDIFF |
+| 문자열 | [12강](intermediate/12-string.md) | `\|\|` vs CONCAT(), INSTR vs LOCATE vs POSITION |
+| 숫자/변환/조건 | [13강](intermediate/13-utility-functions.md) | RANDOM vs RAND(), GREATEST/LEAST 지원 여부 |
+| UNION/INTERSECT/EXCEPT | [14강](intermediate/14-union.md) | 문법 동일, EXCEPT vs MINUS(Oracle) |
+| DML (UPSERT) | [15강](intermediate/15-dml.md) | ON CONFLICT vs ON DUPLICATE KEY |
+| DDL | [16강](intermediate/16-ddl.md) | AUTOINCREMENT vs AUTO_INCREMENT vs GENERATED |
+| 트랜잭션 | [17강](intermediate/17-transactions.md) | BEGIN vs START TRANSACTION |
+| 윈도우 함수 | [18강](advanced/18-window.md) | 문법 동일, 최소 버전 차이 |
+| CTE | [19강](advanced/19-cte.md) | WITH RECURSIVE(SQLite/MySQL/PG) vs WITH만(MSSQL/Oracle) |
+| 뷰 | [22강](advanced/22-views.md) | CREATE OR REPLACE 지원 여부 |
+| 인덱스 | [23강](advanced/23-indexes.md) | EXPLAIN 문법, 부분 인덱스 지원 |
+| 트리거 | [24강](advanced/24-triggers.md) | SQLite: BEGIN...END, PG: 함수+트리거 분리 |
+| JSON | [25강](advanced/25-json.md) | json_extract vs ->>, JSONB(PG) |
+| 저장 프로시저 | [26강](advanced/26-stored-procedures.md) | SQLite 미지원, DELIMITER(MySQL), PL/pgSQL(PG) |
 
 ---
 
@@ -295,8 +40,13 @@
 | 실수 | REAL | DECIMAL(12,2) | NUMERIC(12,2) | DECIMAL(12,2) | NUMBER(12,2) |
 | 짧은 문자열 | TEXT | VARCHAR(200) | VARCHAR(200) | NVARCHAR(200) | VARCHAR2(200) |
 | 긴 텍스트 | TEXT | TEXT | TEXT | NVARCHAR(MAX) | CLOB |
-| 날짜/시간 | TEXT (ISO 8601) | DATETIME | TIMESTAMP | DATETIME2 | DATE / TIMESTAMP |
+| 날짜/시간 | TEXT (ISO 8601) | DATETIME | TIMESTAMP | DATETIME2 | TIMESTAMP |
 | 불리언 | INTEGER (0/1) | TINYINT(1) | BOOLEAN | BIT | NUMBER(1) |
+| JSON | TEXT + json 함수 | JSON | JSONB | NVARCHAR(MAX) | CLOB |
+| 바이너리 | BLOB | BLOB | BYTEA | VARBINARY(MAX) | BLOB |
+| UUID | TEXT | CHAR(36) | UUID | UNIQUEIDENTIFIER | RAW(16) |
+
+> SQLite는 동적 타입 시스템을 사용합니다. 위 타입 이름은 "타입 친화도(affinity)"를 나타내며, 실제로는 어떤 값이든 저장할 수 있습니다.
 
 ---
 
@@ -306,96 +56,53 @@
 
 | DB | 문법 | 예시 |
 |----|------|------|
-| SQLite / MySQL | 백틱 또는 큰따옴표 | `` `order` `` 또는 `"order"` |
-| PostgreSQL | 큰따옴표 | `"order"` |
-| SQL Server | 대괄호 또는 큰따옴표 | `[order]` 또는 `"order"` |
+| SQLite | 큰따옴표 또는 백틱 | `"order"` 또는 `` `order` `` |
+| MySQL | 백틱 (기본) | `` `order` `` |
+| PostgreSQL | 큰따옴표 | `"order"` (대소문자 구분 활성화) |
+| SQL Server | 대괄호 | `[order]` |
 | Oracle | 큰따옴표 | `"ORDER"` (대소문자 구분 주의) |
+
+!!! tip "권장"
+    가능하면 예약어를 식별자로 사용하지 마세요. `order` 대신 `orders`, `user` 대신 `users`처럼 복수형을 쓰면 인용 부호 없이도 안전합니다.
 
 ---
 
-## UPSERT (INSERT or UPDATE)
+## 자동 증가 비교
 
-=== "SQLite"
+| DB | 문법 | 비고 |
+|----|------|------|
+| SQLite | `INTEGER PRIMARY KEY AUTOINCREMENT` | ROWID 기반, AUTOINCREMENT은 선택 |
+| MySQL | `INT AUTO_INCREMENT PRIMARY KEY` | 테이블당 하나, ENGINE=InnoDB |
+| PostgreSQL | `INTEGER GENERATED ALWAYS AS IDENTITY` | SQL 표준. SERIAL은 레거시 |
+| SQL Server | `INT IDENTITY(1,1) PRIMARY KEY` | |
+| Oracle | `NUMBER GENERATED ALWAYS AS IDENTITY` | 12c+. 이전: SEQUENCE + TRIGGER |
 
-    ```sql
-    INSERT INTO products (id, name, price)
-    VALUES (1, 'Keyboard', 89.99)
-    ON CONFLICT(id) DO UPDATE SET
-        name = excluded.name,
-        price = excluded.price;
-    ```
-
-=== "MySQL"
-
-    ```sql
-    INSERT INTO products (id, name, price)
-    VALUES (1, 'Keyboard', 89.99)
-    ON DUPLICATE KEY UPDATE
-        name = VALUES(name),
-        price = VALUES(price);
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    INSERT INTO products (id, name, price)
-    VALUES (1, 'Keyboard', 89.99)
-    ON CONFLICT (id) DO UPDATE SET
-        name = EXCLUDED.name,
-        price = EXCLUDED.price;
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    MERGE INTO products AS target
-    USING (VALUES (1, 'Keyboard', 89.99)) AS source(id, name, price)
-    ON target.id = source.id
-    WHEN MATCHED THEN
-        UPDATE SET name = source.name, price = source.price
-    WHEN NOT MATCHED THEN
-        INSERT (id, name, price) VALUES (source.id, source.name, source.price);
-    ```
-
-=== "Oracle"
-
-    ```sql
-    MERGE INTO products target
-    USING (SELECT 1 AS id, 'Keyboard' AS name, 89.99 AS price FROM DUAL) source
-    ON (target.id = source.id)
-    WHEN MATCHED THEN
-        UPDATE SET name = source.name, price = source.price
-    WHEN NOT MATCHED THEN
-        INSERT (id, name, price) VALUES (source.id, source.name, source.price);
-    ```
+자세한 내용: [16강 DDL](intermediate/16-ddl.md)
 
 ---
 
 ## MERGE 문
 
-`MERGE`는 ANSI SQL 표준으로, 한 문장에서 INSERT/UPDATE/DELETE를 조건부로 수행합니다. UPSERT보다 유연하지만, 모든 DB가 지원하지는 않습니다.
+`MERGE`는 ANSI SQL 표준으로, 한 문장에서 INSERT/UPDATE/DELETE를 조건부로 수행합니다.
 
-| DB | 지원 |
-|----|------|
-| SQLite | 미지원 (ON CONFLICT로 대체) |
-| MySQL | 미지원 (ON DUPLICATE KEY로 대체) |
-| PostgreSQL | 15+ (부분 지원), ON CONFLICT 권장 |
-| SQL Server | 2008+ (완전 지원) |
-| Oracle | 9i+ (완전 지원) |
+| DB | 지원 | 대체 문법 |
+|----|------|-----------|
+| SQLite | 미지원 | `ON CONFLICT` |
+| MySQL | 미지원 | `ON DUPLICATE KEY UPDATE` |
+| PostgreSQL | 15+ (부분) | `ON CONFLICT` 권장 |
+| SQL Server | 2008+ | 완전 지원 |
+| Oracle | 9i+ | 완전 지원 |
 
 === "SQL Server"
 
     ```sql
-    -- 소스 테이블의 데이터로 대상 테이블을 동기화
     MERGE INTO products AS target
     USING staging_products AS source
     ON target.sku = source.sku
     WHEN MATCHED AND source.is_active = 0 THEN
         DELETE
     WHEN MATCHED THEN
-        UPDATE SET
-            name = source.name,
-            price = source.price
+        UPDATE SET name = source.name, price = source.price
     WHEN NOT MATCHED THEN
         INSERT (sku, name, price)
         VALUES (source.sku, source.name, source.price);
@@ -408,236 +115,49 @@
     USING staging_products source
     ON (target.sku = source.sku)
     WHEN MATCHED THEN
-        UPDATE SET
-            name = source.name,
-            price = source.price
+        UPDATE SET name = source.name, price = source.price
     WHEN NOT MATCHED THEN
         INSERT (sku, name, price)
         VALUES (source.sku, source.name, source.price);
     ```
 
-> SQLite/MySQL/PostgreSQL 사용자는 `ON CONFLICT` / `ON DUPLICATE KEY`로 같은 결과를 얻을 수 있습니다. MERGE는 SQL Server/Oracle 환경에서만 사용합니다.
+UPSERT 상세: [15강 DML](intermediate/15-dml.md)
 
 ---
 
-## 윈도우 함수 지원
+## 기능 지원 버전 매트릭스
 
 | 기능 | SQLite | MySQL | PostgreSQL | SQL Server | Oracle |
 |------|--------|-------|------------|------------|--------|
-| ROW_NUMBER | 3.25+ | 8.0+ | 8.4+ | 2005+ | 8i+ |
-| RANK / DENSE_RANK | 3.25+ | 8.0+ | 8.4+ | 2005+ | 8i+ |
-| LAG / LEAD | 3.25+ | 8.0+ | 8.4+ | 2012+ | 8i+ |
-| NTILE | 3.25+ | 8.0+ | 8.4+ | 2005+ | 8i+ |
-| SUM/AVG OVER | 3.25+ | 8.0+ | 8.4+ | 2005+ | 8i+ |
-
-> 이 튜토리얼의 모든 윈도우 함수 쿼리는 위 최소 버전 이상에서 동작합니다.
-
----
-
-## CTE와 재귀 CTE
-
-| 기능 | SQLite | MySQL | PostgreSQL | SQL Server | Oracle |
-|------|--------|-------|------------|------------|--------|
-| WITH (CTE) | 3.8.3+ | 8.0+ | 8.4+ | 2005+ | 11gR2+ |
-| WITH RECURSIVE | 3.8.3+ | 8.0+ | 8.4+ | 2005+ | 11gR2+ |
-
-**재귀 키워드 차이:**
-
-=== "SQLite / MySQL / PostgreSQL"
-
-    ```sql
-    WITH RECURSIVE category_tree AS (
-        SELECT id, name, parent_id, 0 AS depth
-        FROM categories WHERE parent_id IS NULL
-        UNION ALL
-        SELECT c.id, c.name, c.parent_id, ct.depth + 1
-        FROM categories c
-        INNER JOIN category_tree ct ON c.parent_id = ct.id
-    )
-    SELECT * FROM category_tree;
-    ```
-
-=== "SQL Server / Oracle"
-
-    ```sql
-    -- RECURSIVE 키워드 불필요
-    WITH category_tree AS (
-        SELECT id, name, parent_id, 0 AS depth
-        FROM categories WHERE parent_id IS NULL
-        UNION ALL
-        SELECT c.id, c.name, c.parent_id, ct.depth + 1
-        FROM categories c
-        INNER JOIN category_tree ct ON c.parent_id = ct.id
-    )
-    SELECT * FROM category_tree;
-    ```
-
----
-
-## JSON 쿼리
-
-각 데이터베이스는 JSON 데이터를 다루는 고유한 함수를 제공합니다.
-
-=== "SQLite"
-
-    ```sql
-    SELECT name, JSON_EXTRACT(specs, '$.cpu') AS cpu
-    FROM products
-    WHERE specs IS NOT NULL;
-    ```
-
-=== "MySQL"
-
-    ```sql
-    SELECT name, JSON_EXTRACT(specs, '$.cpu') AS cpu
-    FROM products
-    WHERE specs IS NOT NULL;
-    -- 또는: specs->'$.cpu'
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    SELECT name, specs->>'cpu' AS cpu
-    FROM products
-    WHERE specs IS NOT NULL;
-    ```
-
----
-
-## 실행 계획 (EXPLAIN)
-
-쿼리 성능을 분석할 때 사용하는 실행 계획 확인 문법입니다.
-
-=== "SQLite"
-
-    ```sql
-    EXPLAIN QUERY PLAN
-    SELECT * FROM orders WHERE customer_id = 42;
-    ```
-
-=== "MySQL"
-
-    ```sql
-    EXPLAIN
-    SELECT * FROM orders WHERE customer_id = 42;
-    -- 또는: EXPLAIN ANALYZE (MySQL 8.0.18+)
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    EXPLAIN ANALYZE
-    SELECT * FROM orders WHERE customer_id = 42;
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    SET STATISTICS IO ON;
-    SELECT * FROM orders WHERE customer_id = 42;
-    -- 또는: SET SHOWPLAN_TEXT ON;
-    ```
-
----
-
-## 저장 프로시저
-
-반복적인 로직을 서버에 저장하여 호출하는 기능입니다. SQLite는 저장 프로시저를 지원하지 않습니다.
-
-=== "MySQL"
-
-    ```sql
-    DELIMITER //
-    CREATE PROCEDURE sp_example(IN p_id INT)
-    BEGIN
-        SELECT * FROM customers WHERE id = p_id;
-    END //
-    DELIMITER ;
-
-    CALL sp_example(42);
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    CREATE OR REPLACE FUNCTION sp_example(p_id INT)
-    RETURNS TABLE(name TEXT, email TEXT) AS $$
-    BEGIN
-        RETURN QUERY SELECT c.name, c.email
-        FROM customers c WHERE c.id = p_id;
-    END;
-    $$ LANGUAGE plpgsql;
-
-    SELECT * FROM sp_example(42);
-    ```
-
-=== "SQL Server"
-
-    ```sql
-    CREATE PROCEDURE sp_example @p_id INT
-    AS
-    BEGIN
-        SELECT * FROM customers WHERE id = @p_id;
-    END;
-
-    EXEC sp_example @p_id = 42;
-    ```
-
----
-
-## 트리거 문법
-
-데이터 변경 시 자동으로 실행되는 트리거의 문법 차이입니다. 자세한 내용은 [레슨 24](advanced/24-triggers.md)을 참고하세요.
-
-=== "SQLite"
-
-    ```sql
-    CREATE TRIGGER trg_example AFTER INSERT ON orders
-    BEGIN
-        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
-    END;
-    ```
-
-=== "MySQL"
-
-    ```sql
-    DELIMITER //
-    CREATE TRIGGER trg_example AFTER INSERT ON order_items
-    FOR EACH ROW
-    BEGIN
-        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
-    END //
-    DELIMITER ;
-    ```
-
-=== "PostgreSQL"
-
-    ```sql
-    CREATE OR REPLACE FUNCTION fn_example() RETURNS TRIGGER AS $$
-    BEGIN
-        UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;
-        RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;
-
-    CREATE TRIGGER trg_example AFTER INSERT ON order_items
-    FOR EACH ROW EXECUTE FUNCTION fn_example();
-    ```
+| 윈도우 함수 | 3.25+ | 8.0+ | 8.4+ | 2005+ | 8i+ |
+| CTE (WITH) | 3.8.3+ | 8.0+ | 8.4+ | 2005+ | 11gR2+ |
+| 재귀 CTE | 3.8.3+ | 8.0+ | 8.4+ | 2005+ | 11gR2+ |
+| JSON 함수 | 3.38+ | 5.7+ | 9.2+ | 2016+ | 12c+ |
+| FULL OUTER JOIN | 3.39+ | 미지원 | 지원 | 지원 | 지원 |
+| INTERSECT/EXCEPT | 3.34+ | 8.0.31+ | 지원 | 지원 | 지원 (MINUS) |
+| 부분 인덱스 | 3.8+ | 미지원 | 지원 | 지원 (필터) | 미지원 |
+| UPSERT | 3.24+ | 지원 | 9.5+ | MERGE | MERGE |
+| 저장 프로시저 | 미지원 | 지원 | 지원 | 지원 | 지원 |
+| 트리거 | 지원 | 지원 | 지원 | 지원 | 지원 |
+| SEQUENCE | 미지원 | 미지원 | 지원 | 지원 | 지원 |
 
 ---
 
 ## 튜토리얼 SQL 변환 체크리스트
 
-이 튜토리얼의 쿼리를 다른 DB에서 실행할 때 확인할 항목:
+이 튜토리얼의 SQLite 쿼리를 다른 DB에서 실행할 때 확인할 항목:
 
-| # | 확인 사항 | SQLite 원본 | 변환 대상 |
-|--:|-----------|-------------|-----------|
-| 1 | LIMIT/OFFSET | `LIMIT 10` | MSSQL/Oracle: `FETCH NEXT 10 ROWS ONLY` |
-| 2 | 날짜 추출 | `SUBSTR(ordered_at, 1, 7)` | MySQL: `DATE_FORMAT(ordered_at, '%Y-%m')` |
-| 3 | 경과 일수 | `JULIANDAY(a) - JULIANDAY(b)` | MySQL: `DATEDIFF(a, b)` |
-| 4 | 날짜 연산 | `DATE('now', '+30 days')` | PG: `CURRENT_DATE + INTERVAL '30 days'` |
-| 5 | IFNULL | `IFNULL(x, y)` | MSSQL: `ISNULL`, Oracle: `NVL`, 공통: `COALESCE` |
-| 6 | 문자열 연결 | `a \|\| b` | MySQL/MSSQL: `CONCAT(a, b)` |
-| 7 | 불리언 | `is_active = 1` | PG: `is_active = TRUE` |
-| 8 | 타입 캐스팅 | `CAST(x AS INTEGER)` | PG: `x::INTEGER`, Oracle: `TO_NUMBER(x)` |
+| # | 확인 사항 | SQLite 원본 | MySQL | PostgreSQL | SQL Server |
+|--:|-----------|-------------|-------|------------|------------|
+| 1 | 행 제한 | `LIMIT 10` | 동일 | 동일 | `FETCH NEXT 10 ROWS ONLY` |
+| 2 | 날짜 추출 | `SUBSTR(col, 1, 7)` | `DATE_FORMAT(col, '%Y-%m')` | `TO_CHAR(col, 'YYYY-MM')` | `FORMAT(col, 'yyyy-MM')` |
+| 3 | 경과 일수 | `JULIANDAY(a) - JULIANDAY(b)` | `DATEDIFF(a, b)` | `a::date - b::date` | `DATEDIFF(DAY, b, a)` |
+| 4 | 날짜 더하기 | `DATE('now', '+30 days')` | `DATE_ADD(NOW(), INTERVAL 30 DAY)` | `CURRENT_DATE + INTERVAL '30 days'` | `DATEADD(DAY, 30, GETDATE())` |
+| 5 | NULL 대체 | `IFNULL(x, y)` | `IFNULL(x, y)` | `COALESCE(x, y)` | `ISNULL(x, y)` |
+| 6 | 문자열 연결 | `a \|\| b` | `CONCAT(a, b)` | `a \|\| b` | `CONCAT(a, b)` |
+| 7 | 불리언 | `is_active = 1` | 동일 | `is_active = TRUE` | 동일 |
+| 8 | 타입 변환 | `CAST(x AS INTEGER)` | `CAST(x AS SIGNED)` | `x::integer` | `CAST(x AS INT)` |
+| 9 | 현재 시각 | `datetime('now')` | `NOW()` | `NOW()` | `GETDATE()` |
+| 10 | AUTOINCREMENT | `INTEGER PRIMARY KEY` | `INT AUTO_INCREMENT` | `GENERATED ALWAYS AS IDENTITY` | `INT IDENTITY(1,1)` |
+| 11 | 랜덤 | `RANDOM()` | `RAND()` | `RANDOM()` | `NEWID()` |
+| 12 | 정규표현식 | `GLOB '*[0-9]*'` | `REGEXP '[0-9]'` | `~ '[0-9]'` | `LIKE '%[0-9]%'` |
