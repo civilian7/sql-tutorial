@@ -128,18 +128,17 @@ nav:
       - "데이터 품질": exercises/intermediate-11-data-quality.md
 
     - 고급:
-      - "매출 분석": exercises/advanced-01-sales-analysis.md
-      - "고객 세분화": exercises/advanced-02-customer-segmentation.md
-      - "재고 관리": exercises/advanced-03-inventory.md
-      - "CS 성과 분석": exercises/advanced-04-cs-performance.md
-      - "실무 SQL 패턴": exercises/advanced-05-real-world-patterns.md
-      - "정규화 이해": exercises/advanced-06-normalization.md
-      - "비즈니스 시나리오": exercises/advanced-07-scenarios.md
-      - "쿼리 최적화": exercises/advanced-08-optimization.md
-      - "면접 대비": exercises/advanced-09-interview.md
-      - "고급 분석": exercises/advanced-10-analytics.md
+      - "윈도우 함수 실전": exercises/advanced-01-window-functions.md
+      - "CTE 활용": exercises/advanced-02-cte.md
+      - "EXISTS와 안티 패턴": exercises/advanced-03-exists-antipattern.md
+      - "DB 객체 설계": exercises/advanced-04-db-objects.md
+      - "JSON 활용": exercises/advanced-05-json.md
+      - "인덱스와 최적화": exercises/advanced-06-optimization.md
+      - "매출 분석": exercises/advanced-07-sales-analysis.md
+      - "고객/운영 분석": exercises/advanced-08-customer-ops.md
+      - "실무 SQL 패턴": exercises/advanced-09-patterns.md
+      - "면접 대비": exercises/advanced-10-interview.md
       - "도전 문제": exercises/advanced-11-challenge.md
-      - "실행 계획 분석": exercises/advanced-12-explain-plan.md
 
 plugins:
   - search
