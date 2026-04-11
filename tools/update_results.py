@@ -31,17 +31,33 @@ PG_MYSQL_KEYWORDS = [
 
 def run_query(conn, sql, limit=8):
     """Run a SQL query and return (cols, rows) or None on failure."""
-    try:
-        cur = conn.execute(sql)
-        if cur.description is None:
-            return None
-        cols = [desc[0] for desc in cur.description]
-        rows = cur.fetchmany(limit)
-        if not rows:
-            return None
-        return cols, rows
-    except Exception:
+    import signal, threading
+
+    result = [None]
+    error = [None]
+
+    def execute():
+        try:
+            cur = conn.execute(sql)
+            if cur.description is None:
+                return
+            cols = [desc[0] for desc in cur.description]
+            rows = cur.fetchmany(limit)
+            if rows:
+                result[0] = (cols, rows)
+        except Exception as e:
+            error[0] = e
+
+    t = threading.Thread(target=execute)
+    t.start()
+    t.join(timeout=15)  # 15 second timeout per query
+    if t.is_alive():
+        # Query still running — skip it
+        conn.interrupt()
+        t.join(timeout=2)
         return None
+
+    return result[0]
 
 
 def format_table(cols, rows, has_ellipsis=True):

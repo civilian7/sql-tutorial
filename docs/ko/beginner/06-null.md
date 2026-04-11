@@ -276,9 +276,9 @@ SELECT
 
     **결과 (예시):**
 
-    | name | department | role |
-    | ---------- | ---------- | ---------- |
-    | 한민재 | 경영 | admin |
+| name | department | role |
+| ---------- | ---------- | ---------- |
+| 한민재 | 경영 | admin |
 
 
 ### 문제 2
@@ -310,14 +310,14 @@ SELECT
 
     **결과 (예시):**
 
-    | name | price | stock_qty | price_per_unit |
-    | ---------- | ----------: | ----------: | ----------: |
-    | Razer Blade 18 블랙 | 3730900.0 | 107 | 34868.22429906542 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 | 3494.9899799599198 |
-    | 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 | 128.41225626740948 |
-    | Dell U2724D | 865000.0 | 337 | 2566.7655786350147 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 | 2744.0677966101694 |
-    | ... | ... | ... | ... |
+| name | price | stock_qty | price_per_unit |
+| ---------- | ----------: | ----------: | ----------: |
+| Razer Blade 18 블랙 | 3730900.0 | 107 | 34868.22429906542 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 | 3494.9899799599198 |
+| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 | 128.41225626740948 |
+| Dell U2724D | 865000.0 | 337 | 2566.7655786350147 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 | 2744.0677966101694 |
+| ... | ... | ... | ... |
 
 
 ### 문제 4
@@ -336,17 +336,17 @@ SELECT
 
     **결과 (예시):**
 
-    | name | email | created_at |
-    | ---------- | ---------- | ---------- |
-    | 윤준영 | user25@testmail.kr | 2016-02-03 04:18:52 |
-    | 이영식 | user43@testmail.kr | 2016-02-23 17:09:54 |
-    | 송서준 | user66@testmail.kr | 2016-05-07 02:57:58 |
-    | 김지우 | user77@testmail.kr | 2016-04-29 00:44:20 |
-    | 박아름 | user80@testmail.kr | 2016-08-13 13:52:58 |
-    | 김정훈 | user101@testmail.kr | 2016-04-07 22:00:58 |
-    | 이경수 | user107@testmail.kr | 2016-11-30 07:23:31 |
-    | 이옥순 | user113@testmail.kr | 2016-07-08 04:23:22 |
-    | ... | ... | ... |
+| name | email | created_at |
+| ---------- | ---------- | ---------- |
+| 윤준영 | user25@testmail.kr | 2016-02-03 04:18:52 |
+| 이영식 | user43@testmail.kr | 2016-02-23 17:09:54 |
+| 송서준 | user66@testmail.kr | 2016-05-07 02:57:58 |
+| 김지우 | user77@testmail.kr | 2016-04-29 00:44:20 |
+| 박아름 | user80@testmail.kr | 2016-08-13 13:52:58 |
+| 김정훈 | user101@testmail.kr | 2016-04-07 22:00:58 |
+| 이경수 | user107@testmail.kr | 2016-11-30 07:23:31 |
+| 이옥순 | user113@testmail.kr | 2016-07-08 04:23:22 |
+| ... | ... | ... |
 
 
 ### 문제 5
@@ -366,17 +366,17 @@ SELECT
 
     **결과 (예시):**
 
-    | order_number | status | notes |
-    | ---------- | ---------- | ---------- |
-    | ORD-20251211-413965 | pending | — |
-    | ORD-20251226-416837 | pending | — |
-    | ORD-20251231-417734 | pending | 파손 주의 부탁드립니다 |
-    | ORD-20251231-417737 | pending | — |
-    | ORD-20251231-417735 | pending | — |
-    | ORD-20251231-417677 | pending | — |
-    | ORD-20251231-417764 | pending | — |
-    | ORD-20251231-417730 | pending | — |
-    | ... | ... | ... |
+| order_number | status | notes |
+| ---------- | ---------- | ---------- |
+| ORD-20251211-413965 | pending | — |
+| ORD-20251226-416837 | pending | — |
+| ORD-20251231-417734 | pending | 파손 주의 부탁드립니다 |
+| ORD-20251231-417737 | pending | — |
+| ORD-20251231-417735 | pending | — |
+| ORD-20251231-417677 | pending | — |
+| ORD-20251231-417764 | pending | — |
+| ORD-20251231-417730 | pending | — |
+| ... | ... | ... |
 
 
 ### 문제 6
@@ -395,17 +395,17 @@ SELECT
 
     **결과 (예시):**
 
-    | grade | gender_status | customer_count |
-    | ---------- | ---------- | ----------: |
-    | BRONZE | F | 12614 |
-    | BRONZE | M | 21359 |
-    | BRONZE | Unknown | 4177 |
-    | GOLD | F | 1433 |
-    | GOLD | M | 3316 |
-    | GOLD | Unknown | 410 |
-    | SILVER | F | 1491 |
-    | SILVER | M | 3171 |
-    | ... | ... | ... |
+| grade | gender_status | customer_count |
+| ---------- | ---------- | ----------: |
+| BRONZE | F | 12614 |
+| BRONZE | M | 21359 |
+| BRONZE | Unknown | 4177 |
+| GOLD | F | 1433 |
+| GOLD | M | 3316 |
+| GOLD | Unknown | 410 |
+| SILVER | F | 1491 |
+| SILVER | M | 3171 |
+| ... | ... | ... |
 
 
 ### 문제 7
@@ -421,9 +421,9 @@ SELECT
 
     **결과 (예시):**
 
-    | not_cancelled | cancelled |
-    | ----------: | ----------: |
-    | 396785 | 21018 |
+| not_cancelled | cancelled |
+| ----------: | ----------: |
+| 396785 | 21018 |
 
 
 ### 문제 8
@@ -440,9 +440,9 @@ SELECT
 
     **결과 (예시):**
 
-    | total_products | missing_weight | pct_missing |
-    | ----------: | ----------: | ----------: |
-    | 2800 | 148 | 5.3 |
+| total_products | missing_weight | pct_missing |
+| ----------: | ----------: | ----------: |
+| 2800 | 148 | 5.3 |
 
 
 ### 문제 9
@@ -460,10 +460,10 @@ SELECT
 
     **결과 (예시):**
 
-    | content_status | review_count | avg_rating |
-    | ---------- | ----------: | ----------: |
-    | Has Content | 85770 | 3.902261863122304 |
-    | No Content | 9587 | 3.9105038072389693 |
+| content_status | review_count | avg_rating |
+| ---------- | ----------: | ----------: |
+| Has Content | 85770 | 3.902261863122304 |
+| No Content | 9587 | 3.9105038072389693 |
 
 
 ### 문제 10
@@ -481,9 +481,9 @@ SELECT
 
     **결과 (예시):**
 
-    | total_customers | missing_birth_date | missing_gender | never_logged_in |
-    | ----------: | ----------: | ----------: | ----------: |
-    | 52300 | 7793 | 5232 | 2686 |
+| total_customers | missing_birth_date | missing_gender | never_logged_in |
+| ----------: | ----------: | ----------: | ----------: |
+| 52300 | 7793 | 5232 | 2686 |
 
 
 
