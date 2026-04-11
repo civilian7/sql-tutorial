@@ -117,11 +117,15 @@ nav:
     - 중급:
       - "JOIN 마스터": exercises/intermediate-01-joins.md
       - "날짜/시간 분석": exercises/intermediate-02-dates.md
-      - "서브쿼리와 변환": exercises/intermediate-03-subqueries.md
-      - "제약조건 체험": exercises/intermediate-04-constraints.md
-      - "트랜잭션": exercises/intermediate-05-transactions.md
-      - "SQL 디버깅": exercises/intermediate-06-debugging.md
-      - "데이터 품질 점검": exercises/intermediate-07-data-quality.md
+      - "문자열/숫자 함수": exercises/intermediate-03-string-math.md
+      - "서브쿼리": exercises/intermediate-04-subqueries.md
+      - "집합 연산": exercises/intermediate-05-set-operations.md
+      - "DML 실습": exercises/intermediate-06-dml.md
+      - "DDL/제약조건": exercises/intermediate-07-ddl.md
+      - "트랜잭션": exercises/intermediate-08-transactions.md
+      - "종합 문제": exercises/intermediate-09-comprehensive.md
+      - "SQL 디버깅": exercises/intermediate-10-debugging.md
+      - "데이터 품질": exercises/intermediate-11-data-quality.md
 
     - 고급:
       - "매출 분석": exercises/advanced-01-sales-analysis.md
