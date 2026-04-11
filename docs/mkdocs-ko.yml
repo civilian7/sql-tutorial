@@ -107,9 +107,13 @@ nav:
     - exercises/index.md
     - 초급:
       - "상품 탐색": exercises/beginner-01-products.md
-      - "고객 분석": exercises/beginner-02-customers.md
-      - "주문 기초": exercises/beginner-03-orders.md
-      - "빈칸 채우기": exercises/beginner-04-fill-blanks.md
+      - "정렬과 페이징": exercises/beginner-02-sort-paging.md
+      - "집계 함수": exercises/beginner-03-aggregates.md
+      - "그룹화와 필터": exercises/beginner-04-group-by.md
+      - "NULL 처리": exercises/beginner-05-null.md
+      - "CASE 표현식": exercises/beginner-06-case.md
+      - "종합 문제": exercises/beginner-07-comprehensive.md
+      - "SQL 오류 찾기": exercises/beginner-08-debugging.md
     - 중급:
       - "JOIN 마스터": exercises/intermediate-01-joins.md
       - "날짜/시간 분석": exercises/intermediate-02-dates.md
