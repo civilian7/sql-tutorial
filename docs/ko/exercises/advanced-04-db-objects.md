@@ -286,10 +286,204 @@ SQLite의 시스템 카탈로그를 사용합니다.
     **결과 예시:**
 
     | name | type | sql |
-    |---|---|---|
-    | v_customer_dashboard | view | CREATE VIEW v_customer_dashboard AS ... |
-    | v_monthly_revenue | view | CREATE VIEW v_monthly_revenue AS ... |
-    | v_product_performance | view | CREATE VIEW v_product_performance AS ... |
+    | ---------- | ---------- | ---------- |
+    | v_cart_abandonment | view | CREATE VIEW v_cart_abandonment AS
+    SELECT
+        c.id AS cart_id,
+        cust.name AS customer_name,
+        cust.email,
+        c.status,
+        c.created_at,
+        COUNT(ci.id) AS item_count,
+        CAST(SUM(p.price * ci.quantity) AS INTEGER) AS potential_revenue,
+        GROUP_CONCAT(p.name, ', ') AS products
+    FROM carts c
+    JOIN customers cust ON c.customer_id = cust.id
+    JOIN cart_items ci ON c.id = ci.cart_id
+    JOIN products p ON ci.product_id = p.id
+    WHERE c.status = 'abandoned'
+    GROUP BY c.id |
+    | v_category_tree | view | CREATE VIEW v_category_tree AS
+    WITH RECURSIVE tree AS (
+        SELECT id, name, parent_id, depth,
+               name AS full_path,
+               CAST(printf('%04d', sort_order) AS TEXT) AS sort_key
+        FROM categories
+        WHERE parent_id IS NULL
+        UNION ALL
+        SELECT c.id, c.name, c.parent_id, c.depth,
+               tree.full_path || ' > ' || c.name,
+               tree.sort_key || '.' || printf('%04d', c.sort_order)
+        FROM categories c
+        JOIN tree ON c.parent_id = tree.id
+    )
+    SELECT t.id, t.name, t.parent_id, t.depth, t.full_path,
+           COALESCE(p.product_count, 0) AS product_count
+    FROM tree t
+    LEFT JOIN (
+        SELECT category_id, COUNT(*) AS product_count
+        FROM products
+        GROUP BY category_id
+    ) p ON t.id = p.category_id
+    ORDER BY t.sort_key |
+    | v_coupon_effectiveness | view | CREATE VIEW v_coupon_effectiveness AS
+    SELECT
+        cp.id AS coupon_id,
+        cp.code,
+        cp.name,
+        cp.type,
+        cp.discount_value,
+        cp.is_active,
+        COALESCE(u.usage_count, 0) AS usage_count,
+        cp.usage_limit,
+        COALESCE(u.total_discount, 0) AS total_discount_given,
+        COALESCE(u.total_order_revenue, 0) AS total_order_revenue,
+        CASE
+            WHEN COALESCE(u.total_discount, 0) > 0
+            THEN ROUND(u.total_order_revenue / u.total_discount, 1)
+            ELSE 0
+        END AS roi_ratio
+    FROM coupons cp
+    LEFT JOIN (
+        SELECT
+            cu.coupon_id,
+            COUNT(*) AS usage_count,
+            CAST(SUM(cu.discount_amount) AS INTEGER) AS total_discount,
+            CAST(SUM(o.total_amount) AS INTEGER) AS total_order_revenue
+        FROM coupon_usage cu
+        JOIN orders o ON cu.order_id = o.id
+        GROUP BY cu.coupon_id
+    ) u ON cp.id = u.coupon_id
+    ORDER BY COALESCE(u.usage_count, 0) DESC |
+    | v_customer_rfm | view | CREATE VIEW v_customer_rfm AS
+    WITH rfm_raw AS (
+        SELECT
+            c.id AS customer_id,
+            c.name,
+            c.grade,
+            CAST(julianday('2025-06-30') - julianday(MAX(o.ordered_at)) AS INTEGER) AS recency_days,
+            COUNT(o.id) AS frequency,
+            CAST(SUM(o.total_amount) AS INTEGER) AS monetary
+        FROM customers c
+        JOIN orders o ON c.id = o.customer_id
+        WHERE o.status NOT IN ('cancelled')
+        GROUP BY c.id
+    ),
+    rfm_scored AS (
+        SELECT *,
+            NTILE(5) OVER (ORDER BY recency_days ASC) AS r_score,   -- more recent = higher score
+            NTILE(5) OVER (ORDER BY frequency DESC) AS f_score,
+            NTILE(5) OVER (ORDER BY monetary DESC) AS m_score
+        FROM rfm_raw
+    )
+    SELECT
+        customer_id, name, grade,
+        recency_days, frequency, monetary,
+        r_score, f_score, m_score,
+        r_score + f_score + m_score AS rfm_total,
+        CASE
+            WHEN r_score >= 4 AND f_score >= 4 AND m_score >= 4 THEN 'Champions'
+            WHEN r_score >= 3 AND f_score >= 3 THEN 'Loyal'
+            WHEN r_score >= 4 AND f_score <= 2 THEN 'New Customers'
+            WHEN r_score <= 2 AND f_score >= 3 THEN 'At Risk'
+            WHEN r_score <= 2 AND f_score <= 2 THEN 'Lost'
+            ELSE 'Others'
+        END AS segment
+    FROM rfm_scored |
+    | v_customer_summary | view | CREATE VIEW v_customer_summary AS
+    SELECT
+        c.id,
+        c.name,
+        c.email,
+        c.grade,
+        c.gender,
+        CASE
+            WHEN c.birth_date IS NULL THEN NULL
+            ELSE CAST((julianday('2025-06-30') - julianday(c.birth_date)) / 365.25 AS INTEGER)
+        END AS age,
+        c.created_at AS joined_at,
+        COALESCE(os.order_count, 0) AS total_orders,
+        COALESCE(os.total_spent, 0) AS total_spent,
+        COALESCE(os.first_order, '') AS first_order_at,
+        COALESCE(os.last_order, '') AS last_order_at,
+        COALESCE(rv.review_count, 0) AS review_count,
+        COALESCE(rv.avg_rating, 0) AS avg_rating_given,
+        COALESCE(ws.wishlist_count, 0) AS wishlist_count,
+        c.is_active,
+        c.last_login_at,
+        CASE
+            WHEN c.is_active = 0 THEN 'inactive'
+            WHEN c.last_login_at IS NULL THEN 'never_logged_in'
+            WHEN c.last_login_at < DATE('2025-06-30', '-365 days') THEN 'dormant'
+            ELSE 'active'
+        END AS activity_status
+    FROM customers c
+    LEFT JOIN (
+        SELECT customer_id,
+               COUNT(*) AS order_count,
+               CAST(SUM(total_amount) AS INTEGER) AS total_spent,
+               MIN(ordered_at) AS first_order,
+               MAX(ordered_at) AS last_order
+        FROM orders
+        WHERE status NOT IN ('cancelled')
+        GROUP BY customer_id
+    ) os ON c.id = os.customer_id
+    LEFT JOIN (
+        SELECT customer_id,
+               COUNT(*) AS review_count,
+               ROUND(AVG(rating), 1) AS avg_rating
+        FROM reviews
+        GROUP BY customer_id
+    ) rv ON c.id = rv.customer_id
+    LEFT JOIN (
+        SELECT customer_id, COUNT(*) AS wishlist_count
+        FROM wishlists
+        GROUP BY customer_id
+    ) ws ON c.id = ws.customer_id |
+    | v_daily_orders | view | CREATE VIEW v_daily_orders AS
+    SELECT
+        DATE(ordered_at) AS order_date,
+        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+            WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
+            WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
+        END AS day_of_week,
+        COUNT(*) AS total_orders,
+        SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed,
+        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,
+        SUM(CASE WHEN status IN ('return_requested','returned') THEN 1 ELSE 0 END) AS returned,
+        CAST(SUM(CASE WHEN status != 'cancelled' THEN total_amount ELSE 0 END) AS INTEGER) AS revenue,
+        CAST(AVG(CASE WHEN status != 'cancelled' THEN total_amount END) AS INTEGER) AS avg_order_amount
+    FROM orders
+    GROUP BY DATE(ordered_at)
+    ORDER BY order_date |
+    | v_hourly_pattern | view | CREATE VIEW v_hourly_pattern AS
+    SELECT
+        CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) AS hour,
+        COUNT(*) AS order_count,
+        CAST(AVG(total_amount) AS INTEGER) AS avg_amount,
+        CASE
+            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 0 AND 5 THEN 'dawn'
+            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 6 AND 11 THEN 'morning'
+            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 12 AND 17 THEN 'afternoon'
+            ELSE 'evening'
+        END AS time_slot
+    FROM orders
+    WHERE status NOT IN ('cancelled')
+    GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
+    ORDER BY hour |
+    | v_monthly_sales | view | CREATE VIEW v_monthly_sales AS
+    SELECT
+        SUBSTR(o.ordered_at, 1, 7) AS month,               -- YYYY-MM
+        COUNT(DISTINCT o.id) AS order_count,                -- number of orders
+        COUNT(DISTINCT o.customer_id) AS customer_count,    -- unique buyers
+        CAST(SUM(o.total_amount) AS INTEGER) AS revenue,    -- total revenue
+        CAST(AVG(o.total_amount) AS INTEGER) AS avg_order,  -- average order value
+        SUM(o.discount_amount) AS total_discount            -- total discount
+    FROM orders o
+    WHERE o.status NOT IN ('cancelled')
+    GROUP BY SUBSTR(o.ordered_at, 1, 7)
+    ORDER BY month |
+    | ... | ... | ... |
 
     > `sql` 칼럼에 뷰의 전체 정의(DDL)가 저장되어 있습니다.
 
@@ -438,8 +632,41 @@ SQLite의 시스템 카탈로그를 사용합니다.
     **결과 예시:**
 
     | trigger_name | table_name | definition |
-    |---|---|---|
-    | *(기존 트리거가 있으면 표시됨)* | | |
+    | ---------- | ---------- | ---------- |
+    | trg_customers_updated_at | customers | CREATE TRIGGER trg_customers_updated_at
+    AFTER UPDATE ON customers
+    BEGIN
+        UPDATE customers SET updated_at = datetime('now') WHERE id = NEW.id;
+    END |
+    | trg_orders_updated_at | orders | CREATE TRIGGER trg_orders_updated_at
+    AFTER UPDATE OF status ON orders
+    BEGIN
+        UPDATE orders SET updated_at = datetime('now') WHERE id = NEW.id;
+    END |
+    | trg_product_price_history | products | CREATE TRIGGER trg_product_price_history
+    AFTER UPDATE OF price ON products
+    WHEN OLD.price != NEW.price
+    BEGIN
+        -- Close existing history record
+        UPDATE product_prices
+        SET ended_at = datetime('now')
+        WHERE product_id = NEW.id AND ended_at IS NULL;
+    
+        -- Insert new history record
+        INSERT INTO product_prices (product_id, price, started_at, ended_at, change_reason)
+        VALUES (NEW.id, NEW.price, datetime('now'), NULL, 'price_update');
+    END |
+    | trg_products_updated_at | products | CREATE TRIGGER trg_products_updated_at
+    AFTER UPDATE ON products
+    BEGIN
+        UPDATE products SET updated_at = datetime('now') WHERE id = NEW.id;
+    END |
+    | trg_reviews_updated_at | reviews | CREATE TRIGGER trg_reviews_updated_at
+    AFTER UPDATE OF rating, title, content ON reviews
+    BEGIN
+        UPDATE reviews SET updated_at = datetime('now') WHERE id = NEW.id;
+    END |
+    | ... | ... | ... |
 
     > 새로 생성한 DB에는 트리거가 없을 수 있습니다. 이후 문제에서 트리거를 생성합니다.
 
@@ -531,10 +758,9 @@ SQLite의 시스템 카탈로그를 사용합니다.
 
     **결과 예시 (재고 변화):**
 
-    | 시점 | id | name | stock_qty |
-    |---|---|---|---|
-    | 삽입 전 | 1 | Razer Blade 18 블랙 | 107 |
-    | 삽입 후 | 1 | Razer Blade 18 블랙 | 105 |
+    | id | name | stock_qty |
+    | ----------: | ---------- | ----------: |
+    | 1 | Razer Blade 18 블랙 | 107 |
 
     > 실제 운영에서는 재고 부족 검증도 함께 구현해야 합니다.
 
@@ -643,9 +869,10 @@ SQLite의 시스템 카탈로그를 사용합니다.
     **결과 예시:**
 
     | id | product_id | price | started_at | ended_at | change_reason |
-    |---|---|---|---|---|---|
-    | 501 | 1 | 2800000 | 2025-12-15 ... | NULL | price_drop |
-    | 234 | 1 | 2987500 | 2024-06-01 ... | 2025-12-15 ... | regular |
+    | ----------: | ----------: | ----------: | ---------- | ---------- | ---------- |
+    | 5 | 1 | 3730900.0 | 2026-01-09 19:55:26 | (NULL) | cost_increase |
+    | 4 | 1 | 3587300.0 | 2025-12-10 19:55:26 | 2026-01-09 19:55:26 | promotion |
+    | 3 | 1 | 4337400.0 | 2025-05-24 11:34:31 | 2025-12-10 19:55:26 | cost_increase |
 
 ---
 
@@ -797,10 +1024,10 @@ SQLite의 시스템 카탈로그를 사용합니다.
     **결과 예시:**
 
     | type | object_count |
-    |---|---|
-    | table | 30 |
-    | view | 3 |
-    | index | 25 |
+    | ---------- | ----------: |
+    | table | 31 |
+    | view | 18 |
+    | index | 72 |
     | trigger | 5 |
 
 ---
