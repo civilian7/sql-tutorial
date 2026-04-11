@@ -830,19 +830,51 @@ ORDER BY c.date_key;
     | ...    | ...      | ...         |
 
 
-!!! tip "채점 기준"
-    | 기준 | 배점 |
-    |------|------|
-    | 연습 1: SELF JOIN + LEFT JOIN 조직도 (매니저 NULL 포함) | 11점 |
-    | 연습 2: SELF JOIN + `id < id` 중복 쌍 제거 | 11점 |
-    | 연습 3: SELF JOIN + 등급 조건 + LIMIT | 11점 |
-    | 연습 4: SELF JOIN + ABS 가격 차이 계산 | 11점 |
-    | 연습 5: SELF JOIN + 같은 고객 서로 다른 주소 | 12점 |
-    | 연습 6: CROSS JOIN 서브쿼리 + 비율 계산 | 11점 |
-    | 연습 7: CROSS JOIN + CTE + LEFT JOIN 매트릭스 보고서 | 11점 |
-    | 연습 8: CROSS JOIN + LEFT JOIN 월-공급업체 보고서 | 11점 |
-    | 연습 9: CROSS JOIN + LEFT JOIN 등급-카테고리 보고서 | 11점 |
-    | **합계** | **100점** |
+### 연습 10: 카테고리 부모-자식 관계
+
+`categories` 테이블을 SELF JOIN하여 부모 카테고리명(`parent_name`)과 자식 카테고리명(`child_name`)을 조회하세요. 부모가 없는 최상위 카테고리의 `parent_name`은 `'(최상위)'`로 표시합니다.
+
+??? success "정답"
+    ```sql
+    SELECT
+        COALESCE(parent.name, '(최상위)') AS parent_name,
+        child.name                       AS child_name,
+        child.depth
+    FROM categories AS child
+    LEFT JOIN categories AS parent ON child.parent_id = parent.id
+    ORDER BY parent.name, child.name;
+    ```
+
+    **결과 (예시):**
+
+    | parent_name | child_name | depth |
+    | ----------- | ---------- | ----: |
+    | (최상위)       | CPU        |     0 |
+    | (최상위)       | UPS/전원     |     0 |
+    | (최상위)       | 그래픽카드      |     0 |
+    | CPU         | AMD        |     1 |
+    | CPU         | Intel      |     1 |
+    | ...         | ...        | ...   |
+
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [18강: 윈도우 함수](../advanced/18-window.md)로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [16강: 트랜잭션](16-transactions.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| SELF JOIN 조직도/계층 | 1, 10 |
+| SELF JOIN 중복 쌍 제거 (id < id) | 2, 3, 4 |
+| SELF JOIN 주소 비교 | 5 |
+| CROSS JOIN + 비율 계산 | 6 |
+| CROSS JOIN + CTE + LEFT JOIN 매트릭스 | 7, 8, 9 |
 
 ---
 다음: [18강: 윈도우 함수](../advanced/18-window.md)

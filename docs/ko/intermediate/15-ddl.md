@@ -912,65 +912,26 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
         ```
 
 
-### 연습 11
-CTAS(CREATE TABLE AS SELECT)를 사용하여 `order_totals_by_month` 테이블을 만드세요. 포함할 칼럼: 주문 연도, 주문 월, 주문 건수, 총 매출. 기존 `orders` 테이블을 사용합니다.
+### 채점 가이드
 
-??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TABLE order_totals_by_month AS
-        SELECT
-            strftime('%Y', ordered_at)    AS order_year,
-            strftime('%m', ordered_at)    AS order_month,
-            COUNT(*)                      AS order_count,
-            ROUND(SUM(total_amount), 2)   AS total_revenue
-        FROM orders
-        GROUP BY strftime('%Y', ordered_at),
-                 strftime('%m', ordered_at);
-        ```
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [16강: 트랜잭션](16-transactions.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [14강: DML](14-dml.md)부터 다시 시작하세요 |
 
-    === "MySQL"
-        ```sql
-        CREATE TABLE order_totals_by_month AS
-        SELECT
-            YEAR(ordered_at)              AS order_year,
-            MONTH(ordered_at)             AS order_month,
-            COUNT(*)                      AS order_count,
-            ROUND(SUM(total_amount), 2)   AS total_revenue
-        FROM orders
-        GROUP BY YEAR(ordered_at),
-                 MONTH(ordered_at);
-        ```
+**문제별 영역:**
 
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE order_totals_by_month AS
-        SELECT
-            EXTRACT(YEAR FROM ordered_at)::INTEGER  AS order_year,
-            EXTRACT(MONTH FROM ordered_at)::INTEGER AS order_month,
-            COUNT(*)::INTEGER                       AS order_count,
-            ROUND(SUM(total_amount), 2)             AS total_revenue
-        FROM orders
-        GROUP BY EXTRACT(YEAR FROM ordered_at),
-                 EXTRACT(MONTH FROM ordered_at);
-        ```
-
-
-!!! tip "채점 기준"
-    | 기준 | 배점 |
-    |------|------|
-    | 연습 1: CREATE TABLE + 자동 증가 PK + NOT NULL/UNIQUE/DEFAULT 제약 | 9점 |
-    | 연습 2: ALTER TABLE ADD COLUMN + RENAME COLUMN | 9점 |
-    | 연습 3: 복합 기본 키 + CHECK 제약 + DEFAULT 현재 시각 | 9점 |
-    | 연습 4: DELETE vs TRUNCATE 차이 설명 + DB별 구문 | 9점 |
-    | 연습 5: CREATE TABLE + CHECK + FOREIGN KEY | 9점 |
-    | 연습 6: 기존 DDL 문제점 식별 + 수정 (PK, NOT NULL, CHECK, FK) | 9점 |
-    | 연습 7: DROP TABLE IF EXISTS | 9점 |
-    | 연습 8: FOREIGN KEY ON DELETE CASCADE/SET NULL 조합 | 9점 |
-    | 연습 9: CTAS + ALTER TABLE ADD COLUMN | 10점 |
-    | 연습 10: 종합 CREATE TABLE (PK, FK, CHECK, DEFAULT) | 9점 |
-    | 연습 11: CTAS + GROUP BY 요약 테이블 생성 | 9점 |
-    | **합계** | **100점** |
+| 영역 | 해당 문제 |
+|------|:--------:|
+| CREATE TABLE + 제약조건 | 1, 3, 5, 10 |
+| ALTER TABLE (ADD/RENAME) | 2 |
+| DELETE vs TRUNCATE | 4 |
+| DDL 문제점 식별 + 수정 | 6 |
+| DROP TABLE IF EXISTS | 7 |
+| FOREIGN KEY ON DELETE 옵션 | 8 |
+| CTAS (CREATE TABLE AS SELECT) | 9 |
 
 ---
 다음: [16강: 트랜잭션과 ACID](16-transactions.md)

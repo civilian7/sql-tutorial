@@ -75,7 +75,7 @@ nav:
     - "06. NULL 처리": beginner/06-null.md
   - 중급:
     - "07. INNER JOIN": intermediate/07-inner-join.md
-    - "08. LEFT JOIN": intermediate/08-left-join.md
+    - "08. LEFT JOIN과 외부 조인": intermediate/08-left-join.md
     - "09. 서브쿼리": intermediate/09-subqueries.md
     - "10. CASE 표현식": intermediate/10-case.md
     - "11. 날짜/시간 함수": intermediate/11-datetime.md

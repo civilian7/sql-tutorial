@@ -1,4 +1,4 @@
-# 8강: LEFT JOIN
+# 8강: LEFT JOIN과 외부 조인
 
 7강에서 INNER JOIN으로 두 테이블을 연결했습니다. 하지만 INNER JOIN은 양쪽 모두에 데이터가 있는 행만 반환합니다. '주문이 없는 고객'이나 '리뷰가 없는 상품'을 찾으려면? LEFT JOIN을 사용합니다.
 
@@ -8,29 +8,31 @@
 `LEFT JOIN`은 **왼쪽 테이블의 모든 행**을 반환하고, 오른쪽 테이블에서 일치하는 행이 있으면 함께 가져옵니다. 일치하는 행이 없으면 오른쪽 칼럼은 `NULL`로 채워집니다. 관련 레코드가 없는 행을 찾을 때 꼭 필요한 기법으로, 실무에서 매우 자주 쓰입니다.
 
 ```mermaid
-flowchart LR
-    subgraph "customers (LEFT)"
-        C1["ID:1 Kim"]
-        C2["ID:2 Lee"]
-        C3["ID:3 Park"]
+flowchart TD
+    subgraph customers["customers (LEFT)"]
+        C1["Kim · ID:1"]
+        C2["Lee · ID:2"]
+        C3["Park · ID:3"]
     end
-    subgraph "orders (RIGHT)"
-        O1["Cust:1 ORD-001"]
-        O3["Cust:2 ORD-003"]
+    subgraph orders["orders (RIGHT)"]
+        O1["ORD-001 · customer_id:1"]
+        O3["ORD-003 · customer_id:2"]
     end
-    subgraph "LEFT JOIN Result"
-        R1["Kim + ORD-001"]
-        R2["Lee + ORD-003"]
-        R3["Park + NULL"]
+    subgraph result["LEFT JOIN 결과"]
+        R1["Kim + ORD-001"]:::matched
+        R2["Lee + ORD-003"]:::matched
+        R3["Park + NULL"]:::kept
     end
     C1 --> R1
     C2 --> R2
     C3 --> R3
-    O1 --> R1
-    O3 --> R2
+    O1 -.-> R1
+    O3 -.-> R2
+    classDef matched fill:#c8e6c9,stroke:#43a047
+    classDef kept fill:#fff9c4,stroke:#f9a825
 ```
 
-> LEFT JOIN은 왼쪽 테이블의 모든 행을 유지합니다. 오른쪽에 매칭이 없으면 NULL로 채워집니다.
+> **LEFT JOIN**은 왼쪽 테이블의 모든 행을 유지합니다. 오른쪽에 매칭이 없으면 NULL로 채워집니다.
 
 ![LEFT JOIN](../img/join-left.svg){ .off-glb width="300"  }
 
@@ -191,26 +193,28 @@ LIMIT 5;
 `RIGHT JOIN`은 LEFT JOIN의 반대입니다. **오른쪽 테이블의 모든 행**을 유지하고, 왼쪽 테이블에서 일치하는 행이 없으면 `NULL`로 채웁니다.
 
 ```mermaid
-flowchart LR
-    subgraph "orders (LEFT)"
-        O1["Cust:1 ORD-001"]
-        O3["Cust:2 ORD-003"]
+flowchart TD
+    subgraph orders["orders (LEFT)"]
+        O1["ORD-001 · customer_id:1"]
+        O3["ORD-003 · customer_id:2"]
     end
-    subgraph "customers (RIGHT)"
-        C1["ID:1 Kim"]
-        C2["ID:2 Lee"]
-        C3["ID:3 Park"]
+    subgraph customers["customers (RIGHT)"]
+        C1["Kim · ID:1"]
+        C2["Lee · ID:2"]
+        C3["Park · ID:3"]
     end
-    subgraph "RIGHT JOIN Result"
-        R1["ORD-001 + Kim"]
-        R2["ORD-003 + Lee"]
-        R3["NULL + Park"]
+    subgraph result["RIGHT JOIN 결과"]
+        R1["ORD-001 + Kim"]:::matched
+        R2["ORD-003 + Lee"]:::matched
+        R3["NULL + Park"]:::kept
     end
     O1 --> R1
     O3 --> R2
-    C1 --> R1
-    C2 --> R2
+    C1 -.-> R1
+    C2 -.-> R2
     C3 --> R3
+    classDef matched fill:#c8e6c9,stroke:#43a047
+    classDef kept fill:#fff9c4,stroke:#f9a825
 ```
 
 ```sql
@@ -250,29 +254,31 @@ LIMIT 10;
 `FULL OUTER JOIN`은 **양쪽 테이블의 모든 행**을 유지합니다. 어느 쪽에서든 매칭이 안 되면 `NULL`로 채워집니다. 주문이 없는 고객과 고객 정보가 없는 주문을 동시에 확인할 때 유용합니다.
 
 ```mermaid
-flowchart LR
-    subgraph "customers"
-        C1["ID:1 Kim"]
-        C2["ID:2 Lee"]
-        C3["ID:3 Park"]
+flowchart TD
+    subgraph customers["customers"]
+        C1["Kim · ID:1"]
+        C2["Lee · ID:2"]
+        C3["Park · ID:3"]
     end
-    subgraph "orders"
-        O1["Cust:1 ORD-001"]
-        O2["Cust:2 ORD-003"]
-        O4["Cust:99 ORD-007"]
+    subgraph orders["orders"]
+        O1["ORD-001 · customer_id:1"]
+        O2["ORD-003 · customer_id:2"]
+        O4["ORD-007 · customer_id:99"]
     end
-    subgraph "FULL OUTER JOIN Result"
-        R1["Kim + ORD-001"]
-        R2["Lee + ORD-003"]
-        R3["Park + NULL"]
-        R4["NULL + ORD-007"]
+    subgraph result["FULL OUTER JOIN 결과"]
+        R1["Kim + ORD-001"]:::matched
+        R2["Lee + ORD-003"]:::matched
+        R3["Park + NULL"]:::kept
+        R4["NULL + ORD-007"]:::kept
     end
     C1 --> R1
     C2 --> R2
     C3 --> R3
-    O1 --> R1
-    O2 --> R2
+    O1 -.-> R1
+    O2 -.-> R2
     O4 --> R4
+    classDef matched fill:#c8e6c9,stroke:#43a047
+    classDef kept fill:#fff9c4,stroke:#f9a825
 ```
 
 FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
@@ -668,20 +674,26 @@ FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
     | ...           | ...                  | ...            |
 
 
-!!! tip "채점 기준"
-    | 기준 | 배점 |
-    |------|------|
-    | 연습 1: FULL OUTER JOIN + COALESCE 대체 표시 | 10점 |
-    | 연습 2: LEFT JOIN + WHERE IS NULL 안티 조인 | 10점 |
-    | 연습 3: LEFT JOIN + 복합 WHERE 조건 안티 조인 | 10점 |
-    | 연습 4: LEFT JOIN + COUNT + GROUP BY 집계 | 10점 |
-    | 연습 5: RIGHT JOIN + COUNT + GROUP BY | 10점 |
-    | 연습 6: LEFT JOIN + ON 조건 + COALESCE 집계 | 10점 |
-    | 연습 7: LEFT JOIN + SUM/COUNT(DISTINCT) 집계 | 10점 |
-    | 연습 8: 다중 LEFT JOIN + COALESCE 대체 표시 | 10점 |
-    | 연습 9: LEFT JOIN + 서브쿼리 ON 조건 | 10점 |
-    | 연습 10: LEFT JOIN 안티 조인 + INNER JOIN 조합 | 10점 |
-    | **합계** | **100점** |
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [9강: 서브쿼리](09-subqueries.md)로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [7강: INNER JOIN](07-inner-join.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| FULL OUTER JOIN + COALESCE | 1 |
+| 안티 조인 (LEFT JOIN + IS NULL) | 2, 3 |
+| LEFT JOIN + 집계 | 4, 6, 7 |
+| RIGHT JOIN | 5 |
+| 다중 LEFT JOIN + COALESCE | 8 |
+| LEFT JOIN + 서브쿼리 | 9 |
+| 안티 조인 + INNER JOIN 조합 | 10 |
 
 ---
 다음: [9강: 서브쿼리](09-subqueries.md)

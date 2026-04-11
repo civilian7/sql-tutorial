@@ -535,19 +535,49 @@ LIMIT 8;
     | ...         | ...         |
 
 
-!!! tip "채점 기준"
-    | 기준 | 배점 |
-    |------|------|
-    | 연습 1: NOT IN 서브쿼리로 미결제 주문 조회 | 10점 |
-    | 연습 2: WHERE 스칼라 서브쿼리 (평균 비교) | 10점 |
-    | 연습 3: SELECT 절 스칼라 서브쿼리 | 12점 |
-    | 연습 4: 상관 서브쿼리 (카테고리별 평균 비교) | 14점 |
-    | 연습 5: IN + NOT IN 조합 | 12점 |
-    | 연습 6: FROM 서브쿼리 + JOIN | 12점 |
-    | 연습 7: IN 서브쿼리 (다중 JOIN 포함) | 10점 |
-    | 연습 8: FROM 서브쿼리 + JOIN + 정렬 | 10점 |
-    | 연습 9: 중첩 FROM 서브쿼리 + 스칼라 서브쿼리 | 10점 |
-    | **합계** | **100점** |
+### 연습 10
+가장 최근 주문한 고객 5명의 이름, 이메일, 마지막 주문일을 구하세요. `FROM` 서브쿼리로 고객별 최신 주문일(`last_order`)을 먼저 구하고, 외부 쿼리에서 `customers` 테이블과 조인하세요. `last_order` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.name,
+        c.email,
+        recent.last_order
+    FROM (
+        SELECT
+            customer_id,
+            MAX(ordered_at) AS last_order
+        FROM orders
+        GROUP BY customer_id
+    ) AS recent
+    INNER JOIN customers AS c ON recent.customer_id = c.id
+    ORDER BY recent.last_order DESC
+    LIMIT 5;
+    ```
+
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [10강: CASE 표현식](10-case.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [8강: LEFT JOIN](08-left-join.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| NOT IN 서브쿼리 | 1 |
+| WHERE 스칼라 서브쿼리 | 2 |
+| SELECT 스칼라 서브쿼리 | 3 |
+| 상관 서브쿼리 | 4 |
+| IN + NOT IN 조합 | 5 |
+| FROM 서브쿼리 (파생 테이블) | 6, 8, 10 |
+| IN 서브쿼리 + JOIN | 7 |
+| 중첩 서브쿼리 | 9 |
 
 ---
 다음: [10강: CASE 표현식](10-case.md)

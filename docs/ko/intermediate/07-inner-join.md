@@ -8,31 +8,33 @@
 `JOIN`은 관련 칼럼을 기준으로 두 개 이상의 테이블 행을 합칩니다. `INNER JOIN`은 **양쪽** 테이블에서 모두 일치하는 행만 반환합니다 — 일치하지 않는 행은 결과에서 제외됩니다.
 
 ```mermaid
-flowchart LR
-    subgraph "customers"
-        C1["ID:1 Kim"]
-        C2["ID:2 Lee"]
-        C3["ID:3 Park"]
+flowchart TD
+    subgraph customers["customers"]
+        C1["Kim · ID:1"]
+        C2["Lee · ID:2"]
+        C3["Park · ID:3"]:::excluded
     end
-    subgraph "orders"
-        O1["Cust:1 ORD-001"]
-        O2["Cust:1 ORD-002"]
-        O3["Cust:2 ORD-003"]
+    subgraph orders["orders"]
+        O1["ORD-001 · customer_id:1"]
+        O2["ORD-002 · customer_id:1"]
+        O3["ORD-003 · customer_id:2"]
     end
-    subgraph "INNER JOIN Result"
-        R1["Kim + ORD-001"]
-        R2["Kim + ORD-002"]
-        R3["Lee + ORD-003"]
+    subgraph result["INNER JOIN 결과"]
+        R1["Kim + ORD-001"]:::matched
+        R2["Kim + ORD-002"]:::matched
+        R3["Lee + ORD-003"]:::matched
     end
     C1 --> R1
     C1 --> R2
     C2 --> R3
-    O1 --> R1
-    O2 --> R2
-    O3 --> R3
+    O1 -.-> R1
+    O2 -.-> R2
+    O3 -.-> R3
+    classDef excluded fill:#ffcdd2,stroke:#e57373,stroke-dasharray: 5 5
+    classDef matched fill:#c8e6c9,stroke:#43a047
 ```
 
-> INNER JOIN은 양쪽 테이블에 모두 매칭되는 행만 반환합니다. Park(ID:3)은 주문이 없어 결과에서 제외됩니다.
+> **INNER JOIN**은 양쪽 테이블에 모두 매칭되는 행만 반환합니다. Park(ID:3)은 주문이 없어 결과에서 제외됩니다.
 
 ![INNER JOIN](../img/join-inner.svg){ .off-glb width="300"  }
 
@@ -391,18 +393,62 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
-!!! tip "채점 기준"
-    | 기준 | 배점 |
-    |------|------|
-    | 연습 1: 3개 테이블 JOIN + 정렬 + LIMIT | 12점 |
-    | 연습 2: JOIN + COUNT(DISTINCT) + GROUP BY | 12점 |
-    | 연습 3: JOIN + 상태 필터 + SUM/COUNT 집계 | 14점 |
-    | 연습 4: 2개 테이블 JOIN + WHERE 필터 + 정렬 | 12점 |
-    | 연습 5: shipping-orders JOIN + WHERE 필터 | 12점 |
-    | 연습 6: 3개 테이블 JOIN + 정렬 | 12점 |
-    | 연습 7: 3개 테이블 JOIN + COUNT(DISTINCT) + SUM 집계 | 14점 |
-    | 연습 8: JOIN + 상태 필터 + GROUP BY 집계 | 12점 |
-    | **합계** | **100점** |
+### 연습 9
+리뷰(`reviews`)를 작성한 고객의 이름(`customers.name`)과 리뷰 대상 상품명(`products.name`), 평점(`rating`), 리뷰 작성일(`reviews.created_at`)을 조회하세요. 평점이 5인 리뷰만 대상으로 하고, `reviews.created_at` 내림차순으로 정렬하여 10행으로 제한하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.name        AS customer_name,
+        p.name        AS product_name,
+        r.rating,
+        r.created_at
+    FROM reviews AS r
+    INNER JOIN customers AS c ON r.customer_id = c.id
+    INNER JOIN products  AS p ON r.product_id  = p.id
+    WHERE r.rating = 5
+    ORDER BY r.created_at DESC
+    LIMIT 10;
+    ```
+
+
+### 연습 10
+카테고리별로 해당 카테고리 상품의 총 주문 금액(`total_revenue`)과 주문 건수(`order_count`)를 구하세요. `categories.name`, `order_count`, `total_revenue`를 반환하고, 최상위 카테고리(`depth = 0`)만 대상으로 합니다. `total_revenue` 내림차순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        cat.name       AS category_name,
+        COUNT(DISTINCT o.id) AS order_count,
+        SUM(oi.quantity * oi.unit_price) AS total_revenue
+    FROM order_items AS oi
+    INNER JOIN orders     AS o   ON oi.order_id   = o.id
+    INNER JOIN products   AS p   ON oi.product_id = p.id
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    WHERE cat.depth = 0
+    ORDER BY total_revenue DESC;
+    ```
+
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [8강: LEFT JOIN](08-left-join.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [6강: NULL](../beginner/06-null.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| 다중 테이블 JOIN | 1, 6 |
+| JOIN + 집계 (COUNT/SUM) | 2, 7 |
+| JOIN + 상태 필터 + 집계 | 3, 8 |
+| 2개 테이블 JOIN + WHERE 필터 | 4, 5 |
+| 3개 테이블 JOIN + WHERE 필터 | 9 |
+| JOIN + GROUP BY + 집계 | 10 |
 
 ---
 다음: [8강: LEFT JOIN](08-left-join.md)

@@ -532,19 +532,63 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     | ...          | ...          | ...            |
 
 
-!!! tip "채점 기준"
-    | 기준 | 배점 |
-    |------|------|
-    | 연습 1: UNION으로 두 등급 합치기 | 8점 |
-    | 연습 2: UNION으로 상품+카테고리 이름 합치기 | 8점 |
-    | 연습 3: UNION ALL + 날짜 필터 + 정렬 | 12점 |
-    | 연습 4: UNION ALL로 리뷰+Q&A 합치기 | 10점 |
-    | 연습 5: UNION ALL로 합계 행 추가 | 12점 |
-    | 연습 6: UNION ALL + sort_key 정렬 제어 | 10점 |
-    | 연습 7: UNION ALL + 서브쿼리 집계 | 14점 |
-    | 연습 8: UNION ALL + 서브쿼리 + 윈도우 함수 | 14점 |
-    | 연습 9: UNION ALL + 서브쿼리 + JOIN + CASE | 12점 |
-    | **합계** | **100점** |
+### 연습 10
+각 공급업체별로 "최고가 상품"과 "최저가 상품"을 한 목록으로 합치세요. `UNION ALL`을 사용하고, `price_type`('최고가' 또는 '최저가'), `company_name`, `product_name`, `price`를 포함하세요. `company_name`, `price_type` 순으로 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        '최고가' AS price_type,
+        s.company_name,
+        p.name  AS product_name,
+        p.price
+    FROM products AS p
+    INNER JOIN suppliers AS s ON p.supplier_id = s.id
+    WHERE p.is_active = 1
+      AND p.price = (
+          SELECT MAX(p2.price)
+          FROM products AS p2
+          WHERE p2.supplier_id = p.supplier_id AND p2.is_active = 1
+      )
+
+    UNION ALL
+
+    SELECT
+        '최저가' AS price_type,
+        s.company_name,
+        p.name  AS product_name,
+        p.price
+    FROM products AS p
+    INNER JOIN suppliers AS s ON p.supplier_id = s.id
+    WHERE p.is_active = 1
+      AND p.price = (
+          SELECT MIN(p2.price)
+          FROM products AS p2
+          WHERE p2.supplier_id = p.supplier_id AND p2.is_active = 1
+      )
+
+    ORDER BY company_name, price_type;
+    ```
+
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [14강: DML](14-dml.md)로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [12강: 문자열 함수](12-string.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| UNION 기본 (중복 제거) | 1, 2 |
+| UNION ALL + 서로 다른 테이블 합치기 | 3, 4 |
+| UNION ALL + 합계 행 (롤업) | 5, 6 |
+| UNION ALL + 서브쿼리 집계 | 7, 8, 9 |
+| UNION ALL + 상관 서브쿼리 | 10 |
 
 ---
 다음: [14강: INSERT, UPDATE, DELETE](14-dml.md)

@@ -229,6 +229,186 @@ FROM products
 WHERE LENGTH(name) != LENGTH(TRIM(name));
 ```
 
+## NULL과 문자열 연결
+
+문자열 연결에서 가장 흔한 실수: **한쪽이 NULL이면 결과 전체가 NULL**입니다.
+
+```sql
+-- birth_date가 NULL인 고객이면 contact_info도 NULL!
+SELECT
+    name || ' (' || birth_date || ')' AS contact_info
+FROM customers
+LIMIT 5;
+```
+
+| contact_info         |
+| -------------------- |
+| 정준호 (1988-03-15)    |
+| (NULL)               |
+| 김민재 (1995-07-22)    |
+| ...                  |
+
+`COALESCE`로 NULL을 대체 문자열로 바꿔야 합니다.
+
+=== "SQLite / PostgreSQL"
+    ```sql
+    SELECT
+        name || ' (' || COALESCE(birth_date, '미입력') || ')' AS contact_info
+    FROM customers
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- MySQL의 CONCAT()은 NULL이 있어도 NULL을 반환
+    SELECT
+        CONCAT(name, ' (', COALESCE(birth_date, '미입력'), ')') AS contact_info
+    FROM customers
+    LIMIT 5;
+
+    -- CONCAT_WS()는 NULL을 건너뜀 (구분자 지정)
+    SELECT
+        CONCAT_WS(' | ', name, phone, email) AS contact_info
+    FROM customers
+    LIMIT 5;
+    ```
+
+> **규칙:** 문자열 연결 시 NULL이 될 수 있는 칼럼에는 항상 `COALESCE(col, '기본값')`을 씌우세요. MySQL의 `CONCAT_WS()`는 NULL을 자동으로 건너뛰므로 편리합니다.
+
+## LPAD, RPAD — 고정 폭 패딩
+
+문자열을 지정한 길이로 맞추고, 부족한 부분을 특정 문자로 채웁니다. 주문번호 포맷팅, 리포트 정렬 등에 유용합니다.
+
+=== "SQLite"
+    SQLite에는 `LPAD`/`RPAD` 함수가 없습니다. `printf()`로 대체합니다.
+
+    ```sql
+    -- 고객 ID를 5자리 0-패딩
+    SELECT
+        id,
+        printf('%05d', id) AS padded_id,
+        name
+    FROM customers
+    LIMIT 5;
+    ```
+
+    | id | padded_id | name |
+    | -: | --------- | ---- |
+    |  1 | 00001     | 정준호  |
+    |  2 | 00002     | 김경수  |
+    | ...| ...       | ...  |
+
+=== "MySQL"
+    ```sql
+    -- 고객 ID를 5자리 0-패딩
+    SELECT
+        id,
+        LPAD(id, 5, '0') AS padded_id,
+        name
+    FROM customers
+    LIMIT 5;
+
+    -- 상품명을 30자 고정폭으로 (오른쪽 공백 채움)
+    SELECT RPAD(name, 30, ' ') AS fixed_name, price
+    FROM products
+    LIMIT 5;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- 고객 ID를 5자리 0-패딩
+    SELECT
+        id,
+        LPAD(id::text, 5, '0') AS padded_id,
+        name
+    FROM customers
+    LIMIT 5;
+
+    -- 상품명을 30자 고정폭으로
+    SELECT RPAD(name, 30, ' ') AS fixed_name, price
+    FROM products
+    LIMIT 5;
+    ```
+
+> `LPAD(값, 총길이, 채울문자)`는 **왼쪽**을 채우고, `RPAD`는 **오른쪽**을 채웁니다. 값이 총길이보다 길면 MySQL/PG에서는 잘립니다.
+
+## GROUP_CONCAT / STRING_AGG — 그룹별 문자열 집계
+
+여러 행의 문자열을 하나로 합칩니다. "카테고리별 상품 목록", "고객별 주문번호 나열" 등에 매우 자주 쓰이는 함수입니다.
+
+=== "SQLite"
+    ```sql
+    -- 공급업체별 상품명 목록
+    SELECT
+        s.company_name,
+        GROUP_CONCAT(p.name, ', ') AS product_list,
+        COUNT(*)                   AS product_count
+    FROM products AS p
+    INNER JOIN suppliers AS s ON p.supplier_id = s.id
+    WHERE p.is_active = 1
+    GROUP BY s.company_name
+    ORDER BY product_count DESC
+    LIMIT 3;
+    ```
+
+    > SQLite의 `GROUP_CONCAT(col, 구분자)` — 구분자 기본값은 `','`(콤마)입니다.
+
+=== "MySQL"
+    ```sql
+    -- 공급업체별 상품명 목록
+    SELECT
+        s.company_name,
+        GROUP_CONCAT(p.name ORDER BY p.name SEPARATOR ', ') AS product_list,
+        COUNT(*) AS product_count
+    FROM products AS p
+    INNER JOIN suppliers AS s ON p.supplier_id = s.id
+    WHERE p.is_active = 1
+    GROUP BY s.company_name
+    ORDER BY product_count DESC
+    LIMIT 3;
+    ```
+
+    > MySQL의 `GROUP_CONCAT`은 `ORDER BY`와 `SEPARATOR`를 지원합니다. 기본 최대 길이는 1024바이트(`group_concat_max_len`)입니다.
+
+=== "PostgreSQL"
+    ```sql
+    -- 공급업체별 상품명 목록
+    SELECT
+        s.company_name,
+        STRING_AGG(p.name, ', ' ORDER BY p.name) AS product_list,
+        COUNT(*) AS product_count
+    FROM products AS p
+    INNER JOIN suppliers AS s ON p.supplier_id = s.id
+    WHERE p.is_active = 1
+    GROUP BY s.company_name
+    ORDER BY product_count DESC
+    LIMIT 3;
+    ```
+
+    > PostgreSQL은 `STRING_AGG(col, 구분자 ORDER BY ...)` 형식입니다. 길이 제한이 없습니다.
+
+**결과 (예시):**
+
+| company_name | product_list                              | product_count |
+| ------------ | ----------------------------------------- | ------------: |
+| 에이수스코리아      | ASUS Dual RTX 5070 Ti ..., ASUS PCE-BE92BT ... | 21 |
+| 삼성전자 공식 유통   | 삼성 DDR4 32GB ..., 삼성 DDR5 16GB ...         | 21 |
+| ...          | ...                                       | ...           |
+
+```sql
+-- 고객 등급별 고객 이름 (상위 5명씩)
+SELECT
+    grade,
+    GROUP_CONCAT(name, ', ') AS sample_names
+FROM (
+    SELECT grade, name, ROW_NUMBER() OVER (PARTITION BY grade ORDER BY id) AS rn
+    FROM customers
+    WHERE is_active = 1
+) AS ranked
+WHERE rn <= 5
+GROUP BY grade;
+```
+
 ## 정리
 
 | 개념 | 설명 | 예시 |
@@ -238,8 +418,11 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
 | UPPER / LOWER | 대소문자 변환 | `UPPER(grade)`, `LOWER(email)` |
 | REPLACE | 문자열 치환 | `REPLACE(status, '_', ' ')` |
 | 문자열 연결 | SQLite/PG: `\|\|`, MySQL: `CONCAT()` | `name \|\| ' - ' \|\| email` |
+| NULL + 연결 | NULL이면 전체가 NULL → COALESCE 필수 | `COALESCE(col, '기본값')` |
 | INSTR / LOCATE / POSITION | 문자 위치 찾기 (DB별 상이) | `INSTR(email, '@')` |
 | TRIM / LTRIM / RTRIM | 앞뒤 공백·문자 제거 | `TRIM(name)` |
+| LPAD / RPAD | 고정 폭 패딩 (SQLite: `printf`) | `LPAD(id, 5, '0')` |
+| GROUP_CONCAT / STRING_AGG | 그룹별 문자열 합치기 | `GROUP_CONCAT(name, ', ')` |
 | LIKE | 패턴 매칭 (`%`, `_` 와일드카드) | `WHERE name LIKE '%Gaming%'` |
 
 !!! note "레슨 복습 문제"
@@ -578,20 +761,134 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
         LIMIT 10;
         ```
 
-!!! tip "채점 기준"
-    | 기준 | 배점 |
-    |------|------|
-    | 연습 1: 문자열 연결(`\|\|` 또는 CONCAT) + WHERE 필터 | 10점 |
-    | 연습 2: SUBSTR + CAST로 일련번호 추출 | 10점 |
-    | 연습 3: LENGTH + ORDER BY + LIMIT | 8점 |
-    | 연습 4: REPLACE + UPPER 조합 | 10점 |
-    | 연습 5: LIKE 패턴 매칭 + 정렬 | 8점 |
-    | 연습 6: SUBSTR + INSTR로 이메일 파싱 | 12점 |
-    | 연습 7: CASE + LENGTH + SUBSTR 조합 | 14점 |
-    | 연습 8: UPPER + LOWER + 문자열 연결 | 10점 |
-    | 연습 9: SUBSTR + LIKE 필터 | 8점 |
-    | 연습 10: INSTR + WHERE 필터 | 10점 |
-    | **합계** | **100점** |
+### 연습 11
+고객의 `name`과 `phone`을 연결하되, 전화번호가 NULL인 경우 `'번호 없음'`으로 표시하세요. `customer_id`, `contact`를 반환하고 10행으로 제한하세요.
+
+??? success "정답"
+    === "SQLite / PostgreSQL"
+        ```sql
+        SELECT
+            id AS customer_id,
+            name || ' — ' || COALESCE(phone, '번호 없음') AS contact
+        FROM customers
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            id AS customer_id,
+            CONCAT(name, ' — ', COALESCE(phone, '번호 없음')) AS contact
+        FROM customers
+        LIMIT 10;
+        ```
+
+
+### 연습 12
+고객 ID를 6자리 0-패딩으로 포맷하고, `'C-'` 접두어를 붙인 `customer_code`를 만드세요. 예: ID 42 → `'C-000042'`. `customer_code`, `name`, `grade`를 반환하고 10행으로 제한하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            'C-' || printf('%06d', id) AS customer_code,
+            name,
+            grade
+        FROM customers
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            CONCAT('C-', LPAD(id, 6, '0')) AS customer_code,
+            name,
+            grade
+        FROM customers
+        LIMIT 10;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            'C-' || LPAD(id::text, 6, '0') AS customer_code,
+            name,
+            grade
+        FROM customers
+        LIMIT 10;
+        ```
+
+
+### 연습 13
+카테고리별로 해당 카테고리에 속한 활성 상품의 이름을 콤마로 연결하여 한 행으로 표시하세요. `category_name`, `product_list`, `product_count`를 반환하고, 상품 수가 많은 순으로 5행까지 정렬하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        SELECT
+            cat.name AS category_name,
+            GROUP_CONCAT(p.name, ', ') AS product_list,
+            COUNT(*) AS product_count
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE p.is_active = 1
+        GROUP BY cat.name
+        ORDER BY product_count DESC
+        LIMIT 5;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+            cat.name AS category_name,
+            GROUP_CONCAT(p.name ORDER BY p.name SEPARATOR ', ') AS product_list,
+            COUNT(*) AS product_count
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE p.is_active = 1
+        GROUP BY cat.name
+        ORDER BY product_count DESC
+        LIMIT 5;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+            cat.name AS category_name,
+            STRING_AGG(p.name, ', ' ORDER BY p.name) AS product_list,
+            COUNT(*) AS product_count
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE p.is_active = 1
+        GROUP BY cat.name
+        ORDER BY product_count DESC
+        LIMIT 5;
+        ```
+
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **12~13개** | [13강: UNION](13-union.md)으로 이동 |
+| **9~11개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [11강: 날짜/시간 함수](11-datetime.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| 문자열 연결 (&#124;&#124; / CONCAT) | 1, 8 |
+| SUBSTR + CAST 추출 | 2, 9 |
+| LENGTH | 3 |
+| REPLACE + UPPER/LOWER | 4 |
+| LIKE 패턴 매칭 | 5 |
+| SUBSTR + INSTR 파싱 | 6, 10 |
+| CASE + LENGTH + SUBSTR 조합 | 7 |
+| NULL + 문자열 연결 (COALESCE) | 11 |
+| LPAD / printf 패딩 | 12 |
+| GROUP_CONCAT / STRING_AGG | 13 |
 
 ---
 다음: [13강: UNION](13-union.md)
