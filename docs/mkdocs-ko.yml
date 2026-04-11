@@ -1,5 +1,5 @@
-site_name: SQL 튜토리얼 v2.0
-site_description: 현실적인 전자상거래 데이터베이스(30 테이블)로 배우는 SQL
+site_name: SQL 튜토리얼
+site_description: 현실적인 전자상거래 데이터베이스로 배우는 SQL
 repo_url: https://github.com/civilian7/sql-tutorial
 repo_name: GitHub
 docs_dir: ko
@@ -25,6 +25,7 @@ theme:
     - content.code.copy
     - navigation.sections
     - navigation.expand
+    - navigation.indexes
     - navigation.top
     - search.highlight
 
@@ -43,10 +44,27 @@ extra:
 extra_css:
   - css/extra.css
 
+hooks:
+  - hooks/mermaid_hook.py
+
 nav:
-  - 홈: index.md
-  - 시작하기: getting-started.md
-  - 데이터베이스 스키마: schema.md
+  - 교재 소개: index.md
+  - 준비하기:
+    - setup/index.md
+    - "00. 프로젝트 다운로드": setup/00-install.md
+    - "01. 데이터베이스 선택": setup/01-choose-db.md
+    - "02. 데이터베이스 설치": setup/02-database.md
+    - "03. 데이터 생성": setup/03-generate.md
+    - "04. 생성기 고급 옵션": setup/04-generate-advanced.md
+    - "05. 확인 및 첫 쿼리": setup/05-verify.md
+  - 데이터베이스 스키마:
+    - schema/index.md
+    - "01. 테이블": schema/tables.md
+    - "02. 뷰": schema/views.md
+    - "03. 트리거": schema/triggers.md
+    - "04. 저장 프로시저": schema/procedures.md
+    - "05. 스키마 조회 쿼리": schema/queries.md
+    - "06. 페르소나별 활용 가이드": schema/personas.md
   - 초급:
     - "00. 데이터베이스와 SQL 소개": beginner/00-introduction.md
     - "01. SELECT 기초": beginner/01-select.md
@@ -77,7 +95,6 @@ nav:
     - "24. JSON 데이터 쿼리": advanced/24-json.md
     - "25. 저장 프로시저": advanced/25-stored-procedures.md
   - 참고:
-    - "생성기 상세 가이드": generator-guide.md
     - "데이터베이스별 SQL 차이": dialect-comparison.md
   - 연습 문제:
     - exercises/index.md
@@ -125,12 +142,17 @@ plugins:
 markdown_extensions:
   - admonition
   - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:pymdownx.superfences.fence_div_format
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.keys
   - attr_list
+  - md_in_html
   - tables

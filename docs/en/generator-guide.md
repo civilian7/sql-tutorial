@@ -703,7 +703,7 @@ output/
 ```
 
 !!! note "SQLite Database Contents"
-    `ecommerce.db` contains 30 tables, views, triggers, and indexes. See the [Database Schema](schema.md) page for full details.
+    `ecommerce.db` contains tables, views, triggers, and indexes. See the [Database Schema](schema/index.md) page for full details.
 
 ---
 

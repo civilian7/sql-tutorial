@@ -138,7 +138,7 @@ Throughout this tutorial, you'll work with **TechShop** -- a fictional e-commerc
 
 **Scale:**
 
-- **30 tables**, **687,000+ rows** of data
+- **687,000+ rows** of data
 - Customers, orders, products, reviews, payments, shipping, inventory, and more
 
 **Core data flow:**

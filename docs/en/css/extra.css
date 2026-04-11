@@ -64,12 +64,11 @@
    Content
    =========================================== */
 
-/* Table — compact, auto-fit columns */
+/* Table — compact, full-width with last column stretching */
 .md-typeset table:not([class]) {
   font-size: 0.75rem;
-  width: auto;                          /* shrink to content, not 100% */
-  max-width: 100%;
-  table-layout: auto;                   /* columns sized by content */
+  width: 100%;
+  table-layout: auto;
   border-collapse: collapse;
 }
 
@@ -110,6 +109,25 @@
 
 .md-typeset table:not([class]) code {
   font-size: 0.7rem;
+}
+
+/* Data size table — fixed layout, equal size columns */
+.md-typeset .table-data-size table {
+  table-layout: fixed;
+  width: 100%;
+}
+.md-typeset .table-data-size th:first-child,
+.md-typeset .table-data-size td:first-child {
+  width: 22%;
+}
+.md-typeset .table-data-size th:nth-child(2),
+.md-typeset .table-data-size td:nth-child(2),
+.md-typeset .table-data-size th:nth-child(3),
+.md-typeset .table-data-size td:nth-child(3),
+.md-typeset .table-data-size th:nth-child(4),
+.md-typeset .table-data-size td:nth-child(4) {
+  width: 26%;
+  text-align: right;
 }
 
 /* Version badge in title */
