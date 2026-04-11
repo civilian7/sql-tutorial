@@ -479,13 +479,14 @@ Use the system catalog (`sqlite_master` for SQLite) to list all 5 pre-installed 
 
         **Result (example):**
 
-        | name                      | tbl_name  | fires_on     |
-        | ------------------------- | --------- | ------------ |
-        | trg_customers_updated_at  | customers | AFTER UPDATE |
-        | trg_orders_updated_at     | orders    | AFTER UPDATE |
-        | trg_product_price_history | products  | AFTER UPDATE |
-        | trg_products_updated_at   | products  | AFTER UPDATE |
-        | trg_reviews_updated_at    | reviews   | AFTER UPDATE |
+| name | tbl_name | fires_on |
+| ---------- | ---------- | ---------- |
+| trg_customers_updated_at | customers | AFTER UPDATE |
+| trg_orders_updated_at | orders | AFTER UPDATE |
+| trg_product_price_history | products | AFTER UPDATE |
+| trg_products_updated_at | products | AFTER UPDATE |
+| trg_reviews_updated_at | reviews | AFTER UPDATE |
+| ... | ... | ... |
 
 
     === "MySQL"

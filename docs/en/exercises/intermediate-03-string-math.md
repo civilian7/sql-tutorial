@@ -67,14 +67,14 @@ Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
 
     | name | name_length |
     | ---------- | ----------: |
-    | TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz 화이트 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 89 |
-    | MSI MAG B850 TOMAHAWK MAX WIFI 화이트 [특별 한정판 에디션] 고급 알루미늄 합금 바디 적용, 프리미엄 패키지 구성 | 77 |
-    | Microsoft Bluetooth Ergonomic Mouse 실버 [특별 한정판 에디션] 전문가 추천 모델, 업계 최고 성능 인증 획득 | 77 |
-    | ASUS TUF Gaming RTX 4070 Ti Super 실버 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 76 |
-    | be quiet! Shadow Base 800 FX 블랙 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 71 |
-    | MSI MPG X870E CARBON WIFI 화이트 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 70 |
-    | Intel Core Ultra 5 245K 화이트 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 68 |
-    | Super Flower Leadex VII 1000W [특별 한정판 에디션] 전문가 추천 모델, 업계 최고 성능 인증 획득 | 68 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 113 |
+    | HP EliteBook 840 G10 Black [Special Limited Edition] Extended 3-year warranty + exclusive carrying case included | 112 |
+    | ASUS ExpertBook B5 [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 110 |
+    | ASUS ExpertBook B5 [Special Limited Edition] RGB lighting equipped, software customization supported | 100 |
+    | TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz Silver | 52 |
+    | CORSAIR Dominator Titanium DDR5 32GB 7200MHz Silver | 51 |
+    | Arctic Liquid Freezer III Pro 420 A-RGB Silver | 46 |
+    | Kingston FURY Renegade DDR5 32GB 7200MHz Black | 46 |
     | ... | ... |
 
     > Actual results depend on the data.
@@ -100,13 +100,13 @@ Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
     | brand_upper |
     | ---------- |
     | ADOBE |
+    | AHNLAB |
     | AMD |
     | APC |
     | APPLE |
     | ARCTIC |
     | ASROCK |
     | ASUS |
-    | BE QUIET! |
     | ... |
 
     > With unified case, brands can be identified accurately.
@@ -136,14 +136,14 @@ Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
 
     | brand | name | model_name |
     | ---------- | ---------- | ---------- |
-    | AMD | AMD Ryzen 5 9600X | Ryzen 5 9600X |
-    | AMD | AMD Ryzen 7 7700X | Ryzen 7 7700X |
-    | AMD | AMD Ryzen 7 7700X 블랙 | Ryzen 7 7700X 블랙 |
-    | AMD | AMD Ryzen 7 7700X 블랙 | Ryzen 7 7700X 블랙 |
-    | AMD | AMD Ryzen 7 7800X3D | Ryzen 7 7800X3D |
-    | AMD | AMD Ryzen 7 7800X3D 실버 | Ryzen 7 7800X3D 실버 |
-    | AMD | AMD Ryzen 7 9700X 블랙 | Ryzen 7 9700X 블랙 |
-    | AMD | AMD Ryzen 7 9800X3D 실버 | Ryzen 7 9800X3D 실버 |
+    | AMD | AMD Ryzen 9 9900X | Ryzen 9 9900X |
+    | AMD | AMD Ryzen 9 9900X | Ryzen 9 9900X |
+    | APC | APC Back-UPS Pro Gaming BGM1500B Black | Back-UPS Pro Gaming BGM1500B Black |
+    | ASRock | ASRock B850M Pro RS Black | B850M Pro RS Black |
+    | ASRock | ASRock B850M Pro RS Silver | B850M Pro RS Silver |
+    | ASRock | ASRock B850M Pro RS White | B850M Pro RS White |
+    | ASRock | ASRock B860M Pro RS Silver | B860M Pro RS Silver |
+    | ASRock | ASRock B860M Pro RS White | B860M Pro RS White |
     | ... | ... | ... |
 
 ---
@@ -173,10 +173,10 @@ Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
     | user10@testmail.kr | user10 |
     | user100@testmail.kr | user100 |
     | user1000@testmail.kr | user1000 |
-    | user10000@testmail.kr | user10000 |
-    | user10001@testmail.kr | user10001 |
-    | user10002@testmail.kr | user10002 |
-    | user10003@testmail.kr | user10003 |
+    | user1001@testmail.kr | user1001 |
+    | user1002@testmail.kr | user1002 |
+    | user1003@testmail.kr | user1003 |
+    | user1004@testmail.kr | user1004 |
     | ... | ... |
 
     > Actual results depend on the data.
@@ -239,14 +239,14 @@ Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
 
     | name | phone | phone_no_dash | digit_count |
     | ---------- | ---------- | ---------- | ----------: |
-    | 정준호 | 020-4964-6200 | 02049646200 | 11 |
-    | 김경수 | 020-4423-5167 | 02044235167 | 11 |
-    | 김민재 | 020-0806-0711 | 02008060711 | 11 |
-    | 진정자 | 020-9666-8856 | 02096668856 | 11 |
-    | 이정수 | 020-0239-9503 | 02002399503 | 11 |
-    | 김준혁 | 020-0786-7765 | 02007867765 | 11 |
-    | 김명자 | 020-4487-2922 | 02044872922 | 11 |
-    | 성민석 | 020-8951-7989 | 02089517989 | 11 |
+    | Joshua Atkins | 555-4964-6200 | 55549646200 | 11 |
+    | Danny Johnson | 555-4423-5167 | 55544235167 | 11 |
+    | Adam Moore | 555-0806-0711 | 55508060711 | 11 |
+    | Virginia Steele | 555-9666-8856 | 55596668856 | 11 |
+    | Jared Vazquez | 555-0239-9503 | 55502399503 | 11 |
+    | Benjamin Skinner | 555-0786-7765 | 55507867765 | 11 |
+    | Ashley Jones | 555-4487-2922 | 55544872922 | 11 |
+    | Tyler Rodriguez | 555-8951-7989 | 55589517989 | 11 |
     | ... | ... | ... | ... |
 
     > Actual results depend on the data.
@@ -275,14 +275,14 @@ Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
 
     | sku | category_code | name |
     | ---------- | ---------- | ---------- |
-    | AU-BOS-00184 | AU | 보스 SoundLink Flex 실버 |
-    | AU-BOS-00306 | AU | 보스 QuietComfort Ultra 실버 |
-    | AU-BOS-00322 | AU | 보스 QuietComfort Ultra Earbuds 실버 |
-    | AU-BOS-00767 | AU | 보스 QuietComfort Ultra Earbuds 실버 |
-    | AU-BOS-00810 | AU | 보스 QuietComfort Ultra |
-    | AU-BOS-00883 | AU | 보스 QuietComfort Ultra Earbuds 블랙 |
-    | AU-BOS-01085 | AU | 보스 QuietComfort Ultra |
-    | AU-BOS-01090 | AU | 보스 QuietComfort 45 실버 |
+    | AU-BOS-00256 | AU | Bose SoundLink Flex Black |
+    | AU-JBL-00019 | AU | JBL Quantum ONE White |
+    | AU-JBL-00055 | AU | JBL Flip 6 White |
+    | AU-JBL-00070 | AU | JBL Pebbles 2 Black |
+    | AU-JBL-00096 | AU | JBL Flip 6 Black |
+    | AU-RAZ-00253 | AU | Razer Kraken V4 Black |
+    | AU-SNY-00009 | AU | Sony WH-CH720N Silver |
+    | AU-STE-00122 | AU | SteelSeries Arctis Nova Pro Wireless White |
     | ... | ... | ... |
 
     > The first 2 characters of the SKU represent the category.
@@ -349,14 +349,13 @@ Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
 
     | name | rtx_model |
     | ---------- | ---------- |
-    | ASUS ROG STRIX RTX 5090 | 5090 |
-    | MSI GeForce RTX 5090 SUPRIM X | 5090 |
-    | MSI GeForce RTX 5090 SUPRIM X 실버 | 5090 |
-    | MSI GeForce RTX 5090 SUPRIM X 화이트 | 5090 |
-    | 기가바이트 RTX 5090 AERO OC | 5090 |
-    | 기가바이트 RTX 5090 AERO OC | 5090 |
-    | 기가바이트 RTX 5090 AERO OC | 5090 |
-    | ASUS TUF Gaming RTX 5080 화이트 | 5080 |
+    | Gigabyte RTX 5090 AERO OC | 5090 |
+    | ASUS TUF Gaming RTX 5080 White | 5080 |
+    | ASUS Dual RTX 5070 Ti Silver | 5070 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 5070 |
+    | Gigabyte RTX 4090 AERO OC White | 4090 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 4070 |
+    | ASUS Dual RTX 4060 Ti Black | 4060 |
     | ... | ... |
 
     > Actual results depend on the data.
@@ -387,14 +386,14 @@ Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
 
     | order_number | total_amount | rounded_10k | in_man_won |
     | ---------- | ----------: | ----------: | ----------: |
-    | ORD-20230408-248697 | 71906300.0 | 71906300.0 | 7190.63 |
-    | ORD-20240218-293235 | 68948100.0 | 68948100.0 | 6894.81 |
-    | ORD-20240822-323378 | 64332900.0 | 64332900.0 | 6433.29 |
-    | ORD-20180516-26809 | 63466900.0 | 63466900.0 | 6346.69 |
-    | ORD-20200429-82365 | 61889000.0 | 61889000.0 | 6188.9 |
-    | ORD-20230626-259827 | 61811500.0 | 61811500.0 | 6181.15 |
-    | ORD-20160730-03977 | 60810900.0 | 60810900.0 | 6081.09 |
-    | ORD-20251230-417476 | 60038800.0 | 60038800.0 | 6003.88 |
+    | ORD-20201121-08810 | 50867500.0 | 50867500.0 | 5086.75 |
+    | ORD-20250305-32265 | 46820024.0 | 46820024.0 | 4682.0024 |
+    | ORD-20200209-05404 | 43677500.0 | 43677500.0 | 4367.75 |
+    | ORD-20251218-37240 | 38626400.0 | 38626400.0 | 3862.64 |
+    | ORD-20220106-15263 | 37987600.0 | 37987600.0 | 3798.76 |
+    | ORD-20200820-07684 | 37518200.0 | 37518200.0 | 3751.82 |
+    | ORD-20220224-15869 | 35397700.0 | 35397700.0 | 3539.77 |
+    | ORD-20220509-16861 | 33823800.0 | 33823800.0 | 3382.38 |
     | ... | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -425,14 +424,14 @@ Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
 
     | name | price | cost_price | margin_pct |
     | ---------- | ----------: | ----------: | ----------: |
-    | Microsoft 365 Personal 실버 | 171000.0 | 62900.0 | 171.9 |
-    | Adobe Creative Cloud 1년 화이트 | 657900.0 | 256500.0 | 156.5 |
-    | V3 365 Clinic | 63300.0 | 25200.0 | 151.2 |
-    | Adobe Photoshop 1년 | 313600.0 | 126500.0 | 147.9 |
-    | Adobe Creative Cloud 1년 | 309100.0 | 125600.0 | 146.1 |
-    | Razer Viper V3 HyperSpeed 블랙 | 99500.0 | 41000.0 | 142.7 |
-    | Adobe Acrobat Pro 1년 | 389600.0 | 164600.0 | 136.7 |
-    | Windows 11 Pro | 409600.0 | 176800.0 | 131.7 |
+    | Norton AntiVirus Plus Silver | 74800.0 | 32400.0 | 130.9 |
+    | Windows 11 Pro Silver | 423000.0 | 198800.0 | 112.8 |
+    | Hancom Office 2024 Enterprise Silver | 241400.0 | 116400.0 | 107.4 |
+    | Logitech G502 HERO Silver | 71100.0 | 36500.0 | 94.8 |
+    | V3 Endpoint Security Black | 46500.0 | 24200.0 | 92.1 |
+    | Microsoft 365 Personal | 108200.0 | 57900.0 | 86.9 |
+    | TP-Link Archer TBE400E White | 30200.0 | 16300.0 | 85.3 |
+    | WD Gold 12TB | 541900.0 | 292600.0 | 85.2 |
     | ... | ... | ... | ... |
 
     > Without `NULLIF`, division errors could occur on rows where cost_price=0.
@@ -462,14 +461,14 @@ Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
 
     | order_number | total_amount | formatted_amount |
     | ---------- | ----------: | ---------- |
-    | ORD-20230408-248697 | 71906300.0 | 71,906,300원 |
-    | ORD-20240218-293235 | 68948100.0 | 68,948,100원 |
-    | ORD-20240822-323378 | 64332900.0 | 64,332,900원 |
-    | ORD-20180516-26809 | 63466900.0 | 63,466,900원 |
-    | ORD-20200429-82365 | 61889000.0 | 61,889,000원 |
-    | ORD-20230626-259827 | 61811500.0 | 61,811,500원 |
-    | ORD-20160730-03977 | 60810900.0 | 60,810,900원 |
-    | ORD-20251230-417476 | 60038800.0 | 60,038,800원 |
+    | ORD-20201121-08810 | 50867500.0 | 50,867,500원 |
+    | ORD-20250305-32265 | 46820024.0 | 46,820,024원 |
+    | ORD-20200209-05404 | 43677500.0 | 43,677,500원 |
+    | ORD-20251218-37240 | 38626400.0 | 38,626,400원 |
+    | ORD-20220106-15263 | 37987600.0 | 37,987,600원 |
+    | ORD-20200820-07684 | 37518200.0 | 37,518,200원 |
+    | ORD-20220224-15869 | 35397700.0 | 35,397,700원 |
+    | ORD-20220509-16861 | 33823800.0 | 33,823,800원 |
     | ... | ... | ... |
 
     > `printf` is a SQLite-specific function.
@@ -506,14 +505,14 @@ Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
 
     | name | price | price_range | price_class |
     | ---------- | ----------: | ---------- | ---------- |
-    | Razer Blade 14 블랙 | 7495200.0 | 200만원 이상 | 고가 |
-    | Razer Blade 16 블랙 | 5634900.0 | 200만원 이상 | 고가 |
-    | Razer Blade 16 | 5518300.0 | 200만원 이상 | 고가 |
-    | Razer Blade 18 | 5450500.0 | 200만원 이상 | 고가 |
-    | Razer Blade 14 | 5339100.0 | 200만원 이상 | 고가 |
-    | Razer Blade 16 실버 | 5127500.0 | 200만원 이상 | 고가 |
-    | Razer Blade 18 화이트 | 4913500.0 | 200만원 이상 | 고가 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 | 200만원 이상 | 고가 |
+    | MacBook Air 15 M3 Silver | 5481100.0 | 200만원 이상 | 고가 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 | 200만원 이상 | 고가 |
+    | Razer Blade 18 Black | 4353100.0 | 200만원 이상 | 고가 |
+    | Razer Blade 16 Silver | 3702900.0 | 200만원 이상 | 고가 |
+    | ASUS ROG Strix G16CH White | 3671500.0 | 200만원 이상 | 고가 |
+    | ASUS ROG Strix GT35 | 3296800.0 | 200만원 이상 | 고가 |
+    | Razer Blade 18 Black | 2987500.0 | 200만원 이상 | 고가 |
+    | ASUS Dual RTX 4060 Ti Black | 2674800.0 | 200만원 이상 | 고가 |
     | ... | ... | ... | ... |
 
 ---
@@ -544,14 +543,14 @@ Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
 
     | name | stock_qty | original_type | stock_as_real | converted_type | price_int |
     | ---------- | ----------: | ---------- | ----------: | ---------- | ----------: |
-    | Arctic Liquid Freezer III 240 | 500 | integer | 500.0 | real | 106100 |
-    | Razer Viper V3 HyperSpeed 실버 | 500 | integer | 500.0 | real | 130200 |
-    | Apple Magic Keyboard Touch ID 포함 | 500 | integer | 500.0 | real | 118500 |
-    | ASUS PRIME Z790-A WIFI 화이트 | 500 | integer | 500.0 | real | 480400 |
+    | Arctic Liquid Freezer III 240 | 500 | integer | 500.0 | real | 98600 |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 499 | integer | 499.0 | real | 1744000 |
-    | 시소닉 FOCUS GX-850 | 499 | integer | 499.0 | real | 172900 |
-    | be quiet! Dark Power 13 1000W | 499 | integer | 499.0 | real | 90800 |
-    | 로지텍 MX Anywhere 3S 블랙 | 499 | integer | 499.0 | real | 118800 |
+    | Seasonic VERTEX GX-1200 Black | 498 | integer | 498.0 | real | 369800 |
+    | ASRock B850M Pro RS Silver | 496 | integer | 496.0 | real | 665600 |
+    | TP-Link Archer TX55E Black | 495 | integer | 495.0 | real | 64000 |
+    | Epson L15160 | 493 | integer | 493.0 | real | 1019500 |
+    | Samsung Odyssey G7 32 | 491 | integer | 491.0 | real | 355500 |
+    | LG Gram 14 | 490 | integer | 490.0 | real | 1734000 |
     | ... | ... | ... | ... | ... | ... |
 
     > `TYPEOF()` is a SQLite-specific function that checks the actual type of stored values.
@@ -594,10 +593,10 @@ Practice complex formatting, data transformation, and pattern matching.
 
     | grade | total_count | sample_names |
     | ---------- | ----------: | ---------- |
-    | VIP | 5 | 김상철, 문영숙, 김도현, 박정수, 오영숙 |
-    | SILVER | 5 | 김정순, 김현준, 정중수, 유현지, 황하은 |
-    | GOLD | 5 | 한민재, 서성민, 한은영, 임민재, 김지훈 |
-    | BRONZE | 5 | 이주원, 장승현, 이승민, 박예진, 우서영 |
+    | VIP | 5 | Gabriel Walters, Adam Moore, Terri Jones, Jason Rivera, Corey Carroll |
+    | SILVER | 5 | Sara Williams, Jared Vazquez, Christopher Green, Leah Moore, Lynn Shelton |
+    | GOLD | 5 | Joseph Sellers, Joseph Lewis, Richard Barker, Diana Ferguson, Nancy Smith |
+    | BRONZE | 5 | Mary Jackson, Lydia Lawrence, Ashley Hogan, Michael Hutchinson, Victoria Patel |
 
     > Shows the 5 oldest names from each grade. Actual names will differ.
 
@@ -626,14 +625,14 @@ Practice complex formatting, data transformation, and pattern matching.
 
     | order_number | date_part | formatted_date | sequence_no |
     | ---------- | ---------- | ---------- | ----------: |
-    | ORD-20251211-413965 | 20251211 | 2025-12-11 | 413965 |
-    | ORD-20251226-416837 | 20251226 | 2025-12-26 | 416837 |
-    | ORD-20251231-417734 | 20251231 | 2025-12-31 | 417734 |
-    | ORD-20251231-417696 | 20251231 | 2025-12-31 | 417696 |
-    | ORD-20251231-417737 | 20251231 | 2025-12-31 | 417737 |
-    | ORD-20251231-417735 | 20251231 | 2025-12-31 | 417735 |
-    | ORD-20251231-417677 | 20251231 | 2025-12-31 | 417677 |
-    | ORD-20251231-417764 | 20251231 | 2025-12-31 | 417764 |
+    | ORD-20251231-37555 | 20251231 | 2025-12-31 | 37555 |
+    | ORD-20251231-37543 | 20251231 | 2025-12-31 | 37543 |
+    | ORD-20251231-37552 | 20251231 | 2025-12-31 | 37552 |
+    | ORD-20251231-37548 | 20251231 | 2025-12-31 | 37548 |
+    | ORD-20251231-37542 | 20251231 | 2025-12-31 | 37542 |
+    | ORD-20251231-37546 | 20251231 | 2025-12-31 | 37546 |
+    | ORD-20251231-37547 | 20251231 | 2025-12-31 | 37547 |
+    | ORD-20251231-37556 | 20251231 | 2025-12-31 | 37556 |
     | ... | ... | ... | ... |
 
     > Actual sequence numbers depend on the data.
@@ -663,14 +662,14 @@ Practice complex formatting, data transformation, and pattern matching.
 
     | name | price | brand |
     | ---------- | ----------: | ---------- |
-    | Seagate BarraCuda 2TB 화이트 | 611900.0 | Seagate |
-    | WD Red Plus 8TB | 586300.0 | WD |
-    | WD Red Plus 4TB 실버 | 575900.0 | WD |
-    | WD Red Plus 8TB 블랙 | 575600.0 | WD |
-    | Seagate BarraCuda 2TB 실버 | 570500.0 | Seagate |
-    | Seagate BarraCuda 2TB | 558500.0 | Seagate |
-    | WD Red Plus 4TB | 558200.0 | WD |
-    | WD Red Plus 4TB | 557500.0 | WD |
+    | Seagate IronWolf 4TB Black | 545400.0 | Seagate |
+    | WD Gold 12TB | 541900.0 | WD |
+    | be quiet! Straight Power 12 1000W Black | 331100.0 | be quiet! |
+    | Seagate Exos 16TB Silver | 303300.0 | Seagate |
+    | be quiet! Dark Power 13 1000W | 293000.0 | be quiet! |
+    | Kingston FURY Renegade DDR5 32GB 7200MHz Black | 282300.0 | Kingston |
+    | Kingston FURY Renegade DDR5 32GB 7200MHz Black | 276900.0 | Kingston |
+    | SK hynix Platinum P41 1TB | 269200.0 | SK hynix |
     | ... | ... | ... |
 
     > `GLOB` is SQLite-specific. Unlike `LIKE`, it is case-sensitive.
@@ -702,11 +701,11 @@ Practice complex formatting, data transformation, and pattern matching.
 
     | product_card |
     | ---------- |
-    | [Razer] Razer Blade 14 블랙 | 7,495,200원 | 재고: 171개 | 무게: 1.827kg |
-    | [Razer] Razer Blade 16 블랙 | 5,634,900원 | 재고: 461개 | 무게: 2.716kg |
-    | [Razer] Razer Blade 16 | 5,518,300원 | 재고: 494개 | 무게: 2.89kg |
-    | [Razer] Razer Blade 18 | 5,450,500원 | 재고: 297개 | 무게: 2.23kg |
-    | [Razer] Razer Blade 14 | 5,339,100원 | 재고: 190개 | 무게: 2.341kg |
+    | [Apple] MacBook Air 15 M3 Silver | 5,481,100원 | 재고: 346개 | 무게: 2.087kg |
+    | [ASUS] ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4,496,700원 | 재고: 434개 | 무게: 1.277kg |
+    | [Razer] Razer Blade 18 Black | 4,353,100원 | 재고: 287개 | 무게: 2.443kg |
+    | [Razer] Razer Blade 16 Silver | 3,702,900원 | 재고: 323개 | 무게: 2.986kg |
+    | [ASUS] ASUS ROG Strix G16CH White | 3,671,500원 | 재고: 201개 | 무게: 16.624kg |
     | ... |
 
     > Actual results depend on the data. weight_grams가 NULL이면 '무게 미정'이 표시됩니다.
@@ -737,11 +736,11 @@ Practice complex formatting, data transformation, and pattern matching.
 
     | channel | domain | customer_count |
     | ---------- | ---------- | ----------: |
-    | search_ad | testmail.kr | 15289 |
-    | social | testmail.kr | 14245 |
-    | organic | testmail.kr | 11457 |
-    | referral | testmail.kr | 7146 |
-    | direct | testmail.kr | 4163 |
+    | search_ad | testmail.kr | 1543 |
+    | social | testmail.kr | 1425 |
+    | organic | testmail.kr | 1146 |
+    | referral | testmail.kr | 708 |
+    | direct | testmail.kr | 408 |
     | ... | ... | ... |
 
     > Since all emails use the testmail.kr domain, the meaningful insight is the customer count distribution by channel.
@@ -783,14 +782,14 @@ Practice complex formatting, data transformation, and pattern matching.
 
     | name | price_tier | margin_pct | stock_status | sale_status | display_price |
     | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- |
-    | Razer Blade 14 블랙 | 고가 | 80.1% | 충분 | 판매중 | 7,495,200원 |
-    | Razer Blade 16 블랙 | 고가 | 38.7% | 충분 | 판매중 | 5,634,900원 |
-    | Razer Blade 16 | 고가 | 49.0% | 충분 | 판매중 | 5,518,300원 |
-    | Razer Blade 16 화이트 | 고가 | 42.9% | 충분 | 단종 | 5,503,500원 |
-    | Razer Blade 18 | 고가 | 42.9% | 충분 | 판매중 | 5,450,500원 |
-    | Razer Blade 14 | 고가 | 42.9% | 충분 | 판매중 | 5,339,100원 |
-    | Razer Blade 16 실버 | 고가 | 42.9% | 충분 | 판매중 | 5,127,500원 |
-    | Razer Blade 16 블랙 | 고가 | 39.1% | 충분 | 단종 | 4,938,200원 |
+    | MacBook Air 15 M3 Silver | 고가 | 71.0% | 충분 | 판매중 | 5,481,100원 |
+    | ASUS TUF Gaming RTX 5080 White | 고가 | 49.0% | 충분 | 단종 | 4,526,600원 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 고가 | 36.4% | 충분 | 판매중 | 4,496,700원 |
+    | Razer Blade 18 Black | 고가 | 42.9% | 충분 | 판매중 | 4,353,100원 |
+    | Razer Blade 16 Silver | 고가 | 28.3% | 충분 | 판매중 | 3,702,900원 |
+    | ASUS ROG Strix G16CH White | 고가 | 48.0% | 충분 | 판매중 | 3,671,500원 |
+    | ASUS ROG Zephyrus G16 | 고가 | 11.2% | 충분 | 단종 | 3,429,900원 |
+    | ASUS ROG Strix GT35 | 고가 | 1.9% | 충분 | 판매중 | 3,296,800원 |
     | ... | ... | ... | ... | ... | ... |
 
     > Combines multiple functions to create a report showing product status at a glance.

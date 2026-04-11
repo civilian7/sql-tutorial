@@ -110,7 +110,7 @@ def process_exercise_file(filepath, db_path):
 
         # Find result table markers inside success blocks
         stripped = line.strip()
-        if '**결과' in stripped and '**' in stripped:
+        if ('**결과' in stripped or '**Result' in stripped) and '**' in stripped:
             # Determine indentation level
             indent = len(line) - len(line.lstrip())
 

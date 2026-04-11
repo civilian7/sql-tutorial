@@ -26,7 +26,7 @@ FROM customers;
 
 | total_customers |
 | ----------: |
-| 52300 |
+| 5230 |
 
 ```sql
 -- Compare customer counts by birth date registration
@@ -41,7 +41,7 @@ FROM customers;
 
 | total_customers | with_birth_date | missing_birth_date |
 | ----------: | ----------: | ----------: |
-| 52300 | 44507 | 7793 |
+| 5230 | 4492 | 738 |
 
 ### COUNT(DISTINCT) -- Unique Value Count
 
@@ -59,7 +59,7 @@ FROM orders;
 
 | total_orders | unique_customers |
 | ----------: | ----------: |
-| 417803 | 29230 |
+| 37557 | 2839 |
 
 There are 34,908 orders, but only 4,985 unique customers have placed orders, since one customer can place multiple orders.
 
@@ -86,7 +86,7 @@ WHERE status IN ('delivered', 'confirmed');
 
 | total_revenue |
 | ----------: |
-| 393749378848.0 |
+| 34582358414.0 |
 
 ```sql
 -- Total points held by active customers
@@ -99,7 +99,7 @@ WHERE is_active = 1;
 
 | total_points_outstanding |
 | ----------: |
-| 3840575170 |
+| 337459019 |
 
 ## AVG
 
@@ -118,7 +118,7 @@ WHERE is_active = 1;
 
 | avg_price | avg_stock |
 | ----------: | ----------: |
-| 678774.8505747126 | 250.53793103448277 |
+| 659594.495412844 | 272.408256880734 |
 
 ```sql
 -- Average order amount excluding cancellations and returns
@@ -131,7 +131,7 @@ WHERE status NOT IN ('cancelled', 'returned');
 
 | avg_order_value |
 | ----------: |
-| 1034451.993859959 |
+| 1010677.9067462009 |
 
 ## ROUND -- Rounding
 
@@ -149,7 +149,7 @@ FROM reviews;
 
 | avg_raw | avg_rounded |
 | ----------: | ----------: |
-| 3.903090491521336 | 3.9 |
+| 3.904984788205008 | 3.9 |
 
 ```sql
 -- Average product price rounded to the nearest whole number
@@ -212,7 +212,7 @@ WHERE is_active = 1;
 
 | cheapest | most_expensive |
 | ----------: | ----------: |
-| 16500.0 | 7495200.0 |
+| 18500.0 | 5481100.0 |
 
 ```sql
 -- First and most recent order dates
@@ -226,7 +226,7 @@ FROM orders;
 
 | first_order | latest_order |
 | ---------- | ---------- |
-| 2016-01-02 13:54:14 | 2026-01-01 08:40:57 |
+| 2016-01-09 10:20:06 | 2025-12-31 22:25:39 |
 
 ## Using Multiple Aggregate Functions Together
 
@@ -247,7 +247,7 @@ FROM reviews;
 
 | total_reviews | avg_rating | lowest_rating | highest_rating | five_star_count |
 | ----------: | ----------: | ----------: | ----------: | ----------: |
-| 95357 | 3.903090491521336 | 1 | 5 | 38460 |
+| 8546 | 3.904984788205008 | 1 | 5 | 3433 |
 
 ## Aggregate Functions and NULL
 
@@ -327,7 +327,7 @@ Calculate the total revenue (sum of `total_amount`) from completed orders (`stat
 
 | total_revenue |
 | ----------: |
-| 393749378848.0 |
+| 34582358414.0 |
 
 
 ### Problem 3
@@ -345,7 +345,7 @@ From the `customers` table, find the total number of customers and the number of
 
 | total_customers | with_birth_date |
 | ----------: | ----------: |
-| 52300 | 44507 |
+| 5230 | 4492 |
 
 
 ### Problem 4
@@ -364,7 +364,7 @@ Count the number of currently active products at TechShop and calculate their to
 
 | active_product_count | total_inventory_value |
 | ----------: | ----------: |
-| 2175 | 375495851400.0 |
+| 218 | 39328835500.0 |
 
 
 ### Problem 5
@@ -384,7 +384,7 @@ Calculate the average, minimum, and maximum `total_amount` for orders that were 
 
 | avg_order | min_order | max_order |
 | ----------: | ----------: | ----------: |
-| 1027943.4813606213 | 13262.0 | 71906300.0 |
+| 1002058.562654908 | 16876.0 | 50867500.0 |
 
 
 ### Problem 6
@@ -404,7 +404,7 @@ From the `products` table, calculate the average price (`avg_price`, 0 decimal p
 
 | avg_price | avg_cost | avg_margin_pct |
 | ----------: | ----------: | ----------: |
-| 678775.0 | 519733.0 | 23.3 |
+| 659594.0 | 504305.0 | 23.9 |
 
 
 ### Problem 7
@@ -424,7 +424,7 @@ From the `products` table, find the minimum price, maximum price, and price rang
 
 | min_price | max_price | price_range |
 | ----------: | ----------: | ----------: |
-| 16500.0 | 7495200.0 | 7478700.0 |
+| 18500.0 | 5481100.0 | 5462600.0 |
 
 
 ### Problem 8
@@ -444,7 +444,7 @@ From the `order_items` table, find the total row count, total quantity sum (`qua
 
 | total_items | total_qty | avg_unit_price | max_qty |
 | ----------: | ----------: | ----------: | ----------: |
-| 1015189 | 1117997 | 406547.0 | 10 |
+| 91104 | 101162 | 394885.14 | 10 |
 
 
 ### Problem 9
@@ -466,7 +466,7 @@ From the `payments` table, find the count, total amount, average amount (0 decim
 
 | payment_count | total_amount | avg_amount | min_amount | max_amount |
 | ----------: | ----------: | ----------: | ----------: | ----------: |
-| 383883 | 394593947687.0 | 1027902.0 | 13262.0 | 71906300.0 |
+| 34616 | 34682197764.0 | 1001912.0 | 16876.0 | 50867500.0 |
 
 
 ### Problem 10
@@ -488,7 +488,7 @@ How many orders have a shipping note (`notes`), and what percentage of total ord
 
 | orders_with_notes | total_orders | pct_with_notes |
 | ----------: | ----------: | ----------: |
-| 146327 | 417803 | 35.0 |
+| 13219 | 37557 | 35.2 |
 
 
 ### Scoring Guide

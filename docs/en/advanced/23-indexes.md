@@ -448,14 +448,17 @@ Use `sqlite_master` to list all indexes in the database. For each index, examine
 
         **Result (example):**
 
-        | name                       | tbl_name   | sql                                                                | index_type |
-        | -------------------------- | ---------- | ------------------------------------------------------------------ | ---------- |
-        | idx_calendar_year_month    | calendar   | CREATE INDEX idx_calendar_year_month ON calendar(year, month)      | 복합         |
-        | idx_cart_items_cart_id     | cart_items | CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id)         | 단일         |
-        | idx_carts_customer_id      | carts      | CREATE INDEX idx_carts_customer_id ON carts(customer_id)           | 단일         |
-        | idx_complaints_category    | complaints | CREATE INDEX idx_complaints_category ON complaints(category)       | 단일         |
-        | idx_complaints_customer_id | complaints | CREATE INDEX idx_complaints_customer_id ON complaints(customer_id) | 단일         |
-        | ...                        | ...        | ...                                                                | ...        |
+| name | tbl_name | sql | index_type |
+| ---------- | ---------- | ---------- | ---------- |
+| idx_calendar_year_month | calendar | CREATE INDEX idx_calendar_year_month ON calendar(year, month) | composite |
+| idx_cart_items_cart_id | cart_items | CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id) | single |
+| idx_carts_customer_id | carts | CREATE INDEX idx_carts_customer_id ON carts(customer_id) | single |
+| idx_complaints_category | complaints | CREATE INDEX idx_complaints_category ON complaints(category) | single |
+| idx_complaints_customer_id | complaints | CREATE INDEX idx_complaints_customer_id ON complaints(customer_id) | single |
+| idx_complaints_order_id | complaints | CREATE INDEX idx_complaints_order_id ON complaints(order_id) | single |
+| idx_complaints_staff_id | complaints | CREATE INDEX idx_complaints_staff_id ON complaints(staff_id) | single |
+| idx_complaints_status | complaints | CREATE INDEX idx_complaints_status ON complaints(status) | single |
+| ... | ... | ... | ... |
 
 
     === "MySQL"

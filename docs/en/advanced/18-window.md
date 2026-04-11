@@ -92,14 +92,14 @@ LIMIT 12;
 
 | category | product_name | price | price_rank |
 | ---------- | ---------- | ----------: | ----------: |
-| 2in1 | 레노버 IdeaPad Flex 5 화이트 | 2914000.0 | 1 |
-| 2in1 | 레노버 ThinkPad X1 2in1 화이트 | 2579700.0 | 2 |
-| 2in1 | HP Pavilion x360 14 블랙 | 2461600.0 | 3 |
-| 2in1 | 삼성 갤럭시북4 360 | 2354000.0 | 4 |
-| 2in1 | 레노버 ThinkPad X1 2in1 실버 | 2233200.0 | 5 |
-| 2in1 | 레노버 IdeaPad Flex 5 화이트 | 2171700.0 | 6 |
-| 2in1 | 레노버 Yoga 9i 실버 | 2161400.0 | 7 |
-| 2in1 | 삼성 갤럭시북5 360 블랙 | 2111000.0 | 8 |
+| 2-in-1 | Lenovo ThinkPad X1 2in1 Silver | 1866100.0 | 1 |
+| 2-in-1 | Lenovo IdeaPad Flex 5 White | 1524800.0 | 2 |
+| 2-in-1 | HP Pavilion x360 14 Black | 1479700.0 | 3 |
+| 2-in-1 | Samsung Galaxy Book4 360 Black | 1388600.0 | 4 |
+| 2-in-1 | Samsung Galaxy Book4 360 Black | 1267000.0 | 5 |
+| 2-in-1 | HP Envy x360 15 Silver | 1214600.0 | 6 |
+| 2-in-1 | Samsung Galaxy Book5 360 Black | 1179900.0 | 7 |
+| AMD | AMD Ryzen 9 9900X | 591800.0 | 1 |
 | ... | ... | ... | ... |
 
 ## Top-N per Group
@@ -153,14 +153,14 @@ ORDER BY year_month;
 
 | year_month | monthly_revenue | cumulative_revenue |
 | ---------- | ----------: | ----------: |
-| 2024-01 | 3807789761.0 | 3807789761.0 |
-| 2024-02 | 4701108852.0 | 8508898613.0 |
-| 2024-03 | 4935663129.0 | 13444561742.0 |
-| 2024-04 | 4954492231.0 | 18399053973.0 |
-| 2024-05 | 4912114419.0 | 23311168392.0 |
-| 2024-06 | 3853868900.0 | 27165037292.0 |
-| 2024-07 | 4453107092.0 | 31618144384.0 |
-| 2024-08 | 4903583071.0 | 36521727455.0 |
+| 2024-01 | 298764720.0 | 298764720.0 |
+| 2024-02 | 413105149.0 | 711869869.0 |
+| 2024-03 | 527614956.0 | 1239484825.0 |
+| 2024-04 | 463645381.0 | 1703130206.0 |
+| 2024-05 | 444935778.0 | 2148065984.0 |
+| 2024-06 | 373863202.0 | 2521929186.0 |
+| 2024-07 | 360080397.0 | 2882009583.0 |
+| 2024-08 | 407562440.0 | 3289572023.0 |
 | ... | ... | ... |
 
 ## LAG and LEAD — Referencing Adjacent Rows
@@ -194,14 +194,14 @@ ORDER BY year_month;
 
 | year_month | monthly_revenue | prev_month_revenue | mom_growth_pct |
 | ---------- | ----------: | ---------- | ---------- |
-| 2024-01 | 3807789761.0 | (NULL) | (NULL) |
-| 2024-02 | 4701108852.0 | 3807789761.0 | 23.5 |
-| 2024-03 | 4935663129.0 | 4701108852.0 | 5.0 |
-| 2024-04 | 4954492231.0 | 4935663129.0 | 0.4 |
-| 2024-05 | 4912114419.0 | 4954492231.0 | -0.9 |
-| 2024-06 | 3853868900.0 | 4912114419.0 | -21.5 |
-| 2024-07 | 4453107092.0 | 3853868900.0 | 15.5 |
-| 2024-08 | 4903583071.0 | 4453107092.0 | 10.1 |
+| 2024-01 | 298764720.0 | (NULL) | (NULL) |
+| 2024-02 | 413105149.0 | 298764720.0 | 38.3 |
+| 2024-03 | 527614956.0 | 413105149.0 | 27.7 |
+| 2024-04 | 463645381.0 | 527614956.0 | -12.1 |
+| 2024-05 | 444935778.0 | 463645381.0 | -4.0 |
+| 2024-06 | 373863202.0 | 444935778.0 | -16.0 |
+| 2024-07 | 360080397.0 | 373863202.0 | -3.7 |
+| 2024-08 | 407562440.0 | 360080397.0 | 13.2 |
 | ... | ... | ... | ... |
 
 ## Using PARTITION BY with LEAD
@@ -404,14 +404,14 @@ Use `DENSE_RANK()` to rank all active products by `price` in descending order. R
 
 | product_name | price | overall_rank |
 | ---------- | ----------: | ----------: |
-| Razer Blade 14 블랙 | 7495200.0 | 1 |
-| Razer Blade 16 블랙 | 5634900.0 | 2 |
-| Razer Blade 16 | 5518300.0 | 3 |
-| Razer Blade 18 | 5450500.0 | 4 |
-| Razer Blade 14 | 5339100.0 | 5 |
-| Razer Blade 16 실버 | 5127500.0 | 6 |
-| Razer Blade 18 화이트 | 4913500.0 | 7 |
-| MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 | 8 |
+| MacBook Air 15 M3 Silver | 5481100.0 | 1 |
+| ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 | 2 |
+| Razer Blade 18 Black | 4353100.0 | 3 |
+| Razer Blade 16 Silver | 3702900.0 | 4 |
+| ASUS ROG Strix G16CH White | 3671500.0 | 5 |
+| ASUS ROG Strix GT35 | 3296800.0 | 6 |
+| Razer Blade 18 Black | 2987500.0 | 7 |
+| ASUS Dual RTX 4060 Ti Black | 2674800.0 | 8 |
 | ... | ... | ... |
 
 
@@ -438,14 +438,14 @@ Calculate the cumulative total of new customer signups by year (cumulative custo
 
 | year | new_signups | cumulative_customers |
 | ---------- | ----------: | ----------: |
-| 2016 | 1000 | 1000 |
-| 2017 | 1800 | 2800 |
-| 2018 | 3000 | 5800 |
-| 2019 | 4500 | 10300 |
-| 2020 | 7000 | 17300 |
-| 2021 | 8000 | 25300 |
-| 2022 | 6500 | 31800 |
-| 2023 | 6000 | 37800 |
+| 2016 | 100 | 100 |
+| 2017 | 180 | 280 |
+| 2018 | 300 | 580 |
+| 2019 | 450 | 1030 |
+| 2020 | 700 | 1730 |
+| 2021 | 800 | 2530 |
+| 2022 | 650 | 3180 |
+| 2023 | 600 | 3780 |
 | ... | ... | ... |
 
 
@@ -480,14 +480,14 @@ For each month in 2023 and 2024, calculate the year-over-year (YoY) revenue grow
 
 | year_month | revenue | same_month_last_year | yoy_growth_pct |
 | ---------- | ----------: | ---------- | ---------- |
-| 2023-01 | 3271703186.0 | (NULL) | (NULL) |
-| 2023-02 | 3915639006.0 | (NULL) | (NULL) |
-| 2023-03 | 4939077954.0 | (NULL) | (NULL) |
-| 2023-04 | 4797530375.0 | (NULL) | (NULL) |
-| 2023-05 | 4115530865.0 | (NULL) | (NULL) |
-| 2023-06 | 3520005441.0 | (NULL) | (NULL) |
-| 2023-07 | 3257340549.0 | (NULL) | (NULL) |
-| 2023-08 | 4354477595.0 | (NULL) | (NULL) |
+| 2023-01 | 274226287.0 | (NULL) | (NULL) |
+| 2023-02 | 333966148.0 | (NULL) | (NULL) |
+| 2023-03 | 491087654.0 | (NULL) | (NULL) |
+| 2023-04 | 403110649.0 | (NULL) | (NULL) |
+| 2023-05 | 361101076.0 | (NULL) | (NULL) |
+| 2023-06 | 288736533.0 | (NULL) | (NULL) |
+| 2023-07 | 319249348.0 | (NULL) | (NULL) |
+| 2023-08 | 366518636.0 | (NULL) | (NULL) |
 | ... | ... | ... | ... |
 
 
@@ -526,14 +526,14 @@ Use `ROW_NUMBER()` to number each customer's orders and extract only the first o
 
 | customer_id | name | order_number | ordered_at | total_amount |
 | ----------: | ---------- | ---------- | ---------- | ----------: |
-| 903 | 김상철 | ORD-20160102-00026 | 2016-01-02 13:54:14 | 56400.0 |
-| 752 | 김정순 | ORD-20160103-00063 | 2016-01-03 12:47:28 | 487900.0 |
-| 840 | 문영숙 | ORD-20160101-00013 | 2016-01-03 12:48:53 | 49900.0 |
-| 690 | 장승현 | ORD-20160103-00059 | 2016-01-03 21:05:14 | 56400.0 |
-| 978 | 김현준 | ORD-20160102-00035 | 2016-01-05 17:54:32 | 194700.0 |
-| 226 | 박정수 | ORD-20160105-00088 | 2016-01-05 19:40:04 | 2230100.0 |
-| 90 | 유현지 | ORD-20160101-00017 | 2016-01-06 03:02:29 | 54500.0 |
-| 881 | 김도현 | ORD-20160107-00143 | 2016-01-07 07:31:04 | 91300.0 |
+| 90 | Joseph Sellers | ORD-20160109-00012 | 2016-01-09 10:20:06 | 211800.0 |
+| 98 | Gabriel Walters | ORD-20160107-00010 | 2016-01-10 12:08:34 | 537800.0 |
+| 85 | Ashley Hogan | ORD-20160112-00016 | 2016-01-15 17:24:53 | 704800.0 |
+| 15 | Lydia Lawrence | ORD-20160111-00015 | 2016-01-16 08:39:08 | 211800.0 |
+| 72 | Michael Hutchinson | ORD-20160117-00023 | 2016-01-17 16:32:31 | 167000.0 |
+| 18 | Sara Williams | ORD-20160103-00004 | 2016-01-18 01:56:50 | 167000.0 |
+| 30 | Austin Hunt | ORD-20160123-00029 | 2016-01-31 18:55:50 | 378369.0 |
+| 3 | Adam Moore | ORD-20160208-00047 | 2016-02-11 20:59:38 | 390000.0 |
 | ... | ... | ... | ... | ... |
 
 
@@ -559,14 +559,14 @@ Use `RANK()` and `DENSE_RANK()` together to rank product prices within each cate
 
 | category_name | product_name | price | rank | dense_rank |
 | ---------- | ---------- | ----------: | ----------: | ----------: |
-| 2in1 | 레노버 IdeaPad Flex 5 화이트 | 2914000.0 | 1 | 1 |
-| 2in1 | 레노버 ThinkPad X1 2in1 화이트 | 2579700.0 | 2 | 2 |
-| 2in1 | HP Pavilion x360 14 블랙 | 2461600.0 | 3 | 3 |
-| 2in1 | 삼성 갤럭시북4 360 | 2354000.0 | 4 | 4 |
-| 2in1 | 레노버 ThinkPad X1 2in1 실버 | 2233200.0 | 5 | 5 |
-| 2in1 | 레노버 IdeaPad Flex 5 화이트 | 2171700.0 | 6 | 6 |
-| 2in1 | 레노버 Yoga 9i 실버 | 2161400.0 | 7 | 7 |
-| 2in1 | 삼성 갤럭시북5 360 블랙 | 2111000.0 | 8 | 8 |
+| 2-in-1 | Lenovo ThinkPad X1 2in1 Silver | 1866100.0 | 1 | 1 |
+| 2-in-1 | Lenovo IdeaPad Flex 5 White | 1524800.0 | 2 | 2 |
+| 2-in-1 | HP Pavilion x360 14 Black | 1479700.0 | 3 | 3 |
+| 2-in-1 | Samsung Galaxy Book4 360 Black | 1388600.0 | 4 | 4 |
+| 2-in-1 | Samsung Galaxy Book4 360 Black | 1267000.0 | 5 | 5 |
+| 2-in-1 | HP Envy x360 15 Silver | 1214600.0 | 6 | 6 |
+| 2-in-1 | Samsung Galaxy Book5 360 Black | 1179900.0 | 7 | 7 |
+| AMD | AMD Ryzen 9 9900X | 591800.0 | 1 | 1 |
 | ... | ... | ... | ... | ... |
 
 
@@ -600,14 +600,14 @@ Calculate the 3-month moving average of monthly revenue for 2024. Use the `ROWS 
 
 | year_month | monthly_revenue | moving_avg_3m |
 | ---------- | ----------: | ----------: |
-| 2024-01 | 3807789761.0 | 3807789761.0 |
-| 2024-02 | 4701108852.0 | 4254449306.5 |
-| 2024-03 | 4935663129.0 | 4481520580.67 |
-| 2024-04 | 4954492231.0 | 4863754737.33 |
-| 2024-05 | 4912114419.0 | 4934089926.33 |
-| 2024-06 | 3853868900.0 | 4573491850.0 |
-| 2024-07 | 4453107092.0 | 4406363470.33 |
-| 2024-08 | 4903583071.0 | 4403519687.67 |
+| 2024-01 | 298764720.0 | 298764720.0 |
+| 2024-02 | 413105149.0 | 355934934.5 |
+| 2024-03 | 527614956.0 | 413161608.33 |
+| 2024-04 | 463645381.0 | 468121828.67 |
+| 2024-05 | 444935778.0 | 478732038.33 |
+| 2024-06 | 373863202.0 | 427481453.67 |
+| 2024-07 | 360080397.0 | 392959792.33 |
+| 2024-08 | 407562440.0 | 380502013.0 |
 | ... | ... | ... |
 
 
@@ -640,14 +640,14 @@ Use `NTILE(4)` to divide customers into 4 quartiles based on total purchase amou
 
 | name | grade | total_spent | quartile |
 | ---------- | ---------- | ----------: | ----------: |
-| 박정수 | VIP | 671056103.0 | 1 |
-| 정유진 | VIP | 646834022.0 | 1 |
-| 이미정 | VIP | 633645694.0 | 1 |
-| 김상철 | VIP | 565735423.0 | 1 |
-| 문영숙 | VIP | 523138846.0 | 1 |
-| 이영자 | VIP | 520594776.0 | 1 |
-| 이미정 | VIP | 497376276.0 | 1 |
-| 장영숙 | VIP | 487964896.0 | 1 |
+| Allen Snyder | VIP | 407119725.0 | 1 |
+| Jason Rivera | VIP | 375955231.0 | 1 |
+| Ronald Arellano | VIP | 255055649.0 | 1 |
+| Brenda Garcia | VIP | 253180338.0 | 1 |
+| Courtney Huff | VIP | 248498783.0 | 1 |
+| Gabriel Walters | VIP | 239477591.0 | 1 |
+| James Banks | VIP | 237513053.0 | 1 |
+| David York | GOLD | 207834908.0 | 1 |
 | ... | ... | ... | ... |
 
 
@@ -676,14 +676,14 @@ Calculate cumulative units sold for each product by order date. Return `product_
 
 | product_name | ordered_at | quantity | cumulative_qty |
 | ---------- | ---------- | ----------: | ----------: |
-| Razer Blade 18 블랙 | 2016-11-09 11:59:05 | 1 | 1 |
-| Razer Blade 18 블랙 | 2016-11-16 21:26:24 | 1 | 2 |
-| Razer Blade 18 블랙 | 2016-11-29 21:30:03 | 1 | 3 |
-| Razer Blade 18 블랙 | 2016-12-02 13:40:50 | 1 | 4 |
-| Razer Blade 18 블랙 | 2016-12-13 15:38:56 | 1 | 5 |
-| Razer Blade 18 블랙 | 2016-12-14 20:37:12 | 1 | 6 |
-| Razer Blade 18 블랙 | 2016-12-15 10:52:01 | 1 | 7 |
-| Razer Blade 18 블랙 | 2016-12-16 20:05:41 | 1 | 8 |
+| Razer Blade 18 Black | 2016-11-13 20:04:12 | 1 | 1 |
+| Razer Blade 18 Black | 2016-11-19 08:54:25 | 1 | 2 |
+| Razer Blade 18 Black | 2016-12-01 11:39:37 | 1 | 3 |
+| Razer Blade 18 Black | 2017-01-16 13:21:17 | 1 | 4 |
+| Razer Blade 18 Black | 2017-01-25 17:37:37 | 1 | 5 |
+| Razer Blade 18 Black | 2017-01-30 14:18:22 | 1 | 6 |
+| Razer Blade 18 Black | 2017-03-05 13:05:56 | 1 | 7 |
+| Razer Blade 18 Black | 2017-03-20 17:34:00 | 1 | 8 |
 | ... | ... | ... | ... |
 
 
@@ -714,14 +714,11 @@ Show the running headcount by department (by hire date order) along with the dep
 
 | department | name | role | hired_at | running_headcount | dept_total_headcount |
 | ---------- | ---------- | ---------- | ---------- | ----------: | ----------: |
-| CS | 김옥자 | staff | 2017-06-11 | 1 | 3 |
-| CS | 이현준 | staff | 2022-05-17 | 2 | 3 |
-| CS | 이순자 | staff | 2023-03-12 | 3 | 3 |
-| 개발 | 김영일 | manager | 2020-05-03 | 1 | 2 |
-| 개발 | 김현주 | staff | 2024-09-04 | 2 | 2 |
-| 경영 | 한민재 | admin | 2016-05-23 | 1 | 11 |
-| 경영 | 심정식 | staff | 2017-04-20 | 2 | 11 |
-| 경영 | 장주원 | admin | 2017-08-20 | 3 | 11 |
+| Management | Michael Thomas | admin | 2016-05-23 | 1 | 3 |
+| Management | Michael Mcguire | admin | 2017-08-20 | 2 | 3 |
+| Management | Jonathan Smith | admin | 2022-10-12 | 3 | 3 |
+| Marketing | Nicole Hamilton | manager | 2024-08-05 | 1 | 1 |
+| Sales | Jaime Phelps | manager | 2022-03-02 | 1 | 1 |
 | ... | ... | ... | ... | ... | ... |
 
 
@@ -763,14 +760,14 @@ Calculate the interval (in days) between each customer's orders and find the ave
 
 | customer_id | name | order_count | avg_days_between_orders |
 | ----------: | ---------- | ----------: | ----------: |
-| 47099 | 강현준 | 5 | 5.3 |
-| 49904 | 류은주 | 5 | 5.3 |
-| 226 | 박정수 | 661 | 5.5 |
-| 48065 | 조경수 | 6 | 5.8 |
-| 356 | 정유진 | 544 | 6.5 |
-| 1000 | 이미정 | 530 | 6.6 |
-| 840 | 문영숙 | 546 | 6.7 |
-| 51259 | 박정희 | 9 | 6.8 |
+| 97 | Jason Rivera | 346 | 10.0 |
+| 226 | Allen Snyder | 307 | 10.6 |
+| 549 | Ronald Arellano | 220 | 12.0 |
+| 4840 | Jennifer Bradshaw | 7 | 12.0 |
+| 356 | Courtney Huff | 226 | 12.2 |
+| 98 | Gabriel Walters | 283 | 12.8 |
+| 162 | Brenda Garcia | 249 | 13.0 |
+| 1323 | Austin Townsend | 164 | 13.2 |
 | ... | ... | ... | ... |
 
 
@@ -861,14 +858,14 @@ For each category, display each product's name, price, the cheapest product name
 
 | category | product_name | price | cheapest_in_category | priciest_in_category |
 | ---------- | ---------- | ----------: | ---------- | ---------- |
-| 2in1 | HP Pavilion x360 14 | 720800.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
-| 2in1 | HP Spectre x360 14 블랙 | 721300.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
-| 2in1 | HP Spectre x360 14 블랙 | 846500.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
-| 2in1 | HP Envy x360 15 실버 | 883400.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
-| 2in1 | HP Envy x360 15 | 905200.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
-| 2in1 | HP Pavilion x360 14 블랙 | 911700.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
-| 2in1 | 레노버 IdeaPad Flex 5 | 937600.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
-| 2in1 | HP Pavilion x360 14 실버 | 991200.0 | HP Pavilion x360 14 | 레노버 IdeaPad Flex 5 화이트 |
+| 2-in-1 | Samsung Galaxy Book5 360 Black | 1179900.0 | Samsung Galaxy Book5 360 Black | Lenovo ThinkPad X1 2in1 Silver |
+| 2-in-1 | HP Envy x360 15 Silver | 1214600.0 | Samsung Galaxy Book5 360 Black | Lenovo ThinkPad X1 2in1 Silver |
+| 2-in-1 | Samsung Galaxy Book4 360 Black | 1267000.0 | Samsung Galaxy Book5 360 Black | Lenovo ThinkPad X1 2in1 Silver |
+| 2-in-1 | Samsung Galaxy Book4 360 Black | 1388600.0 | Samsung Galaxy Book5 360 Black | Lenovo ThinkPad X1 2in1 Silver |
+| 2-in-1 | HP Pavilion x360 14 Black | 1479700.0 | Samsung Galaxy Book5 360 Black | Lenovo ThinkPad X1 2in1 Silver |
+| 2-in-1 | Lenovo IdeaPad Flex 5 White | 1524800.0 | Samsung Galaxy Book5 360 Black | Lenovo ThinkPad X1 2in1 Silver |
+| 2-in-1 | Lenovo ThinkPad X1 2in1 Silver | 1866100.0 | Samsung Galaxy Book5 360 Black | Lenovo ThinkPad X1 2in1 Silver |
+| AMD | AMD Ryzen 9 9900X | 335700.0 | AMD Ryzen 9 9900X | AMD Ryzen 9 9900X |
 | ... | ... | ... | ... | ... |
 
 

@@ -56,7 +56,7 @@ Practice one aggregate function at a time.
 
     | total_products |
     | ----------: |
-    | 2800 |
+    | 280 |
 
 ---
 
@@ -78,7 +78,7 @@ Practice one aggregate function at a time.
 
     | active_count |
     | ----------: |
-    | 2175 |
+    | 218 |
 
 ---
 
@@ -99,7 +99,7 @@ Practice one aggregate function at a time.
 
     | discontinued_count |
     | ----------: |
-    | 625 |
+    | 62 |
 
     > `COUNT(*)` returns 280, but `COUNT(discontinued_at)` returns 62 excluding NULL.
 
@@ -122,7 +122,7 @@ Practice one aggregate function at a time.
 
     | total_stock |
     | ----------: |
-    | 701168 |
+    | 76887 |
 
 ---
 
@@ -143,7 +143,7 @@ Practice one aggregate function at a time.
 
     | avg_price |
     | ----------: |
-    | 667853.25 |
+    | 649272.5 |
 
     > The decimal point appears long. Later you will learn how to organize it with `ROUND`.
 
@@ -166,7 +166,7 @@ Practice one aggregate function at a time.
 
     | max_price |
     | ----------: |
-    | 7495200.0 |
+    | 5481100.0 |
 
 ---
 
@@ -187,7 +187,7 @@ Practice one aggregate function at a time.
 
     | min_price |
     | ----------: |
-    | 16500.0 |
+    | 18500.0 |
 
 ---
 
@@ -208,7 +208,7 @@ Practice one aggregate function at a time.
 
     | total_revenue |
     | ----------: |
-    | 435005072142.0 |
+    | 38183495063.0 |
 
     > It is approximately 35.5 billion won. Cumulative sales over 10 years.
 
@@ -231,7 +231,7 @@ Practice one aggregate function at a time.
 
     | avg_rating |
     | ----------: |
-    | 3.903090491521336 |
+    | 3.904984788205008 |
 
 ---
 
@@ -252,7 +252,7 @@ Practice one aggregate function at a time.
 
     | max_points |
     | ----------: |
-    | 6344986 |
+    | 3955828 |
 
     > There is a customer who holds approximately 3.34 million points.
 
@@ -282,7 +282,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | avg_price |
     | ----------: |
-    | 678774.85 |
+    | 659594.5 |
 
 ---
 
@@ -303,7 +303,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | brand_count |
     | ----------: |
-    | 57 |
+    | 55 |
 
 ---
 
@@ -324,7 +324,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | ordering_customers |
     | ----------: |
-    | 29230 |
+    | 2839 |
 
     > Approximately 52% of the total 5,230 people have experience ordering.
 
@@ -349,7 +349,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | min_price | max_price | avg_price |
     | ----------: | ----------: | ----------: |
-    | 16500.0 | 7495200.0 | 667853.0 |
+    | 18500.0 | 5481100.0 | 649273.0 |
 
 ---
 
@@ -371,7 +371,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | five_star_count |
     | ----------: |
-    | 38460 |
+    | 3433 |
 
     > Approximately 41% of the total 7,945 reviews are 5-star reviews.
 
@@ -418,7 +418,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | card_count |
     | ----------: |
-    | 187835 |
+    | 16841 |
 
 ---
 
@@ -461,7 +461,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | first_order | last_order |
     | ---------- | ---------- |
-    | 2016-01-02 13:54:14 | 2026-01-01 08:40:57 |
+    | 2016-01-09 10:20:06 | 2025-12-31 22:25:39 |
 
     > Order data for approximately 9 years and 6 months exists.
 
@@ -485,7 +485,7 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
 
     | discounted_orders |
     | ----------: |
-    | 88688 |
+    | 7917 |
 
     > Discounts were applied to approximately 21% of the total 34,908 orders.
 
@@ -517,7 +517,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | order_count | total_revenue | avg_amount |
     | ----------: | ----------: | ----------: |
-    | 382081 | 392629443801.0 | 1027608.0 |
+    | 34393 | 34386590179.0 | 999814.0 |
 
 ---
 
@@ -539,7 +539,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | reviewer_count | reviewed_product_count |
     | ----------: | ----------: |
-    | 20329 | 2758 |
+    | 1899 | 278 |
 
     > Out of 280 products, 256 (91%) had reviews.
 
@@ -563,7 +563,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | total_points | avg_points |
     | ----------: | ----------: |
-    | 3840575170 | 73434.0 |
+    | 337459019 | 64524.0 |
 
     > The total accumulated points of all customers is approximately 320 million points, with an average of approximately 60,000 points per person.
 
@@ -589,7 +589,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | order_count | revenue |
     | ----------: | ----------: |
-    | 63967 | 65739060082.0 |
+    | 5785 | 5622439762.0 |
 
     > Sales in 2024 are approximately 5.6 billion won.
 
@@ -614,7 +614,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | refund_count | refund_total |
     | ----------: | ----------: |
-    | 22633 | 28380821307.0 |
+    | 1930 | 2357145631.0 |
 
     > Approximately 2.25 billion won was refunded.
 
@@ -638,7 +638,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | inventory_value |
     | ----------: |
-    | 288433758600.0 |
+    | 30030260700.0 |
 
     > The total inventory cost of products being sold is approximately 30 billion won.
 
@@ -661,7 +661,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | net_revenue |
     | ----------: |
-    | 431099282542.0 |
+    | 37831403663.0 |
 
     > Total sales before discount of KRW 35.5 billion, excluding discount of approximately KRW 310 million, net sales are approximately KRW 35.2 billion.
 
@@ -685,7 +685,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | one_star_count |
     | ----------: |
-    | 4762 |
+    | 434 |
 
     ```sql
     SELECT COUNT(*) AS five_star_count
@@ -697,7 +697,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | five_star_count |
     | ----------: |
-    | 38460 |
+    | 3433 |
 
     > A score of 5 (3,221 cases) is approximately 8 times more than a score of 1 (395 cases). If you learn GROUP BY, you can get the number of cases by all ratings with one query.
 
@@ -721,7 +721,7 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | avg_margin_pct |
     | ----------: |
-    | 23.3 |
+    | 23.9 |
 
     > The average margin for products being sold is approximately 23%.
 
@@ -749,6 +749,6 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
 
     | total_orders | total_revenue | avg_amount | total_discount | total_shipping | total_point_used |
     | ----------: | ----------: | ----------: | ----------: | ----------: | ----------: |
-    | 417803 | 435005072142.0 | 1041173.0 | 3905789600.0 | 65301000.0 | 107572558 |
+    | 37557 | 38183495063.0 | 1016681.0 | 352091400.0 | 9198000.0 | 9303137 |
 
     > Approximately 35,000 cases over 10 years, sales of KRW 35.5 billion, average of approximately KRW 1.02 million per case, total discounts of KRW 310 million, delivery fee income of 8.87 million, and point usage of 8.82 million.

@@ -50,14 +50,14 @@ Practice one concept at a time.
 
     | id | category_id | supplier_id | successor_id | name | sku | brand | model_number | description | specs | price | cost_price | stock_qty | weight_grams | is_active | discontinued_at | created_at | updated_at |
     | ----------: | ----------: | ----------: | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ----------: | ----------: | ----------: | ----------: | ----------: | ---------- | ---------- | ---------- |
-    | 1 | 7 | 20 | (NULL) | Razer Blade 18 블랙 | LA-GAM-RAZ-00001 | Razer | RAZ-00001 | Razer Razer Blade 18 블랙 - 고성능, 최신 기술 탑재 | {"screen_size": "14 inch", "cpu": "Apple M3", "ram": "8GB", "storage": "256GB", "weight_kg": 1.7, "battery_hours": 6} | 3730900.0 | 3086700.0 | 107 | 2556 | 1 | (NULL) | 2016-11-20 02:59:21 | 2016-11-20 02:59:21 |
-    | 2 | 28 | 27 | (NULL) | MSI GeForce RTX 4070 Ti Super GAMING X | GP-NVI-MSI-00002 | MSI | MSI-00002 | MSI MSI GeForce RTX 4070 Ti Super GAMING X - 고성능, 최신 기술 탑재 | {"vram": "12GB", "clock_mhz": 2447, "tdp_watts": 271} | 1744000.0 | 1360300.0 | 499 | 1632 | 1 | (NULL) | 2016-08-05 10:29:33 | 2016-08-05 10:29:33 |
-    | 3 | 21 | 1 | (NULL) | 삼성 DDR4 32GB PC4-25600 | RA-DDR-SAM-00003 | 삼성전자 | 삼성전-00003 | 삼성전자 삼성 DDR4 32GB PC4-25600 - 고성능, 최신 기술 탑재 | {"capacity_gb": 32, "speed_mhz": 5600, "type": "DDR5"} | 46100.0 | 37900.0 | 359 | 40 | 1 | (NULL) | 2016-12-25 00:50:46 | 2016-12-25 00:50:46 |
-    | 4 | 11 | 31 | (NULL) | Dell U2724D | MO-GEN-DEL-00004 | Dell | DEL-00004 | Dell Dell U2724D - 고성능, 최신 기술 탑재 | {"screen_size": "27 inch", "resolution": "QHD", "refresh_rate": 144, "panel": "IPS"} | 865000.0 | 565700.0 | 337 | 4817 | 1 | (NULL) | 2016-03-27 09:13:57 | 2016-03-27 09:13:57 |
-    | 5 | 22 | 48 | (NULL) | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | RA-DDR-GSK-00005 | G.SKILL | G.S-00005 | G.SKILL G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 - 고성능, 최신 기술 탑재 | {"capacity_gb": 32, "speed_mhz": 6400, "type": "DDR5"} | 161900.0 | 121400.0 | 59 | 60 | 1 | (NULL) | 2016-01-27 23:02:53 | 2016-01-27 23:02:53 |
-    | 6 | 29 | 27 | (NULL) | MSI Radeon RX 9070 VENTUS 3X 화이트 | GP-AMD-MSI-00006 | MSI | MSI-00006 | MSI MSI Radeon RX 9070 VENTUS 3X 화이트 - 고성능, 최신 기술 탑재 | {"vram": "16GB", "clock_mhz": 1946, "tdp_watts": 411} | 618800.0 | 431800.0 | 460 | 1789 | 1 | (NULL) | 2016-08-19 16:26:49 | 2016-08-19 16:26:49 |
-    | 7 | 22 | 1 | (NULL) | 삼성 DDR5 32GB PC5-38400 | RA-DDR-SAM-00007 | 삼성전자 | 삼성전-00007 | 삼성전자 삼성 DDR5 32GB PC5-38400 - 고성능, 최신 기술 탑재 | {"capacity_gb": 64, "speed_mhz": 3200, "type": "DDR4"} | 194700.0 | 151900.0 | 340 | 46 | 1 | (NULL) | 2016-01-01 15:45:49 | 2016-01-01 15:45:49 |
-    | 8 | 36 | 19 | (NULL) | 로지텍 G715 화이트 | KE-MEC-LOG-00008 | 로지텍 | 로지텍-00008 | 로지텍 로지텍 G715 화이트 - 고성능, 최신 기술 탑재 | (NULL) | 254400.0 | 135700.0 | 341 | 1168 | 1 | (NULL) | 2016-02-18 09:35:31 | 2016-02-18 09:35:31 |
+    | 1 | 7 | 20 | (NULL) | Razer Blade 18 Black | LA-GAM-RAZ-00001 | Razer | RAZ-00001 | Razer Razer Blade 18 Black - High performance, latest technology | {"screen_size": "14 inch", "cpu": "Apple M3", "ram": "8GB", "storage": "256GB", "weight_kg": 1.7, "battery_hours": 6} | 2987500.0 | 3086700.0 | 107 | 2556 | 1 | (NULL) | 2016-11-20 02:59:21 | 2016-11-20 02:59:21 |
+    | 2 | 28 | 27 | (NULL) | MSI GeForce RTX 4070 Ti Super GAMING X | GP-NVI-MSI-00002 | MSI | MSI-00002 | MSI MSI GeForce RTX 4070 Ti Super GAMING X - High performance, latest technology | {"vram": "12GB", "clock_mhz": 2447, "tdp_watts": 271} | 1744000.0 | 1360300.0 | 499 | 1632 | 1 | (NULL) | 2016-08-05 10:29:33 | 2016-08-05 10:29:33 |
+    | 3 | 21 | 1 | (NULL) | Samsung DDR4 32GB PC4-25600 | RA-DDR-SAM-00003 | Samsung | 삼성전-00003 | Samsung Samsung DDR4 32GB PC4-25600 - High performance, latest technology | {"capacity_gb": 32, "speed_mhz": 5600, "type": "DDR5"} | 43500.0 | 37900.0 | 359 | 40 | 1 | (NULL) | 2016-12-25 00:50:46 | 2016-12-25 00:50:46 |
+    | 4 | 11 | 31 | (NULL) | Dell U2724D | MO-GEN-DEL-00004 | Dell | DEL-00004 | Dell Dell U2724D - High performance, latest technology | {"screen_size": "27 inch", "resolution": "QHD", "refresh_rate": 144, "panel": "IPS"} | 894100.0 | 565700.0 | 337 | 4817 | 1 | (NULL) | 2016-03-27 09:13:57 | 2016-03-27 09:13:57 |
+    | 5 | 22 | 48 | (NULL) | G.SKILL Trident Z5 DDR5 64GB 6000MHz White | RA-DDR-GSK-00005 | G.SKILL | G.S-00005 | G.SKILL G.SKILL Trident Z5 DDR5 64GB 6000MHz White - High performance, latest technology | {"capacity_gb": 32, "speed_mhz": 6400, "type": "DDR5"} | 167000.0 | 121400.0 | 59 | 60 | 1 | (NULL) | 2016-01-27 23:02:53 | 2016-01-27 23:02:53 |
+    | 6 | 29 | 27 | (NULL) | MSI Radeon RX 9070 VENTUS 3X White | GP-AMD-MSI-00006 | MSI | MSI-00006 | MSI MSI Radeon RX 9070 VENTUS 3X White - High performance, latest technology | {"vram": "16GB", "clock_mhz": 1946, "tdp_watts": 411} | 383100.0 | 431800.0 | 460 | 1789 | 1 | (NULL) | 2016-08-19 16:26:49 | 2016-08-19 16:26:49 |
+    | 7 | 22 | 1 | (NULL) | Samsung DDR5 32GB PC5-38400 | RA-DDR-SAM-00007 | Samsung | 삼성전-00007 | Samsung Samsung DDR5 32GB PC5-38400 - High performance, latest technology | {"capacity_gb": 64, "speed_mhz": 3200, "type": "DDR4"} | 211800.0 | 151900.0 | 340 | 46 | 1 | (NULL) | 2016-01-01 15:45:49 | 2016-01-01 15:45:49 |
+    | 8 | 36 | 19 | (NULL) | Logitech G715 White | KE-MEC-LOG-00008 | Logitech | 로지텍-00008 | Logitech Logitech G715 White - High performance, latest technology | (NULL) | 131500.0 | 135700.0 | 341 | 1168 | 1 | (NULL) | 2016-02-18 09:35:31 | 2016-02-18 09:35:31 |
     | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
     > The actual result shows all 18 columns. A total of 280 rows are returned.
@@ -81,14 +81,14 @@ Practice one concept at a time.
 
     | name | price | stock_qty |
     | ---------- | ----------: | ----------: |
-    | Razer Blade 18 블랙 | 3730900.0 | 107 |
+    | Razer Blade 18 Black | 2987500.0 | 107 |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 |
-    | 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 |
-    | Dell U2724D | 865000.0 | 337 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 |
-    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 460 |
-    | 삼성 DDR5 32GB PC5-38400 | 194700.0 | 340 |
-    | 로지텍 G715 화이트 | 254400.0 | 341 |
+    | Samsung DDR4 32GB PC4-25600 | 43500.0 | 359 |
+    | Dell U2724D | 894100.0 | 337 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 | 59 |
+    | MSI Radeon RX 9070 VENTUS 3X White | 383100.0 | 460 |
+    | Samsung DDR5 32GB PC5-38400 | 211800.0 | 340 |
+    | Logitech G715 White | 131500.0 | 341 |
     | ... | ... | ... |
 
 ---
@@ -111,14 +111,14 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | ASUS ROG Strix G16CH 화이트 | 3307900.0 |
-    | ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
-    | ASUS ROG Strix Scar 16 실버 | 1511700.0 |
-    | ASUS ExpertBook B5 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 1629100.0 |
-    | ASUS PCE-BE92BT | 50800.0 |
-    | ASUS Dual RTX 4060 Ti 블랙 | 1271700.0 |
-    | ASUS Dual RX 9070 실버 | 747200.0 |
-    | ASUS PRIME Z890-A WIFI 실버 | 463900.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | ASUS ROG Strix Scar 16 Silver | 1598100.0 |
+    | ASUS ExpertBook B5 [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 2041000.0 |
+    | ASUS PCE-BE92BT | 47200.0 |
+    | ASUS Dual RTX 4060 Ti Black | 2674800.0 |
+    | ASUS Dual RX 9070 Silver | 1344800.0 |
+    | ASUS PRIME Z890-A WIFI Silver | 727700.0 |
     | ... | ... |
 
 ---
@@ -141,14 +141,14 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 18 블랙 | 3730900.0 |
+    | Razer Blade 18 Black | 2987500.0 |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
-    | LG 일체형PC 27V70Q 실버 | 1028600.0 |
-    | Razer Blade 18 화이트 | 3879900.0 |
-    | ASUS ROG Strix G16CH 화이트 | 3307900.0 |
-    | 한성 보스몬스터 DX5800 블랙 | 1189600.0 |
-    | ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
-    | MSI Radeon RX 7900 XTX GAMING X 화이트 | 1409500.0 |
+    | LG All-in-One PC 27V70Q Silver | 1093200.0 |
+    | Razer Blade 18 White | 2483600.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | Hansung BossMonster DX5800 Black | 1129400.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | HP Envy x360 15 Silver | 1214600.0 |
     | ... | ... |
 
 ---
@@ -171,14 +171,14 @@ Practice one concept at a time.
 
     | name | price | discontinued_at |
     | ---------- | ----------: | ---------- |
-    | 소니 WH-CH720N 실버 | 378900.0 | 2023-09-21 01:03:38 |
-    | WD Elements 2TB 블랙 | 239700.0 | 2024-08-25 09:29:10 |
-    | JBL Quantum ONE 화이트 | 294800.0 | 2023-06-01 06:11:13 |
-    | 주연 리오나인 i7 시스템 실버 | 744100.0 | 2023-05-08 03:08:52 |
-    | ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 | 2017-05-15 20:10:25 |
-    | 로지텍 G713 실버 | 139200.0 | 2020-05-02 13:07:12 |
-    | 삼성 DDR4 32GB PC4-25600 | 113700.0 | 2017-08-03 21:40:45 |
-    | ASUS ROG Strix Scar 16 실버 | 1511700.0 | 2019-11-12 00:23:31 |
+    | Sony WH-CH720N Silver | 445700.0 | 2023-09-21 01:03:38 |
+    | WD Elements 2TB Black | 247100.0 | 2024-08-25 09:29:10 |
+    | JBL Quantum ONE White | 239900.0 | 2023-06-01 06:11:13 |
+    | Jooyon Rionine i7 System Silver | 810300.0 | 2023-05-08 03:08:52 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 | 2017-05-15 20:10:25 |
+    | Logitech G713 Silver | 151000.0 | 2021-05-03 13:07:12 |
+    | Samsung DDR4 32GB PC4-25600 | 91000.0 | 2018-08-03 21:40:45 |
+    | ASUS ROG Strix Scar 16 Silver | 1598100.0 | 2020-11-11 00:23:31 |
     | ... | ... | ... |
 
 ---
@@ -201,14 +201,14 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | Dell U2724D | 865000.0 |
-    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 |
-    | 넷기어 Nighthawk RS700S 블랙 | 605400.0 |
-    | 한성 보스몬스터 DX9900 실버 | 763600.0 |
-    | 주연 리오나인 i7 시스템 실버 | 744100.0 |
-    | HP Envy x360 15 실버 | 883400.0 |
-    | ASRock B850M Pro RS 실버 | 607200.0 |
-    | 넷기어 Orbi 970 블랙 | 865300.0 |
+    | Dell U2724D | 894100.0 |
+    | Netgear Nighthawk RS700S Black | 629300.0 |
+    | Hansung BossMonster DX9900 Silver | 739900.0 |
+    | Jooyon Rionine i7 System Silver | 810300.0 |
+    | Samsung Odyssey G7 32 White | 537800.0 |
+    | ASRock B850M Pro RS Silver | 665600.0 |
+    | Netgear Orbi 970 Black | 762500.0 |
+    | ASUS PRIME Z890-A WIFI Silver | 727700.0 |
     | ... | ... |
 
 ---
@@ -232,13 +232,13 @@ Practice one concept at a time.
     | name | brand | price |
     | ---------- | ---------- | ----------: |
     | MSI GeForce RTX 4070 Ti Super GAMING X | MSI | 1744000.0 |
-    | MSI Radeon RX 9070 VENTUS 3X 화이트 | MSI | 618800.0 |
-    | MSI MAG X870E TOMAHAWK WIFI 화이트 | MSI | 473800.0 |
-    | ASUS ROG Strix G16CH 화이트 | ASUS | 3307900.0 |
-    | ASUS TUF Gaming RTX 5080 화이트 | ASUS | 3994200.0 |
-    | MSI Radeon RX 7900 XTX GAMING X 화이트 | MSI | 1409500.0 |
-    | ASUS ROG Strix Scar 16 실버 | ASUS | 1511700.0 |
-    | ASUS ExpertBook B5 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | ASUS | 1629100.0 |
+    | MSI Radeon RX 9070 VENTUS 3X White | MSI | 383100.0 |
+    | Logitech G715 White | Logitech | 131500.0 |
+    | MSI MAG X870E TOMAHAWK WIFI White | MSI | 425400.0 |
+    | ASUS ROG Strix G16CH White | ASUS | 3671500.0 |
+    | Logitech K580 | Logitech | 67800.0 |
+    | ASUS TUF Gaming RTX 5080 White | ASUS | 4526600.0 |
+    | MSI Radeon RX 7900 XTX GAMING X White | MSI | 1517600.0 |
     | ... | ... | ... |
 
 ---
@@ -262,13 +262,10 @@ Practice one concept at a time.
     | name | price |
     | ---------- | ----------: |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
-    | ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
-    | MSI Radeon RX 7900 XTX GAMING X 화이트 | 1409500.0 |
-    | APC Back-UPS Pro Gaming BGM1500B 화이트 | 449500.0 |
-    | APC Back-UPS Pro Gaming BGM1500B 블랙 | 624300.0 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | 4624100.0 |
-    | ASUS TUF Gaming RX 9070 XT OC 블랙 | 1199500.0 |
-    | ASUS TUF Gaming RX 9070 XT OC 실버 | 829400.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | MSI Radeon RX 7900 XTX GAMING X White | 1517600.0 |
+    | APC Back-UPS Pro Gaming BGM1500B Black | 516300.0 |
+    | MSI Radeon RX 9070 XT GAMING X | 1896000.0 |
     | ... | ... |
 
 ---
@@ -291,14 +288,14 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 블랙 | 5634900.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | Razer Blade 16 화이트 | 5503500.0 |
-    | Razer Blade 18 | 5450500.0 |
-    | Razer Blade 14 | 5339100.0 |
-    | Razer Blade 16 실버 | 5127500.0 |
-    | Razer Blade 16 블랙 | 4938200.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | Razer Blade 18 Black | 4353100.0 |
+    | Razer Blade 16 Silver | 3702900.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | ASUS ROG Zephyrus G16 | 3429900.0 |
+    | ASUS ROG Strix GT35 | 3296800.0 |
     | ... | ... |
 
 ---
@@ -322,11 +319,11 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 블랙 | 5634900.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | Razer Blade 16 화이트 | 5503500.0 |
-    | Razer Blade 18 | 5450500.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | Razer Blade 18 Black | 4353100.0 |
+    | Razer Blade 16 Silver | 3702900.0 |
     | ... | ... |
 
 ---
@@ -356,14 +353,14 @@ Practice combining two concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | TP-Link TL-SG108 실버 | 16500.0 |
-    | TP-Link TG-3468 블랙 | 19800.0 |
-    | 삼성 무선 키보드 Trio 500 화이트 | 20300.0 |
-    | TP-Link TL-SG1016D 화이트 | 20300.0 |
-    | 로지텍 G502 HERO 실버 | 20300.0 |
-    | Razer Cobra 실버 | 20300.0 |
-    | TP-Link Archer TX55E 실버 | 20500.0 |
-    | 로지텍 G402 | 20500.0 |
+    | TP-Link TG-3468 Black | 18500.0 |
+    | Samsung SPA-KFG0BUB Silver | 21900.0 |
+    | Arctic Freezer 36 A-RGB White | 23000.0 |
+    | Arctic Freezer 36 A-RGB White | 29900.0 |
+    | TP-Link Archer TBE400E White | 30200.0 |
+    | Samsung SPA-KFG0BUB | 30700.0 |
+    | TP-Link TL-SG1016D Silver | 36100.0 |
+    | Microsoft Bluetooth Keyboard White | 36800.0 |
     | ... | ... |
 
 ---
@@ -388,14 +385,14 @@ Practice combining two concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | TP-Link TL-SG108 실버 | 16500.0 |
-    | TP-Link TG-3468 블랙 | 19800.0 |
-    | 삼성 무선 키보드 Trio 500 화이트 | 20300.0 |
-    | TP-Link TL-SG1016D 화이트 | 20300.0 |
-    | 로지텍 G502 HERO 실버 | 20300.0 |
-    | Razer Cobra 실버 | 20300.0 |
-    | TP-Link Archer TX55E 실버 | 20500.0 |
-    | 로지텍 G402 | 20500.0 |
+    | TP-Link TG-3468 Black | 18500.0 |
+    | Samsung SPA-KFG0BUB Silver | 21900.0 |
+    | Arctic Freezer 36 A-RGB White | 23000.0 |
+    | Arctic Freezer 36 A-RGB White | 29900.0 |
+    | TP-Link Archer TBE400E White | 30200.0 |
+    | Samsung SPA-KFG0BUB | 30700.0 |
+    | TP-Link TL-SG1016D Silver | 36100.0 |
+    | Microsoft Bluetooth Keyboard White | 36800.0 |
     | ... | ... |
 
 ---
@@ -419,14 +416,14 @@ Practice combining two concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 블랙 | 5634900.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | Razer Blade 18 | 5450500.0 |
-    | Razer Blade 14 | 5339100.0 |
-    | Razer Blade 16 실버 | 5127500.0 |
-    | Razer Blade 18 화이트 | 4913500.0 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | Razer Blade 18 Black | 4353100.0 |
+    | Razer Blade 16 Silver | 3702900.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | ASUS ROG Strix GT35 | 3296800.0 |
+    | Razer Blade 18 Black | 2987500.0 |
+    | ASUS Dual RTX 4060 Ti Black | 2674800.0 |
     | ... | ... |
 
 ---
@@ -450,13 +447,13 @@ Practice combining two concepts.
     | name | brand | price |
     | ---------- | ---------- | ----------: |
     | MSI GeForce RTX 4070 Ti Super GAMING X | MSI | 1744000.0 |
-    | MSI Radeon RX 9070 VENTUS 3X 화이트 | MSI | 618800.0 |
-    | MSI MAG X870E TOMAHAWK WIFI 화이트 | MSI | 473800.0 |
-    | ASUS ROG Strix G16CH 화이트 | ASUS | 3307900.0 |
-    | ASUS TUF Gaming RTX 5080 화이트 | ASUS | 3994200.0 |
-    | MSI Radeon RX 7900 XTX GAMING X 화이트 | MSI | 1409500.0 |
-    | ASUS ROG Strix Scar 16 실버 | ASUS | 1511700.0 |
-    | ASUS ExpertBook B5 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | ASUS | 1629100.0 |
+    | MSI Radeon RX 9070 VENTUS 3X White | MSI | 383100.0 |
+    | MSI MAG X870E TOMAHAWK WIFI White | MSI | 425400.0 |
+    | ASUS ROG Strix G16CH White | ASUS | 3671500.0 |
+    | ASUS TUF Gaming RTX 5080 White | ASUS | 4526600.0 |
+    | MSI Radeon RX 7900 XTX GAMING X White | MSI | 1517600.0 |
+    | ASUS ROG Strix Scar 16 Silver | ASUS | 1598100.0 |
+    | ASUS ExpertBook B5 [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | ASUS | 2041000.0 |
     | ... | ... | ... |
 
 ---
@@ -479,14 +476,14 @@ Practice combining two concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 18 블랙 | 3730900.0 |
+    | Razer Blade 18 Black | 2987500.0 |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
-    | 삼성 DDR4 32GB PC4-25600 | 46100.0 |
-    | Dell U2724D | 865000.0 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 |
-    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 |
-    | 삼성 DDR5 32GB PC5-38400 | 194700.0 |
-    | 로지텍 G715 화이트 | 254400.0 |
+    | Samsung DDR4 32GB PC4-25600 | 43500.0 |
+    | Dell U2724D | 894100.0 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 |
+    | MSI Radeon RX 9070 VENTUS 3X White | 383100.0 |
+    | Samsung DDR5 32GB PC5-38400 | 211800.0 |
+    | Logitech G715 White | 131500.0 |
     | ... | ... |
 
 ---
@@ -510,14 +507,13 @@ Practice combining two concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | 4624100.0 |
-    | ASUS Dual RTX 4060 Ti 실버 | 4294000.0 |
-    | 기가바이트 RTX 5080 GAMING OC 화이트 | 4229900.0 |
-    | 기가바이트 RTX 4060 EAGLE OC 실버 | 4218800.0 |
-    | ASUS Dual RTX 4060 Ti | 4214800.0 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 블랙 | 4194600.0 |
-    | 기가바이트 RTX 4090 AERO OC | 4177400.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | ASUS Dual RTX 4060 Ti Black | 2674800.0 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
+    | Gigabyte RTX 4090 AERO OC White | 1280900.0 |
+    | Gigabyte RTX 5090 AERO OC | 1136100.0 |
+    | ASUS Dual RTX 5070 Ti Silver | 986400.0 |
     | ... | ... |
 
 ---
@@ -543,13 +539,13 @@ Practice combining two concepts.
     | name | price | stock_qty |
     | ---------- | ----------: | ----------: |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 |
-    | ASUS ROG Strix G16 실버 | 2272200.0 | 499 |
-    | HP Slim Desktop S01 | 1712800.0 | 497 |
-    | 삼성 오디세이 G7 32 화이트 | 2479000.0 | 495 |
-    | Dell XPS Desktop 8960 실버 | 1282100.0 | 494 |
-    | 레노버 ThinkCentre M70q 화이트 [특별 한정판 에디션] 고급 알루미늄 합금 바디 적용, 프리미엄 패키지 구성 | 1570900.0 | 494 |
-    | LG 그램 프로 16 화이트 | 2797000.0 | 492 |
-    | ASUS ROG Swift PG32UCDM 화이트 | 1719300.0 | 492 |
+    | Epson L15160 | 1019500.0 | 493 |
+    | SAPPHIRE PULSE RX 7800 XT Silver | 1146300.0 | 490 |
+    | LG Gram 14 | 1734000.0 | 490 |
+    | MSI Radeon RX 9070 XT GAMING X | 1896000.0 | 482 |
+    | HP Slim Desktop S01 White | 1708400.0 | 481 |
+    | Razer Blade 18 | 1806800.0 | 460 |
+    | ASUS Dual RX 9070 Silver | 1344800.0 | 454 |
     | ... | ... | ... |
 
 ---
@@ -572,14 +568,14 @@ Practice combining two concepts.
 
     | name | category_id | price |
     | ---------- | ----------: | ----------: |
-    | LG 일체형PC 27V70Q 실버 | 2 | 1028600.0 |
-    | 삼성 DM500TEA 블랙 | 2 | 2598300.0 |
-    | HP Slim Desktop S01 화이트 | 2 | 1644700.0 |
-    | Dell XPS Desktop 8960 실버 | 2 | 1282100.0 |
-    | Dell Inspiron Desktop | 2 | 1153400.0 |
-    | HP Slim Desktop S01 | 2 | 1712800.0 |
-    | 삼성 DM500TDA | 2 | 2332400.0 |
-    | 삼성 DM500TDA 화이트 | 2 | 2159500.0 |
+    | LG All-in-One PC 27V70Q Silver | 2 | 1093200.0 |
+    | HP Slim Desktop S01 White | 2 | 1708400.0 |
+    | Dell XPS Desktop 8960 Silver | 2 | 1249400.0 |
+    | HP Z2 Mini G1a Black | 2 | 895000.0 |
+    | Samsung DM500TDA Silver | 2 | 822100.0 |
+    | Hansung BossMonster DX9900 Silver | 3 | 739900.0 |
+    | ASUS ROG Strix G16CH White | 3 | 3671500.0 |
+    | Jooyon Rionine i7 System Silver | 3 | 810300.0 |
     | ... | ... | ... |
 
     > Category 1=Desktop PC, 2=Pre-built, 3=Custom-built PC.
@@ -603,14 +599,14 @@ Practice combining two concepts.
 
     | name | price | cost_price | margin |
     | ---------- | ----------: | ----------: | ----------: |
-    | Razer Blade 18 블랙 | 3730900.0 | 3086700.0 | 644200.0 |
+    | Razer Blade 18 Black | 2987500.0 | 3086700.0 | -99200.0 |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 1360300.0 | 383700.0 |
-    | 삼성 DDR4 32GB PC4-25600 | 46100.0 | 37900.0 | 8200.0 |
-    | Dell U2724D | 865000.0 | 565700.0 | 299300.0 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 121400.0 | 40500.0 |
-    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 431800.0 | 187000.0 |
-    | 삼성 DDR5 32GB PC5-38400 | 194700.0 | 151900.0 | 42800.0 |
-    | 로지텍 G715 화이트 | 254400.0 | 135700.0 | 118700.0 |
+    | Samsung DDR4 32GB PC4-25600 | 43500.0 | 37900.0 | 5600.0 |
+    | Dell U2724D | 894100.0 | 565700.0 | 328400.0 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 | 121400.0 | 45600.0 |
+    | MSI Radeon RX 9070 VENTUS 3X White | 383100.0 | 431800.0 | -48700.0 |
+    | Samsung DDR5 32GB PC5-38400 | 211800.0 | 151900.0 | 59900.0 |
+    | Logitech G715 White | 131500.0 | 135700.0 | -4200.0 |
     | ... | ... | ... | ... |
 
     > Products with negative margin are sold below cost (negative margin).
@@ -640,9 +636,9 @@ Practice combining two concepts.
     | ASRock |
     | ASUS |
     | Adobe |
+    | AhnLab |
     | Apple |
     | Arctic |
-    | BenQ |
     | ... |
 
 ---
@@ -673,14 +669,14 @@ Complex problems combining multiple concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 블랙 | 5634900.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | Razer Blade 18 | 5450500.0 |
-    | Razer Blade 14 | 5339100.0 |
-    | Razer Blade 16 실버 | 5127500.0 |
-    | Razer Blade 18 화이트 | 4913500.0 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | Razer Blade 18 Black | 4353100.0 |
+    | Razer Blade 16 Silver | 3702900.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | ASUS ROG Strix GT35 | 3296800.0 |
+    | Razer Blade 18 Black | 2987500.0 |
+    | ASUS Dual RTX 4060 Ti Black | 2674800.0 |
     | ... | ... |
 
 ---
@@ -704,14 +700,14 @@ Complex problems combining multiple concepts.
 
     | name | brand | price |
     | ---------- | ---------- | ----------: |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | MSI | 4881500.0 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | MSI | 4624100.0 |
-    | ASUS ROG Strix GT35 실버 | ASUS | 4621600.0 |
-    | MSI Katana HX 실버 | MSI | 4429800.0 |
-    | ASUS ROG Strix Scar 16 블랙 | ASUS | 4362900.0 |
-    | ASUS Dual RTX 4060 Ti 실버 | ASUS | 4294000.0 |
-    | ASUS TUF Gaming A15 화이트 | ASUS | 4280800.0 |
-    | ASUS Dual RTX 4060 Ti | ASUS | 4214800.0 |
+    | ASUS TUF Gaming RTX 5080 White | ASUS | 4526600.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | ASUS | 4496700.0 |
+    | ASUS ROG Strix G16CH White | ASUS | 3671500.0 |
+    | ASUS ROG Zephyrus G16 | ASUS | 3429900.0 |
+    | ASUS ROG Strix GT35 | ASUS | 3296800.0 |
+    | ASUS Dual RTX 4060 Ti Black | ASUS | 2674800.0 |
+    | ASUS ROG Strix Scar 16 | ASUS | 2452500.0 |
+    | ASUS ExpertBook B5 [Special Limited Edition] RGB lighting equipped, software customization supported | ASUS | 2121600.0 |
     | ... | ... | ... |
 
 ---
@@ -735,14 +731,14 @@ Complex problems combining multiple concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 블랙 | 5634900.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | Razer Blade 18 | 5450500.0 |
-    | Razer Blade 14 | 5339100.0 |
-    | Razer Blade 16 실버 | 5127500.0 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | 4624100.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | Razer Blade 18 Black | 4353100.0 |
+    | Razer Blade 16 Silver | 3702900.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | ASUS ROG Strix GT35 | 3296800.0 |
+    | Razer Blade 18 Black | 2987500.0 |
+    | ASUS Dual RTX 4060 Ti Black | 2674800.0 |
     | ... | ... |
 
 ---
@@ -767,15 +763,10 @@ Complex problems combining multiple concepts.
 
     | name | price |
     | ---------- | ----------: |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 1986400.0 |
-    | MSI GeForce RTX 5080 GAMING X TRIO 화이트 | 1879100.0 |
     | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
-    | MSI GeForce RTX 5070 GAMING X 블랙 | 1608400.0 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X 블랙 | 1510200.0 |
-    | 기가바이트 RTX 5090 AERO OC | 1453600.0 |
-    | ASUS ROG STRIX RTX 5070 화이트 | 1432600.0 |
-    | ASUS Dual RTX 4060 Ti 블랙 | 1271700.0 |
-    | ... | ... |
+    | Gigabyte RTX 4090 AERO OC White | 1280900.0 |
+    | Gigabyte RTX 5090 AERO OC | 1136100.0 |
+    | ASUS Dual RTX 5070 Ti Silver | 986400.0 |
 
 ---
 
@@ -798,11 +789,11 @@ Complex problems combining multiple concepts.
 
     | name | price | cost_price | margin |
     | ---------- | ----------: | ----------: | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 | 4161000.0 | 3334200.0 |
-    | MacBook Air 13 M4 | 4449200.0 | 2451900.0 | 1997300.0 |
-    | Razer Blade 16 | 5518300.0 | 3703300.0 | 1815000.0 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 | 3168100.0 | 1713400.0 |
-    | Razer Blade 18 화이트 | 4913500.0 | 3251900.0 | 1661600.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 | 3205400.0 | 2275700.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 | 3037100.0 | 1489500.0 |
+    | Razer Blade 18 Black | 4353100.0 | 3047200.0 | 1305900.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 | 3296400.0 | 1200300.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 | 2480900.0 | 1190600.0 |
     | ... | ... | ... | ... |
 
 ---
@@ -827,11 +818,11 @@ Complex problems combining multiple concepts.
 
     | name | price | discontinued_at |
     | ---------- | ----------: | ---------- |
-    | 로지텍 G715 실버 | 100600.0 | 2025-12-27 19:50:12 |
-    | 시소닉 FOCUS GM-750 실버 | 98900.0 | 2025-12-25 20:05:49 |
-    | SteelSeries Arctis Nova 7 Wireless 실버 | 367300.0 | 2025-12-24 21:58:49 |
-    | Dell Latitude 5540 실버 | 1113900.0 | 2025-12-17 22:47:10 |
-    | 주연 리오나인 i9 하이엔드 실버 | 1663400.0 | 2025-12-15 15:04:20 |
+    | Dell XPS Desktop 8960 Silver | 1249400.0 | 2025-11-20 15:30:12 |
+    | Kingston FURY Beast DDR4 16GB White | 91200.0 | 2025-11-18 04:06:13 |
+    | Intel Core Ultra 7 265K | 196300.0 | 2025-11-16 21:11:33 |
+    | Hansung BossMonster DX7700 White | 1579400.0 | 2025-10-25 03:47:01 |
+    | Intel Core Ultra 7 265K White | 170200.0 | 2025-08-24 00:34:53 |
     | ... | ... | ... |
 
 ---
@@ -854,10 +845,7 @@ Complex problems combining multiple concepts.
 
     | name | price | stock_qty |
     | ---------- | ----------: | ----------: |
-    | Arctic Freezer 36 A-RGB 화이트 | 27400.0 | 0 |
-    | 삼성 DDR4 16GB PC4-25600 | 73600.0 | 0 |
-    | WD My Passport 2TB 블랙 | 329100.0 | 0 |
-    | 삼성 DDR5 32GB PC5-38400 실버 | 158000.0 | 0 |
+    | Arctic Freezer 36 A-RGB White | 23000.0 | 0 |
 
     > Currently only a few products match. In real online stores, out-of-stock product management is important.
 
@@ -884,14 +872,14 @@ Complex problems combining multiple concepts.
 
     | name | price | stock_qty |
     | ---------- | ----------: | ----------: |
-    | 엡손 L15160 | 501700.0 | 323 |
-    | 삼성 S24C360 블랙 | 503500.0 | 355 |
-    | 넷기어 RAX70 실버 | 506300.0 | 221 |
-    | ASRock B860M Pro RS 화이트 | 506700.0 | 390 |
-    | 필립스 328E1CA 실버 | 507300.0 | 128 |
-    | HP DeskJet 2820 | 508800.0 | 376 |
-    | 엡손 L3260 블랙 | 509200.0 | 314 |
-    | ASRock Z790 Steel Legend | 511000.0 | 226 |
+    | CyberPower BRG1500AVRLCD Silver | 508100.0 | 230 |
+    | APC Back-UPS Pro Gaming BGM1500B Black | 516300.0 | 393 |
+    | Philips 27E1N5300AE White | 518700.0 | 397 |
+    | Gigabyte Z790 AORUS MASTER | 520400.0 | 339 |
+    | Samsung Odyssey G7 32 White | 537800.0 | 425 |
+    | WD Gold 12TB | 541900.0 | 430 |
+    | ASRock X870E Taichi Silver | 543100.0 | 411 |
+    | Gigabyte X870 AORUS ELITE AX Silver | 545100.0 | 48 |
     | ... | ... | ... |
 
 ---
@@ -915,14 +903,14 @@ Complex problems combining multiple concepts.
 
     | name | weight_grams | price |
     | ---------- | ----------: | ----------: |
-    | 한성 보스몬스터 DX7700 실버 | 19914 | 3230900.0 |
-    | ASUS ROG Strix GT35 실버 | 19883 | 2553100.0 |
-    | APC Back-UPS Pro BR1500G 실버 | 19791 | 340300.0 |
-    | ASUS ROG Strix GT35 화이트 | 19598 | 1637500.0 |
-    | ASUS ROG Strix GT35 | 19449 | 3296400.0 |
-    | 한성 보스몬스터 DX7700 화이트 | 19250 | 1607700.0 |
-    | APC Back-UPS Pro BR1500G 블랙 | 19212 | 217000.0 |
-    | 한성 프리워크 P5700 블랙 | 19165 | 3917100.0 |
+    | ASUS ROG Strix GT35 | 19449 | 3296800.0 |
+    | Hansung BossMonster DX7700 White | 19250 | 1579400.0 |
+    | ASUS ROG Strix G16CH White | 16624 | 3671500.0 |
+    | Hansung BossMonster DX9900 Silver | 14892 | 739900.0 |
+    | ASUS ROG Strix G16CH Silver | 14308 | 1879100.0 |
+    | CyberPower OR1500LCDRT2U Black | 14045 | 252900.0 |
+    | Jooyon Rionine Mini PC | 13062 | 1194000.0 |
+    | LG All-in-One PC 27V70Q Silver | 12700 | 1093200.0 |
     | ... | ... | ... |
 
     > Products weighing 5kg or more are mostly desktop PCs.
@@ -953,14 +941,14 @@ Complex problems combining multiple concepts.
 
     | name | price | cost_price | margin_pct |
     | ---------- | ----------: | ----------: | ----------: |
-    | Microsoft 365 Personal 실버 | 171000.0 | 62900.0 | 63.2 |
-    | Adobe Creative Cloud 1년 화이트 | 657900.0 | 256500.0 | 61.0 |
-    | V3 365 Clinic | 63300.0 | 25200.0 | 60.2 |
-    | Adobe Photoshop 1년 | 313600.0 | 126500.0 | 59.7 |
-    | Adobe Creative Cloud 1년 | 309100.0 | 125600.0 | 59.4 |
-    | Razer Viper V3 HyperSpeed 블랙 | 99500.0 | 41000.0 | 58.8 |
-    | Adobe Acrobat Pro 1년 | 389600.0 | 164600.0 | 57.8 |
-    | Windows 11 Pro | 409600.0 | 176800.0 | 56.8 |
+    | Norton AntiVirus Plus Silver | 74800.0 | 32400.0 | 56.7 |
+    | Windows 11 Pro Silver | 423000.0 | 198800.0 | 53.0 |
+    | Hancom Office 2024 Enterprise Silver | 241400.0 | 116400.0 | 51.8 |
+    | Logitech G502 HERO Silver | 71100.0 | 36500.0 | 48.7 |
+    | V3 Endpoint Security Black | 46500.0 | 24200.0 | 48.0 |
+    | Microsoft 365 Personal | 108200.0 | 57900.0 | 46.5 |
+    | TP-Link Archer TBE400E White | 30200.0 | 16300.0 | 46.0 |
+    | WD Gold 12TB | 541900.0 | 292600.0 | 46.0 |
     | ... | ... | ... | ... |
 
     > Software products (Norton, Hancom Office) have low physical costs, resulting in high margin rates.

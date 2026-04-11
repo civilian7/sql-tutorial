@@ -27,10 +27,10 @@ GROUP BY grade;
 
 | grade | customer_count |
 | ---------- | ----------: |
-| BRONZE | 38150 |
-| GOLD | 5159 |
-| SILVER | 5105 |
-| VIP | 3886 |
+| BRONZE | 3859 |
+| GOLD | 524 |
+| SILVER | 479 |
+| VIP | 368 |
 
 The database gathers rows with the same `grade` value into a single bucket, then counts the rows in each bucket.
 
@@ -49,14 +49,14 @@ ORDER BY total_revenue DESC;
 
 | status | order_count | total_revenue |
 | ---------- | ----------: | ----------: |
-| confirmed | 382081 | 392629443801.0 |
-| cancelled | 21018 | 22079238470.0 |
-| return_requested | 6125 | 8839120776.0 |
-| returned | 6071 | 8750957343.0 |
-| delivered | 1029 | 1119935047.0 |
-| pending | 706 | 741807866.0 |
-| shipped | 453 | 518561734.0 |
-| preparing | 153 | 170900996.0 |
+| confirmed | 34393 | 34386590179.0 |
+| cancelled | 1859 | 1943134782.0 |
+| return_requested | 507 | 811487700.0 |
+| returned | 493 | 659444574.0 |
+| delivered | 125 | 195768235.0 |
+| pending | 82 | 87230243.0 |
+| shipped | 51 | 74070546.0 |
+| paid | 23 | 13521976.0 |
 | ... | ... | ... |
 
 ## GROUP BY -- Multiple Columns
@@ -79,14 +79,14 @@ ORDER BY grade, gender;
 
 | grade | gender | cnt |
 | ---------- | ---------- | ----------: |
-| BRONZE | F | 12614 |
-| BRONZE | M | 21359 |
-| GOLD | F | 1433 |
-| GOLD | M | 3316 |
-| SILVER | F | 1491 |
-| SILVER | M | 3171 |
-| VIP | F | 940 |
-| VIP | M | 2744 |
+| BRONZE | F | 1302 |
+| BRONZE | M | 2128 |
+| GOLD | F | 140 |
+| GOLD | M | 343 |
+| SILVER | F | 141 |
+| SILVER | M | 293 |
+| VIP | F | 86 |
+| VIP | M | 268 |
 | ... | ... | ... |
 
 ## Monthly Order Aggregation
@@ -161,10 +161,8 @@ HAVING COUNT(*) > 500;
 
 | grade | customer_count |
 | ---------- | ----------: |
-| BRONZE | 38150 |
-| GOLD | 5159 |
-| SILVER | 5105 |
-| VIP | 3886 |
+| BRONZE | 3859 |
+| GOLD | 524 |
 
 ```sql
 -- Categories with 10+ active products and average price over $100
@@ -184,15 +182,10 @@ ORDER BY avg_price DESC;
 
 | category_id | product_count | avg_price |
 | ----------: | ----------: | ----------: |
-| 9 | 21 | 3292633.3333333335 |
-| 7 | 99 | 2966560.606060606 |
-| 28 | 46 | 2429036.9565217393 |
-| 3 | 46 | 2210358.695652174 |
-| 6 | 83 | 1739673.4939759036 |
-| 8 | 45 | 1565324.4444444445 |
-| 2 | 74 | 1504925.6756756757 |
-| 13 | 49 | 1328097.9591836734 |
-| ... | ... | ... |
+| 12 | 10 | 1123150.0 |
+| 18 | 10 | 527080.0 |
+| 30 | 11 | 234645.45454545456 |
+| 31 | 10 | 159930.0 |
 
 ## WHERE vs. HAVING
 
@@ -244,12 +237,8 @@ Aggregate the order count by `status`. Show only statuses with more than 1,000 o
 
 | status | order_count |
 | ---------- | ----------: |
-| confirmed | 382081 |
-| cancelled | 21018 |
-| return_requested | 6125 |
-| returned | 6071 |
-| delivered | 1029 |
-| ... | ... |
+| confirmed | 34393 |
+| cancelled | 1859 |
 
 
 ### Problem 2
@@ -271,12 +260,12 @@ From the `payments` table, find the total collected amount and transaction count
 
 | method | transaction_count | total_collected |
 | ---------- | ----------: | ----------: |
-| card | 172644 | 177755027447.0 |
-| kakao_pay | 76533 | 78373726984.0 |
-| naver_pay | 57725 | 59384559811.0 |
-| bank_transfer | 38667 | 39692289969.0 |
-| point | 19247 | 19966562723.0 |
-| virtual_account | 19067 | 19421780753.0 |
+| card | 15556 | 15537036997.0 |
+| kakao_pay | 6886 | 6781114303.0 |
+| naver_pay | 5270 | 5420480093.0 |
+| bank_transfer | 3429 | 3456454657.0 |
+| point | 1770 | 1780334619.0 |
+| virtual_account | 1705 | 1706777095.0 |
 | ... | ... | ... |
 
 
@@ -297,10 +286,10 @@ From the `customers` table, find the average `point_balance` by `grade`. Sort by
 
 | grade | avg_points |
 | ---------- | ----------: |
-| VIP | 437736.85666495113 |
-| GOLD | 166187.96743554954 |
-| SILVER | 104672.13143976494 |
-| BRONZE | 19601.960419397117 |
+| VIP | 407014.6902173913 |
+| GOLD | 147710.68702290076 |
+| SILVER | 95042.32985386222 |
+| BRONZE | 16779.46022285566 |
 
 
 ### Problem 4
@@ -321,14 +310,14 @@ Group by both `grade` and `gender` from the `customers` table and count customer
 
 | grade | gender | customer_count |
 | ---------- | ---------- | ----------: |
-| BRONZE | (NULL) | 4177 |
-| BRONZE | F | 12614 |
-| BRONZE | M | 21359 |
-| GOLD | (NULL) | 410 |
-| GOLD | F | 1433 |
-| GOLD | M | 3316 |
-| SILVER | (NULL) | 443 |
-| SILVER | F | 1491 |
+| BRONZE | (NULL) | 429 |
+| BRONZE | F | 1302 |
+| BRONZE | M | 2128 |
+| GOLD | (NULL) | 41 |
+| GOLD | F | 140 |
+| GOLD | M | 343 |
+| SILVER | (NULL) | 45 |
+| SILVER | F | 141 |
 | ... | ... | ... |
 
 
@@ -350,11 +339,11 @@ From the `reviews` table, find the review count by `rating`. Show only ratings w
 
 | rating | review_count |
 | ----------: | ----------: |
-| 1 | 4762 |
-| 2 | 9512 |
-| 3 | 14391 |
-| 4 | 28232 |
-| 5 | 38460 |
+| 1 | 434 |
+| 2 | 839 |
+| 3 | 1265 |
+| 4 | 2575 |
+| 5 | 3433 |
 | ... | ... |
 
 
@@ -378,13 +367,13 @@ From the `orders` table, considering only active orders (`status NOT IN ('cancel
 
 | status | order_count | avg_amount |
 | ---------- | ----------: | ----------: |
-| return_requested | 6125 | 1443122.0 |
-| shipped | 453 | 1144728.0 |
-| preparing | 153 | 1117000.0 |
-| delivered | 1029 | 1088372.0 |
-| pending | 706 | 1050719.0 |
-| confirmed | 382081 | 1027608.0 |
-| paid | 167 | 928779.0 |
+| return_requested | 507 | 1600567.0 |
+| delivered | 125 | 1566146.0 |
+| shipped | 51 | 1452364.0 |
+| pending | 82 | 1063783.0 |
+| confirmed | 34393 | 999814.0 |
+| paid | 23 | 587912.0 |
+| preparing | 24 | 510285.0 |
 | ... | ... | ... |
 
 
@@ -409,14 +398,14 @@ From the 2023-2024 `orders` data, find months where monthly revenue exceeded $50
 
 | year_month | monthly_revenue |
 | ---------- | ----------: |
-| 2023-01 | 3271703186.0 |
-| 2023-02 | 3915639006.0 |
-| 2023-03 | 4939077954.0 |
-| 2023-04 | 4797530375.0 |
-| 2023-05 | 4115530865.0 |
-| 2023-06 | 3520005441.0 |
-| 2023-07 | 3257340549.0 |
-| 2023-08 | 4354477595.0 |
+| 2023-01 | 274226287.0 |
+| 2023-02 | 333966148.0 |
+| 2023-03 | 491087654.0 |
+| 2023-04 | 403110649.0 |
+| 2023-05 | 361101076.0 |
+| 2023-06 | 288736533.0 |
+| 2023-07 | 319249348.0 |
+| 2023-08 | 366518636.0 |
 | ... | ... |
 
 
@@ -465,12 +454,12 @@ From the `payments` table, find the number of unique orders per payment method u
 
 | method | unique_orders |
 | ---------- | ----------: |
-| card | 187835 |
-| kakao_pay | 83308 |
-| naver_pay | 62837 |
-| bank_transfer | 42062 |
-| point | 20975 |
-| virtual_account | 20786 |
+| card | 16841 |
+| kakao_pay | 7486 |
+| naver_pay | 5715 |
+| bank_transfer | 3718 |
+| point | 1921 |
+| virtual_account | 1876 |
 | ... | ... |
 
 
@@ -494,14 +483,14 @@ From the `orders` table, find the order count and total revenue by year. Exclude
 
 | order_year | order_count | yearly_revenue |
 | ---------- | ----------: | ----------: |
-| 2016 | 7002 | 7186536080.0 |
-| 2017 | 10710 | 11188959996.0 |
-| 2018 | 19356 | 20309091899.0 |
-| 2019 | 26981 | 28328279035.0 |
-| 2020 | 43749 | 45447183212.0 |
-| 2021 | 56519 | 58065333224.0 |
-| 2022 | 55414 | 57233324746.0 |
-| 2023 | 47910 | 49710423204.0 |
+| 2016 | 388 | 288397247.0 |
+| 2017 | 657 | 619679681.0 |
+| 2018 | 1238 | 1179049206.0 |
+| 2019 | 2422 | 2438425607.0 |
+| 2020 | 4078 | 4182596871.0 |
+| 2021 | 5501 | 5672563917.0 |
+| 2022 | 4882 | 4922471211.0 |
+| 2023 | 4719 | 4736163108.0 |
 | ... | ... | ... |
 
 
@@ -550,14 +539,14 @@ From the `products` table, find the product count, average price (0 decimal plac
 
 | category_id | product_count | avg_price | total_stock |
 | ----------: | ----------: | ----------: | ----------: |
-| 43 | 135 | 248917.0 | 31088 |
-| 30 | 120 | 203971.0 | 29632 |
-| 31 | 116 | 161962.0 | 25661 |
-| 6 | 115 | 1730655.0 | 28946 |
-| 42 | 115 | 120864.0 | 29387 |
-| 7 | 113 | 2930866.0 | 29777 |
-| 36 | 112 | 176021.0 | 30221 |
-| 44 | 104 | 390027.0 | 27069 |
+| 18 | 13 | 529754.0 | 3826 |
+| 30 | 13 | 219008.0 | 3812 |
+| 43 | 12 | 277150.0 | 3085 |
+| 3 | 11 | 1719809.0 | 2241 |
+| 31 | 11 | 158482.0 | 2681 |
+| 36 | 11 | 158000.0 | 3094 |
+| 37 | 11 | 41064.0 | 3141 |
+| 6 | 10 | 1748820.0 | 2833 |
 | ... | ... | ... | ... |
 
 

@@ -26,11 +26,11 @@ LIMIT 5;
 
 | order_number | ordered_at | order_date | year_month |
 | ---------- | ---------- | ---------- | ---------- |
-| ORD-20160101-00001 | 2016-01-31 22:16:37 | 2016-01-31 | 2016-01 |
-| ORD-20160101-00002 | 2016-01-06 01:15:21 | 2016-01-06 | 2016-01 |
-| ORD-20160101-00003 | 2016-01-11 08:08:34 | 2016-01-11 | 2016-01 |
-| ORD-20160101-00004 | 2016-01-23 08:32:43 | 2016-01-23 | 2016-01 |
-| ORD-20160101-00005 | 2016-01-11 07:08:34 | 2016-01-11 | 2016-01 |
+| ORD-20160101-00001 | 2016-01-17 03:39:08 | 2016-01-17 | 2016-01 |
+| ORD-20160102-00002 | 2016-01-11 20:08:34 | 2016-01-11 | 2016-01 |
+| ORD-20160102-00003 | 2016-01-11 04:08:34 | 2016-01-11 | 2016-01 |
+| ORD-20160103-00004 | 2016-01-18 01:56:50 | 2016-01-18 | 2016-01 |
+| ORD-20160103-00005 | 2016-01-12 01:08:34 | 2016-01-12 | 2016-01 |
 | ... | ... | ... | ... |
 
 ```sql
@@ -60,11 +60,11 @@ LIMIT 5;
 
 | name | name_length |
 | ---------- | ----------: |
-| TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz 화이트 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 89 |
-| MSI MAG B850 TOMAHAWK MAX WIFI 화이트 [특별 한정판 에디션] 고급 알루미늄 합금 바디 적용, 프리미엄 패키지 구성 | 77 |
-| Microsoft Bluetooth Ergonomic Mouse 실버 [특별 한정판 에디션] 전문가 추천 모델, 업계 최고 성능 인증 획득 | 77 |
-| ASUS TUF Gaming RTX 4070 Ti Super 실버 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 76 |
-| be quiet! Shadow Base 800 FX 블랙 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | 71 |
+| ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 113 |
+| HP EliteBook 840 G10 Black [Special Limited Edition] Extended 3-year warranty + exclusive carrying case included | 112 |
+| ASUS ExpertBook B5 [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 110 |
+| ASUS ExpertBook B5 [Special Limited Edition] RGB lighting equipped, software customization supported | 100 |
+| TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz Silver | 52 |
 | ... | ... |
 
 ## UPPER and LOWER
@@ -83,11 +83,11 @@ LIMIT 5;
 
 | name | email_lower | grade_display |
 | ---------- | ---------- | ---------- |
-| 정준호 | user1@testmail.kr | BRONZE |
-| 김경수 | user2@testmail.kr | BRONZE |
-| 김민재 | user3@testmail.kr | VIP |
-| 진정자 | user4@testmail.kr | GOLD |
-| 이정수 | user5@testmail.kr | BRONZE |
+| Joshua Atkins | user1@testmail.kr | BRONZE |
+| Danny Johnson | user2@testmail.kr | GOLD |
+| Adam Moore | user3@testmail.kr | VIP |
+| Virginia Steele | user4@testmail.kr | GOLD |
+| Jared Vazquez | user5@testmail.kr | SILVER |
 | ... | ... | ... |
 
 ## REPLACE
@@ -545,14 +545,14 @@ Create a customer contact card: concatenate each customer's `name`, `phone`, `em
 
 | customer_id | contact_card | grade |
 | ----------: | ---------- | ---------- |
-| 2 | 김경수 | 020-4423-5167 | user2@testmail.kr | BRONZE |
-| 3 | 김민재 | 020-0806-0711 | user3@testmail.kr | VIP |
-| 4 | 진정자 | 020-9666-8856 | user4@testmail.kr | GOLD |
-| 5 | 이정수 | 020-0239-9503 | user5@testmail.kr | BRONZE |
-| 8 | 성민석 | 020-8951-7989 | user8@testmail.kr | VIP |
-| 10 | 박지훈 | 020-1196-8263 | user10@testmail.kr | GOLD |
-| 12 | 장준서 | 020-0083-5468 | user12@testmail.kr | SILVER |
-| 14 | 윤순옥 | 020-4730-0267 | user14@testmail.kr | BRONZE |
+| 2 | Danny Johnson | 555-4423-5167 | user2@testmail.kr | GOLD |
+| 3 | Adam Moore | 555-0806-0711 | user3@testmail.kr | VIP |
+| 4 | Virginia Steele | 555-9666-8856 | user4@testmail.kr | GOLD |
+| 5 | Jared Vazquez | 555-0239-9503 | user5@testmail.kr | SILVER |
+| 8 | Tyler Rodriguez | 555-8951-7989 | user8@testmail.kr | SILVER |
+| 10 | John Stark | 555-1196-8263 | user10@testmail.kr | GOLD |
+| 12 | Michael Velasquez | 555-0083-5468 | user12@testmail.kr | GOLD |
+| 14 | Martha Murphy | 555-4730-0267 | user14@testmail.kr | BRONZE |
 | ... | ... | ... |
 
 
@@ -585,14 +585,14 @@ Extract the sequence number from each order (e.g., last 5 digits `00042` from `O
 
 | order_number | sequence_no | total_amount |
 | ---------- | ----------: | ----------: |
-| ORD-20200920-99999 | 99999 | 176300.0 |
-| ORD-20220603-199999 | 99999 | 6555400.0 |
-| ORD-20240329-299999 | 99999 | 2933700.0 |
-| ORD-20251008-399999 | 99999 | 1354900.0 |
-| ORD-20200920-99998 | 99998 | 1930300.0 |
-| ORD-20220603-199998 | 99998 | 129100.0 |
-| ORD-20240329-299998 | 99998 | 107200.0 |
-| ORD-20251008-399998 | 99998 | 64800.0 |
+| ORD-20251231-37557 | 37557 | 388500.0 |
+| ORD-20251231-37556 | 37556 | 153900.0 |
+| ORD-20251231-37555 | 37555 | 74800.0 |
+| ORD-20251231-37554 | 37554 | 74900.0 |
+| ORD-20251231-37553 | 37553 | 350500.0 |
+| ORD-20251231-37552 | 37552 | 254300.0 |
+| ORD-20251231-37551 | 37551 | 417000.0 |
+| ORD-20251231-37550 | 37550 | 71200.0 |
 | ... | ... | ... |
 
 
@@ -613,11 +613,11 @@ Find the length of customer names and return the top 5 with the longest names. S
 
 | name | name_length |
 | ---------- | ----------: |
-| 정준호 | 3 |
-| 김경수 | 3 |
-| 김민재 | 3 |
-| 진정자 | 3 |
-| 이정수 | 3 |
+| Mr. William Hernandez Jr. | 25 |
+| Mr. Michael Contreras IV | 24 |
+| Mrs. Christina Scott DVM | 24 |
+| Dr. Brandon Martinez DDS | 24 |
+| Mr. James Hernandez DDS | 23 |
 | ... | ... |
 
 
@@ -662,14 +662,11 @@ Query `name` and `price` for products containing the word `'Gaming'` in their na
 
 | name | price |
 | ---------- | ----------: |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 4624100.0 |
-| ASUS TUF Gaming A15 화이트 | 4280800.0 |
-| 기가바이트 RTX 5080 GAMING OC 화이트 | 4229900.0 |
-| ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
-| ASUS TUF Gaming A15 | 3972700.0 |
-| 레노버 IdeaPad Gaming 3 블랙 | 3370800.0 |
-| 레노버 IdeaPad Gaming 3 블랙 | 3319400.0 |
-| ASUS TUF Gaming RTX 4070 Ti Super 화이트 | 3225400.0 |
+| ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+| MSI Radeon RX 9070 XT GAMING X | 1896000.0 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
+| MSI Radeon RX 7900 XTX GAMING X White | 1517600.0 |
+| APC Back-UPS Pro Gaming BGM1500B Black | 516300.0 |
 | ... | ... |
 
 
@@ -691,14 +688,14 @@ Extract only the user ID portion before `@` from customer emails. Return `name`,
 
 | name | email | user_id |
 | ---------- | ---------- | ---------- |
-| 정준호 | user1@testmail.kr | user1 |
-| 김경수 | user2@testmail.kr | user2 |
-| 김민재 | user3@testmail.kr | user3 |
-| 진정자 | user4@testmail.kr | user4 |
-| 이정수 | user5@testmail.kr | user5 |
-| 김준혁 | user6@testmail.kr | user6 |
-| 김명자 | user7@testmail.kr | user7 |
-| 성민석 | user8@testmail.kr | user8 |
+| Joshua Atkins | user1@testmail.kr | user1 |
+| Danny Johnson | user2@testmail.kr | user2 |
+| Adam Moore | user3@testmail.kr | user3 |
+| Virginia Steele | user4@testmail.kr | user4 |
+| Jared Vazquez | user5@testmail.kr | user5 |
+| Benjamin Skinner | user6@testmail.kr | user6 |
+| Ashley Jones | user7@testmail.kr | user7 |
+| Tyler Rodriguez | user8@testmail.kr | user8 |
 | ... | ... | ... |
 
 
@@ -744,14 +741,14 @@ Create a `short_name` by truncating product names to the first 20 characters and
 
 | name | short_name |
 | ---------- | ---------- |
-| TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz 화이트 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | TeamGroup T-Force De... |
-| MSI MAG B850 TOMAHAWK MAX WIFI 화이트 [특별 한정판 에디션] 고급 알루미늄 합금 바디 적용, 프리미엄 패키지 구성 | MSI MAG B850 TOMAHAW... |
-| Microsoft Bluetooth Ergonomic Mouse 실버 [특별 한정판 에디션] 전문가 추천 모델, 업계 최고 성능 인증 획득 | Microsoft Bluetooth ... |
-| ASUS TUF Gaming RTX 4070 Ti Super 실버 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | ASUS TUF Gaming RTX ... |
-| be quiet! Shadow Base 800 FX 블랙 [특별 한정판 에디션] 저소음 설계, 에너지 효율 1등급, 친환경 포장 | be quiet! Shadow Bas... |
-| MSI MPG X870E CARBON WIFI 화이트 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | MSI MPG X870E CARBON... |
-| Intel Core Ultra 5 245K 화이트 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | Intel Core Ultra 5 2... |
-| Super Flower Leadex VII 1000W [특별 한정판 에디션] 전문가 추천 모델, 업계 최고 성능 인증 획득 | Super Flower Leadex ... |
+| ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | ASUS Dual RTX 5070 T... |
+| HP EliteBook 840 G10 Black [Special Limited Edition] Extended 3-year warranty + exclusive carrying case included | HP EliteBook 840 G10... |
+| ASUS ExpertBook B5 [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | ASUS ExpertBook B5 [... |
+| ASUS ExpertBook B5 [Special Limited Edition] RGB lighting equipped, software customization supported | ASUS ExpertBook B5 [... |
+| TeamGroup T-Force Delta RGB DDR5 32GB 6000MHz Silver | TeamGroup T-Force De... |
+| CORSAIR Dominator Titanium DDR5 32GB 7200MHz Silver | CORSAIR Dominator Ti... |
+| Arctic Liquid Freezer III Pro 420 A-RGB Silver | Arctic Liquid Freeze... |
+| Kingston FURY Renegade DDR5 32GB 7200MHz Black | Kingston FURY Renega... |
 | ... | ... |
 
 
@@ -787,14 +784,14 @@ Convert customer grade to lowercase and name to uppercase to create a string in 
 
 | id | display_text |
 | ----------: | ---------- |
-| 2 | BRONZE: bronze - 김경수 |
-| 3 | VIP: vip - 김민재 |
-| 4 | GOLD: gold - 진정자 |
-| 5 | BRONZE: bronze - 이정수 |
-| 8 | VIP: vip - 성민석 |
-| 10 | GOLD: gold - 박지훈 |
-| 12 | SILVER: silver - 장준서 |
-| 14 | BRONZE: bronze - 윤순옥 |
+| 2 | GOLD: gold - Danny Johnson |
+| 3 | VIP: vip - Adam Moore |
+| 4 | GOLD: gold - Virginia Steele |
+| 5 | SILVER: silver - Jared Vazquez |
+| 8 | SILVER: silver - Tyler Rodriguez |
+| 10 | GOLD: gold - John Stark |
+| 12 | GOLD: gold - Michael Velasquez |
+| 14 | BRONZE: bronze - Martha Murphy |
 | ... | ... |
 
 
@@ -826,14 +823,14 @@ From orders where `order_number` starts with `'ORD-2024'`, extract the date port
 
 | order_number | date_part | total_amount |
 | ---------- | ---------- | ----------: |
-| ORD-20240101-286269 | 20240101 | 93000.0 |
-| ORD-20240101-286270 | 20240101 | 402200.0 |
-| ORD-20240101-286271 | 20240101 | 137800.0 |
-| ORD-20240101-286272 | 20240101 | 82500.0 |
-| ORD-20240101-286273 | 20240101 | 80700.0 |
-| ORD-20240101-286274 | 20240101 | 174400.0 |
-| ORD-20240101-286275 | 20240101 | 1462300.0 |
-| ORD-20240101-286276 | 20240101 | 694900.0 |
+| ORD-20240101-25452 | 20240101 | 337900.0 |
+| ORD-20240101-25453 | 20240101 | 160400.0 |
+| ORD-20240101-25454 | 20240101 | 117700.0 |
+| ORD-20240101-25455 | 20240101 | 42600.0 |
+| ORD-20240101-25456 | 20240101 | 1171392.0 |
+| ORD-20240101-25457 | 20240101 | 616200.0 |
+| ORD-20240101-25458 | 20240101 | 206300.0 |
+| ORD-20240101-25459 | 20240101 | 612280.0 |
 | ... | ... | ... |
 
 
@@ -855,14 +852,14 @@ Find the position of the `@` symbol in product names (0 if not found). Target on
 
 | name | space_pos |
 | ---------- | ----------: |
-| AMD Ryzen 5 9600X | 4 |
-| AMD Ryzen 7 7700X | 4 |
-| AMD Ryzen 7 7700X 블랙 | 4 |
-| AMD Ryzen 7 7700X 블랙 | 4 |
-| AMD Ryzen 7 7800X3D | 4 |
-| AMD Ryzen 7 7800X3D 실버 | 4 |
-| AMD Ryzen 7 9700X 블랙 | 4 |
-| AMD Ryzen 7 9800X3D 실버 | 4 |
+| AMD Ryzen 9 9900X | 4 |
+| AMD Ryzen 9 9900X | 4 |
+| APC Back-UPS Pro Gaming BGM1500B Black | 4 |
+| ASRock B850M Pro RS Black | 7 |
+| ASRock B850M Pro RS Silver | 7 |
+| ASRock B850M Pro RS White | 7 |
+| ASRock B860M Pro RS Silver | 7 |
+| ASRock B860M Pro RS White | 7 |
 | ... | ... |
 
 

@@ -46,11 +46,11 @@ LIMIT 5;
 
 | order_number | total_amount | status_label |
 | ---------- | ----------: | ---------- |
-| ORD-20251211-413965 | 409600.0 | Awaiting Payment |
-| ORD-20251226-416837 | 1169700.0 | Awaiting Payment |
-| ORD-20251231-417734 | 2076300.0 | Awaiting Payment |
-| ORD-20251231-417696 | 814400.0 | Return Requested |
-| ORD-20251231-417737 | 550600.0 | Awaiting Payment |
+| ORD-20251231-37555 | 74800.0 | Awaiting Payment |
+| ORD-20251231-37543 | 134100.0 | Awaiting Payment |
+| ORD-20251231-37552 | 254300.0 | Awaiting Payment |
+| ORD-20251231-37548 | 187700.0 | Awaiting Payment |
+| ORD-20251231-37542 | 155700.0 | Awaiting Payment |
 | ... | ... | ... |
 
 ## Searched CASE
@@ -78,14 +78,14 @@ LIMIT 10;
 
 | name | price | price_tier |
 | ---------- | ----------: | ---------- |
-| TP-Link TL-SG108 실버 | 16500.0 | Premium |
-| TP-Link TG-3468 블랙 | 19800.0 | Premium |
-| 삼성 무선 키보드 Trio 500 화이트 | 20300.0 | Premium |
-| TP-Link TL-SG1016D 화이트 | 20300.0 | Premium |
-| 로지텍 G502 HERO 실버 | 20300.0 | Premium |
-| Razer Cobra 실버 | 20300.0 | Premium |
-| TP-Link Archer TX55E 실버 | 20500.0 | Premium |
-| 로지텍 G402 | 20500.0 | Premium |
+| TP-Link TG-3468 Black | 18500.0 | Premium |
+| Samsung SPA-KFG0BUB Silver | 21900.0 | Premium |
+| Arctic Freezer 36 A-RGB White | 23000.0 | Premium |
+| Arctic Freezer 36 A-RGB White | 29900.0 | Premium |
+| TP-Link Archer TBE400E White | 30200.0 | Premium |
+| Samsung SPA-KFG0BUB | 30700.0 | Premium |
+| TP-Link TL-SG1016D Silver | 36100.0 | Premium |
+| Microsoft Bluetooth Keyboard White | 36800.0 | Premium |
 | ... | ... | ... |
 
 ## Using CASE for Age Group Classification
@@ -174,7 +174,7 @@ ORDER BY avg_price;
 
 | price_tier | product_count | avg_price |
 | ---------- | ----------: | ----------: |
-| Premium (800K+) | 2175 | 678774.8505747126 |
+| Premium (800K+) | 218 | 659594.495412844 |
 
 === "SQLite"
     ```sql
@@ -286,14 +286,14 @@ Display `'No memo'` when the order's `notes` column is NULL. Use a CASE expressi
 
 | order_number | status | memo |
 | ---------- | ---------- | ---------- |
-| ORD-20251211-413965 | pending | No memo |
-| ORD-20251226-416837 | pending | No memo |
-| ORD-20251231-417734 | pending | 파손 주의 부탁드립니다 |
-| ORD-20251231-417696 | return_requested | No memo |
-| ORD-20251231-417737 | pending | No memo |
-| ORD-20251231-417735 | pending | No memo |
-| ORD-20251231-417677 | pending | No memo |
-| ORD-20251231-417764 | pending | No memo |
+| ORD-20251231-37555 | pending | No memo |
+| ORD-20251231-37543 | pending | Please knock gently |
+| ORD-20251231-37552 | pending | No memo |
+| ORD-20251231-37548 | pending | No memo |
+| ORD-20251231-37542 | pending | Deliver to the office front desk |
+| ORD-20251231-37546 | pending | Leave with the doorman/concierge |
+| ORD-20251231-37547 | pending | Handle with care — fragile |
+| ORD-20251231-37556 | pending | No memo |
 | ... | ... | ... |
 
 
@@ -318,14 +318,11 @@ Sort the `staff` list so that employees with `role` = `'manager'` come first, th
 
 | name | department | role |
 | ---------- | ---------- | ---------- |
-| 권영희 | 마케팅 | manager |
-| 김영일 | 개발 | manager |
-| 이준혁 | 영업 | manager |
-| 황예준 | 경영 | manager |
-| 강주원 | 영업 | staff |
-| 고영숙 | 물류 | staff |
-| 구미정 | 물류 | staff |
-| 권민재 | 영업 | staff |
+| Jaime Phelps | Sales | manager |
+| Nicole Hamilton | Marketing | manager |
+| Jonathan Smith | Management | admin |
+| Michael Mcguire | Management | admin |
+| Michael Thomas | Management | admin |
 | ... | ... | ... |
 
 
@@ -351,14 +348,14 @@ Convert payment methods (`payments.method`) to labels using a simple CASE: `'car
 
 | id | amount | method_label |
 | ----------: | ----------: | ---------- |
-| 1 | 161900.0 | Credit Card |
-| 2 | 493200.0 | Credit Card |
-| 3 | 465500.0 | Credit Card |
-| 4 | 355400.0 | Credit Card |
-| 5 | 4542200.0 | Other |
-| 6 | 145100.0 | Credit Card |
-| 7 | 423500.0 | Credit Card |
-| 8 | 1926200.0 | Other |
+| 1 | 167000.0 | Credit Card |
+| 2 | 211800.0 | Credit Card |
+| 3 | 704800.0 | Credit Card |
+| 4 | 167000.0 | Credit Card |
+| 5 | 534490.0 | Other |
+| 6 | 167000.0 | Credit Card |
+| 7 | 687400.0 | Credit Card |
+| 8 | 916600.0 | Other |
 | ... | ... | ... |
 
 
@@ -385,14 +382,14 @@ Add a `stock_status` column to the product list: `stock_qty = 0` -> `'Out of Sto
 
 | name | stock_qty | stock_status |
 | ---------- | ----------: | ---------- |
-| Arctic Freezer 36 A-RGB 화이트 | 0 | Out of Stock |
-| 삼성 DDR4 16GB PC4-25600 | 0 | Out of Stock |
-| WD My Passport 2TB 블랙 | 0 | Out of Stock |
-| 삼성 DDR5 32GB PC5-38400 실버 | 0 | Out of Stock |
-| 로지텍 MX Keys Mini 실버 | 1 | Low Stock |
-| Dell U2723QE 실버 | 1 | Low Stock |
-| Dell S2425HS 블랙 | 1 | Low Stock |
-| SK하이닉스 DDR4 32GB PC4-25600 화이트 | 2 | Low Stock |
+| Arctic Freezer 36 A-RGB White | 0 | Out of Stock |
+| Samsung SPA-KFG0BUB | 4 | Low Stock |
+| Logitech G502 HERO Silver | 8 | Low Stock |
+| ASUS ROG Strix Scar 16 | 18 | In Stock |
+| MSI MPG X870E CARBON WIFI Black | 21 | In Stock |
+| LG 27UQ85R Black | 26 | In Stock |
+| ASUS ROG Strix G16CH Silver | 28 | In Stock |
+| Fractal Design Define 7 White | 30 | In Stock |
 | ... | ... | ... |
 
 
@@ -422,11 +419,11 @@ Create a generational distribution report: count how many active customers are i
 
 | generation | customer_count |
 | ---------- | ----------: |
-| Millennial | 17306 |
-| Gen Z | 7484 |
-| Gen X | 5835 |
-| Unknown | 5481 |
-| Baby Boomer+ | 659 |
+| Millennial | 1762 |
+| Gen Z | 776 |
+| Gen X | 561 |
+| Unknown | 497 |
+| Baby Boomer+ | 64 |
 | ... | ... |
 
 
@@ -489,11 +486,11 @@ Convert review `rating` values to text labels: 5 -> `'Excellent'`, 4 -> `'Good'`
 
 | rating_label | review_count | avg_rating |
 | ---------- | ----------: | ----------: |
-| Excellent | 38460 | 5.0 |
-| Good | 28232 | 4.0 |
-| Average | 14391 | 3.0 |
-| Poor | 9512 | 2.0 |
-| Terrible | 4762 | 1.0 |
+| Excellent | 3433 | 5.0 |
+| Good | 2575 | 4.0 |
+| Average | 1265 | 3.0 |
+| Poor | 839 | 2.0 |
+| Terrible | 434 | 1.0 |
 | ... | ... | ... |
 
 
@@ -518,10 +515,10 @@ Classify customer `point_balance` into 3 tiers: 100,000+ as `'Heavy User'`, 10,0
 
 | grade | heavy_count | regular_count | light_count |
 | ---------- | ----------: | ----------: | ----------: |
-| BRONZE | 2180 | 6224 | 14211 |
-| GOLD | 2127 | 3032 | 0 |
-| SILVER | 1517 | 2875 | 713 |
-| VIP | 3134 | 752 | 0 |
+| BRONZE | 187 | 597 | 1505 |
+| GOLD | 231 | 293 | 0 |
+| SILVER | 130 | 289 | 60 |
+| VIP | 293 | 75 | 0 |
 
 
 ### Problem 8
@@ -552,7 +549,7 @@ Aggregate order count and total revenue by order amount tier (`total_amount`: un
 
 | amount_tier | order_count | total_revenue |
 | ---------- | ----------: | ----------: |
-| Large | 390714 | 404174876329.0 |
+| Large | 35205 | 35580915707.0 |
 
 
 ### Problem 9
@@ -578,12 +575,12 @@ Pivot the payment outcome by method: count `'Success'` (status = `'completed'`) 
 
 | method | success_count | fail_count | success_rate |
 | ---------- | ----------: | ----------: | ----------: |
-| naver_pay | 57725 | 5112 | 91.9 |
-| kakao_pay | 76533 | 6775 | 91.9 |
-| card | 172644 | 15191 | 91.9 |
-| bank_transfer | 38667 | 3395 | 91.9 |
-| point | 19247 | 1728 | 91.8 |
-| virtual_account | 19067 | 1719 | 91.7 |
+| card | 15556 | 1285 | 92.4 |
+| naver_pay | 5270 | 445 | 92.2 |
+| bank_transfer | 3429 | 289 | 92.2 |
+| point | 1770 | 151 | 92.1 |
+| kakao_pay | 6886 | 600 | 92.0 |
+| virtual_account | 1705 | 171 | 90.9 |
 | ... | ... | ... | ... |
 
 
@@ -616,14 +613,14 @@ Calculate each product's quarterly revenue for 2024 as separate columns (`q1_rev
 
 | product_name | q1_revenue | q2_revenue | q3_revenue | q4_revenue |
 | ---------- | ----------: | ----------: | ----------: | ----------: |
-| ASUS Dual RTX 4060 Ti 실버 | 72998000.0 | 90174000.0 | 98762000.0 | 107350000.0 |
-| MSI GeForce RTX 5070 Ti VENTUS 3X 블랙 | 92281200.0 | 75502800.0 | 50335200.0 | 88086600.0 |
-| ASUS ROG STRIX RTX 4090 화이트 | 88456800.0 | 70028300.0 | 55285500.0 | 84771100.0 |
-| MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 53696500.0 | 73222500.0 | 48815000.0 | 97630000.0 |
-| 기가바이트 RTX 4060 EAGLE OC 실버 | 80157200.0 | 67500800.0 | 46406800.0 | 63282000.0 |
-| ASUS Dual RTX 4060 Ti | 42148000.0 | 67436800.0 | 63222000.0 | 84296000.0 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 41616900.0 | 32368700.0 | 87857900.0 | 83233800.0 |
-| MSI GeForce RTX 4090 SUPRIM X 화이트 | 41906700.0 | 45716400.0 | 76194000.0 | 76194000.0 |
+| Razer Blade 18 Black | 47884100.0 | 56590300.0 | 26118600.0 | 39177900.0 |
+| Razer Blade 16 Silver | 51840600.0 | 40731900.0 | 14811600.0 | 29623200.0 |
+| MacBook Air 15 M3 Silver | 0 | 27405500.0 | 60292100.0 | 43848800.0 |
+| ASUS Dual RTX 4060 Ti Black | 24073200.0 | 24073200.0 | 16048800.0 | 48146400.0 |
+| ASUS Dual RTX 5070 Ti Silver | 24660000.0 | 24660000.0 | 35510400.0 | 22687200.0 |
+| ASUS ROG Swift PG32UCDM Silver | 20793300.0 | 37806000.0 | 22683600.0 | 13232100.0 |
+| Razer Blade 18 Black | 23900000.0 | 8962500.0 | 44812500.0 | 14937500.0 |
+| ASUS ROG Strix Scar 16 | 17167500.0 | 24525000.0 | 24525000.0 | 22072500.0 |
 | ... | ... | ... | ... | ... |
 
 

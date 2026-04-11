@@ -59,11 +59,11 @@ LIMIT 5;
 
 | order_number | customer_name | status | total_amount |
 | ---------- | ---------- | ---------- | ----------: |
-| ORD-20251211-413965 | 송광수 | pending | 409600.0 |
-| ORD-20251226-416837 | 송광수 | pending | 1169700.0 |
-| ORD-20251231-417734 | 류미숙 | pending | 2076300.0 |
-| ORD-20251231-417696 | 김영미 | return_requested | 814400.0 |
-| ORD-20251231-417737 | 이영미 | pending | 550600.0 |
+| ORD-20251231-37555 | Angel Jones | pending | 74800.0 |
+| ORD-20251231-37543 | Carla Watson | pending | 134100.0 |
+| ORD-20251231-37552 | Martin Hanson | pending | 254300.0 |
+| ORD-20251231-37548 | Lucas Johnson | pending | 187700.0 |
+| ORD-20251231-37542 | Adam Moore | pending | 155700.0 |
 | ... | ... | ... | ... |
 
 > **Table aliases** (`o`, `c`) make queries shorter and `ON` conditions easier to read. While not required, they are strongly recommended when joining multiple tables.
@@ -105,12 +105,12 @@ LIMIT 6;
 
 | item_id | order_number | product_name | category | quantity | unit_price |
 | ----------: | ---------- | ---------- | ---------- | ----------: | ----------: |
-| 1005850 | ORD-20251211-413965 | Windows 11 Pro | OS | 1 | 409600.0 |
-| 1012839 | ORD-20251226-416837 | MSI Radeon RX 7800 XT GAMING X 실버 | AMD | 1 | 994000.0 |
-| 1012840 | ORD-20251226-416837 | Razer Huntsman V3 Pro Mini 화이트 | 기계식 | 1 | 175700.0 |
-| 1015035 | ORD-20251231-417734 | NZXT Kraken 240 실버 | 수랭 | 1 | 169800.0 |
-| 1015036 | ORD-20251231-417734 | BenQ PD2725U | 전문가용 모니터 | 1 | 1596100.0 |
-| 1015037 | ORD-20251231-417734 | Razer Huntsman V3 Pro 실버 | 기계식 | 1 | 251300.0 |
+| 91101 | ORD-20251231-37555 | Norton AntiVirus Plus Silver | Security | 1 | 74800.0 |
+| 91080 | ORD-20251231-37543 | Hancom Office 2024 Enterprise White | Office | 1 | 134100.0 |
+| 91096 | ORD-20251231-37552 | Hancom Office 2024 Enterprise White | Office | 1 | 134100.0 |
+| 91097 | ORD-20251231-37552 | NZXT Kraken 240 Silver | Liquid Cooling | 1 | 120200.0 |
+| 91092 | ORD-20251231-37548 | Samsung 990 EVO Plus 1TB White | SSD | 1 | 187700.0 |
+| 91079 | ORD-20251231-37542 | Logitech G PRO X2 Superstrike Black | Gaming | 1 | 155700.0 |
 | ... | ... | ... | ... | ... | ... |
 
 ## Aggregation After JOIN
@@ -138,14 +138,14 @@ LIMIT 8;
 
 | category | order_count | units_sold | gross_revenue |
 | ---------- | ----------: | ----------: | ----------: |
-| 게이밍 노트북 | 17165 | 17775 | 50574480000.0 |
-| NVIDIA | 16987 | 17503 | 38502234300.0 |
-| AMD | 36412 | 42099 | 33886162000.0 |
-| 일반 노트북 | 17571 | 18400 | 30788049100.0 |
-| 게이밍 모니터 | 19005 | 19862 | 23766598100.0 |
-| 스피커/헤드셋 | 57394 | 64568 | 15688151400.0 |
-| Intel 소켓 | 33557 | 37092 | 14834738600.0 |
-| 2in1 | 8739 | 9176 | 14628870400.0 |
+| Gaming Laptop | 1534 | 1586 | 4671979900.0 |
+| AMD | 3309 | 3867 | 3007936300.0 |
+| NVIDIA | 1529 | 1577 | 2672535800.0 |
+| Gaming Monitor | 2199 | 2317 | 2636507300.0 |
+| General Laptop | 1288 | 1303 | 2315576700.0 |
+| 2-in-1 | 1179 | 1236 | 1844966800.0 |
+| Intel Socket | 2943 | 3275 | 1495665600.0 |
+| AMD Socket | 2862 | 3172 | 1458653400.0 |
 | ... | ... | ... | ... |
 
 ## Filtering Joined Tables
@@ -205,14 +205,14 @@ Query each review with the customer's `name` and product's `name`. Return `revie
 
 | review_id | customer_name | product_name | rating | created_at |
 | ----------: | ---------- | ---------- | ----------: | ---------- |
-| 95346 | 성민지 | Keychron K6 Pro 실버 | 5 | 2026-01-19 14:32:43 |
-| 95352 | 김지은 | Windows 11 Pro for Workstations 화이트 | 5 | 2026-01-18 22:59:14 |
-| 95329 | 안정숙 | 엡손 L3260 블랙 | 5 | 2026-01-17 12:41:28 |
-| 95256 | 오예은 | MSI MAG X870E TOMAHAWK WIFI | 5 | 2026-01-16 19:31:49 |
-| 95304 | 조미경 | 로지텍 M750 화이트 | 5 | 2026-01-16 09:52:54 |
-| 95290 | 송영진 | Arctic Freezer 36 | 5 | 2026-01-15 19:31:49 |
-| 95254 | 김재호 | Ducky One 3 Mini 화이트 | 5 | 2026-01-14 22:26:41 |
-| 95332 | 강경자 | 로지텍 K580 화이트 | 5 | 2026-01-14 14:19:57 |
+| 8535 | Jonathan Landry | Norton AntiVirus Plus Silver | 5 | 2026-01-13 12:09:18 |
+| 8530 | Christine Maxwell | Netgear GS308 Silver | 5 | 2026-01-11 21:02:15 |
+| 8541 | Jill Dalton | Arctic Liquid Freezer III Pro 420 A-RGB Silver | 5 | 2026-01-07 20:55:20 |
+| 8517 | Stanley Long | ASUS Dual RTX 5070 Ti Silver | 5 | 2026-01-07 09:24:04 |
+| 8536 | Mary Thomas | be quiet! Dark Power 13 1000W | 5 | 2026-01-06 21:29:23 |
+| 8502 | Roy Castro | TP-Link TL-SG108 | 5 | 2026-01-06 15:27:04 |
+| 8527 | Tiffany Graham | Microsoft Ergonomic Keyboard Silver | 5 | 2026-01-04 18:00:26 |
+| 8488 | Samuel Jones | Kingston FURY Renegade DDR5 32GB 7200MHz Black | 5 | 2026-01-03 10:58:26 |
 | ... | ... | ... | ... | ... |
 
 
@@ -235,12 +235,12 @@ Find the number of unique customers per payment method. Return `method` and `uni
 
 | method | unique_customers |
 | ---------- | ----------: |
-| card | 24417 |
-| kakao_pay | 18635 |
-| naver_pay | 16800 |
-| bank_transfer | 13859 |
-| virtual_account | 9566 |
-| point | 9377 |
+| card | 2316 |
+| kakao_pay | 1777 |
+| naver_pay | 1598 |
+| bank_transfer | 1332 |
+| virtual_account | 923 |
+| point | 892 |
 | ... | ... |
 
 
@@ -266,11 +266,11 @@ Find the top 5 customers by total purchase amount (sum of `total_amount` excludi
 
 | customer_name | grade | order_count | total_spent |
 | ---------- | ---------- | ----------: | ----------: |
-| 박정수 | VIP | 651 | 650074070.0 |
-| 정유진 | VIP | 537 | 636930622.0 |
-| 이미정 | VIP | 516 | 610700757.0 |
-| 김상철 | VIP | 508 | 556233023.0 |
-| 문영숙 | VIP | 539 | 514443352.0 |
+| Allen Snyder | VIP | 303 | 403448758.0 |
+| Jason Rivera | VIP | 342 | 366385931.0 |
+| Brenda Garcia | VIP | 249 | 253180338.0 |
+| Courtney Huff | VIP | 223 | 244604910.0 |
+| Ronald Arellano | VIP | 219 | 235775349.0 |
 | ... | ... | ... | ... |
 
 
@@ -294,14 +294,14 @@ Query `order_number`, `customer_name`, and `status`, filtering only orders with 
 
 | order_number | customer_name | status |
 | ---------- | ---------- | ---------- |
-| ORD-20251225-416644 | 배순자 | shipped |
-| ORD-20251225-416701 | 윤민서 | shipped |
-| ORD-20251225-416643 | 김정숙 | shipped |
-| ORD-20251225-416703 | 이지현 | shipped |
-| ORD-20251225-416637 | 김은영 | shipped |
-| ORD-20251225-416653 | 이준서 | shipped |
-| ORD-20251225-416617 | 김서현 | shipped |
-| ORD-20251225-416710 | 송진우 | shipped |
+| ORD-20251225-37416 | Rebecca Schneider | shipped |
+| ORD-20251225-37402 | Jim Shannon | shipped |
+| ORD-20251225-37410 | Drew Valencia | shipped |
+| ORD-20251225-37403 | William Johnson | shipped |
+| ORD-20251225-37411 | Daniel Mendez | shipped |
+| ORD-20251225-37408 | Christine Johnson | shipped |
+| ORD-20251225-37406 | Robert Mitchell | shipped |
+| ORD-20251225-37407 | Jesse Villanueva | shipped |
 | ... | ... | ... |
 
 
@@ -326,14 +326,14 @@ Join the `shipping` and `orders` tables to query `order_number`, `carrier`, `tra
 
 | order_number | carrier | tracking_number | delivered_at |
 | ---------- | ---------- | ---------- | ---------- |
-| ORD-20251225-416704 | 한진택배 | 701588090253 | 2026-01-01 22:43:08 |
-| ORD-20251225-416550 | CJ대한통운 | 351306420479 | 2026-01-01 22:14:41 |
-| ORD-20251225-416613 | 한진택배 | 546653191029 | 2026-01-01 16:37:19 |
-| ORD-20251225-416538 | CJ대한통운 | 943122890721 | 2026-01-01 16:08:52 |
-| ORD-20251225-416700 | 로젠택배 | 274924906373 | 2026-01-01 15:48:04 |
-| ORD-20251225-416555 | CJ대한통운 | 558581065191 | 2026-01-01 15:04:18 |
-| ORD-20251225-416610 | 우체국택배 | 444971555001 | 2026-01-01 14:50:31 |
-| ORD-20251225-416570 | 로젠택배 | 831575445354 | 2026-01-01 14:26:55 |
+| ORD-20251225-37399 | USPS | 376080377423 | 2026-01-01 23:36:22 |
+| ORD-20251225-37404 | UPS | 652516112449 | 2026-01-01 22:02:51 |
+| ORD-20251225-37414 | FedEx | 100421839710 | 2026-01-01 13:49:43 |
+| ORD-20251225-37413 | OnTrac | 543173530520 | 2025-12-31 14:25:31 |
+| ORD-20251225-37412 | OnTrac | 456720771228 | 2025-12-30 22:50:46 |
+| ORD-20251224-37387 | OnTrac | 339128234015 | 2025-12-30 19:29:43 |
+| ORD-20251225-37401 | UPS | 187550547718 | 2025-12-30 12:03:50 |
+| ORD-20251224-37396 | UPS | 318330010876 | 2025-12-30 09:46:21 |
 | ... | ... | ... | ... |
 
 
@@ -358,14 +358,14 @@ Query product name (`products.name`), supplier name (`suppliers.company_name`), 
 
 | product_name | supplier_name | quantity | unit_price |
 | ---------- | ---------- | ----------: | ----------: |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
-| Razer Blade 14 블랙 | 레이저코리아 | 1 | 7495200.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
+| MacBook Air 15 M3 Silver | Apple Corp. | 1 | 5481100.0 |
 | ... | ... | ... | ... |
 
 
@@ -389,14 +389,14 @@ Find the total order count (`order_count`) and total quantity sold (`total_qty`)
 
 | company_name | order_count | total_qty |
 | ---------- | ----------: | ----------: |
-| 로지텍코리아 | 71624 | 86965 |
-| 삼성전자 공식 유통 | 69606 | 83177 |
-| 서린시스테크 | 59482 | 76168 |
-| 에이수스코리아 | 54752 | 63117 |
-| 레이저코리아 | 51184 | 60940 |
-| MSI코리아 | 45763 | 53561 |
-| 앱솔루트 테크놀로지 | 40081 | 48150 |
-| 마이크로소프트코리아 | 32890 | 39329 |
+| Logitech Corp. | 7106 | 8580 |
+| Samsung Official Distribution | 7169 | 8557 |
+| Seorin Systech | 5143 | 6547 |
+| SteelSeries Corp. | 5014 | 5772 |
+| ASUS Corp. | 4945 | 5696 |
+| be quiet! Corp. | 3516 | 4325 |
+| MSI Corp. | 3531 | 4055 |
+| ASRock Corp. | 3435 | 3900 |
 | ... | ... | ... |
 
 

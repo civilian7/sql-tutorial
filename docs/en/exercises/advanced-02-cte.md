@@ -76,10 +76,10 @@ Practice single CTE and CTE + JOIN/aggregation.
 
     | year_month | revenue | order_count | avg_revenue | status |
     | ---------- | ----------: | ----------: | ----------: | ---------- |
-    | 2024-12 | 7171062836.0 | 6919 | 4993798863.0 | Above average |
-    | 2024-11 | 6557769842.0 | 6240 | 4993798863.0 | Above average |
-    | 2024-09 | 5398216952.0 | 5124 | 4993798863.0 | Above average |
-    | 2024-10 | 5035863629.0 | 5068 | 4993798863.0 | Above average |
+    | 2024-11 | 543313372.0 | 547 | 426203627.0 | Above average |
+    | 2024-09 | 536079841.0 | 523 | 426203627.0 | Above average |
+    | 2024-03 | 519844502.0 | 555 | 426203627.0 | Above average |
+    | 2024-04 | 451877581.0 | 466 | 426203627.0 | Above average |
 
 ---
 
@@ -195,14 +195,14 @@ Displays the sales amount, sales volume, number of reviews, and average rating o
 
     | product_name | category | units_sold | total_revenue | review_count | avg_rating |
     | ---------- | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | ASUS Dual RTX 4060 Ti 실버 | NVIDIA | 85 | 364990000.0 | 21 | 3.76 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 블랙 | NVIDIA | 73 | 306205800.0 | 11 | 2.82 |
-    | ASUS ROG STRIX RTX 4090 화이트 | NVIDIA | 80 | 294856000.0 | 16 | 3.69 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | NVIDIA | 55 | 268482500.0 | 30 | 3.8 |
-    | 기가바이트 RTX 4060 EAGLE OC 실버 | NVIDIA | 60 | 253128000.0 | 21 | 3.62 |
-    | ASUS Dual RTX 4060 Ti | NVIDIA | 58 | 244458400.0 | 8 | 4.5 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | NVIDIA | 52 | 240453200.0 | 26 | 3.85 |
-    | AMD Ryzen 7 7700X 블랙 | AMD | 215 | 237618000.0 | 77 | 3.88 |
+    | Razer Blade 18 Black | Gaming Laptop | 38 | 165417800.0 | 20 | 4.1 |
+    | Razer Blade 16 Silver | Gaming Laptop | 37 | 137007300.0 | 19 | 3.95 |
+    | MacBook Air 15 M3 Silver | MacBook | 23 | 126065300.0 | 4 | 3.75 |
+    | ASUS Dual RTX 4060 Ti Black | NVIDIA | 40 | 106992000.0 | 16 | 3.75 |
+    | ASUS Dual RTX 5070 Ti Silver | NVIDIA | 106 | 104558400.0 | 23 | 3.65 |
+    | ASUS ROG Swift PG32UCDM Silver | Gaming Monitor | 48 | 90734400.0 | 24 | 3.67 |
+    | ASUS ROG Strix Scar 16 | Gaming Laptop | 35 | 85837500.0 | 13 | 4.23 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | NVIDIA | 49 | 85456000.0 | 42 | 4.12 |
     | ... | ... | ... | ... | ... | ... |
 
 ---
@@ -250,7 +250,13 @@ Find the number of new subscribers per month and look for “surge” months, wh
 
     | year_month | signup_count | prev_count | growth_pct |
     | ---------- | ----------: | ----------: | ----------: |
-    | 2025-01 | 693 | 577 | 20.1 |
+    | 2024-06 | 68 | 43 | 58.1 |
+    | 2024-03 | 71 | 48 | 47.9 |
+    | 2025-10 | 76 | 54 | 40.7 |
+    | 2022-03 | 59 | 42 | 40.5 |
+    | 2024-10 | 65 | 51 | 27.5 |
+    | 2025-07 | 66 | 55 | 20.0 |
+    | ... | ... | ... | ... |
 
 ---
 
@@ -301,14 +307,14 @@ Calculate sales by category as of 2024 and display cumulative proportions in des
 
     | category | revenue | share_pct | cumulative_pct |
     | ---------- | ----------: | ----------: | ----------: |
-    | 게이밍 노트북 | 7252261700.0 | 12.0 | 12.0 |
-    | NVIDIA | 6049128000.0 | 10.0 | 22.0 |
-    | AMD | 5055980700.0 | 8.4 | 30.4 |
-    | 일반 노트북 | 4852629300.0 | 8.0 | 38.4 |
-    | 게이밍 모니터 | 3575676600.0 | 5.9 | 44.3 |
-    | 스피커/헤드셋 | 2473846600.0 | 4.1 | 48.4 |
-    | Intel 소켓 | 2265205100.0 | 3.7 | 52.1 |
-    | 2in1 | 2164737100.0 | 3.6 | 55.7 |
+    | Gaming Laptop | 636925700.0 | 12.3 | 12.3 |
+    | AMD | 447953400.0 | 8.7 | 21.0 |
+    | Gaming Monitor | 353934400.0 | 6.9 | 27.9 |
+    | NVIDIA | 345858700.0 | 6.7 | 34.6 |
+    | 2-in-1 | 340884400.0 | 6.6 | 41.2 |
+    | General Laptop | 291760500.0 | 5.7 | 46.9 |
+    | Professional Monitor | 254590200.0 | 4.9 | 51.8 |
+    | Speakers/Headsets | 232144800.0 | 4.5 | 56.3 |
     | ... | ... | ... | ... |
 
 ---
@@ -373,11 +379,11 @@ Displays the entire path, from the top category (parent_id IS NULL) to subcatego
     | 14 | CPU | 0 | 0 |
     | 16 | CPU > AMD | 1 | 1 |
     | 15 | CPU > Intel | 1 | 1 |
-    | 49 | UPS/전원 | 0 | 0 |
-    | 27 | 그래픽카드 | 0 | 0 |
-    | 29 | 그래픽카드 > AMD | 1 | 1 |
-    | 28 | 그래픽카드 > NVIDIA | 1 | 1 |
-    | 45 | 네트워크 장비 | 0 | 0 |
+    | 31 | Case | 0 | 0 |
+    | 32 | Cooling | 0 | 0 |
+    | 33 | Cooling > Air Cooling | 1 | 1 |
+    | 34 | Cooling > Liquid Cooling | 1 | 1 |
+    | 1 | Desktop PC | 0 | 0 |
     | ... | ... | ... | ... |
 
 ---
@@ -437,14 +443,11 @@ Displays the path to every employee's immediate supervisor, starting with the ma
 
     | id | name | department | role | depth | chain |
     | ----------: | ---------- | ---------- | ---------- | ----------: | ---------- |
-    | 1 | 한민재 | 경영 | admin | 0 | 한민재 |
-    | 30 | 고영숙 | 물류 | staff | 1 | 한민재 > 고영숙 |
-    | 45 | 김영자 | 물류 | staff | 1 | 한민재 > 김영자 |
-    | 47 | 김영환 | 물류 | staff | 1 | 한민재 > 김영환 |
-    | 3 | 박경수 | 경영 | admin | 1 | 한민재 > 박경수 |
-    | 6 | 고준서 | 영업 | manager | 2 | 한민재 > 박경수 > 고준서 |
-    | 12 | 김지혜 | 영업 | staff | 3 | 한민재 > 박경수 > 고준서 > 김지혜 |
-    | 5 | 권영희 | 마케팅 | manager | 2 | 한민재 > 박경수 > 권영희 |
+    | 1 | Michael Thomas | Management | admin | 0 | Michael Thomas |
+    | 4 | Jaime Phelps | Sales | manager | 1 | Michael Thomas > Jaime Phelps |
+    | 3 | Jonathan Smith | Management | admin | 1 | Michael Thomas > Jonathan Smith |
+    | 5 | Nicole Hamilton | Marketing | manager | 2 | Michael Thomas > Jonathan Smith > Nicole Hamilton |
+    | 2 | Michael Mcguire | Management | admin | 1 | Michael Thomas > Michael Mcguire |
     | ... | ... | ... | ... | ... | ... |
 
 ---
@@ -496,14 +499,8 @@ Calculate the overall team size, including direct loads as well as indirect load
 
     | id | name | department | role | total_subordinates |
     | ----------: | ---------- | ---------- | ---------- | ----------: |
-    | 1 | 한민재 | 경영 | admin | 33 |
-    | 3 | 박경수 | 경영 | admin | 18 |
-    | 5 | 권영희 | 마케팅 | manager | 9 |
-    | 4 | 이준혁 | 영업 | manager | 4 |
-    | 2 | 장주원 | 경영 | admin | 3 |
-    | 8 | 황예준 | 경영 | manager | 2 |
-    | 7 | 김영일 | 개발 | manager | 1 |
-    | ... | ... | ... | ... | ... |
+    | 1 | Michael Thomas | Management | admin | 4 |
+    | 3 | Jonathan Smith | Management | admin | 1 |
 
 ---
 
@@ -625,14 +622,14 @@ We chain three CTEs: (1) RFM raw metrics, (2) NTILE scores, and (3) segment labe
 
     | top_category | product_count | total_revenue | units_sold |
     | ---------- | ----------: | ----------: | ----------: |
-    | 노트북 | 237 | 16183602000.0 | 7592 |
-    | 그래픽카드 | 99 | 10026900600.0 | 6451 |
-    | 모니터 | 169 | 6381505300.0 | 7250 |
-    | 메인보드 | 149 | 4331432400.0 | 10848 |
-    | CPU | 29 | 2972276700.0 | 6313 |
-    | 저장장치 | 160 | 2816457800.0 | 13058 |
-    | 스피커/헤드셋 | 98 | 2473846600.0 | 10839 |
-    | 키보드 | 165 | 2218745800.0 | 16740 |
+    | Laptop | 21 | 1395635900.0 | 660 |
+    | Monitor | 19 | 727065300.0 | 712 |
+    | Graphics Card | 10 | 713579800.0 | 580 |
+    | Motherboard | 16 | 398988900.0 | 920 |
+    | Speakers/Headsets | 8 | 232144800.0 | 921 |
+    | Storage | 13 | 205861200.0 | 833 |
+    | Memory (RAM) | 14 | 200423600.0 | 1354 |
+    | Power Supply (PSU) | 10 | 192782400.0 | 913 |
     | ... | ... | ... | ... |
 
 ---
@@ -686,14 +683,14 @@ Create a 12-month sequence from 2024-01 to 2024-12 with a recursive CTE and LEFT
 
     | year_month | order_count | revenue |
     | ---------- | ----------: | ----------: |
-    | 2024-01 | 3795 | 3737010508.0 |
-    | 2024-02 | 4469 | 4630208028.0 |
-    | 2024-03 | 4817 | 4811012761.0 |
-    | 2024-04 | 4858 | 4852046384.0 |
-    | 2024-05 | 4917 | 4796192371.0 |
-    | 2024-06 | 3670 | 3787186898.0 |
-    | 2024-07 | 4378 | 4370145415.0 |
-    | 2024-08 | 4753 | 4778870727.0 |
+    | 2024-01 | 314 | 288908320.0 |
+    | 2024-02 | 416 | 403127749.0 |
+    | 2024-03 | 555 | 519844502.0 |
+    | 2024-04 | 466 | 451877581.0 |
+    | 2024-05 | 385 | 425264478.0 |
+    | 2024-06 | 389 | 362715211.0 |
+    | 2024-07 | 381 | 343929897.0 |
+    | 2024-08 | 416 | 404803340.0 |
     | ... | ... | ... |
 
     > All months are displayed without exception. Months with no data are filled with 0.

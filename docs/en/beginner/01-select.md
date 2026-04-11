@@ -29,14 +29,14 @@ SELECT * FROM categories;
 
 | id | parent_id | name | slug | depth | sort_order | is_active | created_at | updated_at |
 | ----------: | ---------- | ---------- | ---------- | ----------: | ----------: | ----------: | ---------- | ---------- |
-| 1 | (NULL) | 데스크톱 PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-| 2 | 1 | 완제품 | desktop-prebuilt | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-| 3 | 1 | 조립PC | desktop-custom | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-| 4 | 1 | 베어본 | desktop-barebone | 1 | 3 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-| 5 | (NULL) | 노트북 | laptop | 0 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-| 6 | 5 | 일반 노트북 | laptop-general | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-| 7 | 5 | 게이밍 노트북 | laptop-gaming | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-| 8 | 5 | 2in1 | laptop-2in1 | 1 | 3 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 1 | (NULL) | Desktop PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 2 | 1 | Pre-built | desktop-prebuilt | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 3 | 1 | Custom Build | desktop-custom | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 4 | 1 | Barebone | desktop-barebone | 1 | 3 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 5 | (NULL) | Laptop | laptop | 0 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 6 | 5 | General Laptop | laptop-general | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 7 | 5 | Gaming Laptop | laptop-gaming | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 8 | 5 | 2-in-1 | laptop-2in1 | 1 | 3 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
 | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
 !!! warning "SELECT * is for learning"
@@ -59,14 +59,14 @@ FROM products;
 
 | name | price | stock_qty |
 | ---------- | ----------: | ----------: |
-| Razer Blade 18 블랙 | 3730900.0 | 107 |
+| Razer Blade 18 Black | 2987500.0 | 107 |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 |
-| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 |
-| Dell U2724D | 865000.0 | 337 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 |
-| MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 460 |
-| 삼성 DDR5 32GB PC5-38400 | 194700.0 | 340 |
-| 로지텍 G715 화이트 | 254400.0 | 341 |
+| Samsung DDR4 32GB PC4-25600 | 43500.0 | 359 |
+| Dell U2724D | 894100.0 | 337 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 | 59 |
+| MSI Radeon RX 9070 VENTUS 3X White | 383100.0 | 460 |
+| Samsung DDR5 32GB PC5-38400 | 211800.0 | 340 |
+| Logitech G715 White | 131500.0 | 341 |
 | ... | ... | ... |
 
 The result is much easier to read than `SELECT *`. **The column order in the result also follows the order listed in SELECT**.
@@ -102,14 +102,14 @@ FROM products;
 
 | product_name | sale_price | inventory |
 | ---------- | ----------: | ----------: |
-| Razer Blade 18 블랙 | 3730900.0 | 107 |
+| Razer Blade 18 Black | 2987500.0 | 107 |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 |
-| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 |
-| Dell U2724D | 865000.0 | 337 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 |
-| MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 460 |
-| 삼성 DDR5 32GB PC5-38400 | 194700.0 | 340 |
-| 로지텍 G715 화이트 | 254400.0 | 341 |
+| Samsung DDR4 32GB PC4-25600 | 43500.0 | 359 |
+| Dell U2724D | 894100.0 | 337 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 | 59 |
+| MSI Radeon RX 9070 VENTUS 3X White | 383100.0 | 460 |
+| Samsung DDR5 32GB PC5-38400 | 211800.0 | 340 |
+| Logitech G715 White | 131500.0 | 341 |
 | ... | ... | ... |
 
 !!! info "Aliases only affect the result"
@@ -131,14 +131,14 @@ FROM products;
 
 | name | price | discounted_price |
 | ---------- | ----------: | ----------: |
-| Razer Blade 18 블랙 | 3730900.0 | 3357810.0 |
+| Razer Blade 18 Black | 2987500.0 | 2688750.0 |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 1569600.0 |
-| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 41490.0 |
-| Dell U2724D | 865000.0 | 778500.0 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 145710.0 |
-| MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 556920.0 |
-| 삼성 DDR5 32GB PC5-38400 | 194700.0 | 175230.0 |
-| 로지텍 G715 화이트 | 254400.0 | 228960.0 |
+| Samsung DDR4 32GB PC4-25600 | 43500.0 | 39150.0 |
+| Dell U2724D | 894100.0 | 804690.0 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 | 150300.0 |
+| MSI Radeon RX 9070 VENTUS 3X White | 383100.0 | 344790.0 |
+| Samsung DDR5 32GB PC5-38400 | 211800.0 | 190620.0 |
+| Logitech G715 White | 131500.0 | 118350.0 |
 | ... | ... | ... |
 
 ### String Literal Columns
@@ -229,8 +229,8 @@ FROM customers;
 | grade |
 | ---------- |
 | BRONZE |
-| VIP |
 | GOLD |
+| VIP |
 | SILVER |
 
 You can see there are 4 grades. Without DISTINCT, all 5,230 rows would be output.

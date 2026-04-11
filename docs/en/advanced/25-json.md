@@ -420,14 +420,17 @@ Query the name, price, and RAM value of products with RAM `'16GB'`. Sort by pric
 
         **Result (example):**
 
-        | name                                                             | price   | ram  |
-        | ---------------------------------------------------------------- | ------: | ---- |
-        | ASUS ROG Zephyrus G16                                            | 4284100 | 16GB |
-        | ASUS ROG Strix G16CH 화이트                                         | 2988700 | 16GB |
-        | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 2389100 | 16GB |
-        | Razer Blade 18                                                   | 2349600 | 16GB |
-        | LG 그램 17 실버                                                      | 2336200 | 16GB |
-        | ...                                                              | ...     | ...  |
+| name | price | ram |
+| ---------- | ----------: | ---------- |
+| ASUS ROG Strix G16CH White | 3671500.0 | 16GB |
+| ASUS ROG Zephyrus G16 | 3429900.0 | 16GB |
+| HP EliteBook 840 G10 Black [Special Limited Edition] Extended 3-year warranty + exclusive carrying case included | 2080300.0 | 16GB |
+| ASUS ExpertBook B5 White | 2068800.0 | 16GB |
+| Lenovo ThinkPad X1 2in1 Silver | 1866100.0 | 16GB |
+| Razer Blade 18 | 1806800.0 | 16GB |
+| Jooyon Rionine R7 System | 1800000.0 | 16GB |
+| LG Gram 17 Silver | 1697400.0 | 16GB |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -462,13 +465,14 @@ Extract the name and CPU value from products in the `products` table where the `
 
         **Result (example):**
 
-        | name                     | cpu                  |
-        | ------------------------ | -------------------- |
-        | Razer Blade 18 블랙        | Apple M3             |
-        | LG 일체형PC 27V70Q 실버       | Intel Core i5-13600K |
-        | Razer Blade 18 화이트       | Intel Core i9-13900H |
-        | 한성 보스몬스터 DX9900 실버       | AMD Ryzen 5 7600X    |
-        | ASUS ROG Strix G16CH 화이트 | AMD Ryzen 5 7600X    |
+| name | cpu |
+| ---------- | ---------- |
+| Razer Blade 18 Black | Apple M3 |
+| LG All-in-One PC 27V70Q Silver | Intel Core i5-13600K |
+| Razer Blade 18 White | Intel Core i9-13900H |
+| Hansung BossMonster DX9900 Silver | AMD Ryzen 5 7600X |
+| ASUS ROG Strix G16CH White | AMD Ryzen 5 7600X |
+| ... | ... |
 
 
     === "MySQL"
@@ -504,14 +508,17 @@ Query all unique keys used in the `specs` column in alphabetical order.
 
         **Result (example):**
 
-        | key             |
-        | --------------- |
-        | base_clock_ghz  |
-        | battery_hours   |
-        | boost_clock_ghz |
-        | capacity_gb     |
-        | clock_mhz       |
-        | ...             |
+| key |
+| ---------- |
+| base_clock_ghz |
+| battery_hours |
+| boost_clock_ghz |
+| capacity_gb |
+| clock_mhz |
+| cores |
+| cpu |
+| gpu |
+| ... |
 
 
     === "MySQL"
@@ -550,11 +557,11 @@ Among products with a `cpu` key in `specs`, query the name, CPU, and price of th
 
         **Result (example):**
 
-        | name                  | cpu                  | price   |
-        | --------------------- | -------------------- | ------: |
-        | ASUS ROG Strix GT35   | Intel Core i7-13700K | 4314800 |
-        | ASUS ROG Zephyrus G16 | Apple M3             | 4284100 |
-        | Razer Blade 18 블랙     | Intel Core i7-13700H | 4182100 |
+| name | cpu | price |
+| ---------- | ---------- | ----------: |
+| MacBook Air 15 M3 Silver | Intel Core i9-13900H | 5481100.0 |
+| Razer Blade 18 Black | Intel Core i7-13700H | 4353100.0 |
+| Razer Blade 16 Silver | AMD Ryzen 9 7945HX | 3702900.0 |
 
 
     === "MySQL"
@@ -761,14 +768,15 @@ Group products with a `screen_size` key in `specs` by screen size, and query the
 
         **Result (example):**
 
-        | screen_size | product_count | avg_price |
-        | ----------- | ------------: | --------: |
-        | 14 inch     |            13 |   2264508 |
-        | 27 inch     |            12 |   1167542 |
-        | 15.6 inch   |            10 |   1947630 |
-        | 32 inch     |             6 |   1001150 |
-        | 16 inch     |             6 |   2453700 |
-        | ...         | ...           | ...       |
+| screen_size | product_count | avg_price |
+| ---------- | ----------: | ----------: |
+| 14 inch | 13 | 2112669.0 |
+| 27 inch | 12 | 1085900.0 |
+| 15.6 inch | 10 | 1765740.0 |
+| 32 inch | 6 | 970783.0 |
+| 16 inch | 6 | 2522717.0 |
+| 24 inch | 4 | 1194175.0 |
+| ... | ... | ... |
 
 
     === "MySQL"

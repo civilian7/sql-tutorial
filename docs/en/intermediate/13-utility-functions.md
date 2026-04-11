@@ -25,7 +25,7 @@ WHERE is_active = 1;
 
 | avg_2dp | avg_int | avg_1000 |
 | ----------: | ----------: | ----------: |
-| 678774.85 | 678775.0 | 678775.0 |
+| 659594.5 | 659594.0 | 659594.0 |
 
 > `ROUND(value, -3)` rounds to the nearest thousand. Useful when displaying approximate values in reports.
 

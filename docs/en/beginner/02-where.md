@@ -89,14 +89,14 @@ WHERE is_active = 1
 
 | name | price |
 | ---------- | ----------: |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 |
-| 삼성 DDR5 32GB PC5-38400 | 194700.0 |
-| 로지텍 G715 화이트 | 254400.0 |
-| be quiet! Light Base 900 | 161100.0 |
-| MSI MAG X870E TOMAHAWK WIFI 화이트 | 473800.0 |
-| NZXT Kraken Elite 240 RGB 실버 | 349200.0 |
-| TP-Link Archer AX55 블랙 | 331900.0 |
-| be quiet! Pure Power 12 M 850W 화이트 | 350200.0 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 |
+| MSI Radeon RX 9070 VENTUS 3X White | 383100.0 |
+| Samsung DDR5 32GB PC5-38400 | 211800.0 |
+| Logitech G715 White | 131500.0 |
+| be quiet! Light Base 900 | 106200.0 |
+| MSI MAG X870E TOMAHAWK WIFI White | 425400.0 |
+| NZXT Kraken Elite 240 RGB Silver | 323500.0 |
+| TP-Link Archer AX55 Black | 344000.0 |
 | ... | ... |
 
 ```sql
@@ -125,14 +125,14 @@ WHERE grade IN ('GOLD', 'VIP');
 
 | name | grade |
 | ---------- | ---------- |
-| 김민재 | VIP |
-| 진정자 | GOLD |
-| 성민석 | VIP |
-| 박지훈 | GOLD |
-| 강은서 | VIP |
-| 김서준 | GOLD |
-| 이영철 | VIP |
-| 김선영 | GOLD |
+| Danny Johnson | GOLD |
+| Adam Moore | VIP |
+| Virginia Steele | GOLD |
+| John Stark | GOLD |
+| Michael Velasquez | GOLD |
+| Cynthia Bryant | VIP |
+| Heather Gonzalez MD | GOLD |
+| Donald Watts | GOLD |
 | ... | ... |
 
 ```sql
@@ -157,14 +157,14 @@ WHERE price BETWEEN 50000 AND 200000;
 
 | name | price |
 | ---------- | ----------: |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 |
-| 삼성 DDR5 32GB PC5-38400 | 194700.0 |
-| be quiet! Light Base 900 | 161100.0 |
-| TP-Link TG-3468 실버 | 53600.0 |
-| 로지텍 K580 | 50500.0 |
-| Keychron Q1 Pro 실버 | 178600.0 |
-| Seagate Fast SSD 1TB 실버 | 185300.0 |
-| SteelSeries Prime Wireless 블랙 | 111200.0 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 |
+| Logitech G715 White | 131500.0 |
+| be quiet! Light Base 900 | 106200.0 |
+| TP-Link TG-3468 Silver | 58400.0 |
+| be quiet! Pure Power 12 M 850W White | 185100.0 |
+| Logitech K580 | 67800.0 |
+| Seagate Fast SSD 1TB Silver | 171900.0 |
+| SteelSeries Prime Wireless Black | 89800.0 |
 | ... | ... |
 
 ```sql
@@ -250,14 +250,14 @@ WHERE birth_date IS NULL;
 
 | name | email |
 | ---------- | ---------- |
-| 김명자 | user7@testmail.kr |
-| 김정식 | user13@testmail.kr |
-| 윤순옥 | user14@testmail.kr |
-| 이서연 | user21@testmail.kr |
-| 강민석 | user24@testmail.kr |
-| 김서준 | user27@testmail.kr |
-| 윤지훈 | user36@testmail.kr |
-| 박준영 | user38@testmail.kr |
+| Ashley Jones | user7@testmail.kr |
+| Andrew Reeves | user13@testmail.kr |
+| Martha Murphy | user14@testmail.kr |
+| Heather Gonzalez MD | user21@testmail.kr |
+| Barbara White | user24@testmail.kr |
+| Donald Watts | user27@testmail.kr |
+| Angela Barrera | user36@testmail.kr |
+| Dana Miles | user38@testmail.kr |
 | ... | ... |
 
 ```sql
@@ -298,14 +298,14 @@ Find female customers (`gender = 'F'`) with SILVER or GOLD grade. Return `name`,
 
 | name | grade | point_balance |
 | ---------- | ---------- | ----------: |
-| 진정자 | GOLD | 944605 |
-| 박지훈 | GOLD | 436275 |
-| 배종수 | SILVER | 469734 |
-| 박건우 | GOLD | 783515 |
-| 남예준 | SILVER | 244180 |
-| 이현숙 | SILVER | 454550 |
-| 이지아 | SILVER | 159982 |
-| 배성훈 | GOLD | 827245 |
+| Virginia Steele | GOLD | 930784 |
+| Tyler Rodriguez | SILVER | 306268 |
+| John Stark | GOLD | 286912 |
+| Diana Ferguson | GOLD | 310498 |
+| Nancy Smith | GOLD | 290330 |
+| Donna George | SILVER | 570129 |
+| Michelle Golden | SILVER | 231707 |
+| Blake Williams | GOLD | 222643 |
 | ... | ... | ... |
 
 
@@ -336,14 +336,14 @@ Find customers whose gender is unknown (NULL) and who also have no last login re
 
 | name | created_at |
 | ---------- | ---------- |
-| 이영식 | 2016-02-23 17:09:54 |
-| 최성수 | 2016-05-03 04:39:09 |
-| 김은지 | 2016-05-17 00:02:05 |
-| 손영호 | 2017-11-11 21:56:36 |
-| 강지은 | 2017-04-26 04:05:37 |
-| 윤승민 | 2017-12-11 21:16:30 |
-| 박영길 | 2017-10-24 15:03:46 |
-| 허정호 | 2017-02-28 06:33:43 |
+| Terry Miller DVM | 2016-02-23 17:09:54 |
+| Mary Barrett | 2017-05-04 04:39:09 |
+| Kara Good | 2019-04-21 10:06:38 |
+| Cameron Oconnor | 2019-05-18 00:02:05 |
+| Madeline Hernandez | 2020-11-10 21:56:36 |
+| Tara Hoffman | 2020-04-25 04:05:37 |
+| Sandra Flynn | 2020-12-10 21:16:30 |
+| Paul Ramsey | 2020-10-23 15:03:46 |
 | ... | ... |
 
 
@@ -361,14 +361,14 @@ Retrieve the `name` and `price` of products priced at 1 million won or more.
 
 | name | price |
 | ---------- | ----------: |
-| Razer Blade 18 블랙 | 3730900.0 |
+| Razer Blade 18 Black | 2987500.0 |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
-| LG 일체형PC 27V70Q 실버 | 1028600.0 |
-| Razer Blade 18 화이트 | 3879900.0 |
-| ASUS ROG Strix G16CH 화이트 | 3307900.0 |
-| 한성 보스몬스터 DX5800 블랙 | 1189600.0 |
-| ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
-| MSI Radeon RX 7900 XTX GAMING X 화이트 | 1409500.0 |
+| LG All-in-One PC 27V70Q Silver | 1093200.0 |
+| Razer Blade 18 White | 2483600.0 |
+| ASUS ROG Strix G16CH White | 3671500.0 |
+| Hansung BossMonster DX5800 Black | 1129400.0 |
+| ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+| HP Envy x360 15 Silver | 1214600.0 |
 | ... | ... |
 
 
@@ -386,14 +386,14 @@ Retrieve the `name` and `stock_qty` of products that are not out of stock (`stoc
 
 | name | stock_qty |
 | ---------- | ----------: |
-| Razer Blade 18 블랙 | 107 |
+| Razer Blade 18 Black | 107 |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 499 |
-| 삼성 DDR4 32GB PC4-25600 | 359 |
+| Samsung DDR4 32GB PC4-25600 | 359 |
 | Dell U2724D | 337 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 59 |
-| MSI Radeon RX 9070 VENTUS 3X 화이트 | 460 |
-| 삼성 DDR5 32GB PC5-38400 | 340 |
-| 로지텍 G715 화이트 | 341 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 59 |
+| MSI Radeon RX 9070 VENTUS 3X White | 460 |
+| Samsung DDR5 32GB PC5-38400 | 340 |
+| Logitech G715 White | 341 |
 | ... | ... |
 
 
@@ -422,14 +422,14 @@ Retrieve the `order_number` and `status` of orders with status `'pending'` or `'
 
 | order_number | status |
 | ---------- | ---------- |
-| ORD-20251204-412540 | pending |
-| ORD-20251207-413119 | pending |
-| ORD-20251211-413870 | pending |
-| ORD-20251211-413965 | pending |
-| ORD-20251212-414063 | pending |
-| ORD-20251214-414477 | pending |
-| ORD-20251215-414727 | pending |
-| ORD-20251223-416282 | pending |
+| ORD-20251212-37108 | pending |
+| ORD-20251228-37466 | pending |
+| ORD-20251228-37467 | pending |
+| ORD-20251228-37468 | pending |
+| ORD-20251228-37469 | pending |
+| ORD-20251228-37471 | pending |
+| ORD-20251228-37472 | pending |
+| ORD-20251228-37473 | pending |
 | ... | ... |
 
 
@@ -458,15 +458,10 @@ From the `staff` table, retrieve the `name` and `department` of active employees
 
 | name | department |
 | ---------- | ---------- |
-| 한민재 | 경영 |
-| 장주원 | 경영 |
-| 박경수 | 경영 |
-| 이준혁 | 영업 |
-| 권영희 | 마케팅 |
-| 김영일 | 개발 |
-| 황예준 | 경영 |
-| 이춘자 | 경영 |
-| ... | ... |
+| Michael Thomas | Management |
+| Michael Mcguire | Management |
+| Jonathan Smith | Management |
+| Nicole Hamilton | Marketing |
 
 
 ### Problem 10
@@ -484,14 +479,14 @@ From the `customers` table, retrieve the `name`, `grade`, `point_balance`, and `
 
 | name | grade | point_balance | is_active |
 | ---------- | ---------- | ----------: | ----------: |
-| 김경수 | BRONZE | 928447 | 1 |
-| 김민재 | VIP | 2609195 | 1 |
-| 진정자 | GOLD | 944605 | 1 |
-| 이정수 | BRONZE | 1903978 | 1 |
-| 성민석 | VIP | 292416 | 1 |
-| 박지훈 | GOLD | 436275 | 1 |
-| 장준서 | SILVER | 790657 | 1 |
-| 윤순옥 | BRONZE | 549856 | 1 |
+| Danny Johnson | GOLD | 664723 | 1 |
+| Adam Moore | VIP | 1564015 | 1 |
+| Virginia Steele | GOLD | 930784 | 1 |
+| Jared Vazquez | SILVER | 963430 | 1 |
+| Tyler Rodriguez | SILVER | 306268 | 1 |
+| John Stark | GOLD | 286912 | 1 |
+| Michael Velasquez | GOLD | 499365 | 1 |
+| Martha Murphy | BRONZE | 274101 | 1 |
 | ... | ... | ... | ... |
 
 

@@ -67,14 +67,14 @@ Practice two-table INNER JOIN.
 
     | name | price | category |
     | ---------- | ----------: | ---------- |
-    | Razer Blade 14 블랙 | 7495200.0 | 게이밍 노트북 |
-    | Razer Blade 16 블랙 | 5634900.0 | 게이밍 노트북 |
-    | Razer Blade 16 | 5518300.0 | 게이밍 노트북 |
-    | Razer Blade 16 화이트 | 5503500.0 | 게이밍 노트북 |
-    | Razer Blade 18 | 5450500.0 | 게이밍 노트북 |
-    | Razer Blade 14 | 5339100.0 | 게이밍 노트북 |
-    | Razer Blade 16 실버 | 5127500.0 | 게이밍 노트북 |
-    | Razer Blade 16 블랙 | 4938200.0 | 게이밍 노트북 |
+    | MacBook Air 15 M3 Silver | 5481100.0 | MacBook |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 | NVIDIA |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 | NVIDIA |
+    | Razer Blade 18 Black | 4353100.0 | Gaming Laptop |
+    | Razer Blade 16 Silver | 3702900.0 | Gaming Laptop |
+    | ASUS ROG Strix G16CH White | 3671500.0 | Custom Build |
+    | ASUS ROG Zephyrus G16 | 3429900.0 | Gaming Laptop |
+    | ASUS ROG Strix GT35 | 3296800.0 | Custom Build |
     | ... | ... | ... |
 
     > Only top 5 rows shown. 10 rows returned total.
@@ -105,14 +105,14 @@ Practice two-table INNER JOIN.
 
     | product | category | supplier |
     | ---------- | ---------- | ---------- |
-    | AMD Ryzen 5 9600X | AMD | AMD코리아 |
-    | AMD Ryzen 7 7700X | AMD | AMD코리아 |
-    | AMD Ryzen 7 7700X 블랙 | AMD | AMD코리아 |
-    | AMD Ryzen 7 7700X 블랙 | AMD | AMD코리아 |
-    | AMD Ryzen 7 7800X3D | AMD | AMD코리아 |
-    | AMD Ryzen 7 7800X3D 실버 | AMD | AMD코리아 |
-    | AMD Ryzen 7 9700X 블랙 | AMD | AMD코리아 |
-    | AMD Ryzen 7 9800X3D 실버 | AMD | AMD코리아 |
+    | AMD Ryzen 9 9900X | AMD | AMD Corp. |
+    | AMD Ryzen 9 9900X | AMD | AMD Corp. |
+    | APC Back-UPS Pro Gaming BGM1500B Black | UPS/Power | APC Corp. |
+    | ASRock B850M Pro RS Black | AMD Socket | ASRock Corp. |
+    | ASRock B850M Pro RS Silver | AMD Socket | ASRock Corp. |
+    | ASRock B850M Pro RS White | AMD Socket | ASRock Corp. |
+    | ASRock B860M Pro RS Silver | Intel Socket | ASRock Corp. |
+    | ASRock B860M Pro RS White | Intel Socket | ASRock Corp. |
     | ... | ... | ... |
 
 ---
@@ -141,14 +141,14 @@ Practice two-table INNER JOIN.
 
     | order_number | customer_name | total_amount | ordered_at |
     | ---------- | ---------- | ----------: | ---------- |
-    | ORD-20251211-413965 | 송광수 | 409600.0 | 2026-01-01 08:40:57 |
-    | ORD-20251226-416837 | 송광수 | 1169700.0 | 2026-01-01 06:40:57 |
-    | ORD-20251231-417734 | 류미숙 | 2076300.0 | 2025-12-31 23:28:51 |
-    | ORD-20251231-417696 | 김영미 | 814400.0 | 2025-12-31 23:26:03 |
-    | ORD-20251231-417737 | 이영미 | 550600.0 | 2025-12-31 23:17:28 |
-    | ORD-20251231-417735 | 조성수 | 35000.0 | 2025-12-31 23:12:47 |
-    | ORD-20251231-417677 | 김지우 | 2002473.0 | 2025-12-31 23:09:05 |
-    | ORD-20251231-417764 | 이중수 | 42700.0 | 2025-12-31 23:00:56 |
+    | ORD-20251231-37555 | Angel Jones | 74800.0 | 2025-12-31 22:25:39 |
+    | ORD-20251231-37543 | Carla Watson | 134100.0 | 2025-12-31 21:40:27 |
+    | ORD-20251231-37552 | Martin Hanson | 254300.0 | 2025-12-31 20:00:48 |
+    | ORD-20251231-37548 | Lucas Johnson | 187700.0 | 2025-12-31 18:43:56 |
+    | ORD-20251231-37542 | Adam Moore | 155700.0 | 2025-12-31 18:00:24 |
+    | ORD-20251231-37546 | Justin Murphy | 198300.0 | 2025-12-31 15:43:23 |
+    | ORD-20251231-37547 | Sara Hill | 335000.0 | 2025-12-31 15:33:05 |
+    | ORD-20251231-37556 | David York | 153900.0 | 2025-12-31 15:08:54 |
     | ... | ... | ... | ... |
 
     > Actual names and amounts depend on the data.
@@ -180,14 +180,14 @@ Practice two-table INNER JOIN.
 
     | order_id | product_name | brand | quantity | unit_price |
     | ----------: | ---------- | ---------- | ----------: | ----------: |
-    | 417803 | 엡손 L6290 블랙 | 엡손 | 1 | 399000.0 |
-    | 417803 | Dell UP2720Q 화이트 | Dell | 1 | 1289400.0 |
-    | 417802 | 넷기어 Nighthawk RS700S 화이트 | 넷기어 | 1 | 184200.0 |
-    | 417801 | be quiet! Straight Power 12 1000W 블랙 | be quiet! | 1 | 295500.0 |
-    | 417801 | Seagate IronWolf 8TB 화이트 | Seagate | 1 | 194300.0 |
-    | 417800 | Norton 360 Standard 블랙 | Norton | 1 | 81000.0 |
-    | 417800 | Fractal Design Pop Air | Fractal Design | 1 | 150300.0 |
-    | 417800 | CORSAIR iCUE 4000X 실버 | CORSAIR | 1 | 228900.0 |
+    | 37557 | NZXT H7 Flow Silver | NZXT | 1 | 248700.0 |
+    | 37557 | TeamGroup T-Force Vulcan DDR5 32GB 5200MHz | TeamGroup | 1 | 139800.0 |
+    | 37556 | Ducky One 3 Full Black | Ducky | 1 | 153900.0 |
+    | 37555 | Norton AntiVirus Plus Silver | Norton | 1 | 74800.0 |
+    | 37554 | ASUS PCE-BE92BT Black | ASUS | 1 | 74900.0 |
+    | 37553 | Logitech G PRO X2 Superstrike Black | Logitech | 1 | 155700.0 |
+    | 37553 | Netgear GS308 Silver | Netgear | 1 | 194800.0 |
+    | 37552 | NZXT Kraken 240 Silver | NZXT | 1 | 120200.0 |
     | ... | ... | ... | ... | ... |
 
     > Actual results depend on the data.
@@ -218,14 +218,14 @@ Practice two-table INNER JOIN.
 
     | order_number | carrier | delivered_at |
     | ---------- | ---------- | ---------- |
-    | ORD-20251225-416704 | 한진택배 | 2026-01-01 22:43:08 |
-    | ORD-20251225-416550 | CJ대한통운 | 2026-01-01 22:14:41 |
-    | ORD-20251225-416613 | 한진택배 | 2026-01-01 16:37:19 |
-    | ORD-20251225-416538 | CJ대한통운 | 2026-01-01 16:08:52 |
-    | ORD-20251225-416700 | 로젠택배 | 2026-01-01 15:48:04 |
-    | ORD-20251225-416555 | CJ대한통운 | 2026-01-01 15:04:18 |
-    | ORD-20251225-416610 | 우체국택배 | 2026-01-01 14:50:31 |
-    | ORD-20251225-416570 | 로젠택배 | 2026-01-01 14:26:55 |
+    | ORD-20251225-37399 | USPS | 2026-01-01 23:36:22 |
+    | ORD-20251225-37404 | UPS | 2026-01-01 22:02:51 |
+    | ORD-20251225-37414 | FedEx | 2026-01-01 13:49:43 |
+    | ORD-20251225-37413 | OnTrac | 2025-12-31 14:25:31 |
+    | ORD-20251225-37412 | OnTrac | 2025-12-30 22:50:46 |
+    | ORD-20251224-37387 | OnTrac | 2025-12-30 19:29:43 |
+    | ORD-20251225-37401 | UPS | 2025-12-30 12:03:50 |
+    | ORD-20251224-37396 | UPS | 2025-12-30 09:46:21 |
     | ... | ... | ... |
 
 ---
@@ -255,14 +255,14 @@ Practice two-table INNER JOIN.
 
     | product_name | review_title | rating | created_at |
     | ---------- | ---------- | ----------: | ---------- |
-    | Keychron K6 Pro 실버 | 대만족 | 5 | 2026-01-19 14:32:43 |
-    | Windows 11 Pro for Workstations 화이트 | 최고입니다! | 5 | 2026-01-18 22:59:14 |
-    | 엡손 L3260 블랙 | (NULL) | 5 | 2026-01-17 12:41:28 |
-    | MSI MAG X870E TOMAHAWK WIFI | (NULL) | 5 | 2026-01-16 19:31:49 |
-    | 로지텍 M750 화이트 | (NULL) | 5 | 2026-01-16 09:52:54 |
-    | Arctic Freezer 36 | 완벽해요 | 5 | 2026-01-15 19:31:49 |
-    | Ducky One 3 Mini 화이트 | (NULL) | 5 | 2026-01-14 22:26:41 |
-    | 로지텍 K580 화이트 | 최고입니다! | 5 | 2026-01-14 14:19:57 |
+    | Norton AntiVirus Plus Silver | Outstanding | 5 | 2026-01-13 12:09:18 |
+    | Netgear GS308 Silver | Perfect | 5 | 2026-01-11 21:02:15 |
+    | Arctic Liquid Freezer III Pro 420 A-RGB Silver | Best Value | 5 | 2026-01-07 20:55:20 |
+    | ASUS Dual RTX 5070 Ti Silver | Outstanding | 5 | 2026-01-07 09:24:04 |
+    | be quiet! Dark Power 13 1000W | (NULL) | 5 | 2026-01-06 21:29:23 |
+    | TP-Link TL-SG108 | Best Value | 5 | 2026-01-06 15:27:04 |
+    | Microsoft Ergonomic Keyboard Silver | Outstanding | 5 | 2026-01-04 18:00:26 |
+    | Kingston FURY Renegade DDR5 32GB 7200MHz Black | Highly Recommend | 5 | 2026-01-03 10:58:26 |
     | ... | ... | ... | ... |
 
     > Review title may be NULL.
@@ -292,14 +292,14 @@ Practice two-table INNER JOIN.
 
     | company_name | product_count |
     | ---------- | ----------: |
-    | 에이수스코리아 | 230 |
-    | 삼성전자 공식 유통 | 211 |
-    | 로지텍코리아 | 153 |
-    | MSI코리아 | 137 |
-    | 앱솔루트 테크놀로지 | 129 |
-    | 레이저코리아 | 124 |
-    | 서린시스테크 | 120 |
-    | LG전자 공식 유통 | 118 |
+    | ASUS Corp. | 26 |
+    | Samsung Official Distribution | 25 |
+    | Logitech Corp. | 17 |
+    | MSI Corp. | 13 |
+    | Seorin Systech | 12 |
+    | LG Official Distribution | 11 |
+    | TP-Link Corp. | 11 |
+    | ASRock Corp. | 11 |
     | ... | ... |
 
     > Actual values depend on the data.
@@ -330,14 +330,14 @@ Practice two-table INNER JOIN.
 
     | category | product_count | avg_price |
     | ---------- | ----------: | ----------: |
-    | 맥북 | 24 | 3347704.0 |
-    | 게이밍 노트북 | 113 | 2930866.0 |
-    | NVIDIA | 60 | 2324320.0 |
-    | 조립PC | 60 | 2220050.0 |
-    | 일반 노트북 | 115 | 1730655.0 |
-    | 2in1 | 59 | 1606744.0 |
-    | 완제품 | 98 | 1505784.0 |
-    | 전문가용 모니터 | 57 | 1361037.0 |
+    | MacBook | 1 | 5481100.0 |
+    | Gaming Laptop | 9 | 2684478.0 |
+    | NVIDIA | 7 | 2406500.0 |
+    | General Laptop | 10 | 1748820.0 |
+    | Custom Build | 11 | 1719809.0 |
+    | Professional Monitor | 6 | 1492983.0 |
+    | 2-in-1 | 9 | 1458756.0 |
+    | AMD | 8 | 1162400.0 |
     | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -370,15 +370,8 @@ Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | 한성 프리워크 P5700 블랙 | 3917100.0 |
-    | Razer Blade 16 실버 | 3899800.0 |
-    | 기가바이트 AORUS 16X | 3551600.0 |
-    | ASUS ROG Zephyrus G14 실버 | 3362500.0 |
-    | ASUS ROG Strix G16CH 화이트 | 3307900.0 |
-    | Razer Blade 14 실버 | 2902800.0 |
-    | ... | ... |
+    | MSI Radeon RX 9070 XT GAMING X | 1896000.0 |
+    | Hansung BossMonster DX5800 Black | 1129400.0 |
 
     > Only products with 0 reviews. Many may be discontinued.
 
@@ -405,14 +398,14 @@ Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
 
     | name | grade | created_at |
     | ---------- | ---------- | ---------- |
-    | 성미숙 | BRONZE | 2016-01-01 00:53:24 |
-    | 오진호 | BRONZE | 2016-01-01 03:10:41 |
-    | 노지민 | BRONZE | 2016-01-01 10:17:05 |
-    | 양영진 | BRONZE | 2016-01-03 19:49:46 |
-    | 김지아 | BRONZE | 2016-01-05 08:33:42 |
-    | 김민준 | BRONZE | 2016-01-05 21:52:07 |
-    | 최유진 | BRONZE | 2016-01-06 00:09:48 |
-    | 이미정 | BRONZE | 2016-01-06 05:24:42 |
+    | Alan Blair | BRONZE | 2016-01-03 19:49:46 |
+    | Dana Miles | BRONZE | 2016-01-15 19:21:20 |
+    | Tracy Johnson | BRONZE | 2016-01-26 09:42:20 |
+    | Tommy Kim | BRONZE | 2016-02-03 03:40:29 |
+    | Sara Harvey | BRONZE | 2016-02-03 04:18:52 |
+    | Duane Evans MD | BRONZE | 2016-02-09 18:54:54 |
+    | Ashley Jones | BRONZE | 2016-02-17 13:41:08 |
+    | Terry Miller DVM | BRONZE | 2016-02-23 17:09:54 |
     | ... | ... | ... |
 
     > Only customers with 0 orders. Most are BRONZE grade.
@@ -444,14 +437,14 @@ Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
 
     | name | price | wishlist_count |
     | ---------- | ----------: | ----------: |
-    | 로지텍 MK470 화이트 | 41300.0 | 22 |
-    | Razer BlackShark V2 Pro | 172300.0 | 21 |
-    | Dell U2724D 실버 | 643000.0 | 19 |
-    | HP LaserJet Pro M404dn 블랙 | 608200.0 | 19 |
-    | 삼성 990 EVO Plus 1TB 블랙 | 88500.0 | 19 |
-    | BenQ SW272U 실버 | 2023100.0 | 18 |
-    | WD Black SN8100 2TB 블랙 | 90800.0 | 18 |
-    | 레오폴드 FC750R PD | 190400.0 | 18 |
+    | MSI MAG X870E TOMAHAWK WIFI White | 425400.0 | 19 |
+    | ASUS ROG Swift PG32UCDM Silver | 1890300.0 | 19 |
+    | NZXT Kraken Elite 240 RGB Silver | 323500.0 | 16 |
+    | TP-Link TL-SG108E | 101500.0 | 16 |
+    | Ducky One 3 Full Black | 153900.0 | 16 |
+    | Samsung SPA-KFG0BUB | 30700.0 | 15 |
+    | HP Pavilion x360 14 Black | 1479700.0 | 15 |
+    | Microsoft 365 Personal | 108200.0 | 14 |
     | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -485,11 +478,11 @@ Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
 
     | order_number | customer | product | quantity | unit_price |
     | ---------- | ---------- | ---------- | ----------: | ----------: |
-    | ORD-20251211-413965 | 송광수 | Windows 11 Pro | 1 | 409600.0 |
-    | ORD-20251226-416837 | 송광수 | MSI Radeon RX 7800 XT GAMING X 실버 | 1 | 994000.0 |
-    | ORD-20251226-416837 | 송광수 | Razer Huntsman V3 Pro Mini 화이트 | 1 | 175700.0 |
-    | ORD-20251231-417734 | 류미숙 | NZXT Kraken 240 실버 | 1 | 169800.0 |
-    | ORD-20251231-417734 | 류미숙 | BenQ PD2725U | 1 | 1596100.0 |
+    | ORD-20251231-37555 | Angel Jones | Norton AntiVirus Plus Silver | 1 | 74800.0 |
+    | ORD-20251231-37543 | Carla Watson | Hancom Office 2024 Enterprise White | 1 | 134100.0 |
+    | ORD-20251231-37552 | Martin Hanson | Hancom Office 2024 Enterprise White | 1 | 134100.0 |
+    | ORD-20251231-37552 | Martin Hanson | NZXT Kraken 240 Silver | 1 | 120200.0 |
+    | ORD-20251231-37548 | Lucas Johnson | Samsung 990 EVO Plus 1TB White | 1 | 187700.0 |
     | ... | ... | ... | ... | ... |
 
 ---
@@ -519,14 +512,14 @@ Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
 
     | name | avg_rating | review_count |
     | ---------- | ----------: | ----------: |
-    | MSI Radeon RX 7900 XTX GAMING X | 4.83 | 6 |
-    | 넷기어 Orbi 970 실버 | 4.83 | 6 |
-    | ASUS TUF GAMING B860M-PLUS 화이트 | 4.8 | 5 |
-    | 넷기어 RAX70 실버 | 4.8 | 5 |
-    | 레노버 ThinkPad X1 2in1 실버 | 4.8 | 5 |
-    | 삼성 갤럭시북4 프로 화이트 | 4.8 | 5 |
-    | 한성 보스몬스터 DX5800 블랙 | 4.8 | 5 |
-    | SteelSeries Arctis Nova 7 Wireless 실버 | 4.78 | 9 |
+    | Samsung DM500TDA Silver | 4.8 | 5 |
+    | LG 27UQ85R White | 4.6 | 5 |
+    | LG 32UN880 Ergo White | 4.56 | 16 |
+    | WD Elements 2TB Black | 4.53 | 19 |
+    | Windows 11 Home Black | 4.52 | 21 |
+    | Dell XPS Desktop 8960 Silver | 4.5 | 10 |
+    | Arctic Liquid Freezer III Pro 420 A-RGB Silver | 4.45 | 22 |
+    | Intel NUC 13 Pro Silver | 4.44 | 9 |
     | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -558,14 +551,11 @@ Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
 
     | id | staff_name | department | role | manager_name | manager_department |
     | ----------: | ---------- | ---------- | ---------- | ---------- | ---------- |
-    | 24 | 김옥자 | CS | staff | 박경수 | 경영 |
-    | 34 | 이순자 | CS | staff | 장주원 | 경영 |
-    | 38 | 이현준 | CS | staff | 한민재 | 경영 |
-    | 7 | 김영일 | 개발 | manager | 박경수 | 경영 |
-    | 21 | 김현주 | 개발 | staff | 김영일 | 개발 |
-    | 48 | 김경희 | 경영 | staff | 김진우 | 경영 |
-    | 10 | 김진우 | 경영 | manager | 박경수 | 경영 |
-    | 13 | 남정순 | 경영 | staff | 김진우 | 경영 |
+    | 3 | Jonathan Smith | Management | admin | Michael Thomas | Management |
+    | 2 | Michael Mcguire | Management | admin | Michael Thomas | Management |
+    | 1 | Michael Thomas | Management | admin | (NULL) | (NULL) |
+    | 5 | Nicole Hamilton | Marketing | manager | Jonathan Smith | Management |
+    | 4 | Jaime Phelps | Sales | manager | Michael Thomas | Management |
     | ... | ... | ... | ... | ... | ... |
 
     > NULL manager_name indicates the top-level manager.
@@ -598,14 +588,14 @@ Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
 
     | category | units_sold | revenue |
     | ---------- | ----------: | ----------: |
-    | 게이밍 노트북 | 18930 | 53851781900.0 |
-    | NVIDIA | 18253 | 40205792400.0 |
-    | AMD | 43977 | 35401431700.0 |
-    | 일반 노트북 | 19642 | 32862183400.0 |
-    | 게이밍 모니터 | 20873 | 24964654700.0 |
-    | 스피커/헤드셋 | 67551 | 16433071700.0 |
-    | 2in1 | 9744 | 15525975700.0 |
-    | Intel 소켓 | 38524 | 15401899600.0 |
+    | Gaming Laptop | 1691 | 4982099000.0 |
+    | AMD | 4016 | 3124984300.0 |
+    | NVIDIA | 1661 | 2814694400.0 |
+    | Gaming Monitor | 2464 | 2781055700.0 |
+    | General Laptop | 1365 | 2429349600.0 |
+    | 2-in-1 | 1301 | 1944050200.0 |
+    | Intel Socket | 3406 | 1556580900.0 |
+    | AMD Socket | 3325 | 1531232500.0 |
     | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -683,14 +673,14 @@ Practice 4+ table JOINs and complex business queries.
 
     | name | grade | order_count | total_spent |
     | ---------- | ---------- | ----------: | ----------: |
-    | 박정수 | VIP | 671 | 683999108.0 |
-    | 정유진 | VIP | 551 | 661364522.0 |
-    | 이미정 | VIP | 533 | 637982227.0 |
-    | 김상철 | VIP | 520 | 570706423.0 |
-    | 문영숙 | VIP | 552 | 533764115.0 |
-    | 이영자 | VIP | 522 | 531101676.0 |
-    | 이미정 | VIP | 443 | 504714776.0 |
-    | 장영숙 | VIP | 362 | 492889661.0 |
+    | Allen Snyder | VIP | 312 | 409734279.0 |
+    | Jason Rivera | VIP | 352 | 382314874.0 |
+    | Ronald Arellano | VIP | 225 | 266184349.0 |
+    | Brenda Garcia | VIP | 250 | 254525838.0 |
+    | Courtney Huff | VIP | 226 | 248498783.0 |
+    | Gabriel Walters | VIP | 290 | 248168491.0 |
+    | James Banks | VIP | 236 | 244859844.0 |
+    | Sandra Callahan | GOLD | 178 | 213212640.0 |
     | ... | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -720,10 +710,12 @@ Practice 4+ table JOINs and complex business queries.
 
     | carrier | total | delivered | delivery_rate |
     | ---------- | ----------: | ----------: | ----------: |
-    | CJ대한통운 | 158460 | 153326 | 96.8 |
-    | 한진택배 | 99055 | 95746 | 96.7 |
-    | 로젠택배 | 79147 | 76537 | 96.7 |
-    | 우체국택배 | 59417 | 57501 | 96.8 |
+    | FedEx | 10507 | 10198 | 97.1 |
+    | UPS | 8993 | 8729 | 97.1 |
+    | USPS | 7227 | 6990 | 96.7 |
+    | DHL | 5356 | 5184 | 96.8 |
+    | OnTrac | 3533 | 3417 | 96.7 |
+    | ... | ... | ... | ... |
 
     > Actual values depend on the data.
 
@@ -754,14 +746,14 @@ Practice 4+ table JOINs and complex business queries.
 
     | company_name | product_count | avg_price | max_price |
     | ---------- | ----------: | ----------: | ----------: |
-    | 에이수스코리아 | 230 | 1290918.0 | 4621600.0 |
-    | 삼성전자 공식 유통 | 211 | 712006.0 | 2743700.0 |
-    | 로지텍코리아 | 153 | 122777.0 | 327600.0 |
-    | MSI코리아 | 137 | 1201664.0 | 4881500.0 |
-    | 앱솔루트 테크놀로지 | 129 | 171332.0 | 820400.0 |
-    | 레이저코리아 | 124 | 1105065.0 | 7495200.0 |
-    | 서린시스테크 | 120 | 153247.0 | 441700.0 |
-    | LG전자 공식 유통 | 118 | 1317411.0 | 3053700.0 |
+    | ASUS Corp. | 26 | 1683631.0 | 4526600.0 |
+    | Samsung Official Distribution | 25 | 616008.0 | 1833000.0 |
+    | Logitech Corp. | 17 | 111600.0 | 216800.0 |
+    | MSI Corp. | 13 | 778431.0 | 1896000.0 |
+    | Seorin Systech | 12 | 157908.0 | 269200.0 |
+    | LG Official Distribution | 11 | 1346836.0 | 1828800.0 |
+    | TP-Link Corp. | 11 | 128764.0 | 344000.0 |
+    | ASRock Corp. | 11 | 477491.0 | 665600.0 |
     | ... | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -795,10 +787,12 @@ Practice 4+ table JOINs and complex business queries.
 
     | carrier | delivered_count | avg_days | min_days | max_days |
     | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | CJ대한통운 | 153326 | 4.5 | 2 | 7 |
-    | 로젠택배 | 76537 | 4.5 | 2 | 7 |
-    | 우체국택배 | 57501 | 4.5 | 2 | 7 |
-    | 한진택배 | 95746 | 4.5 | 2 | 7 |
+    | DHL | 5184 | 4.5 | 2 | 7 |
+    | FedEx | 10198 | 4.5 | 2 | 7 |
+    | OnTrac | 3417 | 4.5 | 2 | 7 |
+    | UPS | 8729 | 4.5 | 2 | 7 |
+    | USPS | 6990 | 4.5 | 2 | 7 |
+    | ... | ... | ... | ... | ... |
 
     > Actual values depend on the data.
 
@@ -830,12 +824,16 @@ Practice 4+ table JOINs and complex business queries.
     **Result (top 5 rows):**
 
     | product_name | brand | price | category |
-    |-------------|-------|-------|----------|
-    | ASUS ROG Strix GT35 | ASUS | 4314800 | 데스크톱 |
-    | Razer Blade 18 블랙 | Razer | 4182100 | 노트북 |
-    | Razer Blade 16 실버 | Razer | 4123800 | 노트북 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | MSI | 1744000 | 그래픽카드 |
-    | ASUS ROG Strix Scar 16 실버 | ASUS | 1586000 | 노트북 |
+    | ---------- | ---------- | ----------: | ---------- |
+    | Razer Blade 18 Black | Razer | 4353100.0 | Gaming Laptop |
+    | Razer Blade 16 Silver | Razer | 3702900.0 | Gaming Laptop |
+    | Razer Blade 18 Black | Razer | 2987500.0 | Gaming Laptop |
+    | Razer Blade 18 White | Razer | 2483600.0 | Gaming Laptop |
+    | ASUS ROG Strix Scar 16 | ASUS | 2452500.0 | Gaming Laptop |
+    | ASUS ROG Swift PG32UCDM Silver | ASUS | 1890300.0 | Gaming Monitor |
+    | ASUS ROG Strix G16CH Silver | ASUS | 1879100.0 | Custom Build |
+    | Jooyon Rionine i9 High-End | Jooyon Tech | 1849900.0 | Custom Build |
+    | ... | ... | ... | ... |
 
     > Actual results depend on the data.
 
@@ -872,14 +870,14 @@ Practice 4+ table JOINs and complex business queries.
 
     | product_name | question | asked_by | asked_at | answer | answered_by | answered_at |
     | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- |
-    | MSI Katana 15 | 후속 모델 출시 예정이 있나요? | 서지연 | 2025-12-30 23:57:48 | (NULL) | (NULL) | (NULL) |
-    | Dell UP3218K 실버 | 풀로드 시 팬 소음이 어느 정도인가요? | 박영식 | 2025-12-30 23:52:07 | (NULL) | (NULL) | (NULL) |
-    | HP ProDesk 400 G9 블랙 | 실제 소비 전력이 어느 정도인가요? | 이순옥 | 2025-12-30 22:56:41 | (NULL) | (NULL) | (NULL) |
-    | Razer Barracuda X 화이트 | 한국어 매뉴얼이 있나요? | 김명자 | 2025-12-30 22:55:40 | (NULL) | (NULL) | (NULL) |
-    | 삼성 SPA-KFG0BUB 화이트 | 풀로드 시 팬 소음이 어느 정도인가요? | 박준영 | 2025-12-30 20:00:41 | (NULL) | (NULL) | (NULL) |
-    | SK하이닉스 Platinum P41 2TB 블랙 | SSD 추가 장착이 가능한가요? | 양우진 | 2025-12-30 19:12:12 | (NULL) | (NULL) | (NULL) |
-    | TP-Link TL-SG108 실버 | 맥에서도 사용할 수 있나요? | 김지민 | 2025-12-30 18:51:07 | (NULL) | (NULL) | (NULL) |
-    | SteelSeries Aerox 5 Wireless 블랙 | 풀로드 시 팬 소음이 어느 정도인가요? | 박현지 | 2025-12-30 16:06:22 | (NULL) | (NULL) | (NULL) |
+    | SK hynix Platinum P41 2TB Silver | What are the exact dimensions? | Robert Simmons | 2025-12-30 23:10:22 | (NULL) | (NULL) | (NULL) |
+    | ASRock B850M Pro RS White | What PSU wattage do you recommend for this? | Kathleen Stewart | 2025-12-30 23:01:05 | (NULL) | (NULL) | (NULL) |
+    | Dell U2724D | What PSU wattage do you recommend for this? | Jill Reed | 2025-12-30 17:53:24 | Yes, it works with both Windows and Mac. | Jaime Phelps | 2025-12-30 20:53:24 |
+    | ASRock X870E Taichi Silver | Is this product new or refurbished? | Cory Salazar | 2025-12-30 14:27:52 | (NULL) | (NULL) | (NULL) |
+    | Fractal Design North | What are the exact dimensions? | Daniel Murphy | 2025-12-30 13:30:22 | (NULL) | (NULL) | (NULL) |
+    | MSI MEG Ai1300P PCIE5 White | Does this come with cables included? | Tracey Johnston | 2025-12-29 19:22:36 | Yes, all necessary cables are included in the package. | Nicole Hamilton | 2025-12-30 21:22:36 |
+    | TP-Link TG-3468 Black | Can I use this with a Mac? | John Moss | 2025-12-29 10:01:52 | We expect restock within 2 weeks. You can set a notification. | Nicole Hamilton | 2025-12-29 11:01:52 |
+    | Brother MFC-L2750DW Black | Does this come with cables included? | Terry James | 2025-12-29 08:43:06 | We expect restock within 2 weeks. You can set a notification. | Michael Thomas | 2025-12-30 03:43:06 |
     | ... | ... | ... | ... | ... | ... | ... |
 
     > Questions without answers have NULL for answer/answered_by.
@@ -916,14 +914,14 @@ Practice 4+ table JOINs and complex business queries.
 
     | id | customer_name | order_number | staff_name | category | priority | status | created_at |
     | ----------: | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- |
-    | 33270 | 송광수 | ORD-20251211-413965 | 이현준 | delivery_issue | medium | closed | 2026-01-14 17:40:57 |
-    | 33595 | 김은정 | ORD-20251231-417744 | 이순자 | delivery_issue | medium | closed | 2026-01-14 14:14:25 |
-    | 33570 | 김예은 | ORD-20251230-417476 | 이현준 | refund_request | urgent | closed | 2026-01-13 14:47:24 |
-    | 33597 | 박성호 | ORD-20251231-417761 | 이현준 | exchange_request | medium | closed | 2026-01-13 12:22:20 |
-    | 33599 | 김영수 | ORD-20251231-417780 | 이순자 | price_inquiry | high | resolved | 2026-01-13 11:32:17 |
-    | 33577 | 홍도현 | ORD-20251230-417527 | 이순자 | refund_request | high | closed | 2026-01-13 10:54:24 |
-    | 33590 | 이주원 | ORD-20251231-417649 | 이현준 | refund_request | high | closed | 2026-01-12 22:43:43 |
-    | 33543 | 문은영 | ORD-20251228-417236 | 이현준 | refund_request | medium | closed | 2026-01-12 18:56:18 |
+    | 3050 | Dorothy Nelson | ORD-20251231-37541 | Jaime Phelps | product_defect | medium | closed | 2026-01-13 20:27:26 |
+    | 3046 | Timothy Ward | ORD-20251228-37483 | Michael Mcguire | general_inquiry | low | closed | 2026-01-11 05:32:28 |
+    | 3051 | Lucas Johnson | ORD-20251231-37548 | Michael Thomas | refund_request | urgent | closed | 2026-01-10 08:43:56 |
+    | 3043 | Jacob Smith | ORD-20251228-37466 | Nicole Hamilton | product_defect | urgent | closed | 2026-01-08 10:26:57 |
+    | 3039 | Samantha Sampson | ORD-20251227-37453 | Michael Thomas | general_inquiry | medium | closed | 2026-01-08 08:28:26 |
+    | 3044 | Charles Patterson | ORD-20251228-37467 | Michael Mcguire | general_inquiry | urgent | closed | 2026-01-05 13:56:10 |
+    | 3040 | Janet Manning | ORD-20251227-37454 | Michael Mcguire | exchange_request | low | resolved | 2026-01-04 21:17:27 |
+    | 3030 | Sarah Li | ORD-20251222-37348 | Jaime Phelps | delivery_issue | high | closed | 2026-01-04 14:42:16 |
     | ... | ... | ... | ... | ... | ... | ... | ... |
 
     > NULL order_number indicates a general inquiry (not order-related).
@@ -957,14 +955,14 @@ Practice 4+ table JOINs and complex business queries.
 
     | discontinued_product | old_price | discontinued_at | successor_product | new_price | price_diff |
     | ---------- | ----------: | ---------- | ---------- | ----------: | ----------: |
-    | 로지텍 G715 실버 | 100600.0 | 2025-12-27 19:50:12 | 로지텍 G715 화이트 | 196000.0 | 95400.0 |
-    | 주연 리오나인 i9 하이엔드 실버 | 1663400.0 | 2025-12-15 15:04:20 | 한성 보스몬스터 DX5800 블랙 | 609200.0 | -1054200.0 |
-    | Apple Magic Keyboard 숫자 키패드 포함 블랙 | 140700.0 | 2025-12-14 10:44:03 | 로지텍 ERGO K860 화이트 | 116300.0 | -24400.0 |
-    | APC Smart-UPS SMT1500 화이트 | 548700.0 | 2025-11-24 01:47:28 | APC Back-UPS Pro BR1500G 블랙 | 217000.0 | -331700.0 |
-    | Intel NUC 13 Pro 블랙 | 512900.0 | 2025-11-20 14:16:24 | ASUS NUC 14 Pro+ 블랙 | 1233300.0 | 720400.0 |
-    | Apple Magic Mouse | 98500.0 | 2025-11-14 10:48:19 | Microsoft Arc Mouse 실버 | 66000.0 | -32500.0 |
-    | 레노버 ThinkPad T14s | 2576700.0 | 2025-11-12 20:25:30 | 삼성 갤럭시북4 프로 360 실버 | 1858500.0 | -718200.0 |
-    | ASUS ROG Strix G16CH 실버 | 3224500.0 | 2025-10-30 23:43:51 | 주연 리오나인 R7 시스템 실버 | 1754300.0 | -1470200.0 |
+    | Dell XPS Desktop 8960 Silver | 1249400.0 | 2025-11-20 15:30:12 | HP Z2 Mini G1a Black | 895000.0 | -354400.0 |
+    | Hansung BossMonster DX7700 White | 1579400.0 | 2025-10-25 03:47:01 | Jooyon Rionine i9 High-End | 1849900.0 | 270500.0 |
+    | SAPPHIRE PULSE RX 7800 XT Silver | 1146300.0 | 2025-08-01 06:10:51 | MSI Radeon RX 9070 XT GAMING X | 1896000.0 | 749700.0 |
+    | Logitech G715 | 187900.0 | 2025-04-16 06:47:20 | Ducky One 3 Full Black | 153900.0 | -34000.0 |
+    | Razer Basilisk V3 Pro 35K White | 102100.0 | 2025-02-14 06:48:19 | Logitech G PRO X SUPERLIGHT 2 White | 120400.0 | 18300.0 |
+    | Canon imageCLASS MF655Cdw Black | 278900.0 | 2024-09-20 15:47:07 | Epson L15160 | 1019500.0 | 740600.0 |
+    | be quiet! Straight Power 12 1000W | 131800.0 | 2024-08-15 23:34:23 | be quiet! Dark Power 13 1000W | 293000.0 | 161200.0 |
+    | Lian Li A4-H2O Black | 144000.0 | 2024-06-10 11:57:43 | CORSAIR iCUE 4000X | 113900.0 | -30100.0 |
     | ... | ... | ... | ... | ... | ... |
 
     > Actual results depend on the data.
@@ -999,14 +997,14 @@ Practice 4+ table JOINs and complex business queries.
 
     | grade | method | order_count | total_amount | pct_in_grade |
     | ---------- | ---------- | ----------: | ----------: | ----------: |
-    | BRONZE | card | 37883 | 34898879078.0 | 45.2 |
-    | BRONZE | kakao_pay | 16783 | 15394346630.0 | 20.0 |
-    | BRONZE | naver_pay | 12505 | 11438714795.0 | 14.8 |
-    | BRONZE | bank_transfer | 8562 | 7798095897.0 | 10.1 |
-    | BRONZE | virtual_account | 4255 | 3929589888.0 | 5.1 |
-    | BRONZE | point | 4124 | 3671393885.0 | 4.8 |
-    | GOLD | card | 37930 | 39631329241.0 | 45.0 |
-    | GOLD | kakao_pay | 16585 | 17303693765.0 | 19.7 |
+    | BRONZE | card | 3419 | 2961337674.0 | 44.2 |
+    | BRONZE | kakao_pay | 1540 | 1340082913.0 | 20.0 |
+    | BRONZE | naver_pay | 1129 | 1013357950.0 | 15.1 |
+    | BRONZE | bank_transfer | 769 | 683115099.0 | 10.2 |
+    | BRONZE | virtual_account | 371 | 373375315.0 | 5.6 |
+    | BRONZE | point | 380 | 324872725.0 | 4.9 |
+    | GOLD | card | 3546 | 3596555538.0 | 45.2 |
+    | GOLD | kakao_pay | 1505 | 1475781227.0 | 18.5 |
     | ... | ... | ... | ... | ... |
 
     > Actual values depend on the data. Uses window function `SUM() OVER()` for within-grade share.

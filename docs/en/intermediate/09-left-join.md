@@ -55,14 +55,14 @@ LIMIT 8;
 
 | product_name | price | rating | reviewed_at |
 | ---------- | ----------: | ----------: | ---------- |
-| AMD Ryzen 5 9600X | 186400.0 | 1 | 2016-10-11 19:28:27 |
-| AMD Ryzen 5 9600X | 186400.0 | 1 | 2016-11-20 11:26:07 |
-| AMD Ryzen 5 9600X | 186400.0 | 1 | 2021-01-06 14:45:38 |
-| AMD Ryzen 5 9600X | 186400.0 | 1 | 2024-02-17 09:15:04 |
-| AMD Ryzen 5 9600X | 186400.0 | 1 | 2024-04-25 10:35:27 |
-| AMD Ryzen 5 9600X | 186400.0 | 1 | 2024-05-17 22:57:55 |
-| AMD Ryzen 5 9600X | 186400.0 | 1 | 2025-03-07 12:44:04 |
-| AMD Ryzen 5 9600X | 186400.0 | 2 | 2016-09-23 14:03:18 |
+| AMD Ryzen 9 9900X | 335700.0 | 1 | 2023-01-14 16:31:09 |
+| AMD Ryzen 9 9900X | 335700.0 | 1 | 2025-08-08 21:20:16 |
+| AMD Ryzen 9 9900X | 335700.0 | 2 | 2019-04-09 14:20:54 |
+| AMD Ryzen 9 9900X | 335700.0 | 2 | 2020-04-21 19:29:28 |
+| AMD Ryzen 9 9900X | 335700.0 | 2 | 2020-05-17 12:03:14 |
+| AMD Ryzen 9 9900X | 335700.0 | 2 | 2020-08-28 19:46:37 |
+| AMD Ryzen 9 9900X | 335700.0 | 2 | 2020-09-28 21:47:12 |
+| AMD Ryzen 9 9900X | 335700.0 | 2 | 2020-11-06 20:03:53 |
 | ... | ... | ... | ... |
 
 Products like `ASUS TUF Gaming Laptop` and `Belkin USB-C Hub` have no reviews, so `rating` and `reviewed_at` are `NULL`.
@@ -89,15 +89,8 @@ ORDER BY p.name;
 
 | id | name | price |
 | ----------: | ---------- | ----------: |
-| 2712 | ASRock X870E Taichi 화이트 | 218900.0 |
-| 2224 | ASUS ExpertCenter D900 | 2655100.0 |
-| 21 | ASUS ROG Strix G16CH 화이트 | 3307900.0 |
-| 2570 | ASUS ROG Zephyrus G14 실버 | 3362500.0 |
-| 2719 | BenQ PD2725U 화이트 | 814400.0 |
-| 2577 | CORSAIR Vengeance DDR5 32GB 실버 | 338300.0 |
-| 2523 | Dell P2723D | 817700.0 |
-| 2514 | Dell U2723QE 실버 | 555800.0 |
-| ... | ... | ... |
+| 25 | Hansung BossMonster DX5800 Black | 1129400.0 |
+| 279 | MSI Radeon RX 9070 XT GAMING X | 1896000.0 |
 
 ```sql
 -- Customers who have never placed an order
@@ -117,14 +110,14 @@ LIMIT 10;
 
 | id | name | email | created_at |
 | ----------: | ---------- | ---------- | ---------- |
-| 49801 | 김선영 | user49801@testmail.kr | 2025-12-30 22:45:23 |
-| 48802 | 류은경 | user48802@testmail.kr | 2025-12-30 22:33:01 |
-| 51023 | 이은경 | user51023@testmail.kr | 2025-12-30 19:52:14 |
-| 47952 | 류지원 | user47952@testmail.kr | 2025-12-30 19:44:42 |
-| 45855 | 강성민 | user45855@testmail.kr | 2025-12-30 17:47:49 |
-| 50734 | 최하은 | user50734@testmail.kr | 2025-12-30 15:43:58 |
-| 49114 | 이재호 | user49114@testmail.kr | 2025-12-30 15:37:59 |
-| 48650 | 김민지 | user48650@testmail.kr | 2025-12-30 13:11:58 |
+| 4559 | Robert Simmons | user4559@testmail.kr | 2025-12-30 20:49:59 |
+| 4853 | Olivia Watson | user4853@testmail.kr | 2025-12-30 18:50:02 |
+| 5181 | Jennifer Mcgrath | user5181@testmail.kr | 2025-12-30 10:18:14 |
+| 5225 | Nicholas Richardson | user5225@testmail.kr | 2025-12-30 06:02:53 |
+| 4546 | Warren Olsen | user4546@testmail.kr | 2025-12-30 05:59:32 |
+| 4887 | Bradley Daugherty | user4887@testmail.kr | 2025-12-30 05:43:21 |
+| 5221 | Michael Moore | user5221@testmail.kr | 2025-12-29 17:18:36 |
+| 4554 | Erin Pena | user4554@testmail.kr | 2025-12-29 05:52:39 |
 | ... | ... | ... | ... |
 
 > These customers likely signed up recently and haven't made a purchase yet.
@@ -152,14 +145,14 @@ LIMIT 10;
 
 | product_name | price | review_count | avg_rating |
 | ---------- | ----------: | ----------: | ----------: |
-| 로지텍 G PRO X SUPERLIGHT 2 실버 | 49400.0 | 137 | 3.93 |
-| Arctic Freezer i35 화이트 | 31800.0 | 121 | 3.79 |
-| Keychron Q1 Pro 실버 | 178600.0 | 116 | 3.79 |
-| SteelSeries Aerox 5 Wireless 실버 | 61500.0 | 114 | 3.7 |
-| 로지텍 G502 X PLUS 화이트 | 91400.0 | 112 | 4.02 |
-| Crucial T700 2TB 실버 | 37100.0 | 111 | 3.85 |
-| SteelSeries Aerox 5 Wireless 실버 | 101400.0 | 106 | 3.86 |
-| Arctic Freezer i35 블랙 | 44600.0 | 106 | 3.73 |
+| SteelSeries Prime Wireless Silver | 95900.0 | 105 | 3.88 |
+| Kingston FURY Beast DDR4 16GB Silver | 48000.0 | 102 | 3.75 |
+| Logitech G502 X PLUS | 97500.0 | 101 | 4.18 |
+| SteelSeries Aerox 5 Wireless Silver | 100000.0 | 100 | 3.88 |
+| Ducky One 3 TKL White | 189100.0 | 89 | 3.81 |
+| Samsung SPA-KFG0BUB Silver | 21900.0 | 82 | 4.1 |
+| SteelSeries Prime Wireless Black | 89800.0 | 80 | 3.88 |
+| Crucial T700 2TB Silver | 257000.0 | 77 | 4.21 |
 | ... | ... | ... | ... |
 
 ```sql
@@ -183,14 +176,14 @@ LIMIT 8;
 
 | name | grade | order_count | lifetime_value |
 | ---------- | ---------- | ----------: | ----------: |
-| 박정수 | VIP | 661 | 671056103.0 |
-| 정유진 | VIP | 544 | 646834022.0 |
-| 이미정 | VIP | 530 | 633645694.0 |
-| 김상철 | VIP | 513 | 565735423.0 |
-| 문영숙 | VIP | 546 | 523138846.0 |
-| 이영자 | VIP | 509 | 520594776.0 |
-| 이미정 | VIP | 440 | 497376276.0 |
-| 장영숙 | VIP | 356 | 487964896.0 |
+| Allen Snyder | VIP | 307 | 407119725.0 |
+| Jason Rivera | VIP | 346 | 375955231.0 |
+| Ronald Arellano | VIP | 220 | 255055649.0 |
+| Brenda Garcia | VIP | 249 | 253180338.0 |
+| Courtney Huff | VIP | 226 | 248498783.0 |
+| Gabriel Walters | VIP | 283 | 239477591.0 |
+| James Banks | VIP | 232 | 237513053.0 |
+| David York | GOLD | 163 | 207834908.0 |
 | ... | ... | ... | ... |
 
 ## Chaining Multiple LEFT JOINs
@@ -479,7 +472,7 @@ Find the number of customers who have **never left a review**. Return a single v
 
 | no_review_customers |
 | ----------: |
-| 31971 |
+| 3331 |
 
 
 ### Problem 3
@@ -517,14 +510,14 @@ For all categories, find the category name and the number of products (`product_
 
 | category_name | product_count |
 | ---------- | ----------: |
-| 스피커/헤드셋 | 135 |
-| 파워서플라이(PSU) | 120 |
-| 케이스 | 116 |
-| 게이밍 | 115 |
-| 일반 노트북 | 115 |
-| 게이밍 노트북 | 113 |
-| 기계식 | 112 |
-| 프린터/스캐너 | 104 |
+| Intel Socket | 13 |
+| Power Supply (PSU) | 13 |
+| Speakers/Headsets | 12 |
+| Case | 11 |
+| Custom Build | 11 |
+| Mechanical | 11 |
+| Membrane | 11 |
+| AMD Socket | 10 |
 | ... | ... |
 
 
@@ -547,14 +540,14 @@ Using a RIGHT JOIN with the `orders` table as the left side, find all customers'
 
 | name | order_count |
 | ---------- | ----------: |
-| 박정수 | 713 |
-| 문영숙 | 589 |
-| 정유진 | 585 |
-| 이미정 | 559 |
-| 이영자 | 551 |
-| 김상철 | 550 |
-| 김병철 | 471 |
-| 이미정 | 467 |
+| Jason Rivera | 366 |
+| Allen Snyder | 328 |
+| Gabriel Walters | 307 |
+| Brenda Garcia | 266 |
+| James Banks | 246 |
+| Courtney Huff | 237 |
+| Ronald Arellano | 234 |
+| Michael Duncan | 199 |
 | ... | ... |
 
 
@@ -578,14 +571,14 @@ Find the number of active products (`product_count`) and total stock (`total_sto
 
 | company_name | product_count | total_stock |
 | ---------- | ----------: | ----------: |
-| 에이수스코리아 | 187 | 47249 |
-| 삼성전자 공식 유통 | 158 | 40991 |
-| MSI코리아 | 117 | 31624 |
-| 로지텍코리아 | 112 | 27098 |
-| LG전자 공식 유통 | 93 | 25853 |
-| 서린시스테크 | 104 | 25157 |
-| 레이저코리아 | 105 | 24665 |
-| 앱솔루트 테크놀로지 | 102 | 22886 |
+| Samsung Official Distribution | 21 | 6174 |
+| ASUS Corp. | 21 | 5828 |
+| MSI Corp. | 12 | 4070 |
+| ASRock Corp. | 9 | 3084 |
+| TP-Link Corp. | 11 | 3081 |
+| LG Official Distribution | 11 | 2667 |
+| Logitech Corp. | 11 | 2461 |
+| be quiet! Corp. | 7 | 2082 |
 | ... | ... | ... |
 
 
@@ -610,14 +603,14 @@ For all products, show the product name, price, total units sold (`SUM(order_ite
 
 | product_name | price | units_sold | order_appearances |
 | ---------- | ----------: | ----------: | ----------: |
-| AMD Ryzen 5 9600X | 186400.0 | 2340 | 2273 |
-| AMD Ryzen 9 9900X | 290600.0 | 2222 | 2166 |
-| AMD Ryzen 9 9900X 화이트 | 809200.0 | 2100 | 2081 |
-| AMD Ryzen 7 9800X3D 실버 [특별 한정판 에디션] RGB 라이팅 탑재, 소프트웨어 커스터마이징 지원 | 182100.0 | 2081 | 1996 |
-| AMD Ryzen 7 7700X 블랙 | 1105200.0 | 1928 | 1919 |
-| AMD Ryzen 9 9950X3D 블랙 | 419500.0 | 1783 | 1749 |
-| Intel Core Ultra 7 265K 화이트 | 175300.0 | 1745 | 1692 |
-| Intel Core Ultra 5 245KF 블랙 | 345600.0 | 1617 | 1582 |
+| Crucial T700 2TB Silver | 257000.0 | 1503 | 1472 |
+| AMD Ryzen 9 9900X | 335700.0 | 1447 | 1396 |
+| SK hynix Platinum P41 2TB Silver | 255500.0 | 1359 | 1317 |
+| Logitech G502 X PLUS | 97500.0 | 1087 | 979 |
+| Kingston FURY Beast DDR4 16GB Silver | 48000.0 | 1061 | 919 |
+| SteelSeries Prime Wireless Black | 89800.0 | 1034 | 981 |
+| SteelSeries Aerox 5 Wireless Silver | 100000.0 | 1030 | 974 |
+| SteelSeries Prime Wireless Silver | 95900.0 | 1017 | 919 |
 | ... | ... | ... | ... |
 
 
@@ -642,14 +635,14 @@ For all orders, show the order number, total amount, payment method (`payments.m
 
 | order_number | total_amount | payment_method | carrier |
 | ---------- | ----------: | ---------- | ---------- |
-| ORD-20230408-248697 | 71906300.0 | card | CJ대한통운 |
-| ORD-20240218-293235 | 68948100.0 | card | 우체국택배 |
-| ORD-20240822-323378 | 64332900.0 | card | CJ대한통운 |
-| ORD-20180516-26809 | 63466900.0 | card | CJ대한통운 |
-| ORD-20200429-82365 | 61889000.0 | card | 한진택배 |
-| ORD-20230626-259827 | 61811500.0 | virtual_account | 로젠택배 |
-| ORD-20160730-03977 | 60810900.0 | kakao_pay | 우체국택배 |
-| ORD-20251230-417476 | 60038800.0 | kakao_pay | unshipped |
+| ORD-20201121-08810 | 50867500.0 | card | UPS |
+| ORD-20250305-32265 | 46820024.0 | naver_pay | FedEx |
+| ORD-20230523-22331 | 46094971.0 | naver_pay | unshipped |
+| ORD-20200209-05404 | 43677500.0 | card | USPS |
+| ORD-20221231-20394 | 43585700.0 | naver_pay | unshipped |
+| ORD-20251218-37240 | 38626400.0 | bank_transfer | DHL |
+| ORD-20220106-15263 | 37987600.0 | card | UPS |
+| ORD-20200820-07684 | 37518200.0 | naver_pay | DHL |
 | ... | ... | ... | ... |
 
 
@@ -677,14 +670,14 @@ Query all customers' names, emails, and their most recent order status. Display 
 
 | name | email | last_order_status |
 | ---------- | ---------- | ---------- |
-| 강건우 | user4737@testmail.kr | confirmed |
-| 강건우 | user5321@testmail.kr | no orders |
-| 강건우 | user11336@testmail.kr | confirmed |
-| 강건우 | user24351@testmail.kr | no orders |
-| 강건우 | user26672@testmail.kr | confirmed |
-| 강건우 | user27223@testmail.kr | no orders |
-| 강건우 | user32918@testmail.kr | confirmed |
-| 강건우 | user39877@testmail.kr | confirmed |
+| Aaron Carr | user900@testmail.kr | confirmed |
+| Aaron Cooper | user3587@testmail.kr | confirmed |
+| Aaron Cortez | user1804@testmail.kr | no orders |
+| Aaron Fuller | user2520@testmail.kr | confirmed |
+| Aaron Gillespie | user3365@testmail.kr | confirmed |
+| Aaron Green | user417@testmail.kr | confirmed |
+| Aaron Grimes | user347@testmail.kr | cancelled |
+| Aaron Harris | user1884@testmail.kr | confirmed |
 | ... | ... | ... |
 
 
@@ -709,14 +702,14 @@ Find all customers who added products to their wishlist but **never placed an or
 
 | customer_name | email | wishlist_items |
 | ---------- | ---------- | ----------: |
-| 주민재 | user1125@testmail.kr | 4 |
-| 조광수 | user15000@testmail.kr | 4 |
-| 강영숙 | user24435@testmail.kr | 4 |
-| 양병철 | user35514@testmail.kr | 4 |
-| 이영일 | user36836@testmail.kr | 4 |
-| 박성민 | user45132@testmail.kr | 4 |
-| 안영호 | user45255@testmail.kr | 4 |
-| 박미정 | user47439@testmail.kr | 4 |
+| Seth Shepherd | user4491@testmail.kr | 4 |
+| Richard Davis | user1573@testmail.kr | 3 |
+| Aaron Cortez | user1804@testmail.kr | 3 |
+| Joshua Jacobs | user3206@testmail.kr | 3 |
+| Jacob Rios | user3245@testmail.kr | 3 |
+| Lisa Kelley | user4373@testmail.kr | 3 |
+| James Garcia | user4436@testmail.kr | 3 |
+| Sally Morales | user4450@testmail.kr | 3 |
 | ... | ... | ... |
 
 

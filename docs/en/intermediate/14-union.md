@@ -192,14 +192,14 @@ ORDER BY sort_key, revenue DESC;
 
 | sort_key | category | revenue |
 | ----------: | ---------- | ----------: |
-| 0 | 게이밍 노트북 | 7252261700.0 |
-| 0 | NVIDIA | 6049128000.0 |
-| 0 | AMD | 5055980700.0 |
-| 0 | 일반 노트북 | 4852629300.0 |
-| 0 | 게이밍 모니터 | 3575676600.0 |
-| 0 | 스피커/헤드셋 | 2473846600.0 |
-| 0 | Intel 소켓 | 2265205100.0 |
-| 0 | 2in1 | 2164737100.0 |
+| 0 | Gaming Laptop | 636925700.0 |
+| 0 | AMD | 447953400.0 |
+| 0 | Gaming Monitor | 353934400.0 |
+| 0 | NVIDIA | 345858700.0 |
+| 0 | 2-in-1 | 340884400.0 |
+| 0 | General Laptop | 291760500.0 |
+| 0 | Professional Monitor | 254590200.0 |
+| 0 | Speakers/Headsets | 232144800.0 |
 | ... | ... | ... |
 
 ## INTERSECT -- Intersection
@@ -285,14 +285,14 @@ Combine VIP grade customers' names and grades with GOLD grade customers' names a
 
 | name | grade |
 | ---------- | ---------- |
-| 강건우 | VIP |
-| 강경수 | GOLD |
-| 강경숙 | GOLD |
-| 강경숙 | VIP |
-| 강경자 | VIP |
-| 강경희 | VIP |
-| 강광수 | GOLD |
-| 강광수 | VIP |
+| Aaron Gillespie | GOLD |
+| Aaron Medina | GOLD |
+| Aaron Powell | GOLD |
+| Aaron Ryan | GOLD |
+| Abigail Richardson | VIP |
+| Adam Johnson | VIP |
+| Adam Moore | VIP |
+| Adrian Davis | GOLD |
 | ... | ... |
 
 
@@ -311,14 +311,14 @@ Combine all active product (`is_active = 1`) names and all category names using 
 
 | name |
 | ---------- |
-| 2in1 |
+| 2-in-1 |
 | AMD |
-| AMD Ryzen 5 9600X |
-| AMD Ryzen 7 7700X |
-| AMD Ryzen 7 7700X 블랙 |
-| AMD Ryzen 7 7800X3D 실버 |
-| AMD Ryzen 7 9700X 블랙 |
-| AMD Ryzen 7 9800X3D 실버 |
+| AMD Ryzen 9 9900X |
+| AMD Socket |
+| APC Back-UPS Pro Gaming BGM1500B Black |
+| ASRock B850M Pro RS Silver |
+| ASRock B850M Pro RS White |
+| ASRock B860M Pro RS Silver |
 | ... |
 
 
@@ -354,14 +354,14 @@ Create a "negative events" list combining cancelled and returned orders from 202
 
 | event_type | order_number | customer_id | event_date |
 | ---------- | ---------- | ----------: | ---------- |
-| cancellation | ORD-20241231-350177 | 32033 | 2024-12-31 23:28:31 |
-| cancellation | ORD-20241231-350116 | 3334 | 2024-12-31 23:20:07 |
-| cancellation | ORD-20241231-350157 | 18367 | 2024-12-31 21:03:00 |
-| cancellation | ORD-20241231-350139 | 12807 | 2024-12-31 20:48:41 |
-| cancellation | ORD-20241229-349718 | 37593 | 2024-12-31 14:26:02 |
-| cancellation | ORD-20241229-349755 | 42467 | 2024-12-31 13:21:15 |
-| cancellation | ORD-20241229-349736 | 16388 | 2024-12-31 11:04:21 |
-| cancellation | ORD-20241231-350057 | 12488 | 2024-12-31 09:51:04 |
+| cancellation | ORD-20241229-31194 | 1616 | 2024-12-31 11:37:44 |
+| cancellation | ORD-20241228-31179 | 1971 | 2024-12-30 00:01:41 |
+| cancellation | ORD-20241228-31177 | 2552 | 2024-12-28 21:35:05 |
+| cancellation | ORD-20241226-31148 | 1420 | 2024-12-27 20:44:43 |
+| cancellation | ORD-20241225-31134 | 1303 | 2024-12-26 18:43:50 |
+| cancellation | ORD-20241223-31096 | 3326 | 2024-12-25 19:56:46 |
+| cancellation | ORD-20241222-31087 | 1220 | 2024-12-24 13:53:00 |
+| cancellation | ORD-20241220-31038 | 2264 | 2024-12-21 08:47:52 |
 | ... | ... | ... | ... |
 
 
@@ -398,14 +398,14 @@ Create a "customer feedback" list combining 2024 reviews and 2024 product Q&A (q
 
 | feedback_type | product_id | customer_id | created_at |
 | ---------- | ----------: | ----------: | ---------- |
-| review | 2482 | 26230 | 2024-12-31 22:49:53 |
-| review | 2445 | 38978 | 2024-12-31 22:48:10 |
-| review | 1842 | 37715 | 2024-12-31 22:44:19 |
-| review | 870 | 19358 | 2024-12-31 22:35:38 |
-| review | 2345 | 15403 | 2024-12-31 22:29:15 |
-| review | 1469 | 14808 | 2024-12-31 22:19:15 |
-| review | 2093 | 15646 | 2024-12-31 21:58:54 |
-| review | 1913 | 29231 | 2024-12-31 21:50:02 |
+| review | 241 | 3714 | 2024-12-31 23:05:31 |
+| review | 209 | 3905 | 2024-12-31 10:47:07 |
+| qna | 109 | 1544 | 2024-12-31 05:50:42 |
+| qna | 223 | 3974 | 2024-12-29 19:05:30 |
+| review | 214 | 1903 | 2024-12-29 10:19:21 |
+| review | 246 | 2324 | 2024-12-28 23:13:40 |
+| review | 182 | 1530 | 2024-12-28 20:28:36 |
+| qna | 29 | 4422 | 2024-12-28 18:28:41 |
 | ... | ... | ... | ... |
 
 
@@ -438,13 +438,13 @@ Aggregate count by payment method, then add a total row with `UNION ALL`. Displa
 
 | sort_key | method | tx_count |
 | ----------: | ---------- | ----------: |
-| 0 | card | 172644 |
-| 0 | kakao_pay | 76533 |
-| 0 | naver_pay | 57725 |
-| 0 | bank_transfer | 38667 |
-| 0 | point | 19247 |
-| 0 | virtual_account | 19067 |
-| 1 | 합계 | 383883 |
+| 0 | card | 15556 |
+| 0 | kakao_pay | 6886 |
+| 0 | naver_pay | 5270 |
+| 0 | bank_transfer | 3429 |
+| 0 | point | 1770 |
+| 0 | virtual_account | 1705 |
+| 1 | 합계 | 34616 |
 | ... | ... | ... |
 
 
@@ -477,11 +477,11 @@ Aggregate count by customer grade, then add a grand total row (`'Total'`) with `
 
 | sort_key | grade | cnt |
 | ----------: | ---------- | ----------: |
-| 0 | BRONZE | 22615 |
-| 0 | GOLD | 5159 |
-| 0 | SILVER | 5105 |
-| 0 | VIP | 3886 |
-| 1 | 전체 | 36765 |
+| 0 | BRONZE | 2289 |
+| 0 | GOLD | 524 |
+| 0 | SILVER | 479 |
+| 0 | VIP | 368 |
+| 1 | 전체 | 3660 |
 | ... | ... | ... |
 
 
@@ -516,14 +516,14 @@ Create a customer engagement summary. Use `UNION ALL` to aggregate total orders,
 
 | customer_id | total_activity |
 | ----------: | ----------: |
-| 226 | 934 |
-| 840 | 760 |
-| 356 | 751 |
-| 1000 | 745 |
-| 903 | 720 |
-| 98 | 706 |
-| 97 | 646 |
-| 549 | 614 |
+| 97 | 463 |
+| 226 | 410 |
+| 98 | 398 |
+| 162 | 352 |
+| 356 | 319 |
+| 227 | 318 |
+| 549 | 313 |
+| 259 | 248 |
 | ... | ... |
 
 
@@ -562,14 +562,14 @@ Aggregate count and average amount by order status, then add a total row with `U
 
 | status | order_count | avg_amount | pct |
 | ---------- | ----------: | ----------: | ----------: |
-| confirmed | 382081 | 1027607.87 | 45.7 |
-| cancelled | 21018 | 1050491.89 | 2.5 |
-| return_requested | 6125 | 1443121.76 | 0.7 |
-| returned | 6071 | 1441435.9 | 0.7 |
-| delivered | 1029 | 1088372.25 | 0.1 |
-| pending | 706 | 1050719.36 | 0.1 |
-| shipped | 453 | 1144727.89 | 0.1 |
-| paid | 167 | 928779.1 | 0.0 |
+| confirmed | 34393 | 999813.63 | 45.8 |
+| cancelled | 1859 | 1045258.09 | 2.5 |
+| return_requested | 507 | 1600567.46 | 0.7 |
+| returned | 493 | 1337615.77 | 0.7 |
+| delivered | 125 | 1566145.88 | 0.2 |
+| pending | 82 | 1063783.45 | 0.1 |
+| shipped | 51 | 1452363.65 | 0.1 |
+| preparing | 24 | 510284.5 | 0.0 |
 | ... | ... | ... | ... |
 
 
@@ -602,14 +602,14 @@ Aggregate active and inactive product counts per supplier separately, combine wi
 
 | company_name | active_count | inactive_count |
 | ---------- | ----------: | ----------: |
-| 에이수스코리아 | 187 | 43 |
-| 삼성전자 공식 유통 | 158 | 53 |
-| MSI코리아 | 117 | 20 |
-| 로지텍코리아 | 112 | 41 |
-| 레이저코리아 | 105 | 19 |
-| 서린시스테크 | 104 | 16 |
-| 앱솔루트 테크놀로지 | 102 | 27 |
-| LG전자 공식 유통 | 93 | 25 |
+| Samsung Official Distribution | 21 | 4 |
+| ASUS Corp. | 21 | 5 |
+| MSI Corp. | 12 | 1 |
+| TP-Link Corp. | 11 | 0 |
+| Seorin Systech | 11 | 1 |
+| Logitech Corp. | 11 | 6 |
+| LG Official Distribution | 11 | 0 |
+| ASRock Corp. | 9 | 2 |
 | ... | ... | ... |
 
 

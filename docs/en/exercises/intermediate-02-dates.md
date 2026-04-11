@@ -63,14 +63,14 @@ Practice SUBSTR date extraction and DATE range filtering.
 
     | month | orders | revenue |
     | ---------- | ----------: | ----------: |
-    | 2025-01 | 3839 | 3943937476.0 |
-    | 2025-02 | 4730 | 5084851234.0 |
-    | 2025-03 | 6763 | 7026276850.0 |
-    | 2025-04 | 4894 | 4967603102.0 |
-    | 2025-05 | 4789 | 5027077923.0 |
-    | 2025-06 | 4695 | 4929582688.0 |
-    | 2025-07 | 4464 | 4589328327.0 |
-    | 2025-08 | 5908 | 5961730543.0 |
+    | 2025-01 | 461 | 491947609.0 |
+    | 2025-02 | 428 | 422980126.0 |
+    | 2025-03 | 619 | 656638842.0 |
+    | 2025-04 | 467 | 517070656.0 |
+    | 2025-05 | 466 | 514287052.0 |
+    | 2025-06 | 436 | 457780698.0 |
+    | 2025-07 | 402 | 404813220.0 |
+    | 2025-08 | 477 | 453711007.0 |
     | ... | ... | ... |
 
     > Actual values depend on the data. 12 rows are returned.
@@ -106,10 +106,10 @@ Practice SUBSTR date extraction and DATE range filtering.
 
     | quarter | orders | revenue |
     | ---------- | ----------: | ----------: |
-    | Q1 | 13493 | 13722233972.0 |
-    | Q2 | 13862 | 14008860078.0 |
-    | Q3 | 14717 | 15150817406.0 |
-    | Q4 | 18763 | 19606422982.0 |
+    | Q1 | 1330 | 1263575536.0 |
+    | Q2 | 1271 | 1306918979.0 |
+    | Q3 | 1355 | 1340721817.0 |
+    | Q4 | 1518 | 1435560379.0 |
 
     > You can observe the seasonal pattern of higher revenue in Q4 (year-end).
 
@@ -139,14 +139,14 @@ Practice SUBSTR date extraction and DATE range filtering.
 
     | order_date | orders | revenue |
     | ---------- | ----------: | ----------: |
-    | 2025-11-01 | 268 | 296274205.0 |
-    | 2025-11-02 | 260 | 350457927.0 |
-    | 2025-11-03 | 207 | 254333330.0 |
-    | 2025-11-04 | 227 | 274610527.0 |
-    | 2025-11-05 | 164 | 162318704.0 |
-    | 2025-11-06 | 207 | 210772960.0 |
-    | 2025-11-07 | 165 | 188044505.0 |
-    | 2025-11-08 | 256 | 240669352.0 |
+    | 2025-11-01 | 23 | 18638420.0 |
+    | 2025-11-02 | 22 | 16401346.0 |
+    | 2025-11-03 | 24 | 25193599.0 |
+    | 2025-11-04 | 18 | 16932899.0 |
+    | 2025-11-05 | 13 | 8753619.0 |
+    | 2025-11-06 | 20 | 48635756.0 |
+    | 2025-11-07 | 14 | 10072100.0 |
+    | 2025-11-08 | 20 | 16133700.0 |
     | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -174,14 +174,14 @@ Practice SUBSTR date extraction and DATE range filtering.
 
     | hour | order_count |
     | ----------: | ----------: |
-    | 0 | 5419 |
-    | 1 | 3746 |
-    | 2 | 2008 |
-    | 3 | 2024 |
-    | 4 | 2051 |
-    | 5 | 3837 |
-    | 6 | 7420 |
-    | 7 | 11015 |
+    | 0 | 473 |
+    | 1 | 340 |
+    | 2 | 172 |
+    | 3 | 200 |
+    | 4 | 195 |
+    | 5 | 359 |
+    | 6 | 631 |
+    | 7 | 980 |
     | ... | ... |
 
     > 24 rows returned. You can observe patterns of order concentration during lunch/evening hours.
@@ -211,14 +211,14 @@ Practice SUBSTR date extraction and DATE range filtering.
 
     | year | orders | revenue |
     | ---------- | ----------: | ----------: |
-    | 2016 | 7122 | 7405535811.0 |
-    | 2017 | 10871 | 11416329698.0 |
-    | 2018 | 19630 | 20713930120.0 |
-    | 2019 | 27427 | 29034166152.0 |
-    | 2020 | 44396 | 46360873185.0 |
-    | 2021 | 57447 | 59343488311.0 |
-    | 2022 | 56254 | 58485619251.0 |
-    | 2023 | 48687 | 50786628424.0 |
+    | 2016 | 401 | 301871490.0 |
+    | 2017 | 668 | 630467381.0 |
+    | 2018 | 1255 | 1203414419.0 |
+    | 2019 | 2473 | 2523296474.0 |
+    | 2020 | 4128 | 4251046262.0 |
+    | 2021 | 5571 | 5771175319.0 |
+    | 2022 | 4947 | 4999116420.0 |
+    | 2023 | 4788 | 4815030724.0 |
     | ... | ... | ... |
 
     > You can observe a natural growth curve over 10 years.
@@ -246,14 +246,14 @@ Practice SUBSTR date extraction and DATE range filtering.
 
     | signup_year | new_customers |
     | ---------- | ----------: |
-    | 2016 | 1000 |
-    | 2017 | 1800 |
-    | 2018 | 3000 |
-    | 2019 | 4500 |
-    | 2020 | 7000 |
-    | 2021 | 8000 |
-    | 2022 | 6500 |
-    | 2023 | 6000 |
+    | 2016 | 100 |
+    | 2017 | 180 |
+    | 2018 | 300 |
+    | 2019 | 450 |
+    | 2020 | 700 |
+    | 2021 | 800 |
+    | 2022 | 650 |
+    | 2023 | 600 |
     | ... | ... |
 
     > You can observe growth trends by year.
@@ -283,14 +283,14 @@ Practice SUBSTR date extraction and DATE range filtering.
 
     | month | review_count | avg_rating |
     | ---------- | ----------: | ----------: |
-    | 2025-01 | 1316 | 3.95 |
-    | 2025-02 | 962 | 3.88 |
-    | 2025-03 | 1425 | 3.88 |
-    | 2025-04 | 1434 | 3.92 |
-    | 2025-05 | 1222 | 3.91 |
-    | 2025-06 | 1099 | 3.84 |
-    | 2025-07 | 1118 | 3.91 |
-    | 2025-08 | 1217 | 3.94 |
+    | 2025-01 | 124 | 3.83 |
+    | 2025-02 | 98 | 3.97 |
+    | 2025-03 | 125 | 4.05 |
+    | 2025-04 | 141 | 3.99 |
+    | 2025-05 | 111 | 3.96 |
+    | 2025-06 | 111 | 3.84 |
+    | 2025-07 | 117 | 3.94 |
+    | 2025-08 | 125 | 3.9 |
     | ... | ... | ... |
 
     > Actual values depend on the data.
@@ -329,7 +329,7 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
 
     | avg_days_to_first_order |
     | ----------: |
-    | 149.5 |
+    | 164.1 |
 
     > On average, the first order is placed about 45 days after signup. Actual values may differ.
 
@@ -359,13 +359,13 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
 
     | day_name | order_count |
     | ---------- | ----------: |
-    | 일 | 66016 |
-    | 월 | 65807 |
-    | 토 | 65458 |
-    | 화 | 56634 |
-    | 금 | 56416 |
-    | 수 | 53895 |
-    | 목 | 53577 |
+    | 토 | 5935 |
+    | 일 | 5929 |
+    | 월 | 5890 |
+    | 화 | 5136 |
+    | 금 | 5112 |
+    | 수 | 4798 |
+    | 목 | 4757 |
     | ... | ... |
 
     > More orders on weekdays, relatively fewer on weekends. Actual values may differ.
@@ -404,9 +404,9 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
 
     | delivery_range | cnt |
     | ---------- | ----------: |
-    | 2일 | 32922 |
-    | 3일 | 65954 |
-    | 4일 이상 | 296430 |
+    | 2일 | 2894 |
+    | 3일 | 5885 |
+    | 4일 이상 | 26739 |
 
     > Most deliveries are within 2 days. Actual values may differ.
 
@@ -438,14 +438,14 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
 
     | name | grade | last_order | days_ago |
     | ---------- | ---------- | ---------- | ----------: |
-    | 남순자 | BRONZE | 2018-03-22 23:31:18 | 2840 |
-    | 이상훈 | BRONZE | 2018-09-05 19:29:12 | 2673 |
-    | 배성현 | BRONZE | 2019-01-13 20:22:06 | 2543 |
-    | 김은서 | BRONZE | 2019-02-03 17:07:50 | 2522 |
-    | 권경숙 | BRONZE | 2019-05-13 22:46:41 | 2423 |
-    | 김우진 | BRONZE | 2019-10-13 21:22:08 | 2270 |
-    | 김준서 | BRONZE | 2019-10-26 19:48:34 | 2257 |
-    | 김시우 | BRONZE | 2019-11-08 22:24:35 | 2244 |
+    | Lance Barrett | BRONZE | 2019-11-27 11:00:22 | 2225 |
+    | Austin Hunt | BRONZE | 2020-06-05 18:47:34 | 2034 |
+    | Joshua Bradshaw | BRONZE | 2020-07-25 22:23:10 | 1984 |
+    | Anthony Williams | BRONZE | 2020-08-05 13:14:36 | 1973 |
+    | Becky Watkins | BRONZE | 2020-08-13 11:55:26 | 1965 |
+    | Steven Rodriguez | BRONZE | 2020-09-16 21:29:41 | 1931 |
+    | Justin Bautista | BRONZE | 2020-11-02 13:43:56 | 1884 |
+    | Allison Harrington | BRONZE | 2020-11-18 20:25:55 | 1868 |
     | ... | ... | ... | ... |
 
     > Customers with 180+ days (about 6 months) without orders are classified as churn risk.
@@ -478,14 +478,14 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
 
     | day_name | hour | orders |
     | ---------- | ----------: | ----------: |
-    | 일 | 21 | 5649 |
-    | 토 | 21 | 5519 |
-    | 월 | 21 | 5475 |
-    | 일 | 20 | 5091 |
-    | 토 | 20 | 4981 |
-    | 화 | 21 | 4921 |
-    | 월 | 20 | 4865 |
-    | 금 | 21 | 4859 |
+    | 일 | 21 | 534 |
+    | 토 | 21 | 513 |
+    | 토 | 20 | 469 |
+    | 월 | 20 | 462 |
+    | 월 | 21 | 458 |
+    | 화 | 21 | 454 |
+    | 일 | 20 | 445 |
+    | 월 | 22 | 430 |
     | ... | ... | ... |
 
     > Orders concentrate during weekday afternoon~evening. Actual values may differ.
@@ -515,7 +515,7 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
 
     | avg_days | min_days | max_days | completed_count |
     | ----------: | ----------: | ----------: | ----------: |
-    | 6.1 | 2 | 10 | 6071 |
+    | 5.9 | 2 | 9 | 493 |
 
     > Return processing takes an average of about 5 days. Actual values may differ.
 
@@ -552,14 +552,14 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
 
     | year | revenue | prev_year | growth_pct |
     | ---------- | ----------: | ---------- | ---------- |
-    | 2016 | 7405535811.0 | (NULL) | (NULL) |
-    | 2017 | 11416329698.0 | 7405535811.0 | 54.2 |
-    | 2018 | 20713930120.0 | 11416329698.0 | 81.4 |
-    | 2019 | 29034166152.0 | 20713930120.0 | 40.2 |
-    | 2020 | 46360873185.0 | 29034166152.0 | 59.7 |
-    | 2021 | 59343488311.0 | 46360873185.0 | 28.0 |
-    | 2022 | 58485619251.0 | 59343488311.0 | -1.4 |
-    | 2023 | 50786628424.0 | 58485619251.0 | -13.2 |
+    | 2016 | 301871490.0 | (NULL) | (NULL) |
+    | 2017 | 630467381.0 | 301871490.0 | 108.9 |
+    | 2018 | 1203414419.0 | 630467381.0 | 90.9 |
+    | 2019 | 2523296474.0 | 1203414419.0 | 109.7 |
+    | 2020 | 4251046262.0 | 2523296474.0 | 68.5 |
+    | 2021 | 5771175319.0 | 4251046262.0 | 35.8 |
+    | 2022 | 4999116420.0 | 5771175319.0 | -13.4 |
+    | 2023 | 4815030724.0 | 4999116420.0 | -3.7 |
     | ... | ... | ... | ... |
 
     > Shows high growth rate initially, then stable growth patterns.
@@ -607,9 +607,9 @@ Practice calendar JOIN, shipping analysis, and cohort analysis.
     **Result:**
 
     | day_type | total_days | total_orders | avg_daily_orders | avg_daily_revenue |
-    |----------|-----------|-------------|-----------------|------------------|
-    | 평일 | 262 | 28765 | 109.8 | 42345000 |
-    | 주말 | 104 | 8234 | 79.2 | 31234000 |
+    | ---------- | ----------: | ----------: | ----------: | ----------: |
+    | 평일 | 262 | 3766 | 14.4 | 14062210.0 |
+    | 주말 | 104 | 1708 | 16.4 | 15985362.0 |
 
     > Weekdays have about 30% more orders than weekends. Actual values may differ.
 
@@ -644,14 +644,14 @@ Practice calendar JOIN, shipping analysis, and cohort analysis.
 
     | date_key | holiday_name | day_name | order_count | revenue |
     | ---------- | ---------- | ---------- | ----------: | ----------: |
-    | 2024-01-01 | 신정 | Monday | 117 | 123475163.0 |
-    | 2024-02-14 | 건국기념일 | Wednesday | 139 | 128097679.0 |
-    | 2024-03-21 | 봄축제 | Thursday | 163 | 142345241.0 |
-    | 2024-04-05 | 현충일 | Friday | 132 | 169846556.0 |
-    | 2024-05-01 | 근로자의 날 | Wednesday | 127 | 98250430.0 |
-    | 2024-05-15 | 어린이날 | Wednesday | 174 | 171454623.0 |
-    | 2024-06-10 | 하지제 | Monday | 113 | 114405098.0 |
-    | 2024-07-20 | 자유의 날 | Saturday | 141 | 132879919.0 |
+    | 2024-01-01 | New Year's Day | Monday | 12 | 7732372.0 |
+    | 2024-02-14 | Foundation Day | Wednesday | 14 | 16223200.0 |
+    | 2024-03-21 | Spring Festival | Thursday | 18 | 8262021.0 |
+    | 2024-04-05 | Memorial Day | Friday | 15 | 8589571.0 |
+    | 2024-05-01 | Labor Day | Wednesday | 9 | 8726102.0 |
+    | 2024-05-15 | Children's Day | Wednesday | 13 | 10199376.0 |
+    | 2024-06-10 | Summer Solstice Day | Monday | 12 | 14075752.0 |
+    | 2024-07-20 | Freedom Day | Saturday | 12 | 19742310.0 |
     | ... | ... | ... | ... | ... |
 
     > There may be 0 orders during Lunar New Year holidays. Actual results depend on the data.
@@ -693,14 +693,14 @@ Practice calendar JOIN, shipping analysis, and cohort analysis.
 
     | month | new_customers | returning_customers |
     | ---------- | ----------: | ----------: |
-    | 2024-01 | 323 | 3600 |
-    | 2024-02 | 409 | 4194 |
-    | 2024-03 | 484 | 4483 |
-    | 2024-04 | 424 | 4585 |
-    | 2024-05 | 434 | 4646 |
-    | 2024-06 | 323 | 3450 |
-    | 2024-07 | 392 | 4135 |
-    | 2024-08 | 450 | 4452 |
+    | 2024-01 | 32 | 293 |
+    | 2024-02 | 30 | 403 |
+    | 2024-03 | 50 | 522 |
+    | 2024-04 | 34 | 444 |
+    | 2024-05 | 35 | 361 |
+    | 2024-06 | 28 | 369 |
+    | 2024-07 | 34 | 357 |
+    | 2024-08 | 41 | 383 |
     | ... | ... | ... |
 
     > Returning customers far outnumber new ones. Actual values may differ.
@@ -733,14 +733,14 @@ Practice calendar JOIN, shipping analysis, and cohort analysis.
 
     | signup_month | total_signups | purchasers | conversion_rate |
     | ---------- | ----------: | ----------: | ----------: |
-    | 2024-01 | 2165 | 360 | 63.8 |
-    | 2024-02 | 1899 | 363 | 68.4 |
-    | 2024-03 | 2322 | 400 | 64.1 |
-    | 2024-04 | 1979 | 374 | 60.5 |
-    | 2024-05 | 1758 | 372 | 62.6 |
-    | 2024-06 | 1855 | 337 | 58.5 |
-    | 2024-07 | 1797 | 369 | 59.8 |
-    | 2024-08 | 1708 | 383 | 60.1 |
+    | 2024-01 | 118 | 28 | 53.8 |
+    | 2024-02 | 155 | 26 | 54.2 |
+    | 2024-03 | 257 | 44 | 62.0 |
+    | 2024-04 | 132 | 27 | 50.9 |
+    | 2024-05 | 115 | 24 | 55.8 |
+    | 2024-06 | 180 | 36 | 52.9 |
+    | 2024-07 | 171 | 36 | 58.1 |
+    | 2024-08 | 187 | 36 | 57.1 |
     | ... | ... | ... | ... |
 
     > Track purchase conversion rates by cohort. Actual values may differ.
@@ -781,9 +781,9 @@ Practice calendar JOIN, shipping analysis, and cohort analysis.
 
     | period | total_orders | total_revenue | avg_daily_orders | avg_daily_revenue |
     | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | 직전 7일 | 1358 | 1519648590.0 | 194.0 | 217092656.0 |
-    | 프로모션 | 1542 | 1572197624.0 | 220.3 | 224599661.0 |
-    | 직후 7일 | 1537 | 1555897467.0 | 219.6 | 222271067.0 |
+    | 직전 7일 | 139 | 132444053.0 | 19.9 | 18920579.0 |
+    | 프로모션 | 120 | 107302455.0 | 17.1 | 15328922.0 |
+    | 직후 7일 | 98 | 86178752.0 | 14.0 | 12311250.0 |
 
     > Revenue rises significantly during the promotion period. Actual values may differ.
 
@@ -819,11 +819,15 @@ Practice calendar JOIN, shipping analysis, and cohort analysis.
     **Result (top 5 rows):**
 
     | month | total_shipments | delivered | delivery_rate | avg_delivery_days |
-    |-------|----------------|-----------|--------------|------------------|
-    | 2024-01 | 2876 | 2654 | 92.3 | 2.4 |
-    | 2024-02 | 2543 | 2345 | 92.2 | 2.5 |
-    | 2024-03 | 3012 | 2812 | 93.4 | 2.3 |
-    | 2024-04 | 2876 | 2698 | 93.8 | 2.2 |
-    | 2024-05 | 2987 | 2801 | 93.8 | 2.3 |
+    | ---------- | ----------: | ----------: | ----------: | ----------: |
+    | 2024-01 | 325 | 314 | 96.6 | 4.6 |
+    | 2024-02 | 433 | 416 | 96.1 | 4.5 |
+    | 2024-03 | 572 | 555 | 97.0 | 4.5 |
+    | 2024-04 | 478 | 466 | 97.5 | 4.6 |
+    | 2024-05 | 396 | 385 | 97.2 | 4.4 |
+    | 2024-06 | 397 | 389 | 98.0 | 4.5 |
+    | 2024-07 | 391 | 381 | 97.4 | 4.4 |
+    | 2024-08 | 424 | 416 | 98.1 | 4.6 |
+    | ... | ... | ... | ... | ... |
 
     > Maintains a stable 92~94% delivery completion rate year-round. Actual values may differ.

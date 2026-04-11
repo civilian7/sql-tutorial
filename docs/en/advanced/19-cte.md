@@ -145,7 +145,7 @@ ORDER BY avg_ltv DESC;
 
 | segment | customer_count | avg_ltv | avg_orders |
 | ---------- | ----------: | ----------: | ----------: |
-| 챔피언 | 28939 | 13966442.39 | 13.5 |
+| Champion | 2806 | 12680297.83 | 12.5 |
 
 ## Combining CTEs with Window Functions
 
@@ -180,14 +180,14 @@ ORDER BY grade, rnk;
 
 | grade | name | total_spent | rnk |
 | ---------- | ---------- | ----------: | ----------: |
-| BRONZE | 이정수 | 198123069.0 | 1 |
-| BRONZE | 황채원 | 158517555.0 | 2 |
-| BRONZE | 이예준 | 149717892.0 | 3 |
-| GOLD | 강명자 | 423617698.0 | 1 |
-| GOLD | 홍옥순 | 410153190.0 | 2 |
-| GOLD | 윤서현 | 399392033.0 | 3 |
-| SILVER | 김광수 | 216856926.0 | 1 |
-| SILVER | 김광수 | 216126763.0 | 2 |
+| BRONZE | Katie Warner | 97422432.0 | 1 |
+| BRONZE | Robert Turner | 67800337.0 | 2 |
+| BRONZE | Alexandra Elliott | 65913047.0 | 3 |
+| GOLD | David York | 207834908.0 | 1 |
+| GOLD | Sandra Callahan | 204709311.0 | 2 |
+| GOLD | Robert Williams | 121144751.0 | 3 |
+| SILVER | April Rasmussen | 132255743.0 | 1 |
+| SILVER | Joshua Gardner | 110293091.0 | 2 |
 | ... | ... | ... | ... |
 
 ## Recursive CTE — Category Tree Traversal
@@ -287,11 +287,11 @@ The `categories` table has a `parent_id` column that references itself.
 | CPU | 0 | CPU |
 |   AMD | 1 | CPU > AMD |
 |   Intel | 1 | CPU > Intel |
-| UPS/전원 | 0 | UPS/전원 |
-| 그래픽카드 | 0 | 그래픽카드 |
-|   AMD | 1 | 그래픽카드 > AMD |
-|   NVIDIA | 1 | 그래픽카드 > NVIDIA |
-| 네트워크 장비 | 0 | 네트워크 장비 |
+| Case | 0 | Case |
+| Cooling | 0 | Cooling |
+|   Air Cooling | 1 | Cooling > Air Cooling |
+|   Liquid Cooling | 1 | Cooling > Liquid Cooling |
+| Desktop PC | 0 | Desktop PC |
 | ... | ... | ... |
 
 ## Additional Recursive CTE Applications
@@ -442,14 +442,14 @@ Use a recursive CTE to generate a month number sequence from 1 to 12 and find th
 
 | month_num | year_month | order_count |
 | ----------: | ---------- | ----------: |
-| 1 | 2024-01 | 3857 |
-| 2 | 2024-02 | 4530 |
-| 3 | 2024-03 | 4903 |
-| 4 | 2024-04 | 4932 |
-| 5 | 2024-05 | 5001 |
-| 6 | 2024-06 | 3719 |
-| 7 | 2024-07 | 4454 |
-| 8 | 2024-08 | 4827 |
+| 1 | 2024-01 | 322 |
+| 2 | 2024-02 | 424 |
+| 3 | 2024-03 | 565 |
+| 4 | 2024-04 | 474 |
+| 5 | 2024-05 | 390 |
+| 6 | 2024-06 | 395 |
+| 7 | 2024-07 | 387 |
+| 8 | 2024-08 | 418 |
 | ... | ... | ... |
 
 
@@ -528,14 +528,14 @@ Use a CTE to find "at-risk churn customers". These are customers who have ordere
 
 | customer_id | name | grade | order_count | last_order_date |
 | ----------: | ---------- | ---------- | ----------: | ---------- |
-| 1761 | 이상훈 | BRONZE | 4 | 2018-09-05 19:29:12 |
-| 115 | 배성현 | BRONZE | 4 | 2019-01-13 20:22:06 |
-| 4017 | 김옥자 | BRONZE | 3 | 2019-03-10 17:38:26 |
-| 2145 | 송은정 | BRONZE | 4 | 2019-03-22 11:02:35 |
-| 3410 | 최상현 | BRONZE | 4 | 2019-11-10 20:37:22 |
-| 190 | 김명숙 | BRONZE | 9 | 2020-01-11 11:15:01 |
-| 2473 | 엄예진 | BRONZE | 3 | 2020-01-18 22:52:32 |
-| 437 | 장예지 | BRONZE | 22 | 2020-02-16 10:11:16 |
+| 30 | Austin Hunt | BRONZE | 5 | 2018-12-04 20:41:24 |
+| 699 | Joshua Bradshaw | BRONZE | 3 | 2020-07-25 22:23:10 |
+| 438 | Kelly Sutton | BRONZE | 4 | 2021-01-18 19:06:04 |
+| 53 | Erica Wheeler | BRONZE | 6 | 2021-01-19 15:59:59 |
+| 935 | Joseph Wilson | BRONZE | 6 | 2021-04-12 11:08:31 |
+| 276 | Patricia Carter | BRONZE | 11 | 2021-05-09 13:04:03 |
+| 1566 | Michael Crane | BRONZE | 3 | 2021-05-12 14:30:51 |
+| 319 | Jean Watson | BRONZE | 5 | 2021-08-02 21:22:25 |
 | ... | ... | ... | ... | ... |
 
 
@@ -624,14 +624,14 @@ Use two CTEs to compute monthly revenue for 2024 and calculate month-over-month 
 
 | year_month | revenue | prev_revenue | mom_change | mom_pct |
 | ---------- | ----------: | ---------- | ---------- | ---------- |
-| 2024-01 | 3807789761.0 | (NULL) | (NULL) | (NULL) |
-| 2024-02 | 4701108852.0 | 3807789761.0 | 893319091.0 | 23.5 |
-| 2024-03 | 4935663129.0 | 4701108852.0 | 234554277.0 | 5.0 |
-| 2024-04 | 4954492231.0 | 4935663129.0 | 18829102.0 | 0.4 |
-| 2024-05 | 4912114419.0 | 4954492231.0 | -42377812.0 | -0.9 |
-| 2024-06 | 3853868900.0 | 4912114419.0 | -1058245519.0 | -21.5 |
-| 2024-07 | 4453107092.0 | 3853868900.0 | 599238192.0 | 15.5 |
-| 2024-08 | 4903583071.0 | 4453107092.0 | 450475979.0 | 10.1 |
+| 2024-01 | 298764720.0 | (NULL) | (NULL) | (NULL) |
+| 2024-02 | 413105149.0 | 298764720.0 | 114340429.0 | 38.3 |
+| 2024-03 | 527614956.0 | 413105149.0 | 114509807.0 | 27.7 |
+| 2024-04 | 463645381.0 | 527614956.0 | -63969575.0 | -12.1 |
+| 2024-05 | 444935778.0 | 463645381.0 | -18709603.0 | -4.0 |
+| 2024-06 | 373863202.0 | 444935778.0 | -71072576.0 | -16.0 |
+| 2024-07 | 360080397.0 | 373863202.0 | -13782805.0 | -3.7 |
+| 2024-08 | 407562440.0 | 360080397.0 | 47482043.0 | 13.2 |
 | ... | ... | ... | ... | ... |
 
 
@@ -721,14 +721,14 @@ Use a CTE to compare the average product price per category with the overall ave
 
 | category_name | avg_price | overall_avg | diff_from_overall |
 | ---------- | ----------: | ----------: | ----------: |
-| 맥북 | 3292633.33 | 678774.85 | 2613858.48 |
-| 게이밍 노트북 | 2966560.61 | 678774.85 | 2287785.76 |
-| NVIDIA | 2429036.96 | 678774.85 | 1750262.11 |
-| 조립PC | 2210358.7 | 678774.85 | 1531583.85 |
-| 일반 노트북 | 1739673.49 | 678774.85 | 1060898.64 |
-| 2in1 | 1565324.44 | 678774.85 | 886549.59 |
-| 완제품 | 1504925.68 | 678774.85 | 826150.83 |
-| 전문가용 모니터 | 1328097.96 | 678774.85 | 649323.11 |
+| MacBook | 5481100.0 | 659594.5 | 4821505.5 |
+| Gaming Laptop | 2887583.33 | 659594.5 | 2227988.83 |
+| NVIDIA | 2207600.0 | 659594.5 | 1548005.5 |
+| Custom Build | 1836466.67 | 659594.5 | 1176872.17 |
+| General Laptop | 1794812.5 | 659594.5 | 1135218.0 |
+| Professional Monitor | 1492983.33 | 659594.5 | 833388.83 |
+| 2-in-1 | 1417242.86 | 659594.5 | 757648.36 |
+| AMD | 1214266.67 | 659594.5 | 554672.17 |
 | ... | ... | ... | ... |
 
 
@@ -772,12 +772,12 @@ Use a recursive CTE to find the full path (breadcrumb) of all leaf categories (c
 | ----------: | ---------- | ---------- |
 | 16 | AMD | CPU > AMD |
 | 15 | Intel | CPU > Intel |
-| 49 | UPS/전원 | UPS/전원 |
-| 29 | AMD | 그래픽카드 > AMD |
-| 28 | NVIDIA | 그래픽카드 > NVIDIA |
-| 46 | 공유기 | 네트워크 장비 > 공유기 |
-| 48 | 랜카드 | 네트워크 장비 > 랜카드 |
-| 47 | 허브/스위치 | 네트워크 장비 > 허브/스위치 |
+| 31 | Case | Case |
+| 33 | Air Cooling | Cooling > Air Cooling |
+| 34 | Liquid Cooling | Cooling > Liquid Cooling |
+| 4 | Barebone | Desktop PC > Barebone |
+| 3 | Custom Build | Desktop PC > Custom Build |
+| 2 | Pre-built | Desktop PC > Pre-built |
 | ... | ... | ... |
 
 
@@ -843,14 +843,14 @@ Traverse the category tree with a recursive CTE, then aggregate the number of su
 
 | root_category | subcategory_count | product_count |
 | ---------- | ----------: | ----------: |
-| 노트북 | 4 | 311 |
-| 마우스 | 3 | 233 |
-| 키보드 | 3 | 213 |
-| 저장장치 | 3 | 212 |
-| 모니터 | 3 | 208 |
-| 데스크톱 PC | 3 | 202 |
-| 메인보드 | 2 | 182 |
-| 메모리(RAM) | 2 | 167 |
+| Laptop | 4 | 29 |
+| Keyboard | 3 | 27 |
+| Motherboard | 2 | 23 |
+| Monitor | 3 | 22 |
+| Networking | 3 | 22 |
+| Desktop PC | 3 | 18 |
+| Memory (RAM) | 2 | 15 |
+| Storage | 3 | 15 |
 | ... | ... | ... |
 
 
@@ -910,15 +910,8 @@ Traverse the staff table organization chart with a recursive CTE to find the dep
 
 | manager_name | level | direct_reports |
 | ---------- | ----------: | ----------: |
-| 한민재 | 0 | 8 |
-| 박경수 | 1 | 8 |
-| 이준혁 | 1 | 5 |
-| 장주원 | 1 | 4 |
-| 권영희 | 2 | 9 |
-| 최영미 | 2 | 6 |
-| 김진우 | 2 | 5 |
-| 황예준 | 2 | 2 |
-| ... | ... | ... |
+| Michael Thomas | 0 | 3 |
+| Jonathan Smith | 1 | 1 |
 
 
     === "MySQL"
@@ -985,14 +978,14 @@ Use multiple CTEs to calculate the monthly revenue share by payment method. CTE 
 
 | year_month | method | amount | monthly_total | pct |
 | ---------- | ---------- | ----------: | ----------: | ----------: |
-| 2024-01 | card | 1637985623.0 | 3741059908.0 | 43.8 |
-| 2024-01 | kakao_pay | 701582674.0 | 3741059908.0 | 18.8 |
-| 2024-01 | naver_pay | 604077057.0 | 3741059908.0 | 16.1 |
-| 2024-01 | bank_transfer | 397750334.0 | 3741059908.0 | 10.6 |
-| 2024-01 | virtual_account | 209801928.0 | 3741059908.0 | 5.6 |
-| 2024-01 | point | 189862292.0 | 3741059908.0 | 5.1 |
-| 2024-02 | card | 2157466285.0 | 4628277628.0 | 46.6 |
-| 2024-02 | kakao_pay | 794741444.0 | 4628277628.0 | 17.2 |
+| 2024-01 | card | 147207539.0 | 288908320.0 | 51.0 |
+| 2024-01 | kakao_pay | 53100585.0 | 288908320.0 | 18.4 |
+| 2024-01 | naver_pay | 33230574.0 | 288908320.0 | 11.5 |
+| 2024-01 | bank_transfer | 24355270.0 | 288908320.0 | 8.4 |
+| 2024-01 | virtual_account | 17502152.0 | 288908320.0 | 6.1 |
+| 2024-01 | point | 13512200.0 | 288908320.0 | 4.7 |
+| 2024-02 | card | 169679102.0 | 403127749.0 | 42.1 |
+| 2024-02 | naver_pay | 80746191.0 | 403127749.0 | 20.0 |
 | ... | ... | ... | ... | ... |
 
 
@@ -1102,14 +1095,14 @@ Combine CTEs with window functions to find the top 2 products by review rating i
 
 | category_name | product_name | avg_rating | review_count | rnk |
 | ---------- | ---------- | ----------: | ----------: | ----------: |
-| 2in1 | 레노버 ThinkPad X1 2in1 실버 | 4.8 | 5 | 1 |
-| 2in1 | 레노버 IdeaPad Flex 5 블랙 | 4.73 | 11 | 2 |
-| AMD | AMD Ryzen 7 7700X 블랙 | 4.4 | 20 | 1 |
-| AMD | MSI Radeon RX 7900 XTX GAMING X | 4.83 | 6 | 1 |
-| AMD | AMD Ryzen 7 7800X3D | 4.09 | 11 | 2 |
-| AMD | AMD Ryzen 9 9950X3D 블랙 | 4.09 | 96 | 2 |
-| AMD | MSI Radeon RX 7800 XT GAMING X | 4.6 | 5 | 2 |
-| AMD 소켓 | MSI MAG X870E TOMAHAWK WIFI 화이트 | 4.59 | 39 | 1 |
+| 2-in-1 | Lenovo IdeaPad Flex 5 White | 4.33 | 3 | 1 |
+| 2-in-1 | Samsung Galaxy Book4 360 Black | 4.0 | 9 | 2 |
+| AMD | AMD Ryzen 9 9900X | 4.08 | 13 | 1 |
+| AMD | MSI Radeon RX 9070 VENTUS 3X White | 4.08 | 40 | 1 |
+| AMD | AMD Ryzen 9 9900X | 3.86 | 65 | 2 |
+| AMD | SAPPHIRE PULSE RX 7800 XT Black | 4.07 | 27 | 2 |
+| AMD Socket | MSI MAG X870E TOMAHAWK WIFI White | 4.06 | 32 | 1 |
+| AMD Socket | ASRock B850M Pro RS Silver | 4.04 | 25 | 2 |
 | ... | ... | ... | ... | ... |
 
 
@@ -1156,14 +1149,14 @@ Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold
 
 | product_name | units_sold | revenue | avg_rating |
 | ---------- | ----------: | ----------: | ----------: |
-| MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 471 | 2299186500.0 | 3.8 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 476 | 2201071600.0 | 3.85 |
-| AMD Ryzen 7 7700X 블랙 | 1778 | 1965045600.0 | 3.88 |
-| Razer Blade 14 실버 | 362 | 1610393200.0 | 4.21 |
-| AMD Ryzen 9 9900X 화이트 | 1916 | 1550427200.0 | 3.9 |
-| MSI GeForce RTX 4090 SUPRIM X 화이트 | 406 | 1546738200.0 | 4.13 |
-| 기가바이트 RTX 5090 AERO OC | 399 | 1534514100.0 | 3.93 |
-| ASUS ROG STRIX RTX 5090 | 427 | 1474174800.0 | 3.76 |
+| Razer Blade 18 Black | 248 | 1079568800.0 | 4.1 |
+| Razer Blade 16 Silver | 232 | 859072800.0 | 3.95 |
+| ASUS Dual RTX 4060 Ti Black | 319 | 853261200.0 | 3.75 |
+| Razer Blade 18 Black | 279 | 833512500.0 | 3.92 |
+| Razer Blade 18 White | 267 | 663121200.0 | 4.0 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 369 | 643536000.0 | 4.12 |
+| MSI Radeon RX 7900 XTX GAMING X White | 385 | 584276000.0 | 3.66 |
+| Lenovo ThinkPad X1 2in1 Silver | 296 | 552365600.0 | 3.56 |
 | ... | ... | ... | ... |
 
 

@@ -74,14 +74,14 @@ Displays customer ID, name, level, and subscription date. Use `EXISTS`.
 
     | id | name | grade | signup_date |
     | ----------: | ---------- | ---------- | ---------- |
-    | 2 | 김경수 | BRONZE | 2016-08-17 12:29:34 |
-    | 3 | 김민재 | VIP | 2016-02-11 19:59:38 |
-    | 4 | 진정자 | GOLD | 2016-09-18 15:29:45 |
-    | 5 | 이정수 | BRONZE | 2016-02-28 11:34:16 |
-    | 8 | 성민석 | VIP | 2016-09-24 06:49:22 |
-    | 10 | 박지훈 | GOLD | 2016-12-20 04:06:43 |
-    | 12 | 장준서 | SILVER | 2016-12-30 06:48:08 |
-    | 14 | 윤순옥 | BRONZE | 2016-06-05 10:37:50 |
+    | 2 | Danny Johnson | GOLD | 2016-08-17 12:29:34 |
+    | 3 | Adam Moore | VIP | 2016-02-11 19:59:38 |
+    | 4 | Virginia Steele | GOLD | 2016-09-18 15:29:45 |
+    | 5 | Jared Vazquez | SILVER | 2016-02-28 11:34:16 |
+    | 8 | Tyler Rodriguez | SILVER | 2016-09-24 06:49:22 |
+    | 10 | John Stark | GOLD | 2016-12-20 04:06:43 |
+    | 12 | Michael Velasquez | GOLD | 2016-12-30 06:48:08 |
+    | 14 | Martha Murphy | BRONZE | 2016-06-05 10:37:50 |
     | ... | ... | ... | ... |
 
     > Returns the same results as the `IN` subquery, but `EXISTS` is more efficient for large data.
@@ -120,14 +120,14 @@ This is a customer who has only registered but has no order history. Use `NOT EX
 
     | id | name | grade | signup_date | days_since_signup |
     | ----------: | ---------- | ---------- | ---------- | ----------: |
-    | 133 | 성미숙 | BRONZE | 2016-01-01 00:53:24 | 3652.0 |
-    | 584 | 오진호 | BRONZE | 2016-01-01 03:10:41 | 3652.0 |
-    | 387 | 노지민 | BRONZE | 2016-01-01 10:17:05 | 3652.0 |
-    | 84 | 양영진 | BRONZE | 2016-01-03 19:49:46 | 3649.0 |
-    | 707 | 김지아 | BRONZE | 2016-01-05 08:33:42 | 3648.0 |
-    | 641 | 김민준 | BRONZE | 2016-01-05 21:52:07 | 3647.0 |
-    | 516 | 최유진 | BRONZE | 2016-01-06 00:09:48 | 3647.0 |
-    | 951 | 이미정 | BRONZE | 2016-01-06 05:24:42 | 3647.0 |
+    | 84 | Alan Blair | BRONZE | 2016-01-03 19:49:46 | 3649.0 |
+    | 38 | Dana Miles | BRONZE | 2016-01-15 19:21:20 | 3637.0 |
+    | 9 | Tracy Johnson | BRONZE | 2016-01-26 09:42:20 | 3627.0 |
+    | 69 | Tommy Kim | BRONZE | 2016-02-03 03:40:29 | 3619.0 |
+    | 25 | Sara Harvey | BRONZE | 2016-02-03 04:18:52 | 3619.0 |
+    | 32 | Duane Evans MD | BRONZE | 2016-02-09 18:54:54 | 3612.0 |
+    | 7 | Ashley Jones | BRONZE | 2016-02-17 13:41:08 | 3604.0 |
+    | 43 | Terry Miller DVM | BRONZE | 2016-02-23 17:09:54 | 3598.0 |
     | ... | ... | ... | ... | ... |
 
 ---
@@ -168,14 +168,14 @@ Customers who have orders with an order status of 'confirmed' but who have not w
 
     | id | name | grade | confirmed_orders |
     | ----------: | ---------- | ---------- | ----------: |
-    | 27069 | 김예준 | VIP | 25 |
-    | 31228 | 고영희 | GOLD | 20 |
-    | 1342 | 노광수 | SILVER | 18 |
-    | 15336 | 조영식 | GOLD | 18 |
-    | 1676 | 하서연 | BRONZE | 17 |
-    | 17111 | 나은서 | BRONZE | 16 |
-    | 29619 | 김준영 | SILVER | 16 |
-    | 2268 | 강현준 | SILVER | 15 |
+    | 494 | Amanda Smith | GOLD | 20 |
+    | 124 | Paul Wilson | BRONZE | 13 |
+    | 1207 | Kevin Garcia | SILVER | 12 |
+    | 1620 | Alexander Aguirre | BRONZE | 12 |
+    | 2164 | Kristy Nguyen | SILVER | 12 |
+    | 2236 | Kayla Davis | BRONZE | 12 |
+    | 2487 | Larry Kim | BRONZE | 12 |
+    | 3393 | Claudia Buck DDS | GOLD | 11 |
     | ... | ... | ... | ... |
 
     > You can use them as target customers for review writing campaigns.
@@ -220,10 +220,16 @@ Among the `is_purchased = 0` items in the wishlist, the customer has never actua
     **Result example (top 3 rows):**
 
     | customer_id | customer_name | product_id | product_name | price | wishlisted_at |
-    |---|---|---|---|---|---|
-    | 45 | 한... | 12 | MacBook Air M3 | 1590000 | 2025-11-20 ... |
-    | 112 | 송... | 78 | LG 울트라기어 32GP850 | 720000 | 2025-10-15 ... |
-    | 203 | 강... | 5 | 삼성 Galaxy Tab S9 | 890000 | 2025-09-08 ... |
+    | ----------: | ---------- | ----------: | ---------- | ----------: | ---------- |
+    | 4853 | Olivia Watson | 92 | Jooyon Rionine Mini PC | 1194000.0 | 2025-12-30 19:11:10 |
+    | 5229 | Kyle Ferguson | 223 | Samsung Galaxy Book4 360 Black | 1388600.0 | 2025-12-30 17:42:08 |
+    | 4675 | James Mcgrath | 271 | TP-Link TL-SG108 | 108500.0 | 2025-12-30 11:47:20 |
+    | 4940 | Nathaniel Martinez | 191 | Seagate IronWolf 4TB Black | 545400.0 | 2025-12-30 10:41:18 |
+    | 3584 | Bryan Powers | 194 | SK hynix Platinum P41 2TB Black | 237500.0 | 2025-12-30 10:16:54 |
+    | 4546 | Warren Olsen | 239 | TeamGroup T-Force Vulcan DDR5 32GB 5200MHz | 139800.0 | 2025-12-30 09:25:54 |
+    | 4796 | Alexander Logan | 171 | APC Back-UPS Pro Gaming BGM1500B Black | 516300.0 | 2025-12-30 06:38:37 |
+    | 4909 | Kevin Rivera | 56 | Hancom Office 2024 Enterprise Silver | 241400.0 | 2025-12-30 05:38:13 |
+    | ... | ... | ... | ... | ... | ... |
 
     > This is where the marketing team will send shopping cart abandonment notifications or discount coupons.
 
@@ -264,14 +270,14 @@ Identify “blue-chip customers” who consistently purchase without making a cl
 
     | id | name | grade | order_count | total_spent |
     | ----------: | ---------- | ---------- | ----------: | ----------: |
-    | 12486 | 민민재 | GOLD | 52 | 110159678.0 |
-    | 3059 | 윤유진 | BRONZE | 5 | 73560400.0 |
-    | 35583 | 고광수 | GOLD | 18 | 70057482.0 |
-    | 26131 | 손준호 | VIP | 27 | 65757868.0 |
-    | 41328 | 최순옥 | VIP | 12 | 64954495.0 |
-    | 19776 | 박수빈 | BRONZE | 26 | 63290909.0 |
-    | 13716 | 주경숙 | VIP | 18 | 62181751.0 |
-    | 24264 | 권성진 | VIP | 47 | 61953072.0 |
+    | 514 | Steven Johnson | BRONZE | 5 | 52141700.0 |
+    | 3000 | Michelle King | GOLD | 47 | 51674714.0 |
+    | 4065 | Nicole Perry | VIP | 12 | 43306619.0 |
+    | 41 | David Harper | BRONZE | 34 | 42490481.0 |
+    | 44 | Melinda Lang | BRONZE | 45 | 40153649.0 |
+    | 4136 | Zachary Ford | VIP | 4 | 39557863.0 |
+    | 1131 | Victoria Lee | SILVER | 36 | 39097438.0 |
+    | 856 | Danielle Kennedy | BRONZE | 14 | 39030765.0 |
     | ... | ... | ... | ... | ... |
 
 ---
@@ -317,14 +323,14 @@ EXISTS uses aggregates internally.
 
     | id | name | grade |
     | ----------: | ---------- | ---------- |
-    | 39877 | 강건우 | VIP |
-    | 3645 | 강경숙 | VIP |
-    | 43164 | 강경숙 | VIP |
-    | 9195 | 강경자 | VIP |
-    | 15102 | 강경자 | VIP |
-    | 37003 | 강경자 | VIP |
-    | 37522 | 강경희 | VIP |
-    | 49065 | 강광수 | VIP |
+    | 4233 | Abigail Richardson | VIP |
+    | 2066 | Adam Johnson | VIP |
+    | 3 | Adam Moore | VIP |
+    | 2650 | Adrienne Phillips | VIP |
+    | 3585 | Aimee Norman | VIP |
+    | 1746 | Alan Cruz | VIP |
+    | 1516 | Alan Newman | VIP |
+    | 3854 | Alex Gomez | VIP |
     | ... | ... | ... |
 
     > Customers who purchase multiple categories are valuable targets for cross-selling.
@@ -371,14 +377,14 @@ There may be multiple payments in one order. Find orders that do not have any fa
 
     | id | order_number | total_amount | ordered_at | status |
     | ----------: | ---------- | ----------: | ---------- | ---------- |
-    | 350088 | ORD-20241231-350088 | 128500.0 | 2024-12-31 23:56:35 | confirmed |
-    | 350011 | ORD-20241231-350011 | 6344900.0 | 2024-12-31 23:37:34 | confirmed |
-    | 350033 | ORD-20241231-350033 | 107500.0 | 2024-12-31 23:35:44 | confirmed |
-    | 350197 | ORD-20241231-350197 | 122900.0 | 2024-12-31 23:33:09 | confirmed |
-    | 350203 | ORD-20241231-350203 | 304800.0 | 2024-12-31 23:32:29 | confirmed |
-    | 350178 | ORD-20241231-350178 | 3994300.0 | 2024-12-31 23:25:59 | confirmed |
-    | 350092 | ORD-20241231-350092 | 475600.0 | 2024-12-31 22:58:39 | confirmed |
-    | 350094 | ORD-20241231-350094 | 3481000.0 | 2024-12-31 22:56:33 | confirmed |
+    | 31230 | ORD-20241231-31230 | 506700.0 | 2024-12-31 21:25:24 | confirmed |
+    | 31229 | ORD-20241231-31229 | 425600.0 | 2024-12-31 20:47:26 | confirmed |
+    | 31228 | ORD-20241231-31228 | 548900.0 | 2024-12-31 20:17:42 | confirmed |
+    | 31223 | ORD-20241231-31223 | 531300.0 | 2024-12-31 19:30:18 | confirmed |
+    | 31226 | ORD-20241231-31226 | 500100.0 | 2024-12-31 19:28:26 | confirmed |
+    | 31238 | ORD-20241231-31238 | 658500.0 | 2024-12-31 16:08:40 | confirmed |
+    | 31236 | ORD-20241231-31236 | 144100.0 | 2024-12-31 15:52:45 | confirmed |
+    | 31232 | ORD-20241231-31232 | 81800.0 | 2024-12-31 14:35:31 | confirmed |
     | ... | ... | ... | ... | ... |
 
 ---
@@ -418,14 +424,14 @@ In orders containing product 1, items other than product 1 are sorted in order o
 
     | product_id | product_name | price | co_purchase_count |
     | ----------: | ---------- | ----------: | ----------: |
-    | 354 | 소니 WH-1000XM5 화이트 | 344300.0 | 9 |
-    | 256 | Microsoft Bluetooth Ergonomic Mouse 화이트 | 88200.0 | 8 |
-    | 70 | JBL Pebbles 2 블랙 | 96300.0 | 7 |
-    | 131 | SteelSeries Arctis Nova Pro Wireless 실버 | 215500.0 | 7 |
-    | 96 | JBL Flip 6 블랙 | 345400.0 | 6 |
-    | 122 | SteelSeries Arctis Nova Pro Wireless 화이트 | 150300.0 | 6 |
-    | 242 | 로지텍 G PRO X2 Superstrike 블랙 | 151000.0 | 6 |
-    | 309 | Razer Basilisk V3 Pro 35K 블랙 | 71900.0 | 6 |
+    | 45 | SteelSeries Aerox 5 Wireless Silver | 100000.0 | 33 |
+    | 70 | JBL Pebbles 2 Black | 101500.0 | 31 |
+    | 9 | Sony WH-CH720N Silver | 445700.0 | 30 |
+    | 28 | Keychron Q1 Pro Silver | 238000.0 | 26 |
+    | 8 | Logitech G715 White | 131500.0 | 25 |
+    | 34 | SteelSeries Prime Wireless Black | 89800.0 | 25 |
+    | 111 | Logitech G502 X PLUS | 97500.0 | 24 |
+    | 55 | JBL Flip 6 White | 334200.0 | 20 |
     | ... | ... | ... | ... |
 
     > This data serves as the basis for related product recommendation (cross-selling) strategies.
@@ -475,15 +481,9 @@ Customers with at least 1 order in any 12 months in 2024.
 
     | id | name | grade |
     | ----------: | ---------- | ---------- |
-    | 26258 | 고숙자 | VIP |
-    | 14356 | 김광수 | VIP |
-    | 19872 | 김성진 | VIP |
-    | 12387 | 김영진 | VIP |
-    | 16387 | 류미숙 | VIP |
-    | 774 | 박성진 | VIP |
-    | 17840 | 박성현 | VIP |
-    | 31645 | 서영일 | VIP |
-    | ... | ... | ... |
+    | 3097 | Christina Jennings | VIP |
+    | 2516 | Joseph Kirby | VIP |
+    | 3775 | Katherine Garner | VIP |
 
     > This query is a **Double Negation** pattern:
     > "Customers with **non-existent** months without orders" = "Customers who placed orders in all months".
@@ -531,14 +531,14 @@ Combines two EXISTS/NOT EXISTS conditions.
 
     | id | name | grade | last_order_date | orders_in_2024 | spent_in_2024 |
     | ----------: | ---------- | ---------- | ---------- | ----------: | ----------: |
-    | 40080 | 김민재 | BRONZE | 2024-12-05 21:44:31 | 4 | 48780714.0 |
-    | 15138 | 홍현우 | BRONZE | 2024-06-28 20:14:39 | 2 | 36524600.0 |
-    | 10379 | 조상호 | BRONZE | 2024-12-23 17:38:51 | 1 | 34017000.0 |
-    | 14103 | 박병철 | BRONZE | 2024-10-28 13:30:35 | 2 | 30716888.0 |
-    | 28456 | 성현주 | BRONZE | 2024-08-29 17:11:52 | 4 | 26156500.0 |
-    | 7439 | 이지현 | BRONZE | 2024-08-02 23:02:56 | 2 | 25655500.0 |
-    | 19071 | 김정식 | BRONZE | 2024-11-20 10:22:07 | 4 | 24627600.0 |
-    | 18822 | 최영수 | BRONZE | 2024-09-25 16:25:34 | 1 | 24601700.0 |
+    | 2623 | Carolyn Smith | BRONZE | 2024-09-18 20:22:57 | 4 | 17088500.0 |
+    | 2894 | Krista Martinez | BRONZE | 2024-05-24 09:44:28 | 1 | 14204200.0 |
+    | 1724 | Amy Stephenson | BRONZE | 2024-08-03 08:13:36 | 3 | 12494600.0 |
+    | 3667 | Steven Gonzalez | BRONZE | 2024-12-10 12:12:19 | 2 | 12260100.0 |
+    | 1186 | Mary Harris | BRONZE | 2024-10-24 20:05:01 | 3 | 9588499.0 |
+    | 2814 | Beth Newman | BRONZE | 2024-08-26 20:19:31 | 2 | 8290525.0 |
+    | 2236 | Kayla Davis | BRONZE | 2024-11-21 11:34:35 | 4 | 7629400.0 |
+    | 301 | Jill Tate | BRONZE | 2024-11-03 20:09:37 | 4 | 6973400.0 |
     | ... | ... | ... | ... | ... | ... |
 
 ---
@@ -596,14 +596,14 @@ This is a customer who has never used a payment method other than a card (kakao_
 
     | id | name | grade | order_count | total_spent |
     | ----------: | ---------- | ---------- | ----------: | ----------: |
-    | 52222 | 백옥자 | VIP | 1 | 23186800.0 |
-    | 35894 | 성준영 | VIP | 4 | 17874181.0 |
-    | 41858 | 박상현 | VIP | 1 | 15873100.0 |
-    | 50823 | 양영자 | VIP | 1 | 15597600.0 |
-    | 9029 | 이명자 | VIP | 6 | 13717400.0 |
-    | 43150 | 이재현 | BRONZE | 1 | 13294600.0 |
-    | 6250 | 이정순 | GOLD | 6 | 13025500.0 |
-    | 22631 | 박민준 | BRONZE | 2 | 12257400.0 |
+    | 4213 | Christine Johnson | VIP | 1 | 13895400.0 |
+    | 4179 | Troy Carr | VIP | 1 | 8319100.0 |
+    | 3138 | Alison Gilmore | GOLD | 4 | 6843700.0 |
+    | 2027 | Calvin Hernandez | BRONZE | 2 | 6285000.0 |
+    | 3785 | William Morris | GOLD | 4 | 5791400.0 |
+    | 1120 | Elizabeth Leon | BRONZE | 5 | 5519100.0 |
+    | 2119 | Jose Hart | BRONZE | 3 | 5265400.0 |
+    | 3282 | Aaron Medina | GOLD | 3 | 4549585.0 |
     | ... | ... | ... | ... | ... |
 
 ---
@@ -644,9 +644,16 @@ Customers who have submitted at least one inquiry for every `category` value in 
     **Result example:**
 
     | id | name | grade | category_count |
-    |---|---|---|---|
-    | 45 | 김... | SILVER | 7 |
-    | 203 | 박... | BRONZE | 7 |
+    | ----------: | ---------- | ---------- | ----------: |
+    | 744 | Debra Mosley | VIP | 7 |
+    | 98 | Gabriel Walters | VIP | 7 |
+    | 97 | Jason Rivera | VIP | 7 |
+    | 549 | Ronald Arellano | VIP | 7 |
+    | 489 | Roy Fernandez | VIP | 7 |
+    | 258 | Sandra Callahan | GOLD | 7 |
+    | 1388 | Sandra Deleon | VIP | 7 |
+    | 645 | Thomas Griffin | VIP | 7 |
+    | ... | ... | ... | ... |
 
     > Very few customers leave inquiries in all categories. You may be subject to special management from the CS team.
 
@@ -694,15 +701,8 @@ These are premium customers who have never purchased a low-priced product.
 
     | id | name | grade | order_count | total_spent | avg_order_value |
     | ----------: | ---------- | ---------- | ----------: | ----------: | ----------: |
-    | 45794 | 윤영희 | GOLD | 1 | 4429800.0 | 4429800.0 |
-    | 40213 | 민지아 | BRONZE | 1 | 3507900.0 | 3507900.0 |
-    | 48896 | 김성수 | GOLD | 1 | 3180600.0 | 3180600.0 |
-    | 36900 | 남명숙 | BRONZE | 1 | 3076656.0 | 3076656.0 |
-    | 34926 | 강상현 | GOLD | 1 | 2833200.0 | 2833200.0 |
-    | 32669 | 박지훈 | BRONZE | 1 | 2360300.0 | 2360300.0 |
-    | 37945 | 김지원 | BRONZE | 1 | 2317800.0 | 2317800.0 |
-    | 37770 | 김보람 | BRONZE | 1 | 2283400.0 | 2283400.0 |
-    | ... | ... | ... | ... | ... | ... |
+    | 4137 | Robert Mckee | BRONZE | 1 | 4352405.0 | 4352405.0 |
+    | 4973 | Terry Young | SILVER | 1 | 1204536.0 | 1204536.0 |
 
 ---
 

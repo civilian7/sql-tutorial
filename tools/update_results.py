@@ -29,34 +29,33 @@ PG_MYSQL_KEYWORDS = [
 ]
 
 
-def run_query(conn, sql, limit=8):
-    """Run a SQL query and return (cols, rows) or None on failure."""
-    import signal, threading
+def run_query(db_path, sql, limit=8):
+    """Run a SQL query with timeout, using a separate connection per thread."""
+    import threading
 
     result = [None]
-    error = [None]
 
     def execute():
         try:
-            cur = conn.execute(sql)
+            c = sqlite3.connect(db_path)
+            c.execute('PRAGMA journal_mode=WAL')
+            cur = c.execute(sql)
             if cur.description is None:
+                c.close()
                 return
             cols = [desc[0] for desc in cur.description]
             rows = cur.fetchmany(limit)
+            c.close()
             if rows:
                 result[0] = (cols, rows)
-        except Exception as e:
-            error[0] = e
+        except Exception:
+            pass
 
     t = threading.Thread(target=execute)
     t.start()
-    t.join(timeout=15)  # 15 second timeout per query
+    t.join(timeout=15)
     if t.is_alive():
-        # Query still running — skip it
-        conn.interrupt()
-        t.join(timeout=2)
         return None
-
     return result[0]
 
 
@@ -173,7 +172,7 @@ def find_table_after_result(lines, result_idx):
     return None, None
 
 
-def process_file(filepath, conn, dry_run=False):
+def process_file(filepath, db_path, dry_run=False):
     """Process a single file, updating result tables."""
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -183,7 +182,7 @@ def process_file(filepath, conn, dry_run=False):
 
     # Find all **결과** lines
     for i, line in enumerate(lines):
-        if '**결과' not in line:
+        if '**결과' not in line and '**Result' not in line:
             continue
 
         # Check if inside a tab block (=== "MySQL" or === "PostgreSQL")
@@ -215,7 +214,7 @@ def process_file(filepath, conn, dry_run=False):
         fetch_limit = int(limit_match.group(1)) if limit_match else 10
         fetch_limit = min(fetch_limit, 8)
 
-        result = run_query(conn, sql, limit=fetch_limit)
+        result = run_query(db_path, sql, limit=fetch_limit)
         if result is None:
             continue
 
@@ -244,8 +243,6 @@ def process_file(filepath, conn, dry_run=False):
 
 
 def main():
-    conn = sqlite3.connect(DB_PATH)
-
     if len(sys.argv) > 1:
         files = sys.argv[1:]
     else:
@@ -259,14 +256,13 @@ def main():
 
     total = 0
     for filepath in files:
-        count = process_file(filepath, conn)
+        count = process_file(filepath, DB_PATH)
         if count > 0:
             name = os.path.basename(filepath)
             print(f'  {name}: {count}개 갱신')
             total += count
 
     print(f'\n총 {total}개 결과 테이블 갱신')
-    conn.close()
 
 
 if __name__ == '__main__':

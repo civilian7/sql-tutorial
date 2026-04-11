@@ -46,14 +46,16 @@ ORDER BY child.depth, child.sort_order;
 **Result (example):**
 
 | id | category | depth | parent_category |
-| -: | -------- | ----: | --------------- |
-|  1 | 데스크톱 PC  |     0 | (NULL)          |
-|  5 | 노트북      |     0 | (NULL)          |
-| 10 | 모니터      |     0 | (NULL)          |
-| 14 | CPU      |     0 | (NULL)          |
-| 17 | 메인보드     |     0 | (NULL)          |
-| 20 | 메모리(RAM) |     0 | (NULL)          |
-| ... | ...      | ...   | ...             |
+| ----------: | ---------- | ----------: | ---------- |
+| 1 | Desktop PC | 0 | (NULL) |
+| 5 | Laptop | 0 | (NULL) |
+| 10 | Monitor | 0 | (NULL) |
+| 14 | CPU | 0 | (NULL) |
+| 17 | Motherboard | 0 | (NULL) |
+| 20 | Memory (RAM) | 0 | (NULL) |
+| 23 | Storage | 0 | (NULL) |
+| 27 | Graphics Card | 0 | (NULL) |
+| ... | ... | ... | ... |
 
 Top-level categories (`depth=0`) have NULL `parent_id`, so `parent_category` is also NULL. `LEFT JOIN` is used to include these rows in the results.
 
@@ -375,13 +377,14 @@ SELF JOIN the `staff` table to query each employee's name, department, role, and
 
     **Result (example):**
 
-    | employee | department | role    | manager |
-    | -------- | ---------- | ------- | ------- |
-    | 박경수      | 경영         | admin   | 한민재     |
-    | 장주원      | 경영         | admin   | 한민재     |
-    | 한민재      | 경영         | admin   | (NULL)  |
-    | 권영희      | 마케팅        | manager | 박경수     |
-    | 이준혁      | 영업         | manager | 한민재     |
+| employee | department | role | manager |
+| ---------- | ---------- | ---------- | ---------- |
+| Jonathan Smith | Management | admin | Michael Thomas |
+| Michael Mcguire | Management | admin | Michael Thomas |
+| Michael Thomas | Management | admin | (NULL) |
+| Nicole Hamilton | Marketing | manager | Jonathan Smith |
+| Jaime Phelps | Sales | manager | Michael Thomas |
+| ... | ... | ... | ... |
 
 
 ### Problem 2: Same Department Employee Pairs
@@ -403,11 +406,11 @@ Find employee pairs in the same department. Remove duplicate pairs (`id < id`) a
 
     **Result (example):**
 
-    | department | staff_a | staff_b |
-    | ---------- | ------- | ------- |
-    | 경영         | 장주원     | 박경수     |
-    | 경영         | 한민재     | 박경수     |
-    | 경영         | 한민재     | 장주원     |
+| department | staff_a | staff_b |
+| ---------- | ---------- | ---------- |
+| Management | Michael Mcguire | Jonathan Smith |
+| Management | Michael Thomas | Jonathan Smith |
+| Management | Michael Thomas | Michael Mcguire |
 
 
 ### Problem 3: Same Grade Customer Pairs
@@ -432,14 +435,17 @@ Find customer pairs with the same `grade`, removing duplicate pairs (`id < id`).
 
     **Result (example):**
 
-    | grade  | customer_a | customer_b |
-    | ------ | ---------- | ---------- |
-    | BRONZE | 강건우        | 강성수        |
-    | BRONZE | 강건우        | 강성진        |
-    | BRONZE | 강건우        | 강성훈        |
-    | BRONZE | 강건우        | 강영미        |
-    | BRONZE | 강건우        | 강영희        |
-    | ...    | ...        | ...        |
+| grade | customer_a | customer_b |
+| ---------- | ---------- | ---------- |
+| BRONZE | Aaron Carr | Aaron Cooper |
+| BRONZE | Aaron Carr | Aaron Cortez |
+| BRONZE | Aaron Carr | Aaron Meyer |
+| BRONZE | Aaron Carr | Aaron Price |
+| BRONZE | Aaron Carr | Aaron Wells |
+| BRONZE | Aaron Carr | Abigail Hopkins |
+| BRONZE | Aaron Carr | Abigail Marquez |
+| BRONZE | Aaron Carr | Adam Gonzalez |
+| ... | ... | ... |
 
 
 ### Problem 4: Same Supplier Product Pairs
@@ -466,14 +472,17 @@ Find product pairs supplied by the same supplier and display them with price dif
 
     **Result (example):**
 
-    | supplier | product_a             | product_b             | price_a | price_b | price_diff |
-    | -------- | --------------------- | --------------------- | ------: | ------: | ---------: |
-    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Strix GT35   |   48800 | 4314800 |    4266000 |
-    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS PCE-BE92BT 블랙    | 4314800 |   57200 |    4257600 |
-    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Zephyrus G16 |   48800 | 4284100 |    4235300 |
-    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS XG-C100C 블랙      | 4314800 |   83500 |    4231300 |
-    | 에이수스코리아  | ASUS ROG Zephyrus G16 | ASUS PCE-BE92BT 블랙    | 4284100 |   57200 |    4226900 |
-    | ...      | ...                   | ...                   | ...     | ...     | ...        |
+| supplier | product_a | product_b | price_a | price_b | price_diff |
+| ---------- | ---------- | ---------- | ----------: | ----------: | ----------: |
+| Apple Corp. | Apple Magic Keyboard Silver | MacBook Air 15 M3 Silver | 149700.0 | 5481100.0 | 5331400.0 |
+| ASUS Corp. | ASUS TUF Gaming RTX 5080 White | ASUS PCE-BE92BT | 4526600.0 | 47200.0 | 4479400.0 |
+| ASUS Corp. | ASUS TUF Gaming RTX 5080 White | ASUS PCE-BE92BT Black | 4526600.0 | 74900.0 | 4451700.0 |
+| ASUS Corp. | ASUS PCE-BE92BT | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 47200.0 | 4496700.0 | 4449500.0 |
+| ASUS Corp. | ASUS PCE-BE92BT Black | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 74900.0 | 4496700.0 | 4421800.0 |
+| ASUS Corp. | ASUS TUF Gaming RTX 5080 White | ASUS PCE-BE92BT | 4526600.0 | 111500.0 | 4415100.0 |
+| ASUS Corp. | ASUS TUF Gaming RTX 5080 White | ASUS XG-C100C Black | 4526600.0 | 117900.0 | 4408700.0 |
+| ASUS Corp. | ASUS TUF Gaming RTX 5080 White | ASUS RT-AX86U Pro Silver | 4526600.0 | 132600.0 | 4394000.0 |
+| ... | ... | ... | ... | ... | ... |
 
 
 
@@ -500,14 +509,17 @@ Find cases where the same customer has ordered to different addresses. (SELF JOI
 
     **Result (example):**
 
-    | name | address_1                      | address_2                      |
-    | ---- | ------------------------------ | ------------------------------ |
-    | 강경수  | 경기도 청양군 선릉로 626-76 (중수김최리)     | 강원도 부천시 원미구 서초대14길 929 (정남송김동) |
-    | 강경숙  | 경상북도 용인시 테헤란거리 958-21 (정웅박리)   | 전라북도 과천시 선릉6로 지하563 (옥순김리)     |
-    | 강경자  | 세종특별자치시 관악구 잠실로 542 (영미최동)     | 서울특별시 용산구 학동길 500-28           |
-    | 강경자  | 충청남도 부여군 삼성817길 453-98 (상호박이리) | 서울특별시 용산구 학동길 500-28           |
-    | 강경자  | 충청남도 부여군 삼성817길 453-98 (상호박이리) | 세종특별자치시 관악구 잠실로 542 (영미최동)     |
-    | ...  | ...                            | ...                            |
+| name | address_1 | address_2 |
+| ---------- | ---------- | ---------- |
+| Aaron Green | 1512 Aaron Row | 70592 Cameron Divide Suite 159 |
+| Aaron Harris | 3836 Young Avenue | 1958 Travis Ports |
+| Aaron Medina | 43653 Garcia Freeway Apt. 431 | 851 Bowman Island Suite 053 |
+| Aaron Medina | 43653 Garcia Freeway Apt. 431 | 9282 Allen Corner |
+| Aaron Medina | 851 Bowman Island Suite 053 | 9282 Allen Corner |
+| Aaron Moore | 8769 Jessica Parkway | USNS Barnes |
+| Aaron Price | 605 Owen Mountain | 900 Julia Shoal Suite 899 |
+| Aaron Ryan | 01710 Dunlap Fort | 548 Gonzalez Springs |
+| ... | ... | ... |
 
 
 ### Problem 6: Ratio Calculation with CROSS JOIN
@@ -533,12 +545,12 @@ Calculate the percentage (%) each customer grade represents of total active cust
 
     **Result (example):**
 
-    | grade  | grade_count | pct  |
-    | ------ | ----------: | ---: |
-    | BRONZE |        2548 | 66.8 |
-    | GOLD   |         484 | 12.7 |
-    | SILVER |         469 | 12.3 |
-    | VIP    |         315 |  8.3 |
+| grade | grade_count | pct |
+| ---------- | ----------: | ----------: |
+| BRONZE | 2289 | 62.5 |
+| GOLD | 524 | 14.3 |
+| SILVER | 479 | 13.1 |
+| VIP | 368 | 10.1 |
 
 
 ### Problem 7: Quarter-Payment Method CROSS JOIN Report
@@ -585,14 +597,17 @@ Generate all combinations of 4 quarters (`Q1`-`Q4`) and payment methods (`DISTIN
 
         **Result (example):**
 
-        | q  | method        | total_amount |
-        | -- | ------------- | -----------: |
-        | Q1 | bank_transfer |    116631296 |
-        | Q1 | card          |    609763898 |
-        | Q1 | kakao_pay     |    245675166 |
-        | Q1 | naver_pay     |    166861740 |
-        | Q1 | point         |     87019317 |
-        | ... | ...           | ...          |
+| q | method | total_amount |
+| ---------- | ---------- | ----------: |
+| Q1 | bank_transfer | 98541709.0 |
+| Q1 | card | 526711551.0 |
+| Q1 | kakao_pay | 244005919.0 |
+| Q1 | naver_pay | 196322827.0 |
+| Q1 | point | 89533449.0 |
+| Q1 | virtual_account | 56765116.0 |
+| Q2 | bank_transfer | 107063738.0 |
+| Q2 | card | 629458185.0 |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -710,14 +725,17 @@ For each combination of month and supplier in 2024, show the inbound quantity fo
 
         **Result (example):**
 
-        | year_month | supplier   | inbound_qty |
-        | ---------- | ---------- | ----------: |
-        | 2024-01    | AMD코리아     |           0 |
-        | 2024-01    | APC코리아     |           0 |
-        | 2024-01    | ASRock코리아  |           0 |
-        | 2024-01    | HP코리아      |           0 |
-        | 2024-01    | LG전자 공식 유통 |           0 |
-        | ...        | ...        | ...         |
+| year_month | supplier | inbound_qty |
+| ---------- | ---------- | ----------: |
+| 2024-01 | ABKO | 0 |
+| 2024-01 | ADATA Corp. | 0 |
+| 2024-01 | AMD Corp. | 0 |
+| 2024-01 | APC Corp. | 0 |
+| 2024-01 | ASRock Corp. | 0 |
+| 2024-01 | ASUS Corp. | 160 |
+| 2024-01 | Absolute Technology | 0 |
+| 2024-01 | Acer Corp. | 0 |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -827,14 +845,17 @@ Generate all combinations of customer grades (`DISTINCT grade`) and top-level ca
 
     **Result (example):**
 
-    | grade  | category | order_count |
-    | ------ | -------- | ----------: |
-    | BRONZE | CPU      |         853 |
-    | BRONZE | UPS/전원   |         132 |
-    | BRONZE | 그래픽카드    |         782 |
-    | BRONZE | 네트워크 장비  |        1148 |
-    | BRONZE | 노트북      |         827 |
-    | ...    | ...      | ...         |
+| grade | category | order_count |
+| ---------- | ---------- | ----------: |
+| BRONZE | CPU | 805 |
+| BRONZE | Case | 1220 |
+| BRONZE | Cooling | 1104 |
+| BRONZE | Desktop PC | 176 |
+| BRONZE | Graphics Card | 798 |
+| BRONZE | Keyboard | 2569 |
+| BRONZE | Laptop | 815 |
+| BRONZE | Memory (RAM) | 1454 |
+| ... | ... | ... |
 
 
 ### Problem 10: Category Parent-Child Relationship
@@ -854,14 +875,17 @@ SELF JOIN the `categories` table to query parent category name (`parent_name`) a
 
     **Result (example):**
 
-    | parent_name | child_name | depth |
-    | ----------- | ---------- | ----: |
-    | (최상위)       | CPU        |     0 |
-    | (최상위)       | UPS/전원     |     0 |
-    | (최상위)       | 그래픽카드      |     0 |
-    | CPU         | AMD        |     1 |
-    | CPU         | Intel      |     1 |
-    | ...         | ...        | ...   |
+| parent_name | child_name | depth |
+| ---------- | ---------- | ----------: |
+| (최상위) | CPU | 0 |
+| (최상위) | Case | 0 |
+| (최상위) | Cooling | 0 |
+| (최상위) | Desktop PC | 0 |
+| (최상위) | Graphics Card | 0 |
+| (최상위) | Keyboard | 0 |
+| (최상위) | Laptop | 0 |
+| (최상위) | Memory (RAM) | 0 |
+| ... | ... | ... |
 
 
 ### Scoring Guide

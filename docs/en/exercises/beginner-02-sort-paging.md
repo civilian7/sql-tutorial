@@ -57,14 +57,14 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 블랙 | 5634900.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | Razer Blade 16 화이트 | 5503500.0 |
-    | Razer Blade 18 | 5450500.0 |
-    | Razer Blade 14 | 5339100.0 |
-    | Razer Blade 16 실버 | 5127500.0 |
-    | Razer Blade 16 블랙 | 4938200.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | Razer Blade 18 Black | 4353100.0 |
+    | Razer Blade 16 Silver | 3702900.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | ASUS ROG Zephyrus G16 | 3429900.0 |
+    | ASUS ROG Strix GT35 | 3296800.0 |
     | ... | ... |
 
 ---
@@ -87,14 +87,14 @@ Practice one concept at a time.
 
     | name | brand | price |
     | ---------- | ---------- | ----------: |
-    | TP-Link TL-SG108 실버 | TP-Link | 16500.0 |
-    | 로지텍 M100r | 로지텍 | 17300.0 |
-    | 넷기어 GS308 블랙 | 넷기어 | 17400.0 |
-    | TP-Link TL-SG108E | TP-Link | 18000.0 |
-    | 로지텍 G502 HERO [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 로지텍 | 19400.0 |
-    | TP-Link TG-3468 블랙 | TP-Link | 19800.0 |
-    | TP-Link TL-SG108 | TP-Link | 20100.0 |
-    | 삼성 무선 키보드 Trio 500 화이트 | 삼성전자 | 20300.0 |
+    | TP-Link TG-3468 Black | TP-Link | 18500.0 |
+    | Samsung SPA-KFG0BUB Silver | Samsung | 21900.0 |
+    | Arctic Freezer 36 A-RGB White | Arctic | 23000.0 |
+    | Arctic Freezer 36 A-RGB White | Arctic | 29900.0 |
+    | TP-Link Archer TBE400E White | TP-Link | 30200.0 |
+    | Samsung SPA-KFG0BUB | Samsung | 30700.0 |
+    | Logitech MK470 Black | Logitech | 31800.0 |
+    | Logitech MX Anywhere 3S Black | Logitech | 33600.0 |
     | ... | ... | ... |
 
 ---
@@ -118,11 +118,11 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 |
-    | Razer Blade 16 블랙 | 5634900.0 |
-    | Razer Blade 16 | 5518300.0 |
-    | Razer Blade 16 화이트 | 5503500.0 |
-    | Razer Blade 18 | 5450500.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+    | Razer Blade 18 Black | 4353100.0 |
+    | Razer Blade 16 Silver | 3702900.0 |
     | ... | ... |
 
 ---
@@ -146,11 +146,11 @@ Practice one concept at a time.
 
     | name | price | stock_qty |
     | ---------- | ----------: | ----------: |
-    | Arctic Freezer 36 A-RGB 화이트 | 27400.0 | 0 |
-    | 한컴오피스 2024 기업용 실버 | 391200.0 | 0 |
-    | 삼성 DDR4 16GB PC4-25600 | 73600.0 | 0 |
-    | WD My Passport 2TB 블랙 | 329100.0 | 0 |
-    | 삼성 DDR5 32GB PC5-38400 실버 | 158000.0 | 0 |
+    | Arctic Freezer 36 A-RGB White | 23000.0 | 0 |
+    | Samsung SPA-KFG0BUB | 30700.0 | 4 |
+    | Samsung DDR4 32GB PC4-25600 | 91000.0 | 6 |
+    | Norton AntiVirus Plus | 69700.0 | 8 |
+    | Logitech G502 HERO Silver | 71100.0 | 8 |
     | ... | ... | ... |
 
 ---
@@ -174,11 +174,11 @@ Practice one concept at a time.
 
     | name | email | grade | created_at |
     | ---------- | ---------- | ---------- | ---------- |
-    | 이주원 | user313@testmail.kr | BRONZE | 2016-01-01 00:00:52 |
-    | 성미숙 | user133@testmail.kr | BRONZE | 2016-01-01 00:53:24 |
-    | 오진호 | user584@testmail.kr | BRONZE | 2016-01-01 03:10:41 |
-    | 노지민 | user387@testmail.kr | BRONZE | 2016-01-01 10:17:05 |
-    | 장승현 | user690@testmail.kr | BRONZE | 2016-01-01 15:11:55 |
+    | Alan Blair | user84@testmail.kr | BRONZE | 2016-01-03 19:49:46 |
+    | Mary Jackson | user61@testmail.kr | BRONZE | 2016-01-04 14:11:21 |
+    | Joseph Sellers | user90@testmail.kr | GOLD | 2016-01-05 22:02:29 |
+    | Gabriel Walters | user98@testmail.kr | VIP | 2016-01-09 06:08:34 |
+    | Lydia Lawrence | user15@testmail.kr | BRONZE | 2016-01-14 06:39:08 |
     | ... | ... | ... | ... |
 
 ---
@@ -202,11 +202,11 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | AMD Ryzen 5 9600X | 186400.0 |
-    | AMD Ryzen 7 7700X | 691500.0 |
-    | AMD Ryzen 7 7700X 블랙 | 1105200.0 |
-    | AMD Ryzen 7 7700X 블랙 | 458300.0 |
-    | AMD Ryzen 7 7800X3D | 750800.0 |
+    | AMD Ryzen 9 9900X | 335700.0 |
+    | AMD Ryzen 9 9900X | 591800.0 |
+    | APC Back-UPS Pro Gaming BGM1500B Black | 516300.0 |
+    | ASRock B850M Pro RS Black | 201000.0 |
+    | ASRock B850M Pro RS Silver | 665600.0 |
     | ... | ... |
 
 ---
@@ -230,11 +230,11 @@ Practice one concept at a time.
 
     | name | price |
     | ---------- | ----------: |
-    | Razer Blade 14 | 5339100.0 |
-    | Razer Blade 16 실버 | 5127500.0 |
-    | Razer Blade 16 블랙 | 4938200.0 |
-    | Razer Blade 18 화이트 | 4913500.0 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 |
+    | ASUS ROG Zephyrus G16 | 3429900.0 |
+    | ASUS ROG Strix GT35 | 3296800.0 |
+    | Razer Blade 18 Black | 2987500.0 |
+    | ASUS Dual RTX 4060 Ti Black | 2674800.0 |
     | ... | ... |
 
 ---
@@ -258,11 +258,11 @@ Practice one concept at a time.
 
     | name | grade | point_balance |
     | ---------- | ---------- | ----------: |
-    | 박정수 | VIP | 6344986 |
-    | 정유진 | VIP | 6255658 |
-    | 이미정 | VIP | 5999946 |
-    | 김상철 | VIP | 5406032 |
-    | 문영숙 | VIP | 4947814 |
+    | Allen Snyder | VIP | 3955828 |
+    | Jason Rivera | VIP | 3518880 |
+    | Brenda Garcia | VIP | 2450166 |
+    | Courtney Huff | VIP | 2383491 |
+    | James Banks | VIP | 2297542 |
     | ... | ... | ... |
 
 ---
@@ -286,11 +286,11 @@ Practice one concept at a time.
 
     | order_number | total_amount | ordered_at |
     | ---------- | ----------: | ---------- |
-    | ORD-20230408-248697 | 71906300.0 | 2023-04-08 16:24:03 |
-    | ORD-20240218-293235 | 68948100.0 | 2024-02-18 20:53:49 |
-    | ORD-20240822-323378 | 64332900.0 | 2024-08-22 13:20:32 |
-    | ORD-20180516-26809 | 63466900.0 | 2018-05-16 06:29:52 |
-    | ORD-20200429-82365 | 61889000.0 | 2020-04-29 21:21:06 |
+    | ORD-20201121-08810 | 50867500.0 | 2020-11-21 12:04:42 |
+    | ORD-20250305-32265 | 46820024.0 | 2025-03-05 09:01:08 |
+    | ORD-20230523-22331 | 46094971.0 | 2023-05-23 08:50:55 |
+    | ORD-20200209-05404 | 43677500.0 | 2020-02-09 23:36:36 |
+    | ORD-20221231-20394 | 43585700.0 | 2022-12-31 21:35:59 |
     | ... | ... | ... |
 
 ---
@@ -318,9 +318,9 @@ Practice one concept at a time.
     | ASRock |
     | ASUS |
     | Adobe |
+    | AhnLab |
     | Apple |
     | Arctic |
-    | BenQ |
     | ... |
 
 ---
@@ -351,11 +351,11 @@ Practice combining multiple concepts.
 
     | name | brand | price |
     | ---------- | ---------- | ----------: |
-    | Razer Blade 14 블랙 | Razer | 7495200.0 |
-    | Razer Blade 16 블랙 | Razer | 5634900.0 |
-    | Razer Blade 16 | Razer | 5518300.0 |
-    | Razer Blade 16 화이트 | Razer | 5503500.0 |
-    | Razer Blade 18 | Razer | 5450500.0 |
+    | MacBook Air 15 M3 Silver | Apple | 5481100.0 |
+    | ASUS TUF Gaming RTX 5080 White | ASUS | 4526600.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | ASUS | 4496700.0 |
+    | Razer Blade 18 Black | Razer | 4353100.0 |
+    | Razer Blade 16 Silver | Razer | 3702900.0 |
     | ... | ... | ... |
 
 ---
@@ -439,11 +439,11 @@ Practice combining multiple concepts.
 
     | name | price | discontinued_at |
     | ---------- | ----------: | ---------- |
-    | 로지텍 G715 실버 | 100600.0 | 2025-12-27 19:50:12 |
-    | 시소닉 FOCUS GM-750 실버 | 98900.0 | 2025-12-25 20:05:49 |
-    | SteelSeries Arctis Nova 7 Wireless 실버 | 367300.0 | 2025-12-24 21:58:49 |
-    | Dell Latitude 5540 실버 | 1113900.0 | 2025-12-17 22:47:10 |
-    | 주연 리오나인 i9 하이엔드 실버 | 1663400.0 | 2025-12-15 15:04:20 |
+    | Dell XPS Desktop 8960 Silver | 1249400.0 | 2025-11-20 15:30:12 |
+    | Kingston FURY Beast DDR4 16GB White | 91200.0 | 2025-11-18 04:06:13 |
+    | Intel Core Ultra 7 265K | 196300.0 | 2025-11-16 21:11:33 |
+    | Hansung BossMonster DX7700 White | 1579400.0 | 2025-10-25 03:47:01 |
+    | Intel Core Ultra 7 265K White | 170200.0 | 2025-08-24 00:34:53 |
     | ... | ... | ... |
 
 ---
@@ -468,11 +468,11 @@ Practice combining multiple concepts.
 
     | title | rating | created_at |
     | ---------- | ----------: | ---------- |
-    | 불량품 | 1 | 2026-01-18 18:51:49 |
-    | 최악 | 1 | 2026-01-17 08:02:24 |
-    | 환불 원해요 | 1 | 2026-01-16 08:03:22 |
-    | 환불 원해요 | 1 | 2026-01-11 18:10:03 |
-    | 최악 | 1 | 2026-01-08 20:38:55 |
+    | (NULL) | 1 | 2026-01-05 20:37:52 |
+    | (NULL) | 1 | 2025-12-21 21:52:59 |
+    | Never Again | 1 | 2025-12-20 11:53:58 |
+    | (NULL) | 1 | 2025-12-19 08:58:30 |
+    | Defective | 1 | 2025-12-14 10:07:24 |
     | ... | ... | ... |
 
 ---
@@ -497,11 +497,11 @@ Practice combining multiple concepts.
 
     | name | brand | price |
     | ---------- | ---------- | ----------: |
-    | 엡손 L15160 | 엡손 | 501700.0 |
-    | 삼성 S24C360 블랙 | 삼성전자 | 503500.0 |
-    | 넷기어 RAX70 실버 | 넷기어 | 506300.0 |
-    | ASRock B860M Pro RS 화이트 | ASRock | 506700.0 |
-    | 필립스 328E1CA 실버 | 필립스 | 507300.0 |
+    | CyberPower BRG1500AVRLCD Silver | CyberPower | 508100.0 |
+    | APC Back-UPS Pro Gaming BGM1500B Black | APC | 516300.0 |
+    | Philips 27E1N5300AE White | Philips | 518700.0 |
+    | Gigabyte Z790 AORUS MASTER | Gigabyte | 520400.0 |
+    | Epson L3260 | Epson | 525400.0 |
     | ... | ... | ... |
 
 ---
@@ -527,11 +527,11 @@ Practice combining multiple concepts.
 
     | order_id | amount | card_issuer | installment_months |
     | ----------: | ----------: | ---------- | ----------: |
-    | 293235 | 68948100.0 | 삼성카드 | 24 |
-    | 307025 | 47227200.0 | KB국민카드 | 24 |
-    | 76585 | 46052600.0 | KB국민카드 | 24 |
-    | 405306 | 46031200.0 | KB국민카드 | 24 |
-    | 18938 | 44626000.0 | 롯데카드 | 24 |
+    | 14056 | 22995900.0 | Visa | 24 |
+    | 37522 | 13678700.0 | Visa | 24 |
+    | 2471 | 13669032.0 | Mastercard | 24 |
+    | 3789 | 9690532.0 | Mastercard | 24 |
+    | 20271 | 6484600.0 | American Express | 24 |
     | ... | ... | ... | ... |
 
 ---
@@ -556,11 +556,11 @@ Practice combining multiple concepts.
 
     | name | email |
     | ---------- | ---------- |
-    | 강미경 | user16965@testmail.kr |
-    | 강미영 | user41074@testmail.kr |
-    | 강미정 | user12237@testmail.kr |
-    | 강민서 | user12355@testmail.kr |
-    | 강민서 | user17719@testmail.kr |
+    | Alexandra Thomas | user3908@testmail.kr |
+    | Alice Reese DVM | user4988@testmail.kr |
+    | Alicia Wiggins | user4089@testmail.kr |
+    | Alison Gilmore | user3138@testmail.kr |
+    | Allen West | user2493@testmail.kr |
     | ... | ... |
 
 ---
@@ -612,11 +612,11 @@ Practice combining multiple concepts.
 
     | name | price | cost_price | margin |
     | ---------- | ----------: | ----------: | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 | 4161000.0 | 3334200.0 |
-    | MacBook Air 13 M4 | 4449200.0 | 2451900.0 | 1997300.0 |
-    | Razer Blade 16 | 5518300.0 | 3703300.0 | 1815000.0 |
-    | MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 4881500.0 | 3168100.0 | 1713400.0 |
-    | Razer Blade 18 화이트 | 4913500.0 | 3251900.0 | 1661600.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 | 3205400.0 | 2275700.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 | 3037100.0 | 1489500.0 |
+    | Razer Blade 18 Black | 4353100.0 | 3047200.0 | 1305900.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 | 3296400.0 | 1200300.0 |
+    | ASUS ROG Strix G16CH White | 3671500.0 | 2480900.0 | 1190600.0 |
     | ... | ... | ... | ... |
 
 ---
@@ -647,11 +647,11 @@ Utilize multiple tables and complex conditions.
 
     | order_number | total_amount | cancelled_at |
     | ---------- | ----------: | ---------- |
-    | ORD-20191116-64149 | 43727700.0 | 2019-11-17 22:33:13 |
-    | ORD-20190330-46537 | 38907900.0 | 2019-04-01 08:28:58 |
-    | ORD-20191105-63133 | 33039100.0 | 2019-11-05 10:16:57 |
-    | ORD-20211105-162659 | 32777300.0 | 2021-11-06 22:22:58 |
-    | ORD-20230319-245317 | 30961500.0 | 2023-03-20 17:28:12 |
+    | ORD-20230523-22331 | 46094971.0 | 2023-05-24 05:50:55 |
+    | ORD-20221231-20394 | 43585700.0 | 2023-01-02 16:35:59 |
+    | ORD-20211112-14229 | 20640700.0 | 2021-11-14 07:35:09 |
+    | ORD-20250307-32312 | 18229600.0 | 2025-03-09 07:13:31 |
+    | ORD-20250924-35599 | 14735700.0 | 2025-09-25 13:46:38 |
     | ... | ... | ... |
 
 ---
@@ -675,14 +675,11 @@ Utilize multiple tables and complex conditions.
 
     | name | price | stock_qty |
     | ---------- | ----------: | ----------: |
-    | 한컴오피스 2024 기업용 실버 | 391200.0 | 0 |
-    | WD My Passport 2TB 블랙 | 329100.0 | 0 |
-    | 삼성 DDR5 32GB PC5-38400 실버 | 158000.0 | 0 |
-    | 삼성 DDR4 16GB PC4-25600 | 73600.0 | 0 |
-    | Arctic Freezer 36 A-RGB 화이트 | 27400.0 | 0 |
-    | Dell S2425HS 블랙 | 667900.0 | 1 |
-    | Dell U2723QE 실버 | 396300.0 | 1 |
-    | Arctic Liquid Freezer III 240 | 189300.0 | 1 |
+    | Arctic Freezer 36 A-RGB White | 23000.0 | 0 |
+    | Samsung SPA-KFG0BUB | 30700.0 | 4 |
+    | Samsung DDR4 32GB PC4-25600 | 91000.0 | 6 |
+    | Logitech G502 HERO Silver | 71100.0 | 8 |
+    | Norton AntiVirus Plus | 69700.0 | 8 |
     | ... | ... | ... |
 
 ---
@@ -707,14 +704,14 @@ Utilize multiple tables and complex conditions.
 
     | name | email | grade |
     | ---------- | ---------- | ---------- |
-    | 김시우 | user337@testmail.kr | BRONZE |
-    | 박민준 | user426@testmail.kr | BRONZE |
-    | 오지후 | user172@testmail.kr | BRONZE |
-    | 윤준영 | user25@testmail.kr | BRONZE |
-    | 권지우 | user169@testmail.kr | BRONZE |
-    | 정정희 | user918@testmail.kr | BRONZE |
-    | 이영식 | user43@testmail.kr | BRONZE |
-    | 전혜진 | user954@testmail.kr | BRONZE |
+    | Sara Harvey | user25@testmail.kr | BRONZE |
+    | Terry Miller DVM | user43@testmail.kr | BRONZE |
+    | Tony Jones | user77@testmail.kr | BRONZE |
+    | Russell Castillo | user66@testmail.kr | BRONZE |
+    | Amy Smith | user80@testmail.kr | BRONZE |
+    | James Booker | user172@testmail.kr | BRONZE |
+    | Jennifer Love | user169@testmail.kr | BRONZE |
+    | Tonya Torres | user101@testmail.kr | BRONZE |
     | ... | ... | ... |
 
 ---
@@ -738,11 +735,11 @@ Utilize multiple tables and complex conditions.
 
     | name | price | price_with_tax |
     | ---------- | ----------: | ----------: |
-    | Razer Blade 14 블랙 | 7495200.0 | 8244720.0 |
-    | Razer Blade 16 블랙 | 5634900.0 | 6198390.0 |
-    | Razer Blade 16 | 5518300.0 | 6070130.0 |
-    | Razer Blade 16 화이트 | 5503500.0 | 6053850.0 |
-    | Razer Blade 18 | 5450500.0 | 5995550.0 |
+    | MacBook Air 15 M3 Silver | 5481100.0 | 6029210.0 |
+    | ASUS TUF Gaming RTX 5080 White | 4526600.0 | 4979260.0 |
+    | ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 | 4946370.0 |
+    | Razer Blade 18 Black | 4353100.0 | 4788410.0 |
+    | Razer Blade 16 Silver | 3702900.0 | 4073190.0 |
     | ... | ... | ... |
 
 ---
@@ -768,11 +765,11 @@ Utilize multiple tables and complex conditions.
 
     | order_number | total_amount | ordered_at |
     | ---------- | ----------: | ---------- |
-    | ORD-20240218-293235 | 68948100.0 | 2024-02-18 20:53:49 |
-    | ORD-20240822-323378 | 64332900.0 | 2024-08-22 13:20:32 |
-    | ORD-20241013-332643 | 57772300.0 | 2024-10-13 19:57:10 |
-    | ORD-20241209-344848 | 56012148.0 | 2024-12-09 18:50:12 |
-    | ORD-20240206-291311 | 52034300.0 | 2024-02-06 15:17:20 |
+    | ORD-20240519-27622 | 33762000.0 | 2024-05-19 22:17:20 |
+    | ORD-20240920-29424 | 30446100.0 | 2024-09-20 12:04:46 |
+    | ORD-20240425-27274 | 25694900.0 | 2024-04-25 10:44:48 |
+    | ORD-20241101-30141 | 21201100.0 | 2024-11-01 20:47:38 |
+    | ORD-20240112-25581 | 18265900.0 | 2024-01-12 08:33:51 |
     | ... | ... | ... |
 
 ---
@@ -797,11 +794,11 @@ Utilize multiple tables and complex conditions.
 
     | order_number | total_amount | discount_amount | ordered_at |
     | ---------- | ----------: | ----------: | ---------- |
-    | ORD-20240913-327284 | 38829400.0 | 3737700.0 | 2024-09-13 01:31:44 |
-    | ORD-20230922-270979 | 32947100.0 | 3097300.0 | 2023-09-22 14:55:31 |
-    | ORD-20241231-350072 | 28566900.0 | 2878300.0 | 2024-12-31 20:04:20 |
-    | ORD-20210923-155344 | 26679400.0 | 2634900.0 | 2021-09-23 20:27:26 |
-    | ORD-20241209-344848 | 56012148.0 | 2305600.0 | 2024-12-09 18:50:12 |
+    | ORD-20221108-19517 | 33599000.0 | 3837300.0 | 2022-11-08 05:28:41 |
+    | ORD-20220713-17752 | 32950400.0 | 3126300.0 | 2022-07-13 16:06:23 |
+    | ORD-20180910-01979 | 32615814.0 | 2690000.0 | 2018-09-10 15:12:37 |
+    | ORD-20230930-23961 | 27295300.0 | 2248800.0 | 2023-09-30 20:13:24 |
+    | ORD-20220224-15869 | 35397700.0 | 1924100.0 | 2022-02-24 23:01:50 |
     | ... | ... | ... | ... |
 
 ---
@@ -826,11 +823,11 @@ Utilize multiple tables and complex conditions.
 
     | order_id | amount | paid_at |
     | ----------: | ----------: | ---------- |
-    | 3977 | 60810900.0 | 2016-07-30 19:21:23 |
-    | 417476 | 60038800.0 | (NULL) |
-    | 207504 | 56303700.0 | 2022-07-28 19:26:23 |
-    | 344848 | 56012148.0 | 2024-12-09 19:12:12 |
-    | 266880 | 49494600.0 | 2023-08-22 13:16:33 |
+    | 1979 | 32615814.0 | 2018-09-10 15:34:37 |
+    | 37004 | 31985600.0 | 2025-12-07 23:36:41 |
+    | 15027 | 28836100.0 | 2021-12-23 20:02:54 |
+    | 25227 | 27440200.0 | 2023-12-15 11:44:54 |
+    | 14074 | 22470000.0 | 2021-11-02 15:36:38 |
     | ... | ... | ... |
 
 ---
@@ -856,11 +853,11 @@ Utilize multiple tables and complex conditions.
 
     | name | grade | point_balance | created_at |
     | ---------- | ---------- | ----------: | ---------- |
-    | 강정식 | VIP | 348058 | 2025-03-21 04:25:02 |
-    | 박영미 | VIP | 314830 | 2025-05-02 04:12:57 |
-    | 권준혁 | VIP | 272576 | 2025-02-25 10:25:19 |
-    | 서은서 | VIP | 262093 | 2025-01-03 09:53:15 |
-    | 이순자 | VIP | 257309 | 2025-01-27 23:01:11 |
+    | Sandra Williams | VIP | 323554 | 2025-10-24 12:23:58 |
+    | Ronald Smith | VIP | 263155 | 2025-03-03 21:41:00 |
+    | Alison Kelly | VIP | 126048 | 2025-03-05 01:34:09 |
+    | Lauren Dunn | VIP | 122578 | 2025-02-07 19:27:08 |
+    | Danielle Roberts | VIP | 109984 | 2025-03-11 13:39:02 |
     | ... | ... | ... | ... |
 
 ---
@@ -885,11 +882,11 @@ Utilize multiple tables and complex conditions.
 
     | name | brand | price |
     | ---------- | ---------- | ----------: |
-    | Razer Blade 14 블랙 | Razer | 7495200.0 |
-    | Razer Blade 16 블랙 | Razer | 5634900.0 |
-    | Razer Blade 16 | Razer | 5518300.0 |
-    | Razer Blade 16 화이트 | Razer | 5503500.0 |
-    | Razer Blade 18 | Razer | 5450500.0 |
+    | MacBook Air 15 M3 Silver | Apple | 5481100.0 |
+    | Razer Blade 18 Black | Razer | 4353100.0 |
+    | Razer Blade 16 Silver | Razer | 3702900.0 |
+    | Razer Blade 18 Black | Razer | 2987500.0 |
+    | Razer Blade 18 White | Razer | 2483600.0 |
     | ... | ... | ... |
 
 ---
@@ -917,9 +914,9 @@ Utilize multiple tables and complex conditions.
 
     | name | weight_grams | weight_kg | price |
     | ---------- | ----------: | ----------: | ----------: |
-    | 한성 보스몬스터 DX7700 실버 | 19914 | 19.9 | 3230900.0 |
-    | ASUS ROG Strix GT35 실버 | 19883 | 19.9 | 2553100.0 |
-    | APC Back-UPS Pro BR1500G 실버 | 19791 | 19.8 | 340300.0 |
-    | ASUS ROG Strix GT35 화이트 | 19598 | 19.6 | 1637500.0 |
-    | ASUS ROG Strix GT35 | 19449 | 19.4 | 3296400.0 |
+    | ASUS ROG Strix GT35 | 19449 | 19.4 | 3296800.0 |
+    | Hansung BossMonster DX7700 White | 19250 | 19.3 | 1579400.0 |
+    | ASUS ROG Strix G16CH White | 16624 | 16.6 | 3671500.0 |
+    | Hansung BossMonster DX9900 Silver | 14892 | 14.9 | 739900.0 |
+    | ASUS ROG Strix G16CH Silver | 14308 | 14.3 | 1879100.0 |
     | ... | ... | ... | ... |

@@ -38,14 +38,14 @@ ORDER BY price ASC;
 
 | name | price |
 | ---------- | ----------: |
-| 기가바이트 B650M AORUS ELITE AX 실버 | 679000.0 |
-| ASUS TUF GAMING B760M-PLUS | 681200.0 |
-| 엡손 L15160 실버 | 686600.0 |
-| HP Slim Desktop S01 블랙 | 689000.0 |
-| AMD Ryzen 7 7700X | 691500.0 |
-| ASUS ROG STRIX RX 7900 XTX 화이트 | 694200.0 |
-| Adobe Acrobat Pro 1년 | 698000.0 |
-| HP Z2 Mini G1a 블랙 | 698500.0 |
+| ASRock B850M Pro RS Silver | 665600.0 |
+| ASUS ExpertCenter PN65 Silver | 722100.0 |
+| Hansung BossMonster DX9900 Silver | 739900.0 |
+| Netgear Orbi 970 Black | 762500.0 |
+| MSI MAG Z790 TOMAHAWK WIFI | 795600.0 |
+| Samsung DM500TDA Silver | 822100.0 |
+| SAPPHIRE PULSE RX 7800 XT Black | 862500.0 |
+| Dell U2724D Black | 870200.0 |
 | ... | ... |
 
 The inner query `(SELECT AVG(price) FROM products WHERE is_active = 1)` calculates the average once, then the outer query compares each product price against that value.
@@ -80,14 +80,14 @@ ORDER BY name;
 
 | name | email | grade |
 | ---------- | ---------- | ---------- |
-| 강경수 | user36521@testmail.kr | GOLD |
-| 강경숙 | user3645@testmail.kr | VIP |
-| 강경숙 | user12913@testmail.kr | SILVER |
-| 강경자 | user29357@testmail.kr | SILVER |
-| 강경자 | user37003@testmail.kr | VIP |
-| 강경희 | user16196@testmail.kr | SILVER |
-| 강도윤 | user2334@testmail.kr | BRONZE |
-| 강도윤 | user6680@testmail.kr | SILVER |
+| Adam Mcdaniel | user3712@testmail.kr | BRONZE |
+| Adam Moore | user3@testmail.kr | VIP |
+| Alan Newman | user1516@testmail.kr | VIP |
+| Alejandro Waller | user1176@testmail.kr | GOLD |
+| Alexandria Hicks | user1818@testmail.kr | BRONZE |
+| Alicia Frey | user3259@testmail.kr | VIP |
+| Allen Snyder | user226@testmail.kr | VIP |
+| Allen West | user2493@testmail.kr | GOLD |
 | ... | ... | ... |
 
 ```sql
@@ -148,10 +148,10 @@ ORDER BY avg_order_value DESC;
 
 | grade | avg_order_value |
 | ---------- | ----------: |
-| VIP | 1384755.9 |
-| GOLD | 1193210.31 |
-| SILVER | 855361.6 |
-| BRONZE | 715847.1 |
+| VIP | 1430749.76 |
+| GOLD | 1115867.67 |
+| SILVER | 881870.78 |
+| BRONZE | 690005.82 |
 
 === "SQLite"
     ```sql
@@ -243,14 +243,14 @@ LIMIT 8;
 
 | name | grade | last_order_date |
 | ---------- | ---------- | ---------- |
-| 송광수 | BRONZE | 2026-01-01 08:40:57 |
-| 류미숙 | GOLD | 2025-12-31 23:28:51 |
-| 김영미 | GOLD | 2025-12-31 23:26:03 |
-| 이영미 | SILVER | 2025-12-31 23:17:28 |
-| 조성수 | BRONZE | 2025-12-31 23:12:47 |
-| 김지우 | VIP | 2025-12-31 23:09:05 |
-| 이중수 | SILVER | 2025-12-31 23:00:56 |
-| 곽민준 | BRONZE | 2025-12-31 22:41:19 |
+| Angel Jones | BRONZE | 2025-12-31 22:25:39 |
+| Carla Watson | GOLD | 2025-12-31 21:40:27 |
+| Martin Hanson | SILVER | 2025-12-31 20:00:48 |
+| Lucas Johnson | BRONZE | 2025-12-31 18:43:56 |
+| Adam Moore | BRONZE | 2025-12-31 18:00:24 |
+| Justin Murphy | VIP | 2025-12-31 15:43:23 |
+| Sara Hill | GOLD | 2025-12-31 15:33:05 |
+| David York | GOLD | 2025-12-31 15:08:54 |
 | ... | ... | ... |
 
 > Scalar subqueries in `SELECT` execute per row, so they can be slow on large tables. When performance matters, use `LEFT JOIN` with aggregation instead.
@@ -290,14 +290,14 @@ Find orders that have never had a completed payment. Use a `NOT IN` subquery to 
 
 | order_number | total_amount | status |
 | ---------- | ----------: | ---------- |
-| ORD-20251230-417476 | 60038800.0 | pending |
-| ORD-20241013-332643 | 57772300.0 | returned |
-| ORD-20191116-64149 | 43727700.0 | cancelled |
-| ORD-20200726-92225 | 41273300.0 | return_requested |
-| ORD-20190330-46537 | 38907900.0 | cancelled |
-| ORD-20230320-245599 | 38678800.0 | return_requested |
-| ORD-20200205-72088 | 37301800.0 | return_requested |
-| ORD-20160622-03380 | 35300200.0 | returned |
+| ORD-20230523-22331 | 46094971.0 | cancelled |
+| ORD-20221231-20394 | 43585700.0 | cancelled |
+| ORD-20211112-14229 | 20640700.0 | cancelled |
+| ORD-20200316-05860 | 19280300.0 | return_requested |
+| ORD-20250424-33207 | 19179500.0 | return_requested |
+| ORD-20250307-32312 | 18229600.0 | cancelled |
+| ORD-20190519-03402 | 15130700.0 | returned |
+| ORD-20250924-35599 | 14735700.0 | cancelled |
 | ... | ... | ... |
 
 
@@ -319,14 +319,14 @@ Query orders with amounts greater than the overall average order amount. Return 
 
 | order_number | total_amount |
 | ---------- | ----------: |
-| ORD-20230408-248697 | 71906300.0 |
-| ORD-20240218-293235 | 68948100.0 |
-| ORD-20240822-323378 | 64332900.0 |
-| ORD-20180516-26809 | 63466900.0 |
-| ORD-20200429-82365 | 61889000.0 |
-| ORD-20230626-259827 | 61811500.0 |
-| ORD-20160730-03977 | 60810900.0 |
-| ORD-20251230-417476 | 60038800.0 |
+| ORD-20201121-08810 | 50867500.0 |
+| ORD-20250305-32265 | 46820024.0 |
+| ORD-20230523-22331 | 46094971.0 |
+| ORD-20200209-05404 | 43677500.0 |
+| ORD-20221231-20394 | 43585700.0 |
+| ORD-20251218-37240 | 38626400.0 |
+| ORD-20220106-15263 | 37987600.0 |
+| ORD-20200820-07684 | 37518200.0 |
 | ... | ... |
 
 
@@ -353,14 +353,14 @@ Use a scalar subquery in the `SELECT` clause to find each product's name and its
 
 | product_name | price | review_count |
 | ---------- | ----------: | ----------: |
-| 로지텍 G PRO X SUPERLIGHT 2 실버 | 49400.0 | 137 |
-| Arctic Freezer i35 화이트 | 31800.0 | 121 |
-| Keychron Q1 Pro 실버 | 178600.0 | 116 |
-| SteelSeries Aerox 5 Wireless 실버 | 61500.0 | 114 |
-| 로지텍 G502 X PLUS 화이트 | 91400.0 | 112 |
-| Crucial T700 2TB 실버 | 37100.0 | 111 |
-| SteelSeries Aerox 5 Wireless 실버 | 101400.0 | 106 |
-| Arctic Freezer i35 블랙 | 44600.0 | 106 |
+| SteelSeries Prime Wireless Silver | 95900.0 | 105 |
+| Kingston FURY Beast DDR4 16GB Silver | 48000.0 | 102 |
+| Logitech G502 X PLUS | 97500.0 | 101 |
+| SteelSeries Aerox 5 Wireless Silver | 100000.0 | 100 |
+| Ducky One 3 TKL White | 189100.0 | 89 |
+| Samsung SPA-KFG0BUB Silver | 21900.0 | 82 |
+| SteelSeries Prime Wireless Black | 89800.0 | 80 |
+| Crucial T700 2TB Silver | 257000.0 | 77 |
 | ... | ... | ... |
 
 
@@ -388,14 +388,14 @@ Find all products priced above the average price within their own category. Use 
 
 | product_name | price | category_id |
 | ---------- | ----------: | ----------: |
-| LG 데스크톱 B80GV 블랙 | 2887600.0 | 2 |
-| 삼성 올인원 DM530ABE 화이트 | 2743700.0 | 2 |
-| 레노버 ThinkStation P3 화이트 | 2685300.0 | 2 |
-| 삼성 DM500TEA 블랙 | 2598300.0 | 2 |
-| HP EliteDesk 800 G9 | 2469400.0 | 2 |
-| 삼성 DM500TEA 블랙 | 2465800.0 | 2 |
-| Dell Inspiron Desktop 실버 | 2361400.0 | 2 |
-| 삼성 DM500TDA | 2332400.0 | 2 |
+| LG All-in-One PC 27V70Q Silver | 1093200.0 | 2 |
+| ASUS ROG Strix G16CH White | 3671500.0 | 3 |
+| ASUS ROG Strix GT35 | 3296800.0 | 3 |
+| ASUS ROG Strix G16CH Silver | 1879100.0 | 3 |
+| Jooyon Rionine i9 High-End | 1849900.0 | 3 |
+| ASUS ExpertBook B5 [Special Limited Edition] RGB lighting equipped, software customization supported | 2121600.0 | 6 |
+| HP EliteBook 840 G10 Black [Special Limited Edition] Extended 3-year warranty + exclusive carrying case included | 2080300.0 | 6 |
+| ASUS ExpertBook B5 White | 2068800.0 | 6 |
 | ... | ... | ... |
 
 
@@ -452,14 +452,14 @@ Use a `FROM` subquery to first calculate the average product price per category,
 
 | category_name | avg_price |
 | ---------- | ----------: |
-| 맥북 | 3292633.33 |
-| 게이밍 노트북 | 2966560.61 |
-| NVIDIA | 2429036.96 |
-| 조립PC | 2210358.7 |
-| 일반 노트북 | 1739673.49 |
-| 2in1 | 1565324.44 |
-| 완제품 | 1504925.68 |
-| 전문가용 모니터 | 1328097.96 |
+| MacBook | 5481100.0 |
+| Gaming Laptop | 2887583.33 |
+| NVIDIA | 2207600.0 |
+| Custom Build | 1836466.67 |
+| General Laptop | 1794812.5 |
+| Professional Monitor | 1492983.33 |
+| 2-in-1 | 1417242.86 |
+| AMD | 1214266.67 |
 | ... | ... |
 
 
@@ -484,14 +484,14 @@ Use a `FROM` subquery to first calculate the average product price per category,
 
 | product_name | price |
 | ---------- | ----------: |
-| Razer Blade 14 블랙 | 7495200.0 |
-| Razer Blade 16 블랙 | 5634900.0 |
-| Razer Blade 16 | 5518300.0 |
-| Razer Blade 16 화이트 | 5503500.0 |
-| Razer Blade 18 | 5450500.0 |
-| Razer Blade 14 | 5339100.0 |
-| Razer Blade 16 실버 | 5127500.0 |
-| Razer Blade 16 블랙 | 4938200.0 |
+| MacBook Air 15 M3 Silver | 5481100.0 |
+| ASUS TUF Gaming RTX 5080 White | 4526600.0 |
+| ASUS Dual RTX 5070 Ti [Special Limited Edition] Low-noise design, energy efficiency rated, eco-friendly packaging | 4496700.0 |
+| Razer Blade 18 Black | 4353100.0 |
+| Razer Blade 16 Silver | 3702900.0 |
+| ASUS ROG Strix G16CH White | 3671500.0 |
+| ASUS ROG Zephyrus G16 | 3429900.0 |
+| ASUS ROG Strix GT35 | 3296800.0 |
 | ... | ... |
 
 
@@ -523,14 +523,14 @@ Use a `FROM` subquery to find the top 10 customers by number of completed orders
 
 | name | grade | order_count | total_spent |
 | ---------- | ---------- | ----------: | ----------: |
-| 박정수 | VIP | 650 | 649737670.0 |
-| 문영숙 | VIP | 537 | 507339847.0 |
-| 정유진 | VIP | 536 | 636671422.0 |
-| 이미정 | VIP | 516 | 610700757.0 |
-| 김상철 | VIP | 508 | 556233023.0 |
-| 이영자 | VIP | 496 | 503242976.0 |
-| 이미정 | VIP | 431 | 484724576.0 |
-| 김병철 | VIP | 427 | 424564320.0 |
+| Jason Rivera | VIP | 340 | 362705631.0 |
+| Allen Snyder | VIP | 302 | 403081258.0 |
+| Gabriel Walters | VIP | 275 | 230165991.0 |
+| Brenda Garcia | VIP | 249 | 253180338.0 |
+| James Banks | VIP | 230 | 234708853.0 |
+| Courtney Huff | VIP | 223 | 244604910.0 |
+| Ronald Arellano | VIP | 219 | 235775349.0 |
+| Michael Duncan | VIP | 188 | 184685776.0 |
 | ... | ... | ... | ... |
 
 
@@ -565,14 +565,14 @@ Find customers whose order count exceeds the overall average order count per cus
 
 | customer_id | order_count |
 | ----------: | ----------: |
-| 226 | 713 |
-| 840 | 589 |
-| 356 | 585 |
-| 1000 | 559 |
-| 98 | 551 |
-| 903 | 550 |
-| 97 | 471 |
-| 549 | 467 |
+| 97 | 366 |
+| 226 | 328 |
+| 98 | 307 |
+| 162 | 266 |
+| 227 | 246 |
+| 356 | 237 |
+| 549 | 234 |
+| 259 | 199 |
 | ... | ... |
 
 

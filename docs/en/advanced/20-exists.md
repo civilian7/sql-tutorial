@@ -71,11 +71,17 @@ LIMIT 10;
 
 **Result (example):**
 
-| id   | name | email                | created_at          |
-| ---: | ---- | -------------------- | ------------------- |
-| 4933 | 윤예준  | user4933@testmail.kr | 2025-12-30 20:40:58 |
-| 5222 | 유동현  | user5222@testmail.kr | 2025-12-30 10:18:14 |
-| ...  | ...  | ...                  | ...                 |
+| id | name | email | created_at |
+| ----------: | ---------- | ---------- | ---------- |
+| 4559 | Robert Simmons | user4559@testmail.kr | 2025-12-30 20:49:59 |
+| 4853 | Olivia Watson | user4853@testmail.kr | 2025-12-30 18:50:02 |
+| 5181 | Jennifer Mcgrath | user5181@testmail.kr | 2025-12-30 10:18:14 |
+| 5225 | Nicholas Richardson | user5225@testmail.kr | 2025-12-30 06:02:53 |
+| 4546 | Warren Olsen | user4546@testmail.kr | 2025-12-30 05:59:32 |
+| 4887 | Bradley Daugherty | user4887@testmail.kr | 2025-12-30 05:43:21 |
+| 5221 | Michael Moore | user5221@testmail.kr | 2025-12-29 17:18:36 |
+| 4554 | Erin Pena | user4554@testmail.kr | 2025-12-29 05:52:39 |
+| ... | ... | ... | ... |
 
 ```sql
 -- Products on someone's wishlist but never purchased
@@ -119,12 +125,17 @@ LIMIT 8;
 
 **Result (example):**
 
-| id   | name | grade | has_orders | has_reviews | has_complaints |
-| ---: | ---- | ----- | ---------- | ----------- | -------------- |
-| 2103 | 강경희  | GOLD  | Yes         | Yes          | Yes             |
-| 1492 | 강도윤  | VIP   | Yes         | Yes          | Yes             |
-| 2606 | 강도현  | GOLD  | Yes         | Yes          | Yes             |
-| ...  | ...  | ...   | ...        | ...         | ...            |
+| id | name | grade | has_orders | has_reviews | has_complaints |
+| ----------: | ---------- | ---------- | ---------- | ---------- | ---------- |
+| 3365 | Aaron Gillespie | GOLD | Yes | Yes | Yes |
+| 3282 | Aaron Medina | GOLD | Yes | No | Yes |
+| 4969 | Aaron Powell | GOLD | Yes | Yes | No |
+| 2324 | Aaron Ryan | GOLD | Yes | Yes | Yes |
+| 4233 | Abigail Richardson | VIP | Yes | Yes | No |
+| 2066 | Adam Johnson | VIP | Yes | Yes | Yes |
+| 3 | Adam Moore | VIP | Yes | Yes | Yes |
+| 789 | Adrian Davis | GOLD | Yes | Yes | Yes |
+| ... | ... | ... | ... | ... | ... |
 
 ## Multi-Condition EXISTS
 
@@ -278,14 +289,17 @@ Use `NOT EXISTS` to implement an anti-join to find orders where shipping has bee
 
     **Result (example):**
 
-    | order_number       | ordered_at          | status  | carrier | shipped_at          |
-    | ------------------ | ------------------- | ------- | ------- | ------------------- |
-    | ORD-20250624-34824 | 2025-06-24 19:12:48 | shipped | 한진택배    | 2025-06-27 19:12:48 |
-    | ORD-20250624-34828 | 2025-06-24 19:43:51 | shipped | CJ대한통운  | 2025-06-26 19:43:51 |
-    | ORD-20250624-34826 | 2025-06-24 19:48:54 | shipped | 한진택배    | 2025-06-25 19:48:54 |
-    | ORD-20250623-34821 | 2025-06-23 19:04:07 | shipped | 한진택배    | 2025-06-25 19:04:07 |
-    | ORD-20250622-34810 | 2025-06-22 08:01:21 | shipped | 우체국택배   | 2025-06-25 08:01:21 |
-    | ...                | ...                 | ...     | ...     | ...                 |
+| order_number | ordered_at | status | carrier | shipped_at |
+| ---------- | ---------- | ---------- | ---------- | ---------- |
+| ORD-20251225-37402 | 2025-12-25 22:53:08 | shipped | OnTrac | 2025-12-28 22:53:08 |
+| ORD-20251225-37410 | 2025-12-25 22:48:04 | shipped | USPS | 2025-12-28 22:48:04 |
+| ORD-20251225-37403 | 2025-12-25 18:40:27 | shipped | DHL | 2025-12-28 18:40:27 |
+| ORD-20251224-37398 | 2025-12-24 19:58:48 | shipped | DHL | 2025-12-27 19:58:48 |
+| ORD-20251225-37408 | 2025-12-25 18:14:11 | shipped | FedEx | 2025-12-27 18:14:11 |
+| ORD-20251225-37406 | 2025-12-25 17:53:34 | shipped | FedEx | 2025-12-27 17:53:34 |
+| ORD-20251225-37416 | 2025-12-25 23:23:43 | shipped | UPS | 2025-12-26 23:23:43 |
+| ORD-20251223-37362 | 2025-12-23 22:26:31 | shipped | DHL | 2025-12-26 22:26:31 |
+| ... | ... | ... | ... | ... |
 
 
 ### Problem 2
@@ -309,14 +323,17 @@ Use `EXISTS` with correlated subqueries to find products that have both a 5-star
 
     **Result (example):**
 
-    | product_id | product_name                        | price  |
-    | ---------: | ----------------------------------- | -----: |
-    |         44 | AMD Ryzen 9 9900X                   | 244800 |
-    |        171 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 408800 |
-    |        140 | ASRock B850M Pro RS 블랙              | 201900 |
-    |         47 | ASRock B850M Pro RS 실버              | 533600 |
-    |        164 | ASRock B850M Pro RS 화이트             | 426500 |
-    | ...        | ...                                 | ...    |
+| product_id | product_name | price |
+| ----------: | ---------- | ----------: |
+| 44 | AMD Ryzen 9 9900X | 335700.0 |
+| 251 | AMD Ryzen 9 9900X | 591800.0 |
+| 171 | APC Back-UPS Pro Gaming BGM1500B Black | 516300.0 |
+| 140 | ASRock B850M Pro RS Black | 201000.0 |
+| 47 | ASRock B850M Pro RS Silver | 665600.0 |
+| 164 | ASRock B850M Pro RS White | 419600.0 |
+| 149 | ASRock B860M Pro RS Silver | 351700.0 |
+| 94 | ASRock B860M Pro RS White | 610100.0 |
+| ... | ... | ... |
 
 
 ### Problem 3
@@ -366,14 +383,17 @@ Use `NOT EXISTS` to find customers who have never written a review but have plac
 
     **Result (example):**
 
-    | customer_id | name | grade  | order_count |
-    | ----------: | ---- | ------ | ----------: |
-    |        3132 | 이진호  | VIP    |          16 |
-    |         380 | 김영환  | SILVER |          14 |
-    |        2358 | 김민준  | SILVER |          14 |
-    |         982 | 남성민  | BRONZE |          13 |
-    |        1525 | 배민석  | BRONZE |          13 |
-    | ...         | ...  | ...    | ...         |
+| customer_id | name | grade | order_count |
+| ----------: | ---------- | ---------- | ----------: |
+| 494 | Amanda Smith | GOLD | 22 |
+| 124 | Paul Wilson | BRONZE | 13 |
+| 2164 | Kristy Nguyen | SILVER | 13 |
+| 1207 | Kevin Garcia | SILVER | 12 |
+| 1620 | Alexander Aguirre | BRONZE | 12 |
+| 2236 | Kayla Davis | BRONZE | 12 |
+| 2487 | Larry Kim | BRONZE | 12 |
+| 3393 | Claudia Buck DDS | GOLD | 11 |
+| ... | ... | ... | ... |
 
 
 ### Problem 5
@@ -441,14 +461,17 @@ Combine `EXISTS` with aggregate conditions to find categories that have at least
 
     **Result (example):**
 
-    | category_name | product_count |
-    | ------------- | ------------: |
-    | 2in1          |             7 |
-    | AMD           |             6 |
-    | AMD 소켓        |             9 |
-    | DDR4          |             5 |
-    | DDR5          |             8 |
-    | ...           | ...           |
+| category_name | product_count |
+| ---------- | ----------: |
+| 2-in-1 | 7 |
+| AMD | 2 |
+| AMD | 6 |
+| AMD Socket | 9 |
+| Air Cooling | 5 |
+| Barebone | 1 |
+| Case | 10 |
+| Custom Build | 9 |
+| ... | ... |
 
 
 ### Problem 7
@@ -477,14 +500,17 @@ Find all wishlist products that the customer has **not yet purchased**. Return `
 
     **Result (example):**
 
-    | customer_name | product_name                                    | created_at          |
-    | ------------- | ----------------------------------------------- | ------------------- |
-    | 윤예준           | 엡손 L6290 블랙                                     | 2025-12-30 20:40:58 |
-    | 나병철           | CORSAIR Dominator Titanium DDR5 32GB 7200MHz 실버 | 2025-12-30 05:21:30 |
-    | 김영미           | MSI MEG Ai1300P PCIE5 화이트                       | 2025-12-28 09:52:47 |
-    | 김민지           | APC Back-UPS Pro Gaming BGM1500B 블랙             | 2025-12-28 07:10:13 |
-    | 김주원           | MSI MEG Z790 ACE 실버                             | 2025-12-26 17:47:03 |
-    | ...           | ...                                             | ...                 |
+| customer_name | product_name | created_at |
+| ---------- | ---------- | ---------- |
+| Olivia Watson | Jooyon Rionine Mini PC | 2025-12-30 19:11:10 |
+| Kyle Ferguson | Samsung Galaxy Book4 360 Black | 2025-12-30 17:42:08 |
+| James Mcgrath | TP-Link TL-SG108 | 2025-12-30 11:47:20 |
+| Nathaniel Martinez | Seagate IronWolf 4TB Black | 2025-12-30 10:41:18 |
+| Bryan Powers | SK hynix Platinum P41 2TB Black | 2025-12-30 10:16:54 |
+| Warren Olsen | TeamGroup T-Force Vulcan DDR5 32GB 5200MHz | 2025-12-30 09:25:54 |
+| Alexander Logan | APC Back-UPS Pro Gaming BGM1500B Black | 2025-12-30 06:38:37 |
+| Kevin Rivera | Hancom Office 2024 Enterprise Silver | 2025-12-30 05:38:13 |
+| ... | ... | ... |
 
 
 ### Problem 8
@@ -545,14 +571,17 @@ Find customers who have both filed complaints and have return history. Return `c
 
     **Result (example):**
 
-    | customer_id | name | grade | complaint_count | return_count |
-    | ----------: | ---- | ----- | --------------: | -----------: |
-    |          98 | 이영자  | VIP   |              44 |           13 |
-    |          97 | 김병철  | VIP   |              33 |            8 |
-    |         227 | 김성민  | VIP   |              26 |            8 |
-    |         549 | 이미정  | VIP   |              22 |           11 |
-    |         226 | 박정수  | VIP   |              18 |            9 |
-    | ...         | ...  | ...   | ...             | ...          |
+| customer_id | name | grade | complaint_count | return_count |
+| ----------: | ---------- | ---------- | ----------: | ----------: |
+| 98 | Gabriel Walters | VIP | 29 | 15 |
+| 97 | Jason Rivera | VIP | 25 | 10 |
+| 162 | Brenda Garcia | VIP | 24 | 1 |
+| 226 | Allen Snyder | VIP | 19 | 9 |
+| 356 | Courtney Huff | VIP | 19 | 3 |
+| 549 | Ronald Arellano | VIP | 19 | 6 |
+| 517 | April Rasmussen | SILVER | 18 | 4 |
+| 1355 | Robert Williams | GOLD | 18 | 6 |
+| ... | ... | ... | ... | ... |
 
 
 ### Problem 10

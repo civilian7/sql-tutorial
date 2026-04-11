@@ -39,11 +39,11 @@ LIMIT 5;
 
 | name | gender |
 | ---------- | ---------- |
-| 정준호 | M |
-| 김민재 | M |
-| 진정자 | F |
-| 이정수 | M |
-| 김준혁 | M |
+| Joshua Atkins | M |
+| Adam Moore | M |
+| Virginia Steele | F |
+| Jared Vazquez | M |
+| Benjamin Skinner | M |
 | ... | ... |
 
 ## IS NULL and IS NOT NULL
@@ -60,11 +60,11 @@ LIMIT 5;
 
 | order_number | total_amount |
 | ---------- | ----------: |
-| ORD-20160101-00001 | 161900.0 |
-| ORD-20160101-00002 | 493200.0 |
-| ORD-20160101-00003 | 465500.0 |
-| ORD-20160101-00004 | 355400.0 |
-| ORD-20160101-00005 | 4542200.0 |
+| ORD-20160101-00001 | 167000.0 |
+| ORD-20160102-00003 | 704800.0 |
+| ORD-20160103-00004 | 167000.0 |
+| ORD-20160105-00008 | 916600.0 |
+| ORD-20160106-00009 | 167000.0 |
 | ... | ... |
 
 ```sql
@@ -93,14 +93,14 @@ LIMIT 8;
 
 | name | gender_display |
 | ---------- | ---------- |
-| 정준호 | M |
-| 김경수 | Not provided |
-| 김민재 | M |
-| 진정자 | F |
-| 이정수 | M |
-| 김준혁 | M |
-| 김명자 | F |
-| 성민석 | F |
+| Joshua Atkins | M |
+| Danny Johnson | Not provided |
+| Adam Moore | M |
+| Virginia Steele | F |
+| Jared Vazquez | M |
+| Benjamin Skinner | M |
+| Ashley Jones | F |
+| Tyler Rodriguez | F |
 | ... | ... |
 
 ```sql
@@ -117,10 +117,10 @@ LIMIT 5;
 | order_number | delivery_note |
 | ---------- | ---------- |
 | ORD-20160101-00001 | No special instructions |
-| ORD-20160101-00002 | No special instructions |
-| ORD-20160101-00003 | No special instructions |
-| ORD-20160101-00004 | No special instructions |
-| ORD-20160101-00005 | No special instructions |
+| ORD-20160102-00002 | Deliver to the office front desk |
+| ORD-20160102-00003 | No special instructions |
+| ORD-20160103-00004 | No special instructions |
+| ORD-20160103-00005 | Do not ring the bell (baby sleeping) |
 | ... | ... |
 
 ## NULLIF
@@ -146,10 +146,10 @@ GROUP BY grade;
 
 | grade | total | inactive | pct_inactive |
 | ---------- | ----------: | ----------: | ----------: |
-| BRONZE | 38150 | 15535 | 40.7 |
-| GOLD | 5159 | 0 | 0.0 |
-| SILVER | 5105 | 0 | 0.0 |
-| VIP | 3886 | 0 | 0.0 |
+| BRONZE | 3859 | 1570 | 40.7 |
+| GOLD | 524 | 0 | 0.0 |
+| SILVER | 479 | 0 | 0.0 |
+| VIP | 368 | 0 | 0.0 |
 
 ## Aggregate Functions and NULL
 
@@ -278,7 +278,7 @@ From the `staff` table, retrieve the `name`, `department`, and `role` of employe
 
 | name | department | role |
 | ---------- | ---------- | ---------- |
-| 한민재 | 경영 | admin |
+| Michael Thomas | Management | admin |
 
 
 ### Problem 2
@@ -312,11 +312,11 @@ Using `NULLIF`, safely calculate the price-to-stock ratio for products in the `p
 
 | name | price | stock_qty | price_per_unit |
 | ---------- | ----------: | ----------: | ----------: |
-| Razer Blade 18 블랙 | 3730900.0 | 107 | 34868.22429906542 |
+| Razer Blade 18 Black | 2987500.0 | 107 | 27920.560747663552 |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 | 3494.9899799599198 |
-| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 | 128.41225626740948 |
-| Dell U2724D | 865000.0 | 337 | 2566.7655786350147 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 | 2744.0677966101694 |
+| Samsung DDR4 32GB PC4-25600 | 43500.0 | 359 | 121.16991643454038 |
+| Dell U2724D | 894100.0 | 337 | 2653.1157270029676 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz White | 167000.0 | 59 | 2830.508474576271 |
 | ... | ... | ... | ... |
 
 
@@ -338,14 +338,14 @@ From the `customers` table, retrieve the `name`, `email`, and `created_at` of cu
 
 | name | email | created_at |
 | ---------- | ---------- | ---------- |
-| 윤준영 | user25@testmail.kr | 2016-02-03 04:18:52 |
-| 이영식 | user43@testmail.kr | 2016-02-23 17:09:54 |
-| 송서준 | user66@testmail.kr | 2016-05-07 02:57:58 |
-| 김지우 | user77@testmail.kr | 2016-04-29 00:44:20 |
-| 박아름 | user80@testmail.kr | 2016-08-13 13:52:58 |
-| 김정훈 | user101@testmail.kr | 2016-04-07 22:00:58 |
-| 이경수 | user107@testmail.kr | 2016-11-30 07:23:31 |
-| 이옥순 | user113@testmail.kr | 2016-07-08 04:23:22 |
+| Sara Harvey | user25@testmail.kr | 2016-02-03 04:18:52 |
+| Terry Miller DVM | user43@testmail.kr | 2016-02-23 17:09:54 |
+| Russell Castillo | user66@testmail.kr | 2016-05-07 02:57:58 |
+| Tony Jones | user77@testmail.kr | 2016-04-29 00:44:20 |
+| Amy Smith | user80@testmail.kr | 2016-08-13 13:52:58 |
+| Tonya Torres | user101@testmail.kr | 2017-04-08 22:00:58 |
+| Paula Allen | user107@testmail.kr | 2017-12-01 07:23:31 |
+| Steven Bailey | user113@testmail.kr | 2017-07-09 04:23:22 |
 | ... | ... | ... |
 
 
@@ -368,14 +368,14 @@ Retrieve all orders without an assigned staff member (`staff_id IS NULL`). Displ
 
 | order_number | status | notes |
 | ---------- | ---------- | ---------- |
-| ORD-20251211-413965 | pending | — |
-| ORD-20251226-416837 | pending | — |
-| ORD-20251231-417734 | pending | 파손 주의 부탁드립니다 |
-| ORD-20251231-417737 | pending | — |
-| ORD-20251231-417735 | pending | — |
-| ORD-20251231-417677 | pending | — |
-| ORD-20251231-417764 | pending | — |
-| ORD-20251231-417730 | pending | — |
+| ORD-20251231-37555 | pending | — |
+| ORD-20251231-37543 | pending | Please knock gently |
+| ORD-20251231-37552 | pending | — |
+| ORD-20251231-37548 | pending | — |
+| ORD-20251231-37542 | pending | Deliver to the office front desk |
+| ORD-20251231-37546 | pending | Leave with the doorman/concierge |
+| ORD-20251231-37547 | pending | Handle with care — fragile |
+| ORD-20251231-37556 | pending | — |
 | ... | ... | ... |
 
 
@@ -397,14 +397,14 @@ Query the number of customers with confirmed gender and those with unspecified g
 
 | grade | gender_status | customer_count |
 | ---------- | ---------- | ----------: |
-| BRONZE | F | 12614 |
-| BRONZE | M | 21359 |
-| BRONZE | Unknown | 4177 |
-| GOLD | F | 1433 |
-| GOLD | M | 3316 |
-| GOLD | Unknown | 410 |
-| SILVER | F | 1491 |
-| SILVER | M | 3171 |
+| BRONZE | F | 1302 |
+| BRONZE | M | 2128 |
+| BRONZE | Unknown | 429 |
+| GOLD | F | 140 |
+| GOLD | M | 343 |
+| GOLD | Unknown | 41 |
+| SILVER | F | 141 |
+| SILVER | M | 293 |
 | ... | ... | ... |
 
 
@@ -423,7 +423,7 @@ From the `orders` table, count the number of orders where `cancelled_at` is NULL
 
 | not_cancelled | cancelled |
 | ----------: | ----------: |
-| 396785 | 21018 |
+| 35698 | 1859 |
 
 
 ### Problem 8
@@ -442,7 +442,7 @@ From the `products` table, find the number of products with NULL `weight_grams` 
 
 | total_products | missing_weight | pct_missing |
 | ----------: | ----------: | ----------: |
-| 2800 | 148 | 5.3 |
+| 280 | 12 | 4.3 |
 
 
 ### Problem 9
@@ -462,8 +462,8 @@ From the `reviews` table, calculate the average `rating` for reviews where `cont
 
 | content_status | review_count | avg_rating |
 | ---------- | ----------: | ----------: |
-| Has Content | 85770 | 3.902261863122304 |
-| No Content | 9587 | 3.9105038072389693 |
+| Has Content | 7708 | 3.9021795537104307 |
+| No Content | 838 | 3.9307875894988067 |
 
 
 ### Problem 10
@@ -483,7 +483,7 @@ Find the count of customers missing birth date, gender, and login history respec
 
 | total_customers | missing_birth_date | missing_gender | never_logged_in |
 | ----------: | ----------: | ----------: | ----------: |
-| 52300 | 7793 | 5232 | 2686 |
+| 5230 | 738 | 529 | 281 |
 
 
 
