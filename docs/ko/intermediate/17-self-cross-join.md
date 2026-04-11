@@ -1,6 +1,9 @@
 # 17강: SELF JOIN과 CROSS JOIN
 
-지금까지 서로 다른 테이블 간의 JOIN을 배웠습니다. 이 강에서는 **같은 테이블을 자기 자신과 결합**하는 SELF JOIN과, **모든 행의 조합**을 만드는 CROSS JOIN을 다룹니다. 두 기법 모두 실무에서 자주 등장하며, 특히 계층 구조와 비교 분석에 필수적입니다.
+[7~8강](07-inner-join.md)에서 INNER JOIN과 LEFT JOIN으로 서로 다른 테이블을 연결했습니다. 이번에는 특수한 JOIN 두 가지를 배웁니다. SELF JOIN은 같은 테이블을 자기 자신과 연결하고(매니저-직원 관계), CROSS JOIN은 모든 조합을 만듭니다(날짜x카테고리).
+
+!!! note "이미 알고 계신다면"
+    SELF JOIN, CROSS JOIN에 익숙하다면 [18강: 윈도우 함수](../advanced/18-window.md)로 건너뛰세요.
 
 ```mermaid
 flowchart TD
@@ -332,6 +335,17 @@ ORDER BY c.date_key;
 
 ---
 
+## 정리
+
+| JOIN 유형 | 설명 | 대표 사용 사례 |
+|-----------|------|----------------|
+| SELF JOIN | 같은 테이블에 서로 다른 별칭을 붙여 JOIN | 매니저-직원, 카테고리 부모-자식, 같은 조건의 쌍 비교 |
+| CROSS JOIN | 양쪽 모든 행의 조합 (M x N) | 날짜x카테고리 매트릭스, 전체 합계 비율 계산 |
+| SELF JOIN + `id < id` | 중복 쌍 제거 (A-B와 B-A 중 하나만) | 같은 부서 직원 쌍, 같은 등급 고객 쌍 |
+| CROSS JOIN + LEFT JOIN | 빈 셀도 포함하는 완전한 보고서 | 월별x카테고리 매출 (매출 없는 셀 = 0) |
+
+---
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
@@ -650,9 +664,6 @@ ORDER BY c.date_key;
         ORDER BY qr.q, m.method;
         ```
 
-다음: [강의 18: 윈도우 함수(Window Functions)](../advanced/18-window.md)
-
-
 ### 연습 8: 월-공급업체 CROSS JOIN 보고서
 
 2024년 각 월과 각 공급업체의 조합에 대해, 해당 월의 입고 수량을 보여주세요. 입고가 없는 셀은 0으로 표시합니다.
@@ -817,3 +828,21 @@ ORDER BY c.date_key;
     | BRONZE | 네트워크 장비  |        1148 |
     | BRONZE | 노트북      |         827 |
     | ...    | ...      | ...         |
+
+
+!!! tip "채점 기준"
+    | 기준 | 배점 |
+    |------|------|
+    | 연습 1: SELF JOIN + LEFT JOIN 조직도 (매니저 NULL 포함) | 11점 |
+    | 연습 2: SELF JOIN + `id < id` 중복 쌍 제거 | 11점 |
+    | 연습 3: SELF JOIN + 등급 조건 + LIMIT | 11점 |
+    | 연습 4: SELF JOIN + ABS 가격 차이 계산 | 11점 |
+    | 연습 5: SELF JOIN + 같은 고객 서로 다른 주소 | 12점 |
+    | 연습 6: CROSS JOIN 서브쿼리 + 비율 계산 | 11점 |
+    | 연습 7: CROSS JOIN + CTE + LEFT JOIN 매트릭스 보고서 | 11점 |
+    | 연습 8: CROSS JOIN + LEFT JOIN 월-공급업체 보고서 | 11점 |
+    | 연습 9: CROSS JOIN + LEFT JOIN 등급-카테고리 보고서 | 11점 |
+    | **합계** | **100점** |
+
+---
+다음: [18강: 윈도우 함수](../advanced/18-window.md)

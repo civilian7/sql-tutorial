@@ -137,6 +137,27 @@ FROM products;
 | Razer Blade 18 블랙 | 2987500 | KRW |
 | ... | ... | ... |
 
+### 테이블 별칭
+
+`AS`는 칼럼뿐 아니라 **테이블에도** 별칭을 붙일 수 있습니다. 지금은 테이블 하나만 쓰니 필요 없어 보이지만, 7강(JOIN)에서 여러 테이블을 합칠 때 반드시 사용합니다.
+
+```sql
+-- products 테이블에 p라는 별칭을 붙임
+SELECT p.name, p.price
+FROM products AS p;
+```
+
+`products.name` 대신 `p.name`으로 짧게 쓸 수 있습니다. `AS`는 생략해도 됩니다:
+
+```sql
+-- AS 생략 (같은 결과)
+SELECT p.name, p.price
+FROM products p;
+```
+
+!!! tip "미리 알아두기"
+    7강에서 `SELECT p.name, c.name FROM products p JOIN categories c ON ...`처럼 쓰게 됩니다. 두 테이블 모두 `name` 칼럼이 있으면 `p.name`과 `c.name`으로 구분해야 합니다. 지금은 "테이블에도 별칭을 붙일 수 있다"는 것만 기억하세요.
+
 ---
 
 ## 산술 연산
@@ -237,6 +258,7 @@ FROM customers;
 | `SELECT *` | 모든 칼럼 조회 | `SELECT * FROM products` |
 | `SELECT 칼럼1, 칼럼2` | 특정 칼럼만 조회 | `SELECT name, price FROM products` |
 | `AS 별칭` | 결과 칼럼 이름 변경 | `SELECT name AS 상품명` |
+| `FROM 테이블 AS t` | 테이블 별칭 (JOIN 시 필수) | `FROM products p` |
 | 산술 연산 | 계산 결과를 칼럼으로 | `SELECT price * 0.9 AS 할인가` |
 | `DISTINCT` | 중복 제거 | `SELECT DISTINCT grade FROM customers` |
 

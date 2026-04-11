@@ -24,26 +24,53 @@ flowchart LR
 | `>`, `>=` | 초과, 이상 |
 
 ```sql
--- 가격이 50만 원 이상인 상품
-SELECT name, price
-FROM products
-WHERE price > 500;
+-- = : VIP 등급 고객만 조회
+SELECT name, grade FROM customers
+WHERE grade = 'VIP';
 ```
-
-**결과:**
-
-| name                                   | price   |
-| -------------------------------------- | ------: |
-| Razer Blade 18 블랙                      | 2987500 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
-| ...                                    | ...     |
 
 ```sql
--- 판매 중인 상품만 조회
-SELECT name, price, stock_qty
-FROM products
-WHERE is_active = 1;
+-- <> : VIP가 아닌 고객 (!=도 같은 뜻)
+SELECT name, grade FROM customers
+WHERE grade <> 'VIP';
 ```
+
+```sql
+-- > : 가격이 100만 원 초과인 상품
+SELECT name, price FROM products
+WHERE price > 1000000;
+```
+
+```sql
+-- >= : 재고가 500개 이상인 상품
+SELECT name, stock_qty FROM products
+WHERE stock_qty >= 500;
+```
+
+```sql
+-- < : 가격이 5만 원 미만인 저가 상품
+SELECT name, price FROM products
+WHERE price < 50000;
+```
+
+```sql
+-- <= : 포인트 잔액이 0 이하인 고객
+SELECT name, point_balance FROM customers
+WHERE point_balance <= 0;
+```
+
+**`>` 결과 예시:**
+
+| name | price |
+| ---- | ----: |
+| Razer Blade 18 블랙 | 2987500 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+| ... | ... |
+
+!!! tip "가장 많이 쓰는 연산자"
+    실무에서는 `=`(특정 값 필터)와 `<>`(특정 값 제외)가 가장 흔합니다. 예: `WHERE status = 'confirmed'`, `WHERE status <> 'cancelled'`
+
+---
 
 ## AND / OR
 
@@ -54,14 +81,17 @@ WHERE is_active = 1;
 SELECT name, price
 FROM products
 WHERE is_active = 1
-  AND price >= 100
-  AND price <= 500;
+  AND price >= 100000
+  AND price <= 500000;
 ```
 
 **결과:**
 
 | name | price |
-| ---- | ----- |
+| ---- | ----: |
+| 삼성 DDR4 32GB PC4-25600 | 49100 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 130700 |
+| ... | ... |
 
 ```sql
 -- VIP 또는 GOLD 등급 고객
@@ -109,13 +139,16 @@ WHERE status IN ('delivered', 'confirmed', 'returned');
 -- 가격이 5만~20만 원인 상품
 SELECT name, price
 FROM products
-WHERE price BETWEEN 50 AND 200;
+WHERE price BETWEEN 50000 AND 200000;
 ```
 
 **결과:**
 
 | name | price |
-| ---- | ----- |
+| ---- | ----: |
+| 삼성 DDR4 32GB PC4-25600 | 49100 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 130700 |
+| ... | ... |
 
 ```sql
 -- 2024년 1분기에 접수된 주문
@@ -126,7 +159,14 @@ WHERE ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59';
 
 ## LIKE
 
-`LIKE`는 텍스트 패턴을 매칭합니다. `%`는 임의의 문자열, `_`는 정확히 한 글자를 대체합니다.
+`LIKE`는 텍스트 패턴을 매칭합니다. 두 가지 와일드카드를 사용합니다:
+
+| 와일드카드 | 의미 | 예시 |
+|:---------:|------|------|
+| `%` | 0개 이상의 임의 문자 | `'%Gaming%'` → "Gaming"이 어디든 포함 |
+| `_` | 정확히 한 글자 | `'_민재'` → 2글자 이름 중 "민재"로 끝나는 것 |
+
+### % 예시 — 포함, 시작, 끝
 
 ```sql
 -- 이름에 "Gaming"이 포함된 상품
@@ -135,21 +175,48 @@ FROM products
 WHERE name LIKE '%Gaming%';
 ```
 
-**결과:**
-
-| name                                   | price   |
-| -------------------------------------- | ------: |
+| name | price |
+| ---- | ----: |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
-| ASUS TUF Gaming RTX 5080 화이트           | 3812000 |
-| MSI Radeon RX 7900 XTX GAMING X 화이트    | 1478100 |
-| ...                                    | ...     |
+| ASUS TUF Gaming RTX 5080 화이트 | 3812000 |
+| ... | ... |
 
 ```sql
--- testmail.kr 도메인을 사용하는 고객
-SELECT name, email
-FROM customers
+-- testmail.kr 도메인으로 끝나는 이메일
+SELECT name, email FROM customers
 WHERE email LIKE '%@testmail.kr';
 ```
+
+```sql
+-- "삼성"으로 시작하는 상품
+SELECT name, price FROM products
+WHERE name LIKE '삼성%';
+```
+
+### _ 예시 — 정확히 한 글자
+
+```sql
+-- 이름이 정확히 3글자인 고객 (성 1글자 + 이름 2글자)
+SELECT name, email FROM customers
+WHERE name LIKE '___';
+```
+
+| name | email |
+| ---- | ----- |
+| 정준호 | jjh0001@testmail.kr |
+| 김민재 | kmj0002@testmail.kr |
+| ... | ... |
+
+```sql
+-- SKU 코드가 "LA-" 로 시작하고 그 뒤 3글자인 카테고리 코드를 가진 상품
+SELECT name, sku FROM products
+WHERE sku LIKE 'LA-___-%';
+```
+
+!!! tip "대소문자 구분"
+    SQLite의 LIKE는 영문 대소문자를 구분하지 않습니다 (`'%gaming%'`과 `'%Gaming%'`이 같은 결과). MySQL은 기본적으로 구분하지 않고, PostgreSQL은 구분합니다. 대소문자를 무시하려면 PG에서는 `ILIKE`를 사용합니다.
+
+---
 
 ## IS NULL / IS NOT NULL
 
@@ -181,10 +248,10 @@ WHERE notes IS NOT NULL;
 
 | 키워드 | 설명 | 예시 |
 |--------|------|------|
-| `=`, `<>`, `<`, `>`, `<=`, `>=` | 비교 연산자 | `WHERE price >= 1000` |
+| `=`, `<>`, `<`, `>`, `<=`, `>=` | 비교 연산자 | `WHERE price >= 100000` |
 | `AND` / `OR` | 여러 조건 결합 | `WHERE grade = 'VIP' AND is_active = 1` |
 | `IN` | 여러 값 중 하나와 일치 | `WHERE grade IN ('GOLD', 'VIP')` |
-| `BETWEEN` | 범위 조건 (양 끝 포함) | `WHERE price BETWEEN 100 AND 500` |
+| `BETWEEN` | 범위 조건 (양 끝 포함) | `WHERE price BETWEEN 100000 AND 500000` |
 | `LIKE` | 텍스트 패턴 매칭 (`%` 임의 문자열, `_` 한 글자) | `WHERE name LIKE '%Gaming%'` |
 | `IS NULL` / `IS NOT NULL` | NULL 여부 확인 (`= NULL`은 동작하지 않음) | `WHERE birth_date IS NULL` |
 
@@ -217,14 +284,14 @@ WHERE notes IS NOT NULL;
 
 
 ### 문제 2
-판매 중(`is_active = 1`)이고 가격이 200~800 사이인 상품을 조회하세요. `name`과 `price`를 반환하되, 가격 내림차순으로 정렬하세요.
+판매 중(`is_active = 1`)이고 가격이 20만~80만 원 사이인 상품을 조회하세요. `name`과 `price`를 반환하되, 가격 내림차순으로 정렬하세요.
 
 ??? success "정답"
     ```sql
     SELECT name, price
     FROM products
     WHERE is_active = 1
-      AND price BETWEEN 200 AND 800
+      AND price BETWEEN 200000 AND 800000
     ORDER BY price DESC;
     ```
 
@@ -252,13 +319,13 @@ WHERE notes IS NOT NULL;
 
 
 ### 문제 4
-가격이 1,000 이상인 상품의 `name`과 `price`를 조회하세요.
+가격이 100만 원 이상인 상품의 `name`과 `price`를 조회하세요.
 
 ??? success "정답"
     ```sql
     SELECT name, price
     FROM products
-    WHERE price >= 1000;
+    WHERE price >= 1000000;
     ```
 
     **결과 (예시):**

@@ -1,5 +1,10 @@
 # 8강: LEFT JOIN
 
+7강에서 INNER JOIN으로 두 테이블을 연결했습니다. 하지만 INNER JOIN은 양쪽 모두에 데이터가 있는 행만 반환합니다. '주문이 없는 고객'이나 '리뷰가 없는 상품'을 찾으려면? LEFT JOIN을 사용합니다.
+
+!!! note "이미 알고 계신다면"
+    LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN에 익숙하다면 [9강: 서브쿼리](09-subqueries.md)로 건너뛰세요.
+
 `LEFT JOIN`은 **왼쪽 테이블의 모든 행**을 반환하고, 오른쪽 테이블에서 일치하는 행이 있으면 함께 가져옵니다. 일치하는 행이 없으면 오른쪽 칼럼은 `NULL`로 채워집니다. 관련 레코드가 없는 행을 찾을 때 꼭 필요한 기법으로, 실무에서 매우 자주 쓰입니다.
 
 ```mermaid
@@ -359,6 +364,17 @@ FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
     LIMIT 15;
     ```
 
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| LEFT JOIN | 왼쪽 테이블의 모든 행을 유지, 불일치 시 NULL | `FROM products LEFT JOIN reviews ON ...` |
+| 안티 조인 | LEFT JOIN + WHERE IS NULL로 불일치 행 찾기 | `WHERE r.id IS NULL` |
+| LEFT JOIN + 집계 | COUNT(right.id)로 NULL 제외 카운트 | `COUNT(r.id) AS review_count` |
+| ON vs WHERE | ON에 조건 추가 시 LEFT 행 유지, WHERE는 제외 | `LEFT JOIN orders ON ... AND o.status = 'delivered'` |
+| RIGHT JOIN | 오른쪽 테이블의 모든 행을 유지 (LEFT JOIN 반대) | `FROM orders RIGHT JOIN customers ON ...` |
+| FULL OUTER JOIN | 양쪽 모든 행 유지, 불일치 시 양쪽 모두 NULL 가능 | `FULL OUTER JOIN orders ON ...` |
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
@@ -652,6 +668,20 @@ FULL OUTER JOIN의 지원 여부는 데이터베이스마다 다릅니다:
     | ...           | ...                  | ...            |
 
 
+!!! tip "채점 기준"
+    | 기준 | 배점 |
+    |------|------|
+    | 연습 1: FULL OUTER JOIN + COALESCE 대체 표시 | 10점 |
+    | 연습 2: LEFT JOIN + WHERE IS NULL 안티 조인 | 10점 |
+    | 연습 3: LEFT JOIN + 복합 WHERE 조건 안티 조인 | 10점 |
+    | 연습 4: LEFT JOIN + COUNT + GROUP BY 집계 | 10점 |
+    | 연습 5: RIGHT JOIN + COUNT + GROUP BY | 10점 |
+    | 연습 6: LEFT JOIN + ON 조건 + COALESCE 집계 | 10점 |
+    | 연습 7: LEFT JOIN + SUM/COUNT(DISTINCT) 집계 | 10점 |
+    | 연습 8: 다중 LEFT JOIN + COALESCE 대체 표시 | 10점 |
+    | 연습 9: LEFT JOIN + 서브쿼리 ON 조건 | 10점 |
+    | 연습 10: LEFT JOIN 안티 조인 + INNER JOIN 조합 | 10점 |
+    | **합계** | **100점** |
 
 ---
 다음: [9강: 서브쿼리](09-subqueries.md)

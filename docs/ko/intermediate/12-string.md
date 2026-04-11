@@ -1,8 +1,11 @@
 # 12강: 문자열 함수
 
-문자열 함수는 데이터베이스마다 이름이나 인자 순서가 다른 경우가 많습니다. 이 강의에서는 SQLite를 기본으로 하되, 차이가 있는 부분에서 MySQL과 PostgreSQL 탭을 함께 보여줍니다.
+[11강](11-datetime.md)에서 날짜/시간 함수로 기간을 계산하고 포맷을 바꾸는 법을 배웠습니다. 데이터 분석에서 '이메일 도메인별 고객 수'나 '상품명에서 브랜드 추출'같은 작업이 자주 필요합니다. 문자열 함수로 텍스트를 자르고, 바꾸고, 합칠 수 있습니다.
 
-SQLite는 텍스트 조작에 유용한 함수들을 제공합니다. 데이터 정제, 출력 형식 지정, 저장된 문자열 파싱, 검색 조건 구성 등에 필수적입니다.
+!!! note "이미 알고 계신다면"
+    SUBSTR, REPLACE, CONCAT, LENGTH, UPPER/LOWER, TRIM에 익숙하다면 [13강: UNION](13-union.md)으로 건너뛰세요.
+
+문자열 함수는 데이터베이스마다 이름이나 인자 순서가 다른 경우가 많습니다. 이 강의에서는 SQLite를 기본으로 하되, 차이가 있는 부분에서 MySQL과 PostgreSQL 탭을 함께 보여줍니다.
 
 ## SUBSTR — 문자열 일부 추출
 
@@ -225,6 +228,19 @@ SELECT
 FROM products
 WHERE LENGTH(name) != LENGTH(TRIM(name));
 ```
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| SUBSTR | 문자열 일부 추출 (1-based) | `SUBSTR(name, 1, 10)` |
+| LENGTH | 문자 수 반환 | `LENGTH(name)` |
+| UPPER / LOWER | 대소문자 변환 | `UPPER(grade)`, `LOWER(email)` |
+| REPLACE | 문자열 치환 | `REPLACE(status, '_', ' ')` |
+| 문자열 연결 | SQLite/PG: `\|\|`, MySQL: `CONCAT()` | `name \|\| ' - ' \|\| email` |
+| INSTR / LOCATE / POSITION | 문자 위치 찾기 (DB별 상이) | `INSTR(email, '@')` |
+| TRIM / LTRIM / RTRIM | 앞뒤 공백·문자 제거 | `TRIM(name)` |
+| LIKE | 패턴 매칭 (`%`, `_` 와일드카드) | `WHERE name LIKE '%Gaming%'` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -561,6 +577,21 @@ WHERE LENGTH(name) != LENGTH(TRIM(name));
         WHERE POSITION(' ' IN name) > 0
         LIMIT 10;
         ```
+
+!!! tip "채점 기준"
+    | 기준 | 배점 |
+    |------|------|
+    | 연습 1: 문자열 연결(`\|\|` 또는 CONCAT) + WHERE 필터 | 10점 |
+    | 연습 2: SUBSTR + CAST로 일련번호 추출 | 10점 |
+    | 연습 3: LENGTH + ORDER BY + LIMIT | 8점 |
+    | 연습 4: REPLACE + UPPER 조합 | 10점 |
+    | 연습 5: LIKE 패턴 매칭 + 정렬 | 8점 |
+    | 연습 6: SUBSTR + INSTR로 이메일 파싱 | 12점 |
+    | 연습 7: CASE + LENGTH + SUBSTR 조합 | 14점 |
+    | 연습 8: UPPER + LOWER + 문자열 연결 | 10점 |
+    | 연습 9: SUBSTR + LIKE 필터 | 8점 |
+    | 연습 10: INSTR + WHERE 필터 | 10점 |
+    | **합계** | **100점** |
 
 ---
 다음: [13강: UNION](13-union.md)

@@ -3,7 +3,7 @@
 3강에서 ORDER BY와 LIMIT로 결과를 정렬하고 상위 N건을 가져왔습니다. 이번에는 '전체 고객이 몇 명인지', '평균 주문 금액은 얼마인지'처럼 여러 행을 하나의 숫자로 요약하는 집계 함수를 배웁니다.
 
 !!! note "이미 알고 계신다면"
-    COUNT, SUM, AVG, MIN, MAX를 이미 알고 있다면 [5강: GROUP BY](05-group-by.md)로 건너뛰세요.
+    COUNT, COUNT(DISTINCT), SUM, AVG, MIN, MAX를 이미 알고 있다면 [5강: GROUP BY](05-group-by.md)로 건너뛰세요.
 
 ```mermaid
 flowchart LR
@@ -42,6 +42,34 @@ FROM customers;
 | total_customers | with_birth_date | missing_birth_date |
 | --------------: | --------------: | -----------------: |
 |            5230 |            4450 |                780 |
+
+### COUNT(DISTINCT) — 고유값 개수
+
+`COUNT(DISTINCT 칼럼)`은 **중복을 제거한 후** 개수를 셉니다. "몇 종류가 있는지" 알고 싶을 때 사용합니다.
+
+```sql
+-- 주문한 적 있는 고유 고객 수
+SELECT
+    COUNT(*)                    AS total_orders,
+    COUNT(DISTINCT customer_id) AS unique_customers
+FROM orders;
+```
+
+**결과:**
+
+| total_orders | unique_customers |
+| -----------: | ---------------: |
+| 34908 | 4985 |
+
+주문은 34,908건이지만, 실제로 주문한 고객은 4,985명입니다. 한 고객이 여러 번 주문했기 때문입니다.
+
+```sql
+-- 테크샵이 취급하는 브랜드 수
+SELECT COUNT(DISTINCT brand) AS brand_count
+FROM products;
+```
+
+---
 
 ## SUM
 
@@ -105,6 +133,68 @@ WHERE status NOT IN ('cancelled', 'returned');
 | --------------: |
 |      1014478.57 |
 
+## ROUND — 반올림
+
+`AVG`의 결과는 소수점이 길게 나올 수 있습니다. `ROUND(값, 자릿수)`로 원하는 소수점 자리까지 반올림할 수 있습니다.
+
+```sql
+-- 리뷰 평균 평점을 소수 첫째 자리까지
+SELECT
+    AVG(rating)          AS avg_raw,
+    ROUND(AVG(rating), 1) AS avg_rounded
+FROM reviews;
+```
+
+**결과:**
+
+| avg_raw | avg_rounded |
+| ------: | ----------: |
+| 3.9147... | 3.9 |
+
+```sql
+-- 상품 평균 가격을 원 단위로 (소수점 없이)
+SELECT ROUND(AVG(price), 0) AS avg_price
+FROM products;
+```
+
+| avg_price |
+| --------: |
+| 665405 |
+
+### 정수 나눗셈 주의
+
+SQLite에서 **정수 ÷ 정수 = 정수**입니다. 소수점이 잘립니다:
+
+```sql
+-- 문제: 리뷰 작성률을 구하려는데...
+SELECT
+    COUNT(*)                    AS total_orders,
+    (SELECT COUNT(*) FROM reviews) AS total_reviews,
+    (SELECT COUNT(*) FROM reviews) / COUNT(*) AS review_rate
+FROM orders;
+```
+
+| total_orders | total_reviews | review_rate |
+| -----------: | ------------: | ----------: |
+| 34908 | 7945 | **0** |
+
+7945 ÷ 34908 = 0.2275...이지만, 정수 나눗셈이라 **0**이 됩니다. 해결법:
+
+```sql
+-- 해결: 한쪽을 실수(1.0)로 곱하기
+SELECT ROUND((SELECT COUNT(*) FROM reviews) * 1.0 / COUNT(*) * 100, 1) AS review_rate_pct
+FROM orders;
+```
+
+| review_rate_pct |
+| --------------: |
+| 22.8 |
+
+!!! tip "MySQL/PostgreSQL에서는?"
+    MySQL과 PostgreSQL은 정수 나눗셈에서도 소수점이 유지되므로 이 문제가 발생하지 않습니다. SQLite 특유의 주의점입니다.
+
+---
+
 ## MIN과 MAX
 
 `MIN`과 `MAX`는 칼럼에서 가장 작은 값과 가장 큰 값을 찾습니다.
@@ -159,16 +249,49 @@ FROM reviews;
 | ------------: | ---------: | ------------: | -------------: | --------------: |
 |          7945 |       3.91 |             1 |              5 |            3221 |
 
+## 집계 함수와 NULL
+
+집계 함수는 NULL을 **무시**합니다. 이것은 중요한 동작입니다:
+
+```sql
+-- birth_date가 NULL인 고객이 약 15%
+SELECT
+    COUNT(*)           AS total,
+    COUNT(birth_date)  AS with_birth,
+    AVG(CASE
+        WHEN birth_date IS NOT NULL
+        THEN 2025 - CAST(SUBSTR(birth_date, 1, 4) AS INTEGER)
+    END) AS avg_age
+FROM customers;
+```
+
+| total | with_birth | avg_age |
+| ----: | ---------: | ------: |
+| 5230 | 4450 | 39.2 |
+
+- `COUNT(*)` = 5,230 (NULL 포함 전체)
+- `COUNT(birth_date)` = 4,450 (NULL 제외)
+- `AVG` = 4,450명의 평균만 계산 (NULL인 780명은 제외)
+
+!!! warning "NULL이 결과를 왜곡할 수 있습니다"
+    `AVG(birth_date 기반 나이)`는 생년월일을 입력한 사람만의 평균입니다. 전체 고객의 평균 나이와는 다를 수 있습니다. NULL이 많은 칼럼을 집계할 때는 항상 `COUNT(*)`와 `COUNT(칼럼)`을 비교하여 NULL 비율을 확인하세요.
+
+---
+
 ## 정리
 
 | 함수 | 설명 | 예시 |
 |------|------|------|
-| `COUNT(*)` | 전체 행 수 | `SELECT COUNT(*) FROM orders` |
+| `COUNT(*)` | 전체 행 수 (NULL 포함) | `SELECT COUNT(*) FROM orders` |
 | `COUNT(칼럼)` | NULL 제외 행 수 | `COUNT(birth_date)` |
+| `COUNT(DISTINCT 칼럼)` | 고유값 개수 | `COUNT(DISTINCT customer_id)` |
 | `SUM(칼럼)` | 합계 (NULL 무시) | `SUM(total_amount)` |
 | `AVG(칼럼)` | 평균 (NULL 무시) | `AVG(price)` |
+| `ROUND(값, N)` | 소수점 N자리 반올림 | `ROUND(AVG(price), 0)` |
 | `MIN(칼럼)` | 최솟값 | `MIN(price)` |
 | `MAX(칼럼)` | 최댓값 | `MAX(price)` |
+| 정수 나눗셈 | SQLite: 정수÷정수=정수 | `* 1.0`으로 실수 변환 |
+| NULL 처리 | 집계 함수는 NULL을 무시 | `COUNT(*)`와 `COUNT(칼럼)` 비교 |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.

@@ -1,5 +1,10 @@
 # 10강: CASE 표현식
 
+데이터를 조회하다 보면 '가격이 100만 원 이상이면 고가, 아니면 일반'처럼 조건에 따라 다른 값을 표시하고 싶을 때가 있습니다. CASE 표현식으로 SQL 안에서 조건 분기를 할 수 있습니다.
+
+!!! note "이미 알고 계신다면"
+    CASE WHEN, 피벗, 범주화에 익숙하다면 [11강: 날짜/시간 함수](11-datetime.md)로 건너뛰세요.
+
 `CASE`는 SQL의 조건 표현식으로, 프로그래밍 언어의 `if/else`와 유사합니다. 값 변환, 레이블 생성, 데이터 구간 분류, 조건부 집계 등을 단일 쿼리 안에서 모두 처리할 수 있습니다.
 
 ```mermaid
@@ -245,6 +250,17 @@ ORDER BY
     total_amount DESC
 LIMIT 10;
 ```
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| 단순 CASE | 하나의 값을 여러 고정 값과 비교 | `CASE status WHEN 'pending' THEN '대기' ...` |
+| 검색 CASE | 독립적인 조건식을 순서대로 평가 | `CASE WHEN price < 50 THEN '저가' ...` |
+| ELSE | 모든 조건에 불일치 시 기본값 | `ELSE '기타' END` |
+| GROUP BY + CASE | CASE 결과로 그룹화하여 집계 | `GROUP BY CASE WHEN ... END` |
+| 조건부 집계 (피벗) | 집계 함수 안에서 CASE로 조건별 카운트/합계 | `COUNT(CASE WHEN status = 'ok' THEN 1 END)` |
+| ORDER BY + CASE | 계산된 표현식으로 커스텀 정렬 | `ORDER BY CASE WHEN ... THEN 1 ...` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -592,6 +608,21 @@ LIMIT 10;
     | SAPPHIRE PULSE RX 7800 XT 실버 |   35413200 |   22297200 |   14427600 |   31478400 |
     | ...                          | ...        | ...        | ...        | ...        |
 
+
+!!! tip "채점 기준"
+    | 기준 | 배점 |
+    |------|------|
+    | 연습 1: CASE + IS NULL 처리 | 8점 |
+    | 연습 2: ORDER BY + 단순 CASE 커스텀 정렬 | 10점 |
+    | 연습 3: 단순 CASE로 값 변환 | 8점 |
+    | 연습 4: 검색 CASE로 범주화 | 10점 |
+    | 연습 5: CASE + GROUP BY 세대별 집계 | 12점 |
+    | 연습 6: 단순 CASE + GROUP BY 집계 | 10점 |
+    | 연습 7: 조건부 집계 (COUNT + CASE 피벗) | 12점 |
+    | 연습 8: 검색 CASE + GROUP BY + ORDER BY CASE | 10점 |
+    | 연습 9: 조건부 집계 (COUNT + CASE) + 비율 계산 | 10점 |
+    | 연습 10: SUM + CASE 분기별 피벗 + 다중 JOIN | 10점 |
+    | **합계** | **100점** |
 
 ---
 다음: [11강: 날짜 및 시간 함수](11-datetime.md)

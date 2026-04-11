@@ -1,5 +1,10 @@
 # 11강: 날짜 및 시간 함수
 
+[10강](10-case.md)에서 CASE로 데이터를 분류하는 법을 배웠습니다. 실무에서 '이번 달 매출', '가입 후 첫 주문까지 며칠?'같은 질문이 자주 나옵니다. 날짜/시간 함수를 사용하면 날짜를 추출하고, 계산하고, 포맷을 바꿀 수 있습니다.
+
+!!! note "이미 알고 계신다면"
+    날짜 추출, 날짜 계산, 포맷 변환, DB별 차이에 익숙하다면 [12강: 문자열 함수](12-string.md)로 건너뛰세요.
+
 날짜/시간 함수는 데이터베이스마다 문법이 가장 크게 다른 영역 중 하나입니다. 이 강의에서는 SQLite를 기본으로 하되, MySQL과 PostgreSQL의 차이점을 탭으로 함께 보여줍니다.
 
 SQLite는 날짜를 `YYYY-MM-DD` 또는 `YYYY-MM-DD HH:MM:SS` 형식의 텍스트로 저장합니다. 내장 함수를 사용하면 날짜의 일부를 추출하거나, 날짜 간 차이를 계산하거나, 보고서용으로 형식을 변환할 수 있습니다.
@@ -405,6 +410,17 @@ ORDER BY year_month;
 | 2024 | Q2 | 523891.40 |
 | 2024 | Q3 | 612347.80 |
 | 2024 | Q4 | 1218807.10 |
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| SUBSTR로 날짜 추출 | 문자열 슬라이싱으로 연·월 추출 | `SUBSTR(ordered_at, 1, 7)` |
+| DATE() | 날짜 문자열 반환, modifier로 계산 | `DATE('now', '-30 days')` |
+| strftime() | 원하는 형식으로 포맷 | `strftime('%w', ordered_at)` |
+| julianday() | 율리우스 일수로 변환, 차이 계산 | `julianday(a) - julianday(b)` |
+| MySQL 날짜 함수 | CURDATE, DATEDIFF, TIMESTAMPDIFF 등 | `DATEDIFF(a, b)` |
+| PostgreSQL 날짜 함수 | EXTRACT, AGE, 날짜 산술 | `EXTRACT(YEAR FROM col)` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -934,6 +950,21 @@ ORDER BY year_month;
         ORDER BY avg_processing_days ASC;
         ```
 
+
+!!! tip "채점 기준"
+    | 기준 | 배점 |
+    |------|------|
+    | 연습 1: 날짜 범위 필터링 + 정렬 | 8점 |
+    | 연습 2: julianday()로 근속 연수 계산 | 10점 |
+    | 연습 3: julianday()로 나이 계산 + NULL 제외 | 10점 |
+    | 연습 4: julianday() 차이 + 활성 고객 필터 | 10점 |
+    | 연습 5: SUBSTR로 연도 추출 + GROUP BY | 10점 |
+    | 연습 6: SUBSTR로 연·월 추출 + GROUP BY | 10점 |
+    | 연습 7: SUBSTR + AVG + ROUND 집계 | 10점 |
+    | 연습 8: julianday() 차이 + HAVING 조건 + JOIN | 12점 |
+    | 연습 9: strftime + CASE + AVG 집계 | 10점 |
+    | 연습 10: julianday() + JOIN + GROUP BY 집계 | 10점 |
+    | **합계** | **100점** |
 
 ---
 다음: [12강: 문자열 함수](12-string.md)

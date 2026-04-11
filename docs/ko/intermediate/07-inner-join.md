@@ -1,5 +1,10 @@
 # 7강: INNER JOIN
 
+지금까지는 한 테이블에서만 데이터를 조회했습니다. 하지만 실무에서는 '주문한 고객의 이름'처럼 여러 테이블의 데이터를 합쳐야 합니다. INNER JOIN으로 테이블을 연결하는 방법을 배웁니다.
+
+!!! note "이미 알고 계신다면"
+    INNER JOIN, ON 조건, 다중 JOIN에 익숙하다면 [8강: LEFT JOIN](08-left-join.md)으로 건너뛰세요.
+
 `JOIN`은 관련 칼럼을 기준으로 두 개 이상의 테이블 행을 합칩니다. `INNER JOIN`은 **양쪽** 테이블에서 모두 일치하는 행만 반환합니다 — 일치하지 않는 행은 결과에서 제외됩니다.
 
 ```mermaid
@@ -151,6 +156,17 @@ WHERE c.grade = 'VIP'
   AND o.ordered_at LIKE '2024%'
 ORDER BY o.total_amount DESC;
 ```
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| INNER JOIN | 양쪽 테이블에서 일치하는 행만 반환 | `FROM orders INNER JOIN customers ON ...` |
+| ON 절 | 조인 조건을 지정 (보통 FK = PK) | `ON o.customer_id = c.id` |
+| 테이블 별칭 | 테이블에 짧은 이름을 부여 | `orders AS o`, `customers AS c` |
+| 다중 JOIN | JOIN을 여러 번 연결하여 3개 이상 테이블 조인 | `INNER JOIN products AS p ON ...` |
+| JOIN + 집계 | 조인 후 GROUP BY로 집계 | `SUM(oi.quantity * oi.unit_price)` |
+| JOIN + WHERE | 조인된 어떤 테이블에든 필터 적용 가능 | `WHERE c.grade = 'VIP'` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -374,6 +390,19 @@ ORDER BY o.total_amount DESC;
     ORDER BY total_revenue DESC
     LIMIT 10;
     ```
+
+!!! tip "채점 기준"
+    | 기준 | 배점 |
+    |------|------|
+    | 연습 1: 3개 테이블 JOIN + 정렬 + LIMIT | 12점 |
+    | 연습 2: JOIN + COUNT(DISTINCT) + GROUP BY | 12점 |
+    | 연습 3: JOIN + 상태 필터 + SUM/COUNT 집계 | 14점 |
+    | 연습 4: 2개 테이블 JOIN + WHERE 필터 + 정렬 | 12점 |
+    | 연습 5: shipping-orders JOIN + WHERE 필터 | 12점 |
+    | 연습 6: 3개 테이블 JOIN + 정렬 | 12점 |
+    | 연습 7: 3개 테이블 JOIN + COUNT(DISTINCT) + SUM 집계 | 14점 |
+    | 연습 8: JOIN + 상태 필터 + GROUP BY 집계 | 12점 |
+    | **합계** | **100점** |
 
 ---
 다음: [8강: LEFT JOIN](08-left-join.md)
