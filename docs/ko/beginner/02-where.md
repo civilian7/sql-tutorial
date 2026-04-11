@@ -88,9 +88,15 @@ WHERE is_active = 1
 **결과:**
 
 | name | price |
-| ---- | ----: |
-| 삼성 DDR4 32GB PC4-25600 | 49100 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 130700 |
+| ---------- | ----------: |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 |
+| 삼성 DDR5 32GB PC5-38400 | 194700.0 |
+| 로지텍 G715 화이트 | 254400.0 |
+| be quiet! Light Base 900 | 161100.0 |
+| MSI MAG X870E TOMAHAWK WIFI 화이트 | 473800.0 |
+| NZXT Kraken Elite 240 RGB 실버 | 349200.0 |
+| TP-Link Archer AX55 블랙 | 331900.0 |
+| be quiet! Pure Power 12 M 850W 화이트 | 350200.0 |
 | ... | ... |
 
 ```sql
@@ -118,11 +124,16 @@ WHERE grade IN ('GOLD', 'VIP');
 **결과:**
 
 | name | grade |
-| ---- | ----- |
-| 김경수  | VIP   |
-| 김민재  | VIP   |
-| 진정자  | VIP   |
-| ...  | ...   |
+| ---------- | ---------- |
+| 김민재 | VIP |
+| 진정자 | GOLD |
+| 성민석 | VIP |
+| 박지훈 | GOLD |
+| 강은서 | VIP |
+| 김서준 | GOLD |
+| 이영철 | VIP |
+| 김선영 | GOLD |
+| ... | ... |
 
 ```sql
 -- 처리가 완료된 상태의 주문 조회
@@ -145,9 +156,15 @@ WHERE price BETWEEN 50000 AND 200000;
 **결과:**
 
 | name | price |
-| ---- | ----: |
-| 삼성 DDR4 32GB PC4-25600 | 49100 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 130700 |
+| ---------- | ----------: |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 |
+| 삼성 DDR5 32GB PC5-38400 | 194700.0 |
+| be quiet! Light Base 900 | 161100.0 |
+| TP-Link TG-3468 실버 | 53600.0 |
+| 로지텍 K580 | 50500.0 |
+| Keychron Q1 Pro 실버 | 178600.0 |
+| Seagate Fast SSD 1TB 실버 | 185300.0 |
+| SteelSeries Prime Wireless 블랙 | 111200.0 |
 | ... | ... |
 
 ```sql
@@ -231,11 +248,17 @@ WHERE birth_date IS NULL;
 
 **결과:**
 
-| name | email              |
-| ---- | ------------------ |
-| 김명자  | user7@testmail.kr  |
-| 김정식  | user13@testmail.kr |
-| ...  | ...                |
+| name | email |
+| ---------- | ---------- |
+| 김명자 | user7@testmail.kr |
+| 김정식 | user13@testmail.kr |
+| 윤순옥 | user14@testmail.kr |
+| 이서연 | user21@testmail.kr |
+| 강민석 | user24@testmail.kr |
+| 김서준 | user27@testmail.kr |
+| 윤지훈 | user36@testmail.kr |
+| 박준영 | user38@testmail.kr |
+| ... | ... |
 
 ```sql
 -- 배송 메모가 있는 주문
@@ -273,14 +296,17 @@ WHERE notes IS NOT NULL;
 
     **결과 (예시):**
 
-    | name | grade  | point_balance |
-    | ---- | ------ | ------------: |
-    | 김건우  | SILVER |         87084 |
-    | 이영일  | SILVER |         87917 |
-    | 남예준  | SILVER |         87589 |
-    | 윤현주  | SILVER |        576801 |
-    | 구영호  | GOLD   |        318534 |
-    | ...  | ...    | ...           |
+    | name | grade | point_balance |
+    | ---------- | ---------- | ----------: |
+    | 진정자 | GOLD | 944605 |
+    | 박지훈 | GOLD | 436275 |
+    | 배종수 | SILVER | 469734 |
+    | 박건우 | GOLD | 783515 |
+    | 남예준 | SILVER | 244180 |
+    | 이현숙 | SILVER | 454550 |
+    | 이지아 | SILVER | 159982 |
+    | 배성훈 | GOLD | 827245 |
+    | ... | ... | ... |
 
 
 ### 문제 2
@@ -308,14 +334,17 @@ WHERE notes IS NOT NULL;
 
     **결과 (예시):**
 
-    | name | created_at          |
-    | ---- | ------------------- |
-    | 이영식  | 2016-02-23 17:09:54 |
-    | 최성수  | 2017-05-04 04:39:09 |
-    | 김명자  | 2019-04-21 10:06:38 |
-    | 박광수  | 2019-05-18 00:02:05 |
-    | 장영호  | 2020-06-07 17:56:26 |
-    | ...  | ...                 |
+    | name | created_at |
+    | ---------- | ---------- |
+    | 이영식 | 2016-02-23 17:09:54 |
+    | 최성수 | 2016-05-03 04:39:09 |
+    | 김은지 | 2016-05-17 00:02:05 |
+    | 손영호 | 2017-11-11 21:56:36 |
+    | 강지은 | 2017-04-26 04:05:37 |
+    | 윤승민 | 2017-12-11 21:16:30 |
+    | 박영길 | 2017-10-24 15:03:46 |
+    | 허정호 | 2017-02-28 06:33:43 |
+    | ... | ... |
 
 
 ### 문제 4
@@ -330,14 +359,17 @@ WHERE notes IS NOT NULL;
 
     **결과 (예시):**
 
-    | name                                     | price   |
-    | ---------------------------------------- | ------: |
-    | Razer Blade 18 블랙                        | 2987500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |
-    | Dell U2724D                              |  853600 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |
-    | ...                                      | ...     |
+    | name | price |
+    | ---------- | ----------: |
+    | Razer Blade 18 블랙 | 3730900.0 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
+    | LG 일체형PC 27V70Q 실버 | 1028600.0 |
+    | Razer Blade 18 화이트 | 3879900.0 |
+    | ASUS ROG Strix G16CH 화이트 | 3307900.0 |
+    | 한성 보스몬스터 DX5800 블랙 | 1189600.0 |
+    | ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
+    | MSI Radeon RX 7900 XTX GAMING X 화이트 | 1409500.0 |
+    | ... | ... |
 
 
 ### 문제 5
@@ -352,14 +384,17 @@ WHERE notes IS NOT NULL;
 
     **결과 (예시):**
 
-    | name                                     | stock_qty |
-    | ---------------------------------------- | --------: |
-    | Razer Blade 18 블랙                        |       107 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   |       499 |
-    | 삼성 DDR4 32GB PC4-25600                   |       359 |
-    | Dell U2724D                              |       337 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |        59 |
-    | ...                                      | ...       |
+    | name | stock_qty |
+    | ---------- | ----------: |
+    | Razer Blade 18 블랙 | 107 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 499 |
+    | 삼성 DDR4 32GB PC4-25600 | 359 |
+    | Dell U2724D | 337 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 59 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 460 |
+    | 삼성 DDR5 32GB PC5-38400 | 340 |
+    | 로지텍 G715 화이트 | 341 |
+    | ... | ... |
 
 
 ### 문제 6
@@ -385,14 +420,17 @@ WHERE notes IS NOT NULL;
 
     **결과 (예시):**
 
-    | order_number       | status  |
-    | ------------------ | ------- |
-    | ORD-20250627-34856 | pending |
-    | ORD-20250627-34857 | pending |
-    | ORD-20250627-34858 | pending |
-    | ORD-20250627-34859 | pending |
-    | ORD-20250627-34860 | pending |
-    | ...                | ...     |
+    | order_number | status |
+    | ---------- | ---------- |
+    | ORD-20251204-412540 | pending |
+    | ORD-20251207-413119 | pending |
+    | ORD-20251211-413870 | pending |
+    | ORD-20251211-413965 | pending |
+    | ORD-20251212-414063 | pending |
+    | ORD-20251214-414477 | pending |
+    | ORD-20251215-414727 | pending |
+    | ORD-20251223-416282 | pending |
+    | ... | ... |
 
 
 ### 문제 8
@@ -419,12 +457,16 @@ WHERE notes IS NOT NULL;
     **결과 (예시):**
 
     | name | department |
-    | ---- | ---------- |
-    | 한민재  | 경영         |
-    | 장주원  | 경영         |
-    | 박경수  | 경영         |
-    | 이준혁  | 영업         |
-    | 권영희  | 마케팅        |
+    | ---------- | ---------- |
+    | 한민재 | 경영 |
+    | 장주원 | 경영 |
+    | 박경수 | 경영 |
+    | 이준혁 | 영업 |
+    | 권영희 | 마케팅 |
+    | 김영일 | 개발 |
+    | 황예준 | 경영 |
+    | 이춘자 | 경영 |
+    | ... | ... |
 
 
 ### 문제 10
@@ -440,14 +482,17 @@ WHERE notes IS NOT NULL;
 
     **결과 (예시):**
 
-    | name | grade  | point_balance | is_active |
-    | ---- | ------ | ------------: | --------: |
-    | 김경수  | VIP    |        772799 |         1 |
-    | 김민재  | VIP    |       1110634 |         1 |
-    | 진정자  | VIP    |        687929 |         1 |
-    | 이정수  | SILVER |       1012866 |         1 |
-    | 성민석  | BRONZE |        264487 |         1 |
-    | ...  | ...    | ...           | ...       |
+    | name | grade | point_balance | is_active |
+    | ---------- | ---------- | ----------: | ----------: |
+    | 김경수 | BRONZE | 928447 | 1 |
+    | 김민재 | VIP | 2609195 | 1 |
+    | 진정자 | GOLD | 944605 | 1 |
+    | 이정수 | BRONZE | 1903978 | 1 |
+    | 성민석 | VIP | 292416 | 1 |
+    | 박지훈 | GOLD | 436275 | 1 |
+    | 장준서 | SILVER | 790657 | 1 |
+    | 윤순옥 | BRONZE | 549856 | 1 |
+    | ... | ... | ... | ... |
 
 
 ### 채점 가이드
