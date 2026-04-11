@@ -97,6 +97,11 @@ nav:
     - "26. 저장 프로시저": advanced/26-stored-procedures.md
   - 참고:
     - "데이터베이스별 SQL 차이": dialect-comparison.md
+    - "용어사전": appendix/glossary.md
+  - 부록 — DBA 기초:
+    - "권한과 보안": appendix/dba-security.md
+    - "동시성과 격리 수준": appendix/dba-concurrency.md
+    - "데이터베이스 유지보수": appendix/dba-maintenance.md
   - 연습 문제:
     - exercises/index.md
     - 초급:
