@@ -1,8 +1,8 @@
 # SQL Tutorial <small>v{{version}}</small> <small style="font-size:0.5em; color:gray;">{{date}}</small>
 
-A hands-on SQL tutorial using a realistic **e-commerce database** (30 tables · 680K rows).
+A hands-on SQL tutorial using a realistic **e-commerce database** (30 tables · 750K rows).
 
-Learn SQL by querying 10 years of business data from **TechShop**, a fictional online store selling computers and peripherals. Progress systematically through **26 lessons · 270 exercises**, from basics to advanced topics.
+Learn SQL by querying 10 years of business data from **TechShop**, a fictional online store selling computers and peripherals. Progress systematically through **27 lessons · 640 exercises**, from basics to advanced topics.
 Supports **SQLite, MySQL, and PostgreSQL** simultaneously — all examples and exercises include DB-specific tabs for comparison.
 
 ## About the Author
@@ -81,7 +81,7 @@ The right tool for the right job. For a one-time task like data generation, Pyth
 
 SQL is hard to learn from books alone. Memorizing syntax doesn't enable you to write queries, and 10-row samples don't build real-world intuition. This tutorial is a **"learn by querying"** resource.
 
-**Realistic data** — 680K rows of data from a growing online store over 10 years includes sales growth trends, year-end peaks, customer churn, NULLs, and outliers. Not textbook-clean data, but the real thing you encounter in practice.
+**Realistic data** — 750K rows of data from a growing online store over 10 years includes sales growth trends, year-end peaks, customer churn, NULLs, and outliers. Not textbook-clean data, but the real thing you encounter in practice.
 
 **Three databases at once** — Solve the same problems in SQLite, MySQL, and PostgreSQL. Compare DB-specific syntax with a single tab switch, building SQL skills that aren't tied to any particular database.
 
@@ -89,9 +89,9 @@ SQL is hard to learn from books alone. Memorizing syntax doesn't enable you to w
 
 | Traditional Resources | This Tutorial |
 |-----------------------|--------------|
-| Syntax explanations only, no practice data | **680K rows** with 10-year growth curves, seasonality, and customer behavior |
+| Syntax explanations only, no practice data | **750K rows** with 10-year growth curves, seasonality, and customer behavior |
 | Covers only one DB | **SQLite, MySQL, PostgreSQL** — same problems across three DBs |
-| Answers only | Full answers + explanations + result tables for all **270 problems** |
+| Answers only | Full answers + explanations + result tables for all **640 problems** |
 | Fixed data, no customization | **Seed-based generator** — freely adjust size, language, and noise |
 | Grammar-listing format | Practice centered on shopping mall **business scenarios** |
 | English or Korean only | Both data and documentation in **Korean/English** |
@@ -196,7 +196,7 @@ Expand to production-level analytical queries, performance tuning, and DB design
 | 24 | JSON Data Queries | JSON extraction/filtering, DB differences | Extract values from JSON columns, conditional searches |
 | 25 | Stored Procedures | PL/pgSQL, MySQL procedures | Encapsulate business logic inside the database |
 
-### Exercises — 23 Sets · 270 Problems
+### Exercises — 30 Sets · 640 Problems
 
 Apply the syntax learned in lessons to real business data. Every problem includes an answer, explanation, and result table.
 
@@ -313,7 +313,7 @@ Adjust to your own pace. Based on 1-2 hours per day.
 | Version | Date | Key Changes |
 |:-------:|:----:|-------------|
 | v2.1 | 2026-04-11 | Document structure overhaul (schema/setup split), 18 MySQL/PG views added, expanded to 15 stored procedures, trigger/view/SP flowcharts, DB selection guide, study schedule |
-| v2.0 | 2026-04-01 | Full renewal — 30 tables, 3 DB simultaneous support, 270 exercises, Korean/English support, seed-based generator |
+| v2.0 | 2026-04-01 | Full renewal — 30 tables, 3 DB simultaneous support, 640 exercises, Korean/English support, seed-based generator |
 | v1.0 | 2025-12-01 | Initial release — SQLite only, 10 tables, basic lessons |
 
 [Get Started →](setup/index.md){ .md-button .md-button--primary }
