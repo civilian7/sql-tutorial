@@ -3,7 +3,7 @@
 0강에서 NULL을 간단히 소개했습니다 — '값이 없다'는 뜻이라고요. 이번 강에서는 NULL이 SQL에서 어떻게 특별하게 동작하는지, 그리고 안전하게 다루는 방법을 배웁니다.
 
 !!! note "이미 알고 계신다면"
-    IS NULL, COALESCE, NULLIF, NULL 전파를 이미 알고 있다면 [7강: INNER JOIN](../intermediate/07-inner-join.md)으로 건너뛰세요.
+    IS NULL, COALESCE, NULLIF, NULL 전파를 이미 알고 있다면 [7강: CASE 표현식](07-case.md)으로 건너뛰세요.
 
 ```mermaid
 flowchart TD
@@ -473,8 +473,8 @@ SELECT
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [7강: INNER JOIN](../intermediate/07-inner-join.md)으로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 7강으로 |
+| **9~10개** | [7강: CASE 표현식](07-case.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **5개 이하** | 이 강의를 다시 읽어보세요 |
 | **3개 이하** | [5강: GROUP BY](05-group-by.md)부터 다시 시작하세요 |
 
@@ -491,4 +491,4 @@ SELECT
 | NULL 전파 (다중 칼럼 결측 집계) | 10 |
 
 ---
-다음: [7강: INNER JOIN](../intermediate/07-inner-join.md)
+다음: [7강: CASE 표현식](07-case.md)

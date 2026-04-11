@@ -1,4 +1,4 @@
-# 강의 22: 인덱스(Indexes)와 쿼리 실행 계획
+# 강의 23: 인덱스(Indexes)와 쿼리 실행 계획
 
 인덱스(Index)는 SQLite가 테이블 전체를 스캔하지 않고도 행을 빠르게 찾을 수 있게 해주는 데이터 구조입니다. 언제 인덱스가 도움이 되고 언제 그렇지 않은지를 이해하는 것이 쿼리 성능 튜닝의 기초입니다.
 
@@ -607,4 +607,4 @@ DROP INDEX IF EXISTS idx_orders_status_date;
 
 
 ---
-다음: [강의 23: 트리거(Triggers)](23-triggers.md)
+다음: [강의 24: 트리거(Triggers)](24-triggers.md)

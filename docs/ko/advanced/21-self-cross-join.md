@@ -1,9 +1,9 @@
-# 17강: SELF JOIN과 CROSS JOIN
+# 21강: SELF JOIN과 CROSS JOIN
 
-[7~8강](07-inner-join.md)에서 INNER JOIN과 LEFT JOIN으로 서로 다른 테이블을 연결했습니다. 이번에는 특수한 JOIN 두 가지를 배웁니다. SELF JOIN은 같은 테이블을 자기 자신과 연결하고(매니저-직원 관계), CROSS JOIN은 모든 조합을 만듭니다(날짜x카테고리).
+[8~9강](../intermediate/08-inner-join.md)에서 INNER JOIN과 LEFT JOIN으로 서로 다른 테이블을 연결했습니다. 이번에는 특수한 JOIN 두 가지를 배웁니다. SELF JOIN은 같은 테이블을 자기 자신과 연결하고(매니저-직원 관계), CROSS JOIN은 모든 조합을 만듭니다(날짜x카테고리).
 
 !!! note "이미 알고 계신다면"
-    SELF JOIN, CROSS JOIN에 익숙하다면 [18강: 윈도우 함수](../advanced/18-window.md)로 건너뛰세요.
+    SELF JOIN, CROSS JOIN에 익숙하다면 [22강: 뷰(Views)](22-views.md)로 건너뛰세요.
 
 ```mermaid
 flowchart TD
@@ -861,10 +861,10 @@ ORDER BY c.date_key;
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [18강: 윈도우 함수](../advanced/18-window.md)로 이동 |
+| **9~10개** | [22강: 뷰(Views)](22-views.md)로 이동 |
 | **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [16강: 트랜잭션](16-transactions.md)부터 다시 시작하세요 |
+| **3개 이하** | [20강: EXISTS](20-exists.md)부터 다시 시작하세요 |
 
 **문제별 영역:**
 
@@ -877,4 +877,4 @@ ORDER BY c.date_key;
 | CROSS JOIN + CTE + LEFT JOIN 매트릭스 | 7, 8, 9 |
 
 ---
-다음: [18강: 윈도우 함수](../advanced/18-window.md)
+다음: [22강: 뷰(Views)](22-views.md)

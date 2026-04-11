@@ -1,9 +1,9 @@
-# 7강: INNER JOIN
+# 8강: INNER JOIN
 
 지금까지는 한 테이블에서만 데이터를 조회했습니다. 하지만 실무에서는 '주문한 고객의 이름'처럼 여러 테이블의 데이터를 합쳐야 합니다. INNER JOIN으로 테이블을 연결하는 방법을 배웁니다.
 
 !!! note "이미 알고 계신다면"
-    INNER JOIN, ON 조건, 다중 JOIN에 익숙하다면 [8강: LEFT JOIN](08-left-join.md)으로 건너뛰세요.
+    INNER JOIN, ON 조건, 다중 JOIN에 익숙하다면 [9강: LEFT JOIN](09-left-join.md)으로 건너뛰세요.
 
 `JOIN`은 관련 칼럼을 기준으로 두 개 이상의 테이블 행을 합칩니다. `INNER JOIN`은 **양쪽** 테이블에서 모두 일치하는 행만 반환합니다 — 일치하지 않는 행은 결과에서 제외됩니다.
 
@@ -434,10 +434,10 @@ ORDER BY o.total_amount DESC;
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [8강: LEFT JOIN](08-left-join.md)으로 이동 |
+| **9~10개** | [9강: LEFT JOIN](09-left-join.md)으로 이동 |
 | **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [6강: NULL](../beginner/06-null.md)부터 다시 시작하세요 |
+| **3개 이하** | [7강: CASE 표현식](../beginner/07-case.md)부터 다시 시작하세요 |
 
 **문제별 영역:**
 
@@ -451,4 +451,4 @@ ORDER BY o.total_amount DESC;
 | JOIN + GROUP BY + 집계 | 10 |
 
 ---
-다음: [8강: LEFT JOIN](08-left-join.md)
+다음: [9강: LEFT JOIN](09-left-join.md)

@@ -3,7 +3,7 @@
 [11강](11-datetime.md)에서 날짜/시간 함수로 기간을 계산하고 포맷을 바꾸는 법을 배웠습니다. 데이터 분석에서 '이메일 도메인별 고객 수'나 '상품명에서 브랜드 추출'같은 작업이 자주 필요합니다. 문자열 함수로 텍스트를 자르고, 바꾸고, 합칠 수 있습니다.
 
 !!! note "이미 알고 계신다면"
-    SUBSTR, REPLACE, CONCAT, LENGTH, UPPER/LOWER, TRIM에 익숙하다면 [13강: UNION](13-union.md)으로 건너뛰세요.
+    SUBSTR, REPLACE, CONCAT, LENGTH, UPPER/LOWER, TRIM에 익숙하다면 [13강: 숫자·변환·조건 함수](13-utility-functions.md)로 건너뛰세요.
 
 문자열 함수는 데이터베이스마다 이름이나 인자 순서가 다른 경우가 많습니다. 이 강의에서는 SQLite를 기본으로 하되, 차이가 있는 부분에서 MySQL과 PostgreSQL 탭을 함께 보여줍니다.
 
@@ -870,7 +870,7 @@ GROUP BY grade;
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **12~13개** | [13강: UNION](13-union.md)으로 이동 |
+| **12~13개** | [13강: 숫자·변환·조건 함수](13-utility-functions.md)로 이동 |
 | **9~11개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
 | **3개 이하** | [11강: 날짜/시간 함수](11-datetime.md)부터 다시 시작하세요 |
@@ -891,4 +891,4 @@ GROUP BY grade;
 | GROUP_CONCAT / STRING_AGG | 13 |
 
 ---
-다음: [13강: UNION](13-union.md)
+다음: [13강: 숫자·변환·조건 함수](13-utility-functions.md)

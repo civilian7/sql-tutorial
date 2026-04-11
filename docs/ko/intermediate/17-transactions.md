@@ -1,9 +1,9 @@
-# 16강: 트랜잭션과 ACID
+# 17강: 트랜잭션과 ACID
 
 주문을 생성할 때 orders 테이블에 INSERT하고, payments 테이블에도 INSERT해야 합니다. 만약 첫 번째는 성공했는데 두 번째가 실패하면? 결제 없는 주문이 생깁니다. 트랜잭션으로 여러 작업을 하나의 단위로 묶어 이런 문제를 방지합니다.
 
 !!! note "이미 알고 계신다면"
-    BEGIN, COMMIT, ROLLBACK, ACID에 익숙하다면 [17강: SELF JOIN과 CROSS JOIN](17-self-cross-join.md)으로 건너뛰세요.
+    BEGIN, COMMIT, ROLLBACK, ACID에 익숙하다면 [18강: 윈도우 함수](../advanced/18-window.md)로 건너뛰세요.
 
 ```mermaid
 flowchart LR
@@ -675,10 +675,10 @@ ACID 속성 4가지를 다음 시나리오에 각각 대응시키세요:
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [17강: SELF JOIN과 CROSS JOIN](17-self-cross-join.md)으로 이동 |
+| **9~10개** | [18강: 윈도우 함수](../advanced/18-window.md)로 이동 |
 | **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [15강: DDL](15-ddl.md)부터 다시 시작하세요 |
+| **3개 이하** | [16강: DDL](16-ddl.md)부터 다시 시작하세요 |
 
 **문제별 영역:**
 
@@ -692,4 +692,4 @@ ACID 속성 4가지를 다음 시나리오에 각각 대응시키세요:
 | 종합 트랜잭션 작성 | 10 |
 
 ---
-다음: [17강: SELF JOIN과 CROSS JOIN](17-self-cross-join.md)
+다음: [18강: 윈도우 함수](../advanced/18-window.md)

@@ -463,4 +463,4 @@ ORDER BY category;
 
 
 ---
-다음: [강의 21: 뷰(Views)](21-views.md)
+다음: [강의 21: SELF JOIN과 CROSS JOIN](21-self-cross-join.md)

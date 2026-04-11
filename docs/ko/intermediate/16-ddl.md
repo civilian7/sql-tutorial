@@ -1,9 +1,9 @@
-# 15강: DDL — 테이블 생성과 변경
+# 16강: DDL — 테이블 생성과 변경
 
-14강에서 데이터를 추가/수정/삭제하는 DML을 배웠습니다. 이번에는 테이블 자체를 만들고, 변경하고, 삭제하는 **DDL**(Data Definition Language)을 배웁니다. [0강](../beginner/00-introduction.md)에서 배운 PK, FK, 데이터 타입을 직접 사용해봅니다.
+15강에서 데이터를 추가/수정/삭제하는 DML을 배웠습니다. 이번에는 테이블 자체를 만들고, 변경하고, 삭제하는 **DDL**(Data Definition Language)을 배웁니다. [0강](../beginner/00-introduction.md)에서 배운 PK, FK, 데이터 타입을 직접 사용해봅니다.
 
 !!! note "이미 알고 계신다면"
-    CREATE TABLE, ALTER TABLE, DROP TABLE, 제약 조건(PK, FK, CHECK, UNIQUE, NOT NULL)에 익숙하다면 [16강: 트랜잭션](16-transactions.md)으로 건너뛰세요.
+    CREATE TABLE, ALTER TABLE, DROP TABLE, 제약 조건(PK, FK, CHECK, UNIQUE, NOT NULL)에 익숙하다면 [17강: 트랜잭션](17-transactions.md)으로 건너뛰세요.
 
 ```mermaid
 flowchart LR
@@ -916,10 +916,10 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [16강: 트랜잭션](16-transactions.md)으로 이동 |
+| **9~10개** | [17강: 트랜잭션](17-transactions.md)으로 이동 |
 | **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [14강: DML](14-dml.md)부터 다시 시작하세요 |
+| **3개 이하** | [15강: DML](15-dml.md)부터 다시 시작하세요 |
 
 **문제별 영역:**
 
@@ -934,4 +934,4 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
 | CTAS (CREATE TABLE AS SELECT) | 9 |
 
 ---
-다음: [16강: 트랜잭션과 ACID](16-transactions.md)
+다음: [17강: 트랜잭션과 ACID](17-transactions.md)
