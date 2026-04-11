@@ -6,13 +6,29 @@
 
     ---
 
-    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `customers` — 고객 · `categories` — 카테고리 · `reviews` — 리뷰 · `inventory_transactions` — 입출고 이력 · `staff` — 직원 · `payments` — 결제
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `customers` — 고객<br>
+    `categories` — 카테고리<br>
+    `reviews` — 리뷰<br>
+    `inventory_transactions` — 입출고 이력<br>
+    `staff` — 직원<br>
+    `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `CREATE VIEW`, 뷰 쿼리, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), 감사 로깅, 저장 프로시저 개념(MySQL/PG)
+    `CREATE VIEW`<br>
+    뷰 쿼리<br>
+    `DROP VIEW`<br>
+    `CREATE TRIGGER` (AFTER/BEFORE<br>
+    INSERT/UPDATE/DELETE<br>
+    WHEN<br>
+    OLD/NEW)<br>
+    감사 로깅<br>
+    저장 프로시저 개념(MySQL/PG)
 
 </div>
 

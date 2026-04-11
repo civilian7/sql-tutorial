@@ -6,13 +6,28 @@
 
     ---
 
-    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `customers` — 고객 · `payments` — 결제 · `calendar` — 날짜 참조 · `product_views` — 상품 조회 이력 · `carts` — 장바구니 · `cart_items` — 장바구니 상세
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `categories` — 카테고리<br>
+    `customers` — 고객<br>
+    `payments` — 결제<br>
+    `calendar` — 날짜 참조<br>
+    `product_views` — 상품 조회 이력<br>
+    `carts` — 장바구니<br>
+    `cart_items` — 장바구니 상세
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    Top-N per group, 갭 분석, 피벗, 세션 분석, 파레토(80/20), 퍼널, 연속 기간 탐지
+    Top-N per group<br>
+    갭 분석<br>
+    피벗<br>
+    세션 분석<br>
+    파레토(80/20)<br>
+    퍼널<br>
+    연속 기간 탐지
 
 </div>
 

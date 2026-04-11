@@ -6,13 +6,24 @@
 
     ---
 
-    `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `product_prices` — 가격 변경 이력 · `point_transactions` — 포인트 적립/사용 · `calendar` — 날짜 참조 · `staff` — 직원
+    `customers` — 고객<br>
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `product_prices` — 가격 변경 이력<br>
+    `point_transactions` — 포인트 적립/사용<br>
+    `calendar` — 날짜 참조<br>
+    `staff` — 직원
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    원장 검증, 가격 변경 영향 분석, 장바구니 분석(연관 규칙), 재고 최적화, 고객 이탈 예측 — 미니 프로젝트급 종합 문제
+    원장 검증<br>
+    가격 변경 영향 분석<br>
+    장바구니 분석(연관 규칙)<br>
+    재고 최적화<br>
+    고객 이탈 예측 — 미니 프로젝트급 종합 문제
 
 </div>
 

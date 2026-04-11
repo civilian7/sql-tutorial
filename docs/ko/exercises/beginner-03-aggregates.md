@@ -6,13 +6,23 @@
 
     ---
 
-    `products` — 상품 (이름, 가격, 재고, 브랜드) · `customers` — 고객 (등급, 포인트, 가입채널) · `orders` — 주문 (상태, 금액, 일시) · `reviews` — 리뷰 (평점, 내용) · `payments` — 결제 (방법, 금액, 상태)
+    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+    `customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `orders` — 주문 (상태, 금액, 일시)<br>
+    `reviews` — 리뷰 (평점, 내용)<br>
+    `payments` — 결제 (방법, 금액, 상태)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `ROUND`, `COUNT(DISTINCT)` + 이전 강의 내용
+    `COUNT`<br>
+    `SUM`<br>
+    `AVG`<br>
+    `MIN`<br>
+    `MAX`<br>
+    `ROUND`<br>
+    `COUNT(DISTINCT)` + 이전 강의 내용
 
 </div>
 

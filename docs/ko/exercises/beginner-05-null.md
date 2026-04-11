@@ -6,13 +6,20 @@
 
     ---
 
-    `customers` — 고객 (등급, 포인트, 가입채널) · `orders` — 주문 (상태, 금액, 일시) · `products` — 상품 (이름, 가격, 재고, 브랜드)
+    `customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `orders` — 주문 (상태, 금액, 일시)<br>
+    `products` — 상품 (이름, 가격, 재고, 브랜드)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `IS NULL`, `IS NOT NULL`, `COALESCE`, `IFNULL`, NULL과 집계 함수, NULL 정렬
+    `IS NULL`<br>
+    `IS NOT NULL`<br>
+    `COALESCE`<br>
+    `IFNULL`<br>
+    NULL과 집계 함수<br>
+    NULL 정렬
 
 </div>
 

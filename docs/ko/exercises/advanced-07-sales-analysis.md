@@ -6,13 +6,24 @@
 
     ---
 
-    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `customers` — 고객 · `payments` — 결제
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `categories` — 카테고리<br>
+    `customers` — 고객<br>
+    `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    CTE, 윈도우 함수, 다중 JOIN, 집계 함수 종합 — 월별/분기별/카테고리별 매출, 성장률, 누적 매출, 코호트
+    CTE<br>
+    윈도우 함수<br>
+    다중 JOIN<br>
+    집계 함수 종합 — 월별/분기별/카테고리별 매출<br>
+    성장률<br>
+    누적 매출<br>
+    코호트
 
 </div>
 

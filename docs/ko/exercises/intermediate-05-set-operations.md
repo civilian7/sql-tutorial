@@ -6,13 +6,25 @@
 
     ---
 
-    `customers` — 고객 · `orders` — 주문 · `reviews` — 리뷰 · `complaints` — 불만 접수 · `wishlists` — 위시리스트 · `order_items` — 주문 상세 · `products` — 상품 · `payments` — 결제 · `returns` — 반품/교환
+    `customers` — 고객<br>
+    `orders` — 주문<br>
+    `reviews` — 리뷰<br>
+    `complaints` — 불만 접수<br>
+    `wishlists` — 위시리스트<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `payments` — 결제<br>
+    `returns` — 반품/교환
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `UNION`, `UNION ALL`, `INTERSECT`, `EXCEPT`, 집합 연산 + `JOIN`/`GROUP BY`
+    `UNION`<br>
+    `UNION ALL`<br>
+    `INTERSECT`<br>
+    `EXCEPT`<br>
+    집합 연산 + `JOIN`/`GROUP BY`
 
 </div>
 

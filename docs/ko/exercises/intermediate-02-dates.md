@@ -6,13 +6,24 @@
 
     ---
 
-    `orders` — 주문 (상태, 금액, 일시) · `customers` — 고객 (등급, 포인트, 가입채널) · `shipping` — 배송 (택배사, 추적번호) · `reviews` — 리뷰 (평점, 내용) · `returns` — 반품/교환 · `calendar` — 날짜 참조 (공휴일, 주말)
+    `orders` — 주문 (상태, 금액, 일시)<br>
+    `customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `shipping` — 배송 (택배사, 추적번호)<br>
+    `reviews` — 리뷰 (평점, 내용)<br>
+    `returns` — 반품/교환<br>
+    `calendar` — 날짜 참조 (공휴일, 주말)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `SUBSTR` 날짜 추출, `DATE()`, `STRFTIME()`, `JULIANDAY()`, 날짜 연산, 시간대 분석, calendar JOIN
+    `SUBSTR` 날짜 추출<br>
+    `DATE()`<br>
+    `STRFTIME()`<br>
+    `JULIANDAY()`<br>
+    날짜 연산<br>
+    시간대 분석<br>
+    calendar JOIN
 
 </div>
 

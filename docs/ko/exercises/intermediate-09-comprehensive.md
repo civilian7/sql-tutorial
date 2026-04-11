@@ -6,13 +6,29 @@
 
     ---
 
-    `orders` — 주문 · `customers` — 고객 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `payments` — 결제 · `reviews` — 리뷰 · `shipping` — 배송 · `complaints` — 불만 접수 · `wishlists` — 위시리스트
+    `orders` — 주문<br>
+    `customers` — 고객<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `categories` — 카테고리<br>
+    `payments` — 결제<br>
+    `reviews` — 리뷰<br>
+    `shipping` — 배송<br>
+    `complaints` — 불만 접수<br>
+    `wishlists` — 위시리스트
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    중급 전체: `JOIN`, 서브쿼리, 날짜 함수, 문자열 함수, `CASE`, `UNION`, `GROUP BY`/`HAVING`, 집계 함수
+    중급 전체: `JOIN`<br>
+    서브쿼리<br>
+    날짜 함수<br>
+    문자열 함수<br>
+    `CASE`<br>
+    `UNION`<br>
+    `GROUP BY`/`HAVING`<br>
+    집계 함수
 
 </div>
 

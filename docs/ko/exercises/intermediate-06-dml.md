@@ -6,13 +6,20 @@
 
     ---
 
-    `products` — 상품 · `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 (임시 테이블로 복사하여 실습)
+    `products` — 상품<br>
+    `customers` — 고객<br>
+    `orders` — 주문<br>
+    `order_items` — 주문 상세 (임시 테이블로 복사하여 실습)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `INSERT INTO`, `UPDATE SET`, `DELETE FROM`, `INSERT INTO ... SELECT`, 서브쿼리 활용 DML
+    `INSERT INTO`<br>
+    `UPDATE SET`<br>
+    `DELETE FROM`<br>
+    `INSERT INTO ... SELECT`<br>
+    서브쿼리 활용 DML
 
 </div>
 

@@ -6,13 +6,19 @@
 
     ---
 
-    `products` — 상품 (이름, 가격, 재고, 브랜드) · `categories` — 카테고리 (부모-자식 계층)
+    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+    `categories` — 카테고리 (부모-자식 계층)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `JSON_EXTRACT`, `JSON_EACH`, `JSON_GROUP_ARRAY`, `JSON_GROUP_OBJECT`, JSON 경로 표현식, specs 칼럼 활용
+    `JSON_EXTRACT`<br>
+    `JSON_EACH`<br>
+    `JSON_GROUP_ARRAY`<br>
+    `JSON_GROUP_OBJECT`<br>
+    JSON 경로 표현식<br>
+    specs 칼럼 활용
 
 </div>
 

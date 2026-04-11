@@ -6,13 +6,21 @@
 
     ---
 
-    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `payments` — 결제
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `EXPLAIN QUERY PLAN`, `CREATE INDEX`, 복합 인덱스, 커버링 인덱스, SCAN vs SEARCH, 인덱스 사용 불가 패턴
+    `EXPLAIN QUERY PLAN`<br>
+    `CREATE INDEX`<br>
+    복합 인덱스<br>
+    커버링 인덱스<br>
+    SCAN vs SEARCH<br>
+    인덱스 사용 불가 패턴
 
 </div>
 

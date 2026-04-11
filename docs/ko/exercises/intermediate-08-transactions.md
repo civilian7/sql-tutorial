@@ -6,13 +6,22 @@
 
     ---
 
-    `orders` — 주문 · `products` — 상품 · `customers` — 고객 · `payments` — 결제 (임시 테이블로 복사하여 실습)
+    `orders` — 주문<br>
+    `products` — 상품<br>
+    `customers` — 고객<br>
+    `payments` — 결제 (임시 테이블로 복사하여 실습)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `RELEASE`, 원자성, 동시성 제어
+    `BEGIN`<br>
+    `COMMIT`<br>
+    `ROLLBACK`<br>
+    `SAVEPOINT`<br>
+    `RELEASE`<br>
+    원자성<br>
+    동시성 제어
 
 </div>
 

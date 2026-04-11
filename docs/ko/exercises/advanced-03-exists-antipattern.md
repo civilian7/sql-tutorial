@@ -6,13 +6,25 @@
 
     ---
 
-    `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `reviews` — 리뷰 · `wishlists` — 위시리스트 · `complaints` — 불만 접수 · `categories` — 카테고리 · `payments` — 결제
+    `customers` — 고객<br>
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `reviews` — 리뷰<br>
+    `wishlists` — 위시리스트<br>
+    `complaints` — 불만 접수<br>
+    `categories` — 카테고리<br>
+    `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `EXISTS`, `NOT EXISTS`, 상관 서브쿼리, 안티 조인 패턴, 전칭 한정(Universal Quantification)
+    `EXISTS`<br>
+    `NOT EXISTS`<br>
+    상관 서브쿼리<br>
+    안티 조인 패턴<br>
+    전칭 한정(Universal Quantification)
 
 </div>
 

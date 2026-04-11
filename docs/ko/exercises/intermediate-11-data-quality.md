@@ -6,13 +6,28 @@
 
     ---
 
-    `customers` — 고객 · `products` — 상품 · `orders` — 주문 · `order_items` — 주문 상세 · `payments` — 결제 · `shipping` — 배송 · `reviews` — 리뷰 · `returns` — 반품/교환 · `customer_addresses` — 배송 주소 · `coupons` — 쿠폰 · `coupon_usage` — 쿠폰 사용 · `product_prices` — 가격 변경 이력
+    `customers` — 고객<br>
+    `products` — 상품<br>
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `payments` — 결제<br>
+    `shipping` — 배송<br>
+    `reviews` — 리뷰<br>
+    `returns` — 반품/교환<br>
+    `customer_addresses` — 배송 주소<br>
+    `coupons` — 쿠폰<br>
+    `coupon_usage` — 쿠폰 사용<br>
+    `product_prices` — 가격 변경 이력
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    NULL/중복/범위 점검, 참조 무결성 검증, 날짜 역전 탐지, 이상치 발견, 종합 품질 대시보드
+    NULL/중복/범위 점검<br>
+    참조 무결성 검증<br>
+    날짜 역전 탐지<br>
+    이상치 발견<br>
+    종합 품질 대시보드
 
 </div>
 

@@ -6,13 +6,26 @@
 
     ---
 
-    `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `suppliers` — 공급업체 · `reviews` — 리뷰 · `shipping` — 배송 · `payments` — 결제
+    `customers` — 고객<br>
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `categories` — 카테고리<br>
+    `suppliers` — 공급업체<br>
+    `reviews` — 리뷰<br>
+    `shipping` — 배송<br>
+    `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    JOIN, 서브쿼리, 날짜 함수, 집계, UNION, DML 등 중급 문법(08~17강)에서 발생하는 오류 진단 및 수정
+    JOIN<br>
+    서브쿼리<br>
+    날짜 함수<br>
+    집계<br>
+    UNION<br>
+    DML 등 중급 문법(08~17강)에서 발생하는 오류 진단 및 수정
 
 </div>
 

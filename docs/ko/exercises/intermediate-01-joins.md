@@ -6,13 +6,32 @@
 
     ---
 
-    `orders` — 주문 · `customers` — 고객 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `suppliers` — 공급업체 · `shipping` — 배송 · `reviews` — 리뷰 · `staff` — 직원 · `wishlists` — 위시리스트 · `complaints` — 불만 접수 · `product_tags` — 상품 태그 · `tags` — 태그 · `product_qna` — 상품 Q&A · `calendar` — 날짜 참조
+    `orders` — 주문<br>
+    `customers` — 고객<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `categories` — 카테고리<br>
+    `suppliers` — 공급업체<br>
+    `shipping` — 배송<br>
+    `reviews` — 리뷰<br>
+    `staff` — 직원<br>
+    `wishlists` — 위시리스트<br>
+    `complaints` — 불만 접수<br>
+    `product_tags` — 상품 태그<br>
+    `tags` — 태그<br>
+    `product_qna` — 상품 Q&A<br>
+    `calendar` — 날짜 참조
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    `INNER JOIN`, `LEFT JOIN`, anti-join, 다중 테이블 JOIN, Self-JOIN, JOIN + `GROUP BY` + 집계
+    `INNER JOIN`<br>
+    `LEFT JOIN`<br>
+    anti-join<br>
+    다중 테이블 JOIN<br>
+    Self-JOIN<br>
+    JOIN + `GROUP BY` + 집계
 
 </div>
 

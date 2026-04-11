@@ -6,13 +6,28 @@
 
     ---
 
-    `products` — 상품 (이름, 가격, 재고, 브랜드) · `customers` — 고객 (등급, 포인트, 가입채널) · `orders` — 주문 (상태, 금액, 일시) · `reviews` — 리뷰 (평점, 내용) · `payments` — 결제 (방법, 금액, 상태) · `categories` — 카테고리 (부모-자식 계층) · `suppliers` — 공급업체 (회사명, 연락처)
+    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+    `customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `orders` — 주문 (상태, 금액, 일시)<br>
+    `reviews` — 리뷰 (평점, 내용)<br>
+    `payments` — 결제 (방법, 금액, 상태)<br>
+    `categories` — 카테고리 (부모-자식 계층)<br>
+    `suppliers` — 공급업체 (회사명, 연락처)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    입문 전체: `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, 집계 함수, `GROUP BY`, `HAVING`, `IS NULL`, `COALESCE`, `CASE`
+    입문 전체: `SELECT`<br>
+    `WHERE`<br>
+    `ORDER BY`<br>
+    `LIMIT`<br>
+    집계 함수<br>
+    `GROUP BY`<br>
+    `HAVING`<br>
+    `IS NULL`<br>
+    `COALESCE`<br>
+    `CASE`
 
 </div>
 

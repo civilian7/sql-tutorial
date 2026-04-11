@@ -12,7 +12,12 @@
 
     ---
 
-    `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `DISTINCT`, 별칭(`AS`)
+    `SELECT`<br>
+    `WHERE`<br>
+    `ORDER BY`<br>
+    `LIMIT`<br>
+    `DISTINCT`<br>
+    별칭(`AS`)
 
 </div>
 

@@ -6,13 +6,29 @@
 
     ---
 
-    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `customers` — 고객 · `reviews` — 리뷰 · `product_views` — 상품 조회 이력 · `calendar` — 날짜 참조 · `staff` — 직원
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `categories` — 카테고리<br>
+    `customers` — 고객<br>
+    `reviews` — 리뷰<br>
+    `product_views` — 상품 조회 이력<br>
+    `calendar` — 날짜 참조<br>
+    `staff` — 직원
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    DENSE_RANK, 연속 N일, 중앙값, 세션 분석, 카테고리별 평점, MoM 성장률, 백분위, 근무일 계산, 조직도 재귀
+    DENSE_RANK<br>
+    연속 N일<br>
+    중앙값<br>
+    세션 분석<br>
+    카테고리별 평점<br>
+    MoM 성장률<br>
+    백분위<br>
+    근무일 계산<br>
+    조직도 재귀
 
 </div>
 

@@ -6,13 +6,24 @@
 
     ---
 
-    `products` — 상품 · `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `reviews` — 리뷰 · `wishlists` — 위시리스트 · `categories` — 카테고리 · `payments` — 결제
+    `products` — 상품<br>
+    `customers` — 고객<br>
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `reviews` — 리뷰<br>
+    `wishlists` — 위시리스트<br>
+    `categories` — 카테고리<br>
+    `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    스칼라 서브쿼리, `IN`/`NOT IN`, `EXISTS`/`NOT EXISTS`, FROM 절 서브쿼리(인라인 뷰), 상관 서브쿼리
+    스칼라 서브쿼리<br>
+    `IN`/`NOT IN`<br>
+    `EXISTS`/`NOT EXISTS`<br>
+    FROM 절 서브쿼리(인라인 뷰)<br>
+    상관 서브쿼리
 
 </div>
 

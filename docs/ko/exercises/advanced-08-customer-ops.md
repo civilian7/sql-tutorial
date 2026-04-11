@@ -6,13 +6,26 @@
 
     ---
 
-    `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `inventory_transactions` — 입출고 이력 · `customer_grade_history` — 등급 변경 이력 · `complaints` — 불만 접수 · `staff` — 직원
+    `customers` — 고객<br>
+    `orders` — 주문<br>
+    `order_items` — 주문 상세<br>
+    `products` — 상품<br>
+    `categories` — 카테고리<br>
+    `inventory_transactions` — 입출고 이력<br>
+    `customer_grade_history` — 등급 변경 이력<br>
+    `complaints` — 불만 접수<br>
+    `staff` — 직원
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
     ---
 
-    RFM 분석, 코호트, LTV, 재고 ABC 분석, 안전 재고, CS 성과 — CTE + 윈도우 함수 + 다중 JOIN
+    RFM 분석<br>
+    코호트<br>
+    LTV<br>
+    재고 ABC 분석<br>
+    안전 재고<br>
+    CS 성과 — CTE + 윈도우 함수 + 다중 JOIN
 
 </div>
 

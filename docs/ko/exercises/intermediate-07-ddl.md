@@ -12,7 +12,15 @@
 
     ---
 
-    `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`, 제약조건 (`PRIMARY KEY`, `NOT NULL`, `UNIQUE`, `CHECK`, `DEFAULT`, `FOREIGN KEY`)
+    `CREATE TABLE`<br>
+    `ALTER TABLE`<br>
+    `DROP TABLE`<br>
+    제약조건 (`PRIMARY KEY`<br>
+    `NOT NULL`<br>
+    `UNIQUE`<br>
+    `CHECK`<br>
+    `DEFAULT`<br>
+    `FOREIGN KEY`)
 
 </div>
 
