@@ -192,22 +192,16 @@ ORDER BY grade, rnk;
 
 ```mermaid
 flowchart TD
-    subgraph step1["1단계: 앵커 (기본 케이스)"]
-        A1["최상위 행 선택\nWHERE parent_id IS NULL"]
-    end
-    subgraph step2["2단계: 재귀 반복"]
-        A2["이전 결과와 JOIN하여\n자식 행 추가"]
-    end
-    subgraph step3["3단계: 종료"]
-        A3["더 이상 자식이 없으면\n반복 중단"]
-    end
-    subgraph result["최종 결과"]
-        A4["모든 단계의 행을\nUNION ALL로 합침"]
-    end
-    step1 --> step2
-    step2 -->|"자식 있음"| step2
-    step2 -->|"자식 없음"| step3
-    step3 --> result
+    A1["1단계: 앵커\n최상위 행 선택\nWHERE parent_id IS NULL"]
+    A2["2단계: 재귀\n이전 결과와 JOIN하여\n자식 행 추가"]
+    A3["자식이 더 있나?"]
+    A4["3단계: 종료\n반복 중단"]
+    A5["최종 결과\n모든 단계를 UNION ALL"]
+    A1 --> A2
+    A2 --> A3
+    A3 -->|"YES"| A2
+    A3 -->|"NO"| A4
+    A4 --> A5
 ```
 
 > 재귀 CTE는 **앵커(기본 케이스)** + **재귀 멤버(반복)** + **종료 조건(자식 없음)**으로 구성됩니다.
