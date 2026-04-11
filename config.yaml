@@ -9,11 +9,11 @@ shop_name: "테크샵(TechShop)"
 
 # Date range (YYYY-MM-DD)
 start_date: "2016-01-01"
-end_date: "2025-06-30"
+end_date: "2025-12-31"
 
 # 데이터 규모 프로필 (small / medium / large)
 # CLI에서 --size 옵션으로 오버라이드 가능
-size: medium
+size: small
 
 profiles:
   small:

@@ -59,29 +59,49 @@ class CouponGenerator(BaseGenerator):
     def generate_coupon_usage(
         self, coupons: list[dict], orders: list[dict],
     ) -> list[dict]:
-        """Generate coupon usage history."""
+        """Generate coupon usage history.
+
+        Iterates confirmed orders and applies coupons with ~15% probability.
+        This ensures realistic coupon usage volume (~5000 for medium scale).
+        """
         rows = []
         usage_id = 0
-        target_count = max(100, int(50000 * self.scale))
+        apply_rate = 0.15  # 15% of orders use a coupon
 
         confirmed_orders = [o for o in orders if o["status"] in ("confirmed", "delivered")]
         if not confirmed_orders or not coupons:
             return rows
 
-        # Track usage count per coupon and per customer
+        # Index coupons by validity period for faster lookup
+        parsed_coupons = []
+        for c in coupons:
+            parsed_coupons.append({
+                **c,
+                "_start": datetime.strptime(c["started_at"], "%Y-%m-%d %H:%M:%S"),
+                "_end": datetime.strptime(c["expired_at"], "%Y-%m-%d %H:%M:%S"),
+            })
+
+        # Track usage count per coupon and per (coupon, customer)
         coupon_total_usage: dict[int, int] = {}
         coupon_user_usage: dict[tuple[int, int], int] = {}
 
-        for _ in range(min(target_count, len(confirmed_orders))):
-            order = self.rng.choice(confirmed_orders)
-            coupon = self.rng.choice(coupons)
+        for order in confirmed_orders:
+            # Skip based on probability
+            if self.rng.random() > apply_rate:
+                continue
 
             ordered_at = datetime.strptime(order["ordered_at"], "%Y-%m-%d %H:%M:%S")
-            coupon_start = datetime.strptime(coupon["started_at"], "%Y-%m-%d %H:%M:%S")
-            coupon_end = datetime.strptime(coupon["expired_at"], "%Y-%m-%d %H:%M:%S")
 
-            if not (coupon_start <= ordered_at <= coupon_end):
+            # Find valid coupons for this order's date
+            valid_coupons = [
+                c for c in parsed_coupons
+                if c["_start"] <= ordered_at <= c["_end"]
+            ]
+            if not valid_coupons:
                 continue
+
+            # Pick a random valid coupon
+            coupon = self.rng.choice(valid_coupons)
 
             # Minimum order amount validation
             if coupon["min_order_amount"] and order["total_amount"] < coupon["min_order_amount"]:
