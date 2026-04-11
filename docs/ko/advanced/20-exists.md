@@ -11,6 +11,13 @@ flowchart TD
 
 > EXISTS는 외부 쿼리의 각 행에 대해 서브쿼리를 실행하고, 결과가 있으면 포함합니다.
 
+**실무에서 EXISTS를 사용하는 대표적인 시나리오:**
+
+- **누락 데이터 찾기:** 주문 없는 고객, 리뷰 없는 상품 (NOT EXISTS)
+- **조건부 존재 확인:** VIP인데 최근 주문 없는 고객 (EXISTS + NOT EXISTS)
+- **데이터 정합성:** FK 무결성 검증, 고아 레코드 탐지 (NOT EXISTS)
+- **전칭 부정:** "모든 고객이 구매한 상품" (이중 NOT EXISTS)
+
 ## EXISTS vs. IN
 
 | 특성 | `IN` | `EXISTS` |
@@ -58,7 +65,7 @@ ORDER BY created_at DESC
 LIMIT 10;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | id   | name | email                | created_at          |
 | ---: | ---- | -------------------- | ------------------- |
@@ -79,7 +86,7 @@ AND NOT EXISTS (
 ORDER BY p.price DESC;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | id  | name                   | price  |
 | --: | ---------------------- | -----: |
@@ -106,7 +113,7 @@ ORDER BY c.name
 LIMIT 8;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | id   | name | grade | has_orders | has_reviews | has_complaints |
 | ---: | ---- | ----- | ---------- | ----------- | -------------- |

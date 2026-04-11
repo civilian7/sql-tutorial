@@ -13,6 +13,13 @@ flowchart LR
 
 > 저장 프로시저는 여러 SQL 문을 하나의 이름으로 묶어 서버에서 실행합니다. 네트워크 왕복을 줄이고 비즈니스 로직을 중앙에서 관리할 수 있습니다.
 
+**실무에서 저장 프로시저를 사용하는 대표적인 시나리오:**
+
+- **반복 로직 캡슐화:** 주문 처리, 등급 갱신, 정산 등을 SP로 묶어 한 번에 호출
+- **권한 분리:** 테이블 직접 접근 없이 SP 실행 권한만 부여
+- **트랜잭션 보장:** 여러 테이블 수정을 하나의 원자적 단위로 처리
+- **성능:** 컴파일된 실행 계획 재사용 (MySQL/PG)
+
 !!! warning "SQLite 안내"
     SQLite는 저장 프로시저를 지원하지 않습니다. SQLite 환경에서는 **뷰(VIEW)**, **트리거(TRIGGER)**, **애플리케이션 레벨 로직**으로 유사한 효과를 얻을 수 있습니다. 이 강의는 **MySQL**과 **PostgreSQL** 전용입니다.
 
@@ -812,6 +819,18 @@ DECLARE → OPEN → FETCH (반복) → CLOSE
 | 트랜잭션으로 원자성 보장 | 디버깅 없이 복잡한 중첩 호출 |
 | 주석으로 목적과 파라미터 설명 | 동적 SQL 남용 (SQL 인젝션 위험) |
 | 집합 연산 우선, 커서는 최후 수단 | 커서 남용 (UPDATE/DELETE WHERE로 대체 가능한 경우) |
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| CREATE PROCEDURE | 프로시저 생성 (MySQL) | `CREATE PROCEDURE sp_name(IN p INT)` |
+| CREATE FUNCTION | 함수 생성 (값 반환) | `CREATE FUNCTION fn_name(...) RETURNS ...` |
+| CALL | 프로시저 호출 | `CALL sp_process_order(1001)` |
+| IN / OUT 파라미터 | 입출력 매개변수 | `IN p_id INT, OUT p_result TEXT` |
+| 에러 처리 | SIGNAL (MySQL) / RAISE (PG) | `SIGNAL SQLSTATE '45000'` |
+| CURSOR | 행 단위 순회 | `DECLARE cur CURSOR FOR SELECT ...` |
+| DROP PROCEDURE | 프로시저 삭제 | `DROP PROCEDURE IF EXISTS sp_name` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.

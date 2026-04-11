@@ -371,6 +371,25 @@ WHERE ordered_at > '2024-01-01'
 DROP INDEX IF EXISTS idx_orders_status_date;
 ```
 
+**실무에서 인덱스를 사용하는 대표적인 시나리오:**
+
+- **조회 성능:** WHERE, JOIN, ORDER BY에 사용되는 칼럼에 인덱스
+- **커버링 인덱스:** 자주 실행되는 쿼리의 SELECT 칼럼까지 포함
+- **부분 인덱스:** 활성 데이터만 인덱싱하여 크기 절약
+- **복합 인덱스:** 다중 조건 쿼리에 칼럼 순서 최적화
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| CREATE INDEX | 인덱스 생성 | `CREATE INDEX idx ON t(col)` |
+| UNIQUE INDEX | 중복 방지 인덱스 | `CREATE UNIQUE INDEX ...` |
+| 복합 인덱스 | 다중 칼럼 인덱스 (왼쪽 접두어 규칙) | `ON t(a, b, c)` |
+| 커버링 인덱스 | SELECT 칼럼까지 포함 -> Index-Only Scan | `ON t(a) INCLUDE (b, c)` |
+| 부분 인덱스 | WHERE 조건으로 일부만 인덱싱 | `ON t(col) WHERE active=1` |
+| EXPLAIN | 실행 계획 확인 | `EXPLAIN QUERY PLAN SELECT ...` |
+| DROP INDEX | 인덱스 삭제 | `DROP INDEX IF EXISTS idx` |
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 

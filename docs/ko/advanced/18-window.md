@@ -355,6 +355,14 @@ LIMIT 12;
 
 `FIRST_VALUE`는 `ORDER BY p.price` 기본 프레임에서도 항상 파티션의 첫 행(가장 저렴한 상품)을 반환합니다. 반면 `LAST_VALUE`는 `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING`을 지정하지 않으면 현재 행 자신의 값을 반환하므로 주의하세요.
 
+**실무에서 윈도우 함수를 사용하는 대표적인 시나리오:**
+
+- **매출 순위:** 카테고리별/지역별 매출 Top-N (ROW_NUMBER, RANK)
+- **추이 분석:** 전월 대비 성장률, 전년 동기 비교 (LAG, LEAD)
+- **누적 지표:** 일별 누적 매출, 누적 사용자 수 (SUM OVER)
+- **구간 분석:** 고객 매출 4분위, 성적 백분위 (NTILE)
+- **이동 평균:** 7일/30일 이동 평균으로 추세 파악 (ROWS BETWEEN)
+
 ## 정리
 
 | 함수 / 구문 | 용도 |

@@ -16,6 +16,13 @@ flowchart TD
 
 > Self-JOIN은 같은 테이블을 자기 자신과 결합합니다. staff 테이블의 manager_id로 조직도를 표현할 수 있습니다.
 
+**실무에서 SELF JOIN과 CROSS JOIN을 사용하는 대표적인 시나리오:**
+
+- **계층 관계:** 매니저-직원, 카테고리 부모-자식 (SELF JOIN)
+- **쌍 비교:** 같은 조건의 상품/고객 쌍 분석 (SELF JOIN + id < id)
+- **완전 매트릭스:** 월x카테고리, 등급x결제수단 빈칸 없는 보고서 (CROSS JOIN)
+- **비율 계산:** 전체 합계를 CROSS JOIN으로 모든 행에 붙여서 % 계산
+
 ## SELF JOIN — 같은 테이블끼리 결합
 
 SELF JOIN은 특별한 문법이 아닙니다. 같은 테이블에 서로 다른 별칭을 붙여 JOIN하면 됩니다.
@@ -36,7 +43,7 @@ LEFT JOIN categories AS parent ON child.parent_id = parent.id
 ORDER BY child.depth, child.sort_order;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | id | category | depth | parent_category |
 | -: | -------- | ----: | --------------- |
@@ -78,7 +85,7 @@ SELF JOIN으로 부모(대분류) → 자식(소분류) 전체 경로를 만들 
     ORDER BY parent.sort_order, child.sort_order;
     ```
 
-**결과:**
+**결과 (예시):**
 
 | top_category | sub_category | full_path |
 |--------------|--------------|-----------|

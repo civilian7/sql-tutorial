@@ -96,7 +96,7 @@ ORDER BY total_amount DESC
 LIMIT 5;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | customer_name | order_number | total_amount | payment_method |
 |---------------|--------------|-------------:|----------------|
@@ -324,6 +324,17 @@ DROP VIEW IF EXISTS v_cs_watchlist;
     ```
 
     > `CONCURRENTLY` 옵션은 갱신 중에도 기존 데이터를 조회할 수 있게 해줍니다. 단, UNIQUE 인덱스가 필요합니다.
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| CREATE VIEW | 저장된 쿼리 생성 | `CREATE VIEW v AS SELECT ...` |
+| SELECT FROM view | 뷰를 테이블처럼 조회 | `SELECT * FROM v_summary` |
+| CREATE OR REPLACE | 뷰 수정 (PG/MySQL) | `CREATE OR REPLACE VIEW v AS ...` |
+| DROP VIEW | 뷰 삭제 | `DROP VIEW IF EXISTS v` |
+| 시스템 카탈로그 | 뷰 목록 조회 | `sqlite_master` / `INFORMATION_SCHEMA` |
+| MATERIALIZED VIEW | 결과를 물리적으로 저장 (PG) | `CREATE MATERIALIZED VIEW ...` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.

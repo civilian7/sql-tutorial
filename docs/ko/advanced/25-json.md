@@ -386,6 +386,18 @@ JSON 칼럼은 강력하지만 만능은 아닙니다.
 
 > **경험 규칙:** WHERE 절이나 JOIN에 자주 사용하는 값이면 정규 칼럼으로 분리하세요. 표시만 하거나 가끔 필터링하는 부가 속성이면 JSON이 적합합니다.
 
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| json_extract | JSON 값 추출 | `json_extract(specs, '$.cpu')` |
+| -> / ->> | 단축 연산자 (MySQL/PG) | `specs->>'cpu'` |
+| json_each | JSON 키-값 순회 | `json_each(specs)` |
+| json_set | JSON 값 추가/수정 | `json_set(specs, '$.color', 'black')` |
+| json_remove | JSON 키 삭제 | `json_remove(specs, '$.tdp_watts')` |
+| JSON + GROUP BY | JSON 값 기준 집계 | `GROUP BY json_extract(specs, '$.ram')` |
+| JSON + WHERE | JSON 값으로 필터링 | `WHERE json_extract(specs, '$.cpu') LIKE '%Ryzen%'` |
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 

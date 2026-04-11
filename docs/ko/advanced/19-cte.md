@@ -85,7 +85,7 @@ flowchart TD
     ORDER BY year_month;
     ```
 
-**결과:**
+**결과 (예시):**
 
 | year_month | revenue | order_count | avg_order_value |
 |------------|--------:|------------:|----------------:|
@@ -137,7 +137,7 @@ GROUP BY segment
 ORDER BY avg_ltv DESC;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | segment | customer_count | avg_ltv | avg_orders |
 | ---------- | ----------: | ----------: | ----------: |
@@ -172,7 +172,7 @@ WHERE rnk <= 3
 ORDER BY grade, rnk;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | grade | name | total_spent | rnk |
 | ---------- | ---------- | ----------: | ----------: |
@@ -276,7 +276,7 @@ flowchart TD
     ORDER BY path;
     ```
 
-**결과:**
+**결과 (예시):**
 
 | indented_name | depth | path |
 | ---------- | ----------: | ---------- |
@@ -387,6 +387,23 @@ flowchart TD
     ORDER BY thread_path
     LIMIT 20;
     ```
+
+**실무에서 CTE를 사용하는 대표적인 시나리오:**
+
+- **계층 탐색:** 카테고리 트리, 조직도, BOM (재귀 CTE)
+- **복잡한 쿼리 가독성:** 단계별 CTE로 분리하여 읽기 쉽게 구성
+- **월 시퀀스 생성:** 빈 달도 포함하는 보고서 (재귀로 1~12월 생성)
+- **다단계 분석:** 집계 -> 비율 -> 순위 파이프라인을 CTE 체인으로 구현
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| WITH (CTE) | 이름 붙인 임시 결과셋 | `WITH cte AS (...) SELECT ...` |
+| 다중 CTE | 여러 CTE를 쉼표로 연결 | `WITH a AS (...), b AS (...)` |
+| 재귀 CTE | 자기 자신을 참조 (계층 탐색) | `WITH RECURSIVE ... UNION ALL ...` |
+| 앵커 멤버 | 재귀의 시작점 (기본 케이스) | `WHERE parent_id IS NULL` |
+| 재귀 멤버 | 이전 결과와 JOIN하여 확장 | `JOIN category_tree ON ...` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
