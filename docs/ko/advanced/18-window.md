@@ -84,7 +84,7 @@ ORDER BY cat.name, price_rank
 LIMIT 12;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | category | product_name | price | price_rank |
 | ---------- | ---------- | ----------: | ----------: |
@@ -145,7 +145,7 @@ GROUP BY SUBSTR(ordered_at, 1, 7)
 ORDER BY year_month;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | year_month | monthly_revenue | cumulative_revenue |
 | ---------- | ----------: | ----------: |
@@ -186,7 +186,7 @@ FROM (
 ORDER BY year_month;
 ```
 
-**결과:**
+**결과 (예시):**
 
 | year_month | monthly_revenue | prev_month_revenue | mom_growth_pct |
 | ---------- | ----------: | ---------- | ---------- |
