@@ -24,6 +24,10 @@ flowchart LR
 
 > `products.specs` 칼럼은 TEXT 타입이지만 JSON 문자열을 저장합니다. SQL 함수로 JSON 내부 값을 추출하고 필터링할 수 있습니다.
 
+
+!!! note "이미 알고 계신다면"
+    json_extract, json_set, JSON 집계에 익숙하다면 [26강: 저장 프로시저](26-stored-procedures.md)으로 건너뛰세요.
+
 ## products.specs 칼럼
 
 이 데이터베이스의 `products` 테이블에는 `specs` 칼럼이 있습니다. 카테고리별로 저장되는 JSON 구조가 다릅니다:

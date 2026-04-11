@@ -23,6 +23,10 @@ flowchart LR
 !!! warning "SQLite 안내"
     SQLite는 저장 프로시저를 지원하지 않습니다. SQLite 환경에서는 **뷰(VIEW)**, **트리거(TRIGGER)**, **애플리케이션 레벨 로직**으로 유사한 효과를 얻을 수 있습니다. 이 강의는 **MySQL**과 **PostgreSQL** 전용입니다.
 
+
+!!! note "이미 알고 계신다면"
+    저장 프로시저와 함수에 익숙하다면 [연습 문제](../exercises/index.md)으로 건너뛰세요.
+
 ## 저장 프로시저의 장점
 
 | 장점 | 설명 |

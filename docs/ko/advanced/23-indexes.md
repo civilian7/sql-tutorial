@@ -22,6 +22,10 @@ flowchart TD
 
 ![B-Tree Index Lookup](../img/index-btree.svg){ .off-glb width="560"  }
 
+
+!!! note "이미 알고 계신다면"
+    인덱스 생성/삭제, EXPLAIN에 익숙하다면 [24강: 트리거](24-triggers.md)으로 건너뛰세요.
+
 ## 인덱스의 역할
 
 인덱스가 없으면 SQLite는 일치하는 행을 찾기 위해 테이블의 모든 행을 읽어야 합니다(**전체 테이블 스캔, Full Table Scan**). 검색 칼럼에 인덱스가 있으면 관련 행으로 바로 이동합니다. 책의 색인으로 찾는 것과 처음부터 끝까지 읽는 것의 차이와 같습니다.

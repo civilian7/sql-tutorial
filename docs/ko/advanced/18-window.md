@@ -57,6 +57,10 @@ flowchart LR
 | `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` | 이동 평균 | 3개월 이동 평균 |
 | `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` | 전체 파티션 | LAST_VALUE에 필수 |
 
+
+!!! note "이미 알고 계신다면"
+    윈도우 함수(ROW_NUMBER, RANK, LAG, SUM OVER)에 익숙하다면 [19강: CTE](19-cte.md)으로 건너뛰세요.
+
 ## ROW_NUMBER, RANK, DENSE_RANK
 
 순위 함수는 파티션 내에서 각 행에 순위를 부여합니다.

@@ -20,6 +20,10 @@ flowchart TD
 
 > CTE는 쿼리를 단계별로 쪼개서 파이프라인처럼 연결합니다. 재귀 CTE는 트리 구조를 탐색합니다.
 
+
+!!! note "이미 알고 계신다면"
+    CTE(WITH), 재귀 CTE에 익숙하다면 [20강: EXISTS](20-exists.md)으로 건너뛰세요.
+
 ## 기본 CTE
 
 === "SQLite"

@@ -18,6 +18,10 @@ flowchart TD
 - **데이터 정합성:** FK 무결성 검증, 고아 레코드 탐지 (NOT EXISTS)
 - **전칭 부정:** "모든 고객이 구매한 상품" (이중 NOT EXISTS)
 
+
+!!! note "이미 알고 계신다면"
+    EXISTS, NOT EXISTS, 상관 서브쿼리에 익숙하다면 [21강: SELF/CROSS JOIN](21-self-cross-join.md)으로 건너뛰세요.
+
 ## EXISTS vs. IN
 
 | 특성 | `IN` | `EXISTS` |
