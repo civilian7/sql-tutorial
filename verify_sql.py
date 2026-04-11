@@ -238,10 +238,11 @@ def execute_sql(conn: sqlite3.Connection, sql: str) -> tuple[bool, str, list, li
                 rows = cursor.fetchall()
                 return True, "", columns, [list(r) for r in rows]
 
-        # If no SELECT found, try executing the whole thing
-        cursor = conn.execute(sql)
+        # If no SELECT found, execute statements one by one
+        for stmt in statements:
+            cursor = conn.execute(stmt)
         columns = [desc[0] for desc in cursor.description] if cursor.description else []
-        rows = cursor.fetchall()
+        rows = cursor.fetchall() if columns else []
         return True, "", columns, [list(r) for r in rows]
 
     except Exception as e:
