@@ -8,7 +8,7 @@
 
 ## 페이징 (행 제한)
 
-가장 자주 부딪히는 차이입니다.
+가장 자주 부딪히는 차이입니다. `LIMIT`은 MySQL/SQLite/PostgreSQL에서 사용하고, **ANSI SQL 표준**은 `FETCH FIRST n ROWS ONLY`입니다.
 
 === "SQLite / MySQL / PostgreSQL"
 
@@ -368,6 +368,55 @@
     WHEN NOT MATCHED THEN
         INSERT (id, name, price) VALUES (source.id, source.name, source.price);
     ```
+
+---
+
+## MERGE 문
+
+`MERGE`는 ANSI SQL 표준으로, 한 문장에서 INSERT/UPDATE/DELETE를 조건부로 수행합니다. UPSERT보다 유연하지만, 모든 DB가 지원하지는 않습니다.
+
+| DB | 지원 |
+|----|------|
+| SQLite | 미지원 (ON CONFLICT로 대체) |
+| MySQL | 미지원 (ON DUPLICATE KEY로 대체) |
+| PostgreSQL | 15+ (부분 지원), ON CONFLICT 권장 |
+| SQL Server | 2008+ (완전 지원) |
+| Oracle | 9i+ (완전 지원) |
+
+=== "SQL Server"
+
+    ```sql
+    -- 소스 테이블의 데이터로 대상 테이블을 동기화
+    MERGE INTO products AS target
+    USING staging_products AS source
+    ON target.sku = source.sku
+    WHEN MATCHED AND source.is_active = 0 THEN
+        DELETE
+    WHEN MATCHED THEN
+        UPDATE SET
+            name = source.name,
+            price = source.price
+    WHEN NOT MATCHED THEN
+        INSERT (sku, name, price)
+        VALUES (source.sku, source.name, source.price);
+    ```
+
+=== "Oracle"
+
+    ```sql
+    MERGE INTO products target
+    USING staging_products source
+    ON (target.sku = source.sku)
+    WHEN MATCHED THEN
+        UPDATE SET
+            name = source.name,
+            price = source.price
+    WHEN NOT MATCHED THEN
+        INSERT (sku, name, price)
+        VALUES (source.sku, source.name, source.price);
+    ```
+
+> SQLite/MySQL/PostgreSQL 사용자는 `ON CONFLICT` / `ON DUPLICATE KEY`로 같은 결과를 얻을 수 있습니다. MERGE는 SQL Server/Oracle 환경에서만 사용합니다.
 
 ---
 

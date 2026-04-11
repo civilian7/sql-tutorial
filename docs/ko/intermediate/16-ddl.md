@@ -609,6 +609,63 @@ GROUP BY cat.name;
 
 > **참고:** CTAS로 만든 테이블은 원본 테이블의 제약조건(PRIMARY KEY, FOREIGN KEY, NOT NULL 등)을 상속하지 않습니다. 아카이브, 리포팅 스냅샷, 복잡한 쿼리 결과 저장에 유용합니다. 필요하면 `ALTER TABLE`로 제약조건을 별도로 추가하세요.
 
+## SEQUENCE — 시퀀스
+
+**시퀀스(Sequence)**는 고유한 순차 번호를 생성하는 독립 객체입니다. 테이블의 자동 증가 칼럼과 달리, INSERT 전에 미리 번호를 받거나 여러 테이블에서 하나의 번호 체계를 공유할 수 있습니다.
+
+### DB별 지원 현황
+
+| DB | 시퀀스 지원 | 대안 |
+|----|:----------:|------|
+| SQLite | :x: | `INTEGER PRIMARY KEY AUTOINCREMENT` (ROWID 기반) |
+| MySQL | :x: | `AUTO_INCREMENT` (테이블 칼럼에 종속) |
+| PostgreSQL | :white_check_mark: | `CREATE SEQUENCE` (독립 객체) |
+
+> Oracle, SQL Server 등 대부분의 엔터프라이즈 DB도 시퀀스를 지원합니다.
+
+### PostgreSQL 시퀀스 사용법
+
+```sql
+-- 시퀀스 생성
+CREATE SEQUENCE order_seq
+    START WITH 1
+    INCREMENT BY 1;
+
+-- 다음 값 가져오기
+SELECT NEXTVAL('order_seq');  -- 1, 2, 3, ...
+
+-- 현재 값 확인 (NEXTVAL을 한 번 이상 호출한 후에만 사용 가능)
+SELECT CURRVAL('order_seq');
+
+-- INSERT에서 활용
+INSERT INTO orders (id, customer_id, status)
+VALUES (NEXTVAL('order_seq'), 100, 'pending');
+```
+
+### 시퀀스가 유용한 경우
+
+1. **INSERT 전에 ID가 필요할 때** — 주문번호를 먼저 생성하고, 주문 + 주문상세를 동시에 삽입
+2. **여러 테이블에서 번호를 공유할 때** — 주문/반품/교환이 하나의 일련번호 체계를 사용
+3. **번호 건너뛰기가 필요할 때** — `INCREMENT BY 10`으로 간격 확보
+
+### 시퀀스 관리
+
+```sql
+-- 시퀀스 삭제
+DROP SEQUENCE IF EXISTS order_seq;
+
+-- 시퀀스 값 리셋
+ALTER SEQUENCE order_seq RESTART WITH 1;
+
+-- 시퀀스 목록 조회 (PostgreSQL)
+SELECT sequence_name
+FROM information_schema.sequences
+WHERE sequence_schema = 'public';
+```
+
+!!! tip "자동 증가 vs 시퀀스"
+    단일 테이블의 PK 자동 생성이 목적이라면 `GENERATED ALWAYS AS IDENTITY`(PostgreSQL) 또는 `AUTO_INCREMENT`(MySQL)로 충분합니다. 시퀀스는 더 유연하지만 관리 대상이 늘어나므로 필요한 경우에만 사용하세요.
+
 ## 정리
 
 | DDL 문 | 용도 | 예시 |
@@ -621,6 +678,7 @@ GROUP BY cat.name;
 | DROP TABLE | 테이블 삭제 | `DROP TABLE IF EXISTS t` |
 | TRUNCATE TABLE | 모든 행 삭제 (구조 유지) | `TRUNCATE TABLE t` |
 | CREATE TABLE AS SELECT | 쿼리 결과로 테이블 생성 | `CREATE TABLE t AS SELECT ...` |
+| CREATE SEQUENCE | 순차 번호 생성 객체 (PG) | `CREATE SEQUENCE seq START WITH 1` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -912,12 +970,44 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
         ```
 
 
+### 연습 11
+PostgreSQL에서 `invoice_seq`라는 시퀀스를 만드세요. 1000번부터 시작하고 1씩 증가합니다. 그리고 이 시퀀스를 사용하여 `invoices` 테이블에 행을 삽입하는 INSERT 문을 작성하세요. 칼럼: `id`(시퀀스 값), `order_id`(정수), `issued_at`(현재 시각).
+
+??? success "정답"
+    ```sql
+    -- 시퀀스 생성
+    CREATE SEQUENCE invoice_seq
+        START WITH 1000
+        INCREMENT BY 1;
+
+    -- 테이블 생성
+    CREATE TABLE invoices (
+        id        INTEGER PRIMARY KEY,
+        order_id  INTEGER NOT NULL,
+        issued_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- 시퀀스를 사용한 INSERT
+    INSERT INTO invoices (id, order_id, issued_at)
+    VALUES (NEXTVAL('invoice_seq'), 1001, CURRENT_TIMESTAMP);
+
+    -- 확인
+    SELECT * FROM invoices;
+
+    -- 정리
+    DROP TABLE IF EXISTS invoices;
+    DROP SEQUENCE IF EXISTS invoice_seq;
+    ```
+
+    > SQLite와 MySQL은 시퀀스를 지원하지 않으므로 PostgreSQL 전용 문제입니다.
+
+
 ### 채점 가이드
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [17강: 트랜잭션](17-transactions.md)으로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **10~11개** | [17강: 트랜잭션](17-transactions.md)으로 이동 |
+| **8~9개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
 | **3개 이하** | [15강: DML](15-dml.md)부터 다시 시작하세요 |
 
@@ -932,6 +1022,7 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
 | DROP TABLE IF EXISTS | 7 |
 | FOREIGN KEY ON DELETE 옵션 | 8 |
 | CTAS (CREATE TABLE AS SELECT) | 9 |
+| SEQUENCE (시퀀스) | 11 |
 
 ---
 다음: [17강: 트랜잭션과 ACID](17-transactions.md)

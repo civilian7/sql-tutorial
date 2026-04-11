@@ -276,6 +276,56 @@ WHERE customer_id = 42
 ORDER BY changed_at;
 ```
 
+## FIRST_VALUE와 LAST_VALUE — 파티션의 처음/마지막 값
+
+`FIRST_VALUE(col)`은 윈도우 프레임의 첫 번째 행에서 값을 가져오고, `LAST_VALUE(col)`은 마지막 행에서 값을 가져옵니다.
+
+| 함수 | 설명 |
+|------|------|
+| `FIRST_VALUE(col) OVER (PARTITION BY ... ORDER BY ...)` | 프레임의 첫 번째 행 값 |
+| `LAST_VALUE(col) OVER (... ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)` | 프레임의 마지막 행 값 |
+
+!!! warning "LAST_VALUE의 프레임 함정"
+    윈도우 함수의 기본 프레임은 `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`입니다. 이 기본 프레임에서 `LAST_VALUE`는 항상 **현재 행**의 값을 반환하므로, 파티션의 진짜 마지막 값을 얻으려면 반드시 `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING`을 명시해야 합니다.
+
+```sql
+-- 카테고리별로 가장 저렴한 상품명(FIRST_VALUE)과
+-- 가장 비싼 상품명(LAST_VALUE) 함께 표시
+SELECT
+    cat.name  AS category,
+    p.name    AS product_name,
+    p.price,
+    FIRST_VALUE(p.name) OVER (
+        PARTITION BY p.category_id
+        ORDER BY p.price
+    ) AS cheapest_product,
+    LAST_VALUE(p.name) OVER (
+        PARTITION BY p.category_id
+        ORDER BY p.price
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS most_expensive_product
+FROM products AS p
+INNER JOIN categories AS cat ON p.category_id = cat.id
+WHERE p.is_active = 1
+ORDER BY cat.name, p.price
+LIMIT 12;
+```
+
+`FIRST_VALUE`는 `ORDER BY p.price` 기본 프레임에서도 항상 파티션의 첫 행(가장 저렴한 상품)을 반환합니다. 반면 `LAST_VALUE`는 `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING`을 지정하지 않으면 현재 행 자신의 값을 반환하므로 주의하세요.
+
+## 정리
+
+| 함수 / 구문 | 용도 |
+|-------------|------|
+| `ROW_NUMBER()` | 파티션 내 고유 순번 |
+| `RANK()` / `DENSE_RANK()` | 동점 허용 순위 (건너뜀 여부 차이) |
+| `SUM() OVER (ORDER BY ...)` | 누적 합계 |
+| `LAG(col, n)` / `LEAD(col, n)` | 이전/이후 행 참조 |
+| `NTILE(n)` | n개 균등 분할 |
+| `FIRST_VALUE(col)` | 프레임 첫 번째 행 값 |
+| `LAST_VALUE(col)` | 프레임 마지막 행 값 (프레임 지정 필수) |
+| `ROWS BETWEEN ... AND ...` | 윈도우 프레임 범위 지정 |
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
@@ -696,12 +746,48 @@ ORDER BY changed_at;
         LIMIT 15;
         ```
 
+### 연습 11
+카테고리별로 각 상품의 이름, 가격, 해당 카테고리에서 가장 저렴한 상품명(`cheapest_in_category`)과 가장 비싼 상품명(`priciest_in_category`)을 함께 표시하세요. `FIRST_VALUE`와 `LAST_VALUE`를 사용하며, 활성 상품만 대상으로 합니다. `category`, `product_name`, `price`, `cheapest_in_category`, `priciest_in_category`를 반환하고 상위 15개를 보여주세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        cat.name  AS category,
+        p.name    AS product_name,
+        p.price,
+        FIRST_VALUE(p.name) OVER (
+            PARTITION BY p.category_id
+            ORDER BY p.price
+            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        ) AS cheapest_in_category,
+        LAST_VALUE(p.name) OVER (
+            PARTITION BY p.category_id
+            ORDER BY p.price
+            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        ) AS priciest_in_category
+    FROM products AS p
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    WHERE p.is_active = 1
+    ORDER BY cat.name, p.price
+    LIMIT 15;
+    ```
+
+    **결과 (예시):**
+
+    | category | product_name            | price   | cheapest_in_category | priciest_in_category   |
+    | -------- | ----------------------- | ------: | -------------------- | ---------------------- |
+    | 2in1     | HP Pavilion x360 14 블랙  |  987100 | HP Pavilion x360 14 블랙 | 레노버 IdeaPad Flex 5 화이트 |
+    | 2in1     | HP Spectre x360 14 실버   | 1062100 | HP Pavilion x360 14 블랙 | 레노버 IdeaPad Flex 5 화이트 |
+    | 2in1     | HP Spectre x360 14 실버   | 1344900 | HP Pavilion x360 14 블랙 | 레노버 IdeaPad Flex 5 화이트 |
+    | ...      | ...                     | ...     | ...                  | ...                    |
+
+
 ### 채점 가이드
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [강의 19: CTE](19-cte.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
+| **10~11개** | [강의 19: CTE](19-cte.md)로 이동 |
+| **8~9개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
 | **3개 이하** | [17강: 트랜잭션](../intermediate/17-transactions.md)부터 다시 시작하세요 |
 
@@ -716,6 +802,7 @@ ORDER BY changed_at;
 | 이동 평균 (ROWS BETWEEN) | 6 |
 | NTILE (분위) | 7 |
 | 누적 집계 + 부서별 | 9 |
+| FIRST_VALUE / LAST_VALUE | 11 |
 
 ---
 다음: [강의 19: 공통 테이블 식(WITH)](19-cte.md)

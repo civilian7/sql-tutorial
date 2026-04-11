@@ -198,12 +198,65 @@ ORDER BY sort_key, revenue DESC;
 | ... | | |
 | 1 | 합계 | 4218807.10 |
 
+## INTERSECT — 교집합
+
+`INTERSECT`는 양쪽 쿼리 결과에 **모두 존재하는** 행만 반환합니다.
+
+```sql
+-- 리뷰도 쓰고, 불만도 접수한 고객
+SELECT customer_id FROM reviews
+INTERSECT
+SELECT customer_id FROM complaints;
+```
+
+> **SQLite 참고:** SQLite 3.34.0+(2020-12) 이상에서 `INTERSECT`를 지원합니다. 모든 MySQL 8.0.31+, PostgreSQL에서 사용 가능합니다.
+
+```sql
+-- 활용: VIP이면서 최근 6개월 내 주문한 고객
+SELECT id FROM customers WHERE grade = 'VIP'
+INTERSECT
+SELECT DISTINCT customer_id FROM orders
+WHERE ordered_at >= DATE('now', '-6 months');
+```
+
+## EXCEPT / MINUS — 차집합
+
+`EXCEPT`는 첫 번째 쿼리 결과에서 두 번째 쿼리 결과를 **빼고** 남은 행을 반환합니다. Oracle에서는 `MINUS`라고 합니다.
+
+```sql
+-- 리뷰를 쓴 적 있지만 불만을 접수한 적 없는 고객
+SELECT customer_id FROM reviews
+EXCEPT
+SELECT customer_id FROM complaints;
+```
+
+```sql
+-- 주문은 했지만 배송이 시작되지 않은 주문
+SELECT id FROM orders WHERE status = 'confirmed'
+EXCEPT
+SELECT order_id FROM shipping;
+```
+
+> `EXCEPT`는 `NOT IN` 서브쿼리나 `LEFT JOIN ... IS NULL` 안티 조인과 같은 결과를 반환하지만, 집합 연산 문법이 더 읽기 쉽습니다.
+
+### UNION vs. INTERSECT vs. EXCEPT 비교
+
+| 연산자 | 의미 | 집합 기호 |
+|--------|------|:---------:|
+| UNION | 합집합 (A ∪ B) | ∪ |
+| INTERSECT | 교집합 (A ∩ B) | ∩ |
+| EXCEPT | 차집합 (A − B) | − |
+
+세 연산 모두 **중복을 제거**합니다. 중복을 유지하려면 `UNION ALL`, `INTERSECT ALL`, `EXCEPT ALL`을 사용합니다 (DB별 지원 여부가 다름).
+
 ## 정리
 
 | 개념 | 설명 | 예시 |
 |------|------|------|
 | UNION | 중복 제거 후 결과 합치기 | `SELECT ... UNION SELECT ...` |
 | UNION ALL | 중복 유지, 결과 합치기 (더 빠름) | `SELECT ... UNION ALL SELECT ...` |
+| INTERSECT | 양쪽 모두에 있는 행 (교집합) | `SELECT ... INTERSECT SELECT ...` |
+| EXCEPT | 첫 번째에만 있는 행 (차집합) | `SELECT ... EXCEPT SELECT ...` |
 | 칼럼 일치 규칙 | 양쪽 SELECT의 칼럼 수·타입 일치 필수 | 칼럼 이름은 첫 번째 쿼리 기준 |
 | 서로 다른 테이블 합치기 | 활동 로그, 피드백 통합 등 | 주문 + 리뷰 → 활동 피드 |
 | 롤업 보고서 | UNION ALL로 합계 행 추가 | `sort_key`로 정렬 제어 |
@@ -571,14 +624,40 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ```
 
 
+### 연습 11
+리뷰를 작성한 고객과 불만을 접수한 고객의 **교집합**을 구하세요. `INTERSECT`를 사용하고, 결과의 `customer_id` 수를 세세요.
+
+??? success "정답"
+    ```sql
+    SELECT COUNT(*) AS both_count
+    FROM (
+        SELECT customer_id FROM reviews
+        INTERSECT
+        SELECT customer_id FROM complaints
+    ) AS both_active;
+    ```
+
+
+### 연습 12
+위시리스트에 상품을 등록한 고객 중, 한 번도 주문하지 않은 고객을 `EXCEPT`로 찾으세요. `customer_id`를 반환하고, 오름차순 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT customer_id FROM wishlists
+    EXCEPT
+    SELECT DISTINCT customer_id FROM orders
+    ORDER BY customer_id;
+    ```
+
+
 ### 채점 가이드
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [15강: DML](15-dml.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **11~12개** | [15강: DML](15-dml.md)로 이동 |
+| **8~10개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [12강: 문자열 함수](12-string.md)부터 다시 시작하세요 |
+| **3개 이하** | [13강: 숫자·변환·조건 함수](13-utility-functions.md)부터 다시 시작하세요 |
 
 **문제별 영역:**
 
@@ -589,6 +668,8 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
 | UNION ALL + 합계 행 (롤업) | 5, 6 |
 | UNION ALL + 서브쿼리 집계 | 7, 8, 9 |
 | UNION ALL + 상관 서브쿼리 | 10 |
+| INTERSECT (교집합) | 11 |
+| EXCEPT (차집합) | 12 |
 
 ---
 다음: [15강: INSERT, UPDATE, DELETE](15-dml.md)

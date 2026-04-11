@@ -240,6 +240,127 @@ WHERE status = 'confirmed'
 WHERE ordered_at > '2024-01-01'
 ```
 
+## 커버링 인덱스 (Covering Index)
+
+커버링 인덱스란 쿼리에 필요한 **모든 칼럼이 인덱스 자체에 포함**되어 있어, 테이블 본체에 접근할 필요 없이 인덱스만으로 결과를 반환할 수 있는 인덱스입니다. 이를 **인덱스 온리 스캔(Index-Only Scan)**이라고 합니다.
+
+일반적인 인덱스 조회는 두 단계를 거칩니다:
+
+1. **인덱스에서 행 위치 찾기** (B-tree 탐색)
+2. **테이블에서 나머지 칼럼 읽기** (랜덤 I/O)
+
+커버링 인덱스는 2단계를 생략하므로 특히 대량 데이터에서 성능 차이가 큽니다.
+
+=== "SQLite"
+    ```sql
+    -- customer_id로 검색하고, ordered_at과 total_amount만 조회하는 쿼리가 빈번하다면:
+    CREATE INDEX IF NOT EXISTS idx_orders_covering
+    ON orders (customer_id, ordered_at, total_amount);
+
+    -- 이 쿼리는 인덱스만으로 응답 가능 (테이블 접근 불필요)
+    EXPLAIN QUERY PLAN
+    SELECT ordered_at, total_amount
+    FROM orders
+    WHERE customer_id = 42;
+    -- 기대 결과: SEARCH orders USING COVERING INDEX idx_orders_covering (customer_id=?)
+
+    -- 정리
+    DROP INDEX IF EXISTS idx_orders_covering;
+    ```
+
+=== "MySQL"
+    ```sql
+    -- customer_id로 검색하고, ordered_at과 total_amount만 조회하는 쿼리가 빈번하다면:
+    CREATE INDEX idx_orders_covering
+    ON orders (customer_id, ordered_at, total_amount);
+
+    -- EXPLAIN의 Extra 칼럼에 "Using index"가 표시되면 커버링 인덱스 사용
+    EXPLAIN
+    SELECT ordered_at, total_amount
+    FROM orders
+    WHERE customer_id = 42;
+
+    -- 정리
+    DROP INDEX idx_orders_covering ON orders;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- PostgreSQL은 INCLUDE 절로 커버링 인덱스를 더 명확히 표현
+    CREATE INDEX IF NOT EXISTS idx_orders_covering
+    ON orders (customer_id) INCLUDE (ordered_at, total_amount);
+
+    -- "Index Only Scan"이 표시되면 성공
+    EXPLAIN ANALYZE
+    SELECT ordered_at, total_amount
+    FROM orders
+    WHERE customer_id = 42;
+
+    -- 정리
+    DROP INDEX IF EXISTS idx_orders_covering;
+    ```
+
+!!! tip "커버링 인덱스 설계 원칙"
+    - **WHERE 절 칼럼을 앞에**, SELECT 전용 칼럼을 뒤에 배치합니다.
+    - PostgreSQL의 `INCLUDE` 절은 검색에 사용되지 않는 칼럼을 인덱스 리프에만 저장하여 인덱스 크기를 최적화합니다.
+    - 칼럼을 너무 많이 포함하면 인덱스 크기가 커져 쓰기 성능이 저하됩니다. 자주 실행되는 핵심 쿼리에만 적용하세요.
+
+## 부분 인덱스 (Partial Index)
+
+부분 인덱스는 테이블의 **일부 행만 인덱싱**하는 인덱스입니다. `CREATE INDEX` 문에 `WHERE` 절을 추가하여 조건을 만족하는 행만 인덱스에 포함합니다.
+
+전체 테이블의 일부만 자주 조회하는 경우, 부분 인덱스는 일반 인덱스보다 **크기가 작고 갱신 비용도 낮습니다**.
+
+!!! warning "DB별 지원 현황"
+    - **SQLite** (3.8.0+): 지원
+    - **PostgreSQL**: 지원
+    - **MySQL/MariaDB**: **미지원** — 대안으로 Generated Column + 일반 인덱스 조합을 사용
+
+=== "SQLite"
+    ```sql
+    -- 활성 상품만 인덱싱 (is_active = 1인 행만)
+    CREATE INDEX IF NOT EXISTS idx_active_products
+    ON products (name) WHERE is_active = 1;
+
+    -- 활성 상품 검색 시 부분 인덱스 사용
+    EXPLAIN QUERY PLAN
+    SELECT id, name, price
+    FROM products
+    WHERE is_active = 1 AND name LIKE '삼성%';
+    -- SEARCH products USING INDEX idx_active_products (name>? AND name<?)
+
+    -- 정리
+    DROP INDEX IF EXISTS idx_active_products;
+    ```
+
+=== "PostgreSQL"
+    ```sql
+    -- 활성 상품만 인덱싱
+    CREATE INDEX IF NOT EXISTS idx_active_products
+    ON products (name) WHERE is_active = true;
+
+    -- 미처리 주문만 인덱싱 (전체 주문 중 일부)
+    CREATE INDEX IF NOT EXISTS idx_pending_orders
+    ON orders (customer_id, ordered_at) WHERE status = 'pending';
+
+    EXPLAIN ANALYZE
+    SELECT order_number, ordered_at
+    FROM orders
+    WHERE status = 'pending' AND customer_id = 42;
+
+    -- 정리
+    DROP INDEX IF EXISTS idx_active_products;
+    DROP INDEX IF EXISTS idx_pending_orders;
+    ```
+
+!!! tip "부분 인덱스 활용 예시"
+    | 시나리오 | 부분 인덱스 조건 |
+    |---------|-----------------|
+    | 활성 상품 검색 | `WHERE is_active = 1` |
+    | 미처리 주문 조회 | `WHERE status = 'pending'` |
+    | 최근 리뷰만 조회 | `WHERE created_at >= '2024-01-01'` |
+    | NULL이 아닌 값만 검색 | `WHERE notes IS NOT NULL` |
+
 ## 인덱스 삭제
 
 ```sql
@@ -627,12 +748,63 @@ DROP INDEX IF EXISTS idx_orders_status_date;
     **설명:** 인덱스가 있으면 INSERT/UPDATE/DELETE 시 인덱스도 함께 갱신해야 하므로 쓰기 작업이 느려집니다. 인덱스는 읽기 성능을 높이지만 쓰기 비용이 추가되므로, 자주 조회하는 칼럼에만 선별적으로 생성해야 합니다.
 
 
+### 연습 11
+`orders` 테이블에 `customer_id`, `ordered_at`, `total_amount` 칼럼을 포함하는 커버링 인덱스를 생성하세요. 이후 특정 고객의 `ordered_at`과 `total_amount`만 조회하는 쿼리에 `EXPLAIN QUERY PLAN`을 실행하여 **COVERING INDEX** (인덱스 온리 스캔)가 사용되는지 확인하세요. 확인 후 인덱스를 삭제하세요.
+
+??? success "정답"
+    === "SQLite"
+        ```sql
+        CREATE INDEX IF NOT EXISTS idx_orders_covering
+        ON orders (customer_id, ordered_at, total_amount);
+
+        -- COVERING INDEX 사용 확인
+        EXPLAIN QUERY PLAN
+        SELECT ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 42;
+        -- 기대 결과: SEARCH orders USING COVERING INDEX idx_orders_covering (customer_id=?)
+
+        DROP INDEX IF EXISTS idx_orders_covering;
+        ```
+
+    === "MySQL"
+        ```sql
+        CREATE INDEX idx_orders_covering
+        ON orders (customer_id, ordered_at, total_amount);
+
+        -- Extra 칼럼에 "Using index"가 표시되면 커버링 인덱스 사용
+        EXPLAIN
+        SELECT ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 42;
+
+        DROP INDEX idx_orders_covering ON orders;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        -- PostgreSQL은 INCLUDE로 커버링 인덱스를 표현
+        CREATE INDEX IF NOT EXISTS idx_orders_covering
+        ON orders (customer_id) INCLUDE (ordered_at, total_amount);
+
+        -- "Index Only Scan"이 표시되면 성공
+        EXPLAIN ANALYZE
+        SELECT ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 42;
+
+        DROP INDEX IF EXISTS idx_orders_covering;
+        ```
+
+    **핵심:** 실행 계획에서 SQLite는 `COVERING INDEX`, MySQL은 Extra에 `Using index`, PostgreSQL은 `Index Only Scan`이 표시되면 테이블 접근 없이 인덱스만으로 결과를 반환한 것입니다. 이는 SELECT 절의 모든 칼럼이 인덱스에 포함되어 있기 때문입니다.
+
+
 ### 채점 가이드
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [강의 24: 트리거](24-triggers.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
+| **10~11개** | [강의 24: 트리거](24-triggers.md)로 이동 |
+| **8~9개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
 | **3개 이하** | [강의 22: 뷰](22-views.md)부터 다시 시작하세요 |
 
@@ -648,6 +820,7 @@ DROP INDEX IF EXISTS idx_orders_status_date;
 | 복합 인덱스 생성 + EXPLAIN | 7, 8 |
 | LIKE 접두어 vs 중간 검색 | 9 |
 | 인덱스와 쓰기 성능 | 10 |
+| 커버링 인덱스 (Index-Only Scan) | 11 |
 
 ---
 다음: [강의 24: 트리거(Triggers)](24-triggers.md)

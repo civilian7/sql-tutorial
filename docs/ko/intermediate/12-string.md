@@ -409,6 +409,87 @@ WHERE rn <= 5
 GROUP BY grade;
 ```
 
+## REGEXP — 정규표현식
+
+LIKE의 `%`와 `_`만으로는 "영문자+숫자 조합", "이메일 형식 검증" 같은 복잡한 패턴을 표현하기 어렵습니다. 정규표현식(Regular Expression)을 사용하면 훨씬 정밀한 패턴 매칭이 가능합니다.
+
+### DB별 지원 현황
+
+=== "SQLite"
+    SQLite에는 `REGEXP` 연산자가 문법으로 존재하지만, **기본 설치에는 구현이 없어** 사용하면 에러가 발생합니다. 확장(extension)을 로드해야 동작합니다.
+
+    대안으로 `GLOB`을 사용합니다. GLOB은 대소문자를 구분하며, `*`(여러 문자)와 `?`(한 문자), `[...]`(문자 클래스)를 지원합니다.
+
+    ```sql
+    -- 상품명에 숫자가 포함된 상품 (GLOB 사용)
+    SELECT name, price
+    FROM products
+    WHERE name GLOB '*[0-9]*'
+    LIMIT 5;
+    ```
+
+    ```sql
+    -- 대문자 영문으로 시작하는 상품
+    SELECT name
+    FROM products
+    WHERE name GLOB '[A-Z]*'
+    LIMIT 5;
+    ```
+
+=== "MySQL"
+    MySQL은 `REGEXP` (또는 동의어 `RLIKE`) 연산자를 기본 지원합니다. MySQL 8.0+에서는 ICU 정규표현식 라이브러리를 사용합니다.
+
+    ```sql
+    -- 모델 번호 패턴: 영문자 뒤에 숫자가 오는 상품 (예: RTX 5070, DDR5 16GB)
+    SELECT name, price
+    FROM products
+    WHERE name REGEXP '[A-Za-z]+[0-9]+'
+    LIMIT 5;
+    ```
+
+    ```sql
+    -- 이메일 기본 형식 검증 (@ 앞뒤로 문자가 있는지)
+    SELECT name, email
+    FROM customers
+    WHERE email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
+    LIMIT 5;
+    ```
+
+=== "PostgreSQL"
+    PostgreSQL은 `~` 연산자(대소문자 구분)와 `~*` 연산자(대소문자 무시)를 사용합니다. POSIX 정규표현식을 지원합니다.
+
+    ```sql
+    -- 모델 번호 패턴: 영문자 뒤에 숫자가 오는 상품
+    SELECT name, price
+    FROM products
+    WHERE name ~ '[A-Za-z]+[0-9]+'
+    LIMIT 5;
+    ```
+
+    ```sql
+    -- 대소문자 무시: 'gaming' 포함 상품 (~* 사용)
+    SELECT name, price
+    FROM products
+    WHERE name ~* 'gaming'
+    LIMIT 5;
+
+    -- 이메일 기본 형식 검증
+    SELECT name, email
+    FROM customers
+    WHERE email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+    LIMIT 5;
+    ```
+
+### 문법 비교
+
+| DB | 연산자 | 대소문자 무시 | 예시 |
+|----|--------|:----------:|------|
+| SQLite | GLOB (대안) | X | `WHERE name GLOB '*[0-9]*'` |
+| MySQL | REGEXP / RLIKE | 기본 무시 | `WHERE name REGEXP '[0-9]+'` |
+| PostgreSQL | `~` | `~*` 사용 | `WHERE name ~ '[0-9]+'` |
+
+> **실무 팁:** REGEXP는 인덱스를 사용하지 못하므로, 대량 데이터에서는 LIKE로 먼저 범위를 좁힌 뒤 REGEXP로 정밀 필터링하는 것이 좋습니다.
+
 ## 정리
 
 | 개념 | 설명 | 예시 |
@@ -424,6 +505,7 @@ GROUP BY grade;
 | LPAD / RPAD | 고정 폭 패딩 (SQLite: `printf`) | `LPAD(id, 5, '0')` |
 | GROUP_CONCAT / STRING_AGG | 그룹별 문자열 합치기 | `GROUP_CONCAT(name, ', ')` |
 | LIKE | 패턴 매칭 (`%`, `_` 와일드카드) | `WHERE name LIKE '%Gaming%'` |
+| REGEXP | 정규표현식 패턴 매칭 (DB별 상이) | MySQL: `REGEXP`, PG: `~`, SQLite: `GLOB` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -866,12 +948,56 @@ GROUP BY grade;
         ```
 
 
+### 연습 14
+상품 이름에서 모델 번호 패턴(영문자 뒤에 숫자가 바로 붙는 형태, 예: `RTX5070`, `DDR5`)이 포함된 상품을 찾으세요. `name`, `price`를 가격 내림차순으로 10행까지 반환하세요.
+
+??? success "정답"
+    === "SQLite"
+        SQLite에서는 REGEXP를 기본 지원하지 않으므로 GLOB으로 대체합니다. GLOB의 문자 클래스는 단일 문자만 매칭하므로, "영문자 바로 뒤에 숫자"를 정확히 표현하기 어렵습니다. 근사적으로 영문자와 숫자가 모두 포함된 상품을 찾습니다.
+
+        ```sql
+        SELECT name, price
+        FROM products
+        WHERE name GLOB '*[A-Za-z][0-9]*'
+        ORDER BY price DESC
+        LIMIT 10;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT name, price
+        FROM products
+        WHERE name REGEXP '[A-Za-z][0-9]'
+        ORDER BY price DESC
+        LIMIT 10;
+        ```
+
+        **결과 (예시):**
+
+        | name                                   |   price |
+        | -------------------------------------- | ------: |
+        | ASUS TUF Gaming RTX 5080 화이트           | 3812000 |
+        | ASUS Dual RTX 5070 Ti ...              | 2890000 |
+        | MSI Radeon RX 9070 XT GAMING X         | 1788500 |
+        | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
+        | ...                                    |     ... |
+
+    === "PostgreSQL"
+        ```sql
+        SELECT name, price
+        FROM products
+        WHERE name ~ '[A-Za-z][0-9]'
+        ORDER BY price DESC
+        LIMIT 10;
+        ```
+
+
 ### 채점 가이드
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **12~13개** | [13강: 숫자·변환·조건 함수](13-utility-functions.md)로 이동 |
-| **9~11개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
+| **13~14개** | [13강: 숫자·변환·조건 함수](13-utility-functions.md)로 이동 |
+| **10~12개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
 | **3개 이하** | [11강: 날짜/시간 함수](11-datetime.md)부터 다시 시작하세요 |
 
@@ -889,6 +1015,7 @@ GROUP BY grade;
 | NULL + 문자열 연결 (COALESCE) | 11 |
 | LPAD / printf 패딩 | 12 |
 | GROUP_CONCAT / STRING_AGG | 13 |
+| REGEXP / GLOB 패턴 매칭 | 14 |
 
 ---
 다음: [13강: 숫자·변환·조건 함수](13-utility-functions.md)
