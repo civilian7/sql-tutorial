@@ -1,81 +1,121 @@
-# Lesson 2: Filtering with WHERE
+# Lesson 2: Filtering Data with WHERE
 
-The `WHERE` clause narrows your results to only the rows that satisfy a condition. Without it, every row in the table is returned. Mastering `WHERE` is essential for answering real business questions.
+In Lesson 1, we retrieved desired columns with SELECT. But all rows were returned, right? With WHERE, you can pick out only the rows that match your conditions.
+
+!!! note "Already familiar?"
+    If you already know WHERE, comparison operators, AND/OR, IN, BETWEEN, LIKE, and IS NULL, skip ahead to [Lesson 3: Sorting and Pagination](03-sort-limit.md).
+
+The `WHERE` clause includes only the rows that satisfy the condition in the result. Without `WHERE`, all rows from the table are returned. Using `WHERE` is essential for extracting meaningful data in practice.
 
 ```mermaid
 flowchart LR
     T["🗄️ All Rows\n(5,230)"] --> W["WHERE\ncondition"] --> R["📋 Filtered\n(127 rows)"]
 ```
 
-> **Concept:** WHERE filters rows by condition. Like extracting 127 VIP customers from 5,230 total.
+> **Concept:** WHERE filters out only the rows that match the condition. It is like extracting only 127 VIP members from a total of 5,230.
 
 ## Comparison Operators
 
 | Operator | Meaning |
 |----------|---------|
-| `=` | Equal |
-| `<>` or `!=` | Not equal |
-| `<`, `<=` | Less than, less than or equal |
-| `>`, `>=` | Greater than, greater than or equal |
+| `=` | Equal to |
+| `<>` or `!=` | Not equal to |
+| `<`, `<=` | Less than, less than or equal to |
+| `>`, `>=` | Greater than, greater than or equal to |
 
 ```sql
--- Products priced over $500
-SELECT name, price
-FROM products
-WHERE price > 500;
+-- = : Retrieve only VIP grade customers
+SELECT name, grade FROM customers
+WHERE grade = 'VIP';
 ```
 
-**Result:**
+```sql
+-- <> : Customers who are not VIP (!= has the same meaning)
+SELECT name, grade FROM customers
+WHERE grade <> 'VIP';
+```
 
-| name                                   | price   |
-| -------------------------------------- | ------: |
-| Razer Blade 18 블랙                      | 2987500 |
+```sql
+-- > : Products priced over 1 million won
+SELECT name, price FROM products
+WHERE price > 1000000;
+```
+
+```sql
+-- >= : Products with 500 or more in stock
+SELECT name, stock_qty FROM products
+WHERE stock_qty >= 500;
+```
+
+```sql
+-- < : Low-price products under 50,000 won
+SELECT name, price FROM products
+WHERE price < 50000;
+```
+
+```sql
+-- <= : Customers with point balance of 0 or less
+SELECT name, point_balance FROM customers
+WHERE point_balance <= 0;
+```
+
+**`>` result example:**
+
+| name | price |
+| ---- | ----: |
+| Razer Blade 18 블랙 | 2987500 |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
-| 삼성 DDR4 32GB PC4-25600                 |   49100 |
-| ...                                    | ...     |
+| ... | ... |
 
-```sql
--- Only active products
-SELECT name, price, stock_qty
-FROM products
-WHERE is_active = 1;
-```
+!!! tip "Most commonly used operators"
+    In practice, `=` (filter for a specific value) and `<>` (exclude a specific value) are the most common. Example: `WHERE status = 'confirmed'`, `WHERE status <> 'cancelled'`
+
+---
 
 ## AND / OR
 
-Combine conditions with `AND` (both must be true) and `OR` (either must be true).
+`AND` includes the row when both conditions are true; `OR` includes it when at least one is true.
 
 ```sql
--- Active products priced between $100 and $500
+-- Active products priced between 100,000 and 500,000 won
 SELECT name, price
 FROM products
 WHERE is_active = 1
-  AND price >= 100
-  AND price <= 500;
+  AND price >= 100000
+  AND price <= 500000;
 ```
 
 **Result:**
 
 | name | price |
-| ---- | ----- |
+| ---------- | ----------: |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 |
+| 삼성 DDR5 32GB PC5-38400 | 194700.0 |
+| 로지텍 G715 화이트 | 254400.0 |
+| be quiet! Light Base 900 | 161100.0 |
+| MSI MAG X870E TOMAHAWK WIFI 화이트 | 473800.0 |
+| NZXT Kraken Elite 240 RGB 실버 | 349200.0 |
+| TP-Link Archer AX55 블랙 | 331900.0 |
+| be quiet! Pure Power 12 M 850W 화이트 | 350200.0 |
+| ... | ... |
 
 ```sql
--- VIP or GOLD customers
+-- VIP or GOLD grade customers
 SELECT name, email, grade
 FROM customers
 WHERE grade = 'VIP'
    OR grade = 'GOLD';
 ```
 
-> **Tip:** Use parentheses when mixing `AND` and `OR` to make precedence explicit.
+> **Tip:** When using `AND` and `OR` together, use parentheses to clarify precedence.
 > `WHERE (grade = 'VIP' OR grade = 'GOLD') AND is_active = 1`
 
 ## IN
 
-`IN` is a shortcut for multiple `OR` conditions on the same column.
+`IN` provides a concise way to express multiple `OR` conditions on the same column.
 
 ```sql
--- Customers who are GOLD or VIP (cleaner with IN)
+-- Retrieve GOLD or VIP customers (IN is more concise)
 SELECT name, grade
 FROM customers
 WHERE grade IN ('GOLD', 'VIP');
@@ -84,14 +124,19 @@ WHERE grade IN ('GOLD', 'VIP');
 **Result:**
 
 | name | grade |
-| ---- | ----- |
-| 김경수  | VIP   |
-| 김민재  | VIP   |
-| 진정자  | VIP   |
-| ...  | ...   |
+| ---------- | ---------- |
+| 김민재 | VIP |
+| 진정자 | GOLD |
+| 성민석 | VIP |
+| 박지훈 | GOLD |
+| 강은서 | VIP |
+| 김서준 | GOLD |
+| 이영철 | VIP |
+| 김선영 | GOLD |
+| ... | ... |
 
 ```sql
--- Orders in terminal states
+-- Retrieve orders with completed statuses
 SELECT order_number, status, total_amount
 FROM orders
 WHERE status IN ('delivered', 'confirmed', 'returned');
@@ -99,19 +144,28 @@ WHERE status IN ('delivered', 'confirmed', 'returned');
 
 ## BETWEEN
 
-`BETWEEN` tests for an inclusive range — equivalent to `>= low AND <= high`.
+`BETWEEN` is a range condition that includes both endpoints. It is equivalent to `>= min AND <= max`.
 
 ```sql
--- Products priced from $50 to $200
+-- Products priced between 50,000 and 200,000 won
 SELECT name, price
 FROM products
-WHERE price BETWEEN 50 AND 200;
+WHERE price BETWEEN 50000 AND 200000;
 ```
 
 **Result:**
 
 | name | price |
-| ---- | ----- |
+| ---------- | ----------: |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 |
+| 삼성 DDR5 32GB PC5-38400 | 194700.0 |
+| be quiet! Light Base 900 | 161100.0 |
+| TP-Link TG-3468 실버 | 53600.0 |
+| 로지텍 K580 | 50500.0 |
+| Keychron Q1 Pro 실버 | 178600.0 |
+| Seagate Fast SSD 1TB 실버 | 185300.0 |
+| SteelSeries Prime Wireless 블랙 | 111200.0 |
+| ... | ... |
 
 ```sql
 -- Orders placed in Q1 2024
@@ -122,37 +176,71 @@ WHERE ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59';
 
 ## LIKE
 
-`LIKE` matches text patterns. `%` matches any sequence of characters; `_` matches exactly one character.
+`LIKE` matches text patterns. It uses two wildcards:
+
+| Wildcard | Meaning | Example |
+|:--------:|---------|---------|
+| `%` | Zero or more arbitrary characters | `'%Gaming%'` -> "Gaming" anywhere |
+| `_` | Exactly one character | `'_민재'` -> 2-character names ending with "민재" |
+
+### % examples -- contains, starts with, ends with
 
 ```sql
--- Products whose name contains "Gaming"
+-- Products with "Gaming" in the name
 SELECT name, price
 FROM products
 WHERE name LIKE '%Gaming%';
 ```
 
-**Result:**
-
-| name                                   | price   |
-| -------------------------------------- | ------: |
+| name | price |
+| ---- | ----: |
 | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |
-| ASUS TUF Gaming RTX 5080 화이트           | 3812000 |
-| MSI Radeon RX 7900 XTX GAMING X 화이트    | 1478100 |
-| ...                                    | ...     |
+| ASUS TUF Gaming RTX 5080 화이트 | 3812000 |
+| ... | ... |
 
 ```sql
--- Customers whose email is on testmail.com
-SELECT name, email
-FROM customers
-WHERE email LIKE '%@testmail.com';
+-- Emails ending with testmail.kr domain
+SELECT name, email FROM customers
+WHERE email LIKE '%@testmail.kr';
 ```
+
+```sql
+-- Products starting with "삼성"
+SELECT name, price FROM products
+WHERE name LIKE '삼성%';
+```
+
+### _ examples -- exactly one character
+
+```sql
+-- Customers with exactly 3-character names (1 surname + 2 given name)
+SELECT name, email FROM customers
+WHERE name LIKE '___';
+```
+
+| name | email |
+| ---- | ----- |
+| 정준호 | jjh0001@testmail.kr |
+| 김민재 | kmj0002@testmail.kr |
+| ... | ... |
+
+```sql
+-- Products with SKU starting with "LA-" followed by a 3-character category code
+SELECT name, sku FROM products
+WHERE sku LIKE 'LA-___-%';
+```
+
+!!! tip "Case sensitivity"
+    SQLite's LIKE is case-insensitive for English characters (`'%gaming%'` and `'%Gaming%'` return the same result). MySQL is case-insensitive by default, while PostgreSQL is case-sensitive. To ignore case in PostgreSQL, use `ILIKE`.
+
+---
 
 ## IS NULL / IS NOT NULL
 
-NULL means "unknown" or "missing." You cannot use `= NULL` — you must use `IS NULL`.
+NULL means "unknown" or "absent." It is different from 0 or an empty string. For NULL comparisons, you must use `IS NULL` instead of `= NULL`.
 
 ```sql
--- Customers with no birth date on file
+-- Customers who have not registered their date of birth
 SELECT name, email
 FROM customers
 WHERE birth_date IS NULL;
@@ -160,26 +248,43 @@ WHERE birth_date IS NULL;
 
 **Result:**
 
-| name | email              |
-| ---- | ------------------ |
-| 김명자  | user7@testmail.kr  |
-| 김정식  | user13@testmail.kr |
-| ...  | ...                |
+| name | email |
+| ---------- | ---------- |
+| 김명자 | user7@testmail.kr |
+| 김정식 | user13@testmail.kr |
+| 윤순옥 | user14@testmail.kr |
+| 이서연 | user21@testmail.kr |
+| 강민석 | user24@testmail.kr |
+| 김서준 | user27@testmail.kr |
+| 윤지훈 | user36@testmail.kr |
+| 박준영 | user38@testmail.kr |
+| ... | ... |
 
 ```sql
--- Orders that have delivery instructions
+-- Orders that have shipping notes
 SELECT order_number, notes
 FROM orders
 WHERE notes IS NOT NULL;
 ```
 
-!!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
+## Summary
 
-## Practice Exercises
+| Keyword | Description | Example |
+|---------|-------------|---------|
+| `=`, `<>`, `<`, `>`, `<=`, `>=` | Comparison operators | `WHERE price >= 100000` |
+| `AND` / `OR` | Combine multiple conditions | `WHERE grade = 'VIP' AND is_active = 1` |
+| `IN` | Match one of several values | `WHERE grade IN ('GOLD', 'VIP')` |
+| `BETWEEN` | Range condition (both endpoints included) | `WHERE price BETWEEN 100000 AND 500000` |
+| `LIKE` | Text pattern matching (`%` any string, `_` one character) | `WHERE name LIKE '%Gaming%'` |
+| `IS NULL` / `IS NOT NULL` | Check for NULL (`= NULL` does not work) | `WHERE birth_date IS NULL` |
 
-### Exercise 1
-Find all female customers (`gender = 'F'`) who hold a SILVER or GOLD membership grade. Return their `name`, `grade`, and `point_balance`.
+!!! note "Lesson Review Problems"
+    These are simple problems to immediately check the concepts learned in this lesson. For comprehensive practice combining multiple concepts, see the [Practice Problems](../exercises/index.md) section.
+
+## Practice Problems
+
+### Problem 1
+Find female customers (`gender = 'F'`) with SILVER or GOLD grade. Return `name`, `grade`, and `point_balance`.
 
 ??? success "Answer"
     ```sql
@@ -189,44 +294,35 @@ Find all female customers (`gender = 'F'`) who hold a SILVER or GOLD membership 
       AND grade IN ('SILVER', 'GOLD');
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name | grade  | point_balance |
-    | ---- | ------ | ------------: |
-    | 김건우  | SILVER |         87084 |
-    | 이영일  | SILVER |         87917 |
-    | 남예준  | SILVER |         87589 |
-    | 윤현주  | SILVER |        576801 |
-    | 구영호  | GOLD   |        318534 |
-    | ...  | ...    | ...           |
-
-
-    **Expected result:**
-
-    | name | grade  | point_balance |
-    | ---- | ------ | ------------: |
-    | 김건우  | SILVER |         87084 |
-    | 이영일  | SILVER |         87917 |
-    | 남예준  | SILVER |         87589 |
-    | 윤현주  | SILVER |        576801 |
-    | 구영호  | GOLD   |        318534 |
-    | ...  | ...    | ...           |
+| name | grade | point_balance |
+| ---------- | ---------- | ----------: |
+| 진정자 | GOLD | 944605 |
+| 박지훈 | GOLD | 436275 |
+| 배종수 | SILVER | 469734 |
+| 박건우 | GOLD | 783515 |
+| 남예준 | SILVER | 244180 |
+| 이현숙 | SILVER | 454550 |
+| 이지아 | SILVER | 159982 |
+| 배성훈 | GOLD | 827245 |
+| ... | ... | ... |
 
 
-### Exercise 2
-List products that are active (`is_active = 1`) and priced between $200 and $800. Return `name` and `price`, ordered by price descending.
+### Problem 2
+Retrieve active products (`is_active = 1`) priced between 200,000 and 800,000 won. Return `name` and `price`, sorted by price descending.
 
 ??? success "Answer"
     ```sql
     SELECT name, price
     FROM products
     WHERE is_active = 1
-      AND price BETWEEN 200 AND 800
+      AND price BETWEEN 200000 AND 800000
     ORDER BY price DESC;
     ```
 
-### Exercise 3
-Find all customers whose gender is unknown (NULL) and who have never logged in (`last_login_at IS NULL`). Return their `name` and `created_at`.
+### Problem 3
+Find customers whose gender is unknown (NULL) and who also have no last login record (`last_login_at IS NULL`). Return `name` and `created_at`.
 
 ??? success "Answer"
     ```sql
@@ -236,66 +332,48 @@ Find all customers whose gender is unknown (NULL) and who have never logged in (
       AND last_login_at IS NULL;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name | created_at          |
-    | ---- | ------------------- |
-    | 이영식  | 2016-02-23 17:09:54 |
-    | 최성수  | 2017-05-04 04:39:09 |
-    | 김명자  | 2019-04-21 10:06:38 |
-    | 박광수  | 2019-05-18 00:02:05 |
-    | 장영호  | 2020-06-07 17:56:26 |
-    | ...  | ...                 |
-
-
-    **Expected result:**
-
-    | name | created_at          |
-    | ---- | ------------------- |
-    | 이영식  | 2016-02-23 17:09:54 |
-    | 최성수  | 2017-05-04 04:39:09 |
-    | 김명자  | 2019-04-21 10:06:38 |
-    | 박광수  | 2019-05-18 00:02:05 |
-    | 장영호  | 2020-06-07 17:56:26 |
-    | ...  | ...                 |
+| name | created_at |
+| ---------- | ---------- |
+| 이영식 | 2016-02-23 17:09:54 |
+| 최성수 | 2016-05-03 04:39:09 |
+| 김은지 | 2016-05-17 00:02:05 |
+| 손영호 | 2017-11-11 21:56:36 |
+| 강지은 | 2017-04-26 04:05:37 |
+| 윤승민 | 2017-12-11 21:16:30 |
+| 박영길 | 2017-10-24 15:03:46 |
+| 허정호 | 2017-02-28 06:33:43 |
+| ... | ... |
 
 
-### Exercise 4
-Find all products with a price of $1,000 or more. Return `name` and `price`.
+### Problem 4
+Retrieve the `name` and `price` of products priced at 1 million won or more.
 
 ??? success "Answer"
     ```sql
     SELECT name, price
     FROM products
-    WHERE price >= 1000;
+    WHERE price >= 1000000;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name                                     | price   |
-    | ---------------------------------------- | ------: |
-    | Razer Blade 18 블랙                        | 2987500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |
-    | Dell U2724D                              |  853600 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |
-    | ...                                      | ...     |
-
-
-    **Expected result:**
-
-    | name                                     | price   |
-    | ---------------------------------------- | ------: |
-    | Razer Blade 18 블랙                        | 2987500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |
-    | Dell U2724D                              |  853600 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |
-    | ...                                      | ...     |
+| name | price |
+| ---------- | ----------: |
+| Razer Blade 18 블랙 | 3730900.0 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
+| LG 일체형PC 27V70Q 실버 | 1028600.0 |
+| Razer Blade 18 화이트 | 3879900.0 |
+| ASUS ROG Strix G16CH 화이트 | 3307900.0 |
+| 한성 보스몬스터 DX5800 블랙 | 1189600.0 |
+| ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
+| MSI Radeon RX 7900 XTX GAMING X 화이트 | 1409500.0 |
+| ... | ... |
 
 
-### Exercise 5
-List products whose stock quantity is not zero (`stock_qty <> 0`). Return `name` and `stock_qty`.
+### Problem 5
+Retrieve the `name` and `stock_qty` of products that are not out of stock (`stock_qty <> 0`).
 
 ??? success "Answer"
     ```sql
@@ -304,32 +382,23 @@ List products whose stock quantity is not zero (`stock_qty <> 0`). Return `name`
     WHERE stock_qty <> 0;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name                                     | stock_qty |
-    | ---------------------------------------- | --------: |
-    | Razer Blade 18 블랙                        |       107 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   |       499 |
-    | 삼성 DDR4 32GB PC4-25600                   |       359 |
-    | Dell U2724D                              |       337 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |        59 |
-    | ...                                      | ...       |
-
-
-    **Expected result:**
-
-    | name                                     | stock_qty |
-    | ---------------------------------------- | --------: |
-    | Razer Blade 18 블랙                        |       107 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   |       499 |
-    | 삼성 DDR4 32GB PC4-25600                   |       359 |
-    | Dell U2724D                              |       337 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |        59 |
-    | ...                                      | ...       |
+| name | stock_qty |
+| ---------- | ----------: |
+| Razer Blade 18 블랙 | 107 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 499 |
+| 삼성 DDR4 32GB PC4-25600 | 359 |
+| Dell U2724D | 337 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 59 |
+| MSI Radeon RX 9070 VENTUS 3X 화이트 | 460 |
+| 삼성 DDR5 32GB PC5-38400 | 340 |
+| 로지텍 G715 화이트 | 341 |
+| ... | ... |
 
 
-### Exercise 6
-Find GOLD-grade customers whose point balance is between 500 and 2000. Return `name` and `point_balance`.
+### Problem 6
+From the `customers` table, retrieve the `name` and `point_balance` of GOLD grade customers whose point balance is between 500 and 2000.
 
 ??? success "Answer"
     ```sql
@@ -339,8 +408,8 @@ Find GOLD-grade customers whose point balance is between 500 and 2000. Return `n
       AND point_balance BETWEEN 500 AND 2000;
     ```
 
-### Exercise 7
-List orders whose status is either `'pending'` or `'processing'`. Return `order_number` and `status`. Use the `IN` operator.
+### Problem 7
+Retrieve the `order_number` and `status` of orders with status `'pending'` or `'processing'`. Use the `IN` operator.
 
 ??? success "Answer"
     ```sql
@@ -349,32 +418,23 @@ List orders whose status is either `'pending'` or `'processing'`. Return `order_
     WHERE status IN ('pending', 'processing');
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | order_number       | status  |
-    | ------------------ | ------- |
-    | ORD-20250627-34856 | pending |
-    | ORD-20250627-34857 | pending |
-    | ORD-20250627-34858 | pending |
-    | ORD-20250627-34859 | pending |
-    | ORD-20250627-34860 | pending |
-    | ...                | ...     |
-
-
-    **Expected result:**
-
-    | order_number       | status  |
-    | ------------------ | ------- |
-    | ORD-20250627-34856 | pending |
-    | ORD-20250627-34857 | pending |
-    | ORD-20250627-34858 | pending |
-    | ORD-20250627-34859 | pending |
-    | ORD-20250627-34860 | pending |
-    | ...                | ...     |
+| order_number | status |
+| ---------- | ---------- |
+| ORD-20251204-412540 | pending |
+| ORD-20251207-413119 | pending |
+| ORD-20251211-413870 | pending |
+| ORD-20251211-413965 | pending |
+| ORD-20251212-414063 | pending |
+| ORD-20251214-414477 | pending |
+| ORD-20251215-414727 | pending |
+| ORD-20251223-416282 | pending |
+| ... | ... |
 
 
-### Exercise 8
-Find products whose name ends with "Keyboard". Return `name` and `price`.
+### Problem 8
+Retrieve the `name` and `price` of products whose name ends with "Keyboard".
 
 ??? success "Answer"
     ```sql
@@ -383,8 +443,8 @@ Find products whose name ends with "Keyboard". Return `name` and `price`.
     WHERE name LIKE '%Keyboard';
     ```
 
-### Exercise 9
-From the `staff` table, find active employees (`is_active = 1`) who are not in the `'Sales'` department. Return `name` and `department`.
+### Problem 9
+From the `staff` table, retrieve the `name` and `department` of active employees (`is_active = 1`) whose `department` is not `'Sales'`.
 
 ??? success "Answer"
     ```sql
@@ -394,30 +454,23 @@ From the `staff` table, find active employees (`is_active = 1`) who are not in t
       AND department <> 'Sales';
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name | department |
-    | ---- | ---------- |
-    | 한민재  | 경영         |
-    | 장주원  | 경영         |
-    | 박경수  | 경영         |
-    | 이준혁  | 영업         |
-    | 권영희  | 마케팅        |
-
-
-    **Expected result:**
-
-    | name | department |
-    | ---- | ---------- |
-    | 한민재  | 경영         |
-    | 장주원  | 경영         |
-    | 박경수  | 경영         |
-    | 이준혁  | 영업         |
-    | 권영희  | 마케팅        |
+| name | department |
+| ---------- | ---------- |
+| 한민재 | 경영 |
+| 장주원 | 경영 |
+| 박경수 | 경영 |
+| 이준혁 | 영업 |
+| 권영희 | 마케팅 |
+| 김영일 | 개발 |
+| 황예준 | 경영 |
+| 이춘자 | 경영 |
+| ... | ... |
 
 
-### Exercise 10
-Find customers who are either VIP-grade and inactive (`is_active = 0`), or have a point balance of 5,000 or more. Return `name`, `grade`, `point_balance`, and `is_active`. Use parentheses to make the condition precedence clear.
+### Problem 10
+From the `customers` table, retrieve the `name`, `grade`, `point_balance`, and `is_active` of customers who are VIP grade and inactive (`is_active = 0`), or whose point balance is 5000 or more. Use parentheses to clarify the condition precedence.
 
 ??? success "Answer"
     ```sql
@@ -427,29 +480,42 @@ Find customers who are either VIP-grade and inactive (`is_active = 0`), or have 
        OR point_balance >= 5000;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name | grade  | point_balance | is_active |
-    | ---- | ------ | ------------: | --------: |
-    | 김경수  | VIP    |        772799 |         1 |
-    | 김민재  | VIP    |       1110634 |         1 |
-    | 진정자  | VIP    |        687929 |         1 |
-    | 이정수  | SILVER |       1012866 |         1 |
-    | 성민석  | BRONZE |        264487 |         1 |
-    | ...  | ...    | ...           | ...       |
+| name | grade | point_balance | is_active |
+| ---------- | ---------- | ----------: | ----------: |
+| 김경수 | BRONZE | 928447 | 1 |
+| 김민재 | VIP | 2609195 | 1 |
+| 진정자 | GOLD | 944605 | 1 |
+| 이정수 | BRONZE | 1903978 | 1 |
+| 성민석 | VIP | 292416 | 1 |
+| 박지훈 | GOLD | 436275 | 1 |
+| 장준서 | SILVER | 790657 | 1 |
+| 윤순옥 | BRONZE | 549856 | 1 |
+| ... | ... | ... | ... |
 
 
-    **Expected result:**
+### Scoring Guide
 
-    | name | grade  | point_balance | is_active |
-    | ---- | ------ | ------------: | --------: |
-    | 김경수  | VIP    |        772799 |         1 |
-    | 김민재  | VIP    |       1110634 |         1 |
-    | 진정자  | VIP    |        687929 |         1 |
-    | 이정수  | SILVER |       1012866 |         1 |
-    | 성민석  | BRONZE |        264487 |         1 |
-    | ...  | ...    | ...           | ...       |
+| Score | Next Step |
+|:-----:|-----------|
+| **9-10** | Move to [Lesson 3: Sorting and Pagination](03-sort-limit.md) |
+| **7-8** | Review the explanations for incorrect answers, then proceed to Lesson 3 |
+| **5 or fewer** | Read this lesson again |
+| **3 or fewer** | Start over from [Lesson 1: SELECT Basics](01-select.md) |
 
+**Problem Areas:**
+
+| Area | Problems |
+|------|:--------:|
+| AND / IN | 1 |
+| BETWEEN | 2, 6 |
+| IS NULL | 3 |
+| Comparison operators (>=, <>) | 4, 5 |
+| IN | 7 |
+| LIKE | 8 |
+| AND / negation comparison | 9 |
+| OR / parentheses precedence | 10 |
 
 ---
 Next: [Lesson 3: Sorting and Pagination](03-sort-limit.md)

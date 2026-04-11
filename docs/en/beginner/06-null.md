@@ -1,6 +1,9 @@
-# Lesson 6: Working with NULL
+# Lesson 6: Handling NULL
 
-`NULL` represents an unknown or missing value. It is not zero, not an empty string — it is the absence of a value. Understanding NULL is critical because it behaves differently from every other value in SQL.
+In Lesson 0, we briefly introduced NULL -- it means "no value." In this lesson, we learn how NULL behaves specially in SQL and how to handle it safely.
+
+!!! note "Already familiar?"
+    If you already know IS NULL, COALESCE, NULLIF, and NULL propagation, skip ahead to [Lesson 7: CASE Expressions](07-case.md).
 
 ```mermaid
 flowchart TD
@@ -10,22 +13,22 @@ flowchart TD
     N --> |"IS NULL"| T2["TRUE ✅"]
 ```
 
-> **Concept:** NULL means 'no value'. = NULL always returns UNKNOWN, so use IS NULL instead.
+> **Concept:** NULL is "no value." = NULL always returns UNKNOWN, so you must use IS NULL.
 
-## NULL is Not Equal to Anything
+## NULL Is Not Equal to Anything
 
-You cannot compare NULL with `=` or `<>`. These comparisons always return `NULL` (unknown), never `TRUE`.
+You cannot compare NULL with `=` or `<>`. Such comparisons always return `NULL` (unknown) and never become `TRUE`.
 
 ```sql
--- WRONG: this returns no rows!
+-- Wrong: returns no rows!
 SELECT name FROM customers WHERE birth_date = NULL;
 
--- CORRECT: use IS NULL
+-- Correct: use IS NULL
 SELECT name FROM customers WHERE birth_date IS NULL;
 ```
 
 ```sql
--- Customers whose gender is known
+-- Retrieve customers with confirmed gender
 SELECT name, gender
 FROM customers
 WHERE gender IS NOT NULL
@@ -35,17 +38,18 @@ LIMIT 5;
 **Result:**
 
 | name | gender |
-| ---- | ------ |
-| 정준호  | M      |
-| 김민재  | M      |
-| 진정자  | F      |
-| 이정수  | M      |
-| ...  | ...    |
+| ---------- | ---------- |
+| 정준호 | M |
+| 김민재 | M |
+| 진정자 | F |
+| 이정수 | M |
+| 김준혁 | M |
+| ... | ... |
 
 ## IS NULL and IS NOT NULL
 
 ```sql
--- Orders without delivery notes
+-- Orders without shipping notes
 SELECT order_number, total_amount
 FROM orders
 WHERE notes IS NULL
@@ -54,15 +58,17 @@ LIMIT 5;
 
 **Result:**
 
-| order_number       | total_amount |
-| ------------------ | -----------: |
-| ORD-20160101-00001 |       130700 |
-| ORD-20160102-00003 |       265400 |
-| ORD-20160103-00004 |       130700 |
-| ...                | ...          |
+| order_number | total_amount |
+| ---------- | ----------: |
+| ORD-20160101-00001 | 161900.0 |
+| ORD-20160101-00002 | 493200.0 |
+| ORD-20160101-00003 | 465500.0 |
+| ORD-20160101-00004 | 355400.0 |
+| ORD-20160101-00005 | 4542200.0 |
+| ... | ... |
 
 ```sql
--- Orders that were NOT handled by any staff member
+-- Return/complaint orders without an assigned staff member
 SELECT order_number, status
 FROM orders
 WHERE staff_id IS NULL
@@ -72,13 +78,13 @@ LIMIT 5;
 
 ## COALESCE
 
-`COALESCE(a, b, c, ...)` returns the first non-NULL argument. It is the standard way to substitute a default value for NULL.
+`COALESCE(a, b, c, ...)` returns the first non-NULL argument. It is the most widely used method for displaying a default value instead of NULL.
 
 ```sql
--- Show gender or 'Not Specified' when gender is NULL
+-- Display 'Not provided' when gender is NULL
 SELECT
     name,
-    COALESCE(gender, 'Not Specified') AS gender_display
+    COALESCE(gender, 'Not provided') AS gender_display
 FROM customers
 LIMIT 8;
 ```
@@ -86,16 +92,19 @@ LIMIT 8;
 **Result:**
 
 | name | gender_display |
-|------|----------------|
-| Jennifer Martinez | F |
-| Alex Chen | Not Specified |
-| Robert Kim | M |
-| Maria Santos | Not Specified |
-| Sarah Johnson | F |
-| ... | |
+| ---------- | ---------- |
+| 정준호 | M |
+| 김경수 | Not provided |
+| 김민재 | M |
+| 진정자 | F |
+| 이정수 | M |
+| 김준혁 | M |
+| 김명자 | F |
+| 성민석 | F |
+| ... | ... |
 
 ```sql
--- Use notes or a default message
+-- Display a default message when there are no shipping notes
 SELECT
     order_number,
     COALESCE(notes, 'No special instructions') AS delivery_note
@@ -105,19 +114,21 @@ LIMIT 5;
 
 **Result:**
 
-| order_number       | delivery_note           |
-| ------------------ | ----------------------- |
+| order_number | delivery_note |
+| ---------- | ---------- |
 | ORD-20160101-00001 | No special instructions |
-| ORD-20160102-00002 | 1층 로비에 놓아주세요            |
-| ORD-20160102-00003 | No special instructions |
-| ...                | ...                     |
+| ORD-20160101-00002 | No special instructions |
+| ORD-20160101-00003 | No special instructions |
+| ORD-20160101-00004 | No special instructions |
+| ORD-20160101-00005 | No special instructions |
+| ... | ... |
 
 ## NULLIF
 
-`NULLIF(a, b)` returns NULL when `a` equals `b`, otherwise returns `a`. It is often used to avoid division-by-zero errors.
+`NULLIF(a, b)` returns NULL if `a` equals `b`, otherwise returns `a`. It is often used to prevent division by zero errors.
 
 ```sql
--- Safe percentage: avoid division by zero
+-- Prevent division by zero: safe ratio calculation
 SELECT
     grade,
     COUNT(*) AS total,
@@ -133,20 +144,20 @@ GROUP BY grade;
 
 **Result:**
 
-| grade  | total | inactive | pct_inactive |
-| ------ | ----: | -------: | -----------: |
-| BRONZE |  3962 |     1414 |         35.7 |
-| GOLD   |   484 |        0 |            0 |
-| SILVER |   469 |        0 |            0 |
-| VIP    |   315 |        0 |            0 |
+| grade | total | inactive | pct_inactive |
+| ---------- | ----------: | ----------: | ----------: |
+| BRONZE | 38150 | 15535 | 40.7 |
+| GOLD | 5159 | 0 | 0.0 |
+| SILVER | 5105 | 0 | 0.0 |
+| VIP | 3886 | 0 | 0.0 |
 
-## NULL in Aggregates
+## Aggregate Functions and NULL
 
-Aggregate functions (`SUM`, `AVG`, `COUNT(column)`, `MIN`, `MAX`) silently ignore NULL values. This can cause surprises.
+Aggregate functions (`SUM`, `AVG`, `COUNT(column)`, `MIN`, `MAX`) silently ignore NULL values. Be careful, as this can produce unexpected results.
 
 === "SQLite"
     ```sql
-    -- Comparing COUNT(*) vs COUNT(birth_date)
+    -- Compare COUNT(*) and COUNT(birth_date)
     SELECT
         COUNT(*)           AS all_customers,
         COUNT(birth_date)  AS customers_with_dob,
@@ -180,27 +191,27 @@ Aggregate functions (`SUM`, `AVG`, `COUNT(column)`, `MIN`, `MAX`) silently ignor
 |--------------:|-------------------:|---------------:|
 | 5230 | 4445 | 1982.3 |
 
-> The `AVG` is calculated only over the 4,445 rows that have a birth date — the 785 NULLs are excluded automatically.
+> `AVG` is calculated only for the 4,445 customers who have a birth date. The 785 with NULL are automatically excluded.
 
-## NULL in Expressions
+## NULL Propagation in Expressions
 
-![Three-Valued Logic](../img/null-logic.svg){ .off-glb width="400" }
+![Three-valued logic](../img/null-logic.svg){ .off-glb width="400" }
 
-Any arithmetic involving NULL produces NULL.
+Arithmetic operations involving NULL produce NULL as the result.
 
 ```sql
--- NULL propagates through math
+-- NULL propagates through operations
 SELECT
     1 + NULL,       -- NULL
     NULL * 100,     -- NULL
     'hello' || NULL -- NULL (string concatenation too)
 ```
 
-Use `COALESCE` to guard against this:
+Use `COALESCE` to prevent NULL propagation.
 
 === "SQLite"
     ```sql
-    -- Calculate age in years, treating NULL birth_date as unknown
+    -- If birth_date is NULL, treat age as -1
     SELECT
         name,
         birth_date,
@@ -238,12 +249,23 @@ Use `COALESCE` to guard against this:
     LIMIT 5;
     ```
 
-!!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
+## Summary
 
-## Practice Exercises
-### Exercise 1
-Find the top-level managers in the `staff` table — employees whose `manager_id` is NULL. Show their `name`, `department`, and `role`.
+| Syntax | Description | Example |
+|--------|-------------|---------|
+| `IS NULL` | Check if a value is NULL | `WHERE birth_date IS NULL` |
+| `IS NOT NULL` | Check if a value is not NULL | `WHERE gender IS NOT NULL` |
+| `COALESCE(a, b, ...)` | Return the first non-NULL value | `COALESCE(gender, 'Not provided')` |
+| `NULLIF(a, b)` | Return NULL if a = b (prevents division by zero) | `price / NULLIF(stock_qty, 0)` |
+| Aggregates and NULL | SUM, AVG, COUNT(column), etc. ignore NULL | `AVG` calculates excluding NULL rows |
+| NULL propagation | NULL + number = NULL | `1 + NULL -> NULL` |
+
+!!! note "Lesson Review Problems"
+    These are simple problems to immediately check the concepts learned in this lesson. For comprehensive practice combining multiple concepts, see the [Practice Problems](../exercises/index.md) section.
+
+## Practice Problems
+### Problem 1
+From the `staff` table, retrieve the `name`, `department`, and `role` of employees whose `manager_id` is NULL (top-level managers).
 
 ??? success "Answer"
     ```sql
@@ -252,35 +274,28 @@ Find the top-level managers in the `staff` table — employees whose `manager_id
     WHERE manager_id IS NULL;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name | department | role  |
-    | ---- | ---------- | ----- |
-    | 한민재  | 경영         | admin |
-
-
-    **Expected result:**
-
-    | name | department | role  |
-    | ---- | ---------- | ----- |
-    | 한민재  | 경영         | admin |
+| name | department | role |
+| ---------- | ---------- | ---------- |
+| 한민재 | 경영 | admin |
 
 
-### Exercise 2
-Find customers whose `phone` is NULL. Show their `name` and `email`, but replace NULL emails with `'No contact'` using COALESCE.
+### Problem 2
+From the `customers` table, retrieve the `name` and `email` of customers whose `phone` is NULL. If `email` is also NULL, replace it with `'No contact info'`.
 
 ??? success "Answer"
     ```sql
     SELECT
         name,
-        COALESCE(email, 'No contact') AS email
+        COALESCE(email, 'No contact info') AS email
     FROM customers
     WHERE phone IS NULL;
     ```
 
 
-### Exercise 3
-Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `name`, `price`, `stock_qty`, and `price / NULLIF(stock_qty, 0)` as `price_per_unit`. Limit to 5 rows.
+### Problem 3
+Using `NULLIF`, safely calculate the price-to-stock ratio for products in the `products` table where `stock_qty` might be 0. Return `name`, `price`, `stock_qty`, and `price / NULLIF(stock_qty, 0)` with the alias `price_per_unit`. Limit the result to 5 rows.
 
 ??? success "Answer"
     ```sql
@@ -293,68 +308,49 @@ Use `NULLIF` to safely calculate a price-per-unit ratio for products. Return `na
     LIMIT 5;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name                                     | price   | stock_qty | price_per_unit |
-    | ---------------------------------------- | ------: | --------: | -------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
-    | Dell U2724D                              |  853600 |       337 |        2532.94 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
-
-
-    **Expected result:**
-
-    | name                                     | price   | stock_qty | price_per_unit |
-    | ---------------------------------------- | ------: | --------: | -------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       27920.56 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |        3494.99 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |         136.77 |
-    | Dell U2724D                              |  853600 |       337 |        2532.94 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |        2215.25 |
+| name | price | stock_qty | price_per_unit |
+| ---------- | ----------: | ----------: | ----------: |
+| Razer Blade 18 블랙 | 3730900.0 | 107 | 34868.22429906542 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 | 3494.9899799599198 |
+| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 | 128.41225626740948 |
+| Dell U2724D | 865000.0 | 337 | 2566.7655786350147 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 | 2744.0677966101694 |
+| ... | ... | ... | ... |
 
 
-### Exercise 4
-List customers who have never logged in (`last_login_at IS NULL`). Show `name`, `email`, and `created_at`, replacing NULL `email` with `'N/A'` and NULL `created_at` with `'Unknown'`. Limit to 10 rows.
+### Problem 4
+From the `customers` table, retrieve the `name`, `email`, and `created_at` of customers whose `last_login_at` is NULL. Replace NULL `email` with `'None'` and NULL `created_at` with `'Unknown'`. Limit the result to 10 rows.
 
 ??? success "Answer"
     ```sql
     SELECT
         name,
-        COALESCE(email, 'N/A')       AS email,
+        COALESCE(email, 'None')        AS email,
         COALESCE(created_at, 'Unknown') AS created_at
     FROM customers
     WHERE last_login_at IS NULL
     LIMIT 10;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | name | email              | created_at          |
-    | ---- | ------------------ | ------------------- |
-    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
-    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
-    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
-    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
-    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
-    | ...  | ...                | ...                 |
-
-
-    **Expected result:**
-
-    | name | email              | created_at          |
-    | ---- | ------------------ | ------------------- |
-    | 윤준영  | user25@testmail.kr | 2016-02-03 04:18:52 |
-    | 이영식  | user43@testmail.kr | 2016-02-23 17:09:54 |
-    | 송서준  | user66@testmail.kr | 2016-05-07 02:57:58 |
-    | 김지우  | user77@testmail.kr | 2016-04-29 00:44:20 |
-    | 박아름  | user80@testmail.kr | 2016-08-13 13:52:58 |
-    | ...  | ...                | ...                 |
+| name | email | created_at |
+| ---------- | ---------- | ---------- |
+| 윤준영 | user25@testmail.kr | 2016-02-03 04:18:52 |
+| 이영식 | user43@testmail.kr | 2016-02-23 17:09:54 |
+| 송서준 | user66@testmail.kr | 2016-05-07 02:57:58 |
+| 김지우 | user77@testmail.kr | 2016-04-29 00:44:20 |
+| 박아름 | user80@testmail.kr | 2016-08-13 13:52:58 |
+| 김정훈 | user101@testmail.kr | 2016-04-07 22:00:58 |
+| 이경수 | user107@testmail.kr | 2016-11-30 07:23:31 |
+| 이옥순 | user113@testmail.kr | 2016-07-08 04:23:22 |
+| ... | ... | ... |
 
 
-### Exercise 5
-List all orders where `staff_id IS NULL` (no customer service rep assigned). For each order show `order_number`, `status`, and the notes — but replace NULL notes with the text `'—'`.
+### Problem 5
+Retrieve all orders without an assigned staff member (`staff_id IS NULL`). Display `order_number`, `status`, and `notes`, replacing NULL notes with `'—'`.
 
 ??? success "Answer"
     ```sql
@@ -368,32 +364,23 @@ List all orders where `staff_id IS NULL` (no customer service rep assigned). For
     LIMIT 20;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | order_number       | status    | notes              |
-    | ------------------ | --------- | ------------------ |
-    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
-    | ORD-20250630-34905 | pending   | —                  |
-    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
-    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
-    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
-    | ...                | ...       | ...                |
-
-
-    **Expected result:**
-
-    | order_number       | status    | notes              |
-    | ------------------ | --------- | ------------------ |
-    | ORD-20250630-34900 | pending   | 문 앞에 놓아주세요         |
-    | ORD-20250630-34905 | pending   | —                  |
-    | ORD-20250630-34903 | cancelled | 오후 2시 이후 배송 부탁드립니다 |
-    | ORD-20250630-34899 | pending   | 배송 전 연락 부탁합니다      |
-    | ORD-20250630-34896 | pending   | 경비실에 맡겨주세요         |
-    | ...                | ...       | ...                |
+| order_number | status | notes |
+| ---------- | ---------- | ---------- |
+| ORD-20251211-413965 | pending | — |
+| ORD-20251226-416837 | pending | — |
+| ORD-20251231-417734 | pending | 파손 주의 부탁드립니다 |
+| ORD-20251231-417737 | pending | — |
+| ORD-20251231-417735 | pending | — |
+| ORD-20251231-417677 | pending | — |
+| ORD-20251231-417764 | pending | — |
+| ORD-20251231-417730 | pending | — |
+| ... | ... | ... |
 
 
-### Exercise 6
-For each membership `grade`, show how many customers have a known gender vs. an unknown gender. Use `COALESCE(gender, 'Unknown')` as the grouping column.
+### Problem 6
+Query the number of customers with confirmed gender and those with unspecified gender, by membership `grade`. Use `COALESCE(gender, 'Unknown')` as the grouping basis.
 
 ??? success "Answer"
     ```sql
@@ -406,32 +393,23 @@ For each membership `grade`, show how many customers have a known gender vs. an 
     ORDER BY grade, gender_status;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | grade  | gender_status | customer_count |
-    | ------ | ------------- | -------------: |
-    | BRONZE | F             |           1332 |
-    | BRONZE | M             |           2194 |
-    | BRONZE | Unknown       |            436 |
-    | GOLD   | F             |            136 |
-    | GOLD   | M             |            316 |
-    | ...    | ...           | ...            |
-
-
-    **Expected result:**
-
-    | grade  | gender_status | customer_count |
-    | ------ | ------------- | -------------: |
-    | BRONZE | F             |           1332 |
-    | BRONZE | M             |           2194 |
-    | BRONZE | Unknown       |            436 |
-    | GOLD   | F             |            136 |
-    | GOLD   | M             |            316 |
-    | ...    | ...           | ...            |
+| grade | gender_status | customer_count |
+| ---------- | ---------- | ----------: |
+| BRONZE | F | 12614 |
+| BRONZE | M | 21359 |
+| BRONZE | Unknown | 4177 |
+| GOLD | F | 1433 |
+| GOLD | M | 3316 |
+| GOLD | Unknown | 410 |
+| SILVER | F | 1491 |
+| SILVER | M | 3171 |
+| ... | ... | ... |
 
 
-### Exercise 7
-Count how many orders in the `orders` table have a NULL `cancelled_at` (not cancelled) and how many have a non-NULL `cancelled_at` (cancelled). Use aliases `not_cancelled` and `cancelled`.
+### Problem 7
+From the `orders` table, count the number of orders where `cancelled_at` is NULL (not cancelled) and where it is NOT NULL (cancelled). Use the aliases `not_cancelled` and `cancelled`.
 
 ??? success "Answer"
     ```sql
@@ -441,22 +419,15 @@ Count how many orders in the `orders` table have a NULL `cancelled_at` (not canc
     FROM orders;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | not_cancelled | cancelled |
-    | ------------: | --------: |
-    |         33154 |      1754 |
-
-
-    **Expected result:**
-
-    | not_cancelled | cancelled |
-    | ------------: | --------: |
-    |         33154 |      1754 |
+| not_cancelled | cancelled |
+| ----------: | ----------: |
+| 396785 | 21018 |
 
 
-### Exercise 8
-From the `products` table, count the total products, how many are missing a `weight_grams`, and what percentage that is (1 decimal place). Use aliases `total_products`, `missing_weight`, `pct_missing`.
+### Problem 8
+From the `products` table, find the number of products with NULL `weight_grams` and the total product count, then calculate the NULL percentage (1 decimal place). Use the aliases `total_products`, `missing_weight`, and `pct_missing`.
 
 ??? success "Answer"
     ```sql
@@ -467,22 +438,15 @@ From the `products` table, count the total products, how many are missing a `wei
     FROM products;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | total_products | missing_weight | pct_missing |
-    | -------------: | -------------: | ----------: |
-    |            280 |             12 |         4.3 |
-
-
-    **Expected result:**
-
-    | total_products | missing_weight | pct_missing |
-    | -------------: | -------------: | ----------: |
-    |            280 |             12 |         4.3 |
+| total_products | missing_weight | pct_missing |
+| ----------: | ----------: | ----------: |
+| 2800 | 148 | 5.3 |
 
 
-### Exercise 9
-In the `reviews` table, compare the average `rating` of reviews that have `content` (not NULL) vs. reviews without content (NULL). Show `COUNT(*)` and `AVG(rating)` for each group.
+### Problem 9
+From the `reviews` table, calculate the average `rating` for reviews where `content` is NULL and where it is NOT NULL. Display `COUNT(*)` and `AVG(rating)` together.
 
 ??? success "Answer"
     ```sql
@@ -494,24 +458,16 @@ In the `reviews` table, compare the average `rating` of reviews that have `conte
     GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | content_status | review_count | avg_rating |
-    | -------------- | -----------: | ---------: |
-    | Has Content    |         7156 |       3.91 |
-    | No Content     |          789 |       3.93 |
-
-
-    **Expected result:**
-
-    | content_status | review_count | avg_rating |
-    | -------------- | -----------: | ---------: |
-    | Has Content    |         7156 |       3.91 |
-    | No Content     |          789 |       3.93 |
+| content_status | review_count | avg_rating |
+| ---------- | ----------: | ----------: |
+| Has Content | 85770 | 3.902261863122304 |
+| No Content | 9587 | 3.9105038072389693 |
 
 
-### Exercise 10
-Count how many customers are missing a birth date, have no recorded gender, and have never logged in. Show separate counts for each condition plus the total customer count.
+### Problem 10
+Find the count of customers missing birth date, gender, and login history respectively, along with the total customer count.
 
 ??? success "Answer"
     ```sql
@@ -523,13 +479,34 @@ Count how many customers are missing a birth date, have no recorded gender, and 
     FROM customers;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | total_customers | missing_birth_date | missing_gender | never_logged_in |
-    | --------------: | -----------------: | -------------: | --------------: |
-    |            5230 |                780 |            523 |             289 |
+| total_customers | missing_birth_date | missing_gender | never_logged_in |
+| ----------: | ----------: | ----------: | ----------: |
+| 52300 | 7793 | 5232 | 2686 |
 
 
+
+### Scoring Guide
+
+| Score | Next Step |
+|:-----:|-----------|
+| **9-10** | Move to [Lesson 7: CASE Expressions](07-case.md) |
+| **7-8** | Review the explanations for incorrect answers, then proceed to the next lesson |
+| **5 or fewer** | Read this lesson again |
+| **3 or fewer** | Start over from [Lesson 5: GROUP BY](05-group-by.md) |
+
+**Problem Areas:**
+
+| Area | Problems |
+|------|:--------:|
+| IS NULL | 1, 5 |
+| COALESCE | 2, 4 |
+| NULLIF | 3 |
+| COALESCE + GROUP BY | 6 |
+| Aggregates and NULL (CASE + COUNT) | 7, 8 |
+| NULL group comparison (AVG + IS NULL) | 9 |
+| NULL propagation (multi-column missing aggregation) | 10 |
 
 ---
-Next: [Lesson 7: INNER JOIN](../intermediate/07-inner-join.md)
+Next: [Lesson 7: CASE Expressions](07-case.md)

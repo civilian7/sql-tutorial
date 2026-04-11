@@ -1,17 +1,20 @@
 # Lesson 4: Aggregate Functions
 
-Aggregate functions collapse many rows into a single summary value. They are the building blocks for reports, dashboards, and business metrics.
+In Lesson 3, we sorted results with ORDER BY and LIMIT to get the top N rows. This time, we learn aggregate functions that summarize multiple rows into a single number, such as "how many total customers are there" or "what is the average order amount."
+
+!!! note "Already familiar?"
+    If you already know COUNT, COUNT(DISTINCT), SUM, AVG, MIN, and MAX, skip ahead to [Lesson 5: GROUP BY](05-group-by.md).
 
 ```mermaid
 flowchart LR
     T["Multiple\nRows"] --> A["Aggregate\nCOUNT / SUM\nAVG / MIN / MAX"] --> R["Single\nValue"]
 ```
 
-> **Concept:** Aggregate functions summarize many rows into a single value.
+> **Concept:** Aggregate functions summarize multiple rows into a single value.
 
 ## COUNT
 
-`COUNT(*)` counts every row in the result. `COUNT(column)` counts non-NULL values in that column.
+`COUNT(*)` counts the total number of rows in the result. `COUNT(column)` counts the number of non-NULL values in that column.
 
 ```sql
 -- Total number of customers
@@ -22,11 +25,11 @@ FROM customers;
 **Result:**
 
 | total_customers |
-| --------------: |
-|            5230 |
+| ----------: |
+| 52300 |
 
 ```sql
--- Customers who provided their birth date
+-- Compare customer counts by birth date registration
 SELECT
     COUNT(*)           AS total_customers,
     COUNT(birth_date)  AS with_birth_date,
@@ -37,15 +40,43 @@ FROM customers;
 **Result:**
 
 | total_customers | with_birth_date | missing_birth_date |
-| --------------: | --------------: | -----------------: |
-|            5230 |            4450 |                780 |
+| ----------: | ----------: | ----------: |
+| 52300 | 44507 | 7793 |
+
+### COUNT(DISTINCT) -- Unique Value Count
+
+`COUNT(DISTINCT column)` counts the number of values **after removing duplicates**. Use it when you want to know "how many distinct types exist."
+
+```sql
+-- Number of unique customers who have placed orders
+SELECT
+    COUNT(*)                    AS total_orders,
+    COUNT(DISTINCT customer_id) AS unique_customers
+FROM orders;
+```
+
+**Result:**
+
+| total_orders | unique_customers |
+| ----------: | ----------: |
+| 417803 | 29230 |
+
+There are 34,908 orders, but only 4,985 unique customers have placed orders, since one customer can place multiple orders.
+
+```sql
+-- Number of brands TechShop carries
+SELECT COUNT(DISTINCT brand) AS brand_count
+FROM products;
+```
+
+---
 
 ## SUM
 
-`SUM` totals a numeric column. NULL values are ignored.
+`SUM` calculates the total of a numeric column. NULL values are ignored.
 
 ```sql
--- Total revenue across all completed orders
+-- Total revenue from completed orders
 SELECT SUM(total_amount) AS total_revenue
 FROM orders
 WHERE status IN ('delivered', 'confirmed');
@@ -54,11 +85,11 @@ WHERE status IN ('delivered', 'confirmed');
 **Result:**
 
 | total_revenue |
-| ------------: |
-|   32371516748 |
+| ----------: |
+| 393749378848.0 |
 
 ```sql
--- Total points currently held by all customers
+-- Total points held by active customers
 SELECT SUM(point_balance) AS total_points_outstanding
 FROM customers
 WHERE is_active = 1;
@@ -67,15 +98,15 @@ WHERE is_active = 1;
 **Result:**
 
 | total_points_outstanding |
-| -----------------------: |
-|                315697474 |
+| ----------: |
+| 3840575170 |
 
 ## AVG
 
-`AVG` returns the arithmetic mean, ignoring NULLs.
+`AVG` returns the arithmetic mean, excluding NULL values from the calculation.
 
 ```sql
--- Average product price
+-- Average price and average stock of active products
 SELECT
     AVG(price)     AS avg_price,
     AVG(stock_qty) AS avg_stock
@@ -86,11 +117,11 @@ WHERE is_active = 1;
 **Result:**
 
 | avg_price | avg_stock |
-| --------: | --------: |
-| 665404.59 |    272.41 |
+| ----------: | ----------: |
+| 678774.8505747126 | 250.53793103448277 |
 
 ```sql
--- Average order value
+-- Average order amount excluding cancellations and returns
 SELECT AVG(total_amount) AS avg_order_value
 FROM orders
 WHERE status NOT IN ('cancelled', 'returned');
@@ -99,15 +130,77 @@ WHERE status NOT IN ('cancelled', 'returned');
 **Result:**
 
 | avg_order_value |
+| ----------: |
+| 1034451.993859959 |
+
+## ROUND -- Rounding
+
+`AVG` results can have many decimal places. Use `ROUND(value, digits)` to round to the desired number of decimal places.
+
+```sql
+-- Average review rating rounded to 1 decimal place
+SELECT
+    AVG(rating)          AS avg_raw,
+    ROUND(AVG(rating), 1) AS avg_rounded
+FROM reviews;
+```
+
+**Result:**
+
+| avg_raw | avg_rounded |
+| ----------: | ----------: |
+| 3.903090491521336 | 3.9 |
+
+```sql
+-- Average product price rounded to the nearest whole number
+SELECT ROUND(AVG(price), 0) AS avg_price
+FROM products;
+```
+
+| avg_price |
+| --------: |
+| 665405 |
+
+### Integer Division Caution
+
+In SQLite, **integer / integer = integer**. The decimal part is truncated:
+
+```sql
+-- Problem: trying to calculate the review rate...
+SELECT
+    COUNT(*)                    AS total_orders,
+    (SELECT COUNT(*) FROM reviews) AS total_reviews,
+    (SELECT COUNT(*) FROM reviews) / COUNT(*) AS review_rate
+FROM orders;
+```
+
+| total_orders | total_reviews | review_rate |
+| -----------: | ------------: | ----------: |
+| 34908 | 7945 | **0** |
+
+7945 / 34908 = 0.2275... but because of integer division, it becomes **0**. The fix:
+
+```sql
+-- Fix: multiply by a float (1.0)
+SELECT ROUND((SELECT COUNT(*) FROM reviews) * 1.0 / COUNT(*) * 100, 1) AS review_rate_pct
+FROM orders;
+```
+
+| review_rate_pct |
 | --------------: |
-|      1014478.57 |
+| 22.8 |
+
+!!! tip "What about MySQL/PostgreSQL?"
+    MySQL and PostgreSQL preserve decimal places even in integer division, so this issue does not occur. This is a SQLite-specific caveat.
+
+---
 
 ## MIN and MAX
 
 `MIN` and `MAX` find the smallest and largest values in a column.
 
 ```sql
--- Price range for active products
+-- Lowest and highest prices among active products
 SELECT
     MIN(price) AS cheapest,
     MAX(price) AS most_expensive
@@ -118,11 +211,11 @@ WHERE is_active = 1;
 **Result:**
 
 | cheapest | most_expensive |
-| -------: | -------------: |
-|    13100 |        4314800 |
+| ----------: | ----------: |
+| 16500.0 | 7495200.0 |
 
 ```sql
--- Earliest and latest order dates
+-- First and most recent order dates
 SELECT
     MIN(ordered_at) AS first_order,
     MAX(ordered_at) AS latest_order
@@ -131,16 +224,16 @@ FROM orders;
 
 **Result:**
 
-| first_order         | latest_order        |
-| ------------------- | ------------------- |
-| 2016-01-09 10:19:26 | 2025-06-30 23:02:18 |
+| first_order | latest_order |
+| ---------- | ---------- |
+| 2016-01-02 13:54:14 | 2026-01-01 08:40:57 |
 
-## Combining Multiple Aggregates
+## Using Multiple Aggregate Functions Together
 
-You can use several aggregates in the same `SELECT`:
+You can use multiple aggregate functions in a single `SELECT`.
 
 ```sql
--- Review statistics for TechShop
+-- TechShop review statistics summary
 SELECT
     COUNT(*)                    AS total_reviews,
     AVG(rating)                 AS avg_rating,
@@ -153,14 +246,58 @@ FROM reviews;
 **Result:**
 
 | total_reviews | avg_rating | lowest_rating | highest_rating | five_star_count |
-| ------------: | ---------: | ------------: | -------------: | --------------: |
-|          7945 |       3.91 |             1 |              5 |            3221 |
+| ----------: | ----------: | ----------: | ----------: | ----------: |
+| 95357 | 3.903090491521336 | 1 | 5 | 38460 |
 
-!!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
+## Aggregate Functions and NULL
 
-## Practice Exercises
-### Exercise 1
+Aggregate functions **silently ignore** NULL values. This is an important behavior:
+
+```sql
+-- About 15% of customers have NULL birth_date
+SELECT
+    COUNT(*)           AS total,
+    COUNT(birth_date)  AS with_birth,
+    AVG(CASE
+        WHEN birth_date IS NOT NULL
+        THEN 2025 - CAST(SUBSTR(birth_date, 1, 4) AS INTEGER)
+    END) AS avg_age
+FROM customers;
+```
+
+| total | with_birth | avg_age |
+| ----: | ---------: | ------: |
+| 5230 | 4450 | 39.2 |
+
+- `COUNT(*)` = 5,230 (all rows including NULL)
+- `COUNT(birth_date)` = 4,450 (excluding NULL)
+- `AVG` = calculated only for the 4,450 with data (780 with NULL are excluded)
+
+!!! warning "NULL can skew results"
+    `AVG(age based on birth_date)` is the average only for people who entered their birth date. It may differ from the actual average age of all customers. When aggregating columns with many NULLs, always compare `COUNT(*)` and `COUNT(column)` to check the NULL ratio.
+
+---
+
+## Summary
+
+| Function | Description | Example |
+|----------|-------------|---------|
+| `COUNT(*)` | Total row count (includes NULL) | `SELECT COUNT(*) FROM orders` |
+| `COUNT(column)` | Row count excluding NULL | `COUNT(birth_date)` |
+| `COUNT(DISTINCT column)` | Unique value count | `COUNT(DISTINCT customer_id)` |
+| `SUM(column)` | Sum (ignores NULL) | `SUM(total_amount)` |
+| `AVG(column)` | Average (ignores NULL) | `AVG(price)` |
+| `ROUND(value, N)` | Round to N decimal places | `ROUND(AVG(price), 0)` |
+| `MIN(column)` | Minimum value | `MIN(price)` |
+| `MAX(column)` | Maximum value | `MAX(price)` |
+| Integer division | SQLite: integer / integer = integer | Multiply by `* 1.0` to convert to float |
+| NULL handling | Aggregate functions ignore NULL | Compare `COUNT(*)` and `COUNT(column)` |
+
+!!! note "Lesson Review Problems"
+    These are simple problems to immediately check the concepts learned in this lesson. For comprehensive practice combining multiple concepts, see the [Practice Problems](../exercises/index.md) section.
+
+## Practice Problems
+### Problem 1
 Calculate the average review rating from the `reviews` table, rounded to 2 decimal places. Use the alias `avg_rating`.
 
 ??? success "Answer"
@@ -169,22 +306,15 @@ Calculate the average review rating from the `reviews` table, rounded to 2 decim
     FROM reviews;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | avg_rating |
-    | ---------: |
-    |       3.91 |
-
-
-    **Expected result:**
-
-    | avg_rating |
-    | ---------: |
-    |       3.91 |
+| avg_rating |
+| ----------: |
+| 3.9 |
 
 
-### Exercise 2
-Find the total revenue (`SUM` of `total_amount`) from completed orders (status is `'delivered'` or `'confirmed'`). Use the alias `total_revenue`.
+### Problem 2
+Calculate the total revenue (sum of `total_amount`) from completed orders (`status` is `'delivered'` or `'confirmed'`) in the `orders` table. Use the alias `total_revenue`.
 
 ??? success "Answer"
     ```sql
@@ -193,22 +323,15 @@ Find the total revenue (`SUM` of `total_amount`) from completed orders (status i
     WHERE status IN ('delivered', 'confirmed');
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | total_revenue |
-    | ------------: |
-    |   32371516748 |
-
-
-    **Expected result:**
-
-    | total_revenue |
-    | ------------: |
-    |   32371516748 |
+| total_revenue |
+| ----------: |
+| 393749378848.0 |
 
 
-### Exercise 3
-Count the total number of customers and the number of customers who have a `birth_date` registered. Use aliases `total_customers` and `with_birth_date`.
+### Problem 3
+From the `customers` table, find the total number of customers and the number of customers with a registered `birth_date`. Use the aliases `total_customers` and `with_birth_date`.
 
 ??? success "Answer"
     ```sql
@@ -218,22 +341,15 @@ Count the total number of customers and the number of customers who have a `birt
     FROM customers;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | total_customers | with_birth_date |
-    | --------------: | --------------: |
-    |            5230 |            4450 |
-
-
-    **Expected result:**
-
-    | total_customers | with_birth_date |
-    | --------------: | --------------: |
-    |            5230 |            4450 |
+| total_customers | with_birth_date |
+| ----------: | ----------: |
+| 52300 | 44507 |
 
 
-### Exercise 4
-Count how many **active** products TechShop currently carries, and find the total inventory value (sum of `price * stock_qty`) for those products.
+### Problem 4
+Count the number of currently active products at TechShop and calculate their total inventory value (sum of `price * stock_qty`).
 
 ??? success "Answer"
     ```sql
@@ -244,22 +360,15 @@ Count how many **active** products TechShop currently carries, and find the tota
     WHERE is_active = 1;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | active_product_count | total_inventory_value |
-    | -------------------: | --------------------: |
-    |                  218 |           39496278500 |
-
-
-    **Expected result:**
-
-    | active_product_count | total_inventory_value |
-    | -------------------: | --------------------: |
-    |                  218 |           39496278500 |
+| active_product_count | total_inventory_value |
+| ----------: | ----------: |
+| 2175 | 375495851400.0 |
 
 
-### Exercise 5
-Calculate the average, minimum, and maximum `total_amount` for orders that were not cancelled or returned. Use aliases `avg_order`, `min_order`, and `max_order`.
+### Problem 5
+Calculate the average, minimum, and maximum `total_amount` for orders that were not cancelled or returned. Use the aliases `avg_order`, `min_order`, and `max_order`.
 
 ??? success "Answer"
     ```sql
@@ -271,22 +380,15 @@ Calculate the average, minimum, and maximum `total_amount` for orders that were 
     WHERE status NOT IN ('cancelled', 'returned', 'return_requested');
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | avg_order | min_order | max_order |
-    | --------: | --------: | --------: |
-    | 1007109.8 |     10910 |  58039800 |
-
-
-    **Expected result:**
-
-    | avg_order | min_order | max_order |
-    | --------: | --------: | --------: |
-    | 1007109.8 |     10910 |  58039800 |
+| avg_order | min_order | max_order |
+| ----------: | ----------: | ----------: |
+| 1027943.4813606213 | 13262.0 | 71906300.0 |
 
 
-### Exercise 6
-For active products, calculate the average price (rounded to 0 decimals), average cost_price (rounded to 0 decimals), and average margin percentage (rounded to 1 decimal). Margin = `(price - cost_price) / price * 100`. Compute the average of each product's margin. Use aliases `avg_price`, `avg_cost`, `avg_margin_pct`.
+### Problem 6
+From the `products` table, calculate the average price (`avg_price`, 0 decimal places), average cost (`avg_cost`, 0 decimal places), and average margin rate (`avg_margin_pct`, 1 decimal place) of active products in a single query. Margin rate = `(price - cost_price) / price * 100`, and you should compute the average of each product's margin rate.
 
 ??? success "Answer"
     ```sql
@@ -298,22 +400,15 @@ For active products, calculate the average price (rounded to 0 decimals), averag
     WHERE is_active = 1;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | avg_price | avg_cost | avg_margin_pct |
-    | --------: | -------: | -------------: |
-    |    665405 |   504305 |           22.9 |
-
-
-    **Expected result:**
-
-    | avg_price | avg_cost | avg_margin_pct |
-    | --------: | -------: | -------------: |
-    |    665405 |   504305 |           22.9 |
+| avg_price | avg_cost | avg_margin_pct |
+| ----------: | ----------: | ----------: |
+| 678775.0 | 519733.0 | 23.3 |
 
 
-### Exercise 7
-Find the minimum price, maximum price, and the price range (difference between max and min) for active products (`is_active = 1`). Use aliases `min_price`, `max_price`, and `price_range`.
+### Problem 7
+From the `products` table, find the minimum price, maximum price, and price range for active products (`is_active = 1`). Use the aliases `min_price`, `max_price`, and `price_range`.
 
 ??? success "Answer"
     ```sql
@@ -325,22 +420,15 @@ Find the minimum price, maximum price, and the price range (difference between m
     WHERE is_active = 1;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | min_price | max_price | price_range |
-    | --------: | --------: | ----------: |
-    |     13100 |   4314800 |     4301700 |
-
-
-    **Expected result:**
-
-    | min_price | max_price | price_range |
-    | --------: | --------: | ----------: |
-    |     13100 |   4314800 |     4301700 |
+| min_price | max_price | price_range |
+| ----------: | ----------: | ----------: |
+| 16500.0 | 7495200.0 | 7478700.0 |
 
 
-### Exercise 8
-From the `order_items` table, find the total number of rows, total quantity sum, average unit price (2 decimals), and the maximum quantity in a single line item. Use aliases `total_items`, `total_qty`, `avg_unit_price`, `max_qty`.
+### Problem 8
+From the `order_items` table, find the total row count, total quantity sum (`quantity`), average unit price (`unit_price`, 2 decimal places), and maximum quantity. Use the aliases `total_items`, `total_qty`, `avg_unit_price`, and `max_qty`.
 
 ??? success "Answer"
     ```sql
@@ -352,22 +440,15 @@ From the `order_items` table, find the total number of rows, total quantity sum,
     FROM order_items;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | total_items | total_qty | avg_unit_price | max_qty |
-    | ----------: | --------: | -------------: | ------: |
-    |       84270 |     93356 |      398818.65 |      10 |
-
-
-    **Expected result:**
-
-    | total_items | total_qty | avg_unit_price | max_qty |
-    | ----------: | --------: | -------------: | ------: |
-    |       84270 |     93356 |      398818.65 |      10 |
+| total_items | total_qty | avg_unit_price | max_qty |
+| ----------: | ----------: | ----------: | ----------: |
+| 1015189 | 1117997 | 406547.0 | 10 |
 
 
-### Exercise 9
-For completed payments (`status = 'completed'`) in the `payments` table, calculate the count, total amount, average amount (0 decimals), minimum, and maximum in a single query. Use aliases `payment_count`, `total_amount`, `avg_amount`, `min_amount`, `max_amount`.
+### Problem 9
+From the `payments` table, find the count, total amount, average amount (0 decimal places), and minimum/maximum amounts for completed payments (`status = 'completed'`) in a single query. Use the aliases `payment_count`, `total_amount`, `avg_amount`, `min_amount`, and `max_amount`.
 
 ??? success "Answer"
     ```sql
@@ -381,22 +462,15 @@ For completed payments (`status = 'completed'`) in the `payments` table, calcula
     WHERE status = 'completed';
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | payment_count | total_amount | avg_amount | min_amount | max_amount |
-    | ------------: | -----------: | ---------: | ---------: | ---------: |
-    |         32171 |  32403716933 |    1007234 |      10910 |   58039800 |
-
-
-    **Expected result:**
-
-    | payment_count | total_amount | avg_amount | min_amount | max_amount |
-    | ------------: | -----------: | ---------: | ---------: | ---------: |
-    |         32171 |  32403716933 |    1007234 |      10910 |   58039800 |
+| payment_count | total_amount | avg_amount | min_amount | max_amount |
+| ----------: | ----------: | ----------: | ----------: | ----------: |
+| 383883 | 394593947687.0 | 1027902.0 | 13262.0 | 71906300.0 |
 
 
-### Exercise 10
-How many orders have delivery instructions (`notes IS NOT NULL`)? What percentage of all orders is that? Return `orders_with_notes`, `total_orders`, and `pct_with_notes` (rounded to 1 decimal place).
+### Problem 10
+How many orders have a shipping note (`notes`), and what percentage of total orders is that? Return `orders_with_notes`, `total_orders`, and `pct_with_notes` (1 decimal place).
 
 ??? success "Answer"
     ```sql
@@ -410,19 +484,32 @@ How many orders have delivery instructions (`notes IS NOT NULL`)? What percentag
     FROM orders;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | orders_with_notes | total_orders | pct_with_notes |
-    | ----------------: | -----------: | -------------: |
-    |             12365 |        34908 |           35.4 |
+| orders_with_notes | total_orders | pct_with_notes |
+| ----------: | ----------: | ----------: |
+| 146327 | 417803 | 35.0 |
 
 
-    **Expected result:**
+### Scoring Guide
 
-    | orders_with_notes | total_orders | pct_with_notes |
-    | ----------------: | -----------: | -------------: |
-    |             12365 |        34908 |           35.4 |
+| Score | Next Step |
+|:-----:|-----------|
+| **9-10** | Move to [Lesson 5: GROUP BY](05-group-by.md) |
+| **7-8** | Review the explanations for incorrect answers, then proceed to Lesson 5 |
+| **5 or fewer** | Read this lesson again |
+| **3 or fewer** | Start over from [Lesson 3: Sorting and Pagination](03-sort-limit.md) |
 
+**Problem Areas:**
+
+| Area | Problems |
+|------|:--------:|
+| AVG / ROUND | 1, 6 |
+| SUM | 2, 4 |
+| COUNT / COUNT(col) | 3 |
+| MIN / MAX | 5, 7 |
+| Combined aggregates (COUNT, SUM, AVG, MAX) | 8, 9 |
+| CASE + COUNT (NULL ratio) | 10 |
 
 ---
 Next: [Lesson 5: GROUP BY and HAVING](05-group-by.md)

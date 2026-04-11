@@ -1,18 +1,21 @@
 # Lesson 5: GROUP BY and HAVING
 
-`GROUP BY` divides rows into groups and applies aggregate functions to each group separately. `HAVING` then filters those groups — it is the `WHERE` for aggregated results.
+In Lesson 4, we summarized entire datasets with COUNT, SUM, AVG, etc. But what if you want to aggregate by group, like "customer count by grade" or "revenue by month"? Use GROUP BY.
+
+!!! note "Already familiar?"
+    If you already know GROUP BY, multi-column grouping, and HAVING, skip ahead to [Lesson 6: Handling NULL](06-null.md).
 
 ```mermaid
 flowchart LR
     T["All\nRows"] --> G["GROUP BY\ncategory"] --> GR["Groups\n🔵🔵 | 🟢🟢🟢 | 🔴"]  --> A["Aggregate\nper group"] --> R["Summary\nper group"]
 ```
 
-> **Concept:** GROUP BY groups rows together, then applies aggregates to each group.
+> **Concept:** GROUP BY groups rows together and applies aggregate functions to each group.
 
-## GROUP BY — Single Column
+## GROUP BY -- Single Column
 
 ```sql
--- How many customers in each membership grade?
+-- Customer count by membership grade
 SELECT
     grade,
     COUNT(*) AS customer_count
@@ -22,17 +25,17 @@ GROUP BY grade;
 
 **Result:**
 
-| grade  | customer_count |
-| ------ | -------------: |
-| BRONZE |           3962 |
-| GOLD   |            484 |
-| SILVER |            469 |
-| VIP    |            315 |
+| grade | customer_count |
+| ---------- | ----------: |
+| BRONZE | 38150 |
+| GOLD | 5159 |
+| SILVER | 5105 |
+| VIP | 3886 |
 
-The database collects all rows that share the same `grade` value into a bucket, then counts the rows in each bucket.
+The database gathers rows with the same `grade` value into a single bucket, then counts the rows in each bucket.
 
 ```sql
--- Total revenue by order status
+-- Order count and revenue total by order status
 SELECT
     status,
     COUNT(*)           AS order_count,
@@ -44,20 +47,24 @@ ORDER BY total_revenue DESC;
 
 **Result:**
 
-| status           | order_count | total_revenue |
-| ---------------- | ----------: | ------------: |
-| confirmed        |       32053 |   32304050388 |
-| cancelled        |        1754 |    1749179196 |
-| return_requested |         477 |     721313512 |
-| returned         |         459 |     634631268 |
-| ...              | ...         | ...           |
+| status | order_count | total_revenue |
+| ---------- | ----------: | ----------: |
+| confirmed | 382081 | 392629443801.0 |
+| cancelled | 21018 | 22079238470.0 |
+| return_requested | 6125 | 8839120776.0 |
+| returned | 6071 | 8750957343.0 |
+| delivered | 1029 | 1119935047.0 |
+| pending | 706 | 741807866.0 |
+| shipped | 453 | 518561734.0 |
+| preparing | 153 | 170900996.0 |
+| ... | ... | ... |
 
-## GROUP BY — Multiple Columns
+## GROUP BY -- Multiple Columns
 
-Group by two or more columns to create finer-grained segments.
+Grouping by two or more columns allows for more granular breakdowns.
 
 ```sql
--- Count customers by grade AND gender
+-- Customer count by grade and gender
 SELECT
     grade,
     gender,
@@ -70,24 +77,25 @@ ORDER BY grade, gender;
 
 **Result:**
 
-| grade  | gender | cnt  |
-| ------ | ------ | ---: |
-| BRONZE | F      | 1332 |
-| BRONZE | M      | 2194 |
-| GOLD   | F      |  136 |
-| GOLD   | M      |  316 |
-| SILVER | F      |  126 |
-| SILVER | M      |  306 |
-| VIP    | F      |   76 |
-| VIP    | M      |  221 |
+| grade | gender | cnt |
+| ---------- | ---------- | ----------: |
+| BRONZE | F | 12614 |
+| BRONZE | M | 21359 |
+| GOLD | F | 1433 |
+| GOLD | M | 3316 |
+| SILVER | F | 1491 |
+| SILVER | M | 3171 |
+| VIP | F | 940 |
+| VIP | M | 2744 |
+| ... | ... | ... |
 
-## Monthly Order Counts
+## Monthly Order Aggregation
 
-Extract the year-month from a date column to group by month.
+By extracting the year-month from a date column, you can group by month.
 
 === "SQLite"
     ```sql
-    -- Monthly order count for 2024
+    -- Monthly order count and revenue for 2024
     SELECT
         SUBSTR(ordered_at, 1, 7) AS year_month,
         COUNT(*)                 AS order_count,
@@ -100,7 +108,7 @@ Extract the year-month from a date column to group by month.
 
 === "MySQL"
     ```sql
-    -- Monthly order count for 2024
+    -- Monthly order count and revenue for 2024
     SELECT
         DATE_FORMAT(ordered_at, '%Y-%m') AS year_month,
         COUNT(*)                         AS order_count,
@@ -114,7 +122,7 @@ Extract the year-month from a date column to group by month.
 
 === "PostgreSQL"
     ```sql
-    -- Monthly order count for 2024
+    -- Monthly order count and revenue for 2024
     SELECT
         TO_CHAR(ordered_at, 'YYYY-MM') AS year_month,
         COUNT(*)                       AS order_count,
@@ -137,10 +145,10 @@ Extract the year-month from a date column to group by month.
 
 ## HAVING
 
-`HAVING` filters after grouping, operating on aggregate values. Think of it as `WHERE` for groups.
+`HAVING` filters after grouping and uses aggregate values as conditions. Think of it as `WHERE` for groups.
 
 ```sql
--- Grades with more than 500 customers
+-- Only show grades with more than 500 customers
 SELECT
     grade,
     COUNT(*) AS customer_count
@@ -152,12 +160,14 @@ HAVING COUNT(*) > 500;
 **Result:**
 
 | grade | customer_count |
-|-------|---------------:|
-| BRONZE | 2614 |
-| SILVER | 1569 |
+| ---------- | ----------: |
+| BRONZE | 38150 |
+| GOLD | 5159 |
+| SILVER | 5105 |
+| VIP | 3886 |
 
 ```sql
--- Categories with at least 10 active products and avg price over $100
+-- Categories with 10+ active products and average price over $100
 SELECT
     category_id,
     COUNT(*)   AS product_count,
@@ -173,37 +183,51 @@ ORDER BY avg_price DESC;
 **Result:**
 
 | category_id | product_count | avg_price |
-| ----------: | ------------: | --------: |
-|          12 |            10 |   1184410 |
-|          18 |            10 |    508150 |
-|          30 |            11 | 249681.82 |
-| ...         | ...           | ...       |
+| ----------: | ----------: | ----------: |
+| 9 | 21 | 3292633.3333333335 |
+| 7 | 99 | 2966560.606060606 |
+| 28 | 46 | 2429036.9565217393 |
+| 3 | 46 | 2210358.695652174 |
+| 6 | 83 | 1739673.4939759036 |
+| 8 | 45 | 1565324.4444444445 |
+| 2 | 74 | 1504925.6756756757 |
+| 13 | 49 | 1328097.9591836734 |
+| ... | ... | ... |
 
 ## WHERE vs. HAVING
 
-| Clause | Filters | Timing |
-|--------|---------|--------|
+| Clause | Filters | Applied when |
+|--------|---------|--------------|
 | `WHERE` | Individual rows | Before grouping |
 | `HAVING` | Groups | After grouping |
 
 ```sql
--- WHERE filters rows first, HAVING filters groups after
+-- WHERE filters rows first, then HAVING filters groups
 SELECT
     grade,
     AVG(point_balance) AS avg_points
 FROM customers
-WHERE is_active = 1          -- exclude inactive customers (row-level)
+WHERE is_active = 1          -- Exclude inactive customers (row level)
 GROUP BY grade
-HAVING AVG(point_balance) > 500;  -- only grades where avg points > 500
+HAVING AVG(point_balance) > 500;  -- Only grades with average points over 500
 ```
 
-!!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
+## Summary
 
-## Practice Exercises
+| Syntax | Description | Example |
+|--------|-------------|---------|
+| `GROUP BY column` | Group by a single column | `GROUP BY grade` |
+| `GROUP BY col1, col2` | Subdivide by multiple columns | `GROUP BY grade, gender` |
+| `HAVING condition` | Filter after grouping (based on aggregate values) | `HAVING COUNT(*) > 500` |
+| `WHERE` vs `HAVING` | WHERE filters rows (before grouping), HAVING filters groups (after grouping) | |
 
-### Exercise 1
-Count the number of orders for each `status` value. Show only statuses that have more than 1,000 orders, ordered by count descending.
+!!! note "Lesson Review Problems"
+    These are simple problems to immediately check the concepts learned in this lesson. For comprehensive practice combining multiple concepts, see the [Practice Problems](../exercises/index.md) section.
+
+## Practice Problems
+
+### Problem 1
+Aggregate the order count by `status`. Show only statuses with more than 1,000 orders, sorted by count descending.
 
 ??? success "Answer"
     ```sql
@@ -216,16 +240,20 @@ Count the number of orders for each `status` value. Show only statuses that have
     ORDER BY order_count DESC;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | status    | order_count |
-    | --------- | ----------: |
-    | confirmed |       32053 |
-    | cancelled |        1754 |
+| status | order_count |
+| ---------- | ----------: |
+| confirmed | 382081 |
+| cancelled | 21018 |
+| return_requested | 6125 |
+| returned | 6071 |
+| delivered | 1029 |
+| ... | ... |
 
 
-### Exercise 2
-For each `method` in the `payments` table, calculate the total `amount` collected and the number of transactions. Order by total amount descending.
+### Problem 2
+From the `payments` table, find the total collected amount and transaction count by payment method (`method`). Sort by total amount descending.
 
 ??? success "Answer"
     ```sql
@@ -239,32 +267,21 @@ For each `method` in the `payments` table, calculate the total `amount` collecte
     ORDER BY total_collected DESC;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | method        | transaction_count | total_collected |
-    | ------------- | ----------------: | --------------: |
-    | card          |             14522 |     14526925164 |
-    | kakao_pay     |              6359 |      6652523392 |
-    | naver_pay     |              4835 |      4563329993 |
-    | bank_transfer |              3194 |      3243186244 |
-    | point         |              1623 |      1743665807 |
-    | ...           | ...               | ...             |
-
-
-    **Expected result:**
-
-    | method        | transaction_count | total_collected |
-    | ------------- | ----------------: | --------------: |
-    | card          |             14522 |     14526925164 |
-    | kakao_pay     |              6359 |      6652523392 |
-    | naver_pay     |              4835 |      4563329993 |
-    | bank_transfer |              3194 |      3243186244 |
-    | point         |              1623 |      1743665807 |
-    | ...           | ...               | ...             |
+| method | transaction_count | total_collected |
+| ---------- | ----------: | ----------: |
+| card | 172644 | 177755027447.0 |
+| kakao_pay | 76533 | 78373726984.0 |
+| naver_pay | 57725 | 59384559811.0 |
+| bank_transfer | 38667 | 39692289969.0 |
+| point | 19247 | 19966562723.0 |
+| virtual_account | 19067 | 19421780753.0 |
+| ... | ... | ... |
 
 
-### Exercise 3
-Calculate the average `point_balance` for each `grade` in the `customers` table. Sort by average points descending.
+### Problem 3
+From the `customers` table, find the average `point_balance` by `grade`. Sort by average points descending.
 
 ??? success "Answer"
     ```sql
@@ -276,28 +293,18 @@ Calculate the average `point_balance` for each `grade` in the `customers` table.
     ORDER BY avg_points DESC;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | grade  | avg_points |
-    | ------ | ---------: |
-    | VIP    |  423073.75 |
-    | GOLD   |  158543.32 |
-    | SILVER |   85614.41 |
-    | BRONZE |   16542.43 |
-
-
-    **Expected result:**
-
-    | grade  | avg_points |
-    | ------ | ---------: |
-    | VIP    |  423073.75 |
-    | GOLD   |  158543.32 |
-    | SILVER |   85614.41 |
-    | BRONZE |   16542.43 |
+| grade | avg_points |
+| ---------- | ----------: |
+| VIP | 437736.85666495113 |
+| GOLD | 166187.96743554954 |
+| SILVER | 104672.13143976494 |
+| BRONZE | 19601.960419397117 |
 
 
-### Exercise 4
-Group customers by both `grade` and `gender`, and count the number of customers in each combination. Include rows where `gender` is NULL.
+### Problem 4
+Group by both `grade` and `gender` from the `customers` table and count customers. Include rows where `gender` is NULL.
 
 ??? success "Answer"
     ```sql
@@ -310,32 +317,23 @@ Group customers by both `grade` and `gender`, and count the number of customers 
     ORDER BY grade, gender;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | grade  | gender | customer_count |
-    | ------ | ------ | -------------: |
-    | BRONZE | (NULL) |            436 |
-    | BRONZE | F      |           1332 |
-    | BRONZE | M      |           2194 |
-    | GOLD   | (NULL) |             32 |
-    | GOLD   | F      |            136 |
-    | ...    | ...    | ...            |
-
-
-    **Expected result:**
-
-    | grade  | gender | customer_count |
-    | ------ | ------ | -------------: |
-    | BRONZE | (NULL) |            436 |
-    | BRONZE | F      |           1332 |
-    | BRONZE | M      |           2194 |
-    | GOLD   | (NULL) |             32 |
-    | GOLD   | F      |            136 |
-    | ...    | ...    | ...            |
+| grade | gender | customer_count |
+| ---------- | ---------- | ----------: |
+| BRONZE | (NULL) | 4177 |
+| BRONZE | F | 12614 |
+| BRONZE | M | 21359 |
+| GOLD | (NULL) | 410 |
+| GOLD | F | 1433 |
+| GOLD | M | 3316 |
+| SILVER | (NULL) | 443 |
+| SILVER | F | 1491 |
+| ... | ... | ... |
 
 
-### Exercise 5
-Count the number of reviews for each `rating` value in the `reviews` table. Show only ratings that have 100 or more reviews. Sort by `rating`.
+### Problem 5
+From the `reviews` table, find the review count by `rating`. Show only ratings with 100 or more reviews, sorted by `rating`.
 
 ??? success "Answer"
     ```sql
@@ -348,30 +346,20 @@ Count the number of reviews for each `rating` value in the `reviews` table. Show
     ORDER BY rating;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | rating | review_count |
-    | -----: | -----------: |
-    |      1 |          395 |
-    |      2 |          774 |
-    |      3 |         1193 |
-    |      4 |         2362 |
-    |      5 |         3221 |
-
-
-    **Expected result:**
-
-    | rating | review_count |
-    | -----: | -----------: |
-    |      1 |          395 |
-    |      2 |          774 |
-    |      3 |         1193 |
-    |      4 |         2362 |
-    |      5 |         3221 |
+| rating | review_count |
+| ----------: | ----------: |
+| 1 | 4762 |
+| 2 | 9512 |
+| 3 | 14391 |
+| 4 | 28232 |
+| 5 | 38460 |
+| ... | ... |
 
 
-### Exercise 6
-For active orders only (`status NOT IN ('cancelled', 'returned')`), find the count and average amount (rounded to 0 decimals) per `status`. Show only statuses where the average amount exceeds 300.
+### Problem 6
+From the `orders` table, considering only active orders (`status NOT IN ('cancelled', 'returned')`), find the count and average amount (0 decimal places) by `status`. Show only statuses where the average amount exceeds 300.
 
 ??? success "Answer"
     ```sql
@@ -386,32 +374,22 @@ For active orders only (`status NOT IN ('cancelled', 'returned')`), find the cou
     ORDER BY avg_amount DESC;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | status           | order_count | avg_amount |
-    | ---------------- | ----------: | ---------: |
-    | return_requested |         477 |    1512188 |
-    | preparing        |           7 |    1208178 |
-    | confirmed        |       32053 |    1007832 |
-    | pending          |          47 |     922266 |
-    | delivered        |          77 |     876186 |
-    | ...              | ...         | ...        |
-
-
-    **Expected result:**
-
-    | status           | order_count | avg_amount |
-    | ---------------- | ----------: | ---------: |
-    | return_requested |         477 |    1512188 |
-    | preparing        |           7 |    1208178 |
-    | confirmed        |       32053 |    1007832 |
-    | pending          |          47 |     922266 |
-    | delivered        |          77 |     876186 |
-    | ...              | ...         | ...        |
+| status | order_count | avg_amount |
+| ---------- | ----------: | ----------: |
+| return_requested | 6125 | 1443122.0 |
+| shipped | 453 | 1144728.0 |
+| preparing | 153 | 1117000.0 |
+| delivered | 1029 | 1088372.0 |
+| pending | 706 | 1050719.0 |
+| confirmed | 382081 | 1027608.0 |
+| paid | 167 | 928779.0 |
+| ... | ... | ... |
 
 
-### Exercise 7
-Find all months (from the `orders` table) in 2023 and 2024 where monthly revenue exceeded $500,000. Return `year_month` and `monthly_revenue`, sorted chronologically.
+### Problem 7
+From the 2023-2024 `orders` data, find months where monthly revenue exceeded $500,000. Return `year_month` and `monthly_revenue` sorted by date.
 
 ??? success "Answer"
     === "SQLite"
@@ -427,28 +405,19 @@ Find all months (from the `orders` table) in 2023 and 2024 where monthly revenue
         ORDER BY year_month;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | year_month | monthly_revenue |
-        | ---------- | --------------: |
-        | 2023-01    |       287003017 |
-        | 2023-02    |       247903157 |
-        | 2023-03    |       464329421 |
-        | 2023-04    |       292003281 |
-        | 2023-05    |       456140850 |
-        | ...        | ...             |
-
-
-        **Expected result:**
-
-        | year_month | monthly_revenue |
-        | ---------- | --------------: |
-        | 2023-01    |       287003017 |
-        | 2023-02    |       247903157 |
-        | 2023-03    |       464329421 |
-        | 2023-04    |       292003281 |
-        | 2023-05    |       456140850 |
-        | ...        | ...             |
+| year_month | monthly_revenue |
+| ---------- | ----------: |
+| 2023-01 | 3271703186.0 |
+| 2023-02 | 3915639006.0 |
+| 2023-03 | 4939077954.0 |
+| 2023-04 | 4797530375.0 |
+| 2023-05 | 4115530865.0 |
+| 2023-06 | 3520005441.0 |
+| 2023-07 | 3257340549.0 |
+| 2023-08 | 4354477595.0 |
+| ... | ... |
 
 
     === "MySQL"
@@ -479,8 +448,8 @@ Find all months (from the `orders` table) in 2023 and 2024 where monthly revenue
         ORDER BY year_month;
         ```
 
-### Exercise 8
-Find the number of unique orders per payment `method` in the `payments` table using `COUNT(DISTINCT order_id)`. Sort by unique order count descending.
+### Problem 8
+From the `payments` table, find the number of unique orders per payment method using `COUNT(DISTINCT order_id)`. Sort by unique order count descending.
 
 ??? success "Answer"
     ```sql
@@ -492,32 +461,21 @@ Find the number of unique orders per payment `method` in the `payments` table us
     ORDER BY unique_orders DESC;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | method          | unique_orders |
-    | --------------- | ------------: |
-    | card            |         15728 |
-    | kakao_pay       |          6902 |
-    | naver_pay       |          5252 |
-    | bank_transfer   |          3483 |
-    | virtual_account |          1772 |
-    | ...             | ...           |
-
-
-    **Expected result:**
-
-    | method          | unique_orders |
-    | --------------- | ------------: |
-    | card            |         15728 |
-    | kakao_pay       |          6902 |
-    | naver_pay       |          5252 |
-    | bank_transfer   |          3483 |
-    | virtual_account |          1772 |
-    | ...             | ...           |
+| method | unique_orders |
+| ---------- | ----------: |
+| card | 187835 |
+| kakao_pay | 83308 |
+| naver_pay | 62837 |
+| bank_transfer | 42062 |
+| point | 20975 |
+| virtual_account | 20786 |
+| ... | ... |
 
 
-### Exercise 9
-Calculate yearly order count and total revenue from the `orders` table. Exclude cancelled and returned orders.
+### Problem 9
+From the `orders` table, find the order count and total revenue by year. Exclude cancelled/returned orders.
 
 ??? success "Answer"
     === "SQLite"
@@ -532,28 +490,19 @@ Calculate yearly order count and total revenue from the `orders` table. Exclude 
         ORDER BY order_year;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | order_year | order_count | yearly_revenue |
-        | ---------: | ----------: | -------------: |
-        |       2016 |         399 |      306223187 |
-        |       2017 |         608 |      628189049 |
-        |       2018 |        1444 |     1390778028 |
-        |       2019 |        2502 |     2419434488 |
-        |       2020 |        4244 |     4773995795 |
-        | ...        | ...         | ...            |
-
-
-        **Expected result:**
-
-        | order_year | order_count | yearly_revenue |
-        | ---------: | ----------: | -------------: |
-        |       2016 |         399 |      306223187 |
-        |       2017 |         608 |      628189049 |
-        |       2018 |        1444 |     1390778028 |
-        |       2019 |        2502 |     2419434488 |
-        |       2020 |        4244 |     4773995795 |
-        | ...        | ...         | ...            |
+| order_year | order_count | yearly_revenue |
+| ---------- | ----------: | ----------: |
+| 2016 | 7002 | 7186536080.0 |
+| 2017 | 10710 | 11188959996.0 |
+| 2018 | 19356 | 20309091899.0 |
+| 2019 | 26981 | 28328279035.0 |
+| 2020 | 43749 | 45447183212.0 |
+| 2021 | 56519 | 58065333224.0 |
+| 2022 | 55414 | 57233324746.0 |
+| 2023 | 47910 | 49710423204.0 |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -580,8 +529,8 @@ Calculate yearly order count and total revenue from the `orders` table. Exclude 
         ORDER BY order_year;
         ```
 
-### Exercise 10
-For each `category_id` in the `products` table, find the product count, average price (0 decimals), and total stock (`stock_qty` sum). Show only categories with 5 or more products and average price of at least 50. Sort by product count descending.
+### Problem 10
+From the `products` table, find the product count, average price (0 decimal places), and total stock (`stock_qty` sum) by `category_id`. Show only categories with 5 or more products and an average price of 50 or higher, sorted by product count descending.
 
 ??? success "Answer"
     ```sql
@@ -597,29 +546,42 @@ For each `category_id` in the `products` table, find the product count, average 
     ORDER BY product_count DESC;
     ```
 
-    **Expected result:**
+    **Result (example):**
 
-    | category_id | product_count | avg_price | total_stock |
-    | ----------: | ------------: | --------: | ----------: |
-    |          18 |            13 |    520038 |        3826 |
-    |          30 |            13 |    227223 |        3812 |
-    |          43 |            12 |    247892 |        3085 |
-    |           3 |            11 |   1716582 |        2241 |
-    |          31 |            11 |    146564 |        2681 |
-    | ...         | ...           | ...       | ...         |
+| category_id | product_count | avg_price | total_stock |
+| ----------: | ----------: | ----------: | ----------: |
+| 43 | 135 | 248917.0 | 31088 |
+| 30 | 120 | 203971.0 | 29632 |
+| 31 | 116 | 161962.0 | 25661 |
+| 6 | 115 | 1730655.0 | 28946 |
+| 42 | 115 | 120864.0 | 29387 |
+| 7 | 113 | 2930866.0 | 29777 |
+| 36 | 112 | 176021.0 | 30221 |
+| 44 | 104 | 390027.0 | 27069 |
+| ... | ... | ... | ... |
 
 
-    **Expected result:**
+### Scoring Guide
 
-    | category_id | product_count | avg_price | total_stock |
-    | ----------: | ------------: | --------: | ----------: |
-    |          18 |            13 |    520038 |        3826 |
-    |          30 |            13 |    227223 |        3812 |
-    |          43 |            12 |    247892 |        3085 |
-    |           3 |            11 |   1716582 |        2241 |
-    |          31 |            11 |    146564 |        2681 |
-    | ...         | ...           | ...       | ...         |
+| Score | Next Step |
+|:-----:|-----------|
+| **9-10** | Move to [Lesson 6: Handling NULL](06-null.md) |
+| **7-8** | Review the explanations for incorrect answers, then proceed to Lesson 6 |
+| **5 or fewer** | Read this lesson again |
+| **3 or fewer** | Start over from [Lesson 4: Aggregate Functions](04-aggregates.md) |
 
+**Problem Areas:**
+
+| Area | Problems |
+|------|:--------:|
+| GROUP BY + HAVING | 1, 5 |
+| GROUP BY single column | 2, 3 |
+| GROUP BY multiple columns | 4 |
+| WHERE + GROUP BY + HAVING | 6 |
+| GROUP BY + HAVING (date filter) | 7 |
+| COUNT(DISTINCT) | 8 |
+| GROUP BY (date function) + WHERE | 9 |
+| HAVING multiple conditions | 10 |
 
 ---
-Next: [Lesson 6: Working with NULL](06-null.md)
+Next: [Lesson 6: Handling NULL](06-null.md)

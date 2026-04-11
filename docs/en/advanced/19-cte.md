@@ -1,6 +1,6 @@
-# Lesson 19: Common Table Expressions (WITH)
+# Lesson 19: CTEs and Recursive CTEs
 
-A Common Table Expression (CTE) is a named, temporary result set defined with the `WITH` keyword before the main query. CTEs make complex queries dramatically easier to read, debug, and reuse — each CTE is like a named subquery you can reference multiple times.
+A Common Table Expression (CTE) is a named temporary result set defined before the main query using the `WITH` keyword. CTEs make complex queries much easier to read and debug. Each CTE is like a named subquery that can be referenced multiple times.
 
 ```mermaid
 flowchart TD
@@ -18,7 +18,11 @@ flowchart TD
     N2 --> |"Level 2"| N5["LG"]
 ```
 
-> CTEs break queries into steps connected like a pipeline. Recursive CTEs traverse tree structures.
+> CTEs split queries into step-by-step stages connected like a pipeline. Recursive CTEs traverse tree structures.
+
+
+!!! note "Already familiar?"
+    If you are comfortable with CTEs (WITH) and recursive CTEs, skip ahead to [Lesson 20: EXISTS](20-exists.md).
 
 ## Basic CTE
 
@@ -85,7 +89,7 @@ flowchart TD
     ORDER BY year_month;
     ```
 
-**Result:**
+**Result (example):**
 
 | year_month | revenue | order_count | avg_order_value |
 |------------|--------:|------------:|----------------:|
@@ -94,14 +98,14 @@ flowchart TD
 | 2024-03 | 204123.70 | 347 | 588.25 |
 | ... | | | |
 
-The CTE `monthly_revenue` reads like a named step — first we compute monthly totals, then we query them. No nested subquery nesting needed.
+The CTE name `monthly_revenue` is self-descriptive. It naturally reads as: first compute the monthly totals, then query those results. No need for nested subqueries.
 
 ## Multiple CTEs
 
-Chain CTEs with commas. Each CTE can reference any CTE defined before it.
+CTEs can be chained with commas. Later CTEs can reference previously defined CTEs.
 
 ```sql
--- Customer lifetime value segmentation
+-- 고객 생애 가치(LTV) 세그먼트 분류
 WITH customer_orders AS (
     SELECT
         customer_id,
@@ -137,21 +141,18 @@ GROUP BY segment
 ORDER BY avg_ltv DESC;
 ```
 
-**Result:**
+**Result (example):**
 
 | segment | customer_count | avg_ltv | avg_orders |
-|---------|---------------:|--------:|-----------:|
-| Champion | 312 | 8942.30 | 38.2 |
-| Loyal | 891 | 3124.60 | 18.7 |
-| Regular | 2341 | 842.30 | 6.4 |
-| Occasional | 1242 | 198.70 | 2.1 |
+| ---------- | ----------: | ----------: | ----------: |
+| 챔피언 | 28939 | 13966442.39 | 13.5 |
 
-## CTEs with Window Functions
+## Combining CTEs with Window Functions
 
-CTEs and window functions complement each other well. Compute ranked results in a CTE, then filter in the main query.
+CTEs and window functions work well together. A common pattern is to assign ranks in a CTE and filter in the main query.
 
 ```sql
--- Top 3 customers by revenue per membership grade
+-- 회원 등급별 매출 상위 3명
 WITH customer_revenue AS (
     SELECT
         c.id,
@@ -175,27 +176,47 @@ WHERE rnk <= 3
 ORDER BY grade, rnk;
 ```
 
-**Result:**
+**Result (example):**
 
-| grade  | name | total_spent | rnk |
-| ------ | ---- | ----------: | --: |
-| BRONZE | 이정남  |   107052173 |   1 |
-| BRONZE | 배종수  |    93476435 |   2 |
-| BRONZE | 김선영  |    56829558 |   3 |
-| GOLD   | 이옥순  |   160926628 |   1 |
-| ...    | ...  | ...         | ... |
+| grade | name | total_spent | rnk |
+| ---------- | ---------- | ----------: | ----------: |
+| BRONZE | 이정수 | 198123069.0 | 1 |
+| BRONZE | 황채원 | 158517555.0 | 2 |
+| BRONZE | 이예준 | 149717892.0 | 3 |
+| GOLD | 강명자 | 423617698.0 | 1 |
+| GOLD | 홍옥순 | 410153190.0 | 2 |
+| GOLD | 윤서현 | 399392033.0 | 3 |
+| SILVER | 김광수 | 216856926.0 | 1 |
+| SILVER | 김광수 | 216126763.0 | 2 |
+| ... | ... | ... | ... |
 
-## Recursive CTE — Category Tree
+## Recursive CTE — Category Tree Traversal
 
-A recursive CTE references itself. It is the standard SQL way to walk hierarchical data like a category tree, org chart, or bill of materials.
+A Recursive CTE references itself. It is the standard SQL method for traversing hierarchical data like category trees, organization charts, and bills of materials (BOM).
 
-The `categories` table has a `parent_id` column that points to itself.
+```mermaid
+flowchart TD
+    A1["Step 1: Anchor\nSelect top-level rows\nWHERE parent_id IS NULL"]
+    A2["Step 2: Recurse\nJOIN with previous results\nto add child rows"]
+    A3["More children?"]
+    A4["Step 3: Terminate\nStop iteration"]
+    A5["Final result\nUNION ALL of all steps"]
+    A1 --> A2
+    A2 --> A3
+    A3 -->|"YES"| A2
+    A3 -->|"NO"| A4
+    A4 --> A5
+```
+
+> A recursive CTE consists of an **anchor (base case)** + **recursive member (iteration)** + **termination condition (no more children)**.
+
+The `categories` table has a `parent_id` column that references itself.
 
 === "SQLite / PostgreSQL"
     ```sql
-    -- Walk the full category tree and show depth/path
+    -- Traverse the full category tree showing depth and path
     WITH RECURSIVE category_tree AS (
-        -- Base case: root categories (no parent)
+        -- Base case: top-level categories (no parent)
         SELECT
             id,
             name,
@@ -207,7 +228,7 @@ The `categories` table has a `parent_id` column that points to itself.
 
         UNION ALL
 
-        -- Recursive case: children of already-found nodes
+        -- Recursive case: children of already found nodes
         SELECT
             c.id,
             c.name,
@@ -227,9 +248,9 @@ The `categories` table has a `parent_id` column that points to itself.
 
 === "MySQL"
     ```sql
-    -- Walk the full category tree and show depth/path
+    -- Traverse the full category tree showing depth and path
     WITH RECURSIVE category_tree AS (
-        -- Base case: root categories (no parent)
+        -- Base case: top-level categories (no parent)
         SELECT
             id,
             name,
@@ -241,7 +262,7 @@ The `categories` table has a `parent_id` column that points to itself.
 
         UNION ALL
 
-        -- Recursive case: children of already-found nodes
+        -- Recursive case: children of already found nodes
         SELECT
             c.id,
             c.name,
@@ -259,24 +280,25 @@ The `categories` table has a `parent_id` column that points to itself.
     ORDER BY path;
     ```
 
-**Result:**
+**Result (example):**
 
 | indented_name | depth | path |
-|---------------|------:|------|
-| Electronics | 0 | Electronics |
-|   Computers | 1 | Electronics > Computers |
-|     Laptops | 2 | Electronics > Computers > Laptops |
-|     Desktops | 2 | Electronics > Computers > Desktops |
-|   Peripherals | 1 | Electronics > Peripherals |
-|     Mice | 2 | Electronics > Peripherals > Mice |
-|     Keyboards | 2 | Electronics > Peripherals > Keyboards |
-| ... | | |
+| ---------- | ----------: | ---------- |
+| CPU | 0 | CPU |
+|   AMD | 1 | CPU > AMD |
+|   Intel | 1 | CPU > Intel |
+| UPS/전원 | 0 | UPS/전원 |
+| 그래픽카드 | 0 | 그래픽카드 |
+|   AMD | 1 | 그래픽카드 > AMD |
+|   NVIDIA | 1 | 그래픽카드 > NVIDIA |
+| 네트워크 장비 | 0 | 네트워크 장비 |
+| ... | ... | ... |
 
-## More Recursive CTE Examples
+## Additional Recursive CTE Applications
 
-### Staff Org Chart (Recursive CTE)
+### Employee Organization Chart (Recursive CTE)
 
-Recursively follow `staff.manager_id` to build the full organizational hierarchy.
+Recursively follow `staff.manager_id` to build the full organization chart.
 
 === "SQLite / PostgreSQL"
     ```sql
@@ -324,9 +346,9 @@ Recursively follow `staff.manager_id` to build the full organizational hierarchy
     ORDER BY path;
     ```
 
-### Q&A Threads (Recursive CTE)
+### Q&A Thread (Recursive CTE)
 
-Recursively trace the question → answer → follow-up chain.
+Recursively trace the question, answer, and follow-up question chain.
 
 === "SQLite / PostgreSQL"
     ```sql
@@ -370,12 +392,29 @@ Recursively trace the question → answer → follow-up chain.
     LIMIT 20;
     ```
 
-!!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
+**Common real-world scenarios for CTEs:**
 
-## Practice Exercises
-### Exercise 1
-Use a recursive CTE to generate a sequence of month numbers from 1 to 12, then LEFT JOIN with orders to get the order count for each month of 2024. Months with no orders should show 0. Return `month_num`, `year_month`, and `order_count`.
+- **Hierarchy traversal:** Category trees, organization charts, BOM (recursive CTE)
+- **Complex query readability:** Split into step-by-step CTEs for clarity
+- **Month sequence generation:** Reports including empty months (generate months 1-12 recursively)
+- **Multi-stage analysis:** Implement aggregation -> ratio -> ranking pipelines as CTE chains
+
+## Summary
+
+| Concept | Description | Example |
+|------|------|------|
+| WITH (CTE) | Named temporary result set | `WITH cte AS (...) SELECT ...` |
+| Multiple CTEs | Chain CTEs with commas | `WITH a AS (...), b AS (...)` |
+| Recursive CTE | Self-referencing (hierarchy traversal) | `WITH RECURSIVE ... UNION ALL ...` |
+| Anchor member | Starting point of recursion (base case) | `WHERE parent_id IS NULL` |
+| Recursive member | Expand by JOINing with previous results | `JOIN category_tree ON ...` |
+
+!!! note "Lesson Review Problems"
+    These are simple problems to immediately test the concepts learned in this lesson. For comprehensive practice combining multiple concepts, see the [Practice Problems](../exercises/index.md) section.
+
+## Practice Problems
+### Problem 1
+Use a recursive CTE to generate a month number sequence from 1 to 12 and find the order count for each month of 2024. Months with no orders should show 0. Return `month_num`, `year_month`, `order_count`.
 
 ??? success "Answer"
     === "SQLite"
@@ -399,28 +438,19 @@ Use a recursive CTE to generate a sequence of month numbers from 1 to 12, then L
         ORDER BY m.month_num;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | month_num | year_month | order_count |
-        | --------: | ---------- | ----------: |
-        |         1 | 2024-01    |         371 |
-        |         2 | 2024-02    |         367 |
-        |         3 | 2024-03    |         582 |
-        |         4 | 2024-04    |         393 |
-        |         5 | 2024-05    |         387 |
-        | ...       | ...        | ...         |
-
-
-        **Expected result:**
-
-        | month_num | year_month | order_count |
-        | --------: | ---------- | ----------: |
-        |         1 | 2024-01    |         371 |
-        |         2 | 2024-02    |         367 |
-        |         3 | 2024-03    |         582 |
-        |         4 | 2024-04    |         393 |
-        |         5 | 2024-05    |         387 |
-        | ...       | ...        | ...         |
+| month_num | year_month | order_count |
+| ----------: | ---------- | ----------: |
+| 1 | 2024-01 | 3857 |
+| 2 | 2024-02 | 4530 |
+| 3 | 2024-03 | 4903 |
+| 4 | 2024-04 | 4932 |
+| 5 | 2024-05 | 5001 |
+| 6 | 2024-06 | 3719 |
+| 7 | 2024-07 | 4454 |
+| 8 | 2024-08 | 4827 |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -466,8 +496,8 @@ Use a recursive CTE to generate a sequence of month numbers from 1 to 12, then L
         ```
 
 
-### Exercise 2
-Use a CTE to identify "at-risk" customers: those who have placed at least 3 orders but whose most recent order was more than 180 days ago. Return `customer_id`, `name`, `grade`, `order_count`, and `last_order_date`.
+### Problem 2
+Use a CTE to find "at-risk churn customers". These are customers who have ordered at least 3 times but whose last order was more than 180 days ago. Return `customer_id`, `name`, `grade`, `order_count`, `last_order_date`.
 
 ??? success "Answer"
     === "SQLite"
@@ -494,28 +524,19 @@ Use a CTE to identify "at-risk" customers: those who have placed at least 3 orde
         ORDER BY cr.last_order_date ASC;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | customer_id | name | grade  | order_count | last_order_date     |
-        | ----------: | ---- | ------ | ----------: | ------------------- |
-        |         997 | 문지우  | BRONZE |           6 | 2020-10-08 12:37:15 |
-        |         349 | 박현정  | BRONZE |           7 | 2020-12-19 20:55:15 |
-        |         350 | 홍성호  | BRONZE |           5 | 2021-02-24 09:22:46 |
-        |         317 | 김영철  | BRONZE |           4 | 2021-03-16 19:36:41 |
-        |         191 | 조지현  | BRONZE |           8 | 2021-04-17 21:58:02 |
-        | ...         | ...  | ...    | ...         | ...                 |
-
-
-        **Expected result:**
-
-        | customer_id | name | grade  | order_count | last_order_date     |
-        | ----------: | ---- | ------ | ----------: | ------------------- |
-        |         997 | 문지우  | BRONZE |           6 | 2020-10-08 12:37:15 |
-        |         349 | 박현정  | BRONZE |           7 | 2020-12-19 20:55:15 |
-        |         350 | 홍성호  | BRONZE |           5 | 2021-02-24 09:22:46 |
-        |         317 | 김영철  | BRONZE |           4 | 2021-03-16 19:36:41 |
-        |         191 | 조지현  | BRONZE |           8 | 2021-04-17 21:58:02 |
-        | ...         | ...  | ...    | ...         | ...                 |
+| customer_id | name | grade | order_count | last_order_date |
+| ----------: | ---------- | ---------- | ----------: | ---------- |
+| 1761 | 이상훈 | BRONZE | 4 | 2018-09-05 19:29:12 |
+| 115 | 배성현 | BRONZE | 4 | 2019-01-13 20:22:06 |
+| 4017 | 김옥자 | BRONZE | 3 | 2019-03-10 17:38:26 |
+| 2145 | 송은정 | BRONZE | 4 | 2019-03-22 11:02:35 |
+| 3410 | 최상현 | BRONZE | 4 | 2019-11-10 20:37:22 |
+| 190 | 김명숙 | BRONZE | 9 | 2020-01-11 11:15:01 |
+| 2473 | 엄예진 | BRONZE | 3 | 2020-01-18 22:52:32 |
+| 437 | 장예지 | BRONZE | 22 | 2020-02-16 10:11:16 |
+| ... | ... | ... | ... | ... |
 
 
     === "MySQL"
@@ -567,8 +588,8 @@ Use a CTE to identify "at-risk" customers: those who have placed at least 3 orde
         ```
 
 
-### Exercise 3
-Using two CTEs, find the monthly revenue for 2024, then compute the month-over-month change in revenue. CTE 1: monthly totals. CTE 2: add `LAG` for previous month. Main query: return all columns plus the computed `mom_change` and `mom_pct`.
+### Problem 3
+Use two CTEs to compute monthly revenue for 2024 and calculate month-over-month changes. CTE 1: monthly totals. CTE 2: add previous month values using `LAG`. Main query: return all columns plus `mom_change`, `mom_pct`.
 
 ??? success "Answer"
     === "SQLite"
@@ -599,28 +620,19 @@ Using two CTEs, find the monthly revenue for 2024, then compute the month-over-m
         ORDER BY year_month;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | year_month | revenue   | prev_revenue | mom_change | mom_pct |
-        | ---------- | --------: | -----------: | ---------: | ------: |
-        | 2024-01    | 363769660 |       (NULL) |     (NULL) |  (NULL) |
-        | 2024-02    | 383853446 |    363769660 |   20083786 |     5.5 |
-        | 2024-03    | 553727467 |    383853446 |  169874021 |    44.3 |
-        | 2024-04    | 392480419 |    553727467 | -161247048 |   -29.1 |
-        | 2024-05    | 352236014 |    392480419 |  -40244405 |   -10.3 |
-        | ...        | ...       | ...          | ...        | ...     |
-
-
-        **Expected result:**
-
-        | year_month | revenue   | prev_revenue | mom_change | mom_pct |
-        | ---------- | --------: | -----------: | ---------: | ------: |
-        | 2024-01    | 363769660 |       (NULL) |     (NULL) |  (NULL) |
-        | 2024-02    | 383853446 |    363769660 |   20083786 |     5.5 |
-        | 2024-03    | 553727467 |    383853446 |  169874021 |    44.3 |
-        | 2024-04    | 392480419 |    553727467 | -161247048 |   -29.1 |
-        | 2024-05    | 352236014 |    392480419 |  -40244405 |   -10.3 |
-        | ...        | ...       | ...          | ...        | ...     |
+| year_month | revenue | prev_revenue | mom_change | mom_pct |
+| ---------- | ----------: | ---------- | ---------- | ---------- |
+| 2024-01 | 3807789761.0 | (NULL) | (NULL) | (NULL) |
+| 2024-02 | 4701108852.0 | 3807789761.0 | 893319091.0 | 23.5 |
+| 2024-03 | 4935663129.0 | 4701108852.0 | 234554277.0 | 5.0 |
+| 2024-04 | 4954492231.0 | 4935663129.0 | 18829102.0 | 0.4 |
+| 2024-05 | 4912114419.0 | 4954492231.0 | -42377812.0 | -0.9 |
+| 2024-06 | 3853868900.0 | 4912114419.0 | -1058245519.0 | -21.5 |
+| 2024-07 | 4453107092.0 | 3853868900.0 | 599238192.0 | 15.5 |
+| 2024-08 | 4903583071.0 | 4453107092.0 | 450475979.0 | 10.1 |
+| ... | ... | ... | ... | ... |
 
 
     === "MySQL"
@@ -682,8 +694,8 @@ Using two CTEs, find the monthly revenue for 2024, then compute the month-over-m
         ```
 
 
-### Exercise 4
-Use a CTE to compare each category's average product price against the overall average. Return `category_name`, `avg_price`, `overall_avg`, and `diff_from_overall`. Use one CTE for the overall average and a `CROSS JOIN` in the main query.
+### Problem 4
+Use a CTE to compare the average product price per category with the overall average price. Return `category_name`, `avg_price`, `overall_avg`, `diff_from_overall`. Use one CTE for the overall average, then compare with per-category averages in the main query.
 
 ??? success "Answer"
     ```sql
@@ -705,32 +717,23 @@ Use a CTE to compare each category's average product price against the overall a
     ORDER BY avg_price DESC;
     ```
 
-    **Expected result:**
+        **Result (example):**
 
-    | category_name | avg_price  | overall_avg | diff_from_overall |
-    | ------------- | ---------: | ----------: | ----------------: |
-    | 맥북            |    3774700 |   665404.59 |        3109295.41 |
-    | 게이밍 노트북       |    3169700 |   665404.59 |        2504295.41 |
-    | NVIDIA        |    2045440 |   665404.59 |        1380035.41 |
-    | 일반 노트북        |  1856837.5 |   665404.59 |        1191432.91 |
-    | 조립PC          | 1795033.33 |   665404.59 |        1129628.74 |
-    | ...           | ...        | ...         | ...               |
-
-
-    **Expected result:**
-
-    | category_name | avg_price  | overall_avg | diff_from_overall |
-    | ------------- | ---------: | ----------: | ----------------: |
-    | 맥북            |    3774700 |   665404.59 |        3109295.41 |
-    | 게이밍 노트북       |    3169700 |   665404.59 |        2504295.41 |
-    | NVIDIA        |    2045440 |   665404.59 |        1380035.41 |
-    | 일반 노트북        |  1856837.5 |   665404.59 |        1191432.91 |
-    | 조립PC          | 1795033.33 |   665404.59 |        1129628.74 |
-    | ...           | ...        | ...         | ...               |
+| category_name | avg_price | overall_avg | diff_from_overall |
+| ---------- | ----------: | ----------: | ----------: |
+| 맥북 | 3292633.33 | 678774.85 | 2613858.48 |
+| 게이밍 노트북 | 2966560.61 | 678774.85 | 2287785.76 |
+| NVIDIA | 2429036.96 | 678774.85 | 1750262.11 |
+| 조립PC | 2210358.7 | 678774.85 | 1531583.85 |
+| 일반 노트북 | 1739673.49 | 678774.85 | 1060898.64 |
+| 2in1 | 1565324.44 | 678774.85 | 886549.59 |
+| 완제품 | 1504925.68 | 678774.85 | 826150.83 |
+| 전문가용 모니터 | 1328097.96 | 678774.85 | 649323.11 |
+| ... | ... | ... | ... |
 
 
-### Exercise 5
-Use a recursive CTE to build the full breadcrumb path for every leaf category (categories with no children). Return `category_id`, `category_name`, and `full_path`.
+### Problem 5
+Use a recursive CTE to find the full path (breadcrumb) of all leaf categories (categories with no children). Return `category_id`, `category_name`, `full_path`.
 
 ??? success "Answer"
     === "SQLite / PostgreSQL"
@@ -763,28 +766,19 @@ Use a recursive CTE to build the full breadcrumb path for every leaf category (c
         ORDER BY ct.full_path;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | category_id | category_name | full_path      |
-        | ----------: | ------------- | -------------- |
-        |          16 | AMD           | CPU > AMD      |
-        |          15 | Intel         | CPU > Intel    |
-        |          49 | UPS/전원        | UPS/전원         |
-        |          29 | AMD           | 그래픽카드 > AMD    |
-        |          28 | NVIDIA        | 그래픽카드 > NVIDIA |
-        | ...         | ...           | ...            |
-
-
-        **Expected result:**
-
-        | category_id | category_name | full_path      |
-        | ----------: | ------------- | -------------- |
-        |          16 | AMD           | CPU > AMD      |
-        |          15 | Intel         | CPU > Intel    |
-        |          49 | UPS/전원        | UPS/전원         |
-        |          29 | AMD           | 그래픽카드 > AMD    |
-        |          28 | NVIDIA        | 그래픽카드 > NVIDIA |
-        | ...         | ...           | ...            |
+| category_id | category_name | full_path |
+| ----------: | ---------- | ---------- |
+| 16 | AMD | CPU > AMD |
+| 15 | Intel | CPU > Intel |
+| 49 | UPS/전원 | UPS/전원 |
+| 29 | AMD | 그래픽카드 > AMD |
+| 28 | NVIDIA | 그래픽카드 > NVIDIA |
+| 46 | 공유기 | 네트워크 장비 > 공유기 |
+| 48 | 랜카드 | 네트워크 장비 > 랜카드 |
+| 47 | 허브/스위치 | 네트워크 장비 > 허브/스위치 |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -818,8 +812,8 @@ Use a recursive CTE to build the full breadcrumb path for every leaf category (c
         ```
 
 
-### Exercise 6
-Use a recursive CTE to walk the category tree, then aggregate the number of subcategories and products under each root (top-level) category. Return `root_category`, `subcategory_count`, and `product_count`.
+### Problem 6
+Traverse the category tree with a recursive CTE, then aggregate the number of subcategories and products for each top-level category. Return `root_category`, `subcategory_count`, `product_count`.
 
 ??? success "Answer"
     === "SQLite / PostgreSQL"
@@ -845,28 +839,19 @@ Use a recursive CTE to walk the category tree, then aggregate the number of subc
         ORDER BY product_count DESC;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | root_category | subcategory_count | product_count |
-        | ------------- | ----------------: | ------------: |
-        | 노트북           |                 4 |            29 |
-        | 키보드           |                 3 |            27 |
-        | 메인보드          |                 2 |            23 |
-        | 모니터           |                 3 |            22 |
-        | 네트워크 장비       |                 3 |            22 |
-        | ...           | ...               | ...           |
-
-
-        **Expected result:**
-
-        | root_category | subcategory_count | product_count |
-        | ------------- | ----------------: | ------------: |
-        | 노트북           |                 4 |            29 |
-        | 키보드           |                 3 |            27 |
-        | 메인보드          |                 2 |            23 |
-        | 모니터           |                 3 |            22 |
-        | 네트워크 장비       |                 3 |            22 |
-        | ...           | ...               | ...           |
+| root_category | subcategory_count | product_count |
+| ---------- | ----------: | ----------: |
+| 노트북 | 4 | 311 |
+| 마우스 | 3 | 233 |
+| 키보드 | 3 | 213 |
+| 저장장치 | 3 | 212 |
+| 모니터 | 3 | 208 |
+| 데스크톱 PC | 3 | 202 |
+| 메인보드 | 2 | 182 |
+| 메모리(RAM) | 2 | 167 |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -893,8 +878,8 @@ Use a recursive CTE to walk the category tree, then aggregate the number of subc
         ```
 
 
-### Exercise 7
-Use a recursive CTE to walk the staff org chart and find each manager's depth level and direct report count. Return `manager_name`, `level`, and `direct_reports`. Only include staff who have at least one direct report.
+### Problem 7
+Traverse the staff table organization chart with a recursive CTE to find the depth (level) from the top-level manager (manager_id IS NULL) and the number of direct reports. Return `manager_name`, `level`, `direct_reports`.
 
 ??? success "Answer"
     === "SQLite / PostgreSQL"
@@ -921,20 +906,19 @@ Use a recursive CTE to walk the staff org chart and find each manager's depth le
         ORDER BY m.level, direct_reports DESC;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | manager_name | level | direct_reports |
-        | ------------ | ----: | -------------: |
-        | 한민재          |     0 |              3 |
-        | 박경수          |     1 |              1 |
-
-
-        **Expected result:**
-
-        | manager_name | level | direct_reports |
-        | ------------ | ----: | -------------: |
-        | 한민재          |     0 |              3 |
-        | 박경수          |     1 |              1 |
+| manager_name | level | direct_reports |
+| ---------- | ----------: | ----------: |
+| 한민재 | 0 | 8 |
+| 박경수 | 1 | 8 |
+| 이준혁 | 1 | 5 |
+| 장주원 | 1 | 4 |
+| 권영희 | 2 | 9 |
+| 최영미 | 2 | 6 |
+| 김진우 | 2 | 5 |
+| 황예준 | 2 | 2 |
+| ... | ... | ... |
 
 
     === "MySQL"
@@ -962,8 +946,8 @@ Use a recursive CTE to walk the staff org chart and find each manager's depth le
         ```
 
 
-### Exercise 8
-Use multiple CTEs to find the share of each payment method in monthly revenue for 2024. CTE 1: monthly amount per payment method. CTE 2: monthly total. Main query: return `year_month`, `method`, `amount`, `monthly_total`, and `pct`.
+### Problem 8
+Use multiple CTEs to calculate the monthly revenue share by payment method. CTE 1: amount per payment method per month. CTE 2: monthly total. Main query: return `year_month`, `method`, `amount`, `monthly_total`, `pct`. Use 2024 data only.
 
 ??? success "Answer"
     === "SQLite"
@@ -997,28 +981,19 @@ Use multiple CTEs to find the share of each payment method in monthly revenue fo
         ORDER BY mm.year_month, mm.amount DESC;
         ```
 
-        **Expected result:**
+        **Result (example):**
 
-        | year_month | method        | amount    | monthly_total | pct  |
-        | ---------- | ------------- | --------: | ------------: | ---: |
-        | 2024-01    | card          | 139383923 |     354498356 | 39.3 |
-        | 2024-01    | kakao_pay     |  85739363 |     354498356 | 24.2 |
-        | 2024-01    | naver_pay     |  52942978 |     354498356 | 14.9 |
-        | 2024-01    | bank_transfer |  37382699 |     354498356 | 10.5 |
-        | 2024-01    | point         |  22001403 |     354498356 |  6.2 |
-        | ...        | ...           | ...       | ...           | ...  |
-
-
-        **Expected result:**
-
-        | year_month | method        | amount    | monthly_total | pct  |
-        | ---------- | ------------- | --------: | ------------: | ---: |
-        | 2024-01    | card          | 139383923 |     354498356 | 39.3 |
-        | 2024-01    | kakao_pay     |  85739363 |     354498356 | 24.2 |
-        | 2024-01    | naver_pay     |  52942978 |     354498356 | 14.9 |
-        | 2024-01    | bank_transfer |  37382699 |     354498356 | 10.5 |
-        | 2024-01    | point         |  22001403 |     354498356 |  6.2 |
-        | ...        | ...           | ...       | ...           | ...  |
+| year_month | method | amount | monthly_total | pct |
+| ---------- | ---------- | ----------: | ----------: | ----------: |
+| 2024-01 | card | 1637985623.0 | 3741059908.0 | 43.8 |
+| 2024-01 | kakao_pay | 701582674.0 | 3741059908.0 | 18.8 |
+| 2024-01 | naver_pay | 604077057.0 | 3741059908.0 | 16.1 |
+| 2024-01 | bank_transfer | 397750334.0 | 3741059908.0 | 10.6 |
+| 2024-01 | virtual_account | 209801928.0 | 3741059908.0 | 5.6 |
+| 2024-01 | point | 189862292.0 | 3741059908.0 | 5.1 |
+| 2024-02 | card | 2157466285.0 | 4628277628.0 | 46.6 |
+| 2024-02 | kakao_pay | 794741444.0 | 4628277628.0 | 17.2 |
+| ... | ... | ... | ... | ... |
 
 
     === "MySQL"
@@ -1086,8 +1061,8 @@ Use multiple CTEs to find the share of each payment method in monthly revenue fo
         ```
 
 
-### Exercise 9
-Combine a CTE with a window function to find the top 2 highest-rated products per category. Return `category_name`, `product_name`, `avg_rating`, `review_count`, and `rnk`. Only include products with at least 3 reviews.
+### Problem 9
+Combine CTEs with window functions to find the top 2 products by review rating in each category. Return `category_name`, `product_name`, `avg_rating`, `review_count`, `rnk`. Only include products with 3 or more reviews.
 
 ??? success "Answer"
     ```sql
@@ -1123,32 +1098,23 @@ Combine a CTE with a window function to find the top 2 highest-rated products pe
     ORDER BY category_name, rnk;
     ```
 
-    **Expected result:**
+        **Result (example):**
 
-    | category_name | product_name           | avg_rating | review_count | rnk |
-    | ------------- | ---------------------- | ---------: | -----------: | --: |
-    | 2in1          | HP Envy x360 15 실버     |       4.08 |           39 |   1 |
-    | 2in1          | 삼성 갤럭시북4 360 블랙        |          4 |            7 |   2 |
-    | 2in1          | 삼성 갤럭시북5 360 블랙        |          4 |           11 |   2 |
-    | 2in1          | 레노버 IdeaPad Flex 5 화이트 |          4 |            5 |   2 |
-    | AMD           | AMD Ryzen 9 9900X      |        3.8 |           60 |   1 |
-    | ...           | ...                    | ...        | ...          | ... |
-
-
-    **Expected result:**
-
-    | category_name | product_name           | avg_rating | review_count | rnk |
-    | ------------- | ---------------------- | ---------: | -----------: | --: |
-    | 2in1          | HP Envy x360 15 실버     |       4.08 |           39 |   1 |
-    | 2in1          | 삼성 갤럭시북4 360 블랙        |          4 |            7 |   2 |
-    | 2in1          | 삼성 갤럭시북5 360 블랙        |          4 |           11 |   2 |
-    | 2in1          | 레노버 IdeaPad Flex 5 화이트 |          4 |            5 |   2 |
-    | AMD           | AMD Ryzen 9 9900X      |        3.8 |           60 |   1 |
-    | ...           | ...                    | ...        | ...          | ... |
+| category_name | product_name | avg_rating | review_count | rnk |
+| ---------- | ---------- | ----------: | ----------: | ----------: |
+| 2in1 | 레노버 ThinkPad X1 2in1 실버 | 4.8 | 5 | 1 |
+| 2in1 | 레노버 IdeaPad Flex 5 블랙 | 4.73 | 11 | 2 |
+| AMD | AMD Ryzen 7 7700X 블랙 | 4.4 | 20 | 1 |
+| AMD | MSI Radeon RX 7900 XTX GAMING X | 4.83 | 6 | 1 |
+| AMD | AMD Ryzen 7 7800X3D | 4.09 | 11 | 2 |
+| AMD | AMD Ryzen 9 9950X3D 블랙 | 4.09 | 96 | 2 |
+| AMD | MSI Radeon RX 7800 XT GAMING X | 4.6 | 5 | 2 |
+| AMD 소켓 | MSI MAG X870E TOMAHAWK WIFI 화이트 | 4.59 | 39 | 1 |
+| ... | ... | ... | ... | ... |
 
 
-### Exercise 10
-Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold and revenue per product. CTE 2: average review rating per product. CTE 3: JOIN both. Main query: return `product_name`, `units_sold`, `revenue`, and `avg_rating`, showing the top 10 by revenue.
+### Problem 10
+Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold and revenue per product. CTE 2: average review rating per product. CTE 3: JOIN both CTEs. Main query: return `product_name`, `units_sold`, `revenue`, `avg_rating` and show the top 10 by revenue.
 
 ??? success "Answer"
     ```sql
@@ -1186,29 +1152,39 @@ Chain 3 CTEs to build a "product performance dashboard". CTE 1: total units sold
     LIMIT 10;
     ```
 
-    **Expected result:**
+        **Result (example):**
 
-    | product_name       | units_sold | revenue   | avg_rating |
-    | ------------------ | ---------: | --------: | ---------: |
-    | Razer Blade 18 화이트 |        288 | 956361600 |       3.65 |
-    | Razer Blade 16 실버  |        227 | 936102600 |       4.18 |
-    | Razer Blade 18 블랙  |        223 | 932608300 |       3.57 |
-    | Razer Blade 18 블랙  |        295 | 881312500 |       3.55 |
-    | 삼성 오디세이 G5 27 블랙   |        264 | 676262400 |       3.09 |
-    | ...                | ...        | ...       | ...        |
+| product_name | units_sold | revenue | avg_rating |
+| ---------- | ----------: | ----------: | ----------: |
+| MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 471 | 2299186500.0 | 3.8 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 476 | 2201071600.0 | 3.85 |
+| AMD Ryzen 7 7700X 블랙 | 1778 | 1965045600.0 | 3.88 |
+| Razer Blade 14 실버 | 362 | 1610393200.0 | 4.21 |
+| AMD Ryzen 9 9900X 화이트 | 1916 | 1550427200.0 | 3.9 |
+| MSI GeForce RTX 4090 SUPRIM X 화이트 | 406 | 1546738200.0 | 4.13 |
+| 기가바이트 RTX 5090 AERO OC | 399 | 1534514100.0 | 3.93 |
+| ASUS ROG STRIX RTX 5090 | 427 | 1474174800.0 | 3.76 |
+| ... | ... | ... | ... |
 
 
-    **Expected result:**
+### Scoring Guide
 
-    | product_name       | units_sold | revenue   | avg_rating |
-    | ------------------ | ---------: | --------: | ---------: |
-    | Razer Blade 18 화이트 |        288 | 956361600 |       3.65 |
-    | Razer Blade 16 실버  |        227 | 936102600 |       4.18 |
-    | Razer Blade 18 블랙  |        223 | 932608300 |       3.57 |
-    | Razer Blade 18 블랙  |        295 | 881312500 |       3.55 |
-    | 삼성 오디세이 G5 27 블랙   |        264 | 676262400 |       3.09 |
-    | ...                | ...        | ...       | ...        |
+| Score | Next Step |
+|:----:|----------|
+| **9-10** | Move to [Lesson 20: EXISTS](20-exists.md) |
+| **7-8** | Review the explanations for incorrect answers, then proceed |
+| **Half or less** | Re-read this lesson |
+| **3 or fewer** | Start again from [Lesson 18: Window Functions](18-window.md) |
 
+**Problem Areas:**
+
+| Area | Problems |
+|------|:--------:|
+| Recursive CTE (sequence generation) | 1 |
+| Single CTE + filtering | 2, 4 |
+| CTE + growth rate comparison | 3 |
+| Recursive CTE (tree traversal) | 5, 6, 7 |
+| Multiple CTE chaining | 8, 9, 10 |
 
 ---
 Next: [Lesson 20: EXISTS and Correlated Subqueries](20-exists.md)

@@ -1,34 +1,54 @@
 # Lesson 1: SELECT Basics
 
-The `SELECT` statement is the foundation of SQL. It retrieves data from one or more tables, letting you specify exactly which columns to return and how they appear.
+In Lesson 0, you ran `SELECT id, name, email, grade FROM customers LIMIT 3`. In this lesson, we will learn `SELECT` in depth.
+
+`SELECT` is the most frequently used command in SQL. It **retrieves specific columns from a table**.
 
 ```mermaid
 flowchart LR
-    T["🗄️ Table\n(all rows, all columns)"] --> S["SELECT\ncolumn1, column2"] --> R["📋 Result\n(all rows, selected columns)"]
+    T["Table
+    (all rows, all columns)"] --> S["SELECT
+    col1, col2"] --> R["Result
+    (all rows, selected columns only)"]
 ```
 
-> **Concept:** SELECT picks only the columns you want from a table.
+!!! note "Already familiar?"
+    If you already know SELECT, AS, and DISTINCT, move on to [Lesson 2: Filtering with WHERE](02-where.md).
 
-## SELECT All Columns
+---
 
-Use `SELECT *` to fetch every column from a table. This is great for quick exploration.
+## Retrieving All Columns -- SELECT *
+
+`SELECT *` retrieves **all columns** from the table. It is useful for quickly scanning what data exists in a table.
 
 ```sql
-SELECT * FROM products;
+SELECT * FROM categories;
 ```
 
 **Result:**
 
-| id | category_id | supplier_id | successor_id | name              | sku              | brand | model_number | description                             | specs                                                                                                                 | price   | cost_price | stock_qty | weight_grams | is_active | discontinued_at | created_at          | updated_at          |
-| -: | ----------: | ----------: | -----------: | ----------------- | ---------------- | ----- | ------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------: | ---------: | --------: | -----------: | --------: | --------------- | ------------------- | ------------------- |
-|  1 |           7 |          20 |       (NULL) | Razer Blade 18 블랙 | LA-GAM-RAZ-00001 | Razer | RAZ-00001    | Razer Razer Blade 18 블랙 - 고성능, 최신 기술 탑재 | {"screen_size": "14 inch", "cpu": "Apple M3", "ram": "8GB", "storage": "256GB", "weight_kg": 1.7, "battery_hours": 6} | 2987500 |    3086700 |       107 |         2556 |         1 | (NULL)          | 2016-11-20 02:59:21 | 2016-11-20 02:59:21 |
-| ... | ...         | ...         | ...          | ...               | ...              | ...   | ...          | ...                                     | ...                                                                                                                   | ...     | ...        | ...       | ...          | ...       | ...             | ...                 | ...                 |
+| id | parent_id | name | slug | depth | sort_order | is_active | created_at | updated_at |
+| ----------: | ---------- | ---------- | ---------- | ----------: | ----------: | ----------: | ---------- | ---------- |
+| 1 | (NULL) | 데스크톱 PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 2 | 1 | 완제품 | desktop-prebuilt | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 3 | 1 | 조립PC | desktop-custom | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 4 | 1 | 베어본 | desktop-barebone | 1 | 3 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 5 | (NULL) | 노트북 | laptop | 0 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 6 | 5 | 일반 노트북 | laptop-general | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 7 | 5 | 게이밍 노트북 | laptop-gaming | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 8 | 5 | 2in1 | laptop-2in1 | 1 | 3 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
-> **Tip:** `SELECT *` pulls all columns, which can be slow on large tables. In production, list only the columns you need.
+!!! warning "SELECT * is for learning"
+    `SELECT *` retrieves all columns, so it can be slow on large tables. In practice, develop the habit of **specifying only the columns you need**. From here on in this tutorial, we will specify columns directly.
 
-## SELECT Specific Columns
+---
 
-Listing column names returns only what you ask for — cleaner results, less data transferred.
+## Retrieving Specific Columns
+
+By listing column names directly, you can view **only the columns you want** in a clean format.
+
+Let's revisit the query from Lesson 0:
 
 ```sql
 SELECT name, price, stock_qty
@@ -37,155 +57,351 @@ FROM products;
 
 **Result:**
 
-| name                                   | price   | stock_qty |
-| -------------------------------------- | ------: | --------: |
-| Razer Blade 18 블랙                      | 2987500 |       107 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |       499 |
-| 삼성 DDR4 32GB PC4-25600                 |   49100 |       359 |
-| ...                                    | ...     | ...       |
+| name | price | stock_qty |
+| ---------- | ----------: | ----------: |
+| Razer Blade 18 블랙 | 3730900.0 | 107 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 |
+| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 |
+| Dell U2724D | 865000.0 | 337 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 |
+| MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 460 |
+| 삼성 DDR5 32GB PC5-38400 | 194700.0 | 340 |
+| 로지텍 G715 화이트 | 254400.0 | 341 |
+| ... | ... | ... |
+
+The result is much easier to read than `SELECT *`. **The column order in the result also follows the order listed in SELECT**.
+
+```sql
+-- Changing the order changes the result order
+SELECT stock_qty, name, price
+FROM products;
+```
+
+| stock_qty | name | price |
+| --------: | ---- | ----: |
+| 107 | Razer Blade 18 블랙 | 2987500 |
+| ... | ... | ... |
+
+---
 
 ## Column Aliases (AS)
 
-Use `AS` to rename a column in the output. Aliases improve readability and are required when expressions would otherwise have no name.
+### Why Aliases Are Needed
+
+If the result column is named `stock_qty`, someone who doesn't know the code might not understand what it means. Using `AS`, you can **change the column name displayed in the result**.
 
 ```sql
 SELECT
-    name        AS product_name,
-    price       AS unit_price,
-    stock_qty   AS in_stock
+    name      AS product_name,
+    price     AS sale_price,
+    stock_qty AS inventory
 FROM products;
 ```
 
 **Result:**
 
-| product_name                           | unit_price | in_stock |
-| -------------------------------------- | ---------: | -------: |
-| Razer Blade 18 블랙                      |    2987500 |      107 |
-| MSI GeForce RTX 4070 Ti Super GAMING X |    1744000 |      499 |
-| 삼성 DDR4 32GB PC4-25600                 |      49100 |      359 |
-| ...                                    | ...        | ...      |
+| product_name | sale_price | inventory |
+| ---------- | ----------: | ----------: |
+| Razer Blade 18 블랙 | 3730900.0 | 107 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 499 |
+| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 359 |
+| Dell U2724D | 865000.0 | 337 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 59 |
+| MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 460 |
+| 삼성 DDR5 32GB PC5-38400 | 194700.0 | 340 |
+| 로지텍 G715 화이트 | 254400.0 | 341 |
+| ... | ... | ... |
 
-You can also alias expressions:
+!!! info "Aliases only affect the result"
+    `AS` does not change the actual column name in the table. It only changes **the name displayed in the result**.
+
+### Adding Aliases to Calculations
+
+Aliases are particularly useful for naming calculation results. Without an alias, the column name becomes the expression itself, like `price * 0.9`.
 
 ```sql
 SELECT
     name,
-    price * 1.1 AS price_with_tax
+    price,
+    price * 0.9 AS discounted_price
 FROM products;
 ```
 
 **Result:**
 
-| name                                   | price_with_tax |
-| -------------------------------------- | -------------: |
-| Razer Blade 18 블랙                      |        3286250 |
-| MSI GeForce RTX 4070 Ti Super GAMING X |        1918400 |
-| ...                                    | ...            |
+| name | price | discounted_price |
+| ---------- | ----------: | ----------: |
+| Razer Blade 18 블랙 | 3730900.0 | 3357810.0 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 | 1569600.0 |
+| 삼성 DDR4 32GB PC4-25600 | 46100.0 | 41490.0 |
+| Dell U2724D | 865000.0 | 778500.0 |
+| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 161900.0 | 145710.0 |
+| MSI Radeon RX 9070 VENTUS 3X 화이트 | 618800.0 | 556920.0 |
+| 삼성 DDR5 32GB PC5-38400 | 194700.0 | 175230.0 |
+| 로지텍 G715 화이트 | 254400.0 | 228960.0 |
+| ... | ... | ... |
 
-## DISTINCT
+### String Literal Columns
 
-`DISTINCT` removes duplicate values from the result. Useful to see unique values in a column.
+You can also add **fixed values** to the result that don't exist in the actual table:
 
 ```sql
--- How many unique customer grades exist?
+SELECT
+    name,
+    price,
+    'KRW' AS currency
+FROM products;
+```
+
+| name | price | currency |
+| ---- | ----: | --- |
+| Razer Blade 18 블랙 | 2987500 | KRW |
+| ... | ... | ... |
+
+## Table Aliases
+
+`AS` can be used to assign aliases to **tables** as well as columns. It may seem unnecessary now since we are using only one table, but it becomes essential in Lesson 7 (JOIN) when combining multiple tables.
+
+```sql
+-- Assign the alias p to the products table
+SELECT p.name, p.price
+FROM products AS p;
+```
+
+You can write `p.name` instead of `products.name` for brevity. `AS` can be omitted:
+
+```sql
+-- AS omitted (same result)
+SELECT p.name, p.price
+FROM products p;
+```
+
+!!! tip "Good to know in advance"
+    In Lesson 7, you will write things like `SELECT p.name, c.name FROM products p JOIN categories c ON ...`. If both tables have a `name` column, you must distinguish them as `p.name` and `c.name`. For now, just remember that "you can assign aliases to tables too."
+
+---
+
+## Arithmetic Operations
+
+You can perform arithmetic operations inside SELECT. They only appear in the result and do not change the original data.
+
+| Operator | Meaning | Example |
+|:--------:|---------|---------|
+| `+` | Addition | `price + shipping_fee` |
+| `-` | Subtraction | `price - cost_price` |
+| `*` | Multiplication | `price * 1.1` (10% increase) |
+| `/` | Division | `price / 1000` (in thousands) |
+| `%` | Modulo | `id % 2` (odd/even check) |
+
+```sql
+SELECT
+    name,
+    price,
+    cost_price,
+    price - cost_price AS margin
+FROM products;
+```
+
+| name | price | cost_price | margin |
+| ---- | ----: | ---------: | ---: |
+| Razer Blade 18 블랙 | 2987500 | 3086700 | -99200 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 1360300 | 383700 |
+| 삼성 DDR4 32GB PC4-25600 | 49100 | 37900 | 11200 |
+| ... | ... | ... | ... |
+
+> The first product's margin is **negative** (-99200). Cases where the cost exceeds the selling price do exist in real data.
+
+---
+
+## DISTINCT -- Removing Duplicates
+
+### When to Use It
+
+Use it when you want to know "what values exist in this column." For example, to find out the types of membership grades at TechShop:
+
+```sql
 SELECT DISTINCT grade
 FROM customers;
 ```
 
 **Result:**
 
-| grade  |
-| ------ |
+| grade |
+| ---------- |
 | BRONZE |
-| VIP    |
+| VIP |
+| GOLD |
 | SILVER |
-| GOLD   |
+
+You can see there are 4 grades. Without DISTINCT, all 5,230 rows would be output.
+
+### NULL Is Treated as One Value
 
 ```sql
--- Unique gender values (including NULL)
 SELECT DISTINCT gender
 FROM customers;
 ```
 
-**Result:**
-
 | gender |
 | ------ |
-| M      |
+| M |
 | (NULL) |
-| F      |
+| F |
 
-## Combining Techniques
+The NULL we learned about in Lesson 0 appears here. Since some customers did not enter their gender, NULL is included as one unique value.
+
+### DISTINCT on Multiple Columns
+
+DISTINCT removes duplicates based on the **combination of the listed columns**:
 
 ```sql
--- Unique active/inactive statuses for customers
-SELECT DISTINCT is_active AS status
-FROM customers
-ORDER BY is_active;
+SELECT DISTINCT grade, gender
+FROM customers;
 ```
 
-**Result:**
+| grade | gender |
+| ----- | ------ |
+| BRONZE | M |
+| BRONZE | F |
+| BRONZE | (NULL) |
+| SILVER | M |
+| SILVER | F |
+| ... | ... |
 
-| status |
-| -----: |
-|      0 |
-|      1 |
+Only rows with unique combinations of `grade` and `gender` remain.
 
-!!! note "Lesson Review"
-    Quick exercises to check your understanding of this lesson. For comprehensive practice combining multiple concepts, see the [Exercises](../exercises/index.md) section.
+---
 
-## Practice Exercises
+## Summary
 
-### Exercise 1
-List every customer's `name`, `email`, and `grade`. Give the columns the aliases `full_name`, `email_address`, and `membership_tier`.
+| Syntax | Meaning | Example |
+|--------|---------|---------|
+| `SELECT *` | Retrieve all columns | `SELECT * FROM products` |
+| `SELECT col1, col2` | Retrieve specific columns only | `SELECT name, price FROM products` |
+| `AS alias` | Change result column name | `SELECT name AS product_name` |
+| `FROM table AS t` | Table alias (required for JOINs) | `FROM products p` |
+| Arithmetic operations | Calculation result as a column | `SELECT price * 0.9 AS discounted_price` |
+| `DISTINCT` | Remove duplicates | `SELECT DISTINCT grade FROM customers` |
+
+---
+
+!!! note "Lesson Review Problems"
+    These are simple problems to immediately check the concepts learned in this lesson. For comprehensive practice combining multiple concepts, see the [Practice Problems](../exercises/index.md) section.
+
+### Problem 1
+Retrieve all columns from the `categories` table.
+
+??? success "Answer"
+    ```sql
+    SELECT * FROM categories;
+    ```
+
+    | id | parent_id | name | slug | depth | sort_order | is_active | created_at | updated_at |
+    | -: | --------: | ---- | ---- | ----: | ---------: | --------: | ---------- | ---------- |
+    | 1 | (NULL) | 데스크톱 PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+
+### Problem 2
+Retrieve only `name` and `price` from the `products` table.
+
+??? success "Answer"
+    ```sql
+    SELECT name, price FROM products;
+    ```
+
+    | name | price |
+    | ---- | ----: |
+    | Razer Blade 18 블랙 | 2987500 |
+    | ... | ... |
+
+### Problem 3
+Retrieve `department`, `role`, `name` in that order from the `staff` table.
+
+??? success "Answer"
+    ```sql
+    SELECT department, role, name
+    FROM staff;
+    ```
+
+    | department | role | name |
+    | ---------- | ---- | ---- |
+    | 경영 | admin | 한민재 |
+    | ... | ... | ... |
+
+### Problem 4
+Retrieve `name`, `email`, `grade` from the `customers` table with aliases `customer_name`, `email_address`, `tier`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        name        AS full_name,
-        email       AS email_address,
-        grade       AS membership_tier
+        name  AS customer_name,
+        email AS email_address,
+        grade AS tier
     FROM customers;
     ```
 
-    **Expected result:**
+    | customer_name | email_address | tier |
+    | ----- | ----- | --- |
+    | 정준호 | jjh0001@testmail.kr | SILVER |
+    | ... | ... | ... |
 
-    | full_name | email_address     | membership_tier |
-    | --------- | ----------------- | --------------- |
-    | 정준호       | user1@testmail.kr | BRONZE          |
-    | 김경수       | user2@testmail.kr | VIP             |
-    | 김민재       | user3@testmail.kr | VIP             |
-    | 진정자       | user4@testmail.kr | VIP             |
-    | 이정수       | user5@testmail.kr | SILVER          |
-    | ...       | ...               | ...             |
+### Problem 5
+Retrieve `name`, `price` from the `products` table, and add a 10% discounted price with the alias `discounted_price`.
 
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        price,
+        price * 0.9 AS discounted_price
+    FROM products;
+    ```
 
-    **Expected result:**
+    | name | price | discounted_price |
+    | ---- | ----: | ----: |
+    | Razer Blade 18 블랙 | 2987500 | 2688750 |
+    | ... | ... | ... |
 
-    | full_name | email_address     | membership_tier |
-    | --------- | ----------------- | --------------- |
-    | 정준호       | user1@testmail.kr | BRONZE          |
-    | 김경수       | user2@testmail.kr | VIP             |
-    | 김민재       | user3@testmail.kr | VIP             |
-    | 진정자       | user4@testmail.kr | VIP             |
-    | 이정수       | user5@testmail.kr | SILVER          |
-    | ...       | ...               | ...             |
+### Problem 6
+Retrieve `name`, `price`, `cost_price` from the `products` table, and add the margin (`price - cost_price`) and margin rate (`(price - cost_price) * 100 / price`) with aliases `margin` and `margin_rate`.
 
+??? success "Answer"
+    ```sql
+    SELECT
+        name,
+        price,
+        cost_price,
+        price - cost_price                  AS margin,
+        (price - cost_price) * 100 / price  AS margin_rate
+    FROM products;
+    ```
 
-    **Expected result:**
+    | name | price | cost_price | margin | margin_rate |
+    | ---- | ----: | ---------: | ---: | ----: |
+    | Razer Blade 18 블랙 | 2987500 | 3086700 | -99200 | -3 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 1360300 | 383700 | 22 |
+    | ... | ... | ... | ... | ... |
 
-    | full_name | email_address     | membership_tier |
-    | --------- | ----------------- | --------------- |
-    | 정준호       | user1@testmail.kr | BRONZE          |
-    | 김경수       | user2@testmail.kr | VIP             |
-    | 김민재       | user3@testmail.kr | VIP             |
-    | 진정자       | user4@testmail.kr | VIP             |
-    | 이정수       | user5@testmail.kr | SILVER          |
-    | ...       | ...               | ...             |
+### Problem 7
+Retrieve the unique `status` values from the `orders` table.
 
+??? success "Answer"
+    ```sql
+    SELECT DISTINCT status
+    FROM orders;
+    ```
 
-### Exercise 2
-Show all distinct `method` values from the `payments` table to find out which payment methods TechShop accepts.
+    | status |
+    | ------ |
+    | cancelled |
+    | confirmed |
+    | delivered |
+    | paid |
+    | pending |
+    | ... |
+
+### Problem 8
+Retrieve the unique `method` values from the `payments` table to see what payment methods TechShop supports.
 
 ??? success "Answer"
     ```sql
@@ -193,44 +409,17 @@ Show all distinct `method` values from the `payments` table to find out which pa
     FROM payments;
     ```
 
-    **Expected result:**
-
-    | method        |
-    | ------------- |
-    | card          |
-    | point         |
-    | kakao_pay     |
+    | method |
+    | ------ |
+    | card |
+    | point |
+    | kakao_pay |
     | bank_transfer |
-    | naver_pay     |
-    | ...           |
+    | naver_pay |
+    | virtual_account |
 
-
-    **Expected result:**
-
-    | method        |
-    | ------------- |
-    | card          |
-    | point         |
-    | kakao_pay     |
-    | bank_transfer |
-    | naver_pay     |
-    | ...           |
-
-
-    **Expected result:**
-
-    | method        |
-    | ------------- |
-    | card          |
-    | point         |
-    | kakao_pay     |
-    | bank_transfer |
-    | naver_pay     |
-    | ...           |
-
-
-### Exercise 3
-Select `name`, `price`, and `stock_qty` from `products`. Add a computed column called `inventory_value` that equals `price * stock_qty`.
+### Problem 9
+Retrieve `name`, `price`, `stock_qty` from the `products` table, and add `price * stock_qty` with the alias `inventory_value`.
 
 ??? success "Answer"
     ```sql
@@ -242,363 +431,55 @@ Select `name`, `price`, and `stock_qty` from `products`. Add a computed column c
     FROM products;
     ```
 
-    **Expected result:**
+    | name | price | stock_qty | inventory_value |
+    | ---- | ----: | --------: | ------: |
+    | Razer Blade 18 블랙 | 2987500 | 107 | 319662500 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 499 | 870256000 |
+    | ... | ... | ... | ... |
 
-    | name                                     | price   | stock_qty | inventory_value |
-    | ---------------------------------------- | ------: | --------: | --------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       319662500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |       870256000 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |        17626900 |
-    | Dell U2724D                              |  853600 |       337 |       287663200 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |         7711300 |
-    | ...                                      | ...     | ...       | ...             |
-
-
-    **Expected result:**
-
-    | name                                     | price   | stock_qty | inventory_value |
-    | ---------------------------------------- | ------: | --------: | --------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       319662500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |       870256000 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |        17626900 |
-    | Dell U2724D                              |  853600 |       337 |       287663200 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |         7711300 |
-    | ...                                      | ...     | ...       | ...             |
-
-
-    **Expected result:**
-
-    | name                                     | price   | stock_qty | inventory_value |
-    | ---------------------------------------- | ------: | --------: | --------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       319662500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |       870256000 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |        17626900 |
-    | Dell U2724D                              |  853600 |       337 |       287663200 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |         7711300 |
-    | ...                                      | ...     | ...       | ...             |
-
-
-### Exercise 4
-Retrieve all columns from the `categories` table.
+### Problem 10
+Retrieve the unique combinations of `grade` and `gender` from the `customers` table. How many combinations are there?
 
 ??? success "Answer"
     ```sql
-    SELECT * FROM categories;
+    SELECT DISTINCT grade, gender
+    FROM customers;
     ```
 
-    **Expected result:**
-
-    | id | parent_id | name    | slug             | depth | sort_order | is_active | created_at          | updated_at          |
-    | -: | --------: | ------- | ---------------- | ----: | ---------: | --------: | ------------------- | ------------------- |
-    |  1 |    (NULL) | 데스크톱 PC | desktop-pc       |     0 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  2 |         1 | 완제품     | desktop-prebuilt |     1 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  3 |         1 | 조립PC    | desktop-custom   |     1 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  4 |         1 | 베어본     | desktop-barebone |     1 |          3 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  5 |    (NULL) | 노트북     | laptop           |     0 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    | ... | ...       | ...     | ...              | ...   | ...        | ...       | ...                 | ...                 |
-
-
-    **Expected result:**
-
-    | id | parent_id | name    | slug             | depth | sort_order | is_active | created_at          | updated_at          |
-    | -: | --------: | ------- | ---------------- | ----: | ---------: | --------: | ------------------- | ------------------- |
-    |  1 |    (NULL) | 데스크톱 PC | desktop-pc       |     0 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  2 |         1 | 완제품     | desktop-prebuilt |     1 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  3 |         1 | 조립PC    | desktop-custom   |     1 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  4 |         1 | 베어본     | desktop-barebone |     1 |          3 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  5 |    (NULL) | 노트북     | laptop           |     0 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    | ... | ...       | ...     | ...              | ...   | ...        | ...       | ...                 | ...                 |
-
-
-    **Expected result:**
-
-    | id | parent_id | name    | slug             | depth | sort_order | is_active | created_at          | updated_at          |
-    | -: | --------: | ------- | ---------------- | ----: | ---------: | --------: | ------------------- | ------------------- |
-    |  1 |    (NULL) | 데스크톱 PC | desktop-pc       |     0 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  2 |         1 | 완제품     | desktop-prebuilt |     1 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  3 |         1 | 조립PC    | desktop-custom   |     1 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  4 |         1 | 베어본     | desktop-barebone |     1 |          3 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  5 |    (NULL) | 노트북     | laptop           |     0 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    | ... | ...       | ...     | ...              | ...   | ...        | ...       | ...                 | ...                 |
-
-
-### Exercise 5
-Select `name`, `department`, and `role` from the `staff` table, but rearrange the column order to `department`, `role`, `name`.
-
-??? success "Answer"
-    ```sql
-    SELECT department, role, name
-    FROM staff;
-    ```
-
-    **Expected result:**
-
-    | department | role    | name |
-    | ---------- | ------- | ---- |
-    | 경영         | admin   | 한민재  |
-    | 경영         | admin   | 장주원  |
-    | 경영         | admin   | 박경수  |
-    | 영업         | manager | 이준혁  |
-    | 마케팅        | manager | 권영희  |
-
-
-    **Expected result:**
-
-    | department | role    | name |
-    | ---------- | ------- | ---- |
-    | 경영         | admin   | 한민재  |
-    | 경영         | admin   | 장주원  |
-    | 경영         | admin   | 박경수  |
-    | 영업         | manager | 이준혁  |
-    | 마케팅        | manager | 권영희  |
-
-
-    **Expected result:**
-
-    | department | role    | name |
-    | ---------- | ------- | ---- |
-    | 경영         | admin   | 한민재  |
-    | 경영         | admin   | 장주원  |
-    | 경영         | admin   | 박경수  |
-    | 영업         | manager | 이준혁  |
-    | 마케팅        | manager | 권영희  |
-
-
-### Exercise 6
-Find all distinct `status` values in the `orders` table.
-
-??? success "Answer"
-    ```sql
-    SELECT DISTINCT status
-    FROM orders;
-    ```
-
-    **Expected result:**
-
-    | status    |
-    | --------- |
-    | cancelled |
-    | confirmed |
-    | delivered |
-    | paid      |
-    | pending   |
-    | ...       |
-
-
-    **Expected result:**
-
-    | status    |
-    | --------- |
-    | cancelled |
-    | confirmed |
-    | delivered |
-    | paid      |
-    | pending   |
-    | ...       |
-
-
-    **Expected result:**
-
-    | status    |
-    | --------- |
-    | cancelled |
-    | confirmed |
-    | delivered |
-    | paid      |
-    | pending   |
-    | ...       |
-
-
-### Exercise 7
-List product `name` and `price` from `products`, and add a column `discounted_price` that shows the price after a 10% discount.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        name,
-        price,
-        price * 0.9 AS discounted_price
-    FROM products;
-    ```
-
-    **Expected result:**
-
-    | name                                     | price   | discounted_price |
-    | ---------------------------------------- | ------: | ---------------: |
-    | Razer Blade 18 블랙                        | 2987500 |          2688750 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |          1569600 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |            44190 |
-    | Dell U2724D                              |  853600 |           768240 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |           117630 |
-    | ...                                      | ...     | ...              |
-
-
-    **Expected result:**
-
-    | name                                     | price   | discounted_price |
-    | ---------------------------------------- | ------: | ---------------: |
-    | Razer Blade 18 블랙                        | 2987500 |          2688750 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |          1569600 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |            44190 |
-    | Dell U2724D                              |  853600 |           768240 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |           117630 |
-    | ...                                      | ...     | ...              |
-
-
-    **Expected result:**
-
-    | name                                     | price   | discounted_price |
-    | ---------------------------------------- | ------: | ---------------: |
-    | Razer Blade 18 블랙                        | 2987500 |          2688750 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |          1569600 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |            44190 |
-    | Dell U2724D                              |  853600 |           768240 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |           117630 |
-    | ...                                      | ...     | ...              |
-
-
-### Exercise 8
-Select `name` and `price` from `products`, and add a string literal `'KRW'` as a column aliased `currency` on every row.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        name,
-        price,
-        'KRW' AS currency
-    FROM products;
-    ```
-
-    **Expected result:**
-
-    | name                                     | price   | currency |
-    | ---------------------------------------- | ------: | -------- |
-    | Razer Blade 18 블랙                        | 2987500 | KRW      |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 | KRW      |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 | KRW      |
-    | Dell U2724D                              |  853600 | KRW      |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 | KRW      |
-    | ...                                      | ...     | ...      |
-
-
-    **Expected result:**
-
-    | name                                     | price   | currency |
-    | ---------------------------------------- | ------: | -------- |
-    | Razer Blade 18 블랙                        | 2987500 | KRW      |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 | KRW      |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 | KRW      |
-    | Dell U2724D                              |  853600 | KRW      |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 | KRW      |
-    | ...                                      | ...     | ...      |
-
-
-    **Expected result:**
-
-    | name                                     | price   | currency |
-    | ---------------------------------------- | ------: | -------- |
-    | Razer Blade 18 블랙                        | 2987500 | KRW      |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 | KRW      |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 | KRW      |
-    | Dell U2724D                              |  853600 | KRW      |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 | KRW      |
-    | ...                                      | ...     | ...      |
-
-
-### Exercise 9
-Find all distinct combinations of `contact_name` and `company_name` from the `suppliers` table. (Use DISTINCT with multiple columns.)
-
-??? success "Answer"
-    ```sql
-    SELECT DISTINCT contact_name, company_name
-    FROM suppliers;
-    ```
-
-    **Expected result:**
-
-    | contact_name | company_name |
-    | ------------ | ------------ |
-    | 김수민          | 삼성전자 공식 유통   |
-    | 김예준          | LG전자 공식 유통   |
-    | 이상현          | 인텔코리아        |
-    | 강중수          | AMD코리아       |
-    | 이정남          | 엔비디아코리아      |
-    | ...          | ...          |
-
-
-    **Expected result:**
-
-    | contact_name | company_name |
-    | ------------ | ------------ |
-    | 김수민          | 삼성전자 공식 유통   |
-    | 김예준          | LG전자 공식 유통   |
-    | 이상현          | 인텔코리아        |
-    | 강중수          | AMD코리아       |
-    | 이정남          | 엔비디아코리아      |
-    | ...          | ...          |
-
-
-    **Expected result:**
-
-    | contact_name | company_name |
-    | ------------ | ------------ |
-    | 김수민          | 삼성전자 공식 유통   |
-    | 김예준          | LG전자 공식 유통   |
-    | 이상현          | 인텔코리아        |
-    | 강중수          | AMD코리아       |
-    | 이정남          | 엔비디아코리아      |
-    | ...          | ...          |
-
-
-### Exercise 10
-From `products`, select `name`, `price`, and `cost_price`. Add a computed column `margin` (`price - cost_price`) and another `margin_pct` (`(price - cost_price) / price * 100`).
-
-??? success "Answer"
-    ```sql
-    SELECT
-        name,
-        price,
-        cost_price,
-        price - cost_price                    AS margin,
-        (price - cost_price) / price * 100    AS margin_pct
-    FROM products;
-    ```
-
-    **Expected result:**
-
-    | name                                     | price   | cost_price | margin | margin_pct |
-    | ---------------------------------------- | ------: | ---------: | -----: | ---------: |
-    | Razer Blade 18 블랙                        | 2987500 |    3086700 | -99200 |      -3.32 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |    1360300 | 383700 |         22 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |      37900 |  11200 |      22.81 |
-    | Dell U2724D                              |  853600 |     565700 | 287900 |      33.73 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |     121400 |   9300 |       7.12 |
-    | ...                                      | ...     | ...        | ...    | ...        |
-
-
-    **Expected result:**
-
-    | name                                     | price   | cost_price | margin | margin_pct |
-    | ---------------------------------------- | ------: | ---------: | -----: | ---------: |
-    | Razer Blade 18 블랙                        | 2987500 |    3086700 | -99200 |      -3.32 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |    1360300 | 383700 |         22 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |      37900 |  11200 |      22.81 |
-    | Dell U2724D                              |  853600 |     565700 | 287900 |      33.73 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |     121400 |   9300 |       7.12 |
-    | ...                                      | ...     | ...        | ...    | ...        |
-
-
-    **Expected result:**
-
-    | name                                     | price   | cost_price | margin | margin_pct |
-    | ---------------------------------------- | ------: | ---------: | -----: | ---------: |
-    | Razer Blade 18 블랙                        | 2987500 |    3086700 | -99200 |      -3.32 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |    1360300 | 383700 |         22 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |      37900 |  11200 |      22.81 |
-    | Dell U2724D                              |  853600 |     565700 | 287900 |      33.73 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |     121400 |   9300 |       7.12 |
-    | ...                                      | ...     | ...        | ...    | ...        |
-
+    | grade | gender |
+    | ----- | ------ |
+    | BRONZE | M |
+    | BRONZE | F |
+    | BRONZE | (NULL) |
+    | SILVER | M |
+    | SILVER | F |
+    | SILVER | (NULL) |
+    | GOLD | M |
+    | GOLD | F |
+    | GOLD | (NULL) |
+    | VIP | M |
+    | VIP | F |
+    | VIP | (NULL) |
+
+    4 grades x 3 genders (M, F, NULL) = **12 combinations**.
+
+### Scoring Guide
+
+| Score | Next Step |
+|:-----:|-----------|
+| **9-10** | Move to [Lesson 2: Filtering with WHERE](02-where.md) |
+| **7-8** | Review the explanations for incorrect answers, then proceed to Lesson 2 |
+| **4-6** | Read this lesson again |
+| **0-3** | Start over from [Lesson 0](00-introduction.md) |
+
+**Problem Areas:**
+
+| Area | Problems |
+|------|:--------:|
+| SELECT * / specific columns | 1, 2, 3 |
+| AS (aliases) | 4, 5, 6 |
+| DISTINCT | 7, 8, 10 |
+| Arithmetic operations | 5, 6, 9 |
 
 ---
 Next: [Lesson 2: Filtering with WHERE](02-where.md)

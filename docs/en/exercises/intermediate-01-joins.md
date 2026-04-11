@@ -1,14 +1,58 @@
 # JOIN Master
 
+<div class="grid cards" markdown>
 
-### 1. Retrieve each product's name, price, and category name. Top 
+-   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
 
+    ---
 
-Retrieve each product's name, price, and category name. Top 10 by price descending.
+    `orders` — Orders<br>
+    `customers` — Customers<br>
+    `order_items` — Order details<br>
+    `products` — Products<br>
+    `categories` — Categories<br>
+    `suppliers` — Suppliers<br>
+    `shipping` — Shipping<br>
+    `reviews` — Reviews<br>
+    `staff` — Staff<br>
+    `wishlists` — Wishlists<br>
+    `complaints` — Complaints<br>
+    `product_tags` — Product tags<br>
+    `tags` — Tags<br>
+    `product_qna` — Product Q&A<br>
+    `calendar` — Date reference
 
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
 
-**Hint 1:** `INNER JOIN` `products` and `categories` on `category_id`, then `ORDER BY ... DESC LIMIT 10`.
+    ---
 
+    `INNER JOIN`<br>
+    `LEFT JOIN`<br>
+    anti-join<br>
+    Multi-table JOIN<br>
+    Self-JOIN<br>
+    JOIN + `GROUP BY` + aggregation
+
+</div>
+
+!!! info "Before You Begin"
+    This exercise applies what you learned in **Intermediate Lessons 8~9** (INNER JOIN, LEFT JOIN) to practical scenarios.
+    GROUP BY, aggregate functions, ORDER BY, and LIMIT are also used together.
+
+---
+
+## Basic (1~8)
+
+Practice two-table INNER JOIN.
+
+---
+
+### Problem 1
+
+**Find each product's name, price, and category name. Top 10 by price descending.**
+
+??? tip "Hint"
+    `INNER JOIN` `products` and `categories` on `category_id`, then `ORDER BY price DESC LIMIT 10`.
 
 ??? success "Answer"
     ```sql
@@ -19,18 +63,30 @@ Retrieve each product's name, price, and category name. Top 10 by price descendi
     LIMIT 10;
     ```
 
+    **Result (10행):**
+
+    | name | price | category |
+    | ---------- | ----------: | ---------- |
+    | Razer Blade 14 블랙 | 7495200.0 | 게이밍 노트북 |
+    | Razer Blade 16 블랙 | 5634900.0 | 게이밍 노트북 |
+    | Razer Blade 16 | 5518300.0 | 게이밍 노트북 |
+    | Razer Blade 16 화이트 | 5503500.0 | 게이밍 노트북 |
+    | Razer Blade 18 | 5450500.0 | 게이밍 노트북 |
+    | Razer Blade 14 | 5339100.0 | 게이밍 노트북 |
+    | Razer Blade 16 실버 | 5127500.0 | 게이밍 노트북 |
+    | Razer Blade 16 블랙 | 4938200.0 | 게이밍 노트북 |
+    | ... | ... | ... |
+
+    > Only top 5 rows shown. 10 rows returned total.
 
 ---
 
+### Problem 2
 
-### 2. Retrieve the product name, category name, and supplier compa
+**Find product name, category name, and supplier name together. Top 20 sorted alphabetically by product name.**
 
-
-Retrieve the product name, category name, and supplier company name together.
-
-
-**Hint 1:** `INNER JOIN` both `categories` and `suppliers` from `products`.
-
+??? tip "Hint"
+    `INNER JOIN` both `categories` and `suppliers` from `products`. You can use JOIN twice in a single SELECT.
 
 ??? success "Answer"
     ```sql
@@ -45,18 +101,261 @@ Retrieve the product name, category name, and supplier company name together.
     LIMIT 20;
     ```
 
+    **Result (top 5 rows):**
+
+    | product | category | supplier |
+    | ---------- | ---------- | ---------- |
+    | AMD Ryzen 5 9600X | AMD | AMD코리아 |
+    | AMD Ryzen 7 7700X | AMD | AMD코리아 |
+    | AMD Ryzen 7 7700X 블랙 | AMD | AMD코리아 |
+    | AMD Ryzen 7 7700X 블랙 | AMD | AMD코리아 |
+    | AMD Ryzen 7 7800X3D | AMD | AMD코리아 |
+    | AMD Ryzen 7 7800X3D 실버 | AMD | AMD코리아 |
+    | AMD Ryzen 7 9700X 블랙 | AMD | AMD코리아 |
+    | AMD Ryzen 7 9800X3D 실버 | AMD | AMD코리아 |
+    | ... | ... | ... |
 
 ---
 
+### Problem 3
 
-### 3. Retrieve the name and price of products that have never rece
+**Find customer name and order amount per order. Most recent 10 orders only.**
 
+??? tip "Hint"
+    JOIN `orders` and `customers` on `customer_id`. `ORDER BY ordered_at DESC LIMIT 10`.
 
-Retrieve the name and price of products that have never received a review.
+??? success "Answer"
+    ```sql
+    SELECT
+        o.order_number,
+        c.name AS customer_name,
+        o.total_amount,
+        o.ordered_at
+    FROM orders AS o
+    INNER JOIN customers AS c ON o.customer_id = c.id
+    ORDER BY o.ordered_at DESC
+    LIMIT 10;
+    ```
 
+    **Result (top 5 rows):**
 
-**Hint 1:** After `LEFT JOIN reviews`, use `WHERE r.id IS NULL` to find unmatched rows.
+    | order_number | customer_name | total_amount | ordered_at |
+    | ---------- | ---------- | ----------: | ---------- |
+    | ORD-20251211-413965 | 송광수 | 409600.0 | 2026-01-01 08:40:57 |
+    | ORD-20251226-416837 | 송광수 | 1169700.0 | 2026-01-01 06:40:57 |
+    | ORD-20251231-417734 | 류미숙 | 2076300.0 | 2025-12-31 23:28:51 |
+    | ORD-20251231-417696 | 김영미 | 814400.0 | 2025-12-31 23:26:03 |
+    | ORD-20251231-417737 | 이영미 | 550600.0 | 2025-12-31 23:17:28 |
+    | ORD-20251231-417735 | 조성수 | 35000.0 | 2025-12-31 23:12:47 |
+    | ORD-20251231-417677 | 김지우 | 2002473.0 | 2025-12-31 23:09:05 |
+    | ORD-20251231-417764 | 이중수 | 42700.0 | 2025-12-31 23:00:56 |
+    | ... | ... | ... | ... |
 
+    > Actual names and amounts depend on the data.
+
+---
+
+### Problem 4
+
+**Combine order details (order_items) with product info to find product name, quantity, and unit price per order item. Most recent 15.**
+
+??? tip "Hint"
+    JOIN `order_items` and `products` on `product_id`. `ORDER BY oi.id DESC LIMIT 15`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        oi.order_id,
+        p.name AS product_name,
+        p.brand,
+        oi.quantity,
+        oi.unit_price
+    FROM order_items AS oi
+    INNER JOIN products AS p ON oi.product_id = p.id
+    ORDER BY oi.id DESC
+    LIMIT 15;
+    ```
+
+    **Result (top 5 rows):**
+
+    | order_id | product_name | brand | quantity | unit_price |
+    | ----------: | ---------- | ---------- | ----------: | ----------: |
+    | 417803 | 엡손 L6290 블랙 | 엡손 | 1 | 399000.0 |
+    | 417803 | Dell UP2720Q 화이트 | Dell | 1 | 1289400.0 |
+    | 417802 | 넷기어 Nighthawk RS700S 화이트 | 넷기어 | 1 | 184200.0 |
+    | 417801 | be quiet! Straight Power 12 1000W 블랙 | be quiet! | 1 | 295500.0 |
+    | 417801 | Seagate IronWolf 8TB 화이트 | Seagate | 1 | 194300.0 |
+    | 417800 | Norton 360 Standard 블랙 | Norton | 1 | 81000.0 |
+    | 417800 | Fractal Design Pop Air | Fractal Design | 1 | 150300.0 |
+    | 417800 | CORSAIR iCUE 4000X 실버 | CORSAIR | 1 | 228900.0 |
+    | ... | ... | ... | ... | ... |
+
+    > Actual results depend on the data.
+
+---
+
+### Problem 5
+
+**Find order number, carrier, and delivery date for delivered orders. Top 10 by most recent delivery.**
+
+??? tip "Hint"
+    JOIN `shipping` and `orders` on `order_id`. `WHERE sh.status = 'delivered'`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        o.order_number,
+        sh.carrier,
+        sh.delivered_at
+    FROM shipping AS sh
+    INNER JOIN orders AS o ON sh.order_id = o.id
+    WHERE sh.status = 'delivered'
+    ORDER BY sh.delivered_at DESC
+    LIMIT 10;
+    ```
+
+    **Result (top 5 rows):**
+
+    | order_number | carrier | delivered_at |
+    | ---------- | ---------- | ---------- |
+    | ORD-20251225-416704 | 한진택배 | 2026-01-01 22:43:08 |
+    | ORD-20251225-416550 | CJ대한통운 | 2026-01-01 22:14:41 |
+    | ORD-20251225-416613 | 한진택배 | 2026-01-01 16:37:19 |
+    | ORD-20251225-416538 | CJ대한통운 | 2026-01-01 16:08:52 |
+    | ORD-20251225-416700 | 로젠택배 | 2026-01-01 15:48:04 |
+    | ORD-20251225-416555 | CJ대한통운 | 2026-01-01 15:04:18 |
+    | ORD-20251225-416610 | 우체국택배 | 2026-01-01 14:50:31 |
+    | ORD-20251225-416570 | 로젠택배 | 2026-01-01 14:26:55 |
+    | ... | ... | ... |
+
+---
+
+### Problem 6
+
+**Combine reviews with product info to find product name, review title, and date for 5-star reviews. Most recent 10.**
+
+??? tip "Hint"
+    JOIN `reviews` and `products` on `product_id`. `WHERE r.rating = 5`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        p.name AS product_name,
+        r.title AS review_title,
+        r.rating,
+        r.created_at
+    FROM reviews AS r
+    INNER JOIN products AS p ON r.product_id = p.id
+    WHERE r.rating = 5
+    ORDER BY r.created_at DESC
+    LIMIT 10;
+    ```
+
+    **Result (top 5 rows):**
+
+    | product_name | review_title | rating | created_at |
+    | ---------- | ---------- | ----------: | ---------- |
+    | Keychron K6 Pro 실버 | 대만족 | 5 | 2026-01-19 14:32:43 |
+    | Windows 11 Pro for Workstations 화이트 | 최고입니다! | 5 | 2026-01-18 22:59:14 |
+    | 엡손 L3260 블랙 | (NULL) | 5 | 2026-01-17 12:41:28 |
+    | MSI MAG X870E TOMAHAWK WIFI | (NULL) | 5 | 2026-01-16 19:31:49 |
+    | 로지텍 M750 화이트 | (NULL) | 5 | 2026-01-16 09:52:54 |
+    | Arctic Freezer 36 | 완벽해요 | 5 | 2026-01-15 19:31:49 |
+    | Ducky One 3 Mini 화이트 | (NULL) | 5 | 2026-01-14 22:26:41 |
+    | 로지텍 K580 화이트 | 최고입니다! | 5 | 2026-01-14 14:19:57 |
+    | ... | ... | ... | ... |
+
+    > Review title may be NULL.
+
+---
+
+### Problem 7
+
+**Find product count per supplier. Sort by product count descending.**
+
+??? tip "Hint"
+    JOIN `suppliers` and `products`, then aggregate per supplier with `GROUP BY`. Count products with `COUNT(p.id)`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        s.company_name,
+        COUNT(p.id) AS product_count
+    FROM suppliers AS s
+    INNER JOIN products AS p ON s.id = p.supplier_id
+    GROUP BY s.id, s.company_name
+    ORDER BY product_count DESC
+    LIMIT 15;
+    ```
+
+    **Result (top 5 rows):**
+
+    | company_name | product_count |
+    | ---------- | ----------: |
+    | 에이수스코리아 | 230 |
+    | 삼성전자 공식 유통 | 211 |
+    | 로지텍코리아 | 153 |
+    | MSI코리아 | 137 |
+    | 앱솔루트 테크놀로지 | 129 |
+    | 레이저코리아 | 124 |
+    | 서린시스테크 | 120 |
+    | LG전자 공식 유통 | 118 |
+    | ... | ... |
+
+    > Actual values depend on the data.
+
+---
+
+### Problem 8
+
+**Find each category name and average price of its products. Top 10 by average price descending.**
+
+??? tip "Hint"
+    JOIN `categories` and `products`. Aggregate `AVG(p.price)` per category with `GROUP BY cat.id, cat.name`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        cat.name AS category,
+        COUNT(p.id) AS product_count,
+        ROUND(AVG(p.price), 0) AS avg_price
+    FROM categories AS cat
+    INNER JOIN products AS p ON cat.id = p.category_id
+    GROUP BY cat.id, cat.name
+    ORDER BY avg_price DESC
+    LIMIT 10;
+    ```
+
+    **Result (top 5 rows):**
+
+    | category | product_count | avg_price |
+    | ---------- | ----------: | ----------: |
+    | 맥북 | 24 | 3347704.0 |
+    | 게이밍 노트북 | 113 | 2930866.0 |
+    | NVIDIA | 60 | 2324320.0 |
+    | 조립PC | 60 | 2220050.0 |
+    | 일반 노트북 | 115 | 1730655.0 |
+    | 2in1 | 59 | 1606744.0 |
+    | 완제품 | 98 | 1505784.0 |
+    | 전문가용 모니터 | 57 | 1361037.0 |
+    | ... | ... | ... |
+
+    > Actual values depend on the data.
+
+---
+
+## Applied (9~16)
+
+Practice LEFT JOIN, anti-join, 3-table JOIN, and JOIN + GROUP BY.
+
+---
+
+### Problem 9
+
+**Find products with no reviews, showing name and price. Sort by price descending.**
+
+??? tip "Hint"
+    LEFT JOIN `products` with `reviews`, then find unmatched rows with `WHERE r.id IS NULL`. This is the **anti-join** pattern.
 
 ??? success "Answer"
     ```sql
@@ -67,67 +366,104 @@ Retrieve the name and price of products that have never received a review.
     ORDER BY p.price DESC;
     ```
 
+    **Result (top 5 rows):**
+
+    | name | price |
+    | ---------- | ----------: |
+    | Razer Blade 14 블랙 | 7495200.0 |
+    | Razer Blade 16 | 5518300.0 |
+    | 한성 프리워크 P5700 블랙 | 3917100.0 |
+    | Razer Blade 16 실버 | 3899800.0 |
+    | 기가바이트 AORUS 16X | 3551600.0 |
+    | ASUS ROG Zephyrus G14 실버 | 3362500.0 |
+    | ASUS ROG Strix G16CH 화이트 | 3307900.0 |
+    | Razer Blade 14 실버 | 2902800.0 |
+    | ... | ... |
+
+    > Only products with 0 reviews. Many may be discontinued.
 
 ---
 
+### Problem 10
 
-### 4. Retrieve the name and signup date of customers who have neve
+**Find customers who never placed an order, showing name and signup date. Sort by signup date ascending.**
 
-
-Retrieve the name and signup date of customers who have never placed an order.
-
-
-**Hint 1:** `customers LEFT JOIN orders`, then `WHERE o.id IS NULL` to filter customers with no orders.
-
+??? tip "Hint"
+    `customers LEFT JOIN orders` then filter with `WHERE o.id IS NULL` for customers without orders.
 
 ??? success "Answer"
     ```sql
-    SELECT c.name, c.created_at
+    SELECT c.name, c.grade, c.created_at
     FROM customers AS c
     LEFT JOIN orders AS o ON c.id = o.customer_id
     WHERE o.id IS NULL
-    ORDER BY c.created_at;
+    ORDER BY c.created_at
+    LIMIT 20;
     ```
 
+    **Result (top 5 rows):**
+
+    | name | grade | created_at |
+    | ---------- | ---------- | ---------- |
+    | 성미숙 | BRONZE | 2016-01-01 00:53:24 |
+    | 오진호 | BRONZE | 2016-01-01 03:10:41 |
+    | 노지민 | BRONZE | 2016-01-01 10:17:05 |
+    | 양영진 | BRONZE | 2016-01-03 19:49:46 |
+    | 김지아 | BRONZE | 2016-01-05 08:33:42 |
+    | 김민준 | BRONZE | 2016-01-05 21:52:07 |
+    | 최유진 | BRONZE | 2016-01-06 00:09:48 |
+    | 이미정 | BRONZE | 2016-01-06 05:24:42 |
+    | ... | ... | ... |
+
+    > Only customers with 0 orders. Most are BRONZE grade.
 
 ---
 
+### Problem 11
 
-### 5. Retrieve each customer's name, grade, order count, and total
+**Find wishlisted but unpurchased products showing name, price, and wishlist count.**
 
-
-Retrieve each customer's name, grade, order count, and total amount spent. Top 10 by total spent.
-
-
-**Hint 1:** `customers JOIN orders`, then aggregate with `GROUP BY`. Use `COUNT` and `SUM` together.
-
+??? tip "Hint"
+    JOIN `wishlists` and `products`. Filter unpurchased with `WHERE w.is_purchased = 0`. Aggregate per product with `GROUP BY`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        c.name, c.grade,
-        COUNT(o.id) AS order_count,
-        ROUND(SUM(o.total_amount), 2) AS total_spent
-    FROM customers AS c
-    INNER JOIN orders AS o ON c.id = o.customer_id
-    WHERE o.status NOT IN ('cancelled')
-    GROUP BY c.id, c.name, c.grade
-    ORDER BY total_spent DESC
-    LIMIT 10;
+        p.name,
+        p.price,
+        COUNT(w.id) AS wishlist_count
+    FROM wishlists AS w
+    INNER JOIN products AS p ON w.product_id = p.id
+    WHERE w.is_purchased = 0
+    GROUP BY p.id, p.name, p.price
+    ORDER BY wishlist_count DESC
+    LIMIT 15;
     ```
 
+    **Result (top 5 rows):**
+
+    | name | price | wishlist_count |
+    | ---------- | ----------: | ----------: |
+    | 로지텍 MK470 화이트 | 41300.0 | 22 |
+    | Razer BlackShark V2 Pro | 172300.0 | 21 |
+    | Dell U2724D 실버 | 643000.0 | 19 |
+    | HP LaserJet Pro M404dn 블랙 | 608200.0 | 19 |
+    | 삼성 990 EVO Plus 1TB 블랙 | 88500.0 | 19 |
+    | BenQ SW272U 실버 | 2023100.0 | 18 |
+    | WD Black SN8100 2TB 블랙 | 90800.0 | 18 |
+    | 레오폴드 FC750R PD | 190400.0 | 18 |
+    | ... | ... | ... |
+
+    > Actual values depend on the data.
 
 ---
 
+### Problem 12
 
-### 6. Retrieve the order number, customer name, product name, quan
+**Find order number, customer name, product name, quantity, and unit price for the 5 most recent orders. (4-table JOIN)**
 
-
-Retrieve the order number, customer name, product name, quantity, and unit price for the 5 most recent orders.
-
-
-**Hint 1:** Connect 4 tables with `INNER JOIN`: `orders -> customers`, `orders -> order_items -> products`.
-
+??? tip "Hint"
+    Connect 4 tables with INNER JOIN: `orders` -> `customers`, `orders` -> `order_items` -> `products`.
 
 ??? success "Answer"
     ```sql
@@ -145,46 +481,25 @@ Retrieve the order number, customer name, product name, quantity, and unit price
     LIMIT 5;
     ```
 
+    **Result (5행):**
+
+    | order_number | customer | product | quantity | unit_price |
+    | ---------- | ---------- | ---------- | ----------: | ----------: |
+    | ORD-20251211-413965 | 송광수 | Windows 11 Pro | 1 | 409600.0 |
+    | ORD-20251226-416837 | 송광수 | MSI Radeon RX 7800 XT GAMING X 실버 | 1 | 994000.0 |
+    | ORD-20251226-416837 | 송광수 | Razer Huntsman V3 Pro Mini 화이트 | 1 | 175700.0 |
+    | ORD-20251231-417734 | 류미숙 | NZXT Kraken 240 실버 | 1 | 169800.0 |
+    | ORD-20251231-417734 | 류미숙 | BenQ PD2725U | 1 | 1596100.0 |
+    | ... | ... | ... | ... | ... |
 
 ---
 
+### Problem 13
 
-### 7. Find the total revenue and units sold per category. Exclude 
+**Find products with 5+ reviews showing name, avg rating, and review count. Sort by avg rating descending.**
 
-
-Find the total revenue and units sold per category. Exclude cancelled orders.
-
-
-**Hint 1:** JOIN `order_items -> products -> categories` and exclude cancelled orders with `WHERE o.status NOT IN ('cancelled')`.
-
-
-??? success "Answer"
-    ```sql
-    SELECT
-        cat.name AS category,
-        SUM(oi.quantity) AS units_sold,
-        ROUND(SUM(oi.quantity * oi.unit_price), 2) AS revenue
-    FROM order_items AS oi
-    INNER JOIN orders AS o ON oi.order_id = o.id
-    INNER JOIN products AS p ON oi.product_id = p.id
-    INNER JOIN categories AS cat ON p.category_id = cat.id
-    WHERE o.status NOT IN ('cancelled')
-    GROUP BY cat.name
-    ORDER BY revenue DESC;
-    ```
-
-
----
-
-
-### 8. Find the name, average rating, and review count of products 
-
-
-Find the name, average rating, and review count of products with 5 or more reviews.
-
-
-**Hint 1:** `products JOIN reviews`, then aggregate with `GROUP BY` and filter with `HAVING COUNT(r.id) >= 5`.
-
+??? tip "Hint"
+    JOIN `products` with `reviews`, then filter with `GROUP BY` and `HAVING COUNT(r.id) >= 5`.
 
 ??? success "Answer"
     ```sql
@@ -200,121 +515,30 @@ Find the name, average rating, and review count of products with 5 or more revie
     LIMIT 15;
     ```
 
+    **Result (top 5 rows):**
+
+    | name | avg_rating | review_count |
+    | ---------- | ----------: | ----------: |
+    | MSI Radeon RX 7900 XTX GAMING X | 4.83 | 6 |
+    | 넷기어 Orbi 970 실버 | 4.83 | 6 |
+    | ASUS TUF GAMING B860M-PLUS 화이트 | 4.8 | 5 |
+    | 넷기어 RAX70 실버 | 4.8 | 5 |
+    | 레노버 ThinkPad X1 2in1 실버 | 4.8 | 5 |
+    | 삼성 갤럭시북4 프로 화이트 | 4.8 | 5 |
+    | 한성 보스몬스터 DX5800 블랙 | 4.8 | 5 |
+    | SteelSeries Arctis Nova 7 Wireless 실버 | 4.78 | 9 |
+    | ... | ... | ... |
+
+    > Actual values depend on the data.
 
 ---
 
+### Problem 14
 
-### 9. Find the average number of days from order to delivery for c
+**Staff hierarchy (Self-JOIN): Find all staff with their manager's name.**
 
-
-Find the average number of days from order to delivery for completed shipments.
-
-
-**Hint 1:** Calculate the date difference with `JULIANDAY(delivered_at) - JULIANDAY(ordered_at)`. JOIN `shipping` with `orders`.
-
-
-??? success "Answer"
-    ```sql
-    SELECT
-        ROUND(AVG(JULIANDAY(sh.delivered_at) - JULIANDAY(o.ordered_at)), 1) AS avg_delivery_days
-    FROM shipping AS sh
-    INNER JOIN orders AS o ON sh.order_id = o.id
-    WHERE sh.status = 'delivered'
-      AND sh.delivered_at IS NOT NULL;
-    ```
-
-
----
-
-
-### 10. Find the total shipments, delivered count, and delivery rate
-
-
-Find the total shipments, delivered count, and delivery rate per carrier.
-
-
-**Hint 1:** `GROUP BY carrier` with conditional aggregation using `CASE WHEN status = 'delivered'`. Delivery rate is `100.0 * delivered / total`.
-
-
-??? success "Answer"
-    ```sql
-    SELECT
-        carrier,
-        COUNT(*) AS total,
-        SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) AS delivered,
-        ROUND(100.0 * SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*), 1) AS delivery_rate
-    FROM shipping
-    GROUP BY carrier
-    ORDER BY total DESC;
-    ```
-
-
----
-
-
-### 11. Find the product count, average price, and highest price per
-
-
-Find the product count, average price, and highest price per supplier.
-
-
-**Hint 1:** `suppliers JOIN products`, then aggregate with `GROUP BY`. Use `COUNT`, `AVG`, and `MAX` functions.
-
-
-??? success "Answer"
-    ```sql
-    SELECT
-        s.company_name,
-        COUNT(p.id) AS product_count,
-        ROUND(AVG(p.price), 2) AS avg_price,
-        ROUND(MAX(p.price), 2) AS max_price
-    FROM suppliers AS s
-    INNER JOIN products AS p ON s.id = p.supplier_id
-    GROUP BY s.id, s.company_name
-    ORDER BY product_count DESC;
-    ```
-
-
----
-
-
-### 12. Retrieve each customer's most recent order date and order am
-
-
-Retrieve each customer's most recent order date and order amount. Sort by most recent order.
-
-
-**Hint 1:** Use `MAX(o.ordered_at)` to get the most recent order date and aggregate per customer with `GROUP BY`.
-
-
-??? success "Answer"
-    ```sql
-    SELECT
-        c.name,
-        c.grade,
-        MAX(o.ordered_at) AS last_order_date,
-        o.total_amount AS last_order_amount
-    FROM customers AS c
-    INNER JOIN orders AS o ON c.id = o.customer_id
-    WHERE o.status NOT IN ('cancelled')
-    GROUP BY c.id, c.name, c.grade
-    ORDER BY last_order_date DESC
-    LIMIT 15;
-    ```
-
-
----
-
-
-### 13. Staff Hierarchy (Self-JOIN)
-
-
-List all staff members with their manager names.
-Top-level staff with no manager should show NULL for manager name.
-
-
-**Hint 1:** Self LEFT JOIN on `staff` table. `staff AS s LEFT JOIN staff AS m ON s.manager_id = m.id`. If no manager, `m.name` is NULL.
-
+??? tip "Hint"
+    LEFT JOIN `staff` with itself. `staff AS s LEFT JOIN staff AS m ON s.manager_id = m.id`. NULL indicates top-level manager.
 
 ??? success "Answer"
     ```sql
@@ -330,48 +554,299 @@ Top-level staff with no manager should show NULL for manager name.
     ORDER BY s.department, s.name;
     ```
 
+    **Result (top 5 rows):**
+
+    | id | staff_name | department | role | manager_name | manager_department |
+    | ----------: | ---------- | ---------- | ---------- | ---------- | ---------- |
+    | 24 | 김옥자 | CS | staff | 박경수 | 경영 |
+    | 34 | 이순자 | CS | staff | 장주원 | 경영 |
+    | 38 | 이현준 | CS | staff | 한민재 | 경영 |
+    | 7 | 김영일 | 개발 | manager | 박경수 | 경영 |
+    | 21 | 김현주 | 개발 | staff | 김영일 | 개발 |
+    | 48 | 김경희 | 경영 | staff | 김진우 | 경영 |
+    | 10 | 김진우 | 경영 | manager | 박경수 | 경영 |
+    | 13 | 남정순 | 경영 | staff | 김진우 | 경영 |
+    | ... | ... | ... | ... | ... | ... |
+
+    > NULL manager_name indicates the top-level manager.
 
 ---
 
+### Problem 15
 
-### 14. Product Successor Chain (Self-JOIN)
+**Find total revenue and units sold per category. Exclude cancelled orders.**
 
-
-Find discontinued products and their successors.
-Show discontinued product name, date, successor name, and successor price.
-
-
-**Hint 1:** `products.successor_id` references `id` in the same table. `products AS p JOIN products AS succ ON p.successor_id = succ.id`. Filter `p.discontinued_at IS NOT NULL`.
-
+??? tip "Hint"
+    JOIN `order_items` -> `products` -> `categories`, also JOIN `orders` to exclude cancelled. 4-table JOIN + GROUP BY.
 
 ??? success "Answer"
     ```sql
     SELECT
-        p.name        AS discontinued_product,
-        p.price       AS old_price,
-        p.discontinued_at,
-        succ.name     AS successor_product,
-        succ.price    AS new_price,
-        ROUND(succ.price - p.price, 0) AS price_diff
-    FROM products AS p
-    INNER JOIN products AS succ ON p.successor_id = succ.id
-    WHERE p.discontinued_at IS NOT NULL
-    ORDER BY p.discontinued_at DESC
-    LIMIT 20;
+        cat.name AS category,
+        SUM(oi.quantity) AS units_sold,
+        ROUND(SUM(oi.quantity * oi.unit_price), 0) AS revenue
+    FROM order_items AS oi
+    INNER JOIN orders AS o ON oi.order_id = o.id
+    INNER JOIN products AS p ON oi.product_id = p.id
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    WHERE o.status NOT IN ('cancelled')
+    GROUP BY cat.name
+    ORDER BY revenue DESC;
     ```
 
+    **Result (top 5 rows):**
+
+    | category | units_sold | revenue |
+    | ---------- | ----------: | ----------: |
+    | 게이밍 노트북 | 18930 | 53851781900.0 |
+    | NVIDIA | 18253 | 40205792400.0 |
+    | AMD | 43977 | 35401431700.0 |
+    | 일반 노트북 | 19642 | 32862183400.0 |
+    | 게이밍 모니터 | 20873 | 24964654700.0 |
+    | 스피커/헤드셋 | 67551 | 16433071700.0 |
+    | 2in1 | 9744 | 15525975700.0 |
+    | Intel 소켓 | 38524 | 15401899600.0 |
+    | ... | ... | ... |
+
+    > Actual values depend on the data.
 
 ---
 
+### Problem 16
 
-### 15. Q&A Thread View (Self-JOIN)
+**Find days with no orders: Use the calendar table to find dates in 2024 with zero orders.**
 
+??? tip "Hint"
+    `calendar` LEFT JOIN order dates (subquery). Filter with `WHERE o.order_date IS NULL`.
 
-Show Q&A pairs in one row: question content, customer name, answer content, staff name.
+??? success "Answer"
+    ```sql
+    SELECT
+        cal.date_key,
+        cal.day_name,
+        cal.is_weekend,
+        cal.is_holiday,
+        cal.holiday_name
+    FROM calendar AS cal
+    LEFT JOIN (
+        SELECT DISTINCT SUBSTR(ordered_at, 1, 10) AS order_date
+        FROM orders
+    ) AS od ON cal.date_key = od.order_date
+    WHERE cal.year = 2024
+      AND od.order_date IS NULL
+    ORDER BY cal.date_key;
+    ```
 
+    **Result (top 5 rows):**
 
-**Hint 1:** Questions: `parent_id IS NULL`. Answers: `parent_id` references question's `id`. Question (`q`) LEFT JOIN Answer (`a`) ON `a.parent_id = q.id`.
+    | date_key | day_name | is_weekend | is_holiday | holiday_name |
+    |----------|----------|-----------|-----------|-------------|
+    | 2024-01-01 | 월요일 | 0 | 1 | 신정 |
+    | 2024-02-09 | 금요일 | 0 | 1 | 설날 연휴 |
+    | 2024-02-10 | 토요일 | 1 | 1 | 설날 |
+    | 2024-02-11 | 일요일 | 1 | 1 | 설날 연휴 |
+    | 2024-02-12 | 월요일 | 0 | 1 | 대체공휴일 |
 
+    > Days without orders often fall on holidays. Actual results depend on the data.
+
+---
+
+## Practical (17~25)
+
+Practice 4+ table JOINs and complex business queries.
+
+---
+
+### Problem 17
+
+**Find each customer's name, grade, order count, and total spending. Top 10 by total spending. Exclude cancelled.**
+
+??? tip "Hint"
+    JOIN `customers` with `orders` then aggregate with `GROUP BY`. Use `COUNT` and `SUM` with `WHERE o.status NOT IN ('cancelled')`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        c.name,
+        c.grade,
+        COUNT(o.id) AS order_count,
+        ROUND(SUM(o.total_amount), 0) AS total_spent
+    FROM customers AS c
+    INNER JOIN orders AS o ON c.id = o.customer_id
+    WHERE o.status NOT IN ('cancelled')
+    GROUP BY c.id, c.name, c.grade
+    ORDER BY total_spent DESC
+    LIMIT 10;
+    ```
+
+    **Result (top 5 rows):**
+
+    | name | grade | order_count | total_spent |
+    | ---------- | ---------- | ----------: | ----------: |
+    | 박정수 | VIP | 671 | 683999108.0 |
+    | 정유진 | VIP | 551 | 661364522.0 |
+    | 이미정 | VIP | 533 | 637982227.0 |
+    | 김상철 | VIP | 520 | 570706423.0 |
+    | 문영숙 | VIP | 552 | 533764115.0 |
+    | 이영자 | VIP | 522 | 531101676.0 |
+    | 이미정 | VIP | 443 | 504714776.0 |
+    | 장영숙 | VIP | 362 | 492889661.0 |
+    | ... | ... | ... | ... |
+
+    > Actual values depend on the data.
+
+---
+
+### Problem 18
+
+**Find shipment count, delivered count, and delivery rate (%) per carrier.**
+
+??? tip "Hint"
+    `GROUP BY carrier`. Conditional aggregation with `SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END)`. Rate is `100.0 * delivered / total`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        carrier,
+        COUNT(*) AS total,
+        SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) AS delivered,
+        ROUND(100.0 * SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*), 1) AS delivery_rate
+    FROM shipping
+    GROUP BY carrier
+    ORDER BY total DESC;
+    ```
+
+    **Result:**
+
+    | carrier | total | delivered | delivery_rate |
+    | ---------- | ----------: | ----------: | ----------: |
+    | CJ대한통운 | 158460 | 153326 | 96.8 |
+    | 한진택배 | 99055 | 95746 | 96.7 |
+    | 로젠택배 | 79147 | 76537 | 96.7 |
+    | 우체국택배 | 59417 | 57501 | 96.8 |
+
+    > Actual values depend on the data.
+
+---
+
+### Problem 19
+
+**Find product count, avg price, and max price per supplier. Sort by product count descending.**
+
+??? tip "Hint"
+    JOIN `suppliers` with `products` then aggregate with `GROUP BY`. Use `COUNT`, `AVG`, `MAX`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        s.company_name,
+        COUNT(p.id) AS product_count,
+        ROUND(AVG(p.price), 0) AS avg_price,
+        MAX(p.price) AS max_price
+    FROM suppliers AS s
+    INNER JOIN products AS p ON s.id = p.supplier_id
+    GROUP BY s.id, s.company_name
+    ORDER BY product_count DESC
+    LIMIT 15;
+    ```
+
+    **Result (top 5 rows):**
+
+    | company_name | product_count | avg_price | max_price |
+    | ---------- | ----------: | ----------: | ----------: |
+    | 에이수스코리아 | 230 | 1290918.0 | 4621600.0 |
+    | 삼성전자 공식 유통 | 211 | 712006.0 | 2743700.0 |
+    | 로지텍코리아 | 153 | 122777.0 | 327600.0 |
+    | MSI코리아 | 137 | 1201664.0 | 4881500.0 |
+    | 앱솔루트 테크놀로지 | 129 | 171332.0 | 820400.0 |
+    | 레이저코리아 | 124 | 1105065.0 | 7495200.0 |
+    | 서린시스테크 | 120 | 153247.0 | 441700.0 |
+    | LG전자 공식 유통 | 118 | 1317411.0 | 3053700.0 |
+    | ... | ... | ... | ... |
+
+    > Actual values depend on the data.
+
+---
+
+### Problem 20
+
+**Find avg delivery days (order -> delivery) per carrier for delivered orders.**
+
+??? tip "Hint"
+    JOIN `shipping` with `orders`. Calculate date difference with `JULIANDAY(delivered_at) - JULIANDAY(ordered_at)`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        sh.carrier,
+        COUNT(*) AS delivered_count,
+        ROUND(AVG(JULIANDAY(sh.delivered_at) - JULIANDAY(o.ordered_at)), 1) AS avg_days,
+        MIN(CAST(JULIANDAY(sh.delivered_at) - JULIANDAY(o.ordered_at) AS INTEGER)) AS min_days,
+        MAX(CAST(JULIANDAY(sh.delivered_at) - JULIANDAY(o.ordered_at) AS INTEGER)) AS max_days
+    FROM shipping AS sh
+    INNER JOIN orders AS o ON sh.order_id = o.id
+    WHERE sh.status = 'delivered'
+      AND sh.delivered_at IS NOT NULL
+    GROUP BY sh.carrier
+    ORDER BY avg_days;
+    ```
+
+    **Result:**
+
+    | carrier | delivered_count | avg_days | min_days | max_days |
+    | ---------- | ----------: | ----------: | ----------: | ----------: |
+    | CJ대한통운 | 153326 | 4.5 | 2 | 7 |
+    | 로젠택배 | 76537 | 4.5 | 2 | 7 |
+    | 우체국택배 | 57501 | 4.5 | 2 | 7 |
+    | 한진택배 | 95746 | 4.5 | 2 | 7 |
+
+    > Actual values depend on the data.
+
+---
+
+### Problem 21
+
+**Find products tagged "Gaming" showing name, brand, price, and category. (M:N JOIN)**
+
+??? tip "Hint"
+    Filter tag name via `product_tags` -> `tags`, get product/category info via `product_tags` -> `products` -> `categories`.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        p.name AS product_name,
+        p.brand,
+        p.price,
+        cat.name AS category
+    FROM product_tags AS pt
+    INNER JOIN tags AS t ON pt.tag_id = t.id
+    INNER JOIN products AS p ON pt.product_id = p.id
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    WHERE t.name = 'Gaming'
+      AND p.is_active = 1
+    ORDER BY p.price DESC;
+    ```
+
+    **Result (top 5 rows):**
+
+    | product_name | brand | price | category |
+    |-------------|-------|-------|----------|
+    | ASUS ROG Strix GT35 | ASUS | 4314800 | 데스크톱 |
+    | Razer Blade 18 블랙 | Razer | 4182100 | 노트북 |
+    | Razer Blade 16 실버 | Razer | 4123800 | 노트북 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | MSI | 1744000 | 그래픽카드 |
+    | ASUS ROG Strix Scar 16 실버 | ASUS | 1586000 | 노트북 |
+
+    > Actual results depend on the data.
+
+---
+
+### Problem 22
+
+**Q&A thread query (Self-JOIN): Show Q&A questions and answers in a single row.**
+
+??? tip "Hint"
+    Questions: `parent_id IS NULL`. Answers: `parent_id` references the question `id`. Question(q) LEFT JOIN Answer(a) ON `a.parent_id = q.id`.
 
 ??? success "Answer"
     ```sql
@@ -393,66 +868,145 @@ Show Q&A pairs in one row: question content, customer name, answer content, staf
     LIMIT 20;
     ```
 
+    **Result (top 3 rows):**
+
+    | product_name | question | asked_by | asked_at | answer | answered_by | answered_at |
+    | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- |
+    | MSI Katana 15 | 후속 모델 출시 예정이 있나요? | 서지연 | 2025-12-30 23:57:48 | (NULL) | (NULL) | (NULL) |
+    | Dell UP3218K 실버 | 풀로드 시 팬 소음이 어느 정도인가요? | 박영식 | 2025-12-30 23:52:07 | (NULL) | (NULL) | (NULL) |
+    | HP ProDesk 400 G9 블랙 | 실제 소비 전력이 어느 정도인가요? | 이순옥 | 2025-12-30 22:56:41 | (NULL) | (NULL) | (NULL) |
+    | Razer Barracuda X 화이트 | 한국어 매뉴얼이 있나요? | 김명자 | 2025-12-30 22:55:40 | (NULL) | (NULL) | (NULL) |
+    | 삼성 SPA-KFG0BUB 화이트 | 풀로드 시 팬 소음이 어느 정도인가요? | 박준영 | 2025-12-30 20:00:41 | (NULL) | (NULL) | (NULL) |
+    | SK하이닉스 Platinum P41 2TB 블랙 | SSD 추가 장착이 가능한가요? | 양우진 | 2025-12-30 19:12:12 | (NULL) | (NULL) | (NULL) |
+    | TP-Link TL-SG108 실버 | 맥에서도 사용할 수 있나요? | 김지민 | 2025-12-30 18:51:07 | (NULL) | (NULL) | (NULL) |
+    | SteelSeries Aerox 5 Wireless 블랙 | 풀로드 시 팬 소음이 어느 정도인가요? | 박현지 | 2025-12-30 16:06:22 | (NULL) | (NULL) | (NULL) |
+    | ... | ... | ... | ... | ... | ... | ... |
+
+    > Questions without answers have NULL for answer/answered_by.
 
 ---
 
+### Problem 23
 
-### 16. Days with No Orders (CROSS JOIN)
+**Customer complaint details: Find customer name, order number, assigned staff, and complaint category. Most recent 15.**
 
-
-Using the calendar table, find dates in 2024 with zero orders.
-
-
-**Hint 1:** LEFT JOIN `calendar` with `orders` on date. Extract date from `ordered_at` with `SUBSTR(ordered_at, 1, 10)`. Filter `WHERE o.id IS NULL` for no-order days.
-
+??? tip "Hint"
+    LEFT JOIN `complaints` with `customers`, `orders` (nullable), and `staff` (nullable). Include general inquiries without orders.
 
 ??? success "Answer"
     ```sql
     SELECT
-        cal.date_key,
-        cal.day_name,
-        cal.is_weekend,
-        cal.is_holiday,
-        cal.holiday_name
-    FROM calendar AS cal
-    LEFT JOIN (
-        SELECT DISTINCT SUBSTR(ordered_at, 1, 10) AS order_date
-        FROM orders
-    ) AS od ON cal.date_key = od.order_date
-    WHERE cal.year = 2024
-      AND od.order_date IS NULL
-    ORDER BY cal.date_key;
+        cpl.id,
+        c.name AS customer_name,
+        o.order_number,
+        s.name AS staff_name,
+        cpl.category,
+        cpl.priority,
+        cpl.status,
+        cpl.created_at
+    FROM complaints AS cpl
+    INNER JOIN customers AS c ON cpl.customer_id = c.id
+    LEFT JOIN orders AS o ON cpl.order_id = o.id
+    LEFT JOIN staff AS s ON cpl.staff_id = s.id
+    ORDER BY cpl.created_at DESC
+    LIMIT 15;
     ```
 
+    **Result (top 5 rows):**
+
+    | id | customer_name | order_number | staff_name | category | priority | status | created_at |
+    | ----------: | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- | ---------- |
+    | 33270 | 송광수 | ORD-20251211-413965 | 이현준 | delivery_issue | medium | closed | 2026-01-14 17:40:57 |
+    | 33595 | 김은정 | ORD-20251231-417744 | 이순자 | delivery_issue | medium | closed | 2026-01-14 14:14:25 |
+    | 33570 | 김예은 | ORD-20251230-417476 | 이현준 | refund_request | urgent | closed | 2026-01-13 14:47:24 |
+    | 33597 | 박성호 | ORD-20251231-417761 | 이현준 | exchange_request | medium | closed | 2026-01-13 12:22:20 |
+    | 33599 | 김영수 | ORD-20251231-417780 | 이순자 | price_inquiry | high | resolved | 2026-01-13 11:32:17 |
+    | 33577 | 홍도현 | ORD-20251230-417527 | 이순자 | refund_request | high | closed | 2026-01-13 10:54:24 |
+    | 33590 | 이주원 | ORD-20251231-417649 | 이현준 | refund_request | high | closed | 2026-01-12 22:43:43 |
+    | 33543 | 문은영 | ORD-20251228-417236 | 이현준 | refund_request | medium | closed | 2026-01-12 18:56:18 |
+    | ... | ... | ... | ... | ... | ... | ... | ... |
+
+    > NULL order_number indicates a general inquiry (not order-related).
 
 ---
 
+### Problem 24
 
-### 17. Product Tag Search (M:N JOIN)
+**Product successor chain (Self-JOIN): Find discontinued products with their successor models.**
 
-
-Find products with the "Gaming" tag.
-Show product name, brand, price, and category.
-
-
-**Hint 1:** JOIN `product_tags` -> `tags` to filter by tag name. JOIN `product_tags` -> `products` for product info. `tags.name = 'Gaming'`.
-
+??? tip "Hint"
+    `products.successor_id` references `id` in the same table. `products AS p JOIN products AS succ ON p.successor_id = succ.id`.
 
 ??? success "Answer"
     ```sql
     SELECT
-        p.name   AS product_name,
-        p.brand,
-        p.price,
-        cat.name AS category
-    FROM product_tags AS pt
-    INNER JOIN tags       AS t   ON pt.tag_id     = t.id
-    INNER JOIN products   AS p   ON pt.product_id = p.id
-    INNER JOIN categories AS cat ON p.category_id = cat.id
-    WHERE t.name = 'Gaming'
-      AND p.is_active = 1
-    ORDER BY p.price DESC;
+        p.name        AS discontinued_product,
+        p.price       AS old_price,
+        p.discontinued_at,
+        succ.name     AS successor_product,
+        succ.price    AS new_price,
+        ROUND(succ.price - p.price, 0) AS price_diff
+    FROM products AS p
+    INNER JOIN products AS succ ON p.successor_id = succ.id
+    WHERE p.discontinued_at IS NOT NULL
+    ORDER BY p.discontinued_at DESC
+    LIMIT 20;
     ```
 
+    **Result (top 5 rows):**
+
+    | discontinued_product | old_price | discontinued_at | successor_product | new_price | price_diff |
+    | ---------- | ----------: | ---------- | ---------- | ----------: | ----------: |
+    | 로지텍 G715 실버 | 100600.0 | 2025-12-27 19:50:12 | 로지텍 G715 화이트 | 196000.0 | 95400.0 |
+    | 주연 리오나인 i9 하이엔드 실버 | 1663400.0 | 2025-12-15 15:04:20 | 한성 보스몬스터 DX5800 블랙 | 609200.0 | -1054200.0 |
+    | Apple Magic Keyboard 숫자 키패드 포함 블랙 | 140700.0 | 2025-12-14 10:44:03 | 로지텍 ERGO K860 화이트 | 116300.0 | -24400.0 |
+    | APC Smart-UPS SMT1500 화이트 | 548700.0 | 2025-11-24 01:47:28 | APC Back-UPS Pro BR1500G 블랙 | 217000.0 | -331700.0 |
+    | Intel NUC 13 Pro 블랙 | 512900.0 | 2025-11-20 14:16:24 | ASUS NUC 14 Pro+ 블랙 | 1233300.0 | 720400.0 |
+    | Apple Magic Mouse | 98500.0 | 2025-11-14 10:48:19 | Microsoft Arc Mouse 실버 | 66000.0 | -32500.0 |
+    | 레노버 ThinkPad T14s | 2576700.0 | 2025-11-12 20:25:30 | 삼성 갤럭시북4 프로 360 실버 | 1858500.0 | -718200.0 |
+    | ASUS ROG Strix G16CH 실버 | 3224500.0 | 2025-10-30 23:43:51 | 주연 리오나인 R7 시스템 실버 | 1754300.0 | -1470200.0 |
+    | ... | ... | ... | ... | ... | ... |
+
+    > Actual results depend on the data.
 
 ---
+
+### Problem 25
+
+**Find revenue share by customer grade and payment method. Exclude cancelled.**
+
+??? tip "Hint"
+    JOIN 3 tables: `customers` -> `orders` -> `payments`. Cross-tabulate with `GROUP BY c.grade, pay.method` and calculate share within each grade.
+
+??? success "Answer"
+    ```sql
+    SELECT
+        c.grade,
+        pay.method,
+        COUNT(*) AS order_count,
+        ROUND(SUM(pay.amount), 0) AS total_amount,
+        ROUND(100.0 * SUM(pay.amount) / SUM(SUM(pay.amount)) OVER (PARTITION BY c.grade), 1) AS pct_in_grade
+    FROM customers AS c
+    INNER JOIN orders AS o ON c.id = o.customer_id
+    INNER JOIN payments AS pay ON o.id = pay.order_id
+    WHERE o.status NOT IN ('cancelled')
+      AND pay.status = 'completed'
+    GROUP BY c.grade, pay.method
+    ORDER BY c.grade, total_amount DESC;
+    ```
+
+    **Result (상위 8행):**
+
+    | grade | method | order_count | total_amount | pct_in_grade |
+    | ---------- | ---------- | ----------: | ----------: | ----------: |
+    | BRONZE | card | 37883 | 34898879078.0 | 45.2 |
+    | BRONZE | kakao_pay | 16783 | 15394346630.0 | 20.0 |
+    | BRONZE | naver_pay | 12505 | 11438714795.0 | 14.8 |
+    | BRONZE | bank_transfer | 8562 | 7798095897.0 | 10.1 |
+    | BRONZE | virtual_account | 4255 | 3929589888.0 | 5.1 |
+    | BRONZE | point | 4124 | 3671393885.0 | 4.8 |
+    | GOLD | card | 37930 | 39631329241.0 | 45.0 |
+    | GOLD | kakao_pay | 16585 | 17303693765.0 | 19.7 |
+    | ... | ... | ... | ... | ... |
+
+    > Actual values depend on the data. Uses window function `SUM() OVER()` for within-grade share.

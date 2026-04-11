@@ -1,31 +1,46 @@
-# Stored Procedures (MySQL / PostgreSQL)
+# 04. Stored Procedures
 
-When generating for MySQL or PostgreSQL, native stored procedures/functions are included. SQLite does not support stored procedures.
+## What is a Stored Procedure?
+
+A stored procedure is **frequently used SQL logic stored in the database with a name**. It accepts parameters, executes complex business logic (transactions, conditional branching, loops, etc.), and returns results.
+
+**Why use stored procedures:**
+
+- **Reusability** -- Write complex logic like order creation or point expiration once, call from anywhere
+- **Atomicity** -- Safely process operations that modify multiple tables by wrapping them in a single transaction
+- **Security** -- Grant only procedure execution permissions instead of direct INSERT/UPDATE access to tables
+- **Performance** -- Executes directly on the DB server, reducing network round-trips between application and DB
+
+Detailed learning about stored procedures is covered in [Lesson 26. Stored Procedures](../advanced/26-stored-procedures.md).
+
+## Procedure List
+
+When creating MySQL/PostgreSQL databases, native stored procedures/functions are included. SQLite does not support stored procedures.
 
 | Procedure/Function | Description | Pattern | DB |
 |-------------------|-------------|---------|:--:|
-| sp_place_order | Place Order | Transaction + multi-table INSERT | `M` `P` |
-| sp_expire_points | Expire Points | Batch UPDATE + conditional aggregation | `M` `P` |
-| sp_monthly_settlement | Monthly Settlement Report | Report / result set return | `M` `P` |
-| sp_cancel_order | Cancel Order & Restore Stock | State transition + business rule validation | `M` `P` |
-| sp_update_customer_grades | Recalculate Customer Grades | Aggregate-based grade update + history | `M` `P` |
-| sp_cleanup_abandoned_carts | Clean Up Abandoned Carts | FK-aware DELETE (child → parent) | `M` `P` |
-| sp_product_restock | Product Restocking | Stock update + transaction logging | `M` `P` |
-| sp_customer_statistics | Customer Statistics | OUT parameters / RETURNS TABLE | `M` `P` |
-| sp_daily_summary | Daily KPI Summary | Multi-result set (multiple SELECTs) | `M` `P` |
-| sp_search_products | Dynamic Product Search | Dynamic SQL (PREPARE/EXECUTE) | `M` `P` |
-| sp_transfer_points | Transfer Points | Two-row atomic UPDATE on same table | `M` `P` |
-| sp_generate_order_report | Order Detail Report | Cursor (FETCH LOOP) traversal | `M` `P` |
-| sp_bulk_update_prices | Bulk Price Update | Array/JSON parameter processing | `M` `P` |
-| sp_archive_old_orders | Archive Old Orders | Cross-table data movement | `M` `P` |
-| refresh_materialized_views | Refresh Materialized Views | REFRESH CONCURRENTLY | `P` |
+| sp_place_order | Create order | Transaction + multi-table INSERT | `M` `P` |
+| sp_expire_points | Point expiration processing | Batch UPDATE + conditional aggregation | `M` `P` |
+| sp_monthly_settlement | Monthly settlement report | Report/result set return | `M` `P` |
+| sp_cancel_order | Cancel order and restore stock | State transition + business rule validation | `M` `P` |
+| sp_update_customer_grades | Recalculate customer grades | Aggregation-based grade update + history recording | `M` `P` |
+| sp_cleanup_abandoned_carts | Clean up abandoned carts | FK-aware DELETE (child then parent) | `M` `P` |
+| sp_product_restock | Product restocking | Stock update + history recording | `M` `P` |
+| sp_customer_statistics | Customer statistics query | OUT parameters / RETURNS TABLE | `M` `P` |
+| sp_daily_summary | Daily KPI summary | Composite result set (multiple SELECT) | `M` `P` |
+| sp_search_products | Dynamic product search | Dynamic SQL (PREPARE/EXECUTE) | `M` `P` |
+| sp_transfer_points | Point transfer | Atomic UPDATE of two rows in same table | `M` `P` |
+| sp_generate_order_report | Order detail report | Cursor (CURSOR) traversal | `M` `P` |
+| sp_bulk_update_prices | Bulk price update | Array/JSON parameters | `M` `P` |
+| sp_archive_old_orders | Archive old orders | Data migration between tables | `M` `P` |
+| refresh_materialized_views | Materialized View refresh | REFRESH CONCURRENTLY | `P` |
 
 > `M` = MySQL  `P` = PostgreSQL
 
 
-### sp_place_order — Place Order
+### sp_place_order -- Create Order
 
-Creates an order from the active cart. Auto-generates order number, moves cart items to order items, marks cart as converted.
+Creates an order from the active cart. Auto-generates the order number, moves cart items to order items, and changes cart status to converted.
 
 ```mermaid
 flowchart TD
@@ -33,8 +48,8 @@ flowchart TD
     B --> C{"Total = 0?"}
     C -- Yes --> D["ERROR: Cart is empty"]
     C -- No --> E["Generate order number"]
-    E --> F["INSERT into orders"]
-    F --> G["Move cart_items → order_items"]
+    E --> F["orders INSERT"]
+    F --> G["cart_items -> order_items move"]
     G --> H["Cart status = 'converted'"]
     H --> I["COMMIT"]
 ```
@@ -179,15 +194,15 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_expire_points — Expire Points
+### sp_expire_points -- Point Expiration Processing
 
-Expires earn-type point transactions past their expiry date. Records expiry entries and updates customer balances.
+Expires earned points past their validity period. Records expiration transactions and updates customer balances.
 
 ```mermaid
 flowchart TD
-    A["Call: sp_expire_points()"] --> B["Find expired records
+    A["Call: sp_expire_points()"] --> B["Query expiration targets
     type='earn' AND expires_at < now()"]
-    B --> C["INSERT expiry transactions
+    B --> C["Expiration txn INSERT
     type='expire', amount=-N"]
     C --> D["Deduct customer point_balance"]
     D --> E["COMMIT
@@ -315,16 +330,16 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_monthly_settlement — Monthly Settlement Report
+### sp_monthly_settlement -- Monthly Settlement Report
 
-Returns order summary (revenue, cancellations, returns, avg order value) for the given year/month.
+Returns the order summary (revenue, cancellations, returns, average order value) for a given year/month.
 
 ```mermaid
 flowchart TD
-    A["Call: sp_monthly_settlement(year, month)"] --> B["Calculate date range
+    A["Call: sp_monthly_settlement(year, month)"] --> B["Calculate period
     start_date ~ end_date"]
-    B --> C["Aggregate order summary
-    revenue, cancels, returns, avg"]
+    B --> C["Order summary aggregation
+    Revenue, cancellations, returns, average"]
     C --> D["Return result set"]
 ```
 
@@ -434,9 +449,9 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### refresh_materialized_views — Refresh Materialized Views
+### refresh_materialized_views -- Materialized View Refresh
 
-Refreshes mv_monthly_sales and mv_product_performance concurrently.
+Refreshes mv_monthly_sales and mv_product_performance CONCURRENTLY.
 
 ```mermaid
 flowchart LR
@@ -460,13 +475,13 @@ flowchart LR
 
 
 
-### sp_cancel_order — Cancel Order & Restore Stock
+### sp_cancel_order -- Cancel Order and Restore Stock
 
-Cancels an order and restores stock. Handles payment refund, point restoration, and order status transition within a transaction.
+Cancels the order and restores stock. Handles payment refund, used point return, and order status transition within a transaction.
 
 ```mermaid
 flowchart TD
-    A["Call: sp_cancel_order(order_id, reason)"] --> B["Fetch order + FOR UPDATE"]
+    A["Call: sp_cancel_order(order_id, reason)"] --> B["Query order + FOR UPDATE"]
     B --> C{"Status is pending
     or paid?"}
     C -- No --> D["ERROR: Cannot cancel"]
@@ -475,7 +490,7 @@ flowchart TD
     E --> F{"Points
     used?"}
     F -- No --> G["Order status = 'cancelled'"]
-    F -- Yes --> H["Restore points
+    F -- Yes --> H["Return points
     point_balance += used"]
     H --> G
     G --> I["Payment status = 'refunded'"]
@@ -614,23 +629,23 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_update_customer_grades — Recalculate Customer Grades
+### sp_update_customer_grades -- Recalculate Customer Grades
 
-Recalculates customer grades (BRONZE/SILVER/GOLD/VIP) based on last 12 months of spending. Grade changes are recorded in `customer_grade_history`.
+Recalculates customer grades (BRONZE/SILVER/GOLD/VIP) based on spending over the last 12 months. Changed grades are recorded in `customer_grade_history`.
 
 ```mermaid
 flowchart TD
     A["Call: sp_update_customer_grades()"] --> B["Aggregate last 12 months spending"]
-    B --> C["Calculate grade
+    B --> C["Determine grade
     5M+ VIP, 2M+ GOLD,
     500K+ SILVER, else BRONZE"]
     C --> D{"Different from
     current grade?"}
     D -- No --> E["No change"]
-    D -- Yes --> F["UPDATE customers.grade"]
-    F --> G["INSERT customer_grade_history"]
+    D -- Yes --> F["customers.grade UPDATE"]
+    F --> G["customer_grade_history INSERT"]
     G --> H["COMMIT
-    Return updated count"]
+    Return change count"]
 ```
 
 === "MySQL"
@@ -742,16 +757,16 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_cleanup_abandoned_carts — Clean Up Abandoned Carts
+### sp_cleanup_abandoned_carts -- Clean Up Abandoned Carts
 
-Deletes abandoned carts and their items older than the specified number of days. Designed for periodic scheduling.
+Deletes abandoned carts and their items older than the specified number of days. Designed for scheduled batch runs.
 
 ```mermaid
 flowchart TD
     A["Call: sp_cleanup_abandoned_carts(days_old)"] --> B["cutoff = now() - days_old"]
-    B --> C["DELETE cart_items
-    (children first)"]
-    C --> D["DELETE carts
+    B --> C["cart_items DELETE
+    (child first)"]
+    C --> D["carts DELETE
     status='abandoned'
     AND updated_at < cutoff"]
     D --> E["Return deleted count"]
@@ -816,19 +831,19 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_product_restock — Product Restocking
+### sp_product_restock -- Product Restocking
 
-Increases product stock and records the inbound transaction in `inventory_transactions`. Includes quantity validation.
+Increases product stock and records inbound history in `inventory_transactions`. Includes quantity validation.
 
 ```mermaid
 flowchart TD
     A["Call: sp_product_restock(product_id, qty, notes)"] --> B{"qty > 0?"}
-    B -- No --> C["ERROR: Must be positive"]
+    B -- No --> C["ERROR: Quantity must be positive"]
     B -- Yes --> D["products.stock_qty += qty"]
     D --> E{"Product exists?"}
-    E -- No --> F["ERROR: Not found"]
-    E -- Yes --> G["INSERT inventory_transactions
-    type='inbound'"]
+    E -- No --> F["ERROR: Product not found"]
+    E -- Yes --> G["inventory_transactions
+    INSERT type='inbound'"]
     G --> H["COMMIT
     Return new stock"]
 ```
@@ -917,16 +932,16 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_customer_statistics — Customer Statistics
+### sp_customer_statistics -- Customer Statistics Query
 
-Returns a customer's order count, total spending, average order value, and days since last order. MySQL uses OUT parameters; PostgreSQL uses RETURNS TABLE.
+Returns order count, total spend, average order value, and days since last order for a specific customer. MySQL uses OUT parameters, PostgreSQL uses RETURNS TABLE pattern.
 
 ```mermaid
 flowchart LR
-    A["Call: sp_customer_statistics(customer_id)"] --> B["Aggregate orders
+    A["Call: sp_customer_statistics(customer_id)"] --> B["orders aggregation
     COUNT, SUM, AVG, MAX"]
-    B --> C["OUT: orders, total,
-    avg, days_since_last"]
+    B --> C["OUT: order count, total,
+    average, days since last order"]
 ```
 
 === "MySQL"
@@ -975,15 +990,15 @@ flowchart LR
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_daily_summary — Daily KPI Summary
+### sp_daily_summary -- Daily KPI Summary
 
-Returns order summary (revenue, cancellations, avg order value), new customer count, and review count for a given date.
+Returns order summary (revenue, cancellations, average order value), new customer count, and review count for a given date.
 
 ```mermaid
 flowchart TD
-    A["Call: sp_daily_summary(date)"] --> B["Range: date ~ date+1"]
-    B --> C["Order KPIs
-    revenue, cancels, avg"]
+    A["Call: sp_daily_summary(date)"] --> B["Period: date ~ date+1"]
+    B --> C["Order KPI
+    Revenue, cancellations, average"]
     B --> D["New customer count"]
     B --> E["Review count + avg rating"]
     C --> F["Return result set"]
@@ -1063,9 +1078,9 @@ flowchart TD
     ```
 
 
-### sp_search_products — Dynamic Product Search
+### sp_search_products -- Dynamic Product Search
 
-Searches products with optional filters (keyword, category, price range, stock). Uses dynamic SQL (PREPARE/EXECUTE) to build conditional WHERE clauses.
+Searches products by combining optional filters: keyword, category, price range, stock availability. Builds conditional WHERE clauses using dynamic SQL (PREPARE/EXECUTE).
 
 ```mermaid
 flowchart TD
@@ -1076,10 +1091,10 @@ flowchart TD
     C -- No --> E{"category_id?"}
     D --> E
     E -- Yes --> F["+ category_id = N"]
-    E -- No --> G{"price range?"}
+    E -- No --> G{"Price range?"}
     F --> G
     G -- Yes --> H["+ price BETWEEN min AND max"]
-    G -- No --> I{"stock only?"}
+    G -- No --> I{"In stock only?"}
     H --> I
     I -- Yes --> J["+ stock_qty > 0"]
     I -- No --> K["PREPARE + EXECUTE"]
@@ -1192,25 +1207,25 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_transfer_points — Transfer Points
+### sp_transfer_points -- Point Transfer
 
-Transfers points between two customers. Atomically UPDATEs two rows in the same table, acquiring locks in consistent order to prevent deadlocks.
+Transfers points from one customer to another. Atomically UPDATEs two rows in the same table and acquires locks in a consistent order to prevent deadlocks.
 
 ```mermaid
 flowchart TD
     A["Call: sp_transfer_points(from, to, amount)"] --> B{"amount > 0?
-    from ≠ to?"}
+    from != to?"}
     B -- No --> C["ERROR: Validation failed"]
-    B -- Yes --> D["Lock both rows
+    B -- Yes --> D["Acquire locks on both rows
     LEAST/GREATEST order"]
-    D --> E{"balance ≥ amount?"}
+    D --> E{"Balance >= amount?"}
     E -- No --> F["ERROR: Insufficient balance"]
     E -- Yes --> G["Sender
     balance -= amount"]
     G --> H["Receiver
     balance += amount"]
-    H --> I["INSERT point_transactions
-    for both sides"]
+    H --> I["point_transactions
+    INSERT for both sides"]
     I --> J["COMMIT"]
 ```
 
@@ -1325,19 +1340,19 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_generate_order_report — Order Detail Report
+### sp_generate_order_report -- Order Detail Report
 
-Iterates over orders using a CURSOR, collecting per-order details (item count, top product). A textbook example of the FETCH LOOP pattern.
+Iterates through orders with a cursor (CURSOR) and aggregates per-order details (item count, highest-priced product). A typical use case for the FETCH LOOP pattern.
 
 ```mermaid
 flowchart TD
-    A["Call: sp_generate_order_report(year, month)"] --> B["OPEN cursor
-    fetch month's orders"]
+    A["Call: sp_generate_order_report(year, month)"] --> B["Cursor OPEN
+    Query orders for the month"]
     B --> C{"FETCH next row"}
-    C -- No rows --> F["CLOSE cursor"]
-    C -- Row found --> D["Count items
-    find top product"]
-    D --> E["INSERT into temp table"]
+    C -- No rows --> F["Cursor CLOSE"]
+    C -- Row found --> D["Aggregate item count
+    Query highest-priced product"]
+    D --> E["Temp table INSERT"]
     E --> C
     F --> G["Return temp table results"]
 ```
@@ -1444,21 +1459,21 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_bulk_update_prices — Bulk Price Update
+### sp_bulk_update_prices -- Bulk Price Update
 
-Updates multiple product prices from a JSON array. MySQL uses `JSON_TABLE`, PostgreSQL uses `jsonb_to_recordset`. Price history is automatically recorded before changes.
+Updates prices for multiple products at once using a JSON array. MySQL uses `JSON_TABLE`, PostgreSQL uses `jsonb_to_recordset`. Previous prices are automatically recorded in the history table.
 
 ```mermaid
 flowchart TD
     A["Call: sp_bulk_update_prices(json_array)"] --> B["Parse JSON
-    extract product_id, new_price"]
-    B --> C["Filter products with changed price"]
-    C --> D["INSERT old prices
-    into product_prices"]
-    D --> E["Bulk UPDATE
-    products.price"]
+    Extract product_id, new_price"]
+    B --> C["Filter products with different prices"]
+    C --> D["product_prices
+    INSERT existing price history"]
+    D --> E["products.price
+    Bulk UPDATE"]
     E --> F["COMMIT
-    Return updated count"]
+    Return change count"]
 ```
 
 === "MySQL"
@@ -1536,18 +1551,18 @@ flowchart TD
     $$ LANGUAGE plpgsql;
     ```
 
-### sp_archive_old_orders — Archive Old Orders
+### sp_archive_old_orders -- Archive Old Orders
 
-Archives completed/returned orders older than a given date. In production this would be `INSERT INTO archive SELECT + DELETE`; the tutorial uses note-marking as a safe alternative.
+Archives completed/returned orders before a specified date. In production, the `INSERT INTO archive SELECT + DELETE` pattern is used, but this tutorial substitutes with note marking.
 
 ```mermaid
 flowchart TD
-    A["Call: sp_archive_old_orders(before_date)"] --> B["Find targets
+    A["Call: sp_archive_old_orders(before_date)"] --> B["Query targets
     confirmed/returned
     AND ordered_at < cutoff"]
     B --> C{"Targets found?"}
     C -- No --> D["Return 0"]
-    C -- Yes --> E["Mark orders archived
+    C -- Yes --> E["Mark orders as archived
     notes += '[Archived]'"]
     E --> F["COMMIT
     Return archived count"]

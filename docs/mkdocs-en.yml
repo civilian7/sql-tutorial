@@ -48,75 +48,95 @@ hooks:
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
+  - Getting Started:
+    - setup/index.md
+    - "00. Download the Project": setup/00-install.md
+    - "01. Choose a Database": setup/01-choose-db.md
+    - "02. Install the Database": setup/02-database.md
+    - "03. Generate Data": setup/03-generate.md
+    - "04. Advanced Generator Options": setup/04-generate-advanced.md
+    - "05. Verify & First Query": setup/05-verify.md
   - Database Schema:
-    - "00. Overview": schema/index.md
-    - "01. Table Details": schema/tables.md
+    - schema/index.md
+    - "01. Tables": schema/tables.md
     - "02. Views": schema/views.md
     - "03. Triggers": schema/triggers.md
     - "04. Stored Procedures": schema/procedures.md
     - "05. Schema Queries": schema/queries.md
-  - Beginner:
-    - "00. Introduction to Databases & SQL": beginner/00-introduction.md
-    - "01. SELECT Basics": beginner/01-select.md
-    - "02. Filtering with WHERE": beginner/02-where.md
-    - "03. Sorting & Limiting": beginner/03-sort-limit.md
-    - "04. Aggregate Functions": beginner/04-aggregates.md
-    - "05. GROUP BY & HAVING": beginner/05-group-by.md
-    - "06. NULL Handling": beginner/06-null.md
-  - Intermediate:
-    - "07. INNER JOIN": intermediate/07-inner-join.md
-    - "08. LEFT JOIN & Outer Joins": intermediate/08-left-join.md
-    - "09. Subqueries": intermediate/09-subqueries.md
-    - "10. CASE Expressions": intermediate/10-case.md
-    - "11. Date & Time Functions": intermediate/11-datetime.md
-    - "12. String Functions": intermediate/12-string.md
-    - "13. UNION & Set Operations": intermediate/13-union.md
-    - "14. INSERT, UPDATE, DELETE": intermediate/14-dml.md
-    - "15. DDL": intermediate/15-ddl.md
-    - "16. Transactions & ACID": intermediate/16-transactions.md
-    - "17. SELF JOIN & CROSS JOIN": intermediate/17-self-cross-join.md
-  - Advanced:
-    - "18. Window Functions": advanced/18-window.md
-    - "19. CTE & Recursive CTE": advanced/19-cte.md
-    - "20. EXISTS & Correlated Subqueries": advanced/20-exists.md
-    - "21. Views": advanced/21-views.md
-    - "22. Indexes & Performance": advanced/22-indexes.md
-    - "23. Triggers": advanced/23-triggers.md
-    - "24. Querying JSON Data": advanced/24-json.md
-    - "25. Stored Procedures": advanced/25-stored-procedures.md
+    - "06. Persona Guide": schema/personas.md
+  - Lessons:
+    - Beginner:
+      - "00. Introduction to Databases & SQL": beginner/00-introduction.md
+      - "01. SELECT Basics": beginner/01-select.md
+      - "02. Filtering with WHERE": beginner/02-where.md
+      - "03. Sorting & Pagination": beginner/03-sort-limit.md
+      - "04. Aggregate Functions": beginner/04-aggregates.md
+      - "05. GROUP BY & HAVING": beginner/05-group-by.md
+      - "06. NULL Handling": beginner/06-null.md
+      - "07. CASE Expressions": beginner/07-case.md
+    - Intermediate:
+      - "08. INNER JOIN": intermediate/08-inner-join.md
+      - "09. LEFT JOIN & Outer Joins": intermediate/09-left-join.md
+      - "10. Subqueries": intermediate/10-subqueries.md
+      - "11. Date & Time Functions": intermediate/11-datetime.md
+      - "12. String Functions": intermediate/12-string.md
+      - "13. Numeric, Conversion & Conditional Functions": intermediate/13-utility-functions.md
+      - "14. UNION": intermediate/14-union.md
+      - "15. INSERT, UPDATE, DELETE": intermediate/15-dml.md
+      - "16. DDL — Creating & Altering Tables": intermediate/16-ddl.md
+      - "17. Transactions & ACID": intermediate/17-transactions.md
+    - Advanced:
+      - "18. Window Functions": advanced/18-window.md
+      - "19. CTE & Recursive CTE": advanced/19-cte.md
+      - "20. EXISTS & Correlated Subqueries": advanced/20-exists.md
+      - "21. SELF JOIN & CROSS JOIN": advanced/21-self-cross-join.md
+      - "22. Views": advanced/22-views.md
+      - "23. Indexes & Query Plans": advanced/23-indexes.md
+      - "24. Triggers": advanced/24-triggers.md
+      - "25. JSON Data Queries": advanced/25-json.md
+      - "26. Stored Procedures & Functions": advanced/26-stored-procedures.md
   - Reference:
-    - "Generator Reference": generator-guide.md
     - "SQL Across Databases": dialect-comparison.md
+    - "Glossary": appendix/glossary.md
+  - Appendix — DBA Basics:
+    - "Security & Permissions": appendix/dba-security.md
+    - "Concurrency & Isolation": appendix/dba-concurrency.md
+    - "Database Maintenance": appendix/dba-maintenance.md
   - Exercises:
     - exercises/index.md
     - Beginner:
       - "Product Exploration": exercises/beginner-01-products.md
-      - "Customer Analysis": exercises/beginner-02-customers.md
-      - "Order Basics": exercises/beginner-03-orders.md
-      - "Fill in the Blanks": exercises/beginner-04-fill-blanks.md
+      - "Sorting & Paging": exercises/beginner-02-sort-paging.md
+      - "Aggregate Functions": exercises/beginner-03-aggregates.md
+      - "Grouping & Filtering": exercises/beginner-04-group-by.md
+      - "NULL Handling": exercises/beginner-05-null.md
+      - "CASE Expressions": exercises/beginner-06-case.md
+      - "Comprehensive": exercises/beginner-07-comprehensive.md
+      - "SQL Error Detection": exercises/beginner-08-debugging.md
     - Intermediate:
       - "JOIN Master": exercises/intermediate-01-joins.md
       - "Date & Time Analysis": exercises/intermediate-02-dates.md
-      - "Subqueries & Transformations": exercises/intermediate-03-subqueries.md
-      - "Constraints": exercises/intermediate-04-constraints.md
-      - "Transactions": exercises/intermediate-05-transactions.md
-      - "SQL Debugging": exercises/intermediate-06-debugging.md
-      - "Data Quality Checks": exercises/intermediate-07-data-quality.md
-
+      - "String & Math Functions": exercises/intermediate-03-string-math.md
+      - "Subqueries": exercises/intermediate-04-subqueries.md
+      - "Set Operations": exercises/intermediate-05-set-operations.md
+      - "DML Practice": exercises/intermediate-06-dml.md
+      - "DDL & Constraints": exercises/intermediate-07-ddl.md
+      - "Transactions": exercises/intermediate-08-transactions.md
+      - "Comprehensive": exercises/intermediate-09-comprehensive.md
+      - "SQL Debugging": exercises/intermediate-10-debugging.md
+      - "Data Quality": exercises/intermediate-11-data-quality.md
     - Advanced:
-      - "Sales Analysis": exercises/advanced-01-sales-analysis.md
-      - "Customer Segmentation": exercises/advanced-02-customer-segmentation.md
-      - "Inventory Management": exercises/advanced-03-inventory.md
-      - "CS Performance": exercises/advanced-04-cs-performance.md
-      - "Real-World SQL Patterns": exercises/advanced-05-real-world-patterns.md
-      - "Normalization": exercises/advanced-06-normalization.md
-      - "Business Scenarios": exercises/advanced-07-scenarios.md
-      - "Query Optimization": exercises/advanced-08-optimization.md
-      - "Interview Prep": exercises/advanced-09-interview.md
-      - "Advanced Analytics": exercises/advanced-10-analytics.md
+      - "Window Functions": exercises/advanced-01-window-functions.md
+      - "CTE Mastery": exercises/advanced-02-cte.md
+      - "EXISTS & Anti-Patterns": exercises/advanced-03-exists-antipattern.md
+      - "DB Object Design": exercises/advanced-04-db-objects.md
+      - "JSON Queries": exercises/advanced-05-json.md
+      - "Indexes & Optimization": exercises/advanced-06-optimization.md
+      - "Sales Analysis": exercises/advanced-07-sales-analysis.md
+      - "Customer & Operations": exercises/advanced-08-customer-ops.md
+      - "SQL Patterns": exercises/advanced-09-patterns.md
+      - "Interview Prep": exercises/advanced-10-interview.md
       - "Challenge Problems": exercises/advanced-11-challenge.md
-      - "EXPLAIN / Query Plan": exercises/advanced-12-explain-plan.md
 
 plugins:
   - search
@@ -144,6 +164,10 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_div_format
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.keys
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - attr_list
   - md_in_html
   - tables

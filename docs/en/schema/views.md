@@ -1,54 +1,69 @@
-# Views
+# 02. Views
 
-18 pre-built views let you run complex analytical queries out of the box.
+## What is a View?
+
+A view is **a saved SELECT query with a name**. You can query it like a table with `SELECT * FROM v_monthly_sales`, but it does not store data directly. The internal SQL executes each time the view is queried.
+
+**Why use views:**
+
+- **Convenience** -- No need to write a complex query joining 5 tables every time
+- **Consistency** -- The calculation method for "monthly revenue" is defined once in the view, so everyone gets the same result
+- **Security** -- Granting access to views instead of raw tables prevents exposing sensitive columns (email, phone, etc.)
+- **Abstraction** -- Even if table structures change, maintaining the view interface prevents existing queries from breaking
+
+Detailed learning about views is covered in [Lesson 22. Views](../advanced/22-views.md).
+
+## View List
+
+18 predefined views allow you to run complex analytical queries immediately.
 
 | View | Description | SQL Pattern |
-|------|-------------|-------------|
-| v_monthly_sales | Monthly Sales Summary | GROUP BY + date functions |
-| v_daily_orders | Daily Order Summary | GROUP BY + CASE pivot |
-| v_hourly_pattern | Hourly Order Pattern | Hour extraction + CASE classification |
-| v_revenue_growth | Monthly Revenue Growth | LAG window function |
-| v_yearly_kpi | Annual KPI Summary | Multiple subquery LEFT JOINs |
-| v_customer_rfm | Customer RFM Analysis | NTILE window + CTE + CASE |
-| v_customer_summary | Customer Profile Summary | Multiple LEFT JOINs + COALESCE |
-| v_order_detail | Order Detail Join | 5-table denormalized JOIN |
-| v_product_performance | Product Performance | Multiple LEFT JOINs + margin calc |
-| v_product_abc | Product ABC Analysis | Cumulative SUM OVER + CASE |
-| v_top_products_by_category | Top Products by Category | ROW_NUMBER PARTITION BY |
-| v_category_tree | Category Tree | Recursive CTE + path string |
-| v_payment_summary | Payment Method Summary | Ratio calc (scalar subquery) |
-| v_supplier_performance | Supplier Performance | Multiple LEFT JOINs + return rate |
-| v_staff_workload | CS Staff Workload | LEFT JOIN + avg processing time |
-| v_coupon_effectiveness | Coupon Effectiveness | ROI calc (revenue / discount) |
-| v_return_analysis | Return Analysis | GROUP BY + CASE pivot + AVG |
-| v_cart_abandonment | Cart Abandonment Analysis | JOIN + GROUP_CONCAT/STRING_AGG |
+|-----|------|----------|
+| v_monthly_sales | Monthly sales summary | GROUP BY + date functions |
+| v_daily_orders | Daily order status | GROUP BY + CASE pivot |
+| v_hourly_pattern | Hourly order pattern | Hour extraction + CASE classification |
+| v_revenue_growth | Monthly revenue growth rate | LAG window function |
+| v_yearly_kpi | Yearly core KPI | Multiple subquery LEFT JOIN |
+| v_customer_rfm | Customer RFM analysis | NTILE window + CTE + CASE |
+| v_customer_summary | Customer comprehensive profile | Multiple LEFT JOIN + COALESCE |
+| v_order_detail | Order detail join | 5-table denormalized JOIN |
+| v_product_performance | Product performance metrics | Multiple LEFT JOIN + margin calculation |
+| v_product_abc | Product ABC analysis | Cumulative SUM OVER + CASE classification |
+| v_top_products_by_category | Top products by category | ROW_NUMBER PARTITION BY |
+| v_category_tree | Category tree | Recursive CTE + path string |
+| v_payment_summary | Payment method summary | Ratio calculation (scalar subquery) |
+| v_supplier_performance | Supplier performance | Multiple LEFT JOIN + return rate |
+| v_staff_workload | CS staff workload | LEFT JOIN + avg processing time |
+| v_coupon_effectiveness | Coupon effectiveness | ROI calculation (revenue/discount) |
+| v_return_analysis | Return analysis | GROUP BY + CASE pivot + average |
+| v_cart_abandonment | Cart abandonment analysis | JOIN + GROUP_CONCAT/STRING_AGG |
 
-**Summary by pattern**
+**Summary by Pattern**
 
-| Group | Views | Key Patterns |
-|-------|-------|-------------|
-| Sales/Time-series | v_monthly_sales, v_daily_orders, v_hourly_pattern, v_revenue_growth, v_yearly_kpi | GROUP BY, LAG, multiple subqueries |
-| Customer Analysis | v_customer_rfm, v_customer_summary | NTILE, CTE, multiple LEFT JOINs |
+| Group | Views | Key Pattern |
+|------|-----|----------|
+| Sales/Time Series | v_monthly_sales, v_daily_orders, v_hourly_pattern, v_revenue_growth, v_yearly_kpi | GROUP BY, LAG, multiple subqueries |
+| Customer Analysis | v_customer_rfm, v_customer_summary | NTILE, CTE, multiple LEFT JOIN |
 | Orders/Products | v_order_detail, v_product_performance, v_product_abc, v_top_products_by_category | Denormalized JOIN, SUM OVER, ROW_NUMBER |
 | Hierarchy/Reference | v_category_tree, v_payment_summary | Recursive CTE, scalar subquery |
 | Operations/Analytics | v_supplier_performance, v_staff_workload, v_coupon_effectiveness, v_return_analysis, v_cart_abandonment | Return rate, ROI, GROUP_CONCAT |
 
-!!! info "View support across databases"
-    All 18 views are available in SQLite, MySQL, and PostgreSQL.
+!!! info "View Support by DB"
+    All 18 views are available identically across SQLite, MySQL, and PostgreSQL.
 
-    In PostgreSQL, `v_monthly_sales` and `v_product_performance` are also provided as **Materialized Views** (`mv_` prefix).
-    A Materialized View physically stores query results so they don't need to be recomputed each time, dramatically improving performance for large aggregate views.
+    In PostgreSQL, `v_monthly_sales` and `v_product_performance` are also provided as **Materialized Views** (with `mv_` prefix).
+    Materialized Views physically store query results so they are not recalculated each time, significantly improving performance for large aggregate views.
 
-    | DB | Materialized View | Notes |
-    |----|:-:|-------|
+    | DB | Materialized View | Note |
+    |----|:-:|------|
     | PostgreSQL | `CREATE MATERIALIZED VIEW` + `REFRESH` | Native support |
-    | MySQL | Not supported | Can be emulated with tables + event scheduler |
-    | SQLite | Not supported | Can be emulated with triggers + separate tables |
+    | MySQL | Not supported | Can be manually implemented with table + event scheduler |
+    | SQLite | Not supported | Can be manually implemented with trigger + separate table |
 
 
-### v_cart_abandonment — Cart Abandonment Analysis
+### v_cart_abandonment -- Cart Abandonment Analysis
 
-Unconverted cart analysis with customer info, item count, and potential revenue.
+Analyzes customer information, item count, and potential revenue of unconverted carts.
 
 ```mermaid
 flowchart LR
@@ -59,7 +74,7 @@ flowchart LR
     D --> E["GROUP BY cart
     COUNT, SUM, GROUP_CONCAT"]
     E --> F["Result: customer, items,
-    potential revenue, products"]
+    potential revenue, product list"]
 ```
 
 === "SQLite"
@@ -125,20 +140,20 @@ flowchart LR
     GROUP BY c.id, cust.name, cust.email, c.status, c.created_at;
     ```
 
-### v_category_tree — Category Tree
+### v_category_tree -- Category Tree
 
-Recursive CTE building hierarchical path (Top > Mid > Sub) with product counts.
+Uses recursive CTE to query hierarchy path (top > mid > sub) and product counts.
 
 ```mermaid
 flowchart LR
     A["categories
     parent_id IS NULL"] --> B["Recursive CTE
-    traverse children"]
+    traverse child categories"]
     B --> C["Build full_path
-    Top > Mid > Sub"]
+    top > mid > sub"]
     C --> D["LEFT JOIN products
-    count per category"]
-    D --> E["ORDER BY sort_key"]
+    Product count per category"]
+    D --> E["Sort by sort_key"]
 ```
 
 === "SQLite"
@@ -225,9 +240,9 @@ flowchart LR
     ORDER BY t.sort_key;
     ```
 
-### v_coupon_effectiveness — Coupon Effectiveness
+### v_coupon_effectiveness -- Coupon Effectiveness Analysis
 
-Per-coupon usage count, total discount amount, and ROI.
+Calculates usage count, total discount, and ROI per coupon.
 
 ```mermaid
 flowchart LR
@@ -341,20 +356,20 @@ flowchart LR
     ORDER BY COALESCE(u.usage_count, 0) DESC;
     ```
 
-### v_customer_rfm — Customer RFM Analysis
+### v_customer_rfm -- Customer RFM Analysis
 
-Computes Recency/Frequency/Monetary scores via NTILE(5) and classifies segments (Champions, Loyal, At Risk, etc.).
+Calculates Recency/Frequency/Monetary scores using NTILE(5) and classifies segments such as Champions/Loyal/At Risk.
 
 ```mermaid
 flowchart LR
     A["customers"] --> D["JOIN"]
     B["orders
-    (excl. cancelled)"] --> D
+    (excluding cancelled)"] --> D
     D --> E["Aggregate: recency,
     frequency, monetary"]
     E --> F["NTILE(5)
-    R·F·M scores"]
-    F --> G["CASE → segment
+    R/F/M scores"]
+    F --> G["CASE -> Segment
     Champions/Loyal/
     At Risk/Lost/..."]
 ```
@@ -479,21 +494,21 @@ flowchart LR
     FROM rfm_scored;
     ```
 
-### v_customer_summary — Customer Profile Summary
+### v_customer_summary -- Customer Comprehensive Profile
 
-Per-customer order count, total spend, reviews, wishlist items, and activity status.
+Summarizes order count, total spend, review count, wishlists, and activity status per customer.
 
 ```mermaid
 flowchart LR
     A["customers"] --> E["LEFT JOIN"]
-    B["orders agg
-    count, total"] --> E
-    C["reviews agg
-    count, avg rating"] --> E
+    B["orders aggregate
+    order count, total"] --> E
+    C["reviews aggregate
+    review count, avg rating"] --> E
     D["wishlists
-    count"] --> E
+    wishlist count"] --> E
     E --> F["Age calculation +
-    activity status"]
+    activity status classification"]
 ```
 
 === "SQLite"
@@ -661,17 +676,17 @@ flowchart LR
     ) ws ON c.id = ws.customer_id;
     ```
 
-### v_daily_orders — Daily Order Summary
+### v_daily_orders -- Daily Order Status
 
-Aggregates daily order count, revenue, confirmed/cancelled/returned counts.
+Aggregates daily order count, revenue, and confirmed/cancelled/returned counts.
 
 ```mermaid
 flowchart LR
     A["orders"] --> B["GROUP BY
     DATE(ordered_at)"]
-    B --> C["Aggregate: total,
+    B --> C["Aggregate: total orders,
     confirmed/cancelled/returned,
-    revenue, avg"]
+    revenue, average"]
 ```
 
 === "SQLite"
@@ -681,8 +696,8 @@ flowchart LR
     SELECT
         DATE(ordered_at) AS order_date,
         CASE CAST(strftime('%w', ordered_at) AS INTEGER)
-            WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
-            WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
+            WHEN 0 THEN 'Sun' WHEN 1 THEN 'Mon' WHEN 2 THEN 'Tue'
+            WHEN 3 THEN 'Wed' WHEN 4 THEN 'Thu' WHEN 5 THEN 'Fri' WHEN 6 THEN 'Sat'
         END AS day_of_week,
         COUNT(*) AS total_orders,
         SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed,
@@ -731,19 +746,18 @@ flowchart LR
     ORDER BY order_date;
     ```
 
-### v_hourly_pattern — Hourly Order Pattern
+### v_hourly_pattern -- Hourly Order Pattern
 
-Hourly order distribution with time-slot classification (dawn/morning/afternoon/evening).
+Classifies hourly order distribution into dawn/morning/afternoon/evening slots.
 
 ```mermaid
 flowchart LR
     A["orders
-    (excl. cancelled)"] --> B["Extract HOUR"]
+    (excluding cancelled)"] --> B["HOUR extraction"]
     B --> C["GROUP BY hour"]
-    C --> D["Aggregate: count, avg"]
-    D --> E["CASE → time slot
-    dawn/morning/
-    afternoon/evening"]
+    C --> D["Aggregate: order count, avg amount"]
+    D --> E["CASE -> time slot
+    dawn/morning/afternoon/evening"]
 ```
 
 === "SQLite"
@@ -818,18 +832,18 @@ flowchart LR
     ORDER BY hour;
     ```
 
-### v_monthly_sales — Monthly Sales Summary
+### v_monthly_sales -- Monthly Sales Summary
 
-Aggregates monthly order count, customer count, revenue, and discounts.
+Aggregates monthly order count, customer count, revenue, and discount amounts.
 
 ```mermaid
 flowchart LR
     A["orders
-    (excl. cancelled)"] --> B["GROUP BY
+    (excluding cancelled)"] --> B["GROUP BY
     YYYY-MM"]
     B --> C["Aggregate: orders,
     customers, revenue,
-    avg, discount"]
+    average, discounts"]
 ```
 
 === "SQLite"
@@ -866,9 +880,9 @@ flowchart LR
     ORDER BY month;
     ```
 
-### v_order_detail — Order Detail Join
+### v_order_detail -- Order Detail Join
 
-Denormalized view joining orders + customers + payments + shipping + addresses.
+A denormalized view joining order + customer + payment + shipping + address at once.
 
 ```mermaid
 flowchart LR
@@ -877,7 +891,7 @@ flowchart LR
     C["payments"] --> F
     D["shipping"] --> F
     E["customer_addresses"] --> F
-    F --> G["Denormalized:
+    F --> G["Denormalized result:
     order+customer+payment+
     shipping+address"]
 ```
@@ -981,15 +995,15 @@ flowchart LR
     LEFT JOIN customer_addresses ca ON o.address_id = ca.id;
     ```
 
-### v_payment_summary — Payment Method Summary
+### v_payment_summary -- Payment Method Summary
 
-Payment method breakdown with completion/refund/failure ratios.
+Aggregates count and completed/refunded/failed ratios by payment method.
 
 ```mermaid
 flowchart LR
     A["payments"] --> B["GROUP BY method"]
     B --> C["Aggregate: count, amount,
-    pct, completed/refunded/failed"]
+    ratio, completed/refunded/failed"]
 ```
 
 === "SQLite"
@@ -1043,18 +1057,18 @@ flowchart LR
     ORDER BY payment_count DESC;
     ```
 
-### v_product_abc — Product ABC Analysis
+### v_product_abc -- Product ABC Analysis
 
-Classifies products by cumulative revenue contribution: A (top 70%), B (70-90%), C (90-100%).
+Classifies products into A (top 70%) / B (70-90%) / C (90-100%) grades based on cumulative revenue contribution.
 
 ```mermaid
 flowchart LR
     A["products +
-    order_items"] --> B["Revenue per product"]
+    order_items"] --> B["Revenue aggregation per product"]
     B --> C["SUM OVER
-    cumulative pct"]
-    C --> D["CASE → ABC class
-    A≤80% B≤95% C=rest"]
+    Cumulative revenue ratio"]
+    C --> D["CASE -> ABC grade
+    A<=80% B<=95% C=rest"]
 ```
 
 === "SQLite"
@@ -1159,24 +1173,24 @@ flowchart LR
     ORDER BY total_revenue DESC;
     ```
 
-### v_product_performance — Product Performance
+### v_product_performance -- Product Performance Metrics
 
-Per-product sales, revenue, margin, reviews, ratings, wishlist, and return counts.
+Aggregates sales volume, revenue, margin rate, review count, rating, wishlists, and return count per product.
 
 ```mermaid
 flowchart LR
     A["products +
     categories"] --> F["LEFT JOIN"]
     B["order_items
-    sold, revenue"] --> F
+    sales, revenue"] --> F
     C["reviews
-    count, rating"] --> F
+    reviews, rating"] --> F
     D["wishlists
-    count"] --> F
+    wishlist count"] --> F
     E["returns
-    count"] --> F
-    F --> G["Margin calculation
-    + combined metrics"]
+    return count"] --> F
+    F --> G["Margin rate calculation
+    + comprehensive metrics"]
 ```
 
 === "SQLite"
@@ -1287,16 +1301,16 @@ flowchart LR
     ) rt ON p.id = rt.product_id;
     ```
 
-### v_return_analysis — Return Analysis
+### v_return_analysis -- Return Analysis
 
-Return reason breakdown with refund/exchange ratio, inspection results, and processing days.
+Analyzes count by return reason, refund/exchange ratio, inspection results, and average processing days.
 
 ```mermaid
 flowchart LR
     A["returns"] --> B["GROUP BY reason"]
-    B --> C["Aggregate: count, pct,
-    refund/exchange, avg amount"]
-    C --> D["Inspection results
+    B --> C["Aggregate: count, ratio,
+    refund/exchange, avg refund"]
+    C --> D["Inspection result aggregate
     + avg processing days"]
 ```
 
@@ -1369,18 +1383,18 @@ flowchart LR
     ORDER BY total_count DESC;
     ```
 
-### v_revenue_growth — Monthly Revenue Growth
+### v_revenue_growth -- Monthly Revenue Growth Rate
 
-Calculates month-over-month revenue growth percentage using LAG window function.
+Calculates month-over-month revenue growth rate (%) using the LAG window function.
 
 ```mermaid
 flowchart LR
     A["orders
-    (excl. cancelled)"] --> B["GROUP BY month"]
+    (excluding cancelled)"] --> B["GROUP BY month"]
     B --> C["Monthly revenue"]
-    C --> D["LAG → prev month"]
-    D --> E["Growth %
-    (current-prev)/prev"]
+    C --> D["LAG -> previous month revenue"]
+    D --> E["Growth rate %
+    (current-previous)/previous"]
 ```
 
 === "SQLite"
@@ -1458,18 +1472,18 @@ flowchart LR
     ORDER BY month;
     ```
 
-### v_staff_workload — CS Staff Workload
+### v_staff_workload -- CS Staff Workload
 
-Per-staff complaint count, resolution rate, and average resolution hours.
+Aggregates inquiry processing count, resolution rate, and average processing time per CS staff.
 
 ```mermaid
 flowchart LR
     A["staff
     (CS dept)"] --> D["LEFT JOIN"]
-    B["complaints agg
-    count, resolved,
-    avg hours"] --> D
-    C["orders agg
+    B["complaints aggregate
+    processed, resolved,
+    avg processing time"] --> D
+    C["orders aggregate
     CS order count"] --> D
     D --> E["Per-staff workload"]
 ```
@@ -1576,20 +1590,20 @@ flowchart LR
     WHERE s.department = 'CS' OR comp.complaint_count > 0;
     ```
 
-### v_supplier_performance — Supplier Performance
+### v_supplier_performance -- Supplier Performance
 
-Per-supplier product count, revenue, and return rate.
+Aggregates product count, revenue, and return rate per supplier.
 
 ```mermaid
 flowchart LR
     A["suppliers +
     products"] --> D["LEFT JOIN"]
     B["order_items
-    revenue, sold"] --> D
+    revenue, sales volume"] --> D
     C["returns
-    count"] --> D
-    D --> E["Return rate calc
-    + per-supplier metrics"]
+    return count"] --> D
+    D --> E["Return rate calculation
+    + per-supplier performance"]
 ```
 
 === "SQLite"
@@ -1709,9 +1723,9 @@ flowchart LR
     GROUP BY s.id, s.company_name;
     ```
 
-### v_top_products_by_category — Top Products by Category
+### v_top_products_by_category -- Top Products by Category
 
-Extracts top 5 products per category by revenue using ROW_NUMBER.
+Extracts the top 5 products by revenue per category using ROW_NUMBER.
 
 ```mermaid
 flowchart LR
@@ -1818,23 +1832,23 @@ flowchart LR
     WHERE rank_in_category <= 5;
     ```
 
-### v_yearly_kpi — Annual KPI Summary
+### v_yearly_kpi -- Yearly Core KPI
 
-Annual revenue, orders, customers, cancellation rate, return rate, and more.
+Aggregates annual revenue, order count, customer count, cancellation rate, return rate, and other key metrics.
 
 ```mermaid
 flowchart LR
     A["orders
-    yearly agg"] --> E["LEFT JOIN"]
+    yearly aggregate"] --> E["LEFT JOIN"]
     B["customers
-    new count"] --> E
+    new customer count"] --> E
     C["reviews
-    count"] --> E
+    review count"] --> E
     D["complaints
-    count"] --> E
+    complaint count"] --> E
     E --> F["Annual KPI: revenue,
-    orders, cancel rate,
-    return rate, reviews"]
+    orders, cancellation rate,
+    return rate, reviews, complaints"]
 ```
 
 === "SQLite"
