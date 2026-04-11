@@ -223,6 +223,14 @@ def should_skip(block: SQLBlock) -> tuple[bool, str]:
     if '잘못된' in sql or 'WRONG' in sql or '-- ❌' in sql:
         return True, "intentional error example"
 
+    # Skip placeholder SQL (template syntax, not real queries)
+    if 'view_name' in sql or 'table_name' in sql or 'sp_example' in sql:
+        return True, "placeholder/template SQL"
+
+    # Skip queries referencing user-created objects (views/tables from exercises)
+    if re.search(r'\bv_product_sales\b|\btemp_\w+\b|\bgold_customers\b|\bprice_history\b|\border_archive\b', sql):
+        return True, "references exercise-created object"
+
     return False, ""
 
 
