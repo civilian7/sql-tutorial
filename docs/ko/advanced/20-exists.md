@@ -462,5 +462,54 @@ ORDER BY category;
     | ...         | ...  | ...   | ...             | ...          |
 
 
+### 연습 10
+`EXISTS`를 사용하여 최소 3개 이상의 서로 다른 카테고리 상품을 주문한 고객을 찾으세요. `customer_id`, `name`, `category_count`를 반환하고, `category_count` 내림차순으로 10행까지 정렬하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        c.id AS customer_id,
+        c.name,
+        (
+            SELECT COUNT(DISTINCT p.category_id)
+            FROM order_items AS oi
+            INNER JOIN orders AS o ON oi.order_id = o.id
+            INNER JOIN products AS p ON oi.product_id = p.id
+            WHERE o.customer_id = c.id
+        ) AS category_count
+    FROM customers AS c
+    WHERE EXISTS (
+        SELECT 1
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        WHERE o.customer_id = c.id
+        GROUP BY o.customer_id
+        HAVING COUNT(DISTINCT p.category_id) >= 3
+    )
+    ORDER BY category_count DESC
+    LIMIT 10;
+    ```
+
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [강의 21: SELF/CROSS JOIN](21-self-cross-join.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [강의 19: CTE](19-cte.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| NOT EXISTS (안티 조인) | 1, 4, 7 |
+| EXISTS + 상관 서브쿼리 | 2, 5, 6 |
+| 상관 서브쿼리 (스칼라) | 3 |
+| NOT EXISTS (전체 부정) | 8 |
+| EXISTS + 다중 조건 | 9, 10 |
+
 ---
 다음: [강의 21: SELF JOIN과 CROSS JOIN](21-self-cross-join.md)

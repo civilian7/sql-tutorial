@@ -606,5 +606,48 @@ DROP INDEX IF EXISTS idx_orders_status_date;
     `LIKE '접두어%'`는 B-tree 인덱스의 범위 검색으로 처리할 수 있지만, `LIKE '%문자열%'`는 앞에 와일드카드가 있어 인덱스를 활용할 수 없고 전체 테이블 스캔이 필요합니다.
 
 
+### 연습 10
+인덱스가 쓰기 성능에 미치는 영향을 확인하세요. `products` 테이블의 `name` 칼럼에 인덱스를 생성한 뒤, 테스트 행을 INSERT하고 DELETE한 후 인덱스를 삭제하세요. 인덱스가 INSERT 성능에 미치는 영향을 설명하세요.
+
+??? success "정답"
+    ```sql
+    -- 1. 인덱스 생성
+    CREATE INDEX IF NOT EXISTS idx_products_name
+    ON products (name);
+
+    -- 2. 테스트 행 삽입 (인덱스도 함께 갱신됨)
+    INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
+    VALUES ('SKU-TEST-IDX', '인덱스 테스트 상품', 'Test', 1, 1, 10000, 5000, 10, 1, datetime('now'), datetime('now'));
+
+    -- 3. 정리
+    DELETE FROM products WHERE sku = 'SKU-TEST-IDX';
+    DROP INDEX IF EXISTS idx_products_name;
+    ```
+
+    **설명:** 인덱스가 있으면 INSERT/UPDATE/DELETE 시 인덱스도 함께 갱신해야 하므로 쓰기 작업이 느려집니다. 인덱스는 읽기 성능을 높이지만 쓰기 비용이 추가되므로, 자주 조회하는 칼럼에만 선별적으로 생성해야 합니다.
+
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [강의 24: 트리거](24-triggers.md)로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
+| **절반 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [강의 22: 뷰](22-views.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| 인덱스 삭제 (DROP INDEX) | 1, 4 |
+| UNIQUE INDEX 생성 | 2 |
+| 인덱스 목록 조회 (메타데이터) | 3 |
+| EXPLAIN QUERY PLAN 기초 | 5 |
+| 단일 인덱스 생성 + EXPLAIN | 6 |
+| 복합 인덱스 생성 + EXPLAIN | 7, 8 |
+| LIKE 접두어 vs 중간 검색 | 9 |
+| 인덱스와 쓰기 성능 | 10 |
+
 ---
 다음: [강의 24: 트리거(Triggers)](24-triggers.md)
