@@ -156,6 +156,88 @@ HAVING EXISTS (
 ORDER BY category;
 ```
 
+## EXISTS의 실행 원리
+
+EXISTS가 효율적인 이유를 이해하려면 내부 동작을 알아야 합니다.
+
+```mermaid
+flowchart TD
+    A["외부 쿼리: 고객 1행 가져오기"] --> B["내부 쿼리 실행:\nSELECT 1 FROM orders\nWHERE customer_id = 현재_고객_id"]
+    B --> C{"결과 행이\n1개라도 있나?"}
+    C -->|"YES → 즉시 중단"| D["현재 고객 포함 ✓"]
+    C -->|"NO → 끝까지 탐색"| E["현재 고객 제외 ✗"]
+    D --> F["다음 고객으로"]
+    E --> F
+    F --> A
+```
+
+**핵심: 단락 평가(Short-circuit Evaluation)**
+
+- `EXISTS`: 첫 번째 일치 행을 찾는 즉시 **중단**합니다. 주문이 100건인 고객도 1건만 확인하면 됩니다.
+- `IN`: 서브쿼리의 **전체 결과**를 먼저 수집한 뒤 비교합니다. 대용량에서 차이가 큽니다.
+- `SELECT 1`을 쓰는 이유: EXISTS는 행의 **존재 여부**만 검사하므로, 칼럼 값을 가져올 필요가 없습니다. `SELECT *`도 동작하지만 `SELECT 1`이 의도를 명확히 표현합니다.
+
+## NOT IN의 NULL 함정
+
+`NOT IN`에서 서브쿼리 결과에 **NULL이 하나라도 포함**되면 전체 결과가 비어버립니다. 이것이 `NOT EXISTS`를 선호하는 가장 큰 이유입니다.
+
+```sql
+-- ❌ 위험: product_id에 NULL이 있으면 결과가 0건!
+SELECT name FROM products
+WHERE id NOT IN (SELECT product_id FROM order_items);
+-- product_id가 NULL인 행이 하나라도 있으면 모든 비교가 UNKNOWN → 결과 없음
+
+-- ✅ 안전: NOT EXISTS는 NULL에 영향받지 않음
+SELECT name FROM products AS p
+WHERE NOT EXISTS (
+    SELECT 1 FROM order_items AS oi
+    WHERE oi.product_id = p.id
+);
+```
+
+> **규칙:** `NOT IN` 대신 `NOT EXISTS`를 기본으로 사용하세요. 특히 서브쿼리 칼럼에 NULL이 있을 수 있는 경우 반드시 `NOT EXISTS`를 씁니다.
+
+## 안티 조인 패턴 비교
+
+"~가 없는 행 찾기"는 SQL에서 세 가지 방법으로 구현할 수 있습니다. 각각의 장단점을 비교합니다.
+
+| 패턴 | 문법 | NULL 안전 | 성능 (대용량) |
+|------|------|:---------:|:----------:|
+| `NOT EXISTS` | `WHERE NOT EXISTS (SELECT 1 FROM ... WHERE ...)` | ✅ | 빠름 |
+| `LEFT JOIN + IS NULL` | `LEFT JOIN ... WHERE right.id IS NULL` | ✅ | 빠름 |
+| `NOT IN` | `WHERE col NOT IN (SELECT ...)` | ❌ | 느릴 수 있음 |
+
+```sql
+-- 방법 1: NOT EXISTS (권장)
+SELECT c.name FROM customers AS c
+WHERE NOT EXISTS (
+    SELECT 1 FROM orders AS o WHERE o.customer_id = c.id
+);
+
+-- 방법 2: LEFT JOIN + IS NULL (동등)
+SELECT c.name FROM customers AS c
+LEFT JOIN orders AS o ON o.customer_id = c.id
+WHERE o.id IS NULL;
+
+-- 방법 3: NOT IN (NULL 위험)
+SELECT name FROM customers
+WHERE id NOT IN (SELECT customer_id FROM orders);
+```
+
+세 쿼리의 결과는 동일하지만, `NOT IN`은 `customer_id`에 NULL이 있으면 빈 결과를 반환합니다. 실무에서는 **NOT EXISTS** 또는 **LEFT JOIN + IS NULL**을 사용하세요.
+
+## 정리
+
+| 개념 | 설명 | 예시 |
+|------|------|------|
+| EXISTS | 서브쿼리 결과가 1건이라도 있으면 TRUE | `WHERE EXISTS (SELECT 1 FROM ...)` |
+| NOT EXISTS | 서브쿼리 결과가 0건이면 TRUE | `WHERE NOT EXISTS (SELECT 1 FROM ...)` |
+| 상관 서브쿼리 | 외부 쿼리의 칼럼을 내부에서 참조 | `WHERE o.customer_id = c.id` |
+| 단락 평가 | EXISTS는 첫 일치 시 즉시 중단 | IN보다 대용량에서 효율적 |
+| NOT IN의 NULL 함정 | NULL 포함 시 전체 결과 사라짐 | NOT EXISTS로 대체 |
+| 안티 조인 | "없는 것 찾기" 3가지 패턴 | NOT EXISTS ≈ LEFT JOIN IS NULL > NOT IN |
+| HAVING + EXISTS | 집계 결과에 존재 조건 추가 | 그룹 중 특정 조건 만족하는 것만 |
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
