@@ -6,7 +6,7 @@
 
     ---
 
-    `categories`, `staff`, `orders`, `customers`, `order_items`, `products`, `calendar`
+    `categories` — 카테고리 (부모-자식 계층) · `staff` — 직원 (매니저 계층) · `orders` — 주문 (상태, 금액, 일시) · `customers` — 고객 (등급, 포인트, 가입채널) · `order_items` — 주문 상세 (수량, 단가) · `products` — 상품 (이름, 가격, 재고, 브랜드) · `calendar` — 날짜 참조 (공휴일, 주말)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

@@ -1,5 +1,23 @@
 # DDL/제약조건
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    직접 테이블을 생성/수정/삭제하는 실습 (기존 테이블 참조 없음)
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`, 제약조건 (`PRIMARY KEY`, `NOT NULL`, `UNIQUE`, `CHECK`, `DEFAULT`, `FOREIGN KEY`)
+
+</div>
+
+---
+
 
 ## 기초 (1~5): CREATE TABLE과 제약조건
 

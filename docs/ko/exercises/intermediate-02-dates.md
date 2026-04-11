@@ -6,7 +6,7 @@
 
     ---
 
-    `orders`, `customers`, `shipping`, `reviews`, `returns`, `calendar`
+    `orders` — 주문 (상태, 금액, 일시) · `customers` — 고객 (등급, 포인트, 가입채널) · `shipping` — 배송 (택배사, 추적번호) · `reviews` — 리뷰 (평점, 내용) · `returns` — 반품/교환 · `calendar` — 날짜 참조 (공휴일, 주말)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

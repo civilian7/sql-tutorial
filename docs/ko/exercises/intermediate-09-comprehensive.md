@@ -1,8 +1,26 @@
 # 중급 종합 문제
 
+<div class="grid cards" markdown>
 
-!!! info "이 연습은 중급 과정(8~17강)에서 배운 모든 개념을 조합합니다"
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `orders` — 주문 · `customers` — 고객 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `payments` — 결제 · `reviews` — 리뷰 · `shipping` — 배송 · `complaints` — 불만 접수 · `wishlists` — 위시리스트
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    중급 전체: `JOIN`, 서브쿼리, 날짜 함수, 문자열 함수, `CASE`, `UNION`, `GROUP BY`/`HAVING`, 집계 함수
+
+</div>
+
+!!! info "시작하기 전에"
+    이 연습은 **중급 과정(8~17강)에서 배운 모든 개념**을 조합합니다.
     JOIN, 서브쿼리, 날짜 함수, 문자열 함수, CASE, UNION, GROUP BY/HAVING, 집계 함수 등 여러 개념을 함께 사용하는 실전 쿼리를 연습합니다.
+
+---
 
 
 ## 기초 (1~8): 2~3개 개념 조합

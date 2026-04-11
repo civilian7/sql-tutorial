@@ -1,5 +1,21 @@
 # 매출 분석
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `customers` — 고객 · `payments` — 결제
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    CTE, 윈도우 함수, 다중 JOIN, 집계 함수 종합 — 월별/분기별/카테고리별 매출, 성장률, 누적 매출, 코호트
+
+</div>
+
 CTE, 윈도우 함수, 다중 JOIN, 집계 함수를 종합 활용하는 비즈니스 매출 분석 문제입니다.
 취소(`cancelled`), 반품(`returned`, `return_requested`) 주문은 특별히 명시하지 않는 한 제외합니다.
 

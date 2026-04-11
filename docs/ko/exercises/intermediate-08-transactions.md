@@ -1,8 +1,25 @@
 # 트랜잭션
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `orders` — 주문 · `products` — 상품 · `customers` — 고객 · `payments` — 결제 (임시 테이블로 복사하여 실습)
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `RELEASE`, 원자성, 동시성 제어
+
+</div>
 
 !!! warning "연습 전 주의사항"
     트랜잭션 연습은 **실제 데이터를 변경**합니다. 안전하게 연습하려면 임시 테이블을 사용하세요. 이 연습의 모든 문제는 임시 테이블이나 ROLLBACK을 활용하여 원본 데이터에 영향을 주지 않도록 설계되어 있습니다.
+
+---
 
 
 ## 기초 (1~5): BEGIN, COMMIT, ROLLBACK

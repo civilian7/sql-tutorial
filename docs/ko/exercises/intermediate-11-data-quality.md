@@ -1,10 +1,24 @@
 # 데이터 품질 점검
 
-데이터는 완벽하지 않습니다. NULL, 중복, 참조 무결성 위반, 날짜 역전, 이상치 등
-**현실 데이터에서 흔히 발생하는 품질 문제**를 SQL로 탐지하는 연습입니다.
+<div class="grid cards" markdown>
 
-!!! info "학습 범위"
-    JOIN, 서브쿼리, 집계, 날짜 함수, CASE 등 중급 문법을 활용하여 데이터 품질을 점검합니다.
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `customers` — 고객 · `products` — 상품 · `orders` — 주문 · `order_items` — 주문 상세 · `payments` — 결제 · `shipping` — 배송 · `reviews` — 리뷰 · `returns` — 반품/교환 · `customer_addresses` — 배송 주소 · `coupons` — 쿠폰 · `coupon_usage` — 쿠폰 사용 · `product_prices` — 가격 변경 이력
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    NULL/중복/범위 점검, 참조 무결성 검증, 날짜 역전 탐지, 이상치 발견, 종합 품질 대시보드
+
+</div>
+
+!!! info "시작하기 전에"
+    데이터는 완벽하지 않습니다. NULL, 중복, 참조 무결성 위반, 날짜 역전, 이상치 등
+    **현실 데이터에서 흔히 발생하는 품질 문제**를 SQL로 탐지하는 연습입니다.
     전체 30개 테이블을 교차 검증하는 실전 쿼리를 작성합니다.
 
 ---

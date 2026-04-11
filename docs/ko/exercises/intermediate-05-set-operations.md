@@ -1,5 +1,23 @@
 # 집합 연산
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `customers` — 고객 · `orders` — 주문 · `reviews` — 리뷰 · `complaints` — 불만 접수 · `wishlists` — 위시리스트 · `order_items` — 주문 상세 · `products` — 상품 · `payments` — 결제 · `returns` — 반품/교환
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    `UNION`, `UNION ALL`, `INTERSECT`, `EXCEPT`, 집합 연산 + `JOIN`/`GROUP BY`
+
+</div>
+
+---
+
 
 ## 기초 (1-5): UNION, UNION ALL 기본
 

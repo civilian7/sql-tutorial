@@ -6,7 +6,7 @@
 
     ---
 
-    `orders`, `order_items`, `products`, `customers`, `categories`, `reviews`, `inventory_transactions`, `staff`, `payments`
+    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `customers` — 고객 · `categories` — 카테고리 · `reviews` — 리뷰 · `inventory_transactions` — 입출고 이력 · `staff` — 직원 · `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

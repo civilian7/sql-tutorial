@@ -6,7 +6,7 @@
 
     ---
 
-    `customers`, `orders`, `order_items`, `products`, `reviews`, `wishlists`, `complaints`, `categories`, `payments`
+    `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `reviews` — 리뷰 · `wishlists` — 위시리스트 · `complaints` — 불만 접수 · `categories` — 카테고리 · `payments` — 결제
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

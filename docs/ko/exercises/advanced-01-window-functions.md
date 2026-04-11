@@ -6,7 +6,7 @@
 
     ---
 
-    `orders`, `order_items`, `products`, `customers`, `reviews`, `payments`, `categories`
+    `orders` — 주문 (상태, 금액, 일시) · `order_items` — 주문 상세 (수량, 단가) · `products` — 상품 (이름, 가격, 재고, 브랜드) · `customers` — 고객 (등급, 포인트, 가입채널) · `reviews` — 리뷰 (평점, 내용) · `payments` — 결제 (방법, 금액, 상태) · `categories` — 카테고리 (부모-자식 계층)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

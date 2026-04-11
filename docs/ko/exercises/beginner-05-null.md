@@ -6,7 +6,7 @@
 
     ---
 
-    `customers` (52,300행), `orders` (378,368행), `products` (2,800행)
+    `customers` — 고객 (등급, 포인트, 가입채널) · `orders` — 주문 (상태, 금액, 일시) · `products` — 상품 (이름, 가격, 재고, 브랜드)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

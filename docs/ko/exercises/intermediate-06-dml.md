@@ -1,8 +1,26 @@
 # DML 실습 (INSERT, UPDATE, DELETE)
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `products` — 상품 · `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 (임시 테이블로 복사하여 실습)
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    `INSERT INTO`, `UPDATE SET`, `DELETE FROM`, `INSERT INTO ... SELECT`, 서브쿼리 활용 DML
+
+</div>
+
 !!! warning "주의사항"
     DML 문은 데이터를 변경합니다. 이 연습에서는 **임시 테이블**을 만들어 실습하고, 끝나면 삭제합니다.
     원본 테이블을 직접 수정하지 마세요.
+
+---
 
 
 ## 기초 (1-7): INSERT, UPDATE, DELETE 기본

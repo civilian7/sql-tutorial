@@ -1,8 +1,24 @@
 # 그룹화와 필터
 
-GROUP BY와 HAVING을 사용하여 데이터를 그룹별로 집계하고 필터링하는 연습문제입니다.
+<div class="grid cards" markdown>
 
-사용 테이블: products, customers, orders, reviews, payments, complaints
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드) · `customers` — 고객 (등급, 포인트, 가입채널) · `orders` — 주문 (상태, 금액, 일시) · `reviews` — 리뷰 (평점, 내용) · `payments` — 결제 (방법, 금액, 상태) · `complaints` — 불만 접수 (카테고리, 우선순위)
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    `GROUP BY`, `HAVING`, 집계 함수 + `GROUP BY`, 다중 그룹화
+
+</div>
+
+!!! info "시작하기 전에"
+    이 연습은 **입문 1~5강**에서 배운 내용을 사용합니다.
+    JOIN, 서브쿼리, CASE, 윈도우 함수는 사용하지 않습니다.
 
 ---
 

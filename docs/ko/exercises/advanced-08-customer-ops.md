@@ -1,5 +1,21 @@
 # 고객/운영 분석
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `inventory_transactions` — 입출고 이력 · `customer_grade_history` — 등급 변경 이력 · `complaints` — 불만 접수 · `staff` — 직원
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    RFM 분석, 코호트, LTV, 재고 ABC 분석, 안전 재고, CS 성과 — CTE + 윈도우 함수 + 다중 JOIN
+
+</div>
+
 CTE, 윈도우 함수, 다중 JOIN, 집계 함수를 종합 활용하는 고객 분석 및 운영 분석 문제입니다.
 고객 세분화, 재고 관리, CS 성과, 종합 대시보드까지 실무에서 자주 접하는 분석 시나리오를 다룹니다.
 

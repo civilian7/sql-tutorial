@@ -6,7 +6,7 @@
 
     ---
 
-    `orders`, `customers`, `order_items`, `products`, `categories`, `suppliers`, `shipping`, `reviews`, `staff`, `wishlists`, `complaints`, `product_tags`, `tags`, `product_qna`, `calendar`
+    `orders` — 주문 · `customers` — 고객 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `suppliers` — 공급업체 · `shipping` — 배송 · `reviews` — 리뷰 · `staff` — 직원 · `wishlists` — 위시리스트 · `complaints` — 불만 접수 · `product_tags` — 상품 태그 · `tags` — 태그 · `product_qna` — 상품 Q&A · `calendar` — 날짜 참조
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

@@ -1,5 +1,21 @@
 # 인덱스와 실행 계획
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `payments` — 결제
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    `EXPLAIN QUERY PLAN`, `CREATE INDEX`, 복합 인덱스, 커버링 인덱스, SCAN vs SEARCH, 인덱스 사용 불가 패턴
+
+</div>
+
 23강 인덱스와 실행 계획에서 배운 내용을 실습합니다.
 SQLite의 `EXPLAIN QUERY PLAN`을 사용하여 쿼리의 실행 방식을 분석하고, 인덱스를 생성하여 성능을 개선합니다.
 

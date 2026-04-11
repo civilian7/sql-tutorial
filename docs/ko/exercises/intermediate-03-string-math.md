@@ -6,7 +6,7 @@
 
     ---
 
-    `products`, `customers`, `orders`, `order_items`, `categories`, `suppliers`
+    `products` — 상품 (이름, 가격, 재고, 브랜드) · `customers` — 고객 (등급, 포인트, 가입채널) · `orders` — 주문 (상태, 금액, 일시) · `order_items` — 주문 상세 (수량, 단가) · `categories` — 카테고리 (부모-자식 계층) · `suppliers` — 공급업체 (회사명, 연락처)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

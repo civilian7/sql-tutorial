@@ -1,5 +1,21 @@
 # 실무 SQL 패턴
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `categories` — 카테고리 · `customers` — 고객 · `payments` — 결제 · `calendar` — 날짜 참조 · `product_views` — 상품 조회 이력 · `carts` — 장바구니 · `cart_items` — 장바구니 상세
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    Top-N per group, 갭 분석, 피벗, 세션 분석, 파레토(80/20), 퍼널, 연속 기간 탐지
+
+</div>
+
 실무에서 반복적으로 등장하는 SQL 패턴을 익힙니다.
 Top-N, 갭 분석, 피벗, 세션 분석, 퍼널 등 다양한 테이블을 넘나드는 실전 기법을 다룹니다.
 

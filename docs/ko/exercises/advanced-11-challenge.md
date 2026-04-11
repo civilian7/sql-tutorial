@@ -1,5 +1,21 @@
 # 도전 문제
 
+<div class="grid cards" markdown>
+
+-   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
+
+    ---
+
+    `customers` — 고객 · `orders` — 주문 · `order_items` — 주문 상세 · `products` — 상품 · `product_prices` — 가격 변경 이력 · `point_transactions` — 포인트 적립/사용 · `calendar` — 날짜 참조 · `staff` — 직원
+
+-   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
+
+    ---
+
+    원장 검증, 가격 변경 영향 분석, 장바구니 분석(연관 규칙), 재고 최적화, 고객 이탈 예측 — 미니 프로젝트급 종합 문제
+
+</div>
+
 각 문제는 여러 단계의 분석을 요구하는 미니 프로젝트입니다.
 실무에서 마주치는 복잡한 시나리오를 재현하며, 모든 SQL 개념을 종합적으로 활용합니다.
 

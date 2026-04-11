@@ -6,7 +6,7 @@
 
     ---
 
-    `products`, `customers`, `orders`, `reviews`, `payments`, `categories`, `suppliers` (각 테이블 단독 사용)
+    `products` — 상품 (이름, 가격, 재고, 브랜드) · `customers` — 고객 (등급, 포인트, 가입채널) · `orders` — 주문 (상태, 금액, 일시) · `reviews` — 리뷰 (평점, 내용) · `payments` — 결제 (방법, 금액, 상태) · `categories` — 카테고리 (부모-자식 계층) · `suppliers` — 공급업체 (회사명, 연락처)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
