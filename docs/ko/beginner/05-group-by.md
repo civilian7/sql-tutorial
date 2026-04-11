@@ -1,6 +1,9 @@
 # 5강: GROUP BY와 HAVING
 
-`GROUP BY`는 행을 그룹으로 나누고, 각 그룹에 집계 함수를 따로 적용합니다. `HAVING`은 그 그룹들을 다시 필터링합니다. 집계된 결과에 대한 `WHERE`라고 이해하면 됩니다.
+4강에서 COUNT, SUM, AVG 등으로 전체 데이터를 요약했습니다. 하지만 '등급별 고객 수'나 '월별 매출'처럼 그룹 단위로 집계하고 싶다면? GROUP BY를 사용합니다.
+
+!!! note "이미 알고 계신다면"
+    GROUP BY, 다중 칼럼 그룹화, HAVING을 이미 알고 있다면 [6강: NULL 처리](06-null.md)로 건너뛰세요.
 
 ```mermaid
 flowchart LR
@@ -196,6 +199,15 @@ WHERE is_active = 1          -- 비활성 고객 제외 (행 수준)
 GROUP BY grade
 HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
 ```
+
+## 정리
+
+| 문법 | 설명 | 예시 |
+|------|------|------|
+| `GROUP BY 칼럼` | 단일 칼럼으로 그룹화 | `GROUP BY grade` |
+| `GROUP BY 칼럼1, 칼럼2` | 다중 칼럼으로 세분화 | `GROUP BY grade, gender` |
+| `HAVING 조건` | 그룹화 후 필터링 (집계 값 기준) | `HAVING COUNT(*) > 500` |
+| `WHERE` vs `HAVING` | WHERE는 행 필터(그룹화 전), HAVING은 그룹 필터(그룹화 후) | |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -515,6 +527,28 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     |          31 |            11 |    146564 |        2681 |
     | ...         | ...           | ...       | ...         |
 
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [6강: NULL 처리](06-null.md)로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 6강으로 |
+| **5개 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [4강: 집계 함수](04-aggregates.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| GROUP BY + HAVING | 1, 5 |
+| GROUP BY 단일 칼럼 | 2, 3 |
+| GROUP BY 다중 칼럼 | 4 |
+| WHERE + GROUP BY + HAVING | 6 |
+| GROUP BY + HAVING (기간 필터) | 7 |
+| COUNT(DISTINCT) | 8 |
+| GROUP BY (날짜 함수) + WHERE | 9 |
+| HAVING 다중 조건 | 10 |
 
 ---
 다음: [6강: NULL 다루기](06-null.md)

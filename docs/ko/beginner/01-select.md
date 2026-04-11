@@ -1,34 +1,49 @@
 # 1강: SELECT 기초
 
-`SELECT` 문은 SQL의 근간입니다. 하나 이상의 테이블에서 데이터를 조회하며, 어떤 칼럼을 반환할지, 어떻게 표시할지를 정밀하게 지정할 수 있습니다.
+0강에서 `SELECT id, name, email, grade FROM customers LIMIT 3`를 실행해봤습니다. 이번 강에서는 `SELECT`를 본격적으로 배웁니다.
+
+`SELECT`는 SQL에서 가장 많이 쓰는 명령입니다. **테이블에서 원하는 칼럼을 골라 조회**합니다.
 
 ```mermaid
 flowchart LR
-    T["🗄️ Table\n(all rows, all columns)"] --> S["SELECT\ncolumn1, column2"] --> R["📋 Result\n(all rows, selected columns)"]
+    T["테이블
+    (모든 행, 모든 칼럼)"] --> S["SELECT
+    칼럼1, 칼럼2"] --> R["결과
+    (모든 행, 선택한 칼럼만)"]
 ```
 
-> **개념:** SELECT는 테이블에서 원하는 칼럼만 골라서 보여줍니다.
+!!! note "이미 알고 계신다면"
+    SELECT, AS, DISTINCT를 이미 알고 있다면 [2강: WHERE로 필터링](02-where.md)으로 이동하세요.
 
-## 전체 칼럼 조회
+---
 
-`SELECT *`를 사용하면 테이블의 모든 칼럼을 가져옵니다. 데이터를 빠르게 훑어볼 때 유용합니다.
+## 전체 칼럼 조회 — SELECT *
+
+`SELECT *`는 테이블의 **모든 칼럼**을 가져옵니다. 테이블에 어떤 데이터가 있는지 빠르게 훑어볼 때 유용합니다.
 
 ```sql
-SELECT * FROM products;
+SELECT * FROM categories;
 ```
 
 **결과:**
 
-| id | category_id | supplier_id | successor_id | name              | sku              | brand | model_number | description                             | specs                                                                                                                 | price   | cost_price | stock_qty | weight_grams | is_active | discontinued_at | created_at          | updated_at          |
-| -: | ----------: | ----------: | -----------: | ----------------- | ---------------- | ----- | ------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------: | ---------: | --------: | -----------: | --------: | --------------- | ------------------- | ------------------- |
-|  1 |           7 |          20 |       (NULL) | Razer Blade 18 블랙 | LA-GAM-RAZ-00001 | Razer | RAZ-00001    | Razer Razer Blade 18 블랙 - 고성능, 최신 기술 탑재 | {"screen_size": "14 inch", "cpu": "Apple M3", "ram": "8GB", "storage": "256GB", "weight_kg": 1.7, "battery_hours": 6} | 2987500 |    3086700 |       107 |         2556 |         1 | (NULL)          | 2016-11-20 02:59:21 | 2016-11-20 02:59:21 |
-| ... | ...         | ...         | ...          | ...               | ...              | ...   | ...          | ...                                     | ...                                                                                                                   | ...     | ...        | ...       | ...          | ...       | ...             | ...                 | ...                 |
+| id | parent_id | name | slug | depth | sort_order | is_active | created_at | updated_at |
+| -: | --------: | ---- | ---- | ----: | ---------: | --------: | ---------- | ---------- |
+| 1 | (NULL) | 데스크톱 PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 2 | 1 | 완제품 | desktop-prebuilt | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| 3 | 1 | 조립PC | desktop-custom | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+| ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
-> **팁:** `SELECT *`는 모든 칼럼을 가져오므로 대용량 테이블에서는 속도가 느릴 수 있습니다. 실제 운영 환경에서는 필요한 칼럼만 명시하는 것이 좋습니다.
+!!! warning "SELECT *는 학습용"
+    `SELECT *`는 모든 칼럼을 가져오므로 대용량 테이블에서는 느릴 수 있습니다. 실무에서는 **필요한 칼럼만 명시**하는 습관을 들이세요. 이 튜토리얼에서도 다음부터는 칼럼을 직접 지정합니다.
+
+---
 
 ## 특정 칼럼만 조회
 
-칼럼 이름을 직접 나열하면 원하는 칼럼만 반환됩니다. 결과가 깔끔해지고 전송 데이터양도 줄어듭니다.
+칼럼 이름을 직접 나열하면 **원하는 칼럼만** 깔끔하게 볼 수 있습니다.
+
+0강에서 실행했던 쿼리를 다시 봅니다:
 
 ```sql
 SELECT name, price, stock_qty
@@ -37,176 +52,200 @@ FROM products;
 
 **결과:**
 
-| name                                   | price   | stock_qty |
-| -------------------------------------- | ------: | --------: |
-| Razer Blade 18 블랙                      | 2987500 |       107 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 |       499 |
-| 삼성 DDR4 32GB PC4-25600                 |   49100 |       359 |
-| ...                                    | ...     | ...       |
+| name | price | stock_qty |
+| ---- | ----: | --------: |
+| Razer Blade 18 블랙 | 2987500 | 107 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 499 |
+| 삼성 DDR4 32GB PC4-25600 | 49100 | 359 |
+| ... | ... | ... |
+
+`SELECT *`보다 결과가 훨씬 읽기 쉽습니다. **칼럼 순서도 SELECT에서 나열한 순서대로** 결과가 나옵니다.
+
+```sql
+-- 순서를 바꾸면 결과 순서도 바뀜
+SELECT stock_qty, name, price
+FROM products;
+```
+
+| stock_qty | name | price |
+| --------: | ---- | ----: |
+| 107 | Razer Blade 18 블랙 | 2987500 |
+| ... | ... | ... |
+
+---
 
 ## 칼럼 별칭 (AS)
 
-`AS`를 사용하면 결과에서 칼럼 이름을 바꿀 수 있습니다. 가독성을 높이고, 이름이 없는 계산식에 이름을 붙일 때 특히 유용합니다.
+### 왜 별칭이 필요한가
+
+결과 칼럼의 이름이 `stock_qty`이면 코드를 모르는 사람은 무슨 뜻인지 알기 어렵습니다. `AS`를 사용하면 **결과에서 보이는 칼럼 이름을 바꿀 수 있습니다.**
 
 ```sql
 SELECT
-    name        AS product_name,
-    price       AS unit_price,
-    stock_qty   AS in_stock
+    name      AS 상품명,
+    price     AS 판매가,
+    stock_qty AS 재고수량
 FROM products;
 ```
 
 **결과:**
 
-| product_name                           | unit_price | in_stock |
-| -------------------------------------- | ---------: | -------: |
-| Razer Blade 18 블랙                      |    2987500 |      107 |
-| MSI GeForce RTX 4070 Ti Super GAMING X |    1744000 |      499 |
-| 삼성 DDR4 32GB PC4-25600                 |      49100 |      359 |
-| ...                                    | ...        | ...      |
+| 상품명 | 판매가 | 재고수량 |
+| ----- | ----: | ------: |
+| Razer Blade 18 블랙 | 2987500 | 107 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 499 |
+| 삼성 DDR4 32GB PC4-25600 | 49100 | 359 |
+| ... | ... | ... |
 
-계산식에도 별칭을 붙일 수 있습니다.
+!!! info "별칭은 결과에만 영향"
+    `AS`는 테이블의 실제 칼럼 이름을 바꾸는 것이 아닙니다. **결과 화면에 보이는 이름만** 바꿉니다.
+
+### 계산식에 별칭 붙이기
+
+별칭은 계산 결과에 이름을 붙일 때 특히 유용합니다. 별칭이 없으면 칼럼 이름이 `price * 0.9` 같은 식 자체가 됩니다.
 
 ```sql
 SELECT
     name,
-    price * 1.1 AS price_with_tax
+    price,
+    price * 0.9 AS 할인가
 FROM products;
 ```
 
 **결과:**
 
-| name                                   | price_with_tax |
-| -------------------------------------- | -------------: |
-| Razer Blade 18 블랙                      |        3286250 |
-| MSI GeForce RTX 4070 Ti Super GAMING X |        1918400 |
-| ...                                    | ...            |
+| name | price | 할인가 |
+| ---- | ----: | ----: |
+| Razer Blade 18 블랙 | 2987500 | 2688750 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 1569600 |
+| ... | ... | ... |
 
-## DISTINCT
+### 문자열 리터럴 칼럼
 
-`DISTINCT`는 결과에서 중복 값을 제거합니다. 칼럼에 어떤 값들이 존재하는지 확인할 때 유용합니다.
+실제 테이블에 없는 **고정 값**을 결과에 추가할 수도 있습니다:
 
 ```sql
--- 고객 등급에 어떤 값들이 있는지 확인
+SELECT
+    name,
+    price,
+    'KRW' AS 통화
+FROM products;
+```
+
+| name | price | 통화 |
+| ---- | ----: | --- |
+| Razer Blade 18 블랙 | 2987500 | KRW |
+| ... | ... | ... |
+
+---
+
+## 산술 연산
+
+SELECT 안에서 사칙연산을 할 수 있습니다. 결과에만 나타나며, 원본 데이터는 변경되지 않습니다.
+
+| 연산자 | 의미 | 예시 |
+|:------:|------|------|
+| `+` | 더하기 | `price + shipping_fee` |
+| `-` | 빼기 | `price - cost_price` |
+| `*` | 곱하기 | `price * 1.1` (10% 인상) |
+| `/` | 나누기 | `price / 1000` (천 원 단위) |
+| `%` | 나머지 | `id % 2` (홀짝 구분) |
+
+```sql
+SELECT
+    name,
+    price,
+    cost_price,
+    price - cost_price AS 마진
+FROM products;
+```
+
+| name | price | cost_price | 마진 |
+| ---- | ----: | ---------: | ---: |
+| Razer Blade 18 블랙 | 2987500 | 3086700 | -99200 |
+| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 1360300 | 383700 |
+| 삼성 DDR4 32GB PC4-25600 | 49100 | 37900 | 11200 |
+| ... | ... | ... | ... |
+
+> 첫 번째 상품의 마진이 **음수**(-99200)입니다. 원가가 판매가보다 높은 경우도 현실 데이터에는 존재합니다.
+
+---
+
+## DISTINCT — 중복 제거
+
+### 언제 쓸까
+
+"이 칼럼에 어떤 값들이 존재하는지" 알고 싶을 때 사용합니다. 예를 들어, 테크샵 고객의 등급 종류를 알고 싶다면:
+
+```sql
 SELECT DISTINCT grade
 FROM customers;
 ```
 
 **결과:**
 
-| grade  |
-| ------ |
+| grade |
+| ----- |
 | BRONZE |
-| VIP    |
+| VIP |
 | SILVER |
-| GOLD   |
+| GOLD |
+
+4가지 등급이 있다는 것을 알 수 있습니다. DISTINCT가 없으면 5,230행이 모두 출력됩니다.
+
+### NULL도 하나의 값으로 취급
 
 ```sql
--- 성별 고유값 조회 (NULL 포함)
 SELECT DISTINCT gender
 FROM customers;
 ```
 
-**결과:**
-
 | gender |
 | ------ |
-| M      |
+| M |
 | (NULL) |
-| F      |
+| F |
 
-## 기법 조합
+0강에서 배운 NULL이 여기서 나타납니다. 성별을 입력하지 않은 고객이 있으므로 NULL이 하나의 고유값으로 포함됩니다.
+
+### 여러 칼럼에 DISTINCT
+
+DISTINCT는 **나열된 칼럼의 조합**에 대해 중복을 제거합니다:
 
 ```sql
--- 고객의 활성/비활성 상태 고유값 조회
-SELECT DISTINCT is_active AS status
-FROM customers
-ORDER BY is_active;
+SELECT DISTINCT grade, gender
+FROM customers;
 ```
 
-**결과:**
+| grade | gender |
+| ----- | ------ |
+| BRONZE | M |
+| BRONZE | F |
+| BRONZE | (NULL) |
+| SILVER | M |
+| SILVER | F |
+| ... | ... |
 
-| status |
-| -----: |
-|      0 |
-|      1 |
+`grade`와 `gender`의 **조합**이 고유한 행만 남습니다.
+
+---
+
+## 정리
+
+| 문법 | 의미 | 예시 |
+|------|------|------|
+| `SELECT *` | 모든 칼럼 조회 | `SELECT * FROM products` |
+| `SELECT 칼럼1, 칼럼2` | 특정 칼럼만 조회 | `SELECT name, price FROM products` |
+| `AS 별칭` | 결과 칼럼 이름 변경 | `SELECT name AS 상품명` |
+| 산술 연산 | 계산 결과를 칼럼으로 | `SELECT price * 0.9 AS 할인가` |
+| `DISTINCT` | 중복 제거 | `SELECT DISTINCT grade FROM customers` |
+
+---
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-
 ### 문제 1
-모든 고객의 `name`, `email`, `grade`를 조회하세요. 각 칼럼에 `full_name`, `email_address`, `membership_tier`라는 별칭을 붙이세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        name        AS full_name,
-        email       AS email_address,
-        grade       AS membership_tier
-    FROM customers;
-    ```
-
-    **결과 (예시):**
-
-    | full_name | email_address     | membership_tier |
-    | --------- | ----------------- | --------------- |
-    | 정준호       | user1@testmail.kr | BRONZE          |
-    | 김경수       | user2@testmail.kr | VIP             |
-    | 김민재       | user3@testmail.kr | VIP             |
-    | 진정자       | user4@testmail.kr | VIP             |
-    | 이정수       | user5@testmail.kr | SILVER          |
-    | ...       | ...               | ...             |
-
-
-### 문제 2
-`payments` 테이블에서 `method` 칼럼의 고유값을 모두 조회하여 TechShop이 지원하는 결제 수단을 확인하세요.
-
-??? success "정답"
-    ```sql
-    SELECT DISTINCT method
-    FROM payments;
-    ```
-
-    **결과 (예시):**
-
-    | method        |
-    | ------------- |
-    | card          |
-    | point         |
-    | kakao_pay     |
-    | bank_transfer |
-    | naver_pay     |
-    | ...           |
-
-
-### 문제 3
-`products` 테이블에서 `name`, `price`, `stock_qty`를 조회하세요. 그리고 `price * stock_qty`로 계산된 `inventory_value`라는 칼럼을 추가하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        name,
-        price,
-        stock_qty,
-        price * stock_qty AS inventory_value
-    FROM products;
-    ```
-
-    **결과 (예시):**
-
-    | name                                     | price   | stock_qty | inventory_value |
-    | ---------------------------------------- | ------: | --------: | --------------: |
-    | Razer Blade 18 블랙                        | 2987500 |       107 |       319662500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |       499 |       870256000 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |       359 |        17626900 |
-    | Dell U2724D                              |  853600 |       337 |       287663200 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |        59 |         7711300 |
-    | ...                                      | ...     | ...       | ...             |
-
-
-### 문제 4
 `categories` 테이블의 모든 칼럼을 조회하세요.
 
 ??? success "정답"
@@ -214,20 +253,26 @@ ORDER BY is_active;
     SELECT * FROM categories;
     ```
 
-    **결과 (예시):**
+    | id | parent_id | name | slug | depth | sort_order | is_active | created_at | updated_at |
+    | -: | --------: | ---- | ---- | ----: | ---------: | --------: | ---------- | ---------- |
+    | 1 | (NULL) | 데스크톱 PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | ... | ... | ... | ... | ... | ... | ... | ... | ... |
 
-    | id | parent_id | name    | slug             | depth | sort_order | is_active | created_at          | updated_at          |
-    | -: | --------: | ------- | ---------------- | ----: | ---------: | --------: | ------------------- | ------------------- |
-    |  1 |    (NULL) | 데스크톱 PC | desktop-pc       |     0 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  2 |         1 | 완제품     | desktop-prebuilt |     1 |          1 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  3 |         1 | 조립PC    | desktop-custom   |     1 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  4 |         1 | 베어본     | desktop-barebone |     1 |          3 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    |  5 |    (NULL) | 노트북     | laptop           |     0 |          2 |         1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    | ... | ...       | ...     | ...              | ...   | ...        | ...       | ...                 | ...                 |
+### 문제 2
+`products` 테이블에서 `name`과 `price`만 조회하세요.
 
+??? success "정답"
+    ```sql
+    SELECT name, price FROM products;
+    ```
 
-### 문제 5
-`staff` 테이블에서 `name`, `department`, `role`을 조회하되, 칼럼 순서를 `department`, `role`, `name`으로 바꿔서 출력하세요.
+    | name | price |
+    | ---- | ----: |
+    | Razer Blade 18 블랙 | 2987500 |
+    | ... | ... |
+
+### 문제 3
+`staff` 테이블에서 `department`, `role`, `name` 순서로 조회하세요.
 
 ??? success "정답"
     ```sql
@@ -235,18 +280,66 @@ ORDER BY is_active;
     FROM staff;
     ```
 
-    **결과 (예시):**
+    | department | role | name |
+    | ---------- | ---- | ---- |
+    | 경영 | admin | 한민재 |
+    | ... | ... | ... |
 
-    | department | role    | name |
-    | ---------- | ------- | ---- |
-    | 경영         | admin   | 한민재  |
-    | 경영         | admin   | 장주원  |
-    | 경영         | admin   | 박경수  |
-    | 영업         | manager | 이준혁  |
-    | 마케팅        | manager | 권영희  |
+### 문제 4
+`customers` 테이블에서 `name`, `email`, `grade`를 조회하되 별칭을 `고객명`, `이메일`, `등급`으로 붙이세요.
 
+??? success "정답"
+    ```sql
+    SELECT
+        name  AS 고객명,
+        email AS 이메일,
+        grade AS 등급
+    FROM customers;
+    ```
+
+    | 고객명 | 이메일 | 등급 |
+    | ----- | ----- | --- |
+    | 정준호 | jjh0001@testmail.kr | SILVER |
+    | ... | ... | ... |
+
+### 문제 5
+`products` 테이블에서 `name`, `price`를 조회하고, 10% 할인된 가격을 `할인가`라는 별칭으로 추가하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        price,
+        price * 0.9 AS 할인가
+    FROM products;
+    ```
+
+    | name | price | 할인가 |
+    | ---- | ----: | ----: |
+    | Razer Blade 18 블랙 | 2987500 | 2688750 |
+    | ... | ... | ... |
 
 ### 문제 6
+`products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)과 마진율(`(price - cost_price) * 100 / price`)을 별칭 `마진`, `마진율`로 추가하세요.
+
+??? success "정답"
+    ```sql
+    SELECT
+        name,
+        price,
+        cost_price,
+        price - cost_price                  AS 마진,
+        (price - cost_price) * 100 / price  AS 마진율
+    FROM products;
+    ```
+
+    | name | price | cost_price | 마진 | 마진율 |
+    | ---- | ----: | ---------: | ---: | ----: |
+    | Razer Blade 18 블랙 | 2987500 | 3086700 | -99200 | -3 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 1360300 | 383700 | 22 |
+    | ... | ... | ... | ... | ... |
+
+### 문제 7
 `orders` 테이블에서 고유한 `status` 값을 조회하세요.
 
 ??? success "정답"
@@ -255,112 +348,95 @@ ORDER BY is_active;
     FROM orders;
     ```
 
-    **결과 (예시):**
-
-    | status    |
-    | --------- |
+    | status |
+    | ------ |
     | cancelled |
     | confirmed |
     | delivered |
-    | paid      |
-    | pending   |
-    | ...       |
-
-
-### 문제 7
-`products` 테이블에서 `name`과 `price`를 조회하면서, 10% 할인된 가격을 `discounted_price`라는 별칭으로 함께 출력하세요.
-
-??? success "정답"
-    ```sql
-    SELECT
-        name,
-        price,
-        price * 0.9 AS discounted_price
-    FROM products;
-    ```
-
-    **결과 (예시):**
-
-    | name                                     | price   | discounted_price |
-    | ---------------------------------------- | ------: | ---------------: |
-    | Razer Blade 18 블랙                        | 2987500 |          2688750 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |          1569600 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |            44190 |
-    | Dell U2724D                              |  853600 |           768240 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |           117630 |
-    | ...                                      | ...     | ...              |
-
+    | paid |
+    | pending |
+    | ... |
 
 ### 문제 8
-`products` 테이블에서 `name`과 `price`를 조회하면서, 모든 행에 `'KRW'`라는 문자열 리터럴을 `currency`라는 별칭의 칼럼으로 추가하세요.
+`payments` 테이블에서 고유한 `method` 값을 조회하여, 테크샵이 지원하는 결제 수단을 확인하세요.
 
 ??? success "정답"
     ```sql
-    SELECT
-        name,
-        price,
-        'KRW' AS currency
-    FROM products;
+    SELECT DISTINCT method
+    FROM payments;
     ```
 
-    **결과 (예시):**
-
-    | name                                     | price   | currency |
-    | ---------------------------------------- | ------: | -------- |
-    | Razer Blade 18 블랙                        | 2987500 | KRW      |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 | KRW      |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 | KRW      |
-    | Dell U2724D                              |  853600 | KRW      |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 | KRW      |
-    | ...                                      | ...     | ...      |
-
+    | method |
+    | ------ |
+    | card |
+    | point |
+    | kakao_pay |
+    | bank_transfer |
+    | naver_pay |
+    | virtual_account |
 
 ### 문제 9
-`suppliers` 테이블에서 고유한 `contact_name`과 `company_name` 조합을 조회하세요. (DISTINCT를 여러 칼럼에 사용)
-
-??? success "정답"
-    ```sql
-    SELECT DISTINCT contact_name, company_name
-    FROM suppliers;
-    ```
-
-    **결과 (예시):**
-
-    | contact_name | company_name |
-    | ------------ | ------------ |
-    | 김수민          | 삼성전자 공식 유통   |
-    | 김예준          | LG전자 공식 유통   |
-    | 이상현          | 인텔코리아        |
-    | 강중수          | AMD코리아       |
-    | 이정남          | 엔비디아코리아      |
-    | ...          | ...          |
-
-
-### 문제 10
-`products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)을 `margin`으로, 마진율(`(price - cost_price) / price * 100`)을 `margin_pct`라는 별칭으로 함께 출력하세요.
+`products` 테이블에서 `name`, `price`, `stock_qty`를 조회하고, `price * stock_qty`를 `재고가치`라는 별칭으로 추가하세요.
 
 ??? success "정답"
     ```sql
     SELECT
         name,
         price,
-        cost_price,
-        price - cost_price                    AS margin,
-        (price - cost_price) / price * 100    AS margin_pct
+        stock_qty,
+        price * stock_qty AS 재고가치
     FROM products;
     ```
 
-    **결과 (예시):**
+    | name | price | stock_qty | 재고가치 |
+    | ---- | ----: | --------: | ------: |
+    | Razer Blade 18 블랙 | 2987500 | 107 | 319662500 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 499 | 870256000 |
+    | ... | ... | ... | ... |
 
-    | name                                     | price   | cost_price | margin | margin_pct |
-    | ---------------------------------------- | ------: | ---------: | -----: | ---------: |
-    | Razer Blade 18 블랙                        | 2987500 |    3086700 | -99200 |      -3.32 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X   | 1744000 |    1360300 | 383700 |         22 |
-    | 삼성 DDR4 32GB PC4-25600                   |   49100 |      37900 |  11200 |      22.81 |
-    | Dell U2724D                              |  853600 |     565700 | 287900 |      33.73 |
-    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 |  130700 |     121400 |   9300 |       7.12 |
-    | ...                                      | ...     | ...        | ...    | ...        |
+### 문제 10
+`customers` 테이블에서 고유한 `grade`와 `gender` 조합을 조회하세요. 몇 가지 조합이 나오나요?
 
+??? success "정답"
+    ```sql
+    SELECT DISTINCT grade, gender
+    FROM customers;
+    ```
+
+    | grade | gender |
+    | ----- | ------ |
+    | BRONZE | M |
+    | BRONZE | F |
+    | BRONZE | (NULL) |
+    | SILVER | M |
+    | SILVER | F |
+    | SILVER | (NULL) |
+    | GOLD | M |
+    | GOLD | F |
+    | GOLD | (NULL) |
+    | VIP | M |
+    | VIP | F |
+    | VIP | (NULL) |
+
+    4등급 × 3성별(M, F, NULL) = **12가지** 조합입니다.
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [2강: WHERE로 필터링](02-where.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 2강으로 |
+| **4~6개** | 이 강의를 다시 읽어보세요 |
+| **0~3개** | [0강](00-introduction.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| SELECT * / 특정 칼럼 | 1, 2, 3 |
+| AS (별칭) | 4, 5, 6 |
+| DISTINCT | 7, 8, 10 |
+| 산술 연산 | 5, 6, 9 |
 
 ---
-다음: [2강: WHERE로 데이터 필터링](02-where.md)
+다음: [2강: WHERE로 필터링](02-where.md)

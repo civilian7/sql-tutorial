@@ -1,6 +1,9 @@
 # 6강: NULL 다루기
 
-`NULL`은 알 수 없거나 존재하지 않는 값을 나타냅니다. 0도 아니고 빈 문자열도 아닌, 값 자체가 없는 상태입니다. NULL은 SQL의 다른 모든 값과 다르게 동작하기 때문에 정확히 이해하는 것이 중요합니다.
+0강에서 NULL을 간단히 소개했습니다 — '값이 없다'는 뜻이라고요. 이번 강에서는 NULL이 SQL에서 어떻게 특별하게 동작하는지, 그리고 안전하게 다루는 방법을 배웁니다.
+
+!!! note "이미 알고 계신다면"
+    IS NULL, COALESCE, NULLIF, NULL 전파를 이미 알고 있다면 [7강: INNER JOIN](../intermediate/07-inner-join.md)으로 건너뛰세요.
 
 ```mermaid
 flowchart TD
@@ -238,6 +241,17 @@ SELECT
     LIMIT 5;
     ```
 
+## 정리
+
+| 문법 | 설명 | 예시 |
+|------|------|------|
+| `IS NULL` | 값이 NULL인지 확인 | `WHERE birth_date IS NULL` |
+| `IS NOT NULL` | 값이 NULL이 아닌지 확인 | `WHERE gender IS NOT NULL` |
+| `COALESCE(a, b, ...)` | NULL이 아닌 첫 번째 값 반환 | `COALESCE(gender, '미입력')` |
+| `NULLIF(a, b)` | a = b이면 NULL 반환 (0 나누기 방지) | `price / NULLIF(stock_qty, 0)` |
+| 집계와 NULL | SUM, AVG, COUNT(칼럼) 등은 NULL 무시 | `AVG`는 NULL 행 제외 후 계산 |
+| NULL 전파 | NULL + 숫자 = NULL | `1 + NULL → NULL` |
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
@@ -454,6 +468,27 @@ SELECT
     |            5230 |                780 |            523 |             289 |
 
 
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [7강: INNER JOIN](../intermediate/07-inner-join.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 7강으로 |
+| **5개 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [5강: GROUP BY](05-group-by.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| IS NULL | 1, 5 |
+| COALESCE | 2, 4 |
+| NULLIF | 3 |
+| COALESCE + GROUP BY | 6 |
+| 집계와 NULL (CASE + COUNT) | 7, 8 |
+| NULL 그룹 비교 (AVG + IS NULL) | 9 |
+| NULL 전파 (다중 칼럼 결측 집계) | 10 |
 
 ---
 다음: [7강: INNER JOIN](../intermediate/07-inner-join.md)

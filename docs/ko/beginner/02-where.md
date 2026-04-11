@@ -1,5 +1,10 @@
 # 2강: WHERE로 데이터 필터링
 
+1강에서 SELECT로 원하는 칼럼을 조회했습니다. 하지만 모든 행이 나왔죠? WHERE를 사용하면 조건에 맞는 행만 골라낼 수 있습니다.
+
+!!! note "이미 알고 계신다면"
+    WHERE, 비교연산자, AND/OR, IN, BETWEEN, LIKE, IS NULL을 이미 알고 있다면 [3강: 정렬과 페이징](03-sort-limit.md)으로 건너뛰세요.
+
 `WHERE` 절은 조건을 만족하는 행만 결과에 포함시킵니다. `WHERE`가 없으면 테이블의 모든 행이 반환됩니다. 실무에서 의미 있는 데이터를 뽑아내려면 `WHERE` 사용이 필수입니다.
 
 ```mermaid
@@ -171,6 +176,17 @@ SELECT order_number, notes
 FROM orders
 WHERE notes IS NOT NULL;
 ```
+
+## 정리
+
+| 키워드 | 설명 | 예시 |
+|--------|------|------|
+| `=`, `<>`, `<`, `>`, `<=`, `>=` | 비교 연산자 | `WHERE price >= 1000` |
+| `AND` / `OR` | 여러 조건 결합 | `WHERE grade = 'VIP' AND is_active = 1` |
+| `IN` | 여러 값 중 하나와 일치 | `WHERE grade IN ('GOLD', 'VIP')` |
+| `BETWEEN` | 범위 조건 (양 끝 포함) | `WHERE price BETWEEN 100 AND 500` |
+| `LIKE` | 텍스트 패턴 매칭 (`%` 임의 문자열, `_` 한 글자) | `WHERE name LIKE '%Gaming%'` |
+| `IS NULL` / `IS NOT NULL` | NULL 여부 확인 (`= NULL`은 동작하지 않음) | `WHERE birth_date IS NULL` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -367,5 +383,27 @@ WHERE notes IS NOT NULL;
     | ...  | ...    | ...           | ...       |
 
 
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [3강: 정렬과 페이징](03-sort-limit.md)으로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 3강으로 |
+| **5개 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [1강: SELECT 기초](01-select.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| AND / IN | 1 |
+| BETWEEN | 2, 6 |
+| IS NULL | 3 |
+| 비교 연산자 (>=, <>) | 4, 5 |
+| IN | 7 |
+| LIKE | 8 |
+| AND / 부정 비교 | 9 |
+| OR / 괄호 우선순위 | 10 |
+
 ---
-다음: [3강: 정렬과 페이지네이션](03-sort-limit.md)
+다음: [3강: 정렬과 페이징](03-sort-limit.md)

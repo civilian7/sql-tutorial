@@ -1,4 +1,9 @@
-# 3강: 정렬과 페이지네이션
+# 3강: 정렬과 페이징
+
+2강에서 WHERE로 원하는 행만 필터링했습니다. 하지만 결과가 무작위 순서로 나왔죠? ORDER BY로 정렬하고, LIMIT로 상위 N건만 가져올 수 있습니다.
+
+!!! note "이미 알고 계신다면"
+    ORDER BY, LIMIT, OFFSET을 이미 알고 있다면 [4강: 집계 함수](04-aggregates.md)로 건너뛰세요.
 
 SQL 결과의 행 순서는 별도로 지정하지 않으면 보장되지 않습니다. `ORDER BY`로 하나 이상의 칼럼을 기준으로 정렬할 수 있고, `LIMIT`과 `OFFSET`으로 대용량 결과를 페이지 단위로 나눠 조회할 수 있습니다.
 
@@ -107,7 +112,7 @@ LIMIT 5;
 | Razer Blade 16 실버                                             | 4123800 |
 | MacBook Air 15 M3 실버                                          | 3774700 |
 
-## OFFSET — 페이지네이션(Pagination)
+## OFFSET — 페이징(Pagination)
 
 ![Pagination](../img/pagination.svg){ .off-glb width="480"  }
 
@@ -167,6 +172,17 @@ LIMIT 5;
 | 김명자  | (NULL)     |
 | 김정식  | (NULL)     |
 | ...  | ...        |
+
+## 정리
+
+| 키워드 | 설명 | 예시 |
+|--------|------|------|
+| `ORDER BY col ASC` | 오름차순 정렬 (기본값) | `ORDER BY price ASC` |
+| `ORDER BY col DESC` | 내림차순 정렬 | `ORDER BY price DESC` |
+| 다중 칼럼 정렬 | 첫 번째 칼럼이 같으면 두 번째 칼럼으로 정렬 | `ORDER BY grade ASC, name ASC` |
+| `LIMIT n` | 최대 n개 행만 반환 | `LIMIT 5` |
+| `OFFSET n` | 앞의 n개 행을 건너뜀 | `LIMIT 10 OFFSET 20` (3페이지) |
+| NULL 정렬 | SQLite: ASC 시 NULL이 앞, DESC 시 NULL이 뒤 | `ORDER BY birth_date IS NULL ASC, birth_date ASC` |
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
@@ -402,6 +418,26 @@ LIMIT 5;
     | ORD-20231020-25036 |     46945700 | 2023-10-20 13:57:47 |
     | ...                | ...          | ...                 |
 
+
+### 채점 가이드
+
+| 점수 | 다음 단계 |
+|:----:|----------|
+| **9~10개** | [4강: 집계 함수](04-aggregates.md)로 이동 |
+| **7~8개** | 틀린 문제 해설을 복습한 뒤 4강으로 |
+| **5개 이하** | 이 강의를 다시 읽어보세요 |
+| **3개 이하** | [2강: WHERE로 필터링](02-where.md)부터 다시 시작하세요 |
+
+**문제별 영역:**
+
+| 영역 | 해당 문제 |
+|------|:--------:|
+| ORDER BY DESC + LIMIT | 1, 4 |
+| 다중 정렬 (ASC/DESC) | 2, 5, 8 |
+| LIMIT + OFFSET (페이징) | 3, 7 |
+| ORDER BY 표현식 + LIMIT | 6 |
+| NULL 정렬 처리 | 9 |
+| 다중 정렬 + LIMIT | 10 |
 
 ---
 다음: [4강: 집계 함수](04-aggregates.md)
