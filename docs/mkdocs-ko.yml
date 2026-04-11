@@ -65,36 +65,37 @@ nav:
     - "04. 저장 프로시저": schema/procedures.md
     - "05. 스키마 조회 쿼리": schema/queries.md
     - "06. 페르소나별 활용 가이드": schema/personas.md
-  - 초급:
-    - "00. 데이터베이스와 SQL 소개": beginner/00-introduction.md
-    - "01. SELECT 기초": beginner/01-select.md
-    - "02. WHERE로 필터링": beginner/02-where.md
-    - "03. 정렬과 페이징": beginner/03-sort-limit.md
-    - "04. 집계 함수": beginner/04-aggregates.md
-    - "05. GROUP BY와 HAVING": beginner/05-group-by.md
-    - "06. NULL 처리": beginner/06-null.md
-    - "07. CASE 표현식": beginner/07-case.md
-  - 중급:
-    - "08. INNER JOIN": intermediate/08-inner-join.md
-    - "09. LEFT JOIN과 외부 조인": intermediate/09-left-join.md
-    - "10. 서브쿼리": intermediate/10-subqueries.md
-    - "11. 날짜/시간 함수": intermediate/11-datetime.md
-    - "12. 문자열 함수": intermediate/12-string.md
-    - "13. 숫자·변환·조건 함수": intermediate/13-utility-functions.md
-    - "14. UNION": intermediate/14-union.md
-    - "15. INSERT, UPDATE, DELETE": intermediate/15-dml.md
-    - "16. DDL — 테이블 생성과 변경": intermediate/16-ddl.md
-    - "17. 트랜잭션과 ACID": intermediate/17-transactions.md
-  - 고급:
-    - "18. 윈도우 함수": advanced/18-window.md
-    - "19. CTE와 재귀 CTE": advanced/19-cte.md
-    - "20. EXISTS와 상관 서브쿼리": advanced/20-exists.md
-    - "21. SELF JOIN과 CROSS JOIN": advanced/21-self-cross-join.md
-    - "22. 뷰(Views)": advanced/22-views.md
-    - "23. 인덱스와 성능": advanced/23-indexes.md
-    - "24. 트리거": advanced/24-triggers.md
-    - "25. JSON 데이터 쿼리": advanced/25-json.md
-    - "26. 저장 프로시저": advanced/26-stored-procedures.md
+  - 강의:
+    - 초급:
+      - "00. 데이터베이스와 SQL 소개": beginner/00-introduction.md
+      - "01. SELECT 기초": beginner/01-select.md
+      - "02. WHERE로 필터링": beginner/02-where.md
+      - "03. 정렬과 페이징": beginner/03-sort-limit.md
+      - "04. 집계 함수": beginner/04-aggregates.md
+      - "05. GROUP BY와 HAVING": beginner/05-group-by.md
+      - "06. NULL 처리": beginner/06-null.md
+      - "07. CASE 표현식": beginner/07-case.md
+    - 중급:
+      - "08. INNER JOIN": intermediate/08-inner-join.md
+      - "09. LEFT JOIN과 외부 조인": intermediate/09-left-join.md
+      - "10. 서브쿼리": intermediate/10-subqueries.md
+      - "11. 날짜/시간 함수": intermediate/11-datetime.md
+      - "12. 문자열 함수": intermediate/12-string.md
+      - "13. 숫자·변환·조건 함수": intermediate/13-utility-functions.md
+      - "14. UNION": intermediate/14-union.md
+      - "15. INSERT, UPDATE, DELETE": intermediate/15-dml.md
+      - "16. DDL — 테이블 생성과 변경": intermediate/16-ddl.md
+      - "17. 트랜잭션과 ACID": intermediate/17-transactions.md
+    - 고급:
+      - "18. 윈도우 함수": advanced/18-window.md
+      - "19. CTE와 재귀 CTE": advanced/19-cte.md
+      - "20. EXISTS와 상관 서브쿼리": advanced/20-exists.md
+      - "21. SELF JOIN과 CROSS JOIN": advanced/21-self-cross-join.md
+      - "22. 뷰(Views)": advanced/22-views.md
+      - "23. 인덱스와 성능": advanced/23-indexes.md
+      - "24. 트리거": advanced/24-triggers.md
+      - "25. JSON 데이터 쿼리": advanced/25-json.md
+      - "26. 저장 프로시저": advanced/26-stored-procedures.md
   - 참고:
     - "데이터베이스별 SQL 차이": dialect-comparison.md
     - "용어사전": appendix/glossary.md
