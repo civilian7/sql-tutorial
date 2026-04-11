@@ -6,7 +6,7 @@
 
     ---
 
-    `products` (280행) --- 상품 정보 (이름, 가격, 재고, 브랜드 등)
+    `products` --- 상품 정보 (이름, 가격, 재고, 브랜드 등)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 

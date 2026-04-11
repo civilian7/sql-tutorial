@@ -6,7 +6,7 @@
 
     ---
 
-    `products` (280행), `customers` (5,230행), `orders` (34,908행), `reviews` (7,945행), `payments` (34,908행)
+    `products`, `customers` (5,230행), `orders` (34,908행), `reviews` (7,945행), `payments` (34,908행)
 
 -   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
 
