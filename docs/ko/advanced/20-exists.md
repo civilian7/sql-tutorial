@@ -1,4 +1,4 @@
-# 강의 20: EXISTS와 상관 서브쿼리(Correlated Subqueries)
+# 20강: EXISTS와 상관 서브쿼리
 
 `EXISTS`는 서브쿼리가 한 건이라도 행을 반환하는지 검사합니다. `IN`과 달리 첫 번째 일치 행을 찾는 즉시 중단하므로, 대용량 데이터에서 효율적이며 NULL이 포함될 수 있는 상황에서도 안전합니다.
 
@@ -496,10 +496,10 @@ ORDER BY category;
 
 | 점수 | 다음 단계 |
 |:----:|----------|
-| **9~10개** | [강의 21: SELF/CROSS JOIN](21-self-cross-join.md)으로 이동 |
+| **9~10개** | [21강: SELF/CROSS JOIN](21-self-cross-join.md)으로 이동 |
 | **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
 | **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [강의 19: CTE](19-cte.md)부터 다시 시작하세요 |
+| **3개 이하** | [19강: CTE](19-cte.md)부터 다시 시작하세요 |
 
 **문제별 영역:**
 
@@ -512,4 +512,4 @@ ORDER BY category;
 | EXISTS + 다중 조건 | 9, 10 |
 
 ---
-다음: [강의 21: SELF JOIN과 CROSS JOIN](21-self-cross-join.md)
+다음: [21강: SELF JOIN과 CROSS JOIN](21-self-cross-join.md)
