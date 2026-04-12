@@ -38,49 +38,71 @@
 
 ## 프로젝트 구조
 ```
-ecommerce-test-db/
+sql-tutorial/
 ├── CLAUDE.md                # 이 파일 (프로젝트 컨텍스트)
-├── README.md                # 사용법 문서
-├── config.yaml              # 데이터 생성 설정 (규모, 성장률 등)
-├── requirements.txt         # Python 의존성
+├── README.md                # 사용법 문서 (영어)
+├── README.ko.md             # 사용법 문서 (한국어)
 ├── generate.py              # 메인 실행 스크립트
+├── compile_exercises.py     # YAML 연습문제 → exercise.db + mkdocs
+├── check_integrity.py       # 데이터 무결성 검증
+├── verify.py                # 튜토리얼 통합 검증 (SQL, 난이도, 품질)
+├── sync_sql.py              # 한국어↔영어 SQL 동기화
+├── config.yaml              # 핵심 설정 (날짜, 규모, 성장, 비율)
+├── config_detailed.yaml     # 상세 설정 (120+ 파라미터)
+├── requirements.txt         # Python 의존성
 ├── src/
-│   ├── __init__.py
-│   ├── schema.py            # 스키마 정의 (테이블, 칼럼, 관계)
-│   ├── generators/
-│   │   ├── __init__.py
+│   ├── generators/          # 23개 데이터 생성기
 │   │   ├── base.py          # 공통 생성 로직
-│   │   ├── customers.py     # 고객 데이터 생성
-│   │   ├── products.py      # 상품/카테고리 데이터 생성
-│   │   ├── orders.py        # 주문/주문상세 생성
-│   │   ├── payments.py      # 결제 데이터 생성
-│   │   ├── shipping.py      # 배송 데이터 생성
-│   │   ├── reviews.py       # 리뷰 데이터 생성
-│   │   ├── inventory.py     # 재고/입고 데이터 생성
-│   │   └── staff.py         # 직원/관리자 데이터 생성
+│   │   ├── products.py      # 상품/카테고리
+│   │   ├── customers.py     # 고객
+│   │   ├── orders.py        # 주문/주문상세
+│   │   ├── payments.py      # 결제
+│   │   ├── shipping.py      # 배송
+│   │   ├── reviews.py       # 리뷰
+│   │   ├── inventory.py     # 재고/입고
+│   │   ├── staff.py         # 직원
+│   │   ├── calendar.py      # 날짜 차원
+│   │   ├── carts.py         # 장바구니
+│   │   ├── complaints.py    # CS 클레임
+│   │   ├── coupons.py       # 쿠폰
+│   │   ├── dirty.py         # 더티 데이터 (노이즈)
+│   │   ├── grade_history.py # 등급 이력
+│   │   ├── images.py        # 상품 이미지
+│   │   ├── points.py        # 포인트 적립/사용
+│   │   ├── promotions.py    # 프로모션
+│   │   ├── qna.py           # 상품 Q&A
+│   │   ├── returns.py       # 반품/교환
+│   │   ├── tags.py          # 상품 태그
+│   │   ├── views.py         # 조회 로그
+│   │   └── wishlists.py     # 위시리스트
 │   ├── exporters/
-│   │   ├── __init__.py
 │   │   ├── sqlite_exporter.py
 │   │   ├── mysql_exporter.py
-│   │   ├── postgresql_exporter.py
-│   │   ├── sqlserver_exporter.py
-│   │   └── oracle_exporter.py
+│   │   └── postgresql_exporter.py
 │   └── utils/
-│       ├── __init__.py
 │       ├── fake_phone.py    # 020-XXXX-XXXX 전화번호 생성
 │       ├── growth.py        # 성장 곡선 계산
 │       └── seasonality.py   # 계절성 패턴
 ├── data/
-│   ├── categories.json      # 상품 카테고리 마스터 (수동 큐레이션)
+│   ├── categories.json      # 상품 카테고리 마스터
 │   ├── products.json        # 상품 마스터 (브랜드, 모델명, 가격대)
-│   └── suppliers.json       # 공급업체 마스터
+│   ├── suppliers.json       # 공급업체 마스터
+│   └── locale/              # 로케일별 데이터 (ko, en)
+├── exercises/               # 연습문제 YAML (beginner/intermediate/advanced)
+├── docs/                    # MkDocs 튜토리얼
+│   ├── ko/                  # 한국어
+│   ├── en/                  # 영어
+│   ├── hooks/               # 빌드 훅 (mermaid, 버전 치환)
+│   └── version.json         # 버전 정보
+├── tools/                   # 연습문제 결과 업데이트 도구
+├── .github/workflows/       # CI (verify.yml)
+├── serve.bat                # 로컬 튜토리얼 서버
+├── pdf.bat                  # PDF 내보내기
 └── output/                  # 생성된 DB/SQL 파일 출력 디렉토리
-    ├── ecommerce-ko.db     # SQLite DB (한국어 로케일)
-    ├── ecommerce-en.db     # SQLite DB (영어 로케일)
+    ├── ecommerce-ko.db      # SQLite DB (한국어)
+    ├── ecommerce-en.db      # SQLite DB (영어)
     ├── mysql/
-    ├── postgresql/
-    ├── sqlserver/
-    └── oracle/
+    └── postgresql/
 ```
 
 ## 실행 방법

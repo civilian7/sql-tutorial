@@ -203,14 +203,19 @@ pdf.bat en       # 영어만
 ├── generate.py              # 데이터베이스 생성기
 ├── compile_exercises.py     # YAML 연습문제 → exercise.db + mkdocs
 ├── check_integrity.py       # 데이터 무결성 검증
+├── verify.py                # 튜토리얼 통합 검증 (SQL, 난이도, 품질)
+├── sync_sql.py              # 한국어↔영어 SQL 동기화
 ├── config.yaml              # 핵심 설정
 ├── config_detailed.yaml     # 상세 설정 (120+ 파라미터)
 ├── data/                    # 카테고리, 상품, 공급업체, 로케일
 ├── exercises/               # 연습문제 YAML (beginner/intermediate/advanced)
 ├── docs/                    # MkDocs 튜토리얼 (ko + en)
 ├── src/
-│   ├── generators/          # 18개 데이터 생성기
-│   └── exporters/           # SQLite, MySQL, PostgreSQL 내보내기
+│   ├── generators/          # 23개 데이터 생성기
+│   ├── exporters/           # SQLite, MySQL, PostgreSQL 내보내기
+│   └── utils/               # 전화번호, 성장곡선, 계절성 유틸리티
+├── tools/                   # 연습문제 결과 업데이트 도구
+├── .github/workflows/       # CI (verify.yml)
 ├── serve.bat                # 로컬 튜토리얼 서버
 ├── pdf.bat                  # PDF 내보내기 (mkdocs-exporter + Chromium)
 └── output/                  # 생성된 파일

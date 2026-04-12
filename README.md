@@ -205,14 +205,19 @@ First run automatically installs Playwright + Chromium (~200MB). PDF rendering u
 ├── generate.py              # Database generator
 ├── compile_exercises.py     # YAML exercises → exercise.db + mkdocs
 ├── check_integrity.py       # Data integrity checker
+├── verify.py                # Tutorial verification (SQL, difficulty, quality)
+├── sync_sql.py              # Korean↔English SQL sync
 ├── config.yaml              # Core config
 ├── config_detailed.yaml     # Detailed config (120+ params)
 ├── data/                    # Categories, products, suppliers, locale
 ├── exercises/               # Exercise YAML (beginner/intermediate/advanced)
 ├── docs/                    # MkDocs tutorial (ko + en)
 ├── src/
-│   ├── generators/          # 18 data generators
-│   └── exporters/           # SQLite, MySQL, PostgreSQL exporters
+│   ├── generators/          # 23 data generators
+│   ├── exporters/           # SQLite, MySQL, PostgreSQL exporters
+│   └── utils/               # Phone numbers, growth curves, seasonality
+├── tools/                   # Exercise result update tools
+├── .github/workflows/       # CI (verify.yml)
 ├── serve.bat                # Local tutorial server
 ├── pdf.bat                  # PDF export (mkdocs-exporter + Chromium)
 └── output/                  # Generated files
