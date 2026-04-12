@@ -1,6 +1,6 @@
 한국어 | **[English](README.md)**
 
-# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v2.0</small>
+# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.0</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -8,16 +8,16 @@
 
 > 이 콘텐츠가 마음에 드셨다면 :star: 스타 하나 부탁드립니다!
 
-컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (22개 레슨, 208개 연습문제)을 제공하는 프로젝트입니다.
+컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (27개 레슨, 640개 연습문제)을 제공하는 프로젝트입니다.
 
-> **왜 이 프로젝트를?** 대부분의 SQL 교재는 문제만 있고 데이터가 없어서 쿼리를 실행해볼 수 없습니다. 이 프로젝트는 **69만 건의 현실적 데이터**와 완전한 튜토리얼 + 실행 가능한 연습문제를 제공합니다.
+> **왜 이 프로젝트를?** 대부분의 SQL 교재는 문제만 있고 데이터가 없어서 쿼리를 실행해볼 수 없습니다. 이 프로젝트는 **75만 건의 현실적 데이터**와 완전한 튜토리얼 + 실행 가능한 연습문제를 제공합니다.
 
 ## 빠른 시작
 
 ```bash
 pip install -r requirements.txt
 python generate.py --size small
-# 출력: output/ecommerce-ko.db (~80MB, 69만 건)
+# 출력: output/ecommerce-ko.db (~80MB, 75만 건)
 ```
 
 `output/ecommerce-ko.db`를 SQL 도구에서 열고 학습을 시작하세요.
@@ -27,8 +27,8 @@ python generate.py --size small
 | 구성 | 상세 |
 |------|------|
 | **데이터베이스 생성기** | 30 테이블, 18 뷰, 5 트리거, 61 인덱스 |
-| **튜토리얼** | 22개 레슨 (초급→중급→고급), 한국어/영어 |
-| **연습문제** | 208개 레슨 내 복습 문제 + 별도 연습 세트, 정답 포함 |
+| **튜토리얼** | 27개 레슨 (초급→중급→고급), 한국어/영어 |
+| **연습문제** | 640개 (30세트), 정답 + 해설 + 결과 테이블 포함 |
 | **저장 프로시저** | 25개 프로시저 + 5개 함수 (MySQL & PostgreSQL) |
 | **3개 DB** | SQLite (기본), MySQL, PostgreSQL |
 | **더티 데이터** | `--dirty-data` 데이터 정제 연습 |
@@ -59,29 +59,27 @@ python generate.py [OPTIONS]
 
 | 규모 | 행 수 | SQLite | 시간 | 용도 |
 |------|------:|-------:|-----:|------|
-| small | ~69만 | ~80 MB | ~20초 | 학습, CI |
+| small | ~75만 | ~80 MB | ~20초 | 학습, CI |
 | medium | ~700만 | ~800 MB | ~3분 | 개발 |
 | large | ~3500만 | ~4 GB | ~15분 | 성능 테스트 |
 
 ## 튜토리얼
 
-22개 레슨에 시각적 도표, DB별 SQL 탭, 복습 문제가 포함됩니다.
+27개 레슨에 시각적 도표, DB별 SQL 탭, 복습 문제가 포함됩니다.
 
 | 레벨 | 레슨 | 주제 |
 |------|------|------|
-| 초급 | 01–06 | SELECT, WHERE, ORDER BY, 집계, GROUP BY, NULL |
-| 중급 | 07–16 | JOIN, 서브쿼리, CASE, 날짜/문자열, DML, DDL, Self/Cross JOIN |
-| 고급 | 17–22 | 윈도우 함수, CTE, EXISTS, 뷰, 인덱스, 트리거 |
+| 초급 | 00–07 | DB 개요, SELECT, WHERE, ORDER BY, 집계, GROUP BY, NULL, CASE |
+| 중급 | 08–17 | INNER/LEFT JOIN, 서브쿼리, 날짜/문자열, 숫자·변환, UNION, DML, DDL, 트랜잭션 |
+| 고급 | 18–26 | 윈도우 함수, CTE, EXISTS, Self/Cross JOIN, 뷰, 인덱스, 트리거, JSON, 저장 프로시저 |
 
-## 연습문제 (208문제)
+## 연습문제 (640문제 · 30세트)
 
-| 난이도 | 문제 수 | 예시 |
-|:------:|:-------:|------|
-| ⭐ | 38 | 단일 테이블 SELECT, WHERE |
-| ⭐⭐ | 92 | JOIN, GROUP BY, 날짜, 문자열 |
-| ⭐⭐⭐ | 78 | 서브쿼리, CTE, CASE, 복합 JOIN |
-| ⭐⭐⭐⭐ | 47 | 윈도우 함수, 리텐션, 이동 평균 |
-| ⭐⭐⭐⭐⭐ | 15 | 연속 구간, 세션 분석, 중앙값, 파레토 |
+| 레벨 | 세트 수 | 문제 수 | 주요 주제 |
+|:----:|:-------:|:-------:|----------|
+| 초급 | 8 | 240 | SELECT, WHERE, 집계, GROUP BY, NULL, CASE, 종합, 디버깅 |
+| 중급 | 11 | 220 | JOIN, 날짜, 문자열·숫자, 서브쿼리, 집합, DML, DDL, 트랜잭션, 종합, 디버깅, 데이터 품질 |
+| 고급 | 11 | 180 | 윈도우 함수, CTE, EXISTS, DB 객체, JSON, 최적화, 매출 분석, 고객·운영, 실전 패턴, 면접, 챌린지 |
 
 문제 유형: `SELECT`, `JOIN/UNION`, `Aggregate`, `String/Date`, `Subquery/CTE`, `Window`, `CASE/IF`, `Analytics`
 
@@ -227,7 +225,27 @@ pdf.bat en       # 영어만
 
 개인 학습 및 비상업적 교육 목적으로 자유롭게 사용할 수 있습니다. 상업적 사용: civilian7@gmail.com
 
+## 기여자
+
+| 기여자 | 기여 내용 |
+|--------|----------|
+| [@shinnyeonki](https://github.com/shinnyeonki) | PostgreSQL/MySQL 파티션 테이블 UNIQUE 제약조건 수정, products FK 위반 이슈 리포트 ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
+
 ## 변경 이력
+
+### v3.0.0 (2026-04-12)
+
+**튜토리얼 확장**: 22→27개 레슨 (0강 DB개요, CASE, 숫자·변환, UNION, Self/Cross JOIN, JSON, 저장프로시저 추가)
+
+**연습문제 대폭 확대**: 208→640개 (30세트). 초급 8·중급 11·고급 11세트. 디버깅, 데이터 품질, 면접 대비, 챌린지 세트 신설
+
+**문서 구조 개편**: 스키마·준비하기 분리, 페르소나 9명 학습 경로, 학습 일정 (2주/4주/8주), DB 선택 가이드
+
+**영문 완전 번역**: 27개 레슨 + 30개 연습 세트 + 부록 전체 영문 버전 추가
+
+**뷰·SP 강화**: MySQL/PG 뷰 18개, 저장 프로시저 25개 + 함수 5개, 트리거·뷰·SP 플로우차트
+
+**빌드 자동화**: MkDocs 빌드 훅 (Mermaid CDN, 버전 자동 치환), CI 검증 (verify.py), PDF 내보내기
 
 ### v2.0.0 (2026-04-09)
 

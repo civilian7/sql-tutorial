@@ -37,7 +37,7 @@ def _load_version(config):
     docs_dir = os.path.dirname(hook_dir)
     version_file = os.path.join(docs_dir, "version.json")
 
-    version = "3.0"
+    version = "3.0"  # fallback default — keep in sync with version.json
     date = ""
 
     if os.path.exists(version_file):

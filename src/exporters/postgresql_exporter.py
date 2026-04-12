@@ -231,7 +231,7 @@ CREATE TABLE staff (
 -- =============================================
 CREATE TABLE orders (
     id              INT GENERATED ALWAYS AS IDENTITY,
-    order_number    VARCHAR(30) NOT NULL UNIQUE,
+    order_number    VARCHAR(30) NOT NULL,
     customer_id     INT NOT NULL,
     address_id      INT NOT NULL,
     staff_id        INT NULL,
@@ -247,7 +247,8 @@ CREATE TABLE orders (
     cancelled_at    TIMESTAMP NULL,
     created_at      TIMESTAMP NOT NULL,
     updated_at      TIMESTAMP NOT NULL,
-    PRIMARY KEY (id, ordered_at)
+    PRIMARY KEY (id, ordered_at),
+    UNIQUE (order_number, ordered_at)
 ) PARTITION BY RANGE (ordered_at);
 
 CREATE TABLE orders_2015 PARTITION OF orders
@@ -1847,7 +1848,8 @@ class PostgreSQLExporter:
             f.write("-- =============================================\n")
             f.write("-- E-commerce Test Data - PostgreSQL\n")
             f.write("-- =============================================\n\n")
-            f.write("SET client_encoding = 'UTF8';\n\n")
+            f.write("SET client_encoding = 'UTF8';\n")
+            f.write("SET session_replication_role = 'replica';  -- disable FK checks during bulk load\n\n")
 
             table_order = [
                 "categories", "suppliers", "products", "product_images", "product_prices",
@@ -1869,6 +1871,8 @@ class PostgreSQLExporter:
                 if not rows:
                     continue
                 self._write_inserts(f, table, rows)
+
+            f.write("\nSET session_replication_role = 'origin';  -- re-enable FK checks\n")
 
             # Reset sequences for identity columns
             f.write("\n-- Reset identity sequences\n")

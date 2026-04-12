@@ -1,6 +1,6 @@
 **[한국어](README.ko.md)** | English
 
-# SQL Tutorial — E-Commerce Database <small>v2.0</small>
+# SQL Tutorial — E-Commerce Database <small>v3.0</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -8,16 +8,16 @@
 
 > If you find this useful, please give it a :star: — it helps others discover this project!
 
-A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (22 lessons, 208 exercises).
+A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (27 lessons, 640 exercises).
 
-> **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **687,000 rows of realistic data** + full tutorial + exercises you can actually execute.
+> **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **750,000 rows of realistic data** + full tutorial + exercises you can actually execute.
 
 ## Quick Start
 
 ```bash
 pip install -r requirements.txt
 python generate.py --size small
-# Output: output/ecommerce-en.db (~80MB, 697K rows)
+# Output: output/ecommerce-en.db (~80MB, 750K rows)
 ```
 
 Open `output/ecommerce-en.db` in any SQL tool and start learning.
@@ -27,8 +27,8 @@ Open `output/ecommerce-en.db` in any SQL tool and start learning.
 | Component | Details |
 |-----------|---------|
 | **Database Generator** | 30 tables, 18 views, 5 triggers, 61 indexes |
-| **Tutorial** | 22 lessons (beginner → intermediate → advanced), bilingual (ko/en) |
-| **Exercises** | 208 in-lesson review problems + separate exercise sets, with answers |
+| **Tutorial** | 27 lessons (beginner → intermediate → advanced), bilingual (ko/en) |
+| **Exercises** | 640 problems (30 sets), with answers + explanations + result tables |
 | **Stored Procedures** | 25 procedures + 5 functions (MySQL & PostgreSQL) |
 | **3 Databases** | SQLite (default), MySQL, PostgreSQL |
 | **Dirty Data Mode** | `--dirty-data` for data cleaning practice |
@@ -59,29 +59,27 @@ python generate.py [OPTIONS]
 
 | Scale | Rows | SQLite | Time | Use |
 |-------|-----:|-------:|-----:|-----|
-| small | ~697K | ~80 MB | ~20s | Learning, CI |
+| small | ~750K | ~80 MB | ~20s | Learning, CI |
 | medium | ~7M | ~800 MB | ~3 min | Development |
 | large | ~35M | ~4 GB | ~15 min | Performance testing |
 
 ## Tutorial
 
-22 lessons with visual diagrams, DB-specific SQL tabs, and review exercises.
+27 lessons with visual diagrams, DB-specific SQL tabs, and review exercises.
 
 | Level | Lessons | Topics |
 |-------|---------|--------|
-| Beginner | 01–06 | SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL |
-| Intermediate | 07–16 | JOINs, Subqueries, CASE, Date/String, DML, DDL, Self/Cross JOIN |
-| Advanced | 17–22 | Window Functions, CTE, EXISTS, Views, Indexes, Triggers |
+| Beginner | 00–07 | DB Overview, SELECT, WHERE, ORDER BY, Aggregates, GROUP BY, NULL, CASE |
+| Intermediate | 08–17 | INNER/LEFT JOIN, Subqueries, Date/String, Utility Functions, UNION, DML, DDL, Transactions |
+| Advanced | 18–26 | Window Functions, CTE, EXISTS, Self/Cross JOIN, Views, Indexes, Triggers, JSON, Stored Procedures |
 
-## Exercises (270 problems)
+## Exercises (640 Problems · 30 Sets)
 
-| Level | Problems | Examples |
-|:-----:|:--------:|----------|
-| ⭐ | 38 | Single table SELECT, WHERE |
-| ⭐⭐ | 92 | JOIN, GROUP BY, dates, strings |
-| ⭐⭐⭐ | 78 | Subquery, CTE, CASE, complex JOIN |
-| ⭐⭐⭐⭐ | 47 | Window functions, retention, moving average |
-| ⭐⭐⭐⭐⭐ | 15 | Consecutive patterns, sessions, median, Pareto |
+| Level | Sets | Problems | Key Topics |
+|:-----:|:----:|:--------:|------------|
+| Beginner | 8 | 240 | SELECT, WHERE, Aggregates, GROUP BY, NULL, CASE, Comprehensive, Debugging |
+| Intermediate | 11 | 220 | JOIN, Dates, String/Math, Subqueries, Set Ops, DML, DDL, Transactions, Comprehensive, Debugging, Data Quality |
+| Advanced | 11 | 180 | Window Functions, CTE, EXISTS, DB Objects, JSON, Optimization, Sales Analysis, Customer/Ops, Patterns, Interview, Challenge |
 
 Problem types: `SELECT`, `JOIN/UNION`, `Aggregate`, `String/Date`, `Subquery/CTE`, `Window`, `CASE/IF`, `Analytics`
 
@@ -229,7 +227,27 @@ First run automatically installs Playwright + Chromium (~200MB). PDF rendering u
 
 Free for personal learning and non-commercial education. For commercial use: civilian7@gmail.com
 
+## Contributors
+
+| Contributor | Contributions |
+|-------------|--------------|
+| [@shinnyeonki](https://github.com/shinnyeonki) | Fix partition table UNIQUE constraints for PostgreSQL/MySQL, report products FK violation ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
+
 ## Changelog
+
+### v3.0.0 (2026-04-12)
+
+**Tutorial Expansion**: 22 → 27 lessons (added DB Overview, CASE, Utility Functions, UNION, Self/Cross JOIN, JSON, Stored Procedures)
+
+**Exercises Overhaul**: 208 → 640 problems (30 sets). Beginner 8 · Intermediate 11 · Advanced 11 sets. New sets: Debugging, Data Quality, Interview Prep, Challenge
+
+**Document Restructure**: Schema/setup pages split, 9 persona-based learning paths, study schedules (2/4/8 weeks), DB selection guide
+
+**Full English Translation**: All 27 lessons + 30 exercise sets + appendix translated to English
+
+**Views & SP**: 18 MySQL/PG views, 25 stored procedures + 5 functions, trigger/view/SP flowcharts
+
+**Build Automation**: MkDocs build hook (Mermaid CDN, version substitution), CI verification (verify.py), PDF export
 
 ### v2.0.0 (2026-04-09)
 

@@ -312,8 +312,9 @@ Adjust to your own pace. Based on 1-2 hours per day.
 
 | Version | Date | Key Changes |
 |:-------:|:----:|-------------|
+| v3.0 | 2026-04-12 | 27 lessons · 640 exercises (30 sets) complete, full English translation, persona learning paths, MkDocs build automation, PDF export |
 | v2.1 | 2026-04-11 | Document structure overhaul (schema/setup split), 18 MySQL/PG views added, expanded to 15 stored procedures, trigger/view/SP flowcharts, DB selection guide, study schedule |
-| v2.0 | 2026-04-01 | Full renewal — 30 tables, 3 DB simultaneous support, 640 exercises, Korean/English support, seed-based generator |
+| v2.0 | 2026-04-01 | Full renewal — 30 tables, 3 DB simultaneous support, Korean/English support, seed-based generator |
 | v1.0 | 2025-12-01 | Initial release — SQLite only, 10 tables, basic lessons |
 
 [Get Started →](setup/index.md){ .md-button .md-button--primary }

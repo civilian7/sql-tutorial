@@ -219,6 +219,9 @@ class ProductGenerator(BaseGenerator):
             if candidates:
                 p["successor_id"] = self.rng.choice(candidates)["id"]
 
+        # Sort by id so self-referencing FK (successor_id) inserts in safe order
+        products.sort(key=lambda x: x["id"])
+
         return products
 
     def generate_product_prices(self, products: list[dict]) -> list[dict]:
