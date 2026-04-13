@@ -1,0 +1,233 @@
+metadata:
+  id: lesson-16-ddl
+  title: "테이블 관리 (DDL) — 레슨 복습"
+  title_en: "Table Management — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/16-ddl"
+  concepts: ['CREATE TABLE', 'ALTER TABLE', 'DROP TABLE']
+  estimated_minutes: 22
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_16_ddl_review.mp4"
+    fps: 15
+    intro_text: "16강 테이블 관리 (DDL) — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "16강 테이블 관리 (DDL) 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L16-01
+    level: 2
+    type: "SELECT"
+    question: |
+      `temp_employees` 테이블을 만드세요. 칼럼: `id`(자동 증가 기본 키), `name`(필수, 문자열), `email`(필수, UNIQUE, 문자열), `department`(문자열, 기본값 `'General'`), `hire_date`(문자열/날짜).
+    reference_sql:
+      common: |
+        CREATE TABLE temp_employees (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        name       TEXT NOT NULL,
+        email      TEXT NOT NULL UNIQUE,
+        department TEXT DEFAULT 'General',
+        hire_date  TEXT
+        );
+    tags: []
+
+  - id: L16-02
+    level: 2
+    type: "SELECT"
+    question: |
+      `temp_employees` 테이블에 `phone` 칼럼(문자열, 선택)을 추가한 뒤, `department` 칼럼의 이름을 `dept`로 변경하세요.
+    reference_sql:
+      common: |
+        ALTER TABLE temp_employees ADD COLUMN phone TEXT;
+        
+        ALTER TABLE temp_employees RENAME COLUMN department TO dept;
+    tags: []
+
+  - id: L16-03
+    level: 2
+    type: "SELECT"
+    question: |
+      **복합 기본 키**를 사용하는 `temp_order_log` 테이블을 만드세요. (`order_id`, `log_seq`)가 복합 기본 키입니다. 칼럼: `order_id`(정수, 필수), `log_seq`(정수, 필수), `action`(문자열, 필수, `'created'`, `'shipped'`, `'delivered'`, `'cancelled'` 중 하나만 허용), `logged_at`(기본값: 현재 시각).
+    reference_sql:
+      common: |
+        CREATE TABLE temp_order_log (
+        order_id  INTEGER NOT NULL,
+        log_seq   INTEGER NOT NULL,
+        action    TEXT    NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+        logged_at TEXT    DEFAULT (datetime('now')),
+        PRIMARY KEY (order_id, log_seq)
+        );
+    tags: []
+
+  - id: L16-04
+    level: 2
+    type: "SELECT"
+    question: |
+      `DELETE FROM`과 `TRUNCATE TABLE`의 차이를 설명하세요. 그리고 `order_archive` 테이블의 모든 데이터를 삭제하는 구문을 DB별로 작성하세요.
+    reference_sql:
+      common: |
+        -- SQLite는 TRUNCATE를 지원하지 않으므로 DELETE로 대체
+        DELETE FROM order_archive;
+        
+        -- 디스크 공간 회수가 필요하면
+        VACUUM;
+    tags: []
+
+  - id: L16-05
+    level: 2
+    type: "SELECT"
+    question: |
+      상품 가격 이력을 저장하는 `price_history` 테이블을 만드세요. 칼럼: `id`(정수, 자동 증가 기본 키), `product_id`(정수, NOT NULL), `old_price`, `new_price`(둘 다 실수, NOT NULL), `changed_at`(NOT NULL). `new_price`는 0 이상이어야 합니다(CHECK). `product_id`는 `products(id)`를 참조하는 외래 키입니다.
+    reference_sql:
+      common: |
+        CREATE TABLE price_history (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_id INTEGER NOT NULL,
+        old_price  REAL    NOT NULL,
+        new_price  REAL    NOT NULL CHECK (new_price >= 0),
+        changed_at TEXT    NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES products (id)
+        );
+    tags: []
+
+  - id: L16-06
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 테이블 정의에서 잘못된 부분을 찾고 수정하세요.
+      ```sql
+      CREATE TABLE temp_inventory (
+      product_id INTEGER,
+      warehouse  TEXT,
+      quantity   INTEGER DEFAULT -1,
+      updated_at TEXT
+      );
+      ```
+    reference_sql:
+      common: |
+        CREATE TABLE temp_inventory (
+        id         INTEGER PRIMARY KEY,
+        product_id INTEGER NOT NULL,
+        warehouse  TEXT    NOT NULL,
+        quantity   INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+        updated_at TEXT,
+        FOREIGN KEY (product_id) REFERENCES products (id)
+        );
+    tags: []
+
+  - id: L16-07
+    level: 2
+    type: "SELECT"
+    question: |
+      `event_participants` 테이블을 삭제하세요. 테이블이 존재하지 않아도 오류가 발생하지 않도록 작성하세요.
+    reference_sql:
+      common: |
+        DROP TABLE IF EXISTS event_participants;
+    tags: []
+
+  - id: L16-08
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 아이템을 저장하는 테이블을 만드세요. `quantity`는 1 이상, `unit_price`는 0 이상이어야 합니다. `order_id`는 `orders(id)`를, `product_id`는 `products(id)`를 참조합니다. 주문이 삭제되면 주문 아이템도 함께 삭제되어야 하고(CASCADE), 상품이 삭제되면 `product_id`는 NULL로 변경되어야 합니다(SET NULL).
+    reference_sql:
+      common: |
+        CREATE TABLE temp_order_details (
+        id         INTEGER PRIMARY KEY,
+        order_id   INTEGER NOT NULL,
+        product_id INTEGER,
+        quantity   INTEGER NOT NULL CHECK (quantity >= 1),
+        unit_price REAL    NOT NULL CHECK (unit_price >= 0),
+        FOREIGN KEY (order_id)   REFERENCES orders (id)   ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products (id)  ON DELETE SET NULL
+        );
+    tags: []
+
+  - id: L16-09
+    level: 2
+    type: "SELECT"
+    question: |
+      GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 테이블을 CTAS로 만든 뒤, `ALTER TABLE`로 `note` 칼럼(문자열, 기본값 없음)을 추가하세요.
+    reference_sql:
+      common: |
+        -- 1. CTAS로 테이블 생성
+        CREATE TABLE gold_customers AS
+        SELECT id, name, email, grade
+        FROM customers
+        WHERE grade = 'GOLD';
+        
+        -- 2. 칼럼 추가
+        ALTER TABLE gold_customers ADD COLUMN note TEXT;
+    tags: []
+
+  - id: L16-10
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 요구사항을 만족하는 `product_audit` 테이블을 만드세요:
+      - `id`: 자동 증가 기본 키
+      - `product_id`: 정수, NOT NULL, `products(id)` 참조 외래 키
+      - `action`: 문자열, NOT NULL, 'INSERT', 'UPDATE', 'DELETE' 중 하나만 허용 (CHECK)
+      - `old_price`: 실수 (NULL 허용)
+      - `new_price`: 실수 (NULL 허용)
+      - `changed_by`: 문자열, NOT NULL
+      - `changed_at`: NOT NULL, 기본값은 현재 시각
+    reference_sql:
+      common: |
+        CREATE TABLE product_audit (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_id  INTEGER NOT NULL,
+        action      TEXT    NOT NULL CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
+        old_price   REAL,
+        new_price   REAL,
+        changed_by  TEXT    NOT NULL,
+        changed_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (product_id) REFERENCES products (id)
+        );
+    tags: []
+
+  - id: L16-11
+    level: 2
+    type: "SELECT"
+    question: |
+      PostgreSQL에서 `invoice_seq`라는 시퀀스를 만드세요. 1000번부터 시작하고 1씩 증가합니다. 그리고 이 시퀀스를 사용하여 `invoices` 테이블에 행을 삽입하는 INSERT 문을 작성하세요. 칼럼: `id`(시퀀스 값), `order_id`(정수), `issued_at`(현재 시각).
+    reference_sql:
+      common: |
+        -- 시퀀스 생성
+        CREATE SEQUENCE invoice_seq
+        START WITH 1000
+        INCREMENT BY 1;
+        
+        -- 테이블 생성
+        CREATE TABLE invoices (
+        id        INTEGER PRIMARY KEY,
+        order_id  INTEGER NOT NULL,
+        issued_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        -- 시퀀스를 사용한 INSERT
+        INSERT INTO invoices (id, order_id, issued_at)
+        VALUES (NEXTVAL('invoice_seq'), 1001, CURRENT_TIMESTAMP);
+        
+        -- 확인
+        SELECT * FROM invoices;
+        
+        -- 정리
+        DROP TABLE IF EXISTS invoices;
+        DROP SEQUENCE IF EXISTS invoice_seq;
+    tags: []

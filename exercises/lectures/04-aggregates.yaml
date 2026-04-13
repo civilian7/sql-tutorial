@@ -1,0 +1,175 @@
+metadata:
+  id: lesson-04-aggregates
+  title: "집계 함수 — 레슨 복습"
+  title_en: "Aggregate Functions — Lesson Review"
+  difficulty: beginner
+  lesson: "beginner/04-aggregates"
+  concepts: ['COUNT', 'SUM', 'AVG', 'MIN', 'MAX']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/beginner"
+    filename: "lesson_04_aggregates_review.mp4"
+    fps: 15
+    intro_text: "04강 집계 함수 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "04강 집계 함수 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L04-01
+    level: 2
+    type: "SELECT"
+    question: |
+      `reviews` 테이블에서 리뷰의 평균 평점을 소수점 2자리로 반올림하여 구하세요. 별칭은 `avg_rating`으로 지정하세요.
+    reference_sql:
+      common: |
+        SELECT ROUND(AVG(rating), 2) AS avg_rating
+        FROM reviews;
+    tags: []
+
+  - id: L04-02
+    level: 2
+    type: "SELECT"
+    question: |
+      `orders` 테이블에서 완료된 주문(`status`가 `'delivered'` 또는 `'confirmed'`)의 총 매출(`total_amount` 합계)을 구하세요. 별칭은 `total_revenue`로 지정하세요.
+    reference_sql:
+      common: |
+        SELECT SUM(total_amount) AS total_revenue
+        FROM orders
+        WHERE status IN ('delivered', 'confirmed');
+    tags: []
+
+  - id: L04-03
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 전체 고객 수와 생년월일(`birth_date`)이 등록된 고객 수를 각각 구하세요. 별칭은 `total_customers`, `with_birth_date`로 지정하세요.
+    reference_sql:
+      common: |
+        SELECT
+        COUNT(*)          AS total_customers,
+        COUNT(birth_date) AS with_birth_date
+        FROM customers;
+    tags: []
+
+  - id: L04-04
+    level: 2
+    type: "SELECT"
+    question: |
+      TechShop에서 현재 판매 중인 상품 수를 세고, 해당 상품들의 총 재고 가치(`price * stock_qty` 합계)를 구하세요.
+    reference_sql:
+      common: |
+        SELECT
+        COUNT(*)                AS active_product_count,
+        SUM(price * stock_qty)  AS total_inventory_value
+        FROM products
+        WHERE is_active = 1;
+    tags: []
+
+  - id: L04-05
+    level: 2
+    type: "SELECT"
+    question: |
+      취소 또는 반품되지 않은 주문의 `total_amount` 평균, 최솟값, 최댓값을 계산하세요. 별칭은 각각 `avg_order`, `min_order`, `max_order`로 지정하세요.
+    reference_sql:
+      common: |
+        SELECT
+        AVG(total_amount) AS avg_order,
+        MIN(total_amount) AS min_order,
+        MAX(total_amount) AS max_order
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned', 'return_requested');
+    tags: []
+
+  - id: L04-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 판매 중인 상품의 평균 가격(`avg_price`, 소수점 0자리), 평균 원가(`avg_cost`, 소수점 0자리), 평균 마진율(`avg_margin_pct`, 소수점 1자리)을 한 쿼리로 구하세요. 마진율 = `(price - cost_price) / price * 100`으로 계산하되, 각 상품의 마진율의 평균을 구하세요.
+    reference_sql:
+      common: |
+        SELECT
+        ROUND(AVG(price), 0)                          AS avg_price,
+        ROUND(AVG(cost_price), 0)                           AS avg_cost,
+        ROUND(AVG((price - cost_price) / price * 100), 1)   AS avg_margin_pct
+        FROM products
+        WHERE is_active = 1;
+    tags: []
+
+  - id: L04-07
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 판매 중인 상품(`is_active = 1`)의 최저 가격, 최고 가격, 가격 차이를 구하세요. 별칭은 각각 `min_price`, `max_price`, `price_range`로 지정하세요.
+    reference_sql:
+      common: |
+        SELECT
+        MIN(price)             AS min_price,
+        MAX(price)             AS max_price,
+        MAX(price) - MIN(price) AS price_range
+        FROM products
+        WHERE is_active = 1;
+    tags: []
+
+  - id: L04-08
+    level: 2
+    type: "SELECT"
+    question: |
+      `order_items` 테이블의 전체 행 수, 총 수량 합계(`quantity`), 평균 단가(`unit_price`, 소수점 2자리), 최대 수량을 구하세요. 별칭은 `total_items`, `total_qty`, `avg_unit_price`, `max_qty`로 지정하세요.
+    reference_sql:
+      common: |
+        SELECT
+        COUNT(*)                    AS total_items,
+        SUM(quantity)               AS total_qty,
+        ROUND(AVG(unit_price), 2)   AS avg_unit_price,
+        MAX(quantity)               AS max_qty
+        FROM order_items;
+    tags: []
+
+  - id: L04-09
+    level: 2
+    type: "SELECT"
+    question: |
+      `payments` 테이블에서 완료된 결제(`status = 'completed'`)의 건수, 총 금액, 평균 금액(소수점 0자리), 최소/최대 금액을 모두 한 쿼리로 구하세요. 별칭은 `payment_count`, `total_amount`, `avg_amount`, `min_amount`, `max_amount`로 지정하세요.
+    reference_sql:
+      common: |
+        SELECT
+        COUNT(*)              AS payment_count,
+        SUM(amount)           AS total_amount,
+        ROUND(AVG(amount), 0) AS avg_amount,
+        MIN(amount)           AS min_amount,
+        MAX(amount)           AS max_amount
+        FROM payments
+        WHERE status = 'completed';
+    tags: []
+
+  - id: L04-10
+    level: 2
+    type: "SELECT"
+    question: |
+      배송 메모(`notes`)가 있는 주문은 몇 건인지, 전체 주문 중 몇 퍼센트인지 구하세요. `orders_with_notes`, `total_orders`, `pct_with_notes`(소수점 1자리)를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        COUNT(CASE WHEN notes IS NOT NULL THEN 1 END)  AS orders_with_notes,
+        COUNT(*)                                        AS total_orders,
+        ROUND(
+        100.0 * COUNT(CASE WHEN notes IS NOT NULL THEN 1 END) / COUNT(*),
+        1
+        ) AS pct_with_notes
+        FROM orders;
+    tags: []

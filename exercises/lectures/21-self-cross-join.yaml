@@ -1,0 +1,286 @@
+metadata:
+  id: lesson-21-self-cross-join
+  title: "셀프/크로스 조인 — 레슨 복습"
+  title_en: "Self/Cross Join — Lesson Review"
+  difficulty: advanced
+  lesson: "advanced/21-self-cross-join"
+  concepts: ['SELF JOIN', 'CROSS JOIN']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/advanced"
+    filename: "lesson_21_self_cross_join_review.mp4"
+    fps: 15
+    intro_text: "21강 셀프/크로스 조인 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "21강 셀프/크로스 조인 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L21-01
+    level: 2
+    type: "SELECT"
+    question: |
+      `staff` 테이블을 SELF JOIN하여 각 직원의 이름, 부서, 직책, 그리고 매니저 이름을 조회하세요. 매니저가 없는 직원(CEO 등)도 포함합니다.
+    reference_sql:
+      common: |
+        SELECT
+        s.name       AS employee,
+        s.department,
+        s.role,
+        m.name       AS manager
+        FROM staff AS s
+        LEFT JOIN staff AS m ON s.manager_id = m.id
+        ORDER BY s.department, s.name;
+    tags: []
+
+  - id: L21-02
+    level: 2
+    type: "SELECT"
+    question: |
+      같은 부서에 속한 직원 쌍을 찾으세요. 중복 쌍을 제거하고(`id < id`), 부서명과 두 직원의 이름을 표시하세요.
+    reference_sql:
+      common: |
+        SELECT
+        s1.department,
+        s1.name AS staff_a,
+        s2.name AS staff_b
+        FROM staff AS s1
+        INNER JOIN staff AS s2
+        ON s1.department = s2.department
+        AND s1.id < s2.id
+        ORDER BY s1.department, s1.name;
+    tags: []
+
+  - id: L21-03
+    level: 2
+    type: "SELECT"
+    question: |
+      같은 등급(`grade`)의 고객 쌍을 찾되, 중복 쌍을 제거하세요(`id < id`). 등급, 고객 A 이름, 고객 B 이름을 표시하고 상위 10건만 출력하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c1.grade,
+        c1.name AS customer_a,
+        c2.name AS customer_b
+        FROM customers AS c1
+        INNER JOIN customers AS c2
+        ON c1.grade = c2.grade
+        AND c1.id < c2.id
+        WHERE c1.is_active = 1
+        AND c2.is_active = 1
+        ORDER BY c1.grade, c1.name
+        LIMIT 10;
+    tags: []
+
+  - id: L21-04
+    level: 2
+    type: "SELECT"
+    question: |
+      같은 공급업체가 공급하는 상품 쌍을 찾아, 가격 차이와 함께 표시하세요. 중복 쌍은 제거합니다.
+    reference_sql:
+      common: |
+        SELECT
+        s.company_name AS supplier,
+        p1.name AS product_a,
+        p2.name AS product_b,
+        p1.price AS price_a,
+        p2.price AS price_b,
+        ABS(p1.price - p2.price) AS price_diff
+        FROM products AS p1
+        INNER JOIN products AS p2
+        ON p1.supplier_id = p2.supplier_id
+        AND p1.id < p2.id
+        INNER JOIN suppliers AS s ON p1.supplier_id = s.id
+        ORDER BY price_diff DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L21-05
+    level: 2
+    type: "SELECT"
+    question: |
+      같은 고객이 서로 다른 주소로 주문한 경우를 찾으세요. (`customer_addresses` 테이블 SELF JOIN)
+    reference_sql:
+      common: |
+        SELECT
+        c.name,
+        a1.address1 AS address_1,
+        a2.address1 AS address_2
+        FROM customer_addresses AS a1
+        INNER JOIN customer_addresses AS a2
+        ON a1.customer_id = a2.customer_id
+        AND a1.id < a2.id
+        AND a1.address1 <> a2.address1
+        INNER JOIN customers AS c ON a1.customer_id = c.id
+        GROUP BY c.id, c.name, a1.address1, a2.address1
+        ORDER BY c.name
+        LIMIT 15;
+    tags: []
+
+  - id: L21-06
+    level: 2
+    type: "SELECT"
+    question: |
+      각 고객 등급이 전체 활성 고객 수에서 차지하는 비율(%)을 구하세요. CROSS JOIN으로 전체 수를 붙여 계산합니다. 소수 첫째 자리까지 반올림하세요.
+    reference_sql:
+      common: |
+        SELECT
+        grade,
+        COUNT(*)  AS grade_count,
+        ROUND(100.0 * COUNT(*) / gt.total, 1) AS pct
+        FROM customers
+        CROSS JOIN (
+        SELECT COUNT(*) AS total
+        FROM customers
+        WHERE is_active = 1
+        ) AS gt
+        WHERE is_active = 1
+        GROUP BY grade, gt.total
+        ORDER BY pct DESC;
+    tags: []
+
+  - id: L21-07
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 4개 분기(`Q1`~`Q4`)와 결제 수단(`DISTINCT method`)의 모든 조합을 CROSS JOIN으로 생성하고, 각 조합의 결제 금액 합계를 LEFT JOIN으로 구하세요. 결제가 없는 셀은 0으로 표시하세요.
+    reference_sql:
+      common: |
+        WITH quarters AS (
+        SELECT 'Q1' AS q, '2024-01' AS start_m, '2024-03' AS end_m
+        UNION ALL SELECT 'Q2', '2024-04', '2024-06'
+        UNION ALL SELECT 'Q3', '2024-07', '2024-09'
+        UNION ALL SELECT 'Q4', '2024-10', '2024-12'
+        ),
+        methods AS (
+        SELECT DISTINCT method FROM payments
+        ),
+        quarterly_payments AS (
+        SELECT
+        CASE
+        WHEN SUBSTR(paid_at, 6, 2) IN ('01','02','03') THEN 'Q1'
+        WHEN SUBSTR(paid_at, 6, 2) IN ('04','05','06') THEN 'Q2'
+        WHEN SUBSTR(paid_at, 6, 2) IN ('07','08','09') THEN 'Q3'
+        ELSE 'Q4'
+        END AS q,
+        method,
+        SUM(amount) AS total_amount
+        FROM payments
+        WHERE status = 'completed'
+        AND paid_at LIKE '2024%'
+        GROUP BY q, method
+        )
+        SELECT
+        qr.q,
+        m.method,
+        COALESCE(ROUND(qp.total_amount, 2), 0) AS total_amount
+        FROM quarters AS qr
+        CROSS JOIN methods AS m
+        LEFT JOIN quarterly_payments AS qp
+        ON qr.q = qp.q AND m.method = qp.method
+        ORDER BY qr.q, m.method;
+    tags: []
+
+  - id: L21-08
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 각 월과 각 공급업체의 조합에 대해, 해당 월의 입고 수량을 보여주세요. 입고가 없는 셀은 0으로 표시합니다.
+    reference_sql:
+      common: |
+        WITH months AS (
+        SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
+        UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
+        UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
+        UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
+        UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
+        UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
+        ),
+        supplier_inbound AS (
+        SELECT
+        SUBSTR(it.created_at, 1, 7) AS year_month,
+        p.supplier_id,
+        SUM(it.quantity) AS inbound_qty
+        FROM inventory_transactions AS it
+        INNER JOIN products AS p ON it.product_id = p.id
+        WHERE it.type = 'inbound' AND it.created_at LIKE '2024%'
+        GROUP BY SUBSTR(it.created_at, 1, 7), p.supplier_id
+        )
+        SELECT
+        m.m AS year_month,
+        s.company_name AS supplier,
+        COALESCE(si.inbound_qty, 0) AS inbound_qty
+        FROM months AS m
+        CROSS JOIN suppliers AS s
+        LEFT JOIN supplier_inbound AS si
+        ON m.m = si.year_month AND s.id = si.supplier_id
+        ORDER BY m.m, s.company_name
+        LIMIT 30;
+    tags: []
+
+  - id: L21-09
+    level: 2
+    type: "SELECT"
+    question: |
+      고객 등급(`DISTINCT grade`)과 최상위 카테고리(`depth = 0`)의 모든 조합을 CROSS JOIN으로 생성하고, 각 조합의 주문 건수를 LEFT JOIN으로 구하세요. 주문이 없는 조합은 0으로 표시하세요.
+    reference_sql:
+      common: |
+        WITH grades AS (
+        SELECT DISTINCT grade FROM customers WHERE grade IS NOT NULL
+        ),
+        top_cats AS (
+        SELECT id, name FROM categories WHERE depth = 0
+        ),
+        grade_cat_orders AS (
+        SELECT
+        c.grade,
+        COALESCE(pcat.id, cat.id) AS category_id,
+        COUNT(DISTINCT o.id) AS order_count
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        INNER JOIN order_items AS oi ON o.id = oi.order_id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        LEFT  JOIN categories AS pcat ON cat.parent_id = pcat.id
+        GROUP BY c.grade, COALESCE(pcat.id, cat.id)
+        )
+        SELECT
+        g.grade,
+        tc.name AS category,
+        COALESCE(gco.order_count, 0) AS order_count
+        FROM grades AS g
+        CROSS JOIN top_cats AS tc
+        LEFT JOIN grade_cat_orders AS gco
+        ON g.grade = gco.grade AND tc.id = gco.category_id
+        ORDER BY g.grade, tc.name;
+    tags: []
+
+  - id: L21-10
+    level: 2
+    type: "SELECT"
+    question: |
+      `categories` 테이블을 SELF JOIN하여 부모 카테고리명(`parent_name`)과 자식 카테고리명(`child_name`)을 조회하세요. 부모가 없는 최상위 카테고리의 `parent_name`은 `'(최상위)'`로 표시합니다.
+    reference_sql:
+      common: |
+        SELECT
+        COALESCE(parent.name, '(최상위)') AS parent_name,
+        child.name                       AS child_name,
+        child.depth
+        FROM categories AS child
+        LEFT JOIN categories AS parent ON child.parent_id = parent.id
+        ORDER BY parent.name, child.name;
+    tags: []

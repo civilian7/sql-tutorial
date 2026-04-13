@@ -1,0 +1,224 @@
+metadata:
+  id: lesson-23-indexes
+  title: "인덱스 — 레슨 복습"
+  title_en: "Indexes — Lesson Review"
+  difficulty: advanced
+  lesson: "advanced/23-indexes"
+  concepts: ['CREATE INDEX', '실행 계획', 'EXPLAIN']
+  estimated_minutes: 22
+
+  video:
+    output_dir: "lectures/advanced"
+    filename: "lesson_23_indexes_review.mp4"
+    fps: 15
+    intro_text: "23강 인덱스 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "23강 인덱스 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L23-01
+    level: 2
+    type: "SELECT"
+    question: |
+      연습 3에서 만든 `idx_reviews_rating` 인덱스를 삭제하세요.
+    reference_sql:
+      common: |
+        DROP INDEX IF EXISTS idx_reviews_rating;
+    tags: []
+
+  - id: L23-02
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블의 `email` 칼럼에 고유 인덱스(`UNIQUE INDEX`)를 생성하세요. 고유 인덱스가 일반 인덱스와 다른 점은 무엇인지 생각해 보세요.
+    reference_sql:
+      common: |
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_customers_email_unique
+        ON customers (email);
+    tags: []
+
+  - id: L23-03
+    level: 2
+    type: "SELECT"
+    question: |
+      `sqlite_master`를 사용하여 데이터베이스의 모든 인덱스를 나열하세요. 각 인덱스에 대해 `sql` 칼럼을 검토하여 단일 칼럼 인덱스인지 복합(다중 칼럼) 인덱스인지 판별하세요. 복합 인덱스가 몇 개나 있나요?
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        tbl_name,
+        sql,
+        CASE WHEN sql LIKE '%,%' THEN '복합' ELSE '단일' END AS index_type
+        FROM sqlite_master
+        WHERE type = 'index'
+        AND sql IS NOT NULL
+        ORDER BY tbl_name, name;
+    tags: []
+
+  - id: L23-04
+    level: 2
+    type: "SELECT"
+    question: |
+      연습 4에서 만든 `idx_payments_method_status` 인덱스를 삭제하고, 연습 6에서 만든 `idx_customers_email_unique` 인덱스도 삭제하여 원래 상태로 복원하세요.
+    reference_sql:
+      common: |
+        DROP INDEX IF EXISTS idx_payments_method_status;
+        DROP INDEX IF EXISTS idx_customers_email_unique;
+    tags: []
+
+  - id: L23-05
+    level: 2
+    type: "SELECT"
+    question: |
+      특정 고객의 주문을 날짜 순으로 찾는 쿼리에 `EXPLAIN QUERY PLAN`을 실행하세요. 인덱스가 사용되는지 확인하세요. 그런 다음 `notes IS NOT NULL` 조건으로 필터링하는 쿼리에도 같은 확인을 해보세요.
+    reference_sql:
+      common: |
+        -- idx_orders_customer_id 인덱스를 사용해야 함
+        EXPLAIN QUERY PLAN
+        SELECT order_number, ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 100
+        ORDER BY ordered_at DESC;
+        
+        -- notes에 인덱스가 없으므로 전체 스캔 가능성 높음
+        EXPLAIN QUERY PLAN
+        SELECT order_number, notes
+        FROM orders
+        WHERE notes IS NOT NULL;
+    tags: []
+
+  - id: L23-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `reviews` 테이블의 `rating` 칼럼에 인덱스를 생성하세요. 이후 `rating = 5`인 리뷰를 조회하는 쿼리에 `EXPLAIN QUERY PLAN`을 실행하여 인덱스가 사용되는지 확인하세요.
+    reference_sql:
+      common: |
+        CREATE INDEX IF NOT EXISTS idx_reviews_rating
+        ON reviews (rating);
+        
+        EXPLAIN QUERY PLAN
+        SELECT id, product_id, title
+        FROM reviews
+        WHERE rating = 5;
+        -- SEARCH reviews USING INDEX idx_reviews_rating (rating=?)
+    tags: []
+
+  - id: L23-07
+    level: 2
+    type: "SELECT"
+    question: |
+      `payments` 테이블에 `method`와 `status` 칼럼을 조합한 복합 인덱스 `idx_payments_method_status`를 생성하세요. 이후 `method = 'card' AND status = 'completed'` 조건으로 조회할 때 인덱스가 사용되는지 확인하세요.
+    reference_sql:
+      common: |
+        CREATE INDEX IF NOT EXISTS idx_payments_method_status
+        ON payments (method, status);
+        
+        EXPLAIN QUERY PLAN
+        SELECT id, order_id, amount
+        FROM payments
+        WHERE method = 'card'
+        AND status = 'completed';
+        -- SEARCH payments USING INDEX idx_payments_method_status (method=? AND status=?)
+    tags: []
+
+  - id: L23-08
+    level: 2
+    type: "SELECT"
+    question: |
+      `orders` 테이블에서 `customer_id`와 `ordered_at`을 조합한 복합 인덱스를 만들고, 특정 고객의 2024년 주문만 조회하는 쿼리의 실행 계획이 이 인덱스를 사용하는지 확인하세요. 확인 후 인덱스를 삭제하세요.
+    reference_sql:
+      common: |
+        CREATE INDEX IF NOT EXISTS idx_orders_customer_date
+        ON orders (customer_id, ordered_at);
+        
+        -- 복합 인덱스 사용 확인
+        EXPLAIN QUERY PLAN
+        SELECT order_number, total_amount
+        FROM orders
+        WHERE customer_id = 42
+        AND ordered_at >= '2024-01-01'
+        AND ordered_at < '2025-01-01';
+        -- SEARCH orders USING INDEX idx_orders_customer_date (customer_id=? AND ordered_at>? AND ordered_at<?)
+        
+        DROP INDEX IF EXISTS idx_orders_customer_date;
+    tags: []
+
+  - id: L23-09
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 두 쿼리에 각각 `EXPLAIN QUERY PLAN`을 실행하고, 인덱스 사용 여부의 차이를 설명하세요: (1) `WHERE name LIKE '삼성%'` (2) `WHERE name LIKE '%삼성%'`. `products` 테이블의 `name` 칼럼에 인덱스가 있다고 가정합니다.
+    reference_sql:
+      common: |
+        -- 먼저 name 칼럼에 인덱스 생성
+        CREATE INDEX IF NOT EXISTS idx_products_name
+        ON products (name);
+        
+        -- (1) 접두어 검색: 인덱스 사용 가능
+        EXPLAIN QUERY PLAN
+        SELECT id, name FROM products
+        WHERE name LIKE '삼성%';
+        
+        -- (2) 중간 검색: 인덱스 사용 불가 (전체 스캔)
+        EXPLAIN QUERY PLAN
+        SELECT id, name FROM products
+        WHERE name LIKE '%삼성%';
+        
+        -- 정리
+        DROP INDEX IF EXISTS idx_products_name;
+    tags: []
+
+  - id: L23-10
+    level: 2
+    type: "SELECT"
+    question: |
+      인덱스가 쓰기 성능에 미치는 영향을 확인하세요. `products` 테이블의 `name` 칼럼에 인덱스를 생성한 뒤, 테스트 행을 INSERT하고 DELETE한 후 인덱스를 삭제하세요. 인덱스가 INSERT 성능에 미치는 영향을 설명하세요.
+    reference_sql:
+      common: |
+        -- 1. 인덱스 생성
+        CREATE INDEX IF NOT EXISTS idx_products_name
+        ON products (name);
+        
+        -- 2. 테스트 행 삽입 (인덱스도 함께 갱신됨)
+        INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
+        VALUES ('SKU-TEST-IDX', '인덱스 테스트 상품', 'Test', 1, 1, 10000, 5000, 10, 1, datetime('now'), datetime('now'));
+        
+        -- 3. 정리
+        DELETE FROM products WHERE sku = 'SKU-TEST-IDX';
+        DROP INDEX IF EXISTS idx_products_name;
+    tags: []
+
+  - id: L23-11
+    level: 2
+    type: "SELECT"
+    question: |
+      `orders` 테이블에 `customer_id`, `ordered_at`, `total_amount` 칼럼을 포함하는 커버링 인덱스를 생성하세요. 이후 특정 고객의 `ordered_at`과 `total_amount`만 조회하는 쿼리에 `EXPLAIN QUERY PLAN`을 실행하여 **COVERING INDEX** (인덱스 온리 스캔)가 사용되는지 확인하세요. 확인 후 인덱스를 삭제하세요.
+    reference_sql:
+      common: |
+        CREATE INDEX IF NOT EXISTS idx_orders_covering
+        ON orders (customer_id, ordered_at, total_amount);
+        
+        -- COVERING INDEX 사용 확인
+        EXPLAIN QUERY PLAN
+        SELECT ordered_at, total_amount
+        FROM orders
+        WHERE customer_id = 42;
+        -- 기대 결과: SEARCH orders USING COVERING INDEX idx_orders_covering (customer_id=?)
+        
+        DROP INDEX IF EXISTS idx_orders_covering;
+    tags: []

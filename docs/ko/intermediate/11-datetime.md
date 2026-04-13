@@ -756,25 +756,14 @@ ORDER BY avg_order_amount DESC;
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| SUBSTR로 날짜 추출 | 문자열 슬라이싱으로 연·월 추출 | `SUBSTR(ordered_at, 1, 7)` |
-| DATE() | 날짜 문자열 반환, modifier로 계산 | `DATE('now', '-30 days')` |
-| strftime() | 원하는 형식으로 포맷 | `strftime('%w', ordered_at)` |
-| 시간 추출 | 시/분/초 추출 | `strftime('%H')` / `HOUR()` / `EXTRACT(HOUR)` |
-| 날짜 더하기 | 미래 날짜 계산 | `DATE(col, '+7 days')` / `DATE_ADD` / `+ INTERVAL` |
-| 날짜 자르기 | 월초·연초 구하기 | `DATE('now','start of month')` / `DATE_TRUNC` |
-| 날짜 포맷 변환 | 다양한 출력 형식 | `strftime('%Y년 %m월')` / `DATE_FORMAT` / `TO_CHAR` |
-| julianday() | 율리우스 일수로 변환, 차이 계산 | `julianday(a) - julianday(b)` |
-| 주차/분기 | 주간·분기 보고서 | `strftime('%W')` / `WEEK()` / `QUARTER()` |
-| calendar 테이블 | 공휴일·주말 분석 | `LEFT JOIN calendar ON DATE(col) = date_key` |
-| MySQL 날짜 함수 | CURDATE, DATEDIFF, TIMESTAMPDIFF 등 | `DATEDIFF(a, b)` |
-| PostgreSQL 날짜 함수 | EXTRACT, AGE, DATE_TRUNC, 날짜 산술 | `EXTRACT(YEAR FROM col)` |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 2024년 3월에 주문된 건의 `order_number`, `ordered_at`, `total_amount`를 조회하세요. 날짜 범위 필터링을 사용하고, 주문일 오름차순으로 정렬하세요.
 
 ??? success "정답"
@@ -782,812 +771,259 @@ ORDER BY avg_order_amount DESC;
     SELECT order_number, ordered_at, total_amount
     FROM orders
     WHERE ordered_at >= '2024-03-01'
-      AND ordered_at <  '2024-04-01'
+    AND ordered_at <  '2024-04-01'
     ORDER BY ordered_at ASC;
     ```
 
-    **결과 (예시):**
-
-| order_number | ordered_at | total_amount |
-| ---------- | ---------- | ----------: |
-| ORD-20240222-294018 | 2024-03-01 01:35:38 | 5893600.0 |
-| ORD-20240301-295276 | 2024-03-01 02:08:55 | 1148400.0 |
-| ORD-20240301-295273 | 2024-03-01 02:31:31 | 339300.0 |
-| ORD-20240301-295418 | 2024-03-01 03:48:18 | 1819200.0 |
-| ORD-20240301-295416 | 2024-03-01 04:30:32 | 248000.0 |
-| ORD-20240301-295374 | 2024-03-01 04:38:17 | 159800.0 |
-| ORD-20240301-295257 | 2024-03-01 05:00:14 | 114400.0 |
-| ORD-20240301-295369 | 2024-03-01 05:40:17 | 1396628.0 |
-| ... | ... | ... |
-
-
-### 연습 2
+### 문제 2
 직원의 근속 연수를 계산하세요. `name`, `hired_at`, `years_worked`를 반환하고, 활성 직원만 포함합니다. 근속 연수가 긴 순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            hired_at,
-            CAST(
-                (julianday('now') - julianday(hired_at)) / 365.25
-            AS INTEGER) AS years_worked
-        FROM staff
-        WHERE is_active = 1
-        ORDER BY years_worked DESC;
-        ```
+    ```sql
+    SELECT
+    name,
+    hired_at,
+    CAST(
+    (julianday('now') - julianday(hired_at)) / 365.25
+    AS INTEGER) AS years_worked
+    FROM staff
+    WHERE is_active = 1
+    ORDER BY years_worked DESC;
+    ```
 
-        **결과 (예시):**
-
-| name | hired_at | years_worked |
-| ---------- | ---------- | ----------: |
-| 강주원 | 2016-02-26 | 10 |
-| 김지혜 | 2016-02-23 | 10 |
-| 한민재 | 2016-05-23 | 9 |
-| 박도윤 | 2016-07-19 | 9 |
-| 정우진 | 2016-11-23 | 9 |
-| 장주원 | 2017-08-20 | 8 |
-| 황예준 | 2017-10-15 | 8 |
-| 김옥자 | 2017-06-11 | 8 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            name,
-            hired_at,
-            TIMESTAMPDIFF(YEAR, hired_at, CURDATE()) AS years_worked
-        FROM staff
-        WHERE is_active = 1
-        ORDER BY years_worked DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            name,
-            hired_at,
-            EXTRACT(YEAR FROM AGE(CURRENT_DATE, hired_at))::int AS years_worked
-        FROM staff
-        WHERE is_active = 1
-        ORDER BY years_worked DESC;
-        ```
-
-
-### 연습 3
+### 문제 3
 고객의 나이를 계산하여 `name`, `birth_date`, `age`를 반환하세요. `birth_date`가 NULL인 고객은 제외하고, 나이가 많은 순으로 10행까지 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            birth_date,
-            CAST(
-                (julianday('now') - julianday(birth_date)) / 365.25
-            AS INTEGER) AS age
-        FROM customers
-        WHERE birth_date IS NOT NULL
-        ORDER BY age DESC
-        LIMIT 10;
-        ```
+    ```sql
+    SELECT
+    name,
+    birth_date,
+    CAST(
+    (julianday('now') - julianday(birth_date)) / 365.25
+    AS INTEGER) AS age
+    FROM customers
+    WHERE birth_date IS NOT NULL
+    ORDER BY age DESC
+    LIMIT 10;
+    ```
 
-        **결과 (예시):**
-
-| name | birth_date | age |
-| ---------- | ---------- | ----------: |
-| 강성민 | 1960-04-02 | 66 |
-| 박은영 | 1960-04-09 | 66 |
-| 김순자 | 1960-02-04 | 66 |
-| 황병철 | 1960-03-10 | 66 |
-| 김은주 | 1960-01-01 | 66 |
-| 김수진 | 1960-02-21 | 66 |
-| 이예원 | 1960-02-25 | 66 |
-| 홍우진 | 1960-01-05 | 66 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            name,
-            birth_date,
-            TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS age
-        FROM customers
-        WHERE birth_date IS NOT NULL
-        ORDER BY age DESC
-        LIMIT 10;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            name,
-            birth_date,
-            EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))::int AS age
-        FROM customers
-        WHERE birth_date IS NOT NULL
-        ORDER BY age DESC
-        LIMIT 10;
-        ```
-
-
-### 연습 4
+### 문제 4
 고객의 가입일(`created_at`)과 마지막 로그인(`last_login_at`) 사이의 일수 차이를 계산하세요. 두 날짜가 모두 있는 활성 고객만 포함합니다. `name`, `created_at`, `last_login_at`, `active_days`를 반환하고, `active_days` 내림차순으로 10행까지 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            created_at,
-            last_login_at,
-            CAST(julianday(last_login_at) - julianday(created_at) AS INTEGER) AS active_days
-        FROM customers
-        WHERE is_active = 1
-          AND last_login_at IS NOT NULL
-        ORDER BY active_days DESC
-        LIMIT 10;
-        ```
+    ```sql
+    SELECT
+    name,
+    created_at,
+    last_login_at,
+    CAST(julianday(last_login_at) - julianday(created_at) AS INTEGER) AS active_days
+    FROM customers
+    WHERE is_active = 1
+    AND last_login_at IS NOT NULL
+    ORDER BY active_days DESC
+    LIMIT 10;
+    ```
 
-        **결과 (예시):**
-
-| name | created_at | last_login_at | active_days |
-| ---------- | ---------- | ---------- | ----------: |
-| 강은서 | 2016-01-14 06:39:08 | 2025-12-30 16:32:45 | 3638 |
-| 유현지 | 2016-01-05 22:02:29 | 2025-12-14 23:18:42 | 3631 |
-| 우서영 | 2016-01-08 23:13:13 | 2025-12-17 15:41:20 | 3630 |
-| 김민수 | 2016-01-10 03:13:04 | 2025-12-06 20:49:40 | 3618 |
-| 이명자 | 2016-01-31 06:55:50 | 2025-12-24 17:07:32 | 3615 |
-| 김명숙 | 2016-01-22 12:09:51 | 2025-12-15 13:45:53 | 3615 |
-| 한은영 | 2016-01-19 04:02:06 | 2025-12-12 17:48:30 | 3615 |
-| 최채원 | 2016-01-10 18:32:09 | 2025-11-28 14:01:21 | 3609 |
-| ... | ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            name,
-            created_at,
-            last_login_at,
-            DATEDIFF(last_login_at, created_at) AS active_days
-        FROM customers
-        WHERE is_active = 1
-          AND last_login_at IS NOT NULL
-        ORDER BY active_days DESC
-        LIMIT 10;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            name,
-            created_at,
-            last_login_at,
-            last_login_at::date - created_at::date AS active_days
-        FROM customers
-        WHERE is_active = 1
-          AND last_login_at IS NOT NULL
-        ORDER BY active_days DESC
-        LIMIT 10;
-        ```
-
-
-### 연습 5
+### 문제 5
 쇼핑몰 개업 이후 연도별 신규 고객 수를 구하세요. `year`와 `new_customers`를 반환하고, 연도 오름차순으로 정렬하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        SUBSTR(created_at, 1, 4) AS year,
-        COUNT(*)                 AS new_customers
+    SUBSTR(created_at, 1, 4) AS year,
+    COUNT(*)                 AS new_customers
     FROM customers
     GROUP BY SUBSTR(created_at, 1, 4)
     ORDER BY year;
     ```
 
-    **결과 (예시):**
-
-| year | new_customers |
-| ---------- | ----------: |
-| 2016 | 1000 |
-| 2017 | 1800 |
-| 2018 | 3000 |
-| 2019 | 4500 |
-| 2020 | 7000 |
-| 2021 | 8000 |
-| 2022 | 6500 |
-| 2023 | 6000 |
-| ... | ... |
-
-
-
-### 연습 6
+### 문제 6
 주문에서 연도와 월을 추출하여 `order_year`, `order_month`, `order_count`를 반환하세요. 2023년 주문만 대상으로, 월 오름차순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            SUBSTR(ordered_at, 1, 4) AS order_year,
-            SUBSTR(ordered_at, 6, 2) AS order_month,
-            COUNT(*) AS order_count
-        FROM orders
-        WHERE ordered_at LIKE '2023%'
-        GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)
-        ORDER BY order_month ASC;
-        ```
+    ```sql
+    SELECT
+    SUBSTR(ordered_at, 1, 4) AS order_year,
+    SUBSTR(ordered_at, 6, 2) AS order_month,
+    COUNT(*) AS order_count
+    FROM orders
+    WHERE ordered_at LIKE '2023%'
+    GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)
+    ORDER BY order_month ASC;
+    ```
 
-        **결과 (예시):**
-
-| order_year | order_month | order_count |
-| ---------- | ---------- | ----------: |
-| 2023 | 01 | 3397 |
-| 2023 | 02 | 3978 |
-| 2023 | 03 | 4986 |
-| 2023 | 04 | 5069 |
-| 2023 | 05 | 4379 |
-| 2023 | 06 | 3490 |
-| 2023 | 07 | 3516 |
-| 2023 | 08 | 4306 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            YEAR(ordered_at)  AS order_year,
-            MONTH(ordered_at) AS order_month,
-            COUNT(*) AS order_count
-        FROM orders
-        WHERE YEAR(ordered_at) = 2023
-        GROUP BY YEAR(ordered_at), MONTH(ordered_at)
-        ORDER BY order_month ASC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            EXTRACT(YEAR FROM ordered_at::date)::int  AS order_year,
-            EXTRACT(MONTH FROM ordered_at::date)::int AS order_month,
-            COUNT(*) AS order_count
-        FROM orders
-        WHERE EXTRACT(YEAR FROM ordered_at::date) = 2023
-        GROUP BY
-            EXTRACT(YEAR FROM ordered_at::date),
-            EXTRACT(MONTH FROM ordered_at::date)
-        ORDER BY order_month ASC;
-        ```
-
-
-### 연습 7
+### 문제 7
 리뷰가 작성된 월별로 리뷰 수와 평균 평점을 집계하세요. 2024년 리뷰만 대상으로, `review_month`, `review_count`, `avg_rating`(소수점 2자리)을 반환하고, 월 오름차순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            SUBSTR(created_at, 6, 2) AS review_month,
-            COUNT(*)                 AS review_count,
-            ROUND(AVG(rating), 2)    AS avg_rating
-        FROM reviews
-        WHERE created_at LIKE '2024%'
-        GROUP BY SUBSTR(created_at, 6, 2)
-        ORDER BY review_month ASC;
-        ```
+    ```sql
+    SELECT
+    SUBSTR(created_at, 6, 2) AS review_month,
+    COUNT(*)                 AS review_count,
+    ROUND(AVG(rating), 2)    AS avg_rating
+    FROM reviews
+    WHERE created_at LIKE '2024%'
+    GROUP BY SUBSTR(created_at, 6, 2)
+    ORDER BY review_month ASC;
+    ```
 
-        **결과 (예시):**
-
-| review_month | review_count | avg_rating |
-| ---------- | ----------: | ----------: |
-| 01 | 1082 | 3.87 |
-| 02 | 966 | 3.99 |
-| 03 | 1201 | 3.89 |
-| 04 | 1119 | 3.89 |
-| 05 | 1331 | 3.9 |
-| 06 | 1077 | 3.91 |
-| 07 | 1013 | 3.93 |
-| 08 | 1116 | 3.88 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            MONTH(created_at)     AS review_month,
-            COUNT(*)              AS review_count,
-            ROUND(AVG(rating), 2) AS avg_rating
-        FROM reviews
-        WHERE YEAR(created_at) = 2024
-        GROUP BY MONTH(created_at)
-        ORDER BY review_month ASC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            EXTRACT(MONTH FROM created_at::date)::int AS review_month,
-            COUNT(*)              AS review_count,
-            ROUND(AVG(rating), 2) AS avg_rating
-        FROM reviews
-        WHERE EXTRACT(YEAR FROM created_at::date) = 2024
-        GROUP BY EXTRACT(MONTH FROM created_at::date)
-        ORDER BY review_month ASC;
-        ```
-
-
-### 연습 8
+### 문제 8
 배송 완료(`delivered_at`이 NOT NULL)된 주문 중 배송 소요일이 7일 이상인 건을 찾으세요. `order_number`, `ordered_at`, `delivered_at`, `delivery_days`를 반환하고, 소요일 내림차순으로 10행까지 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            o.order_number,
-            o.ordered_at,
-            s.delivered_at,
-            ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
-        FROM orders AS o
-        INNER JOIN shipping AS s ON s.order_id = o.id
-        WHERE s.delivered_at IS NOT NULL
-          AND julianday(s.delivered_at) - julianday(o.ordered_at) >= 7
-        ORDER BY delivery_days DESC
-        LIMIT 10;
-        ```
+    ```sql
+    SELECT
+    o.order_number,
+    o.ordered_at,
+    s.delivered_at,
+    ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
+    FROM orders AS o
+    INNER JOIN shipping AS s ON s.order_id = o.id
+    WHERE s.delivered_at IS NOT NULL
+    AND julianday(s.delivered_at) - julianday(o.ordered_at) >= 7
+    ORDER BY delivery_days DESC
+    LIMIT 10;
+    ```
 
-        **결과 (예시):**
-
-| order_number | ordered_at | delivered_at | delivery_days |
-| ---------- | ---------- | ---------- | ----------: |
-| ORD-20160101-00016 | 2016-01-12 14:59:26 | 2016-01-19 14:59:26 | 7.0 |
-| ORD-20160101-00020 | 2016-01-23 11:32:43 | 2016-01-30 11:32:43 | 7.0 |
-| ORD-20160102-00025 | 2016-01-07 00:15:21 | 2016-01-14 00:15:21 | 7.0 |
-| ORD-20160102-00038 | 2016-01-14 16:04:37 | 2016-01-21 16:04:37 | 7.0 |
-| ORD-20160103-00062 | 2016-01-26 14:13:30 | 2016-02-02 14:13:30 | 7.0 |
-| ORD-20160104-00082 | 2016-01-11 18:08:34 | 2016-01-18 18:08:34 | 7.0 |
-| ORD-20160104-00086 | 2016-01-04 00:07:19 | 2016-01-11 00:07:19 | 7.0 |
-| ORD-20160105-00093 | 2016-01-05 21:15:21 | 2016-01-12 21:15:21 | 7.0 |
-| ... | ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            o.order_number,
-            o.ordered_at,
-            s.delivered_at,
-            DATEDIFF(s.delivered_at, o.ordered_at) AS delivery_days
-        FROM orders AS o
-        INNER JOIN shipping AS s ON s.order_id = o.id
-        WHERE s.delivered_at IS NOT NULL
-          AND DATEDIFF(s.delivered_at, o.ordered_at) >= 7
-        ORDER BY delivery_days DESC
-        LIMIT 10;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            o.order_number,
-            o.ordered_at,
-            s.delivered_at,
-            s.delivered_at::date - o.ordered_at::date AS delivery_days
-        FROM orders AS o
-        INNER JOIN shipping AS s ON s.order_id = o.id
-        WHERE s.delivered_at IS NOT NULL
-          AND s.delivered_at::date - o.ordered_at::date >= 7
-        ORDER BY delivery_days DESC
-        LIMIT 10;
-        ```
-
-
-### 연습 9
+### 문제 9
 평균 주문 금액이 가장 높은 요일을 구하세요. `strftime('%w', ordered_at)` (0=일요일)을 사용하고, `CASE` 표현식으로 숫자를 요일 이름으로 변환하세요. `day_of_week`, `order_count`, `avg_order_value`를 반환하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            CASE CAST(strftime('%w', ordered_at) AS INTEGER)
-                WHEN 0 THEN '일요일'
-                WHEN 1 THEN '월요일'
-                WHEN 2 THEN '화요일'
-                WHEN 3 THEN '수요일'
-                WHEN 4 THEN '목요일'
-                WHEN 5 THEN '금요일'
-                WHEN 6 THEN '토요일'
-            END AS day_of_week,
-            COUNT(*)              AS order_count,
-            ROUND(AVG(total_amount), 2) AS avg_order_value
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned')
-        GROUP BY strftime('%w', ordered_at)
-        ORDER BY avg_order_value DESC;
-        ```
+    ```sql
+    SELECT
+    CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+    WHEN 0 THEN '일요일'
+    WHEN 1 THEN '월요일'
+    WHEN 2 THEN '화요일'
+    WHEN 3 THEN '수요일'
+    WHEN 4 THEN '목요일'
+    WHEN 5 THEN '금요일'
+    WHEN 6 THEN '토요일'
+    END AS day_of_week,
+    COUNT(*)              AS order_count,
+    ROUND(AVG(total_amount), 2) AS avg_order_value
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+    GROUP BY strftime('%w', ordered_at)
+    ORDER BY avg_order_value DESC;
+    ```
 
-        **결과 (예시):**
-
-| day_of_week | order_count | avg_order_value |
-| ---------- | ----------: | ----------: |
-| 월요일 | 61644 | 1049358.94 |
-| 수요일 | 50438 | 1048967.18 |
-| 일요일 | 61682 | 1030741.41 |
-| 목요일 | 50044 | 1029688.17 |
-| 화요일 | 53009 | 1027912.41 |
-| 금요일 | 52740 | 1027294.98 |
-| 토요일 | 61157 | 1026936.16 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            CASE DAYOFWEEK(ordered_at)
-                WHEN 1 THEN '일요일'
-                WHEN 2 THEN '월요일'
-                WHEN 3 THEN '화요일'
-                WHEN 4 THEN '수요일'
-                WHEN 5 THEN '목요일'
-                WHEN 6 THEN '금요일'
-                WHEN 7 THEN '토요일'
-            END AS day_of_week,
-            COUNT(*)              AS order_count,
-            ROUND(AVG(total_amount), 2) AS avg_order_value
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned')
-        GROUP BY DAYOFWEEK(ordered_at)
-        ORDER BY avg_order_value DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            CASE EXTRACT(DOW FROM ordered_at::date)
-                WHEN 0 THEN '일요일'
-                WHEN 1 THEN '월요일'
-                WHEN 2 THEN '화요일'
-                WHEN 3 THEN '수요일'
-                WHEN 4 THEN '목요일'
-                WHEN 5 THEN '금요일'
-                WHEN 6 THEN '토요일'
-            END AS day_of_week,
-            COUNT(*)              AS order_count,
-            ROUND(AVG(total_amount), 2) AS avg_order_value
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned')
-        GROUP BY EXTRACT(DOW FROM ordered_at::date)
-        ORDER BY avg_order_value DESC;
-        ```
-
-
-### 연습 10
+### 문제 10
 택배사별로 `ordered_at`부터 `shipped_at`(배송 테이블)까지의 평균 처리 일수를 계산하세요. 두 날짜가 모두 있는 행만 포함하고, `carrier`, `shipment_count`, `avg_processing_days`를 `avg_processing_days` 오름차순으로 반환하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            s.carrier,
-            COUNT(*) AS shipment_count,
-            ROUND(
-                AVG(julianday(s.shipped_at) - julianday(o.ordered_at)),
-                1
-            ) AS avg_processing_days
-        FROM shipping AS s
-        INNER JOIN orders AS o ON s.order_id = o.id
-        WHERE s.shipped_at IS NOT NULL
-        GROUP BY s.carrier
-        ORDER BY avg_processing_days ASC;
-        ```
+    ```sql
+    SELECT
+    s.carrier,
+    COUNT(*) AS shipment_count,
+    ROUND(
+    AVG(julianday(s.shipped_at) - julianday(o.ordered_at)),
+    1
+    ) AS avg_processing_days
+    FROM shipping AS s
+    INNER JOIN orders AS o ON s.order_id = o.id
+    WHERE s.shipped_at IS NOT NULL
+    GROUP BY s.carrier
+    ORDER BY avg_processing_days ASC;
+    ```
 
-        **결과 (예시):**
-
-| carrier | shipment_count | avg_processing_days |
-| ---------- | ----------: | ----------: |
-| CJ대한통운 | 158331 | 2.0 |
-| 로젠택배 | 79078 | 2.0 |
-| 우체국택배 | 59378 | 2.0 |
-| 한진택배 | 98972 | 2.0 |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            s.carrier,
-            COUNT(*) AS shipment_count,
-            ROUND(
-                AVG(DATEDIFF(s.shipped_at, o.ordered_at)),
-                1
-            ) AS avg_processing_days
-        FROM shipping AS s
-        INNER JOIN orders AS o ON s.order_id = o.id
-        WHERE s.shipped_at IS NOT NULL
-        GROUP BY s.carrier
-        ORDER BY avg_processing_days ASC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            s.carrier,
-            COUNT(*) AS shipment_count,
-            ROUND(
-                AVG(s.shipped_at::date - o.ordered_at::date),
-                1
-            ) AS avg_processing_days
-        FROM shipping AS s
-        INNER JOIN orders AS o ON s.order_id = o.id
-        WHERE s.shipped_at IS NOT NULL
-        GROUP BY s.carrier
-        ORDER BY avg_processing_days ASC;
-        ```
-
-
-### 연습 11
+### 문제 11
 2024년 시간대별(0~23시) 주문 건수와 평균 주문 금액을 구하세요. `hour`, `order_count`, `avg_amount`(소수점 없이)를 반환하고, 주문 건수가 많은 순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            CAST(strftime('%H', ordered_at) AS INTEGER) AS hour,
-            COUNT(*)                  AS order_count,
-            ROUND(AVG(total_amount))  AS avg_amount
-        FROM orders
-        WHERE ordered_at LIKE '2024%'
-        GROUP BY strftime('%H', ordered_at)
-        ORDER BY order_count DESC;
-        ```
+    ```sql
+    SELECT
+    CAST(strftime('%H', ordered_at) AS INTEGER) AS hour,
+    COUNT(*)                  AS order_count,
+    ROUND(AVG(total_amount))  AS avg_amount
+    FROM orders
+    WHERE ordered_at LIKE '2024%'
+    GROUP BY strftime('%H', ordered_at)
+    ORDER BY order_count DESC;
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            HOUR(ordered_at)          AS hour,
-            COUNT(*)                  AS order_count,
-            ROUND(AVG(total_amount))  AS avg_amount
-        FROM orders
-        WHERE ordered_at >= '2024-01-01'
-          AND ordered_at <  '2025-01-01'
-        GROUP BY HOUR(ordered_at)
-        ORDER BY order_count DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            EXTRACT(HOUR FROM ordered_at)::int AS hour,
-            COUNT(*)                  AS order_count,
-            ROUND(AVG(total_amount))  AS avg_amount
-        FROM orders
-        WHERE ordered_at >= '2024-01-01'
-          AND ordered_at <  '2025-01-01'
-        GROUP BY EXTRACT(HOUR FROM ordered_at)
-        ORDER BY order_count DESC;
-        ```
-
-
-### 연습 12
+### 문제 12
 각 주문에 대해 주문일로부터 14일 후를 "교환/환불 기한"(`refund_deadline`)으로 계산하세요. 2024년 12월 주문만 대상으로, `order_number`, `ordered_at`, `refund_deadline`을 반환하고, 주문일 내림차순으로 5행까지 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            order_number,
-            ordered_at,
-            DATE(ordered_at, '+14 days') AS refund_deadline
-        FROM orders
-        WHERE ordered_at >= '2024-12-01'
-          AND ordered_at <  '2025-01-01'
-        ORDER BY ordered_at DESC
-        LIMIT 5;
-        ```
+    ```sql
+    SELECT
+    order_number,
+    ordered_at,
+    DATE(ordered_at, '+14 days') AS refund_deadline
+    FROM orders
+    WHERE ordered_at >= '2024-12-01'
+    AND ordered_at <  '2025-01-01'
+    ORDER BY ordered_at DESC
+    LIMIT 5;
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            order_number,
-            ordered_at,
-            DATE_ADD(ordered_at, INTERVAL 14 DAY) AS refund_deadline
-        FROM orders
-        WHERE ordered_at >= '2024-12-01'
-          AND ordered_at <  '2025-01-01'
-        ORDER BY ordered_at DESC
-        LIMIT 5;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            order_number,
-            ordered_at,
-            ordered_at::date + INTERVAL '14 days' AS refund_deadline
-        FROM orders
-        WHERE ordered_at >= '2024-12-01'
-          AND ordered_at <  '2025-01-01'
-        ORDER BY ordered_at DESC
-        LIMIT 5;
-        ```
-
-
-### 연습 13
+### 문제 13
 2024년 월별 매출을 구하되, `start of month`를 이용하여 월의 첫 날(`month_start`)과 함께 표시하세요. `month_start`, `order_count`, `revenue`를 반환하고, 월 오름차순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            DATE(ordered_at, 'start of month') AS month_start,
-            COUNT(*)                           AS order_count,
-            SUM(total_amount)                  AS revenue
-        FROM orders
-        WHERE ordered_at LIKE '2024%'
-          AND status NOT IN ('cancelled', 'returned')
-        GROUP BY DATE(ordered_at, 'start of month')
-        ORDER BY month_start;
-        ```
+    ```sql
+    SELECT
+    DATE(ordered_at, 'start of month') AS month_start,
+    COUNT(*)                           AS order_count,
+    SUM(total_amount)                  AS revenue
+    FROM orders
+    WHERE ordered_at LIKE '2024%'
+    AND status NOT IN ('cancelled', 'returned')
+    GROUP BY DATE(ordered_at, 'start of month')
+    ORDER BY month_start;
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            DATE_FORMAT(ordered_at, '%Y-%m-01') AS month_start,
-            COUNT(*)                            AS order_count,
-            SUM(total_amount)                   AS revenue
-        FROM orders
-        WHERE YEAR(ordered_at) = 2024
-          AND status NOT IN ('cancelled', 'returned')
-        GROUP BY DATE_FORMAT(ordered_at, '%Y-%m-01')
-        ORDER BY month_start;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            DATE_TRUNC('month', ordered_at)::date AS month_start,
-            COUNT(*)                               AS order_count,
-            SUM(total_amount)                      AS revenue
-        FROM orders
-        WHERE EXTRACT(YEAR FROM ordered_at::date) = 2024
-          AND status NOT IN ('cancelled', 'returned')
-        GROUP BY DATE_TRUNC('month', ordered_at)
-        ORDER BY month_start;
-        ```
-
-
-### 연습 14
+### 문제 14
 주문 날짜를 `'2024년 03월 15일'` 형식으로 변환하여 `order_number`와 `korean_date`를 반환하세요. 2024년 12월 주문만 대상으로, 최신 5건을 표시하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            order_number,
-            strftime('%Y년 %m월 %d일', ordered_at) AS korean_date
-        FROM orders
-        WHERE ordered_at >= '2024-12-01'
-          AND ordered_at <  '2025-01-01'
-        ORDER BY ordered_at DESC
-        LIMIT 5;
-        ```
+    ```sql
+    SELECT
+    order_number,
+    strftime('%Y년 %m월 %d일', ordered_at) AS korean_date
+    FROM orders
+    WHERE ordered_at >= '2024-12-01'
+    AND ordered_at <  '2025-01-01'
+    ORDER BY ordered_at DESC
+    LIMIT 5;
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            order_number,
-            DATE_FORMAT(ordered_at, '%Y년 %m월 %d일') AS korean_date
-        FROM orders
-        WHERE ordered_at >= '2024-12-01'
-          AND ordered_at <  '2025-01-01'
-        ORDER BY ordered_at DESC
-        LIMIT 5;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            order_number,
-            TO_CHAR(ordered_at, 'YYYY"년" MM"월" DD"일"') AS korean_date
-        FROM orders
-        WHERE ordered_at >= '2024-12-01'
-          AND ordered_at <  '2025-01-01'
-        ORDER BY ordered_at DESC
-        LIMIT 5;
-        ```
-
-
-### 연습 15
+### 문제 15
 2024년 주차별(`week_number`) 주문 건수와 매출을 구하세요. `week_number`, `order_count`, `revenue`를 반환하고, 주차 오름차순으로 정렬하세요. 취소·반품 주문은 제외합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            CAST(strftime('%W', ordered_at) AS INTEGER) AS week_number,
-            COUNT(*)          AS order_count,
-            SUM(total_amount) AS revenue
-        FROM orders
-        WHERE ordered_at LIKE '2024%'
-          AND status NOT IN ('cancelled', 'returned')
-        GROUP BY strftime('%W', ordered_at)
-        ORDER BY week_number;
-        ```
+    ```sql
+    SELECT
+    CAST(strftime('%W', ordered_at) AS INTEGER) AS week_number,
+    COUNT(*)          AS order_count,
+    SUM(total_amount) AS revenue
+    FROM orders
+    WHERE ordered_at LIKE '2024%'
+    AND status NOT IN ('cancelled', 'returned')
+    GROUP BY strftime('%W', ordered_at)
+    ORDER BY week_number;
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            WEEK(ordered_at, 1) AS week_number,
-            COUNT(*)            AS order_count,
-            SUM(total_amount)   AS revenue
-        FROM orders
-        WHERE YEAR(ordered_at) = 2024
-          AND status NOT IN ('cancelled', 'returned')
-        GROUP BY WEEK(ordered_at, 1)
-        ORDER BY week_number;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            EXTRACT(WEEK FROM ordered_at::date)::int AS week_number,
-            COUNT(*)            AS order_count,
-            SUM(total_amount)   AS revenue
-        FROM orders
-        WHERE EXTRACT(YEAR FROM ordered_at::date) = 2024
-          AND status NOT IN ('cancelled', 'returned')
-        GROUP BY EXTRACT(WEEK FROM ordered_at::date)
-        ORDER BY week_number;
-        ```
-
-
-### 연습 16
+### 문제 16
 `calendar` 테이블을 활용하여 2024년의 공휴일, 주말, 평일별 주문 건수와 평균 주문 금액을 비교하세요. `day_type`('공휴일', '주말', '평일'), `order_count`, `avg_amount`(소수점 없이)를 반환하고, `avg_amount` 내림차순으로 정렬하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        CASE WHEN c.is_holiday = 1 THEN '공휴일'
-             WHEN c.is_weekend = 1 THEN '주말'
-             ELSE '평일'
-        END AS day_type,
-        COUNT(o.id)                  AS order_count,
-        ROUND(AVG(o.total_amount))   AS avg_amount
+    CASE WHEN c.is_holiday = 1 THEN '공휴일'
+    WHEN c.is_weekend = 1 THEN '주말'
+    ELSE '평일'
+    END AS day_type,
+    COUNT(o.id)                  AS order_count,
+    ROUND(AVG(o.total_amount))   AS avg_amount
     FROM orders AS o
     INNER JOIN calendar AS c ON DATE(o.ordered_at) = c.date_key
     WHERE o.ordered_at LIKE '2024%'
-      AND o.status NOT IN ('cancelled', 'returned')
+    AND o.status NOT IN ('cancelled', 'returned')
     GROUP BY day_type
     ORDER BY avg_amount DESC;
     ```
 
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **14~16개** | [12강: 문자열 함수](12-string.md)로 이동 |
-| **10~13개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **4개 이하** | [10강: 서브쿼리](10-subqueries.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| 날짜 범위 필터링 | 1 |
-| julianday() 날짜 차이 계산 | 2, 3, 4 |
-| SUBSTR 연도/월 추출 + GROUP BY | 5, 6 |
-| 날짜 추출 + 집계 (AVG/ROUND) | 7 |
-| julianday() + JOIN | 8, 10 |
-| strftime + CASE 요일 변환 | 9 |
-| 시간 추출 (HOUR) | 11 |
-| 날짜 더하기 (미래 날짜) | 12 |
-| 날짜 자르기 (start of month) | 13 |
-| 날짜 포맷 변환 | 14 |
-| 주차 추출 (WEEK) | 15 |
-| calendar 테이블 활용 | 16 |
-
----
-다음: [12강: 문자열 함수](12-string.md)
+<!-- END_LESSON_EXERCISES -->

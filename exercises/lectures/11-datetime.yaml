@@ -1,0 +1,326 @@
+metadata:
+  id: lesson-11-datetime
+  title: "날짜/시간 함수 — 레슨 복습"
+  title_en: "Date/Time Functions — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/11-datetime"
+  concepts: ['DATE', 'TIME', 'DATETIME', '날짜 함수']
+  estimated_minutes: 32
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_11_datetime_review.mp4"
+    fps: 15
+    intro_text: "11강 날짜/시간 함수 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "11강 날짜/시간 함수 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L11-01
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 3월에 주문된 건의 `order_number`, `ordered_at`, `total_amount`를 조회하세요. 날짜 범위 필터링을 사용하고, 주문일 오름차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT order_number, ordered_at, total_amount
+        FROM orders
+        WHERE ordered_at >= '2024-03-01'
+        AND ordered_at <  '2024-04-01'
+        ORDER BY ordered_at ASC;
+    tags: []
+
+  - id: L11-02
+    level: 2
+    type: "SELECT"
+    question: |
+      직원의 근속 연수를 계산하세요. `name`, `hired_at`, `years_worked`를 반환하고, 활성 직원만 포함합니다. 근속 연수가 긴 순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        hired_at,
+        CAST(
+        (julianday('now') - julianday(hired_at)) / 365.25
+        AS INTEGER) AS years_worked
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY years_worked DESC;
+    tags: []
+
+  - id: L11-03
+    level: 2
+    type: "SELECT"
+    question: |
+      고객의 나이를 계산하여 `name`, `birth_date`, `age`를 반환하세요. `birth_date`가 NULL인 고객은 제외하고, 나이가 많은 순으로 10행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        birth_date,
+        CAST(
+        (julianday('now') - julianday(birth_date)) / 365.25
+        AS INTEGER) AS age
+        FROM customers
+        WHERE birth_date IS NOT NULL
+        ORDER BY age DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L11-04
+    level: 2
+    type: "SELECT"
+    question: |
+      고객의 가입일(`created_at`)과 마지막 로그인(`last_login_at`) 사이의 일수 차이를 계산하세요. 두 날짜가 모두 있는 활성 고객만 포함합니다. `name`, `created_at`, `last_login_at`, `active_days`를 반환하고, `active_days` 내림차순으로 10행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        created_at,
+        last_login_at,
+        CAST(julianday(last_login_at) - julianday(created_at) AS INTEGER) AS active_days
+        FROM customers
+        WHERE is_active = 1
+        AND last_login_at IS NOT NULL
+        ORDER BY active_days DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L11-05
+    level: 2
+    type: "SELECT"
+    question: |
+      쇼핑몰 개업 이후 연도별 신규 고객 수를 구하세요. `year`와 `new_customers`를 반환하고, 연도 오름차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        SUBSTR(created_at, 1, 4) AS year,
+        COUNT(*)                 AS new_customers
+        FROM customers
+        GROUP BY SUBSTR(created_at, 1, 4)
+        ORDER BY year;
+    tags: []
+
+  - id: L11-06
+    level: 2
+    type: "SELECT"
+    question: |
+      주문에서 연도와 월을 추출하여 `order_year`, `order_month`, `order_count`를 반환하세요. 2023년 주문만 대상으로, 월 오름차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        SUBSTR(ordered_at, 1, 4) AS order_year,
+        SUBSTR(ordered_at, 6, 2) AS order_month,
+        COUNT(*) AS order_count
+        FROM orders
+        WHERE ordered_at LIKE '2023%'
+        GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)
+        ORDER BY order_month ASC;
+    tags: []
+
+  - id: L11-07
+    level: 2
+    type: "SELECT"
+    question: |
+      리뷰가 작성된 월별로 리뷰 수와 평균 평점을 집계하세요. 2024년 리뷰만 대상으로, `review_month`, `review_count`, `avg_rating`(소수점 2자리)을 반환하고, 월 오름차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        SUBSTR(created_at, 6, 2) AS review_month,
+        COUNT(*)                 AS review_count,
+        ROUND(AVG(rating), 2)    AS avg_rating
+        FROM reviews
+        WHERE created_at LIKE '2024%'
+        GROUP BY SUBSTR(created_at, 6, 2)
+        ORDER BY review_month ASC;
+    tags: []
+
+  - id: L11-08
+    level: 2
+    type: "SELECT"
+    question: |
+      배송 완료(`delivered_at`이 NOT NULL)된 주문 중 배송 소요일이 7일 이상인 건을 찾으세요. `order_number`, `ordered_at`, `delivered_at`, `delivery_days`를 반환하고, 소요일 내림차순으로 10행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        o.order_number,
+        o.ordered_at,
+        s.delivered_at,
+        ROUND(julianday(s.delivered_at) - julianday(o.ordered_at), 1) AS delivery_days
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE s.delivered_at IS NOT NULL
+        AND julianday(s.delivered_at) - julianday(o.ordered_at) >= 7
+        ORDER BY delivery_days DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L11-09
+    level: 2
+    type: "SELECT"
+    question: |
+      평균 주문 금액이 가장 높은 요일을 구하세요. `strftime('%w', ordered_at)` (0=일요일)을 사용하고, `CASE` 표현식으로 숫자를 요일 이름으로 변환하세요. `day_of_week`, `order_count`, `avg_order_value`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
+        WHEN 0 THEN '일요일'
+        WHEN 1 THEN '월요일'
+        WHEN 2 THEN '화요일'
+        WHEN 3 THEN '수요일'
+        WHEN 4 THEN '목요일'
+        WHEN 5 THEN '금요일'
+        WHEN 6 THEN '토요일'
+        END AS day_of_week,
+        COUNT(*)              AS order_count,
+        ROUND(AVG(total_amount), 2) AS avg_order_value
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY strftime('%w', ordered_at)
+        ORDER BY avg_order_value DESC;
+    tags: []
+
+  - id: L11-10
+    level: 2
+    type: "SELECT"
+    question: |
+      택배사별로 `ordered_at`부터 `shipped_at`(배송 테이블)까지의 평균 처리 일수를 계산하세요. 두 날짜가 모두 있는 행만 포함하고, `carrier`, `shipment_count`, `avg_processing_days`를 `avg_processing_days` 오름차순으로 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        s.carrier,
+        COUNT(*) AS shipment_count,
+        ROUND(
+        AVG(julianday(s.shipped_at) - julianday(o.ordered_at)),
+        1
+        ) AS avg_processing_days
+        FROM shipping AS s
+        INNER JOIN orders AS o ON s.order_id = o.id
+        WHERE s.shipped_at IS NOT NULL
+        GROUP BY s.carrier
+        ORDER BY avg_processing_days ASC;
+    tags: []
+
+  - id: L11-11
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 시간대별(0~23시) 주문 건수와 평균 주문 금액을 구하세요. `hour`, `order_count`, `avg_amount`(소수점 없이)를 반환하고, 주문 건수가 많은 순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        CAST(strftime('%H', ordered_at) AS INTEGER) AS hour,
+        COUNT(*)                  AS order_count,
+        ROUND(AVG(total_amount))  AS avg_amount
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+        GROUP BY strftime('%H', ordered_at)
+        ORDER BY order_count DESC;
+    tags: []
+
+  - id: L11-12
+    level: 2
+    type: "SELECT"
+    question: |
+      각 주문에 대해 주문일로부터 14일 후를 "교환/환불 기한"(`refund_deadline`)으로 계산하세요. 2024년 12월 주문만 대상으로, `order_number`, `ordered_at`, `refund_deadline`을 반환하고, 주문일 내림차순으로 5행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        order_number,
+        ordered_at,
+        DATE(ordered_at, '+14 days') AS refund_deadline
+        FROM orders
+        WHERE ordered_at >= '2024-12-01'
+        AND ordered_at <  '2025-01-01'
+        ORDER BY ordered_at DESC
+        LIMIT 5;
+    tags: []
+
+  - id: L11-13
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 월별 매출을 구하되, `start of month`를 이용하여 월의 첫 날(`month_start`)과 함께 표시하세요. `month_start`, `order_count`, `revenue`를 반환하고, 월 오름차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        DATE(ordered_at, 'start of month') AS month_start,
+        COUNT(*)                           AS order_count,
+        SUM(total_amount)                  AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+        AND status NOT IN ('cancelled', 'returned')
+        GROUP BY DATE(ordered_at, 'start of month')
+        ORDER BY month_start;
+    tags: []
+
+  - id: L11-14
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 날짜를 `'2024년 03월 15일'` 형식으로 변환하여 `order_number`와 `korean_date`를 반환하세요. 2024년 12월 주문만 대상으로, 최신 5건을 표시하세요.
+    reference_sql:
+      common: |
+        SELECT
+        order_number,
+        strftime('%Y년 %m월 %d일', ordered_at) AS korean_date
+        FROM orders
+        WHERE ordered_at >= '2024-12-01'
+        AND ordered_at <  '2025-01-01'
+        ORDER BY ordered_at DESC
+        LIMIT 5;
+    tags: []
+
+  - id: L11-15
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 주차별(`week_number`) 주문 건수와 매출을 구하세요. `week_number`, `order_count`, `revenue`를 반환하고, 주차 오름차순으로 정렬하세요. 취소·반품 주문은 제외합니다.
+    reference_sql:
+      common: |
+        SELECT
+        CAST(strftime('%W', ordered_at) AS INTEGER) AS week_number,
+        COUNT(*)          AS order_count,
+        SUM(total_amount) AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+        AND status NOT IN ('cancelled', 'returned')
+        GROUP BY strftime('%W', ordered_at)
+        ORDER BY week_number;
+    tags: []
+
+  - id: L11-16
+    level: 2
+    type: "SELECT"
+    question: |
+      `calendar` 테이블을 활용하여 2024년의 공휴일, 주말, 평일별 주문 건수와 평균 주문 금액을 비교하세요. `day_type`('공휴일', '주말', '평일'), `order_count`, `avg_amount`(소수점 없이)를 반환하고, `avg_amount` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        CASE WHEN c.is_holiday = 1 THEN '공휴일'
+        WHEN c.is_weekend = 1 THEN '주말'
+        ELSE '평일'
+        END AS day_type,
+        COUNT(o.id)                  AS order_count,
+        ROUND(AVG(o.total_amount))   AS avg_amount
+        FROM orders AS o
+        INNER JOIN calendar AS c ON DATE(o.ordered_at) = c.date_key
+        WHERE o.ordered_at LIKE '2024%'
+        AND o.status NOT IN ('cancelled', 'returned')
+        GROUP BY day_type
+        ORDER BY avg_amount DESC;
+    tags: []

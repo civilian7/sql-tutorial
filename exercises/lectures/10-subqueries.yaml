@@ -1,0 +1,245 @@
+metadata:
+  id: lesson-10-subqueries
+  title: "서브쿼리 — 레슨 복습"
+  title_en: "Subqueries — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/10-subqueries"
+  concepts: ['서브쿼리', 'IN', 'EXISTS', '스칼라 서브쿼리']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_10_subqueries_review.mp4"
+    fps: 15
+    intro_text: "10강 서브쿼리 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "10강 서브쿼리 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L10-01
+    level: 2
+    type: "SELECT"
+    question: |
+      한 번도 결제가 완료되지 않은 주문을 찾으세요. `NOT IN` 서브쿼리를 사용하여 `payments` 테이블에서 `status = 'completed'`인 `order_id`를 제외하세요. `order_number`, `total_amount`, `status`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT order_number, total_amount, status
+        FROM orders
+        WHERE id NOT IN (
+        SELECT order_id
+        FROM payments
+        WHERE status = 'completed'
+        )
+        ORDER BY total_amount DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L10-02
+    level: 2
+    type: "SELECT"
+    question: |
+      전체 주문의 평균 금액보다 큰 주문을 조회하세요. `order_number`, `total_amount`를 반환하고, `total_amount` 내림차순으로 정렬하여 10행으로 제한하세요. `WHERE` 절에 스칼라 서브쿼리를 사용하세요.
+    reference_sql:
+      common: |
+        SELECT order_number, total_amount
+        FROM orders
+        WHERE total_amount > (
+        SELECT AVG(total_amount) FROM orders
+        )
+        ORDER BY total_amount DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L10-03
+    level: 2
+    type: "SELECT"
+    question: |
+      각 상품의 이름과 해당 상품의 리뷰 수를 `SELECT` 절의 스칼라 서브쿼리로 구하세요. `product_name`, `price`, `review_count`를 반환하고, `review_count` 내림차순으로 정렬하여 10행으로 제한하세요. 활성 상품만 대상으로 하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.name  AS product_name,
+        p.price,
+        (
+        SELECT COUNT(*)
+        FROM reviews AS r
+        WHERE r.product_id = p.id
+        ) AS review_count
+        FROM products AS p
+        WHERE p.is_active = 1
+        ORDER BY review_count DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L10-04
+    level: 2
+    type: "SELECT"
+    question: |
+      같은 카테고리 내 평균 가격보다 비싼 상품을 모두 찾으세요. 외부 쿼리의 `category_id`를 참조하는 스칼라 서브쿼리를 `WHERE` 절에 사용하고, `product_name`, `price`, `category_id`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.name        AS product_name,
+        p.price,
+        p.category_id
+        FROM products AS p
+        WHERE p.price > (
+        SELECT AVG(p2.price)
+        FROM products AS p2
+        WHERE p2.category_id = p.category_id
+        AND p2.is_active = 1
+        )
+        AND p.is_active = 1
+        ORDER BY p.category_id, p.price DESC;
+    tags: []
+
+  - id: L10-05
+    level: 2
+    type: "SELECT"
+    question: |
+      최소 한 명의 고객 위시리스트에 있지만 **한 번도 주문된 적 없는** 상품을 찾으세요. `IN`과 `NOT IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT name AS product_name, price
+        FROM products
+        WHERE id IN (
+        SELECT DISTINCT product_id FROM wishlists
+        )
+        AND id NOT IN (
+        SELECT DISTINCT product_id FROM order_items
+        )
+        ORDER BY price DESC;
+    tags: []
+
+  - id: L10-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `FROM` 서브쿼리를 사용하여 카테고리별 평균 상품 가격을 먼저 계산한 뒤, 외부 쿼리에서 `categories` 테이블과 조인하여 카테고리명(`category_name`)과 `avg_price`를 반환하세요. `avg_price` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        cat.name       AS category_name,
+        price_stats.avg_price
+        FROM (
+        SELECT
+        category_id,
+        ROUND(AVG(price), 2) AS avg_price
+        FROM products
+        WHERE is_active = 1
+        GROUP BY category_id
+        ) AS price_stats
+        INNER JOIN categories AS cat ON price_stats.category_id = cat.id
+        ORDER BY price_stats.avg_price DESC;
+    tags: []
+
+  - id: L10-07
+    level: 2
+    type: "SELECT"
+    question: |
+      `'VIP'` 등급 고객이 한 번이라도 주문한 상품을 모두 찾으세요. `IN` 서브쿼리를 사용하고, `product_name`과 `price`를 반환하세요. 가격 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT p.name AS product_name, p.price
+        FROM products AS p
+        WHERE p.id IN (
+        SELECT DISTINCT oi.product_id
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE c.grade = 'VIP'
+        )
+        ORDER BY p.price DESC;
+    tags: []
+
+  - id: L10-08
+    level: 2
+    type: "SELECT"
+    question: |
+      `FROM` 서브쿼리를 사용하여 완료된 주문 수 기준 상위 10명의 고객을 구하세요. 내부 쿼리에서 고객별 주문 수를 세고, 외부 쿼리에서 `customers` 테이블과 조인하여 `name`과 `grade`를 추가하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name,
+        c.grade,
+        order_stats.order_count,
+        order_stats.total_spent
+        FROM (
+        SELECT
+        customer_id,
+        COUNT(*)            AS order_count,
+        SUM(total_amount)   AS total_spent
+        FROM orders
+        WHERE status IN ('delivered', 'confirmed')
+        GROUP BY customer_id
+        ) AS order_stats
+        INNER JOIN customers AS c ON order_stats.customer_id = c.id
+        ORDER BY order_stats.order_count DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L10-09
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 횟수가 전체 고객 평균 주문 횟수보다 많은 고객을 찾으세요. `FROM` 서브쿼리로 고객별 주문 횟수를 먼저 구하고, `WHERE` 절에 스칼라 서브쿼리로 평균을 비교하세요. `customer_id`와 `order_count`를 반환하고, `order_count` 내림차순으로 정렬하여 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        customer_id,
+        order_count
+        FROM (
+        SELECT
+        customer_id,
+        COUNT(*) AS order_count
+        FROM orders
+        GROUP BY customer_id
+        ) AS cust_orders
+        WHERE order_count > (
+        SELECT AVG(cnt)
+        FROM (
+        SELECT COUNT(*) AS cnt
+        FROM orders
+        GROUP BY customer_id
+        ) AS avg_calc
+        )
+        ORDER BY order_count DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L10-10
+    level: 2
+    type: "SELECT"
+    question: |
+      가장 최근 주문한 고객 5명의 이름, 이메일, 마지막 주문일을 구하세요. `FROM` 서브쿼리로 고객별 최신 주문일(`last_order`)을 먼저 구하고, 외부 쿼리에서 `customers` 테이블과 조인하세요. `last_order` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name,
+        c.email,
+        recent.last_order
+        FROM (
+        SELECT
+        customer_id,
+        MAX(ordered_at) AS last_order
+        FROM orders
+        GROUP BY customer_id
+        ) AS recent
+        INNER JOIN customers AS c ON recent.customer_id = c.id
+        ORDER BY recent.last_order DESC
+        LIMIT 5;
+    tags: []

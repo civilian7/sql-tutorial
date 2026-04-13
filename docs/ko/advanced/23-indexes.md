@@ -385,40 +385,22 @@ DROP INDEX IF EXISTS idx_orders_status_date;
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| CREATE INDEX | 인덱스 생성 | `CREATE INDEX idx ON t(col)` |
-| UNIQUE INDEX | 중복 방지 인덱스 | `CREATE UNIQUE INDEX ...` |
-| 복합 인덱스 | 다중 칼럼 인덱스 (왼쪽 접두어 규칙) | `ON t(a, b, c)` |
-| 커버링 인덱스 | SELECT 칼럼까지 포함 -> Index-Only Scan | `ON t(a) INCLUDE (b, c)` |
-| 부분 인덱스 | WHERE 조건으로 일부만 인덱싱 | `ON t(col) WHERE active=1` |
-| EXPLAIN | 실행 계획 확인 | `EXPLAIN QUERY PLAN SELECT ...` |
-| DROP INDEX | 인덱스 삭제 | `DROP INDEX IF EXISTS idx` |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 연습 3에서 만든 `idx_reviews_rating` 인덱스를 삭제하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        DROP INDEX IF EXISTS idx_reviews_rating;
-        ```
+    ```sql
+    DROP INDEX IF EXISTS idx_reviews_rating;
+    ```
 
-    === "MySQL"
-        ```sql
-        DROP INDEX idx_reviews_rating ON reviews;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        DROP INDEX IF EXISTS idx_reviews_rating;
-        ```
-
-
-### 연습 2
+### 문제 2
 `customers` 테이블의 `email` 칼럼에 고유 인덱스(`UNIQUE INDEX`)를 생성하세요. 고유 인덱스가 일반 인덱스와 다른 점은 무엇인지 생각해 보세요.
 
 ??? success "정답"
@@ -426,335 +408,126 @@ DROP INDEX IF EXISTS idx_orders_status_date;
     CREATE UNIQUE INDEX IF NOT EXISTS idx_customers_email_unique
     ON customers (email);
     ```
-    고유 인덱스는 해당 칼럼에 중복 값이 삽입되는 것을 방지합니다. 검색 성능 향상 외에 데이터 무결성 제약 역할도 합니다.
 
-
-### 연습 3
+### 문제 3
 `sqlite_master`를 사용하여 데이터베이스의 모든 인덱스를 나열하세요. 각 인덱스에 대해 `sql` 칼럼을 검토하여 단일 칼럼 인덱스인지 복합(다중 칼럼) 인덱스인지 판별하세요. 복합 인덱스가 몇 개나 있나요?
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            tbl_name,
-            sql,
-            CASE WHEN sql LIKE '%,%' THEN '복합' ELSE '단일' END AS index_type
-        FROM sqlite_master
-        WHERE type = 'index'
-          AND sql IS NOT NULL
-        ORDER BY tbl_name, name;
-        ```
+    ```sql
+    SELECT
+    name,
+    tbl_name,
+    sql,
+    CASE WHEN sql LIKE '%,%' THEN '복합' ELSE '단일' END AS index_type
+    FROM sqlite_master
+    WHERE type = 'index'
+    AND sql IS NOT NULL
+    ORDER BY tbl_name, name;
+    ```
 
-        **결과 (예시):**
-
-        | name                       | tbl_name   | sql                                                                | index_type |
-        | -------------------------- | ---------- | ------------------------------------------------------------------ | ---------- |
-        | idx_calendar_year_month    | calendar   | CREATE INDEX idx_calendar_year_month ON calendar(year, month)      | 복합         |
-        | idx_cart_items_cart_id     | cart_items | CREATE INDEX idx_cart_items_cart_id ON cart_items(cart_id)         | 단일         |
-        | idx_carts_customer_id      | carts      | CREATE INDEX idx_carts_customer_id ON carts(customer_id)           | 단일         |
-        | idx_complaints_category    | complaints | CREATE INDEX idx_complaints_category ON complaints(category)       | 단일         |
-        | idx_complaints_customer_id | complaints | CREATE INDEX idx_complaints_customer_id ON complaints(customer_id) | 단일         |
-        | ...                        | ...        | ...                                                                | ...        |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            INDEX_NAME,
-            TABLE_NAME,
-            GROUP_CONCAT(COLUMN_NAME ORDER BY SEQ_IN_INDEX) AS columns,
-            CASE WHEN COUNT(*) > 1 THEN '복합' ELSE '단일' END AS index_type
-        FROM INFORMATION_SCHEMA.STATISTICS
-        WHERE TABLE_SCHEMA = DATABASE()
-        GROUP BY INDEX_NAME, TABLE_NAME
-        ORDER BY TABLE_NAME, INDEX_NAME;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            indexname,
-            tablename,
-            indexdef,
-            CASE WHEN indexdef LIKE '%,%' THEN '복합' ELSE '단일' END AS index_type
-        FROM pg_indexes
-        WHERE schemaname = 'public'
-        ORDER BY tablename, indexname;
-        ```
-
-
-### 연습 4
+### 문제 4
 연습 4에서 만든 `idx_payments_method_status` 인덱스를 삭제하고, 연습 6에서 만든 `idx_customers_email_unique` 인덱스도 삭제하여 원래 상태로 복원하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        DROP INDEX IF EXISTS idx_payments_method_status;
-        DROP INDEX IF EXISTS idx_customers_email_unique;
-        ```
+    ```sql
+    DROP INDEX IF EXISTS idx_payments_method_status;
+    DROP INDEX IF EXISTS idx_customers_email_unique;
+    ```
 
-    === "MySQL"
-        ```sql
-        DROP INDEX idx_payments_method_status ON payments;
-        DROP INDEX idx_customers_email_unique ON customers;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        DROP INDEX IF EXISTS idx_payments_method_status;
-        DROP INDEX IF EXISTS idx_customers_email_unique;
-        ```
-
-
-### 연습 5
+### 문제 5
 특정 고객의 주문을 날짜 순으로 찾는 쿼리에 `EXPLAIN QUERY PLAN`을 실행하세요. 인덱스가 사용되는지 확인하세요. 그런 다음 `notes IS NOT NULL` 조건으로 필터링하는 쿼리에도 같은 확인을 해보세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- idx_orders_customer_id 인덱스를 사용해야 함
-        EXPLAIN QUERY PLAN
-        SELECT order_number, ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 100
-        ORDER BY ordered_at DESC;
+    ```sql
+    -- idx_orders_customer_id 인덱스를 사용해야 함
+    EXPLAIN QUERY PLAN
+    SELECT order_number, ordered_at, total_amount
+    FROM orders
+    WHERE customer_id = 100
+    ORDER BY ordered_at DESC;
+    
+    -- notes에 인덱스가 없으므로 전체 스캔 가능성 높음
+    EXPLAIN QUERY PLAN
+    SELECT order_number, notes
+    FROM orders
+    WHERE notes IS NOT NULL;
+    ```
 
-        -- notes에 인덱스가 없으므로 전체 스캔 가능성 높음
-        EXPLAIN QUERY PLAN
-        SELECT order_number, notes
-        FROM orders
-        WHERE notes IS NOT NULL;
-        ```
-
-    === "MySQL"
-        ```sql
-        -- idx_orders_customer_id 인덱스를 사용해야 함
-        EXPLAIN
-        SELECT order_number, ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 100
-        ORDER BY ordered_at DESC;
-
-        -- notes에 인덱스가 없으므로 전체 스캔 가능성 높음
-        EXPLAIN
-        SELECT order_number, notes
-        FROM orders
-        WHERE notes IS NOT NULL;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- idx_orders_customer_id 인덱스를 사용해야 함
-        EXPLAIN ANALYZE
-        SELECT order_number, ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 100
-        ORDER BY ordered_at DESC;
-
-        -- notes에 인덱스가 없으므로 전체 스캔 가능성 높음
-        EXPLAIN ANALYZE
-        SELECT order_number, notes
-        FROM orders
-        WHERE notes IS NOT NULL;
-        ```
-
-
-### 연습 6
+### 문제 6
 `reviews` 테이블의 `rating` 칼럼에 인덱스를 생성하세요. 이후 `rating = 5`인 리뷰를 조회하는 쿼리에 `EXPLAIN QUERY PLAN`을 실행하여 인덱스가 사용되는지 확인하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_reviews_rating
-        ON reviews (rating);
+    ```sql
+    CREATE INDEX IF NOT EXISTS idx_reviews_rating
+    ON reviews (rating);
+    
+    EXPLAIN QUERY PLAN
+    SELECT id, product_id, title
+    FROM reviews
+    WHERE rating = 5;
+    -- SEARCH reviews USING INDEX idx_reviews_rating (rating=?)
+    ```
 
-        EXPLAIN QUERY PLAN
-        SELECT id, product_id, title
-        FROM reviews
-        WHERE rating = 5;
-        -- SEARCH reviews USING INDEX idx_reviews_rating (rating=?)
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE INDEX idx_reviews_rating
-        ON reviews (rating);
-
-        EXPLAIN
-        SELECT id, product_id, title
-        FROM reviews
-        WHERE rating = 5;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_reviews_rating
-        ON reviews (rating);
-
-        EXPLAIN ANALYZE
-        SELECT id, product_id, title
-        FROM reviews
-        WHERE rating = 5;
-        ```
-
-
-### 연습 7
+### 문제 7
 `payments` 테이블에 `method`와 `status` 칼럼을 조합한 복합 인덱스 `idx_payments_method_status`를 생성하세요. 이후 `method = 'card' AND status = 'completed'` 조건으로 조회할 때 인덱스가 사용되는지 확인하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_payments_method_status
-        ON payments (method, status);
+    ```sql
+    CREATE INDEX IF NOT EXISTS idx_payments_method_status
+    ON payments (method, status);
+    
+    EXPLAIN QUERY PLAN
+    SELECT id, order_id, amount
+    FROM payments
+    WHERE method = 'card'
+    AND status = 'completed';
+    -- SEARCH payments USING INDEX idx_payments_method_status (method=? AND status=?)
+    ```
 
-        EXPLAIN QUERY PLAN
-        SELECT id, order_id, amount
-        FROM payments
-        WHERE method = 'card'
-          AND status = 'completed';
-        -- SEARCH payments USING INDEX idx_payments_method_status (method=? AND status=?)
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE INDEX idx_payments_method_status
-        ON payments (method, status);
-
-        EXPLAIN
-        SELECT id, order_id, amount
-        FROM payments
-        WHERE method = 'card'
-          AND status = 'completed';
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_payments_method_status
-        ON payments (method, status);
-
-        EXPLAIN ANALYZE
-        SELECT id, order_id, amount
-        FROM payments
-        WHERE method = 'card'
-          AND status = 'completed';
-        ```
-
-
-### 연습 8
+### 문제 8
 `orders` 테이블에서 `customer_id`와 `ordered_at`을 조합한 복합 인덱스를 만들고, 특정 고객의 2024년 주문만 조회하는 쿼리의 실행 계획이 이 인덱스를 사용하는지 확인하세요. 확인 후 인덱스를 삭제하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_orders_customer_date
-        ON orders (customer_id, ordered_at);
+    ```sql
+    CREATE INDEX IF NOT EXISTS idx_orders_customer_date
+    ON orders (customer_id, ordered_at);
+    
+    -- 복합 인덱스 사용 확인
+    EXPLAIN QUERY PLAN
+    SELECT order_number, total_amount
+    FROM orders
+    WHERE customer_id = 42
+    AND ordered_at >= '2024-01-01'
+    AND ordered_at < '2025-01-01';
+    -- SEARCH orders USING INDEX idx_orders_customer_date (customer_id=? AND ordered_at>? AND ordered_at<?)
+    
+    DROP INDEX IF EXISTS idx_orders_customer_date;
+    ```
 
-        -- 복합 인덱스 사용 확인
-        EXPLAIN QUERY PLAN
-        SELECT order_number, total_amount
-        FROM orders
-        WHERE customer_id = 42
-          AND ordered_at >= '2024-01-01'
-          AND ordered_at < '2025-01-01';
-        -- SEARCH orders USING INDEX idx_orders_customer_date (customer_id=? AND ordered_at>? AND ordered_at<?)
-
-        DROP INDEX IF EXISTS idx_orders_customer_date;
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE INDEX idx_orders_customer_date
-        ON orders (customer_id, ordered_at);
-
-        EXPLAIN
-        SELECT order_number, total_amount
-        FROM orders
-        WHERE customer_id = 42
-          AND ordered_at >= '2024-01-01'
-          AND ordered_at < '2025-01-01';
-
-        DROP INDEX idx_orders_customer_date ON orders;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_orders_customer_date
-        ON orders (customer_id, ordered_at);
-
-        EXPLAIN ANALYZE
-        SELECT order_number, total_amount
-        FROM orders
-        WHERE customer_id = 42
-          AND ordered_at >= '2024-01-01'
-          AND ordered_at < '2025-01-01';
-
-        DROP INDEX IF EXISTS idx_orders_customer_date;
-        ```
-
-
-### 연습 9
+### 문제 9
 다음 두 쿼리에 각각 `EXPLAIN QUERY PLAN`을 실행하고, 인덱스 사용 여부의 차이를 설명하세요: (1) `WHERE name LIKE '삼성%'` (2) `WHERE name LIKE '%삼성%'`. `products` 테이블의 `name` 칼럼에 인덱스가 있다고 가정합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 먼저 name 칼럼에 인덱스 생성
-        CREATE INDEX IF NOT EXISTS idx_products_name
-        ON products (name);
+    ```sql
+    -- 먼저 name 칼럼에 인덱스 생성
+    CREATE INDEX IF NOT EXISTS idx_products_name
+    ON products (name);
+    
+    -- (1) 접두어 검색: 인덱스 사용 가능
+    EXPLAIN QUERY PLAN
+    SELECT id, name FROM products
+    WHERE name LIKE '삼성%';
+    
+    -- (2) 중간 검색: 인덱스 사용 불가 (전체 스캔)
+    EXPLAIN QUERY PLAN
+    SELECT id, name FROM products
+    WHERE name LIKE '%삼성%';
+    
+    -- 정리
+    DROP INDEX IF EXISTS idx_products_name;
+    ```
 
-        -- (1) 접두어 검색: 인덱스 사용 가능
-        EXPLAIN QUERY PLAN
-        SELECT id, name FROM products
-        WHERE name LIKE '삼성%';
-
-        -- (2) 중간 검색: 인덱스 사용 불가 (전체 스캔)
-        EXPLAIN QUERY PLAN
-        SELECT id, name FROM products
-        WHERE name LIKE '%삼성%';
-
-        -- 정리
-        DROP INDEX IF EXISTS idx_products_name;
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE INDEX idx_products_name ON products (name);
-
-        -- (1) 접두어 검색: 인덱스 사용 가능
-        EXPLAIN
-        SELECT id, name FROM products
-        WHERE name LIKE '삼성%';
-
-        -- (2) 중간 검색: 인덱스 사용 불가 (전체 스캔)
-        EXPLAIN
-        SELECT id, name FROM products
-        WHERE name LIKE '%삼성%';
-
-        DROP INDEX idx_products_name ON products;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_products_name
-        ON products (name);
-
-        -- (1) 접두어 검색: 인덱스 사용 가능
-        EXPLAIN ANALYZE
-        SELECT id, name FROM products
-        WHERE name LIKE '삼성%';
-
-        -- (2) 중간 검색: 인덱스 사용 불가 (전체 스캔)
-        EXPLAIN ANALYZE
-        SELECT id, name FROM products
-        WHERE name LIKE '%삼성%';
-
-        DROP INDEX IF EXISTS idx_products_name;
-        ```
-    `LIKE '접두어%'`는 B-tree 인덱스의 범위 검색으로 처리할 수 있지만, `LIKE '%문자열%'`는 앞에 와일드카드가 있어 인덱스를 활용할 수 없고 전체 테이블 스캔이 필요합니다.
-
-
-### 연습 10
+### 문제 10
 인덱스가 쓰기 성능에 미치는 영향을 확인하세요. `products` 테이블의 `name` 칼럼에 인덱스를 생성한 뒤, 테스트 행을 INSERT하고 DELETE한 후 인덱스를 삭제하세요. 인덱스가 INSERT 성능에 미치는 영향을 설명하세요.
 
 ??? success "정답"
@@ -762,92 +535,32 @@ DROP INDEX IF EXISTS idx_orders_status_date;
     -- 1. 인덱스 생성
     CREATE INDEX IF NOT EXISTS idx_products_name
     ON products (name);
-
+    
     -- 2. 테스트 행 삽입 (인덱스도 함께 갱신됨)
     INSERT INTO products (sku, name, brand, category_id, supplier_id, price, cost_price, stock_qty, is_active, created_at, updated_at)
     VALUES ('SKU-TEST-IDX', '인덱스 테스트 상품', 'Test', 1, 1, 10000, 5000, 10, 1, datetime('now'), datetime('now'));
-
+    
     -- 3. 정리
     DELETE FROM products WHERE sku = 'SKU-TEST-IDX';
     DROP INDEX IF EXISTS idx_products_name;
     ```
 
-    **설명:** 인덱스가 있으면 INSERT/UPDATE/DELETE 시 인덱스도 함께 갱신해야 하므로 쓰기 작업이 느려집니다. 인덱스는 읽기 성능을 높이지만 쓰기 비용이 추가되므로, 자주 조회하는 칼럼에만 선별적으로 생성해야 합니다.
-
-
-### 연습 11
+### 문제 11
 `orders` 테이블에 `customer_id`, `ordered_at`, `total_amount` 칼럼을 포함하는 커버링 인덱스를 생성하세요. 이후 특정 고객의 `ordered_at`과 `total_amount`만 조회하는 쿼리에 `EXPLAIN QUERY PLAN`을 실행하여 **COVERING INDEX** (인덱스 온리 스캔)가 사용되는지 확인하세요. 확인 후 인덱스를 삭제하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE INDEX IF NOT EXISTS idx_orders_covering
-        ON orders (customer_id, ordered_at, total_amount);
+    ```sql
+    CREATE INDEX IF NOT EXISTS idx_orders_covering
+    ON orders (customer_id, ordered_at, total_amount);
+    
+    -- COVERING INDEX 사용 확인
+    EXPLAIN QUERY PLAN
+    SELECT ordered_at, total_amount
+    FROM orders
+    WHERE customer_id = 42;
+    -- 기대 결과: SEARCH orders USING COVERING INDEX idx_orders_covering (customer_id=?)
+    
+    DROP INDEX IF EXISTS idx_orders_covering;
+    ```
 
-        -- COVERING INDEX 사용 확인
-        EXPLAIN QUERY PLAN
-        SELECT ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 42;
-        -- 기대 결과: SEARCH orders USING COVERING INDEX idx_orders_covering (customer_id=?)
-
-        DROP INDEX IF EXISTS idx_orders_covering;
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE INDEX idx_orders_covering
-        ON orders (customer_id, ordered_at, total_amount);
-
-        -- Extra 칼럼에 "Using index"가 표시되면 커버링 인덱스 사용
-        EXPLAIN
-        SELECT ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 42;
-
-        DROP INDEX idx_orders_covering ON orders;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- PostgreSQL은 INCLUDE로 커버링 인덱스를 표현
-        CREATE INDEX IF NOT EXISTS idx_orders_covering
-        ON orders (customer_id) INCLUDE (ordered_at, total_amount);
-
-        -- "Index Only Scan"이 표시되면 성공
-        EXPLAIN ANALYZE
-        SELECT ordered_at, total_amount
-        FROM orders
-        WHERE customer_id = 42;
-
-        DROP INDEX IF EXISTS idx_orders_covering;
-        ```
-
-    **핵심:** 실행 계획에서 SQLite는 `COVERING INDEX`, MySQL은 Extra에 `Using index`, PostgreSQL은 `Index Only Scan`이 표시되면 테이블 접근 없이 인덱스만으로 결과를 반환한 것입니다. 이는 SELECT 절의 모든 칼럼이 인덱스에 포함되어 있기 때문입니다.
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **10~11개** | [24강: 트리거](24-triggers.md)로 이동 |
-| **8~9개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [22강: 뷰](22-views.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| 인덱스 삭제 (DROP INDEX) | 1, 4 |
-| UNIQUE INDEX 생성 | 2 |
-| 인덱스 목록 조회 (메타데이터) | 3 |
-| EXPLAIN QUERY PLAN 기초 | 5 |
-| 단일 인덱스 생성 + EXPLAIN | 6 |
-| 복합 인덱스 생성 + EXPLAIN | 7, 8 |
-| LIKE 접두어 vs 중간 검색 | 9 |
-| 인덱스와 쓰기 성능 | 10 |
-| 커버링 인덱스 (Index-Only Scan) | 11 |
-
----
-다음: [24강: 트리거(Triggers)](24-triggers.md)
+<!-- END_LESSON_EXERCISES -->

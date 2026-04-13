@@ -317,580 +317,183 @@ DROP TABLE IF EXISTS price_change_log;
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| CREATE TRIGGER | 트리거 생성 | `CREATE TRIGGER trg AFTER INSERT ON t` |
-| BEFORE / AFTER | 이벤트 전/후 실행 시점 | `BEFORE UPDATE`, `AFTER DELETE` |
-| OLD / NEW | 변경 전/후 행 참조 | `OLD.price`, `NEW.status` |
-| WHEN 조건 | 특정 조건에서만 실행 | `WHEN NEW.price <> OLD.price` |
-| RAISE(ABORT) | 트리거에서 오류 발생 (SQLite) | `SELECT RAISE(ABORT, '메시지')` |
-| DROP TRIGGER | 트리거 삭제 | `DROP TRIGGER IF EXISTS trg` |
-| 시스템 카탈로그 | 트리거 목록 조회 | `sqlite_master WHERE type='trigger'` |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 시스템 카탈로그에서 `trg_earn_points_on_order` 트리거의 전체 SQL 정의를 조회하세요. 이 트리거가 어떤 테이블에서 어떤 이벤트 발생 시 작동하는지, 그리고 어떤 테이블을 수정하는지 설명하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'trigger'
-          AND name = 'trg_earn_points_on_order';
-        ```
+    ```sql
+    SELECT sql
+    FROM sqlite_master
+    WHERE type = 'trigger'
+    AND name = 'trg_earn_points_on_order';
+    ```
 
-    === "MySQL"
-        ```sql
-        SHOW CREATE TRIGGER trg_earn_points_on_order;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT pg_get_triggerdef(oid)
-        FROM pg_trigger
-        WHERE tgname = 'trg_earn_points_on_order';
-        ```
-    이 트리거는 `orders` 테이블에 새 행이 INSERT될 때 작동하며, `customers` 테이블의 `point_balance`를 `NEW.point_earned` 만큼 증가시킵니다.
-
-
-### 연습 2
+### 문제 2
 WHEN 조건을 사용하여, 상품 가격이 100만원 이상으로 변경될 때만 로그를 남기는 트리거 `trg_log_expensive_price_change`를 작성하세요. `price_change_log` 테이블이 이미 있다고 가정합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TRIGGER IF NOT EXISTS trg_log_expensive_price_change
-        AFTER UPDATE OF price ON products
-        WHEN NEW.price >= 1000000 AND OLD.price <> NEW.price
-        BEGIN
-            INSERT INTO price_change_log (product_id, old_price, new_price)
-            VALUES (NEW.id, OLD.price, NEW.price);
-        END;
-        ```
+    ```sql
+    CREATE TRIGGER IF NOT EXISTS trg_log_expensive_price_change
+    AFTER UPDATE OF price ON products
+    WHEN NEW.price >= 1000000 AND OLD.price <> NEW.price
+    BEGIN
+    INSERT INTO price_change_log (product_id, old_price, new_price)
+    VALUES (NEW.id, OLD.price, NEW.price);
+    END;
+    ```
 
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE TRIGGER trg_log_expensive_price_change
-        AFTER UPDATE ON products
-        FOR EACH ROW
-        BEGIN
-            IF NEW.price >= 1000000 AND OLD.price <> NEW.price THEN
-                INSERT INTO price_change_log (product_id, old_price, new_price)
-                VALUES (NEW.id, OLD.price, NEW.price);
-            END IF;
-        END //
-        DELIMITER ;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_log_expensive_price_change()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF NEW.price >= 1000000 AND OLD.price <> NEW.price THEN
-                INSERT INTO price_change_log (product_id, old_price, new_price)
-                VALUES (NEW.id, OLD.price, NEW.price);
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-
-        CREATE TRIGGER trg_log_expensive_price_change
-        AFTER UPDATE OF price ON products
-        FOR EACH ROW
-        EXECUTE FUNCTION fn_log_expensive_price_change();
-        ```
-
-
-### 연습 3
+### 문제 3
 리뷰가 새로 등록될 때 해당 리뷰의 `created_at`을 현재 시각으로 자동 설정하는 AFTER INSERT 트리거 `trg_review_created_at`을 작성하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TRIGGER IF NOT EXISTS trg_review_created_at
-        AFTER INSERT ON reviews
-        WHEN NEW.created_at IS NULL
-        BEGIN
-            UPDATE reviews
-            SET created_at = datetime('now')
-            WHERE id = NEW.id;
-        END;
-        ```
+    ```sql
+    CREATE TRIGGER IF NOT EXISTS trg_review_created_at
+    AFTER INSERT ON reviews
+    WHEN NEW.created_at IS NULL
+    BEGIN
+    UPDATE reviews
+    SET created_at = datetime('now')
+    WHERE id = NEW.id;
+    END;
+    ```
 
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE TRIGGER trg_review_created_at
-        BEFORE INSERT ON reviews
-        FOR EACH ROW
-        BEGIN
-            IF NEW.created_at IS NULL THEN
-                SET NEW.created_at = NOW();
-            END IF;
-        END //
-        DELIMITER ;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_review_created_at()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF NEW.created_at IS NULL THEN
-                NEW.created_at := NOW();
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-
-        CREATE TRIGGER trg_review_created_at
-        BEFORE INSERT ON reviews
-        FOR EACH ROW
-        EXECUTE FUNCTION fn_review_created_at();
-        ```
-
-
-### 연습 4
+### 문제 4
 시스템 카탈로그(SQLite의 경우 `sqlite_master`)를 사용하여 5개의 기본 제공 트리거를 모두 나열하세요. 각 트리거에 대해 이름, 대상 테이블, 그리고 트리거 정의에서 `INSERT`, `UPDATE`, `DELETE` 중 어느 시점에 실행되는지를 표시하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            tbl_name,
-            CASE
-                WHEN sql LIKE '%AFTER INSERT%'  THEN 'AFTER INSERT'
-                WHEN sql LIKE '%AFTER UPDATE%'  THEN 'AFTER UPDATE'
-                WHEN sql LIKE '%AFTER DELETE%'  THEN 'AFTER DELETE'
-                WHEN sql LIKE '%BEFORE INSERT%' THEN 'BEFORE INSERT'
-                WHEN sql LIKE '%BEFORE UPDATE%' THEN 'BEFORE UPDATE'
-                WHEN sql LIKE '%BEFORE DELETE%' THEN 'BEFORE DELETE'
-            END AS fires_on
-        FROM sqlite_master
-        WHERE type = 'trigger'
-        ORDER BY name;
-        ```
+    ```sql
+    SELECT
+    name,
+    tbl_name,
+    CASE
+    WHEN sql LIKE '%AFTER INSERT%'  THEN 'AFTER INSERT'
+    WHEN sql LIKE '%AFTER UPDATE%'  THEN 'AFTER UPDATE'
+    WHEN sql LIKE '%AFTER DELETE%'  THEN 'AFTER DELETE'
+    WHEN sql LIKE '%BEFORE INSERT%' THEN 'BEFORE INSERT'
+    WHEN sql LIKE '%BEFORE UPDATE%' THEN 'BEFORE UPDATE'
+    WHEN sql LIKE '%BEFORE DELETE%' THEN 'BEFORE DELETE'
+    END AS fires_on
+    FROM sqlite_master
+    WHERE type = 'trigger'
+    ORDER BY name;
+    ```
 
-        **결과 (예시):**
-
-        | name                      | tbl_name  | fires_on     |
-        | ------------------------- | --------- | ------------ |
-        | trg_customers_updated_at  | customers | AFTER UPDATE |
-        | trg_orders_updated_at     | orders    | AFTER UPDATE |
-        | trg_product_price_history | products  | AFTER UPDATE |
-        | trg_products_updated_at   | products  | AFTER UPDATE |
-        | trg_reviews_updated_at    | reviews   | AFTER UPDATE |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            TRIGGER_NAME,
-            EVENT_OBJECT_TABLE,
-            CONCAT(ACTION_TIMING, ' ', EVENT_MANIPULATION) AS fires_on
-        FROM INFORMATION_SCHEMA.TRIGGERS
-        WHERE TRIGGER_SCHEMA = DATABASE()
-        ORDER BY TRIGGER_NAME;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            tgname,
-            relname,
-            CASE
-                WHEN tgtype & 2  > 0 THEN 'BEFORE'
-                WHEN tgtype & 64 > 0 THEN 'INSTEAD OF'
-                ELSE 'AFTER'
-            END || ' ' ||
-            CASE
-                WHEN tgtype & 4  > 0 THEN 'INSERT'
-                WHEN tgtype & 8  > 0 THEN 'DELETE'
-                WHEN tgtype & 16 > 0 THEN 'UPDATE'
-            END AS fires_on
-        FROM pg_trigger t
-        JOIN pg_class c ON t.tgrelid = c.oid
-        WHERE NOT t.tgisinternal
-        ORDER BY tgname;
-        ```
-
-
-### 연습 5
+### 문제 5
 직원이 삭제되기 전에 해당 직원이 담당 중인 주문이 있는지 확인하고, 있으면 삭제를 방지하는 BEFORE DELETE 트리거 `trg_prevent_staff_delete`를 작성하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TRIGGER IF NOT EXISTS trg_prevent_staff_delete
-        BEFORE DELETE ON staff
-        WHEN (SELECT COUNT(*) FROM orders WHERE staff_id = OLD.id AND status NOT IN ('delivered', 'cancelled')) > 0
-        BEGIN
-            SELECT RAISE(ABORT, '담당 중인 주문이 있어 삭제할 수 없습니다.');
-        END;
-        ```
+    ```sql
+    CREATE TRIGGER IF NOT EXISTS trg_prevent_staff_delete
+    BEFORE DELETE ON staff
+    WHEN (SELECT COUNT(*) FROM orders WHERE staff_id = OLD.id AND status NOT IN ('delivered', 'cancelled')) > 0
+    BEGIN
+    SELECT RAISE(ABORT, '담당 중인 주문이 있어 삭제할 수 없습니다.');
+    END;
+    ```
 
-    === "MySQL"
-        ```sql
-        DELIMITER //
-        CREATE TRIGGER trg_prevent_staff_delete
-        BEFORE DELETE ON staff
-        FOR EACH ROW
-        BEGIN
-            DECLARE active_orders INT;
-            SELECT COUNT(*) INTO active_orders
-            FROM orders
-            WHERE staff_id = OLD.id
-              AND status NOT IN ('delivered', 'cancelled');
-            IF active_orders > 0 THEN
-                SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'Cannot delete staff with active orders.';
-            END IF;
-        END //
-        DELIMITER ;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_prevent_staff_delete()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF (SELECT COUNT(*) FROM orders WHERE staff_id = OLD.id AND status NOT IN ('delivered', 'cancelled')) > 0 THEN
-                RAISE EXCEPTION 'Cannot delete staff with active orders.';
-            END IF;
-            RETURN OLD;
-        END;
-        $$ LANGUAGE plpgsql;
-
-        CREATE TRIGGER trg_prevent_staff_delete
-        BEFORE DELETE ON staff
-        FOR EACH ROW
-        EXECUTE FUNCTION fn_prevent_staff_delete();
-        ```
-
-
-### 연습 6
+### 문제 6
 고객 등급(`grade`)이 변경될 때 변경 이력을 기록하는 감사 로그를 구현하세요. 먼저 `grade_change_log` 테이블을 만들고(`customer_id`, `old_grade`, `new_grade`, `changed_at`), 이후 `customers` 테이블에 AFTER UPDATE 트리거를 작성하세요. `OLD`와 `NEW`를 사용하여 이전/이후 등급을 기록합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TABLE IF NOT EXISTS grade_change_log (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            customer_id INTEGER,
-            old_grade   TEXT,
-            new_grade   TEXT,
-            changed_at  TEXT DEFAULT (datetime('now'))
-        );
+    ```sql
+    CREATE TABLE IF NOT EXISTS grade_change_log (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER,
+    old_grade   TEXT,
+    new_grade   TEXT,
+    changed_at  TEXT DEFAULT (datetime('now'))
+    );
+    
+    CREATE TRIGGER IF NOT EXISTS trg_log_grade_change
+    AFTER UPDATE OF grade ON customers
+    WHEN OLD.grade <> NEW.grade
+    BEGIN
+    INSERT INTO grade_change_log (customer_id, old_grade, new_grade)
+    VALUES (NEW.id, OLD.grade, NEW.grade);
+    END;
+    ```
 
-        CREATE TRIGGER IF NOT EXISTS trg_log_grade_change
-        AFTER UPDATE OF grade ON customers
-        WHEN OLD.grade <> NEW.grade
-        BEGIN
-            INSERT INTO grade_change_log (customer_id, old_grade, new_grade)
-            VALUES (NEW.id, OLD.grade, NEW.grade);
-        END;
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE TABLE IF NOT EXISTS grade_change_log (
-            id          INT AUTO_INCREMENT PRIMARY KEY,
-            customer_id INT,
-            old_grade   VARCHAR(20),
-            new_grade   VARCHAR(20),
-            changed_at  DATETIME DEFAULT NOW()
-        );
-
-        DELIMITER //
-        CREATE TRIGGER trg_log_grade_change
-        AFTER UPDATE ON customers
-        FOR EACH ROW
-        BEGIN
-            IF OLD.grade <> NEW.grade THEN
-                INSERT INTO grade_change_log (customer_id, old_grade, new_grade)
-                VALUES (NEW.id, OLD.grade, NEW.grade);
-            END IF;
-        END //
-        DELIMITER ;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE IF NOT EXISTS grade_change_log (
-            id          SERIAL PRIMARY KEY,
-            customer_id INTEGER,
-            old_grade   VARCHAR(20),
-            new_grade   VARCHAR(20),
-            changed_at  TIMESTAMP DEFAULT NOW()
-        );
-
-        CREATE OR REPLACE FUNCTION fn_log_grade_change()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF OLD.grade <> NEW.grade THEN
-                INSERT INTO grade_change_log (customer_id, old_grade, new_grade)
-                VALUES (NEW.id, OLD.grade, NEW.grade);
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-
-        CREATE TRIGGER trg_log_grade_change
-        AFTER UPDATE OF grade ON customers
-        FOR EACH ROW
-        EXECUTE FUNCTION fn_log_grade_change();
-        ```
-
-
-### 연습 7
+### 문제 7
 연습 3~6에서 만든 트리거와 테이블을 모두 삭제하여 원래 상태로 복원하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        DROP TRIGGER IF EXISTS trg_review_created_at;
-        DROP TRIGGER IF EXISTS trg_log_grade_change;
-        DROP TRIGGER IF EXISTS trg_prevent_staff_delete;
-        DROP TRIGGER IF EXISTS trg_log_expensive_price_change;
-        DROP TABLE IF EXISTS grade_change_log;
-        ```
+    ```sql
+    DROP TRIGGER IF EXISTS trg_review_created_at;
+    DROP TRIGGER IF EXISTS trg_log_grade_change;
+    DROP TRIGGER IF EXISTS trg_prevent_staff_delete;
+    DROP TRIGGER IF EXISTS trg_log_expensive_price_change;
+    DROP TABLE IF EXISTS grade_change_log;
+    ```
 
-    === "MySQL"
-        ```sql
-        DROP TRIGGER IF EXISTS trg_review_created_at;
-        DROP TRIGGER IF EXISTS trg_log_grade_change;
-        DROP TRIGGER IF EXISTS trg_prevent_staff_delete;
-        DROP TRIGGER IF EXISTS trg_log_expensive_price_change;
-        DROP TABLE IF EXISTS grade_change_log;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        DROP TRIGGER IF EXISTS trg_review_created_at ON reviews;
-        DROP TRIGGER IF EXISTS trg_log_grade_change ON customers;
-        DROP TRIGGER IF EXISTS trg_prevent_staff_delete ON staff;
-        DROP TRIGGER IF EXISTS trg_log_expensive_price_change ON products;
-        DROP FUNCTION IF EXISTS fn_review_created_at();
-        DROP FUNCTION IF EXISTS fn_log_grade_change();
-        DROP FUNCTION IF EXISTS fn_prevent_staff_delete();
-        DROP FUNCTION IF EXISTS fn_log_expensive_price_change();
-        DROP TABLE IF EXISTS grade_change_log;
-        ```
-
-
-### 연습 8
+### 문제 8
 시스템 카탈로그(SQLite의 경우 `sqlite_master`)에서 `trg_restore_stock_on_cancel` 트리거의 정의를 조회하세요. 이후 취소된 주문에 포함된 상품의 재고를 조회하여, 취소 시점에 재고가 올바르게 복원됐는지 확인하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 1단계: 트리거 정의 확인
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'trigger'
-          AND name = 'trg_restore_stock_on_cancel';
+    ```sql
+    -- 1단계: 트리거 정의 확인
+    SELECT sql
+    FROM sqlite_master
+    WHERE type = 'trigger'
+    AND name = 'trg_restore_stock_on_cancel';
+    
+    -- 2단계: 취소된 주문과 해당 상품 확인
+    SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
+    FROM orders AS o
+    INNER JOIN order_items AS oi ON oi.order_id = o.id
+    INNER JOIN products    AS p  ON p.id = oi.product_id
+    WHERE o.status = 'cancelled'
+    LIMIT 5;
+    -- stock_qty에는 복원된 수량이 이미 반영되어 있어야 함
+    ```
 
-        -- 2단계: 취소된 주문과 해당 상품 확인
-        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
-        FROM orders AS o
-        INNER JOIN order_items AS oi ON oi.order_id = o.id
-        INNER JOIN products    AS p  ON p.id = oi.product_id
-        WHERE o.status = 'cancelled'
-        LIMIT 5;
-        -- stock_qty에는 복원된 수량이 이미 반영되어 있어야 함
-        ```
-
-    === "MySQL"
-        ```sql
-        -- 1단계: 트리거 정의 확인
-        SHOW CREATE TRIGGER trg_restore_stock_on_cancel;
-
-        -- 2단계: 취소된 주문과 해당 상품 확인
-        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
-        FROM orders AS o
-        INNER JOIN order_items AS oi ON oi.order_id = o.id
-        INNER JOIN products    AS p  ON p.id = oi.product_id
-        WHERE o.status = 'cancelled'
-        LIMIT 5;
-        -- stock_qty에는 복원된 수량이 이미 반영되어 있어야 함
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- 1단계: 트리거 정의 확인
-        SELECT pg_get_triggerdef(oid)
-        FROM pg_trigger
-        WHERE tgname = 'trg_restore_stock_on_cancel';
-
-        -- 2단계: 취소된 주문과 해당 상품 확인
-        SELECT o.id AS order_id, oi.product_id, oi.quantity, p.stock_qty
-        FROM orders AS o
-        INNER JOIN order_items AS oi ON oi.order_id = o.id
-        INNER JOIN products    AS p  ON p.id = oi.product_id
-        WHERE o.status = 'cancelled'
-        LIMIT 5;
-        -- stock_qty에는 복원된 수량이 이미 반영되어 있어야 함
-        ```
-
-
-### 연습 9
+### 문제 9
 주문 금액이 500만원 이상인 주문이 들어올 때 `high_value_orders_log` 테이블에 기록하는 AFTER INSERT 트리거 `trg_log_high_value_order`를 작성하세요. 먼저 로그 테이블(`order_id`, `total_amount`, `logged_at`)을 만드세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TABLE IF NOT EXISTS high_value_orders_log (
-            id           INTEGER PRIMARY KEY AUTOINCREMENT,
-            order_id     INTEGER,
-            total_amount REAL,
-            logged_at    TEXT DEFAULT (datetime('now'))
-        );
+    ```sql
+    CREATE TABLE IF NOT EXISTS high_value_orders_log (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id     INTEGER,
+    total_amount REAL,
+    logged_at    TEXT DEFAULT (datetime('now'))
+    );
+    
+    CREATE TRIGGER IF NOT EXISTS trg_log_high_value_order
+    AFTER INSERT ON orders
+    WHEN NEW.total_amount >= 5000000
+    BEGIN
+    INSERT INTO high_value_orders_log (order_id, total_amount)
+    VALUES (NEW.id, NEW.total_amount);
+    END;
+    ```
 
-        CREATE TRIGGER IF NOT EXISTS trg_log_high_value_order
-        AFTER INSERT ON orders
-        WHEN NEW.total_amount >= 5000000
-        BEGIN
-            INSERT INTO high_value_orders_log (order_id, total_amount)
-            VALUES (NEW.id, NEW.total_amount);
-        END;
-        ```
-
-    === "MySQL"
-        ```sql
-        CREATE TABLE IF NOT EXISTS high_value_orders_log (
-            id           INT AUTO_INCREMENT PRIMARY KEY,
-            order_id     INT,
-            total_amount DECIMAL(12,2),
-            logged_at    DATETIME DEFAULT NOW()
-        );
-
-        DELIMITER //
-        CREATE TRIGGER trg_log_high_value_order
-        AFTER INSERT ON orders
-        FOR EACH ROW
-        BEGIN
-            IF NEW.total_amount >= 5000000 THEN
-                INSERT INTO high_value_orders_log (order_id, total_amount)
-                VALUES (NEW.id, NEW.total_amount);
-            END IF;
-        END //
-        DELIMITER ;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE IF NOT EXISTS high_value_orders_log (
-            id           SERIAL PRIMARY KEY,
-            order_id     INTEGER,
-            total_amount NUMERIC(12,2),
-            logged_at    TIMESTAMP DEFAULT NOW()
-        );
-
-        CREATE OR REPLACE FUNCTION fn_log_high_value_order()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            IF NEW.total_amount >= 5000000 THEN
-                INSERT INTO high_value_orders_log (order_id, total_amount)
-                VALUES (NEW.id, NEW.total_amount);
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-
-        CREATE TRIGGER trg_log_high_value_order
-        AFTER INSERT ON orders
-        FOR EACH ROW
-        EXECUTE FUNCTION fn_log_high_value_order();
-        ```
-
-
-### 연습 10
+### 문제 10
 연습 9에서 만든 트리거와 테이블, 그리고 연습 2에서 만든 `trg_log_expensive_price_change`를 포함하여 이번 강의에서 만든 모든 트리거/테이블을 삭제하여 원래 상태로 복원하세요. 삭제 후 시스템 카탈로그로 사용자 정의 트리거가 남아있지 않은지 확인하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 연습에서 만든 트리거 삭제
-        DROP TRIGGER IF EXISTS trg_log_high_value_order;
-        DROP TRIGGER IF EXISTS trg_review_created_at;
-        DROP TRIGGER IF EXISTS trg_log_grade_change;
-        DROP TRIGGER IF EXISTS trg_prevent_staff_delete;
-        DROP TRIGGER IF EXISTS trg_log_expensive_price_change;
+    ```sql
+    -- 연습에서 만든 트리거 삭제
+    DROP TRIGGER IF EXISTS trg_log_high_value_order;
+    DROP TRIGGER IF EXISTS trg_review_created_at;
+    DROP TRIGGER IF EXISTS trg_log_grade_change;
+    DROP TRIGGER IF EXISTS trg_prevent_staff_delete;
+    DROP TRIGGER IF EXISTS trg_log_expensive_price_change;
+    
+    -- 연습에서 만든 테이블 삭제
+    DROP TABLE IF EXISTS high_value_orders_log;
+    DROP TABLE IF EXISTS grade_change_log;
+    
+    -- 기본 제공 트리거만 남았는지 확인
+    SELECT name, tbl_name FROM sqlite_master
+    WHERE type = 'trigger'
+    ORDER BY name;
+    ```
 
-        -- 연습에서 만든 테이블 삭제
-        DROP TABLE IF EXISTS high_value_orders_log;
-        DROP TABLE IF EXISTS grade_change_log;
-
-        -- 기본 제공 트리거만 남았는지 확인
-        SELECT name, tbl_name FROM sqlite_master
-        WHERE type = 'trigger'
-        ORDER BY name;
-        ```
-
-    === "MySQL"
-        ```sql
-        DROP TRIGGER IF EXISTS trg_log_high_value_order;
-        DROP TRIGGER IF EXISTS trg_review_created_at;
-        DROP TRIGGER IF EXISTS trg_log_grade_change;
-        DROP TRIGGER IF EXISTS trg_prevent_staff_delete;
-        DROP TRIGGER IF EXISTS trg_log_expensive_price_change;
-        DROP TABLE IF EXISTS high_value_orders_log;
-        DROP TABLE IF EXISTS grade_change_log;
-
-        SELECT TRIGGER_NAME, EVENT_OBJECT_TABLE
-        FROM INFORMATION_SCHEMA.TRIGGERS
-        WHERE TRIGGER_SCHEMA = DATABASE()
-        ORDER BY TRIGGER_NAME;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        DROP TRIGGER IF EXISTS trg_log_high_value_order ON orders;
-        DROP TRIGGER IF EXISTS trg_review_created_at ON reviews;
-        DROP TRIGGER IF EXISTS trg_log_grade_change ON customers;
-        DROP TRIGGER IF EXISTS trg_prevent_staff_delete ON staff;
-        DROP TRIGGER IF EXISTS trg_log_expensive_price_change ON products;
-        DROP FUNCTION IF EXISTS fn_log_high_value_order();
-        DROP FUNCTION IF EXISTS fn_review_created_at();
-        DROP FUNCTION IF EXISTS fn_log_grade_change();
-        DROP FUNCTION IF EXISTS fn_prevent_staff_delete();
-        DROP FUNCTION IF EXISTS fn_log_expensive_price_change();
-        DROP TABLE IF EXISTS high_value_orders_log;
-        DROP TABLE IF EXISTS grade_change_log;
-
-        SELECT tgname, relname
-        FROM pg_trigger t
-        JOIN pg_class c ON t.tgrelid = c.oid
-        WHERE NOT t.tgisinternal
-        ORDER BY tgname;
-        ```
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [25강: JSON](25-json.md)으로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [23강: 인덱스](23-indexes.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| 시스템 카탈로그 (트리거 조회) | 1, 4, 8 |
-| WHEN 조건부 트리거 | 2, 9 |
-| AFTER INSERT 트리거 | 3 |
-| BEFORE DELETE 방지 트리거 | 5 |
-| 감사 로그 (AFTER UPDATE) | 6 |
-| 정리 (DROP TRIGGER) | 7, 10 |
-
----
-다음: [25강: JSON 데이터 쿼리](25-json.md)
+<!-- END_LESSON_EXERCISES -->

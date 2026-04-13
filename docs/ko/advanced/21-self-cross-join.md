@@ -353,535 +353,244 @@ ORDER BY c.date_key;
 
 ---
 
+<!-- BEGIN_LESSON_EXERCISES -->
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1: 직원-매니저 조직도
-
+### 문제 1
 `staff` 테이블을 SELF JOIN하여 각 직원의 이름, 부서, 직책, 그리고 매니저 이름을 조회하세요. 매니저가 없는 직원(CEO 등)도 포함합니다.
 
 ??? success "정답"
     ```sql
     SELECT
-        s.name       AS employee,
-        s.department,
-        s.role,
-        m.name       AS manager
+    s.name       AS employee,
+    s.department,
+    s.role,
+    m.name       AS manager
     FROM staff AS s
     LEFT JOIN staff AS m ON s.manager_id = m.id
     ORDER BY s.department, s.name;
     ```
 
-    **결과 (예시):**
-
-    | employee | department | role    | manager |
-    | -------- | ---------- | ------- | ------- |
-    | 박경수      | 경영         | admin   | 한민재     |
-    | 장주원      | 경영         | admin   | 한민재     |
-    | 한민재      | 경영         | admin   | (NULL)  |
-    | 권영희      | 마케팅        | manager | 박경수     |
-    | 이준혁      | 영업         | manager | 한민재     |
-
-
-### 연습 2: 같은 부서 직원 쌍
-
+### 문제 2
 같은 부서에 속한 직원 쌍을 찾으세요. 중복 쌍을 제거하고(`id < id`), 부서명과 두 직원의 이름을 표시하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        s1.department,
-        s1.name AS staff_a,
-        s2.name AS staff_b
+    s1.department,
+    s1.name AS staff_a,
+    s2.name AS staff_b
     FROM staff AS s1
     INNER JOIN staff AS s2
-        ON s1.department = s2.department
-       AND s1.id < s2.id
+    ON s1.department = s2.department
+    AND s1.id < s2.id
     ORDER BY s1.department, s1.name;
     ```
 
-    **결과 (예시):**
-
-    | department | staff_a | staff_b |
-    | ---------- | ------- | ------- |
-    | 경영         | 장주원     | 박경수     |
-    | 경영         | 한민재     | 박경수     |
-    | 경영         | 한민재     | 장주원     |
-
-
-### 연습 3: 같은 등급 고객 쌍
-
+### 문제 3
 같은 등급(`grade`)의 고객 쌍을 찾되, 중복 쌍을 제거하세요(`id < id`). 등급, 고객 A 이름, 고객 B 이름을 표시하고 상위 10건만 출력하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        c1.grade,
-        c1.name AS customer_a,
-        c2.name AS customer_b
+    c1.grade,
+    c1.name AS customer_a,
+    c2.name AS customer_b
     FROM customers AS c1
     INNER JOIN customers AS c2
-        ON c1.grade = c2.grade
-       AND c1.id < c2.id
+    ON c1.grade = c2.grade
+    AND c1.id < c2.id
     WHERE c1.is_active = 1
-      AND c2.is_active = 1
+    AND c2.is_active = 1
     ORDER BY c1.grade, c1.name
     LIMIT 10;
     ```
 
-    **결과 (예시):**
-
-    | grade  | customer_a | customer_b |
-    | ------ | ---------- | ---------- |
-    | BRONZE | 강건우        | 강성수        |
-    | BRONZE | 강건우        | 강성진        |
-    | BRONZE | 강건우        | 강성훈        |
-    | BRONZE | 강건우        | 강영미        |
-    | BRONZE | 강건우        | 강영희        |
-    | ...    | ...        | ...        |
-
-
-### 연습 4: 같은 공급업체의 상품 쌍
-
+### 문제 4
 같은 공급업체가 공급하는 상품 쌍을 찾아, 가격 차이와 함께 표시하세요. 중복 쌍은 제거합니다.
 
 ??? success "정답"
     ```sql
     SELECT
-        s.company_name AS supplier,
-        p1.name AS product_a,
-        p2.name AS product_b,
-        p1.price AS price_a,
-        p2.price AS price_b,
-        ABS(p1.price - p2.price) AS price_diff
+    s.company_name AS supplier,
+    p1.name AS product_a,
+    p2.name AS product_b,
+    p1.price AS price_a,
+    p2.price AS price_b,
+    ABS(p1.price - p2.price) AS price_diff
     FROM products AS p1
     INNER JOIN products AS p2
-        ON p1.supplier_id = p2.supplier_id
-       AND p1.id < p2.id
+    ON p1.supplier_id = p2.supplier_id
+    AND p1.id < p2.id
     INNER JOIN suppliers AS s ON p1.supplier_id = s.id
     ORDER BY price_diff DESC
     LIMIT 10;
     ```
 
-    **결과 (예시):**
-
-    | supplier | product_a             | product_b             | price_a | price_b | price_diff |
-    | -------- | --------------------- | --------------------- | ------: | ------: | ---------: |
-    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Strix GT35   |   48800 | 4314800 |    4266000 |
-    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS PCE-BE92BT 블랙    | 4314800 |   57200 |    4257600 |
-    | 에이수스코리아  | ASUS PCE-BE92BT       | ASUS ROG Zephyrus G16 |   48800 | 4284100 |    4235300 |
-    | 에이수스코리아  | ASUS ROG Strix GT35   | ASUS XG-C100C 블랙      | 4314800 |   83500 |    4231300 |
-    | 에이수스코리아  | ASUS ROG Zephyrus G16 | ASUS PCE-BE92BT 블랙    | 4284100 |   57200 |    4226900 |
-    | ...      | ...                   | ...                   | ...     | ...     | ...        |
-
-
-
-### 연습 5: 배송지 여러 개인 고객
-
+### 문제 5
 같은 고객이 서로 다른 주소로 주문한 경우를 찾으세요. (`customer_addresses` 테이블 SELF JOIN)
 
 ??? success "정답"
     ```sql
     SELECT
-        c.name,
-        a1.address1 AS address_1,
-        a2.address1 AS address_2
+    c.name,
+    a1.address1 AS address_1,
+    a2.address1 AS address_2
     FROM customer_addresses AS a1
     INNER JOIN customer_addresses AS a2
-        ON a1.customer_id = a2.customer_id
-       AND a1.id < a2.id
-       AND a1.address1 <> a2.address1
+    ON a1.customer_id = a2.customer_id
+    AND a1.id < a2.id
+    AND a1.address1 <> a2.address1
     INNER JOIN customers AS c ON a1.customer_id = c.id
     GROUP BY c.id, c.name, a1.address1, a2.address1
     ORDER BY c.name
     LIMIT 15;
     ```
 
-    **결과 (예시):**
-
-    | name | address_1                      | address_2                      |
-    | ---- | ------------------------------ | ------------------------------ |
-    | 강경수  | 경기도 청양군 선릉로 626-76 (중수김최리)     | 강원도 부천시 원미구 서초대14길 929 (정남송김동) |
-    | 강경숙  | 경상북도 용인시 테헤란거리 958-21 (정웅박리)   | 전라북도 과천시 선릉6로 지하563 (옥순김리)     |
-    | 강경자  | 세종특별자치시 관악구 잠실로 542 (영미최동)     | 서울특별시 용산구 학동길 500-28           |
-    | 강경자  | 충청남도 부여군 삼성817길 453-98 (상호박이리) | 서울특별시 용산구 학동길 500-28           |
-    | 강경자  | 충청남도 부여군 삼성817길 453-98 (상호박이리) | 세종특별자치시 관악구 잠실로 542 (영미최동)     |
-    | ...  | ...                            | ...                            |
-
-
-### 연습 6: CROSS JOIN으로 비율 계산
-
+### 문제 6
 각 고객 등급이 전체 활성 고객 수에서 차지하는 비율(%)을 구하세요. CROSS JOIN으로 전체 수를 붙여 계산합니다. 소수 첫째 자리까지 반올림하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        grade,
-        COUNT(*)  AS grade_count,
-        ROUND(100.0 * COUNT(*) / gt.total, 1) AS pct
+    grade,
+    COUNT(*)  AS grade_count,
+    ROUND(100.0 * COUNT(*) / gt.total, 1) AS pct
     FROM customers
     CROSS JOIN (
-        SELECT COUNT(*) AS total
-        FROM customers
-        WHERE is_active = 1
+    SELECT COUNT(*) AS total
+    FROM customers
+    WHERE is_active = 1
     ) AS gt
     WHERE is_active = 1
     GROUP BY grade, gt.total
     ORDER BY pct DESC;
     ```
 
-    **결과 (예시):**
-
-    | grade  | grade_count | pct  |
-    | ------ | ----------: | ---: |
-    | BRONZE |        2548 | 66.8 |
-    | GOLD   |         484 | 12.7 |
-    | SILVER |         469 | 12.3 |
-    | VIP    |         315 |  8.3 |
-
-
-### 연습 7: 분기-결제수단 CROSS JOIN 보고서
-
+### 문제 7
 2024년 4개 분기(`Q1`~`Q4`)와 결제 수단(`DISTINCT method`)의 모든 조합을 CROSS JOIN으로 생성하고, 각 조합의 결제 금액 합계를 LEFT JOIN으로 구하세요. 결제가 없는 셀은 0으로 표시하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        WITH quarters AS (
-            SELECT 'Q1' AS q, '2024-01' AS start_m, '2024-03' AS end_m
-            UNION ALL SELECT 'Q2', '2024-04', '2024-06'
-            UNION ALL SELECT 'Q3', '2024-07', '2024-09'
-            UNION ALL SELECT 'Q4', '2024-10', '2024-12'
-        ),
-        methods AS (
-            SELECT DISTINCT method FROM payments
-        ),
-        quarterly_payments AS (
-            SELECT
-                CASE
-                    WHEN SUBSTR(paid_at, 6, 2) IN ('01','02','03') THEN 'Q1'
-                    WHEN SUBSTR(paid_at, 6, 2) IN ('04','05','06') THEN 'Q2'
-                    WHEN SUBSTR(paid_at, 6, 2) IN ('07','08','09') THEN 'Q3'
-                    ELSE 'Q4'
-                END AS q,
-                method,
-                SUM(amount) AS total_amount
-            FROM payments
-            WHERE status = 'completed'
-              AND paid_at LIKE '2024%'
-            GROUP BY q, method
-        )
-        SELECT
-            qr.q,
-            m.method,
-            COALESCE(ROUND(qp.total_amount, 2), 0) AS total_amount
-        FROM quarters AS qr
-        CROSS JOIN methods AS m
-        LEFT JOIN quarterly_payments AS qp
-            ON qr.q = qp.q AND m.method = qp.method
-        ORDER BY qr.q, m.method;
-        ```
+    ```sql
+    WITH quarters AS (
+    SELECT 'Q1' AS q, '2024-01' AS start_m, '2024-03' AS end_m
+    UNION ALL SELECT 'Q2', '2024-04', '2024-06'
+    UNION ALL SELECT 'Q3', '2024-07', '2024-09'
+    UNION ALL SELECT 'Q4', '2024-10', '2024-12'
+    ),
+    methods AS (
+    SELECT DISTINCT method FROM payments
+    ),
+    quarterly_payments AS (
+    SELECT
+    CASE
+    WHEN SUBSTR(paid_at, 6, 2) IN ('01','02','03') THEN 'Q1'
+    WHEN SUBSTR(paid_at, 6, 2) IN ('04','05','06') THEN 'Q2'
+    WHEN SUBSTR(paid_at, 6, 2) IN ('07','08','09') THEN 'Q3'
+    ELSE 'Q4'
+    END AS q,
+    method,
+    SUM(amount) AS total_amount
+    FROM payments
+    WHERE status = 'completed'
+    AND paid_at LIKE '2024%'
+    GROUP BY q, method
+    )
+    SELECT
+    qr.q,
+    m.method,
+    COALESCE(ROUND(qp.total_amount, 2), 0) AS total_amount
+    FROM quarters AS qr
+    CROSS JOIN methods AS m
+    LEFT JOIN quarterly_payments AS qp
+    ON qr.q = qp.q AND m.method = qp.method
+    ORDER BY qr.q, m.method;
+    ```
 
-        **결과 (예시):**
-
-        | q  | method        | total_amount |
-        | -- | ------------- | -----------: |
-        | Q1 | bank_transfer |    116631296 |
-        | Q1 | card          |    609763898 |
-        | Q1 | kakao_pay     |    245675166 |
-        | Q1 | naver_pay     |    166861740 |
-        | Q1 | point         |     87019317 |
-        | ... | ...           | ...          |
-
-
-    === "MySQL"
-        ```sql
-        WITH quarters AS (
-            SELECT 'Q1' AS q, 1 AS start_m, 3 AS end_m
-            UNION ALL SELECT 'Q2', 4, 6
-            UNION ALL SELECT 'Q3', 7, 9
-            UNION ALL SELECT 'Q4', 10, 12
-        ),
-        methods AS (
-            SELECT DISTINCT method FROM payments
-        ),
-        quarterly_payments AS (
-            SELECT
-                CASE
-                    WHEN MONTH(paid_at) BETWEEN 1 AND 3 THEN 'Q1'
-                    WHEN MONTH(paid_at) BETWEEN 4 AND 6 THEN 'Q2'
-                    WHEN MONTH(paid_at) BETWEEN 7 AND 9 THEN 'Q3'
-                    ELSE 'Q4'
-                END AS q,
-                method,
-                SUM(amount) AS total_amount
-            FROM payments
-            WHERE status = 'completed'
-              AND paid_at >= '2024-01-01'
-              AND paid_at <  '2025-01-01'
-            GROUP BY q, method
-        )
-        SELECT
-            qr.q,
-            m.method,
-            COALESCE(ROUND(qp.total_amount, 2), 0) AS total_amount
-        FROM quarters AS qr
-        CROSS JOIN methods AS m
-        LEFT JOIN quarterly_payments AS qp
-            ON qr.q = qp.q AND m.method = qp.method
-        ORDER BY qr.q, m.method;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH quarters AS (
-            SELECT 'Q1' AS q, 1 AS start_m, 3 AS end_m
-            UNION ALL SELECT 'Q2', 4, 6
-            UNION ALL SELECT 'Q3', 7, 9
-            UNION ALL SELECT 'Q4', 10, 12
-        ),
-        methods AS (
-            SELECT DISTINCT method FROM payments
-        ),
-        quarterly_payments AS (
-            SELECT
-                CASE
-                    WHEN EXTRACT(MONTH FROM paid_at) BETWEEN 1 AND 3 THEN 'Q1'
-                    WHEN EXTRACT(MONTH FROM paid_at) BETWEEN 4 AND 6 THEN 'Q2'
-                    WHEN EXTRACT(MONTH FROM paid_at) BETWEEN 7 AND 9 THEN 'Q3'
-                    ELSE 'Q4'
-                END AS q,
-                method,
-                SUM(amount) AS total_amount
-            FROM payments
-            WHERE status = 'completed'
-              AND paid_at >= '2024-01-01'
-              AND paid_at <  '2025-01-01'
-            GROUP BY q, method
-        )
-        SELECT
-            qr.q,
-            m.method,
-            COALESCE(ROUND(qp.total_amount, 2), 0) AS total_amount
-        FROM quarters AS qr
-        CROSS JOIN methods AS m
-        LEFT JOIN quarterly_payments AS qp
-            ON qr.q = qp.q AND m.method = qp.method
-        ORDER BY qr.q, m.method;
-        ```
-
-### 연습 8: 월-공급업체 CROSS JOIN 보고서
-
+### 문제 8
 2024년 각 월과 각 공급업체의 조합에 대해, 해당 월의 입고 수량을 보여주세요. 입고가 없는 셀은 0으로 표시합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        WITH months AS (
-            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
-            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
-            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
-            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
-            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
-            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
-        ),
-        supplier_inbound AS (
-            SELECT
-                SUBSTR(it.created_at, 1, 7) AS year_month,
-                p.supplier_id,
-                SUM(it.quantity) AS inbound_qty
-            FROM inventory_transactions AS it
-            INNER JOIN products AS p ON it.product_id = p.id
-            WHERE it.type = 'inbound' AND it.created_at LIKE '2024%'
-            GROUP BY SUBSTR(it.created_at, 1, 7), p.supplier_id
-        )
-        SELECT
-            m.m AS year_month,
-            s.company_name AS supplier,
-            COALESCE(si.inbound_qty, 0) AS inbound_qty
-        FROM months AS m
-        CROSS JOIN suppliers AS s
-        LEFT JOIN supplier_inbound AS si
-            ON m.m = si.year_month AND s.id = si.supplier_id
-        ORDER BY m.m, s.company_name
-        LIMIT 30;
-        ```
+    ```sql
+    WITH months AS (
+    SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
+    UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
+    UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
+    UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
+    UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
+    UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
+    ),
+    supplier_inbound AS (
+    SELECT
+    SUBSTR(it.created_at, 1, 7) AS year_month,
+    p.supplier_id,
+    SUM(it.quantity) AS inbound_qty
+    FROM inventory_transactions AS it
+    INNER JOIN products AS p ON it.product_id = p.id
+    WHERE it.type = 'inbound' AND it.created_at LIKE '2024%'
+    GROUP BY SUBSTR(it.created_at, 1, 7), p.supplier_id
+    )
+    SELECT
+    m.m AS year_month,
+    s.company_name AS supplier,
+    COALESCE(si.inbound_qty, 0) AS inbound_qty
+    FROM months AS m
+    CROSS JOIN suppliers AS s
+    LEFT JOIN supplier_inbound AS si
+    ON m.m = si.year_month AND s.id = si.supplier_id
+    ORDER BY m.m, s.company_name
+    LIMIT 30;
+    ```
 
-        **결과 (예시):**
-
-        | year_month | supplier   | inbound_qty |
-        | ---------- | ---------- | ----------: |
-        | 2024-01    | AMD코리아     |           0 |
-        | 2024-01    | APC코리아     |           0 |
-        | 2024-01    | ASRock코리아  |           0 |
-        | 2024-01    | HP코리아      |           0 |
-        | 2024-01    | LG전자 공식 유통 |           0 |
-        | ...        | ...        | ...         |
-
-
-    === "MySQL"
-        ```sql
-        WITH months AS (
-            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
-            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
-            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
-            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
-            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
-            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
-        ),
-        supplier_inbound AS (
-            SELECT
-                DATE_FORMAT(it.created_at, '%Y-%m') AS year_month,
-                p.supplier_id,
-                SUM(it.quantity) AS inbound_qty
-            FROM inventory_transactions AS it
-            INNER JOIN products AS p ON it.product_id = p.id
-            WHERE it.type = 'inbound'
-              AND it.created_at >= '2024-01-01'
-              AND it.created_at <  '2025-01-01'
-            GROUP BY DATE_FORMAT(it.created_at, '%Y-%m'), p.supplier_id
-        )
-        SELECT
-            m.m AS year_month,
-            s.company_name AS supplier,
-            COALESCE(si.inbound_qty, 0) AS inbound_qty
-        FROM months AS m
-        CROSS JOIN suppliers AS s
-        LEFT JOIN supplier_inbound AS si
-            ON m.m = si.year_month AND s.id = si.supplier_id
-        ORDER BY m.m, s.company_name
-        LIMIT 30;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH months AS (
-            SELECT '2024-01' AS m UNION ALL SELECT '2024-02'
-            UNION ALL SELECT '2024-03' UNION ALL SELECT '2024-04'
-            UNION ALL SELECT '2024-05' UNION ALL SELECT '2024-06'
-            UNION ALL SELECT '2024-07' UNION ALL SELECT '2024-08'
-            UNION ALL SELECT '2024-09' UNION ALL SELECT '2024-10'
-            UNION ALL SELECT '2024-11' UNION ALL SELECT '2024-12'
-        ),
-        supplier_inbound AS (
-            SELECT
-                TO_CHAR(it.created_at, 'YYYY-MM') AS year_month,
-                p.supplier_id,
-                SUM(it.quantity) AS inbound_qty
-            FROM inventory_transactions AS it
-            INNER JOIN products AS p ON it.product_id = p.id
-            WHERE it.type = 'inbound'
-              AND it.created_at >= '2024-01-01'
-              AND it.created_at <  '2025-01-01'
-            GROUP BY TO_CHAR(it.created_at, 'YYYY-MM'), p.supplier_id
-        )
-        SELECT
-            m.m AS year_month,
-            s.company_name AS supplier,
-            COALESCE(si.inbound_qty, 0) AS inbound_qty
-        FROM months AS m
-        CROSS JOIN suppliers AS s
-        LEFT JOIN supplier_inbound AS si
-            ON m.m = si.year_month AND s.id = si.supplier_id
-        ORDER BY m.m, s.company_name
-        LIMIT 30;
-        ```
-
-
-### 연습 9: 등급-카테고리 CROSS JOIN
-
+### 문제 9
 고객 등급(`DISTINCT grade`)과 최상위 카테고리(`depth = 0`)의 모든 조합을 CROSS JOIN으로 생성하고, 각 조합의 주문 건수를 LEFT JOIN으로 구하세요. 주문이 없는 조합은 0으로 표시하세요.
 
 ??? success "정답"
     ```sql
     WITH grades AS (
-        SELECT DISTINCT grade FROM customers WHERE grade IS NOT NULL
+    SELECT DISTINCT grade FROM customers WHERE grade IS NOT NULL
     ),
     top_cats AS (
-        SELECT id, name FROM categories WHERE depth = 0
+    SELECT id, name FROM categories WHERE depth = 0
     ),
     grade_cat_orders AS (
-        SELECT
-            c.grade,
-            COALESCE(pcat.id, cat.id) AS category_id,
-            COUNT(DISTINCT o.id) AS order_count
-        FROM orders AS o
-        INNER JOIN customers AS c ON o.customer_id = c.id
-        INNER JOIN order_items AS oi ON o.id = oi.order_id
-        INNER JOIN products AS p ON oi.product_id = p.id
-        INNER JOIN categories AS cat ON p.category_id = cat.id
-        LEFT  JOIN categories AS pcat ON cat.parent_id = pcat.id
-        GROUP BY c.grade, COALESCE(pcat.id, cat.id)
+    SELECT
+    c.grade,
+    COALESCE(pcat.id, cat.id) AS category_id,
+    COUNT(DISTINCT o.id) AS order_count
+    FROM orders AS o
+    INNER JOIN customers AS c ON o.customer_id = c.id
+    INNER JOIN order_items AS oi ON o.id = oi.order_id
+    INNER JOIN products AS p ON oi.product_id = p.id
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    LEFT  JOIN categories AS pcat ON cat.parent_id = pcat.id
+    GROUP BY c.grade, COALESCE(pcat.id, cat.id)
     )
     SELECT
-        g.grade,
-        tc.name AS category,
-        COALESCE(gco.order_count, 0) AS order_count
+    g.grade,
+    tc.name AS category,
+    COALESCE(gco.order_count, 0) AS order_count
     FROM grades AS g
     CROSS JOIN top_cats AS tc
     LEFT JOIN grade_cat_orders AS gco
-        ON g.grade = gco.grade AND tc.id = gco.category_id
+    ON g.grade = gco.grade AND tc.id = gco.category_id
     ORDER BY g.grade, tc.name;
     ```
 
-    **결과 (예시):**
-
-    | grade  | category | order_count |
-    | ------ | -------- | ----------: |
-    | BRONZE | CPU      |         853 |
-    | BRONZE | UPS/전원   |         132 |
-    | BRONZE | 그래픽카드    |         782 |
-    | BRONZE | 네트워크 장비  |        1148 |
-    | BRONZE | 노트북      |         827 |
-    | ...    | ...      | ...         |
-
-
-### 연습 10: 카테고리 부모-자식 관계
-
+### 문제 10
 `categories` 테이블을 SELF JOIN하여 부모 카테고리명(`parent_name`)과 자식 카테고리명(`child_name`)을 조회하세요. 부모가 없는 최상위 카테고리의 `parent_name`은 `'(최상위)'`로 표시합니다.
 
 ??? success "정답"
     ```sql
     SELECT
-        COALESCE(parent.name, '(최상위)') AS parent_name,
-        child.name                       AS child_name,
-        child.depth
+    COALESCE(parent.name, '(최상위)') AS parent_name,
+    child.name                       AS child_name,
+    child.depth
     FROM categories AS child
     LEFT JOIN categories AS parent ON child.parent_id = parent.id
     ORDER BY parent.name, child.name;
     ```
 
-    **결과 (예시):**
-
-    | parent_name | child_name | depth |
-    | ----------- | ---------- | ----: |
-    | (최상위)       | CPU        |     0 |
-    | (최상위)       | UPS/전원     |     0 |
-    | (최상위)       | 그래픽카드      |     0 |
-    | CPU         | AMD        |     1 |
-    | CPU         | Intel      |     1 |
-    | ...         | ...        | ...   |
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [22강: 뷰(Views)](22-views.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [20강: EXISTS](20-exists.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| SELF JOIN 조직도/계층 | 1, 10 |
-| SELF JOIN 중복 쌍 제거 (id < id) | 2, 3, 4 |
-| SELF JOIN 주소 비교 | 5 |
-| CROSS JOIN + 비율 계산 | 6 |
-| CROSS JOIN + CTE + LEFT JOIN 매트릭스 | 7, 8, 9 |
-
----
-다음: [22강: 뷰(Views)](22-views.md)
+<!-- END_LESSON_EXERCISES -->

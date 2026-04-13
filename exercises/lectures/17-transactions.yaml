@@ -1,0 +1,131 @@
+metadata:
+  id: lesson-17-transactions
+  title: "트랜잭션 — 레슨 복습"
+  title_en: "Transactions — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/17-transactions"
+  concepts: ['BEGIN', 'COMMIT', 'ROLLBACK', 'SAVEPOINT']
+  estimated_minutes: 8
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_17_transactions_review.mp4"
+    fps: 15
+    intro_text: "17강 트랜잭션 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "17강 트랜잭션 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L17-03
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 시나리오를 트랜잭션으로 작성하세요: 고객(id=30)의 포인트를 5000 차감하고, 해당 포인트를 orders(id=8001)의 total_amount에서 할인 적용하세요.
+    reference_sql:
+      common: |
+        BEGIN TRANSACTION;
+        
+        UPDATE customers SET point_balance = point_balance - 5000 WHERE id = 30;
+        UPDATE orders SET total_amount = total_amount - 5000 WHERE id = 8001;
+        
+        COMMIT;
+    tags: []
+
+  - id: L17-04
+    level: 2
+    type: "SELECT"
+    question: |
+      아래 SQL에서 문제점을 찾고, 트랜잭션을 사용하여 안전하게 수정하세요.
+      ```sql
+      INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
+      VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
+      INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
+      VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
+      UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
+      ```
+    reference_sql:
+      common: |
+        BEGIN TRANSACTION;
+        
+        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
+        VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
+        
+        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
+        VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
+        
+        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
+        
+        COMMIT;
+    tags: []
+
+  - id: L17-05
+    level: 2
+    type: "SELECT"
+    question: |
+      SAVEPOINT를 사용하여 다음 시나리오를 작성하세요: 주문(id=100)에 상품 3개를 추가하되, 두 번째 상품 추가 후 문제가 발견되어 두 번째 상품만 취소하고, 나머지는 유지한 채 커밋합니다.
+    reference_sql:
+      common: |
+        BEGIN;
+        
+        INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
+        VALUES (100, 10, 1, 45000, 0, 45000);
+        
+        SAVEPOINT sp_item2;
+        
+        INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
+        VALUES (100, 20, 1, 32000, 0, 32000);
+        
+        -- 두 번째 상품에 문제 발견 → 취소
+        ROLLBACK TO SAVEPOINT sp_item2;
+        
+        -- 세 번째 상품은 정상 추가
+        INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
+        VALUES (100, 30, 2, 18000, 0, 36000);
+        
+        COMMIT;
+    tags: []
+
+  - id: L17-10
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 처리 트랜잭션을 작성하세요. 고객(id=45)이 상품(id=120)을 3개 주문하고, 단가는 55000원입니다. 주문(orders), 주문상세(order_items), 결제(payments), 재고(products.stock_qty) 4개 테이블을 하나의 트랜잭션으로 처리하세요. 결제는 카드 결제이고, 재고 변동도 inventory_transactions에 기록합니다.
+    reference_sql:
+      common: |
+        BEGIN TRANSACTION;
+        
+        -- 주문
+        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
+        VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, datetime('now'), datetime('now'), datetime('now'));
+        
+        -- 주문 상세
+        INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
+        VALUES (99003, 120, 3, 55000, 0, 165000);
+        
+        -- 결제
+        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
+        VALUES (99003, 'credit_card', 165000, 'completed', datetime('now'), datetime('now'));
+        
+        -- 재고 차감
+        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;
+        
+        -- 재고 변동 기록
+        INSERT INTO inventory_transactions (product_id, type, quantity, created_at)
+        VALUES (120, 'OUT', -3, datetime('now'));
+        
+        COMMIT;
+    tags: []

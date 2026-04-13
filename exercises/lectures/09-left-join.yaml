@@ -1,0 +1,210 @@
+metadata:
+  id: lesson-09-left-join
+  title: "LEFT JOIN — 레슨 복습"
+  title_en: "LEFT JOIN — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/09-left-join"
+  concepts: ['LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_09_left_join_review.mp4"
+    fps: 15
+    intro_text: "09강 LEFT JOIN — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "09강 LEFT JOIN 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L09-01
+    level: 2
+    type: "SELECT"
+    question: |
+      주문이 없는 고객과 고객 정보가 누락된 주문을 **모두** 포함하여 `customer_name`, `order_number`, `total_amount`를 조회하세요. 고객이 없으면 `'(알 수 없음)'`, 주문이 없으면 `'(주문 없음)'`으로 표시하세요. `customer_name` 오름차순으로 정렬하여 15행까지 반환하세요.
+    reference_sql:
+      common: |
+        -- SQLite 3.39+
+        SELECT
+        COALESCE(c.name, '(알 수 없음)')       AS customer_name,
+        COALESCE(o.order_number, '(주문 없음)') AS order_number,
+        o.total_amount
+        FROM customers AS c
+        FULL OUTER JOIN orders AS o ON c.id = o.customer_id
+        ORDER BY customer_name
+        LIMIT 15;
+    tags: []
+
+  - id: L09-02
+    level: 2
+    type: "SELECT"
+    question: |
+      **리뷰를 남기지 않은** 고객 수를 구하세요. `no_review_customers`라는 단일 값을 반환하세요.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS no_review_customers
+        FROM customers AS c
+        LEFT JOIN reviews AS r ON c.id = r.customer_id
+        WHERE r.id IS NULL;
+    tags: []
+
+  - id: L09-03
+    level: 2
+    type: "SELECT"
+    question: |
+      `inventory_transactions` 테이블에 **재고 거래 내역이 전혀 없는** 활성 상품을 모두 구하세요. `product_id`, `name`, `stock_qty`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.id        AS product_id,
+        p.name,
+        p.stock_qty
+        FROM products AS p
+        LEFT JOIN inventory_transactions AS it ON p.id = it.product_id
+        WHERE p.is_active = 1
+        AND it.id IS NULL
+        ORDER BY p.name;
+    tags: []
+
+  - id: L09-04
+    level: 2
+    type: "SELECT"
+    question: |
+      모든 카테고리에 대해 카테고리명과 해당 카테고리에 속한 상품 수(`product_count`)를 구하세요. **상품이 하나도 없는 카테고리도 포함**하여 0으로 표시하세요. `product_count` 내림차순, 같으면 카테고리명 오름차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        cat.name        AS category_name,
+        COUNT(p.id)     AS product_count
+        FROM categories AS cat
+        LEFT JOIN products AS p ON cat.id = p.category_id
+        GROUP BY cat.id, cat.name
+        ORDER BY product_count DESC, category_name ASC;
+    tags: []
+
+  - id: L09-05
+    level: 2
+    type: "SELECT"
+    question: |
+      `orders` 테이블을 기준으로 RIGHT JOIN을 사용하여, 모든 고객의 이름(`name`)과 주문 횟수(`order_count`)를 구하세요. **주문이 없는 고객도 포함**하고, 주문 횟수 내림차순으로 정렬하여 10행까지 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name,
+        COUNT(o.id) AS order_count
+        FROM orders AS o
+        RIGHT JOIN customers AS c ON c.id = o.customer_id
+        GROUP BY c.id, c.name
+        ORDER BY order_count DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L09-06
+    level: 2
+    type: "SELECT"
+    question: |
+      공급업체(`suppliers`)별로 공급하는 활성 상품 수(`product_count`)와 총 재고(`total_stock`)를 구하세요. **상품이 없는 공급업체도 포함**하고, 해당 값은 0으로 표시하세요. `total_stock` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        sup.company_name,
+        COUNT(p.id)                     AS product_count,
+        COALESCE(SUM(p.stock_qty), 0)   AS total_stock
+        FROM suppliers AS sup
+        LEFT JOIN products AS p ON sup.id = p.supplier_id
+        AND p.is_active = 1
+        GROUP BY sup.id, sup.company_name
+        ORDER BY total_stock DESC;
+    tags: []
+
+  - id: L09-07
+    level: 2
+    type: "SELECT"
+    question: |
+      모든 상품에 대해 상품명, 가격, 총 판매 수량(`SUM(order_items.quantity)`), 해당 상품이 등장한 주문 수를 보여주세요. **한 번도 주문되지 않은 상품도 포함**하고 그 경우 0으로 표시하세요. 판매 수량 내림차순으로 20행까지 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.name              AS product_name,
+        p.price,
+        COALESCE(SUM(oi.quantity), 0)    AS units_sold,
+        COUNT(DISTINCT oi.order_id)       AS order_appearances
+        FROM products AS p
+        LEFT JOIN order_items AS oi ON p.id = oi.product_id
+        GROUP BY p.id, p.name, p.price
+        ORDER BY units_sold DESC
+        LIMIT 20;
+    tags: []
+
+  - id: L09-08
+    level: 2
+    type: "SELECT"
+    question: |
+      모든 주문에 대해 주문번호, 총액, 결제 수단(`payments.method`), 배송 운송사(`shipping.carrier`)를 보여주세요. 결제나 배송 정보가 없는 주문도 포함하고, 그 경우 `COALESCE`로 `'미결제'`, `'미배송'`으로 표시하세요. 주문 총액 내림차순으로 10행까지 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        o.order_number,
+        o.total_amount,
+        COALESCE(p.method, '미결제')   AS payment_method,
+        COALESCE(s.carrier, '미배송')  AS carrier
+        FROM orders AS o
+        LEFT JOIN payments AS p ON o.id = p.order_id
+        LEFT JOIN shipping AS s ON o.id = s.order_id
+        ORDER BY o.total_amount DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L09-09
+    level: 2
+    type: "SELECT"
+    question: |
+      모든 고객의 이름, 이메일, 가장 최근 주문 상태(`status`)를 조회하세요. 주문이 없는 고객의 상태는 `'주문 없음'`으로 표시하세요. `COALESCE`를 사용하고, 고객명 오름차순으로 정렬하여 15행까지 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name,
+        c.email,
+        COALESCE(o.status, '주문 없음') AS last_order_status
+        FROM customers AS c
+        LEFT JOIN orders AS o ON c.id = o.customer_id
+        AND o.ordered_at = (
+        SELECT MAX(o2.ordered_at)
+        FROM orders AS o2
+        WHERE o2.customer_id = c.id
+        )
+        ORDER BY c.name
+        LIMIT 15;
+    tags: []
+
+  - id: L09-10
+    level: 2
+    type: "SELECT"
+    question: |
+      위시리스트에 상품을 담았지만 **주문을 한 번도 하지 않은** 고객을 모두 구하세요. `customer_name`, `email`, `wishlist_items`(위시리스트 항목 수)를 반환하고, `wishlist_items` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name  AS customer_name,
+        c.email,
+        COUNT(w.id) AS wishlist_items
+        FROM customers AS c
+        LEFT JOIN orders    AS o ON c.id = o.customer_id
+        INNER JOIN wishlists AS w ON c.id = w.customer_id
+        WHERE o.id IS NULL
+        GROUP BY c.id, c.name, c.email
+        ORDER BY wishlist_items DESC;
+    tags: []

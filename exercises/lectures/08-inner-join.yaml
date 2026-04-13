@@ -1,0 +1,221 @@
+metadata:
+  id: lesson-08-inner-join
+  title: "INNER JOIN — 레슨 복습"
+  title_en: "INNER JOIN — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/08-inner-join"
+  concepts: ['INNER JOIN', 'ON', '다중 조인']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_08_inner_join_review.mp4"
+    fps: 15
+    intro_text: "08강 INNER JOIN — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "08강 INNER JOIN 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L08-01
+    level: 2
+    type: "SELECT"
+    question: |
+      리뷰마다 고객의 `name`과 상품의 `name`을 함께 조회하세요. `review_id`, `customer_name`, `product_name`, `rating`, `created_at`을 반환하고, `rating` 내림차순, `created_at` 내림차순으로 정렬한 뒤 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        r.id          AS review_id,
+        c.name        AS customer_name,
+        p.name        AS product_name,
+        r.rating,
+        r.created_at
+        FROM reviews AS r
+        INNER JOIN customers AS c ON r.customer_id = c.id
+        INNER JOIN products  AS p ON r.product_id  = p.id
+        ORDER BY r.rating DESC, r.created_at DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L08-02
+    level: 2
+    type: "SELECT"
+    question: |
+      결제 수단별로 해당 수단을 사용한 고유 고객 수를 구하세요. `method`와 `unique_customers`를 반환하고, `unique_customers` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.method,
+        COUNT(DISTINCT o.customer_id) AS unique_customers
+        FROM payments AS p
+        INNER JOIN orders AS o ON p.order_id = o.id
+        WHERE p.status = 'completed'
+        GROUP BY p.method
+        ORDER BY unique_customers DESC;
+    tags: []
+
+  - id: L08-03
+    level: 2
+    type: "SELECT"
+    question: |
+      총 구매액(취소·반품 제외 주문의 `total_amount` 합계) 기준 상위 5명의 고객을 구하세요. `customer_name`, `grade`, `order_count`, `total_spent`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name   AS customer_name,
+        c.grade,
+        COUNT(o.id)         AS order_count,
+        SUM(o.total_amount) AS total_spent
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        GROUP BY c.id, c.name, c.grade
+        ORDER BY total_spent DESC
+        LIMIT 5;
+    tags: []
+
+  - id: L08-04
+    level: 2
+    type: "SELECT"
+    question: |
+      주문번호(`order_number`), 고객명(`customer_name`), 주문 상태(`status`)를 조회하되, 주문 상태가 `'shipped'`인 것만 필터링하세요. 주문일(`ordered_at`) 내림차순으로 정렬하고 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        o.order_number,
+        c.name   AS customer_name,
+        o.status
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE o.status = 'shipped'
+        ORDER BY o.ordered_at DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L08-05
+    level: 2
+    type: "SELECT"
+    question: |
+      배송(`shipping`) 테이블과 주문(`orders`) 테이블을 조인하여, 배송 완료(`delivered`)된 주문의 `order_number`, `carrier`, `tracking_number`, `delivered_at`을 조회하세요. `delivered_at` 내림차순으로 정렬하고 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        o.order_number,
+        s.carrier,
+        s.tracking_number,
+        s.delivered_at
+        FROM shipping AS s
+        INNER JOIN orders AS o ON s.order_id = o.id
+        WHERE s.status = 'delivered'
+        ORDER BY s.delivered_at DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L08-06
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 항목(`order_items`)에서 상품명(`products.name`), 공급업체명(`suppliers.company_name`), 수량(`quantity`), 단가(`unit_price`)를 조회하세요. 3개 테이블을 조인하고, 단가 내림차순으로 정렬하여 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.name          AS product_name,
+        sup.company_name AS supplier_name,
+        oi.quantity,
+        oi.unit_price
+        FROM order_items AS oi
+        INNER JOIN products  AS p   ON oi.product_id  = p.id
+        INNER JOIN suppliers AS sup ON p.supplier_id   = sup.id
+        ORDER BY oi.unit_price DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L08-07
+    level: 2
+    type: "SELECT"
+    question: |
+      공급업체별로 해당 업체의 상품이 포함된 총 주문 건수(`order_count`)와 총 판매 수량(`total_qty`)을 구하세요. `company_name`, `order_count`, `total_qty`를 반환하고, `total_qty` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        sup.company_name,
+        COUNT(DISTINCT oi.order_id) AS order_count,
+        SUM(oi.quantity)            AS total_qty
+        FROM order_items AS oi
+        INNER JOIN products  AS p   ON oi.product_id = p.id
+        INNER JOIN suppliers AS sup ON p.supplier_id  = sup.id
+        GROUP BY sup.id, sup.company_name
+        ORDER BY total_qty DESC;
+    tags: []
+
+  - id: L08-08
+    level: 2
+    type: "SELECT"
+    question: |
+      담당 직원(`staff`)별로 처리한 주문 수(`order_count`)와 총 매출(`total_revenue`)을 구하세요. 취소·반품 주문은 제외하고, `staff_name`, `department`, `order_count`, `total_revenue`를 반환하세요. `total_revenue` 내림차순으로 정렬하고 상위 10명만 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        st.name        AS staff_name,
+        st.department,
+        COUNT(o.id)         AS order_count,
+        SUM(o.total_amount) AS total_revenue
+        FROM orders AS o
+        INNER JOIN staff AS st ON o.staff_id = st.id
+        WHERE o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        GROUP BY st.id, st.name, st.department
+        ORDER BY total_revenue DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L08-09
+    level: 2
+    type: "SELECT"
+    question: |
+      리뷰(`reviews`)를 작성한 고객의 이름(`customers.name`)과 리뷰 대상 상품명(`products.name`), 평점(`rating`), 리뷰 작성일(`reviews.created_at`)을 조회하세요. 평점이 5인 리뷰만 대상으로 하고, `reviews.created_at` 내림차순으로 정렬하여 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name        AS customer_name,
+        p.name        AS product_name,
+        r.rating,
+        r.created_at
+        FROM reviews AS r
+        INNER JOIN customers AS c ON r.customer_id = c.id
+        INNER JOIN products  AS p ON r.product_id  = p.id
+        WHERE r.rating = 5
+        ORDER BY r.created_at DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L08-10
+    level: 2
+    type: "SELECT"
+    question: |
+      카테고리별로 해당 카테고리 상품의 총 주문 금액(`total_revenue`)과 주문 건수(`order_count`)를 구하세요. `categories.name`, `order_count`, `total_revenue`를 반환하고, 최상위 카테고리(`depth = 0`)만 대상으로 합니다. `total_revenue` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        cat.name       AS category_name,
+        COUNT(DISTINCT o.id) AS order_count,
+        SUM(oi.quantity * oi.unit_price) AS total_revenue
+        FROM order_items AS oi
+        INNER JOIN orders     AS o   ON oi.order_id   = o.id
+        INNER JOIN products   AS p   ON oi.product_id = p.id
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE cat.depth = 0
+        ORDER BY total_revenue DESC;
+    tags: []

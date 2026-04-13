@@ -1,57 +1,21 @@
 # Date and Time Analysis
 
-<div class="grid cards" markdown>
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
+### 1. Find the number of orders and revenue per month in 2025. Exc
 
-    ---
 
-    `orders` — Orders (status, amount, date/time)<br>
-    `customers` — Customers (tier, points, signup channel)<br>
-    `shipping` — Shipping (carrier, tracking number)<br>
-    `reviews` — Reviews (rating, content)<br>
-    `returns` — Returns/Exchanges<br>
-    `calendar` — Date reference (holidays, weekends)
+Find the number of orders and revenue per month in 2025. Exclude cancelled orders.
 
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
 
-    ---
+**Hint 1:** Extract the month with `SUBSTR(ordered_at, 1, 7)` and filter the year with `WHERE ordered_at LIKE '2025%'`.
 
-    `SUBSTR` 날짜 추출<br>
-    `DATE()`<br>
-    `STRFTIME()`<br>
-    `JULIANDAY()`<br>
-    Date arithmetic<br>
-    Time-of-day analysis<br>
-    calendar JOIN
-
-</div>
-
-!!! info "Before You Begin"
-    This exercise applies what you learned in **Intermediate Lesson 11** (date/time functions) to practical scenarios.
-    SQLite dates are stored as TEXT (`'2024-03-15 14:30:00'`), so they are processed with `SUBSTR`, `JULIANDAY`, etc.
-
----
-
-## Basic (1~7)
-
-Practice SUBSTR date extraction and DATE range filtering.
-
----
-
-### Problem 1
-
-**Find monthly order count and revenue for 2025. Exclude cancelled orders.**
-
-??? tip "Hint"
-    Extract the month in `'2025-01'` format using `SUBSTR(ordered_at, 1, 7)`. Filter by year with `WHERE ordered_at LIKE '2025%'`.
 
 ??? success "Answer"
     ```sql
     SELECT
         SUBSTR(ordered_at, 1, 7) AS month,
         COUNT(*) AS orders,
-        ROUND(SUM(total_amount), 0) AS revenue
+        ROUND(SUM(total_amount), 2) AS revenue
     FROM orders
     WHERE ordered_at LIKE '2025%'
       AND status NOT IN ('cancelled')
@@ -59,30 +23,18 @@ Practice SUBSTR date extraction and DATE range filtering.
     ORDER BY month;
     ```
 
-    **Result (top 5 rows):**
-
-    | month | orders | revenue |
-    | ---------- | ----------: | ----------: |
-    | 2025-01 | 461 | 491947609.0 |
-    | 2025-02 | 428 | 422980126.0 |
-    | 2025-03 | 619 | 656638842.0 |
-    | 2025-04 | 467 | 517070656.0 |
-    | 2025-05 | 466 | 514287052.0 |
-    | 2025-06 | 436 | 457780698.0 |
-    | 2025-07 | 402 | 404813220.0 |
-    | 2025-08 | 477 | 453711007.0 |
-    | ... | ... | ... |
-
-    > Actual values depend on the data. 12 rows are returned.
 
 ---
 
-### Problem 2
 
-**Find revenue and order count by quarter (Q1~Q4) for 2024.**
+### 2. Find the revenue and order count per quarter (Q1-Q4) in 2024
 
-??? tip "Hint"
-    Convert months to quarters with `CASE WHEN SUBSTR(ordered_at, 6, 2) IN ('01','02','03') THEN 'Q1' ...`.
+
+Find the revenue and order count per quarter (Q1-Q4) in 2024.
+
+
+**Hint 1:** Convert months to quarters with `CASE WHEN SUBSTR(ordered_at, 6, 2) IN ('01','02','03') THEN 'Q1' ...`.
+
 
 ??? success "Answer"
     ```sql
@@ -94,7 +46,7 @@ Practice SUBSTR date extraction and DATE range filtering.
             ELSE 'Q4'
         END AS quarter,
         COUNT(*) AS orders,
-        ROUND(SUM(total_amount), 0) AS revenue
+        ROUND(SUM(total_amount), 2) AS revenue
     FROM orders
     WHERE ordered_at LIKE '2024%'
       AND status NOT IN ('cancelled')
@@ -102,217 +54,24 @@ Practice SUBSTR date extraction and DATE range filtering.
     ORDER BY quarter;
     ```
 
-    **Result:**
-
-    | quarter | orders | revenue |
-    | ---------- | ----------: | ----------: |
-    | Q1 | 1330 | 1263575536.0 |
-    | Q2 | 1271 | 1306918979.0 |
-    | Q3 | 1355 | 1340721817.0 |
-    | Q4 | 1518 | 1435560379.0 |
-
-    > You can observe the seasonal pattern of higher revenue in Q4 (year-end).
 
 ---
 
-### Problem 3
 
-**Find daily revenue for November 2025. Exclude cancelled.**
+### 3. Find the average number of days from signup to first order a
 
-??? tip "Hint"
-    Extract only the date part with `SUBSTR(ordered_at, 1, 10)`. When filtering with `BETWEEN`, be careful to include the end of the time range.
+
+Find the average number of days from signup to first order across all customers.
+
+
+**Hint 1:** Get the first order date with `MIN(ordered_at)` in a subquery, then calculate the day difference with `JULIANDAY`.
+
 
 ??? success "Answer"
-    ```sql
-    SELECT
-        SUBSTR(ordered_at, 1, 10) AS order_date,
-        COUNT(*) AS orders,
-        ROUND(SUM(total_amount), 0) AS revenue
-    FROM orders
-    WHERE ordered_at BETWEEN '2025-11-01' AND '2025-11-30 23:59:59'
-      AND status NOT IN ('cancelled')
-    GROUP BY SUBSTR(ordered_at, 1, 10)
-    ORDER BY order_date;
-    ```
 
-    **Result (top 5 rows):**
-
-    | order_date | orders | revenue |
-    | ---------- | ----------: | ----------: |
-    | 2025-11-01 | 23 | 18638420.0 |
-    | 2025-11-02 | 22 | 16401346.0 |
-    | 2025-11-03 | 24 | 25193599.0 |
-    | 2025-11-04 | 18 | 16932899.0 |
-    | 2025-11-05 | 13 | 8753619.0 |
-    | 2025-11-06 | 20 | 48635756.0 |
-    | 2025-11-07 | 14 | 10072100.0 |
-    | 2025-11-08 | 20 | 16133700.0 |
-    | ... | ... | ... |
-
-    > Actual values depend on the data.
-
----
-
-### Problem 4
-
-**Find order count by hour (0~23). Identify which hour has the most orders.**
-
-??? tip "Hint"
-    Extract the hour (HH) with `SUBSTR(ordered_at, 12, 2)`. Convert to integer with `CAST(... AS INTEGER)` for proper sorting.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) AS hour,
-        COUNT(*) AS order_count
-    FROM orders
-    GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
-    ORDER BY hour;
-    ```
-
-    **Result (top 5 rows):**
-
-    | hour | order_count |
-    | ----------: | ----------: |
-    | 0 | 473 |
-    | 1 | 340 |
-    | 2 | 172 |
-    | 3 | 200 |
-    | 4 | 195 |
-    | 5 | 359 |
-    | 6 | 631 |
-    | 7 | 980 |
-    | ... | ... |
-
-    > 24 rows returned. You can observe patterns of order concentration during lunch/evening hours.
-
----
-
-### Problem 5
-
-**Find order count and revenue by year. Exclude cancelled.**
-
-??? tip "Hint"
-    Extract the year with `SUBSTR(ordered_at, 1, 4)`. View 10-year trends at a glance.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        SUBSTR(ordered_at, 1, 4) AS year,
-        COUNT(*) AS orders,
-        ROUND(SUM(total_amount), 0) AS revenue
-    FROM orders
-    WHERE status NOT IN ('cancelled')
-    GROUP BY SUBSTR(ordered_at, 1, 4)
-    ORDER BY year;
-    ```
-
-    **Result (top 5 rows):**
-
-    | year | orders | revenue |
-    | ---------- | ----------: | ----------: |
-    | 2016 | 401 | 301871490.0 |
-    | 2017 | 668 | 630467381.0 |
-    | 2018 | 1255 | 1203414419.0 |
-    | 2019 | 2473 | 2523296474.0 |
-    | 2020 | 4128 | 4251046262.0 |
-    | 2021 | 5571 | 5771175319.0 |
-    | 2022 | 4947 | 4999116420.0 |
-    | 2023 | 4788 | 4815030724.0 |
-    | ... | ... | ... |
-
-    > You can observe a natural growth curve over 10 years.
-
----
-
-### Problem 6
-
-**Find the number of new signups by year.**
-
-??? tip "Hint"
-    Extract signup year with `SUBSTR(created_at, 1, 4)`. `COUNT(*)` by year from the `customers` table.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        SUBSTR(created_at, 1, 4) AS signup_year,
-        COUNT(*) AS new_customers
-    FROM customers
-    GROUP BY SUBSTR(created_at, 1, 4)
-    ORDER BY signup_year;
-    ```
-
-    **Result (top 5 rows):**
-
-    | signup_year | new_customers |
-    | ---------- | ----------: |
-    | 2016 | 100 |
-    | 2017 | 180 |
-    | 2018 | 300 |
-    | 2019 | 450 |
-    | 2020 | 700 |
-    | 2021 | 800 |
-    | 2022 | 650 |
-    | 2023 | 600 |
-    | ... | ... |
-
-    > You can observe growth trends by year.
-
----
-
-### Problem 7
-
-**Find monthly review count and average rating. 2025 only.**
-
-??? tip "Hint"
-    Extract the month from `reviews.created_at` with `SUBSTR(created_at, 1, 7)`.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        SUBSTR(created_at, 1, 7) AS month,
-        COUNT(*) AS review_count,
-        ROUND(AVG(rating), 2) AS avg_rating
-    FROM reviews
-    WHERE created_at LIKE '2025%'
-    GROUP BY SUBSTR(created_at, 1, 7)
-    ORDER BY month;
-    ```
-
-    **Result (top 5 rows):**
-
-    | month | review_count | avg_rating |
-    | ---------- | ----------: | ----------: |
-    | 2025-01 | 124 | 3.83 |
-    | 2025-02 | 98 | 3.97 |
-    | 2025-03 | 125 | 4.05 |
-    | 2025-04 | 141 | 3.99 |
-    | 2025-05 | 111 | 3.96 |
-    | 2025-06 | 111 | 3.84 |
-    | 2025-07 | 117 | 3.94 |
-    | 2025-08 | 125 | 3.9 |
-    | ... | ... | ... |
-
-    > Actual values depend on the data.
-
----
-
-## Applied (8~14)
-
-Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting.
-
----
-
-### Problem 8
-
-**Find the average number of days from signup to first order per customer.**
-
-??? tip "Hint"
-    Use `MIN(ordered_at)` in a subquery to find the first order date, then calculate days with JULIANDAY difference.
-
-??? success "Answer"
-    ```sql
-    SELECT
+    === "SQLite"
+        ```sql
+        SELECT
         ROUND(AVG(JULIANDAY(first_order) - JULIANDAY(join_date)), 1) AS avg_days_to_first_order
     FROM (
         SELECT
@@ -323,65 +82,127 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
         INNER JOIN orders AS o ON c.id = o.customer_id
         GROUP BY c.id, c.created_at
     );
-    ```
+        ```
 
-    **Result:**
+    === "MySQL"
+        ```sql
+        SELECT
+        ROUND(AVG(DATEDIFF(first_order, join_date)), 1) AS avg_days_to_first_order
+    FROM (
+        SELECT
+            c.id,
+            c.created_at AS join_date,
+            MIN(o.ordered_at) AS first_order
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.created_at
+    ) AS sub;
+        ```
 
-    | avg_days_to_first_order |
-    | ----------: |
-    | 164.1 |
+    === "PostgreSQL"
+        ```sql
+        SELECT
+        ROUND(AVG(first_order::date - join_date::date), 1) AS avg_days_to_first_order
+    FROM (
+        SELECT
+            c.id,
+            c.created_at AS join_date,
+            MIN(o.ordered_at) AS first_order
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.created_at
+    ) AS sub;
+        ```
 
-    > On average, the first order is placed about 45 days after signup. Actual values may differ.
 
 ---
 
-### Problem 9
 
-**Find order count by day of week (Mon~Sun). Which day has the most orders?**
+### 4. Find the number of orders per hour of day (0-23).
 
-??? tip "Hint"
-    `STRFTIME('%w', ordered_at)` returns the day number (0=Sun, 1=Mon, ..., 6=Sat). Convert to day names with `CASE`.
+
+Find the number of orders per hour of day (0-23).
+
+
+**Hint 1:** Extract the hour portion with `SUBSTR(ordered_at, 12, 2)`. Convert to integer with `CAST(... AS INTEGER)`.
+
 
 ??? success "Answer"
-    ```sql
-    SELECT
-        CASE CAST(STRFTIME('%w', ordered_at) AS INTEGER)
-            WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
-            WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
-        END AS day_name,
+
+    === "SQLite"
+        ```sql
+        SELECT
+        CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) AS hour,
         COUNT(*) AS order_count
     FROM orders
-    GROUP BY STRFTIME('%w', ordered_at)
-    ORDER BY order_count DESC;
-    ```
+    GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
+    ORDER BY hour;
+        ```
 
-    **Result:**
+    === "MySQL"
+        ```sql
+        SELECT
+        HOUR(ordered_at) AS hour,
+        COUNT(*) AS order_count
+    FROM orders
+    GROUP BY HOUR(ordered_at)
+    ORDER BY hour;
+        ```
 
-    | day_name | order_count |
-    | ---------- | ----------: |
-    | 토 | 5935 |
-    | 일 | 5929 |
-    | 월 | 5890 |
-    | 화 | 5136 |
-    | 금 | 5112 |
-    | 수 | 4798 |
-    | 목 | 4757 |
-    | ... | ... |
+    === "PostgreSQL"
+        ```sql
+        SELECT
+        EXTRACT(HOUR FROM ordered_at::timestamp)::INTEGER AS hour,
+        COUNT(*) AS order_count
+    FROM orders
+    GROUP BY EXTRACT(HOUR FROM ordered_at::timestamp)
+    ORDER BY hour;
+        ```
 
-    > More orders on weekdays, relatively fewer on weekends. Actual values may differ.
 
 ---
 
-### Problem 10
 
-**Break down delivery days into ranges (1 day, 2 days, 3 days, 4+ days) and count.**
+### 5. Find the daily revenue for the last 30 days (based on 2025-1
 
-??? tip "Hint"
-    Calculate delivery days with `JULIANDAY(delivered_at) - JULIANDAY(ordered_at)` in a subquery, then classify into ranges with `CASE WHEN`.
+
+Find the daily revenue for the last 30 days (based on 2025-11-01 to 2025-11-30).
+
+
+**Hint 1:** Filter with `BETWEEN '2025-11-01' AND '2025-11-30 23:59:59'`. Be careful to include up to the end of the last day.
+
 
 ??? success "Answer"
     ```sql
     SELECT
+        SUBSTR(ordered_at, 1, 10) AS order_date,
+        COUNT(*) AS orders,
+        ROUND(SUM(total_amount), 2) AS revenue
+    FROM orders
+    WHERE ordered_at BETWEEN '2025-11-01' AND '2025-11-30 23:59:59'
+      AND status NOT IN ('cancelled')
+    GROUP BY SUBSTR(ordered_at, 1, 10)
+    ORDER BY order_date;
+    ```
+
+
+---
+
+
+### 6. Divide delivery duration into ranges (within 1 day, 2 days, 
+
+
+Divide delivery duration into ranges (within 1 day, 2 days, 3 days, 4+ days) and count.
+
+
+**Hint 1:** Calculate delivery days with `JULIANDAY` difference in a subquery, then classify ranges with `CASE WHEN days <= 1 THEN ...`.
+
+
+??? success "Answer"
+
+    === "SQLite"
+        ```sql
+        SELECT
         CASE
             WHEN days <= 1 THEN '1일 이내'
             WHEN days <= 2 THEN '2일'
@@ -398,30 +219,68 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
     )
     GROUP BY delivery_range
     ORDER BY MIN(days);
-    ```
+        ```
 
-    **Result:**
+    === "MySQL"
+        ```sql
+        SELECT
+        CASE
+            WHEN days <= 1 THEN '1일 이내'
+            WHEN days <= 2 THEN '2일'
+            WHEN days <= 3 THEN '3일'
+            ELSE '4일 이상'
+        END AS delivery_range,
+        COUNT(*) AS cnt
+    FROM (
+        SELECT
+            DATEDIFF(sh.delivered_at, o.ordered_at) AS days
+        FROM shipping AS sh
+        INNER JOIN orders AS o ON sh.order_id = o.id
+        WHERE sh.delivered_at IS NOT NULL
+    ) AS sub
+    GROUP BY delivery_range
+    ORDER BY MIN(days);
+        ```
 
-    | delivery_range | cnt |
-    | ---------- | ----------: |
-    | 2일 | 2894 |
-    | 3일 | 5885 |
-    | 4일 이상 | 26739 |
+    === "PostgreSQL"
+        ```sql
+        SELECT
+        CASE
+            WHEN days <= 1 THEN '1일 이내'
+            WHEN days <= 2 THEN '2일'
+            WHEN days <= 3 THEN '3일'
+            ELSE '4일 이상'
+        END AS delivery_range,
+        COUNT(*) AS cnt
+    FROM (
+        SELECT
+            (sh.delivered_at::date - o.ordered_at::date) AS days
+        FROM shipping AS sh
+        INNER JOIN orders AS o ON sh.order_id = o.id
+        WHERE sh.delivered_at IS NOT NULL
+    ) AS sub
+    GROUP BY delivery_range
+    ORDER BY MIN(days);
+        ```
 
-    > Most deliveries are within 2 days. Actual values may differ.
 
 ---
 
-### Problem 11
 
-**Find days since each customer's last order. Only customers with 180+ days (churn risk).**
+### 7. Find the number of days since each customer's last order. On
 
-??? tip "Hint"
-    Get last order date with `MAX(ordered_at)`, calculate elapsed days with `JULIANDAY('2025-12-31') - JULIANDAY(MAX(...))`. Filter with `HAVING`.
+
+Find the number of days since each customer's last order. Only customers with 180+ days.
+
+
+**Hint 1:** Get the last order date with `MAX(ordered_at)` and calculate elapsed days with `JULIANDAY('reference_date') - JULIANDAY(MAX(...))`. Filter with `HAVING` for 180+ days.
+
 
 ??? success "Answer"
-    ```sql
-    SELECT
+
+    === "SQLite"
+        ```sql
+        SELECT
         c.name,
         c.grade,
         MAX(o.ordered_at) AS last_order,
@@ -432,36 +291,56 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
     HAVING days_ago >= 180
     ORDER BY days_ago DESC
     LIMIT 20;
-    ```
+        ```
 
-    **Result (top 5 rows):**
+    === "MySQL"
+        ```sql
+        SELECT
+        c.name,
+        c.grade,
+        MAX(o.ordered_at) AS last_order,
+        DATEDIFF('2025-12-31', MAX(o.ordered_at)) AS days_ago
+    FROM customers AS c
+    INNER JOIN orders AS o ON c.id = o.customer_id
+    GROUP BY c.id, c.name, c.grade
+    HAVING days_ago >= 180
+    ORDER BY days_ago DESC
+    LIMIT 20;
+        ```
 
-    | name | grade | last_order | days_ago |
-    | ---------- | ---------- | ---------- | ----------: |
-    | Lance Barrett | BRONZE | 2019-11-27 11:00:22 | 2225 |
-    | Austin Hunt | BRONZE | 2020-06-05 18:47:34 | 2034 |
-    | Joshua Bradshaw | BRONZE | 2020-07-25 22:23:10 | 1984 |
-    | Anthony Williams | BRONZE | 2020-08-05 13:14:36 | 1973 |
-    | Becky Watkins | BRONZE | 2020-08-13 11:55:26 | 1965 |
-    | Steven Rodriguez | BRONZE | 2020-09-16 21:29:41 | 1931 |
-    | Justin Bautista | BRONZE | 2020-11-02 13:43:56 | 1884 |
-    | Allison Harrington | BRONZE | 2020-11-18 20:25:55 | 1868 |
-    | ... | ... | ... | ... |
+    === "PostgreSQL"
+        ```sql
+        SELECT
+        c.name,
+        c.grade,
+        MAX(o.ordered_at) AS last_order,
+        ('2025-12-31'::date - MAX(o.ordered_at)::date) AS days_ago
+    FROM customers AS c
+    INNER JOIN orders AS o ON c.id = o.customer_id
+    GROUP BY c.id, c.name, c.grade
+    HAVING ('2025-12-31'::date - MAX(o.ordered_at)::date) >= 180
+    ORDER BY days_ago DESC
+    LIMIT 20;
+        ```
 
-    > Customers with 180+ days (about 6 months) without orders are classified as churn risk.
 
 ---
 
-### Problem 12
 
-**Find order count by day-of-week and hour combination. Top 10 combinations.**
+### 8. Find the order count by day of week (Mon-Sun) and hour (0-23
 
-??? tip "Hint"
-    Extract day number with `STRFTIME('%w', ordered_at)` and hour with `SUBSTR(ordered_at, 12, 2)`. `GROUP BY` both columns.
+
+Find the order count by day of week (Mon-Sun) and hour (0-23). Show top 20 combinations.
+
+
+**Hint 1:** Extract the day-of-week number with `STRFTIME('%w', ordered_at)` and convert to day names with `CASE`. `GROUP BY` both columns.
+
 
 ??? success "Answer"
-    ```sql
-    SELECT
+
+    === "SQLite"
+        ```sql
+        SELECT
         CASE CAST(STRFTIME('%w', ordered_at) AS INTEGER)
             WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
             WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
@@ -471,69 +350,58 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
     FROM orders
     GROUP BY STRFTIME('%w', ordered_at), CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
     ORDER BY orders DESC
-    LIMIT 10;
-    ```
+    LIMIT 20;
+        ```
 
-    **Result (top 5 rows):**
+    === "MySQL"
+        ```sql
+        SELECT
+        CASE DAYOFWEEK(ordered_at)
+            WHEN 1 THEN '일' WHEN 2 THEN '월' WHEN 3 THEN '화'
+            WHEN 4 THEN '수' WHEN 5 THEN '목' WHEN 6 THEN '금' WHEN 7 THEN '토'
+        END AS day_name,
+        HOUR(ordered_at) AS hour,
+        COUNT(*) AS orders
+    FROM orders
+    GROUP BY DAYOFWEEK(ordered_at), HOUR(ordered_at)
+    ORDER BY orders DESC
+    LIMIT 20;
+        ```
 
-    | day_name | hour | orders |
-    | ---------- | ----------: | ----------: |
-    | 일 | 21 | 534 |
-    | 토 | 21 | 513 |
-    | 토 | 20 | 469 |
-    | 월 | 20 | 462 |
-    | 월 | 21 | 458 |
-    | 화 | 21 | 454 |
-    | 일 | 20 | 445 |
-    | 월 | 22 | 430 |
-    | ... | ... | ... |
+    === "PostgreSQL"
+        ```sql
+        SELECT
+        CASE EXTRACT(DOW FROM ordered_at::timestamp)::INTEGER
+            WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
+            WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
+        END AS day_name,
+        EXTRACT(HOUR FROM ordered_at::timestamp)::INTEGER AS hour,
+        COUNT(*) AS orders
+    FROM orders
+    GROUP BY EXTRACT(DOW FROM ordered_at::timestamp), EXTRACT(HOUR FROM ordered_at::timestamp)
+    ORDER BY orders DESC
+    LIMIT 20;
+        ```
 
-    > Orders concentrate during weekday afternoon~evening. Actual values may differ.
-
----
-
-### Problem 13
-
-**Find average days from return request to completion. Completed returns only.**
-
-??? tip "Hint"
-    Calculate days with `JULIANDAY(completed_at) - JULIANDAY(requested_at)` from the `returns` table.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        ROUND(AVG(JULIANDAY(completed_at) - JULIANDAY(requested_at)), 1) AS avg_days,
-        MIN(CAST(JULIANDAY(completed_at) - JULIANDAY(requested_at) AS INTEGER)) AS min_days,
-        MAX(CAST(JULIANDAY(completed_at) - JULIANDAY(requested_at) AS INTEGER)) AS max_days,
-        COUNT(*) AS completed_count
-    FROM returns
-    WHERE status = 'completed'
-      AND completed_at IS NOT NULL;
-    ```
-
-    **Result:**
-
-    | avg_days | min_days | max_days | completed_count |
-    | ----------: | ----------: | ----------: | ----------: |
-    | 5.9 | 2 | 9 | 493 |
-
-    > Return processing takes an average of about 5 days. Actual values may differ.
 
 ---
 
-### Problem 14
 
-**Find yearly revenue and year-over-year growth rate (%). Exclude cancelled.**
+### 9. Find the yearly revenue and year-over-year growth rate (%). 
 
-??? tip "Hint"
-    Compute yearly revenue with a CTE, then reference previous year revenue with `LAG(revenue) OVER (ORDER BY year)`.
+
+Find the yearly revenue and year-over-year growth rate (%). Exclude cancelled orders.
+
+
+**Hint 1:** Calculate yearly revenue in a CTE, then reference the previous year's revenue with `LAG(revenue) OVER (ORDER BY year)`.
+
 
 ??? success "Answer"
     ```sql
     WITH yearly AS (
         SELECT
             SUBSTR(ordered_at, 1, 4) AS year,
-            ROUND(SUM(total_amount), 0) AS revenue
+            ROUND(SUM(total_amount), 2) AS revenue
         FROM orders
         WHERE status NOT IN ('cancelled')
         GROUP BY SUBSTR(ordered_at, 1, 4)
@@ -548,36 +416,133 @@ Practice JULIANDAY differences, STRFTIME weekdays, date addition, and formatting
     ORDER BY year;
     ```
 
-    **Result (top 5 rows):**
-
-    | year | revenue | prev_year | growth_pct |
-    | ---------- | ----------: | ---------- | ---------- |
-    | 2016 | 301871490.0 | (NULL) | (NULL) |
-    | 2017 | 630467381.0 | 301871490.0 | 108.9 |
-    | 2018 | 1203414419.0 | 630467381.0 | 90.9 |
-    | 2019 | 2523296474.0 | 1203414419.0 | 109.7 |
-    | 2020 | 4251046262.0 | 2523296474.0 | 68.5 |
-    | 2021 | 5771175319.0 | 4251046262.0 | 35.8 |
-    | 2022 | 4999116420.0 | 5771175319.0 | -13.4 |
-    | 2023 | 4815030724.0 | 4999116420.0 | -3.7 |
-    | ... | ... | ... | ... |
-
-    > Shows high growth rate initially, then stable growth patterns.
 
 ---
 
-## Practical (15~20)
 
-Practice calendar JOIN, shipping analysis, and cohort analysis.
+### 10. Find the average number of days from return request to compl
+
+
+Find the average number of days from return request to completion. Only completed returns.
+
+
+**Hint 1:** Calculate processing days with `JULIANDAY(completed_at) - JULIANDAY(requested_at)` from the `returns` table. Filter with `WHERE status = 'completed'`.
+
+
+??? success "Answer"
+
+    === "SQLite"
+        ```sql
+        SELECT
+        ROUND(AVG(JULIANDAY(completed_at) - JULIANDAY(requested_at)), 1) AS avg_days,
+        MIN(CAST(JULIANDAY(completed_at) - JULIANDAY(requested_at) AS INTEGER)) AS min_days,
+        MAX(CAST(JULIANDAY(completed_at) - JULIANDAY(requested_at) AS INTEGER)) AS max_days
+    FROM returns
+    WHERE status = 'completed'
+      AND completed_at IS NOT NULL;
+        ```
+
+    === "MySQL"
+        ```sql
+        SELECT
+        ROUND(AVG(DATEDIFF(completed_at, requested_at)), 1) AS avg_days,
+        MIN(DATEDIFF(completed_at, requested_at)) AS min_days,
+        MAX(DATEDIFF(completed_at, requested_at)) AS max_days
+    FROM returns
+    WHERE status = 'completed'
+      AND completed_at IS NOT NULL;
+        ```
+
+    === "PostgreSQL"
+        ```sql
+        SELECT
+        ROUND(AVG(completed_at::date - requested_at::date), 1) AS avg_days,
+        MIN(completed_at::date - requested_at::date) AS min_days,
+        MAX(completed_at::date - requested_at::date) AS max_days
+    FROM returns
+    WHERE status = 'completed'
+      AND completed_at IS NOT NULL;
+        ```
+
 
 ---
 
-### Problem 15
 
-**Weekend vs Weekday comparison: Compare average daily orders and revenue for weekends and weekdays in 2024.**
+### 11. Find the count of first-time buyers and repeat buyers per mo
 
-??? tip "Hint"
-    `calendar` LEFT JOIN `orders` (by date). Aggregate daily, then calculate averages by weekend/weekday group.
+
+Find the count of first-time buyers and repeat buyers per month in 2024.
+
+
+**Hint 1:** Get each customer's first order date with `MIN(ordered_at)` in a CTE, then compare the order month with the first order month to distinguish new vs returning customers.
+
+
+??? success "Answer"
+    ```sql
+    WITH first_orders AS (
+        SELECT
+            customer_id,
+            MIN(ordered_at) AS first_order_date
+        FROM orders
+        WHERE status NOT IN ('cancelled')
+        GROUP BY customer_id
+    )
+    SELECT
+        SUBSTR(o.ordered_at, 1, 7) AS month,
+        SUM(CASE WHEN SUBSTR(o.ordered_at, 1, 7) = SUBSTR(fo.first_order_date, 1, 7)
+            THEN 1 ELSE 0 END) AS new_customers,
+        SUM(CASE WHEN SUBSTR(o.ordered_at, 1, 7) > SUBSTR(fo.first_order_date, 1, 7)
+            THEN 1 ELSE 0 END) AS returning_customers
+    FROM orders AS o
+    INNER JOIN first_orders AS fo ON o.customer_id = fo.customer_id
+    WHERE o.ordered_at LIKE '2024%'
+      AND o.status NOT IN ('cancelled')
+    GROUP BY SUBSTR(o.ordered_at, 1, 7)
+    ORDER BY month;
+    ```
+
+
+---
+
+
+### 12. Find the name, number of changes, first price, and current p
+
+
+Find the name, number of changes, first price, and current price of products whose price has changed 2 or more times.
+
+
+**Hint 1:** Join `products` with `product_prices` for history. Filter with `HAVING COUNT >= 2`. Get the first price via a subquery with `ORDER BY started_at ASC LIMIT 1`.
+
+
+??? success "Answer"
+    ```sql
+    SELECT
+        p.name,
+        COUNT(pp.id) AS price_changes,
+        (SELECT pp2.price FROM product_prices pp2
+         WHERE pp2.product_id = p.id ORDER BY pp2.started_at ASC LIMIT 1) AS first_price,
+        p.price AS current_price
+    FROM products AS p
+    INNER JOIN product_prices AS pp ON p.id = pp.product_id
+    GROUP BY p.id, p.name, p.price
+    HAVING COUNT(pp.id) >= 2
+    ORDER BY price_changes DESC
+    LIMIT 15;
+    ```
+
+
+---
+
+
+### 13. Weekend vs Weekday Order Comparison
+
+
+JOIN calendar with orders to compare 2024 weekend vs weekday
+average daily order count and average daily revenue.
+
+
+**Hint 1:** Use `calendar.is_weekend`. First aggregate orders per day, then calculate averages by weekend/weekday group.
+
 
 ??? success "Answer"
     ```sql
@@ -604,230 +569,46 @@ Practice calendar JOIN, shipping analysis, and cohort analysis.
     GROUP BY is_weekend;
     ```
 
-    **Result:**
-
-    | day_type | total_days | total_orders | avg_daily_orders | avg_daily_revenue |
-    | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | 평일 | 262 | 3766 | 14.4 | 14062210.0 |
-    | 주말 | 104 | 1708 | 16.4 | 15985362.0 |
-
-    > Weekdays have about 30% more orders than weekends. Actual values may differ.
 
 ---
 
-### Problem 16
 
-**Check if orders were placed on holidays. Order count and revenue per holiday in 2024.**
+### 14. Promotion Products Search
 
-??? tip "Hint"
-    `calendar` LEFT JOIN `orders`. Filter holidays with `WHERE cal.is_holiday = 1`.
+
+Find promotions active during a specific period (2024-11-01 to 2024-12-31)
+and the products included in them.
+
+
+**Hint 1:** Period overlap: `promotions.started_at <= '2024-12-31' AND promotions.ended_at >= '2024-11-01'`. JOIN `promotion_products` -> `products`. Show override_price as special price if present.
+
 
 ??? success "Answer"
     ```sql
     SELECT
-        cal.date_key,
-        cal.holiday_name,
-        cal.day_name,
-        COUNT(o.id) AS order_count,
-        COALESCE(ROUND(SUM(o.total_amount), 0), 0) AS revenue
-    FROM calendar AS cal
-    LEFT JOIN orders AS o
-        ON SUBSTR(o.ordered_at, 1, 10) = cal.date_key
-       AND o.status NOT IN ('cancelled')
-    WHERE cal.year = 2024
-      AND cal.is_holiday = 1
-    GROUP BY cal.date_key, cal.holiday_name, cal.day_name
-    ORDER BY cal.date_key;
-    ```
-
-    **Result (top 5 rows):**
-
-    | date_key | holiday_name | day_name | order_count | revenue |
-    | ---------- | ---------- | ---------- | ----------: | ----------: |
-    | 2024-01-01 | New Year's Day | Monday | 12 | 7732372.0 |
-    | 2024-02-14 | Foundation Day | Wednesday | 14 | 16223200.0 |
-    | 2024-03-21 | Spring Festival | Thursday | 18 | 8262021.0 |
-    | 2024-04-05 | Memorial Day | Friday | 15 | 8589571.0 |
-    | 2024-05-01 | Labor Day | Wednesday | 9 | 8726102.0 |
-    | 2024-05-15 | Children's Day | Wednesday | 13 | 10199376.0 |
-    | 2024-06-10 | Summer Solstice Day | Monday | 12 | 14075752.0 |
-    | 2024-07-20 | Freedom Day | Saturday | 12 | 19742310.0 |
-    | ... | ... | ... | ... | ... |
-
-    > There may be 0 orders during Lunar New Year holidays. Actual results depend on the data.
-
----
-
-### Problem 17
-
-**Find monthly first-time and returning customer counts for 2024.**
-
-??? tip "Hint"
-    Use a CTE to find each customer's first order month (`MIN(ordered_at)`). If order month = first order month, it's new; otherwise returning.
-
-??? success "Answer"
-    ```sql
-    WITH first_orders AS (
-        SELECT
-            customer_id,
-            MIN(ordered_at) AS first_order_date
-        FROM orders
-        WHERE status NOT IN ('cancelled')
-        GROUP BY customer_id
-    )
-    SELECT
-        SUBSTR(o.ordered_at, 1, 7) AS month,
-        SUM(CASE WHEN SUBSTR(o.ordered_at, 1, 7) = SUBSTR(fo.first_order_date, 1, 7)
-            THEN 1 ELSE 0 END) AS new_customers,
-        SUM(CASE WHEN SUBSTR(o.ordered_at, 1, 7) > SUBSTR(fo.first_order_date, 1, 7)
-            THEN 1 ELSE 0 END) AS returning_customers
-    FROM orders AS o
-    INNER JOIN first_orders AS fo ON o.customer_id = fo.customer_id
-    WHERE o.ordered_at LIKE '2024%'
-      AND o.status NOT IN ('cancelled')
-    GROUP BY SUBSTR(o.ordered_at, 1, 7)
-    ORDER BY month;
-    ```
-
-    **Result (top 5 rows):**
-
-    | month | new_customers | returning_customers |
-    | ---------- | ----------: | ----------: |
-    | 2024-01 | 32 | 293 |
-    | 2024-02 | 30 | 403 |
-    | 2024-03 | 50 | 522 |
-    | 2024-04 | 34 | 444 |
-    | 2024-05 | 35 | 361 |
-    | 2024-06 | 28 | 369 |
-    | 2024-07 | 34 | 357 |
-    | 2024-08 | 41 | 383 |
-    | ... | ... | ... |
-
-    > Returning customers far outnumber new ones. Actual values may differ.
-
----
-
-### Problem 18
-
-**Find first-purchase conversion rate by signup month (cohort). For customers who signed up in 2024.**
-
-??? tip "Hint"
-    Aggregate 2024 signups by signup month from `customers`. Calculate the ratio of customers with at least 1 order.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        SUBSTR(c.created_at, 1, 7) AS signup_month,
-        COUNT(*) AS total_signups,
-        COUNT(DISTINCT o.customer_id) AS purchasers,
-        ROUND(100.0 * COUNT(DISTINCT o.customer_id) / COUNT(DISTINCT c.id), 1) AS conversion_rate
-    FROM customers AS c
-    LEFT JOIN orders AS o ON c.id = o.customer_id
-        AND o.status NOT IN ('cancelled')
-    WHERE c.created_at LIKE '2024%'
-    GROUP BY SUBSTR(c.created_at, 1, 7)
-    ORDER BY signup_month;
-    ```
-
-    **Result (top 5 rows):**
-
-    | signup_month | total_signups | purchasers | conversion_rate |
-    | ---------- | ----------: | ----------: | ----------: |
-    | 2024-01 | 118 | 28 | 53.8 |
-    | 2024-02 | 155 | 26 | 54.2 |
-    | 2024-03 | 257 | 44 | 62.0 |
-    | 2024-04 | 132 | 27 | 50.9 |
-    | 2024-05 | 115 | 24 | 55.8 |
-    | 2024-06 | 180 | 36 | 52.9 |
-    | 2024-07 | 171 | 36 | 58.1 |
-    | 2024-08 | 187 | 36 | 57.1 |
-    | ... | ... | ... | ... |
-
-    > Track purchase conversion rates by cohort. Actual values may differ.
-
----
-
-### Problem 19
-
-**Compare revenue before and after promotion: Compare average daily revenue for 7 days before/after Black Friday (11/24~11/30). Based on 2024.**
-
-??? tip "Hint"
-    Split into 3 periods: 7 days before (11/17~11/23), promotion period (11/24~11/30), 7 days after (12/01~12/07). Classify with `CASE WHEN`.
-
-??? success "Answer"
-    ```sql
-    SELECT
+        promo.name       AS promotion_name,
+        promo.type       AS promotion_type,
+        promo.discount_type,
+        promo.discount_value,
+        promo.started_at,
+        promo.ended_at,
+        p.name           AS product_name,
+        p.price          AS regular_price,
+        pp.override_price AS special_price,
         CASE
-            WHEN SUBSTR(ordered_at, 1, 10) BETWEEN '2024-11-17' AND '2024-11-23' THEN '직전 7일'
-            WHEN SUBSTR(ordered_at, 1, 10) BETWEEN '2024-11-24' AND '2024-11-30' THEN '프로모션'
-            WHEN SUBSTR(ordered_at, 1, 10) BETWEEN '2024-12-01' AND '2024-12-07' THEN '직후 7일'
-        END AS period,
-        COUNT(*) AS total_orders,
-        ROUND(SUM(total_amount), 0) AS total_revenue,
-        ROUND(COUNT(*) / 7.0, 1) AS avg_daily_orders,
-        ROUND(SUM(total_amount) / 7.0, 0) AS avg_daily_revenue
-    FROM orders
-    WHERE SUBSTR(ordered_at, 1, 10) BETWEEN '2024-11-17' AND '2024-12-07'
-      AND status NOT IN ('cancelled')
-    GROUP BY CASE
-        WHEN SUBSTR(ordered_at, 1, 10) BETWEEN '2024-11-17' AND '2024-11-23' THEN '직전 7일'
-        WHEN SUBSTR(ordered_at, 1, 10) BETWEEN '2024-11-24' AND '2024-11-30' THEN '프로모션'
-        WHEN SUBSTR(ordered_at, 1, 10) BETWEEN '2024-12-01' AND '2024-12-07' THEN '직후 7일'
-    END
-    ORDER BY MIN(SUBSTR(ordered_at, 1, 10));
+            WHEN pp.override_price IS NOT NULL THEN pp.override_price
+            WHEN promo.discount_type = 'percent' THEN ROUND(p.price * (1 - promo.discount_value / 100.0), 0)
+            ELSE ROUND(p.price - promo.discount_value, 0)
+        END AS final_price
+    FROM promotions AS promo
+    INNER JOIN promotion_products AS pp ON promo.id = pp.promotion_id
+    INNER JOIN products           AS p  ON pp.product_id = p.id
+    WHERE promo.started_at <= '2024-12-31'
+      AND promo.ended_at   >= '2024-11-01'
+      AND promo.is_active = 1
+    ORDER BY promo.name, p.name
+    LIMIT 30;
     ```
 
-    **Result:**
-
-    | period | total_orders | total_revenue | avg_daily_orders | avg_daily_revenue |
-    | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | 직전 7일 | 139 | 132444053.0 | 19.9 | 18920579.0 |
-    | 프로모션 | 120 | 107302455.0 | 17.1 | 15328922.0 |
-    | 직후 7일 | 98 | 86178752.0 | 14.0 | 12311250.0 |
-
-    > Revenue rises significantly during the promotion period. Actual values may differ.
 
 ---
-
-### Problem 20
-
-**Monthly delivery completion rate trend: Find total shipments, completed count, completion rate, and average delivery days by month for 2024.**
-
-??? tip "Hint"
-    JOIN `shipping` with `orders`. Extract month with `SUBSTR(o.ordered_at, 1, 7)`. Delivery days: `JULIANDAY(delivered_at) - JULIANDAY(ordered_at)`.
-
-??? success "Answer"
-    ```sql
-    SELECT
-        SUBSTR(o.ordered_at, 1, 7) AS month,
-        COUNT(*) AS total_shipments,
-        SUM(CASE WHEN sh.status = 'delivered' THEN 1 ELSE 0 END) AS delivered,
-        ROUND(100.0 * SUM(CASE WHEN sh.status = 'delivered' THEN 1 ELSE 0 END)
-            / COUNT(*), 1) AS delivery_rate,
-        ROUND(AVG(
-            CASE WHEN sh.delivered_at IS NOT NULL
-                 THEN JULIANDAY(sh.delivered_at) - JULIANDAY(o.ordered_at)
-            END
-        ), 1) AS avg_delivery_days
-    FROM shipping AS sh
-    INNER JOIN orders AS o ON sh.order_id = o.id
-    WHERE o.ordered_at LIKE '2024%'
-    GROUP BY SUBSTR(o.ordered_at, 1, 7)
-    ORDER BY month;
-    ```
-
-    **Result (top 5 rows):**
-
-    | month | total_shipments | delivered | delivery_rate | avg_delivery_days |
-    | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | 2024-01 | 325 | 314 | 96.6 | 4.6 |
-    | 2024-02 | 433 | 416 | 96.1 | 4.5 |
-    | 2024-03 | 572 | 555 | 97.0 | 4.5 |
-    | 2024-04 | 478 | 466 | 97.5 | 4.6 |
-    | 2024-05 | 396 | 385 | 97.2 | 4.4 |
-    | 2024-06 | 397 | 389 | 98.0 | 4.5 |
-    | 2024-07 | 391 | 381 | 97.4 | 4.4 |
-    | 2024-08 | 424 | 416 | 98.1 | 4.6 |
-    | ... | ... | ... | ... | ... |
-
-    > Maintains a stable 92~94% delivery completion rate year-round. Actual values may differ.

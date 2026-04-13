@@ -332,19 +332,14 @@ DROP VIEW IF EXISTS v_cs_watchlist;
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| CREATE VIEW | 저장된 쿼리 생성 | `CREATE VIEW v AS SELECT ...` |
-| SELECT FROM view | 뷰를 테이블처럼 조회 | `SELECT * FROM v_summary` |
-| CREATE OR REPLACE | 뷰 수정 (PG/MySQL) | `CREATE OR REPLACE VIEW v AS ...` |
-| DROP VIEW | 뷰 삭제 | `DROP VIEW IF EXISTS v` |
-| 시스템 카탈로그 | 뷰 목록 조회 | `sqlite_master` / `INFORMATION_SCHEMA` |
-| MATERIALIZED VIEW | 결과를 물리적으로 저장 (PG) | `CREATE MATERIALIZED VIEW ...` |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 `v_customer_stats` 뷰를 조회하여 주문 건수가 5건 이상이고 평균 주문 금액이 300 이상인 고객을 `lifetime_value` 내림차순으로 조회하세요.
 
 ??? success "정답"
@@ -352,12 +347,11 @@ DROP VIEW IF EXISTS v_cs_watchlist;
     SELECT *
     FROM v_customer_stats
     WHERE order_count >= 5
-      AND avg_order_value >= 300
+    AND avg_order_value >= 300
     ORDER BY lifetime_value DESC;
     ```
 
-
-### 연습 2
+### 문제 2
 `v_cs_watchlist` 뷰를 삭제한 뒤, 존재하지 않는 뷰를 삭제할 때 에러가 발생하지 않도록 작성하세요.
 
 ??? success "정답"
@@ -365,122 +359,60 @@ DROP VIEW IF EXISTS v_cs_watchlist;
     DROP VIEW IF EXISTS v_cs_watchlist;
     ```
 
-
-### 연습 3
+### 문제 3
 `v_product_sales`를 조회하여 `total_revenue` 기준 상위 10개 상품을 찾으세요. `product_name`, `category`, `units_sold`, `total_revenue`, `avg_rating`을 반환하고, 리뷰가 5개 이상인 상품만 포함하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        product_name,
-        category,
-        units_sold,
-        total_revenue,
-        avg_rating
+    product_name,
+    category,
+    units_sold,
+    total_revenue,
+    avg_rating
     FROM v_product_sales
     WHERE review_count >= 5
     ORDER BY total_revenue DESC
     LIMIT 10;
     ```
 
-
-### 연습 4
+### 문제 4
 시스템 카탈로그를 사용하여 18개의 뷰 전체를 알파벳 순으로 나열하세요. 각 뷰의 이름만 표시합니다. 이후 관심 있는 뷰를 하나 골라 정의를 살펴보세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 1단계: 모든 뷰 목록 조회
-        SELECT name
-        FROM sqlite_master
-        WHERE type = 'view'
-        ORDER BY name;
+    ```sql
+    -- 1단계: 모든 뷰 목록 조회
+    SELECT name
+    FROM sqlite_master
+    WHERE type = 'view'
+    ORDER BY name;
+    
+    -- 2단계: 특정 뷰 정의 확인 (예: v_monthly_revenue)
+    SELECT sql
+    FROM sqlite_master
+    WHERE type = 'view'
+    AND name = 'v_monthly_revenue';
+    ```
 
-        -- 2단계: 특정 뷰 정의 확인 (예: v_monthly_revenue)
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'view'
-          AND name = 'v_monthly_revenue';
-        ```
-
-    === "MySQL"
-        ```sql
-        -- 1단계: 모든 뷰 목록 조회
-        SELECT TABLE_NAME
-        FROM INFORMATION_SCHEMA.VIEWS
-        WHERE TABLE_SCHEMA = DATABASE()
-        ORDER BY TABLE_NAME;
-
-        -- 2단계: 특정 뷰 정의 확인 (예: v_monthly_revenue)
-        SELECT VIEW_DEFINITION
-        FROM INFORMATION_SCHEMA.VIEWS
-        WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME = 'v_monthly_revenue';
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- 1단계: 모든 뷰 목록 조회
-        SELECT viewname
-        FROM pg_views
-        WHERE schemaname = 'public'
-        ORDER BY viewname;
-
-        -- 2단계: 특정 뷰 정의 확인 (예: v_monthly_revenue)
-        SELECT definition
-        FROM pg_views
-        WHERE schemaname = 'public'
-          AND viewname = 'v_monthly_revenue';
-        ```
-
-
-### 연습 5
+### 문제 5
 `v_supplier_performance` 뷰를 조회하여 반품률이 가장 높은 공급업체를 찾으세요. 이어서, 이 뷰의 정의를 시스템 카탈로그로 확인하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 1단계: 반품률이 가장 높은 공급업체
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
+    ```sql
+    -- 1단계: 반품률이 가장 높은 공급업체
+    SELECT *
+    FROM v_supplier_performance
+    ORDER BY return_rate_pct DESC
+    LIMIT 1;
+    
+    -- 2단계: 뷰 정의 확인
+    SELECT sql
+    FROM sqlite_master
+    WHERE type = 'view'
+    AND name = 'v_supplier_performance';
+    ```
 
-        -- 2단계: 뷰 정의 확인
-        SELECT sql
-        FROM sqlite_master
-        WHERE type = 'view'
-          AND name = 'v_supplier_performance';
-        ```
-
-    === "MySQL"
-        ```sql
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        SELECT VIEW_DEFINITION
-        FROM INFORMATION_SCHEMA.VIEWS
-        WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME = 'v_supplier_performance';
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT *
-        FROM v_supplier_performance
-        ORDER BY return_rate_pct DESC
-        LIMIT 1;
-
-        SELECT definition
-        FROM pg_views
-        WHERE schemaname = 'public'
-          AND viewname = 'v_supplier_performance';
-        ```
-
-
-### 연습 6
+### 문제 6
 연습 5~7에서 만든 뷰들을 모두 삭제하세요.
 
 ??? success "정답"
@@ -489,222 +421,88 @@ DROP VIEW IF EXISTS v_cs_watchlist;
     DROP VIEW IF EXISTS v_category_monthly_revenue;
     ```
 
-
-### 연습 7
+### 문제 7
 `products` 테이블과 `order_items` 테이블을 JOIN하여 상품별 총 판매 수량(`total_qty`)과 총 매출(`total_sales`)을 계산하는 `v_product_total_sales` 뷰를 생성하세요. `product_id`, `product_name`, `total_qty`, `total_sales` 칼럼을 포함합니다.
 
 ??? success "정답"
     ```sql
     CREATE VIEW v_product_total_sales AS
     SELECT
-        p.id          AS product_id,
-        p.name        AS product_name,
-        COALESCE(SUM(oi.quantity), 0)              AS total_qty,
-        COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_sales
+    p.id          AS product_id,
+    p.name        AS product_name,
+    COALESCE(SUM(oi.quantity), 0)              AS total_qty,
+    COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_sales
     FROM products AS p
     LEFT JOIN order_items AS oi ON oi.product_id = p.id
     GROUP BY p.id, p.name;
     ```
 
-
-### 연습 8
+### 문제 8
 기존 뷰 `v_product_total_sales`를 수정하여 `category_name` 칼럼을 추가하세요 (categories 테이블 JOIN). SQLite는 `CREATE OR REPLACE`를 지원하지 않으므로 DB별 방법이 다릅니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- SQLite: DROP 후 재생성
-        DROP VIEW IF EXISTS v_product_total_sales;
+    ```sql
+    -- SQLite: DROP 후 재생성
+    DROP VIEW IF EXISTS v_product_total_sales;
+    
+    CREATE VIEW v_product_total_sales AS
+    SELECT
+    p.id          AS product_id,
+    p.name        AS product_name,
+    c.name        AS category_name,
+    COALESCE(SUM(oi.quantity), 0)              AS total_qty,
+    COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_sales
+    FROM products AS p
+    INNER JOIN categories AS c ON c.id = p.category_id
+    LEFT JOIN order_items AS oi ON oi.product_id = p.id
+    GROUP BY p.id, p.name, c.name;
+    ```
 
-        CREATE VIEW v_product_total_sales AS
-        SELECT
-            p.id          AS product_id,
-            p.name        AS product_name,
-            c.name        AS category_name,
-            COALESCE(SUM(oi.quantity), 0)              AS total_qty,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_sales
-        FROM products AS p
-        INNER JOIN categories AS c ON c.id = p.category_id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY p.id, p.name, c.name;
-        ```
-
-    === "MySQL"
-        ```sql
-        -- MySQL: CREATE OR REPLACE 지원
-        CREATE OR REPLACE VIEW v_product_total_sales AS
-        SELECT
-            p.id          AS product_id,
-            p.name        AS product_name,
-            c.name        AS category_name,
-            COALESCE(SUM(oi.quantity), 0)              AS total_qty,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_sales
-        FROM products AS p
-        INNER JOIN categories AS c ON c.id = p.category_id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY p.id, p.name, c.name;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- PostgreSQL: CREATE OR REPLACE 지원
-        CREATE OR REPLACE VIEW v_product_total_sales AS
-        SELECT
-            p.id          AS product_id,
-            p.name        AS product_name,
-            c.name        AS category_name,
-            COALESCE(SUM(oi.quantity), 0)              AS total_qty,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_sales
-        FROM products AS p
-        INNER JOIN categories AS c ON c.id = p.category_id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY p.id, p.name, c.name;
-        ```
-
-
-### 연습 9
+### 문제 9
 카테고리별 월간 매출 집계 뷰 `v_category_monthly_revenue`를 만드세요. `category_name`, `year_month` (주문일 기준, 'YYYY-MM' 형식), `revenue`, `order_count` 칼럼을 포함합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE VIEW v_category_monthly_revenue AS
-        SELECT
-            c.name                                  AS category_name,
-            STRFTIME('%Y-%m', o.ordered_at)         AS year_month,
-            SUM(oi.quantity * oi.unit_price)         AS revenue,
-            COUNT(DISTINCT o.id)                     AS order_count
-        FROM categories AS c
-        INNER JOIN products    AS p  ON p.category_id = c.id
-        INNER JOIN order_items AS oi ON oi.product_id = p.id
-        INNER JOIN orders      AS o  ON o.id = oi.order_id
-        GROUP BY c.name, STRFTIME('%Y-%m', o.ordered_at);
-        ```
+    ```sql
+    CREATE VIEW v_category_monthly_revenue AS
+    SELECT
+    c.name                                  AS category_name,
+    STRFTIME('%Y-%m', o.ordered_at)         AS year_month,
+    SUM(oi.quantity * oi.unit_price)         AS revenue,
+    COUNT(DISTINCT o.id)                     AS order_count
+    FROM categories AS c
+    INNER JOIN products    AS p  ON p.category_id = c.id
+    INNER JOIN order_items AS oi ON oi.product_id = p.id
+    INNER JOIN orders      AS o  ON o.id = oi.order_id
+    GROUP BY c.name, STRFTIME('%Y-%m', o.ordered_at);
+    ```
 
-    === "MySQL"
-        ```sql
-        CREATE VIEW v_category_monthly_revenue AS
-        SELECT
-            c.name                                  AS category_name,
-            DATE_FORMAT(o.ordered_at, '%Y-%m')      AS year_month,
-            SUM(oi.quantity * oi.unit_price)         AS revenue,
-            COUNT(DISTINCT o.id)                     AS order_count
-        FROM categories AS c
-        INNER JOIN products    AS p  ON p.category_id = c.id
-        INNER JOIN order_items AS oi ON oi.product_id = p.id
-        INNER JOIN orders      AS o  ON o.id = oi.order_id
-        GROUP BY c.name, DATE_FORMAT(o.ordered_at, '%Y-%m');
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE VIEW v_category_monthly_revenue AS
-        SELECT
-            c.name                                  AS category_name,
-            TO_CHAR(o.ordered_at, 'YYYY-MM')        AS year_month,
-            SUM(oi.quantity * oi.unit_price)         AS revenue,
-            COUNT(DISTINCT o.id)                     AS order_count
-        FROM categories AS c
-        INNER JOIN products    AS p  ON p.category_id = c.id
-        INNER JOIN order_items AS oi ON oi.product_id = p.id
-        INNER JOIN orders      AS o  ON o.id = oi.order_id
-        GROUP BY c.name, TO_CHAR(o.ordered_at, 'YYYY-MM');
-        ```
-
-
-### 연습 10
+### 문제 10
 카테고리별 총 매출과 판매 수량을 집계하는 구체화된 뷰 `mv_category_sales`를 생성하세요. `category_name`, `total_revenue`, `total_qty` 칼럼을 포함합니다. DB별로 적절한 방법을 사용하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- SQLite: CTAS로 테이블 생성 (구체화된 뷰 대안)
-        CREATE TABLE mv_category_sales AS
-        SELECT
-            c.name                                  AS category_name,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
-            COALESCE(SUM(oi.quantity), 0)            AS total_qty
-        FROM categories AS c
-        LEFT JOIN products    AS p  ON p.category_id = c.id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY c.name;
+    ```sql
+    -- SQLite: CTAS로 테이블 생성 (구체화된 뷰 대안)
+    CREATE TABLE mv_category_sales AS
+    SELECT
+    c.name                                  AS category_name,
+    COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
+    COALESCE(SUM(oi.quantity), 0)            AS total_qty
+    FROM categories AS c
+    LEFT JOIN products    AS p  ON p.category_id = c.id
+    LEFT JOIN order_items AS oi ON oi.product_id = p.id
+    GROUP BY c.name;
+    
+    -- 갱신 시: DROP 후 재생성
+    DROP TABLE IF EXISTS mv_category_sales;
+    CREATE TABLE mv_category_sales AS
+    SELECT
+    c.name                                  AS category_name,
+    COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
+    COALESCE(SUM(oi.quantity), 0)            AS total_qty
+    FROM categories AS c
+    LEFT JOIN products    AS p  ON p.category_id = c.id
+    LEFT JOIN order_items AS oi ON oi.product_id = p.id
+    GROUP BY c.name;
+    ```
 
-        -- 갱신 시: DROP 후 재생성
-        DROP TABLE IF EXISTS mv_category_sales;
-        CREATE TABLE mv_category_sales AS
-        SELECT
-            c.name                                  AS category_name,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
-            COALESCE(SUM(oi.quantity), 0)            AS total_qty
-        FROM categories AS c
-        LEFT JOIN products    AS p  ON p.category_id = c.id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY c.name;
-        ```
-
-    === "MySQL"
-        ```sql
-        -- MySQL: CTAS로 테이블 생성 (구체화된 뷰 대안)
-        CREATE TABLE mv_category_sales AS
-        SELECT
-            c.name                                  AS category_name,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
-            COALESCE(SUM(oi.quantity), 0)            AS total_qty
-        FROM categories AS c
-        LEFT JOIN products    AS p  ON p.category_id = c.id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY c.name;
-
-        -- 갱신 시: TRUNCATE + INSERT
-        TRUNCATE TABLE mv_category_sales;
-        INSERT INTO mv_category_sales
-        SELECT
-            c.name                                  AS category_name,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
-            COALESCE(SUM(oi.quantity), 0)            AS total_qty
-        FROM categories AS c
-        LEFT JOIN products    AS p  ON p.category_id = c.id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY c.name;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- PostgreSQL: 네이티브 구체화된 뷰
-        CREATE MATERIALIZED VIEW mv_category_sales AS
-        SELECT
-            c.name                                  AS category_name,
-            COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS total_revenue,
-            COALESCE(SUM(oi.quantity), 0)            AS total_qty
-        FROM categories AS c
-        LEFT JOIN products    AS p  ON p.category_id = c.id
-        LEFT JOIN order_items AS oi ON oi.product_id = p.id
-        GROUP BY c.name;
-
-        -- 갱신
-        REFRESH MATERIALIZED VIEW mv_category_sales;
-        ```
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [23강: 인덱스](23-indexes.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [21강: SELF/CROSS JOIN](21-self-cross-join.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| 뷰 조회 (SELECT FROM view) | 1, 3, 5 |
-| 뷰 삭제 (DROP VIEW) | 2, 6 |
-| 시스템 카탈로그 (뷰 목록) | 4 |
-| CREATE VIEW | 7, 9 |
-| ALTER VIEW (수정) | 8 |
-| MATERIALIZED VIEW | 10 |
-
----
-다음: [23강: 인덱스와 쿼리 실행 계획](23-indexes.md)
+<!-- END_LESSON_EXERCISES -->

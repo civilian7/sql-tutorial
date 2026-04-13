@@ -1,0 +1,189 @@
+metadata:
+  id: lesson-25-json
+  title: "JSON 함수 — 레슨 복습"
+  title_en: "JSON Functions — Lesson Review"
+  difficulty: advanced
+  lesson: "advanced/25-json"
+  concepts: ['JSON_EXTRACT', 'JSON_EACH', 'JSON_GROUP_ARRAY']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/advanced"
+    filename: "lesson_25_json_review.mp4"
+    fps: 15
+    intro_text: "25강 JSON 함수 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "25강 JSON 함수 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L25-01
+    level: 2
+    type: "SELECT"
+    question: |
+      RAM이 `'16GB'`인 상품의 이름, 가격, RAM 값을 조회하세요. 가격 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT name, price, specs->>'$.ram' AS ram
+        FROM products
+        WHERE specs->>'$.ram' = '16GB'
+        ORDER BY price DESC;
+    tags: []
+
+  - id: L25-02
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `specs` 칼럼이 NULL이 아닌 상품의 이름과 CPU 값을 추출하세요. CPU 값이 있는 상품만 표시하고, 결과를 5건으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT name, specs->>'$.cpu' AS cpu
+        FROM products
+        WHERE specs IS NOT NULL
+        AND specs->>'$.cpu' IS NOT NULL
+        LIMIT 5;
+    tags: []
+
+  - id: L25-03
+    level: 2
+    type: "SELECT"
+    question: |
+      `specs` 칼럼에 사용된 모든 고유 키(key) 목록을 알파벳 순서로 조회하세요.
+    reference_sql:
+      common: |
+        SELECT DISTINCT j.key
+        FROM products, json_each(products.specs) AS j
+        WHERE products.specs IS NOT NULL
+        ORDER BY j.key;
+    tags: []
+
+  - id: L25-04
+    level: 2
+    type: "SELECT"
+    question: |
+      `specs`에 `cpu` 키가 있는 상품 중, 가격이 가장 비싼 상품 3개의 이름, CPU, 가격을 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, specs->>'$.cpu' AS cpu, price
+        FROM products
+        WHERE specs->>'$.cpu' IS NOT NULL
+        ORDER BY price DESC
+        LIMIT 3;
+    tags: []
+
+  - id: L25-05
+    level: 2
+    type: "SELECT"
+    question: |
+      배터리 수명이 12시간 이상인 노트북의 이름, 가격, 배터리 수명을 조회하세요. 배터리 수명 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        price,
+        json_extract(specs, '$.battery_hours') AS battery_hours
+        FROM products
+        WHERE json_extract(specs, '$.battery_hours') >= 12
+        ORDER BY json_extract(specs, '$.battery_hours') DESC;
+    tags: []
+
+  - id: L25-06
+    level: 2
+    type: "SELECT"
+    question: |
+      VRAM이 `'16GB'` 이상인 GPU 상품의 이름, 가격, VRAM, TDP(전력 소모)를 조회하세요. TDP 오름차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        price,
+        specs->>'$.vram'      AS vram,
+        json_extract(specs, '$.tdp_watts') AS tdp_watts
+        FROM products
+        WHERE specs->>'$.vram' IN ('16GB', '24GB')
+        ORDER BY json_extract(specs, '$.tdp_watts');
+    tags: []
+
+  - id: L25-07
+    level: 2
+    type: "SELECT"
+    question: |
+      상품 ID 1의 specs에 `"color"` 키를 `"Space Gray"` 값으로 추가하는 UPDATE 문을 작성하세요. 이후 추가된 값을 조회하여 확인하세요.
+    reference_sql:
+      common: |
+        -- 키 추가
+        UPDATE products
+        SET specs = json_set(specs, '$.color', 'Space Gray')
+        WHERE id = 1;
+        
+        -- 확인
+        SELECT name, specs->>'$.color' AS color
+        FROM products
+        WHERE id = 1;
+    tags: []
+
+  - id: L25-08
+    level: 2
+    type: "SELECT"
+    question: |
+      연습 8에서 추가한 `"color"` 키를 상품 ID 1의 specs에서 삭제하는 UPDATE 문을 작성하세요. 이후 삭제됐는지 확인하세요.
+    reference_sql:
+      common: |
+        -- 키 삭제
+        UPDATE products
+        SET specs = json_remove(specs, '$.color')
+        WHERE id = 1;
+        
+        -- 확인 (NULL이어야 함)
+        SELECT name, specs->>'$.color' AS color
+        FROM products
+        WHERE id = 1;
+    tags: []
+
+  - id: L25-09
+    level: 2
+    type: "SELECT"
+    question: |
+      `specs`에 `screen_size` 키가 있는 상품을 화면 크기별로 그룹화하고, 각 그룹의 상품 수와 평균 가격을 조회하세요. 상품 수 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        specs->>'$.screen_size' AS screen_size,
+        COUNT(*)                AS product_count,
+        ROUND(AVG(price))       AS avg_price
+        FROM products
+        WHERE specs->>'$.screen_size' IS NOT NULL
+        GROUP BY specs->>'$.screen_size'
+        ORDER BY product_count DESC;
+    tags: []
+
+  - id: L25-10
+    level: 2
+    type: "SELECT"
+    question: |
+      모니터 패널 타입(`panel`)별로 상품 수, 평균 주사율(`refresh_rate`), 최대 주사율을 집계하세요.
+    reference_sql:
+      common: |
+        SELECT
+        specs->>'$.panel'                             AS panel,
+        COUNT(*)                                      AS product_count,
+        ROUND(AVG(json_extract(specs, '$.refresh_rate'))) AS avg_refresh_rate,
+        MAX(json_extract(specs, '$.refresh_rate'))    AS max_refresh_rate
+        FROM products
+        WHERE specs->>'$.panel' IS NOT NULL
+        GROUP BY specs->>'$.panel'
+        ORDER BY avg_refresh_rate DESC;
+    tags: []

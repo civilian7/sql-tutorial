@@ -270,18 +270,12 @@ WHERE notes IS NOT NULL;
 ## 정리
 
 | 키워드 | 설명 | 예시 |
-|--------|------|------|
-| `=`, `<>`, `<`, `>`, `<=`, `>=` | 비교 연산자 | `WHERE price >= 100000` |
-| `AND` / `OR` | 여러 조건 결합 | `WHERE grade = 'VIP' AND is_active = 1` |
-| `IN` | 여러 값 중 하나와 일치 | `WHERE grade IN ('GOLD', 'VIP')` |
-| `BETWEEN` | 범위 조건 (양 끝 포함) | `WHERE price BETWEEN 100000 AND 500000` |
-| `LIKE` | 텍스트 패턴 매칭 (`%` 임의 문자열, `_` 한 글자) | `WHERE name LIKE '%Gaming%'` |
-| `IS NULL` / `IS NOT NULL` | NULL 여부 확인 (`= NULL`은 동작하지 않음) | `WHERE birth_date IS NULL` |
+|--------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
-
-## 연습 문제
 
 ### 문제 1
 여성 고객(`gender = 'F'`) 중 SILVER 또는 GOLD 등급인 고객을 찾으세요. `name`, `grade`, `point_balance`를 반환하세요.
@@ -291,23 +285,8 @@ WHERE notes IS NOT NULL;
     SELECT name, grade, point_balance
     FROM customers
     WHERE gender = 'F'
-      AND grade IN ('SILVER', 'GOLD');
+    AND grade IN ('SILVER', 'GOLD');
     ```
-
-    **결과 (예시):**
-
-| name | grade | point_balance |
-| ---------- | ---------- | ----------: |
-| 진정자 | GOLD | 944605 |
-| 박지훈 | GOLD | 436275 |
-| 배종수 | SILVER | 469734 |
-| 박건우 | GOLD | 783515 |
-| 남예준 | SILVER | 244180 |
-| 이현숙 | SILVER | 454550 |
-| 이지아 | SILVER | 159982 |
-| 배성훈 | GOLD | 827245 |
-| ... | ... | ... |
-
 
 ### 문제 2
 판매 중(`is_active = 1`)이고 가격이 20만~80만 원 사이인 상품을 조회하세요. `name`과 `price`를 반환하되, 가격 내림차순으로 정렬하세요.
@@ -317,7 +296,7 @@ WHERE notes IS NOT NULL;
     SELECT name, price
     FROM products
     WHERE is_active = 1
-      AND price BETWEEN 200000 AND 800000
+    AND price BETWEEN 200000 AND 800000
     ORDER BY price DESC;
     ```
 
@@ -329,23 +308,8 @@ WHERE notes IS NOT NULL;
     SELECT name, created_at
     FROM customers
     WHERE gender IS NULL
-      AND last_login_at IS NULL;
+    AND last_login_at IS NULL;
     ```
-
-    **결과 (예시):**
-
-| name | created_at |
-| ---------- | ---------- |
-| 이영식 | 2016-02-23 17:09:54 |
-| 최성수 | 2016-05-03 04:39:09 |
-| 김은지 | 2016-05-17 00:02:05 |
-| 손영호 | 2017-11-11 21:56:36 |
-| 강지은 | 2017-04-26 04:05:37 |
-| 윤승민 | 2017-12-11 21:16:30 |
-| 박영길 | 2017-10-24 15:03:46 |
-| 허정호 | 2017-02-28 06:33:43 |
-| ... | ... |
-
 
 ### 문제 4
 가격이 100만 원 이상인 상품의 `name`과 `price`를 조회하세요.
@@ -357,21 +321,6 @@ WHERE notes IS NOT NULL;
     WHERE price >= 1000000;
     ```
 
-    **결과 (예시):**
-
-| name | price |
-| ---------- | ----------: |
-| Razer Blade 18 블랙 | 3730900.0 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 1744000.0 |
-| LG 일체형PC 27V70Q 실버 | 1028600.0 |
-| Razer Blade 18 화이트 | 3879900.0 |
-| ASUS ROG Strix G16CH 화이트 | 3307900.0 |
-| 한성 보스몬스터 DX5800 블랙 | 1189600.0 |
-| ASUS TUF Gaming RTX 5080 화이트 | 3994200.0 |
-| MSI Radeon RX 7900 XTX GAMING X 화이트 | 1409500.0 |
-| ... | ... |
-
-
 ### 문제 5
 재고가 0이 아닌 상품(`stock_qty <> 0`)의 `name`과 `stock_qty`를 조회하세요.
 
@@ -382,21 +331,6 @@ WHERE notes IS NOT NULL;
     WHERE stock_qty <> 0;
     ```
 
-    **결과 (예시):**
-
-| name | stock_qty |
-| ---------- | ----------: |
-| Razer Blade 18 블랙 | 107 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 499 |
-| 삼성 DDR4 32GB PC4-25600 | 359 |
-| Dell U2724D | 337 |
-| G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 59 |
-| MSI Radeon RX 9070 VENTUS 3X 화이트 | 460 |
-| 삼성 DDR5 32GB PC5-38400 | 340 |
-| 로지텍 G715 화이트 | 341 |
-| ... | ... |
-
-
 ### 문제 6
 `customers` 테이블에서 포인트 잔액이 500에서 2000 사이인 GOLD 등급 고객의 `name`과 `point_balance`를 조회하세요.
 
@@ -405,7 +339,7 @@ WHERE notes IS NOT NULL;
     SELECT name, point_balance
     FROM customers
     WHERE grade = 'GOLD'
-      AND point_balance BETWEEN 500 AND 2000;
+    AND point_balance BETWEEN 500 AND 2000;
     ```
 
 ### 문제 7
@@ -417,21 +351,6 @@ WHERE notes IS NOT NULL;
     FROM orders
     WHERE status IN ('pending', 'processing');
     ```
-
-    **결과 (예시):**
-
-| order_number | status |
-| ---------- | ---------- |
-| ORD-20251204-412540 | pending |
-| ORD-20251207-413119 | pending |
-| ORD-20251211-413870 | pending |
-| ORD-20251211-413965 | pending |
-| ORD-20251212-414063 | pending |
-| ORD-20251214-414477 | pending |
-| ORD-20251215-414727 | pending |
-| ORD-20251223-416282 | pending |
-| ... | ... |
-
 
 ### 문제 8
 상품명이 "Keyboard"로 끝나는 상품의 `name`과 `price`를 조회하세요.
@@ -451,23 +370,8 @@ WHERE notes IS NOT NULL;
     SELECT name, department
     FROM staff
     WHERE is_active = 1
-      AND department <> 'Sales';
+    AND department <> 'Sales';
     ```
-
-    **결과 (예시):**
-
-| name | department |
-| ---------- | ---------- |
-| 한민재 | 경영 |
-| 장주원 | 경영 |
-| 박경수 | 경영 |
-| 이준혁 | 영업 |
-| 권영희 | 마케팅 |
-| 김영일 | 개발 |
-| 황예준 | 경영 |
-| 이춘자 | 경영 |
-| ... | ... |
-
 
 ### 문제 10
 `customers` 테이블에서 VIP 등급이면서 비활성(`is_active = 0`)이거나, 포인트 잔액이 5000 이상인 고객의 `name`, `grade`, `point_balance`, `is_active`를 조회하세요. 괄호를 사용하여 조건 우선순위를 명확히 하세요.
@@ -477,45 +381,7 @@ WHERE notes IS NOT NULL;
     SELECT name, grade, point_balance, is_active
     FROM customers
     WHERE (grade = 'VIP' AND is_active = 0)
-       OR point_balance >= 5000;
+    OR point_balance >= 5000;
     ```
 
-    **결과 (예시):**
-
-| name | grade | point_balance | is_active |
-| ---------- | ---------- | ----------: | ----------: |
-| 김경수 | BRONZE | 928447 | 1 |
-| 김민재 | VIP | 2609195 | 1 |
-| 진정자 | GOLD | 944605 | 1 |
-| 이정수 | BRONZE | 1903978 | 1 |
-| 성민석 | VIP | 292416 | 1 |
-| 박지훈 | GOLD | 436275 | 1 |
-| 장준서 | SILVER | 790657 | 1 |
-| 윤순옥 | BRONZE | 549856 | 1 |
-| ... | ... | ... | ... |
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [3강: 정렬과 페이징](03-sort-limit.md)으로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 3강으로 |
-| **5개 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [1강: SELECT 기초](01-select.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| AND / IN | 1 |
-| BETWEEN | 2, 6 |
-| IS NULL | 3 |
-| 비교 연산자 (>=, <>) | 4, 5 |
-| IN | 7 |
-| LIKE | 8 |
-| AND / 부정 비교 | 9 |
-| OR / 괄호 우선순위 | 10 |
-
----
-다음: [3강: 정렬과 페이징](03-sort-limit.md)
+<!-- END_LESSON_EXERCISES -->

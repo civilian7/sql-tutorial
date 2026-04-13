@@ -1,0 +1,317 @@
+metadata:
+  id: lesson-18-window
+  title: "윈도우 함수 — 레슨 복습"
+  title_en: "Window Functions — Lesson Review"
+  difficulty: advanced
+  lesson: "advanced/18-window"
+  concepts: ['ROW_NUMBER', 'RANK', 'DENSE_RANK', 'LAG', 'LEAD', 'SUM OVER']
+  estimated_minutes: 22
+
+  video:
+    output_dir: "lectures/advanced"
+    filename: "lesson_18_window_review.mp4"
+    fps: 15
+    intro_text: "18강 윈도우 함수 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "18강 윈도우 함수 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L18-01
+    level: 2
+    type: "SELECT"
+    question: |
+      `DENSE_RANK()`를 사용하여 활성 상품 전체를 `price` 기준 내림차순으로 순위를 매기세요. `product_name`, `price`, `overall_rank`를 반환하고 상위 10개를 보여주세요.
+    reference_sql:
+      common: |
+        SELECT
+        name    AS product_name,
+        price,
+        DENSE_RANK() OVER (ORDER BY price DESC) AS overall_rank
+        FROM products
+        WHERE is_active = 1
+        ORDER BY overall_rank
+        LIMIT 10;
+    tags: []
+
+  - id: L18-02
+    level: 2
+    type: "SELECT"
+    question: |
+      연도별 신규 고객 가입 수의 누적 합계를 계산하세요 (쇼핑몰 개업부터 각 연도까지의 누적 고객 수). `year`, `new_signups`, `cumulative_customers`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        year,
+        new_signups,
+        SUM(new_signups) OVER (ORDER BY year) AS cumulative_customers
+        FROM (
+        SELECT
+        SUBSTR(created_at, 1, 4) AS year,
+        COUNT(*)                 AS new_signups
+        FROM customers
+        GROUP BY SUBSTR(created_at, 1, 4)
+        ) AS yearly
+        ORDER BY year;
+    tags: []
+
+  - id: L18-03
+    level: 2
+    type: "SELECT"
+    question: |
+      2023년과 2024년의 각 월별로 전년 동월 대비 매출 증감률(YoY)을 계산하세요. `LAG(revenue, 12)`를 사용하여 전년 동월과 비교합니다. `year_month`, `revenue`, `same_month_last_year`, `yoy_growth_pct`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        year_month,
+        revenue,
+        LAG(revenue, 12) OVER (ORDER BY year_month) AS same_month_last_year,
+        ROUND(
+        100.0 * (revenue - LAG(revenue, 12) OVER (ORDER BY year_month))
+        / LAG(revenue, 12) OVER (ORDER BY year_month),
+        1
+        ) AS yoy_growth_pct
+        FROM (
+        SELECT
+        SUBSTR(ordered_at, 1, 7) AS year_month,
+        SUM(total_amount)        AS revenue
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        AND ordered_at BETWEEN '2022-01-01' AND '2024-12-31 23:59:59'
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        ) AS monthly
+        WHERE year_month >= '2023-01'
+        ORDER BY year_month;
+    tags: []
+
+  - id: L18-04
+    level: 2
+    type: "SELECT"
+    question: |
+      `ROW_NUMBER()`를 사용하여 각 고객의 주문에 순번을 매기고, 첫 번째 주문만 추출하세요. `customer_id`, `name`, `order_number`, `ordered_at`, `total_amount`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        customer_id,
+        name,
+        order_number,
+        ordered_at,
+        total_amount
+        FROM (
+        SELECT
+        c.id        AS customer_id,
+        c.name,
+        o.order_number,
+        o.ordered_at,
+        o.total_amount,
+        ROW_NUMBER() OVER (
+        PARTITION BY o.customer_id
+        ORDER BY o.ordered_at
+        ) AS rn
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE o.status NOT IN ('cancelled', 'returned')
+        ) AS numbered
+        WHERE rn = 1
+        ORDER BY ordered_at
+        LIMIT 15;
+    tags: []
+
+  - id: L18-05
+    level: 2
+    type: "SELECT"
+    question: |
+      `RANK()`와 `DENSE_RANK()`를 함께 사용하여 카테고리별 상품 가격 순위를 매기세요. `category_name`, `product_name`, `price`, `rank`, `dense_rank`를 반환하고 상위 15개를 보여주세요. 두 순위 함수의 차이를 결과에서 확인할 수 있습니다.
+    reference_sql:
+      common: |
+        SELECT
+        cat.name AS category_name,
+        p.name   AS product_name,
+        p.price,
+        RANK()       OVER (PARTITION BY p.category_id ORDER BY p.price DESC) AS rank,
+        DENSE_RANK() OVER (PARTITION BY p.category_id ORDER BY p.price DESC) AS dense_rank
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE p.is_active = 1
+        ORDER BY cat.name, rank
+        LIMIT 15;
+    tags: []
+
+  - id: L18-06
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 월별 매출의 3개월 이동 평균을 계산하세요. `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` 프레임을 사용합니다. `year_month`, `monthly_revenue`, `moving_avg_3m`을 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        year_month,
+        monthly_revenue,
+        ROUND(
+        AVG(monthly_revenue) OVER (
+        ORDER BY year_month
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+        ), 2
+        ) AS moving_avg_3m
+        FROM (
+        SELECT
+        SUBSTR(ordered_at, 1, 7) AS year_month,
+        SUM(total_amount)        AS monthly_revenue
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+        AND status NOT IN ('cancelled', 'returned')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        ) AS monthly
+        ORDER BY year_month;
+    tags: []
+
+  - id: L18-07
+    level: 2
+    type: "SELECT"
+    question: |
+      `NTILE(4)`를 사용하여 고객을 총 구매 금액 기준으로 4개 분위(quartile)로 나누세요. `name`, `grade`, `total_spent`, `quartile`을 반환하고 `quartile`과 `total_spent` 내림차순으로 정렬하세요. 상위 20개를 보여주세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        grade,
+        total_spent,
+        quartile
+        FROM (
+        SELECT
+        c.name,
+        c.grade,
+        SUM(o.total_amount) AS total_spent,
+        NTILE(4) OVER (ORDER BY SUM(o.total_amount) DESC) AS quartile
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        WHERE o.status NOT IN ('cancelled', 'returned')
+        GROUP BY c.id, c.name, c.grade
+        ) AS ranked
+        ORDER BY quartile, total_spent DESC
+        LIMIT 20;
+    tags: []
+
+  - id: L18-08
+    level: 2
+    type: "SELECT"
+    question: |
+      각 상품별로 주문 시점 기준 누적 판매 수량을 계산하세요. `product_name`, `ordered_at`, `quantity`, `cumulative_qty`를 반환하세요. 특정 상품 하나(id = 1)에 대해 조회하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.name       AS product_name,
+        o.ordered_at,
+        oi.quantity,
+        SUM(oi.quantity) OVER (
+        ORDER BY o.ordered_at, o.id
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS cumulative_qty
+        FROM order_items AS oi
+        INNER JOIN orders   AS o ON oi.order_id   = o.id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        WHERE oi.product_id = 1
+        AND o.status NOT IN ('cancelled', 'returned')
+        ORDER BY o.ordered_at;
+    tags: []
+
+  - id: L18-09
+    level: 2
+    type: "SELECT"
+    question: |
+      부서별로 직원 급여(hire 순서 기준) 누적 합계와 부서 평균 대비 차이를 함께 표시하세요. `department`, `name`, `role`, `hired_at`, `running_headcount`, `dept_avg_headcount`를 반환하세요. `running_headcount`는 `COUNT(*) OVER`로, `dept_avg_headcount`는 `COUNT(*) OVER (PARTITION BY department)`으로 구합니다.
+    reference_sql:
+      common: |
+        SELECT
+        department,
+        name,
+        role,
+        hired_at,
+        COUNT(*) OVER (
+        PARTITION BY department
+        ORDER BY hired_at
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS running_headcount,
+        COUNT(*) OVER (
+        PARTITION BY department
+        ) AS dept_total_headcount
+        FROM staff
+        WHERE is_active = 1
+        ORDER BY department, hired_at;
+    tags: []
+
+  - id: L18-10
+    level: 2
+    type: "SELECT"
+    question: |
+      각 고객의 주문 간 간격(일)을 계산하고, 고객별 평균 주문 간격을 구하세요. `LAG`로 이전 주문일을 참조합니다. `customer_id`, `name`, `order_count`, `avg_days_between_orders`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        customer_id,
+        name,
+        order_count,
+        ROUND(AVG(days_gap), 1) AS avg_days_between_orders
+        FROM (
+        SELECT
+        c.id   AS customer_id,
+        c.name,
+        COUNT(*) OVER (PARTITION BY o.customer_id) AS order_count,
+        ROUND(
+        julianday(o.ordered_at)
+        - julianday(LAG(o.ordered_at) OVER (
+        PARTITION BY o.customer_id ORDER BY o.ordered_at
+        )),
+        0
+        ) AS days_gap
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE o.status NOT IN ('cancelled', 'returned')
+        ) AS gaps
+        WHERE days_gap IS NOT NULL
+        GROUP BY customer_id, name, order_count
+        HAVING order_count >= 5
+        ORDER BY avg_days_between_orders
+        LIMIT 15;
+    tags: []
+
+  - id: L18-11
+    level: 2
+    type: "SELECT"
+    question: |
+      카테고리별로 각 상품의 이름, 가격, 해당 카테고리에서 가장 저렴한 상품명(`cheapest_in_category`)과 가장 비싼 상품명(`priciest_in_category`)을 함께 표시하세요. `FIRST_VALUE`와 `LAST_VALUE`를 사용하며, 활성 상품만 대상으로 합니다. `category`, `product_name`, `price`, `cheapest_in_category`, `priciest_in_category`를 반환하고 상위 15개를 보여주세요.
+    reference_sql:
+      common: |
+        SELECT
+        cat.name  AS category,
+        p.name    AS product_name,
+        p.price,
+        FIRST_VALUE(p.name) OVER (
+        PARTITION BY p.category_id
+        ORDER BY p.price
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        ) AS cheapest_in_category,
+        LAST_VALUE(p.name) OVER (
+        PARTITION BY p.category_id
+        ORDER BY p.price
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        ) AS priciest_in_category
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE p.is_active = 1
+        ORDER BY cat.name, p.price
+        LIMIT 15;
+    tags: []

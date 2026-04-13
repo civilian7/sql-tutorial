@@ -1,0 +1,198 @@
+metadata:
+  id: lesson-05-group-by
+  title: "GROUP BY — 레슨 복습"
+  title_en: "GROUP BY — Lesson Review"
+  difficulty: beginner
+  lesson: "beginner/05-group-by"
+  concepts: ['GROUP BY', 'HAVING']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/beginner"
+    filename: "lesson_05_group_by_review.mp4"
+    fps: 15
+    intro_text: "05강 GROUP BY — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "05강 GROUP BY 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L05-01
+    level: 2
+    type: "SELECT"
+    question: |
+      `status`별 주문 건수를 집계하세요. 건수가 1,000 초과인 상태만 표시하고, 건수 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        status,
+        COUNT(*) AS order_count
+        FROM orders
+        GROUP BY status
+        HAVING COUNT(*) > 1000
+        ORDER BY order_count DESC;
+    tags: []
+
+  - id: L05-02
+    level: 2
+    type: "SELECT"
+    question: |
+      `payments` 테이블에서 결제 수단(`method`)별로 수집된 총 금액과 거래 건수를 구하세요. 총 금액 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        method,
+        COUNT(*)       AS transaction_count,
+        SUM(amount)    AS total_collected
+        FROM payments
+        WHERE status = 'completed'
+        GROUP BY method
+        ORDER BY total_collected DESC;
+    tags: []
+
+  - id: L05-03
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 `grade`별로 평균 포인트(`point_balance`)를 구하세요. 평균 포인트 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        grade,
+        AVG(point_balance) AS avg_points
+        FROM customers
+        GROUP BY grade
+        ORDER BY avg_points DESC;
+    tags: []
+
+  - id: L05-04
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 `grade`와 `gender` 두 칼럼으로 그룹화하여 고객 수를 구하세요. `gender`가 NULL인 행도 포함하세요.
+    reference_sql:
+      common: |
+        SELECT
+        grade,
+        gender,
+        COUNT(*) AS customer_count
+        FROM customers
+        GROUP BY grade, gender
+        ORDER BY grade, gender;
+    tags: []
+
+  - id: L05-05
+    level: 2
+    type: "SELECT"
+    question: |
+      `reviews` 테이블에서 `rating`별 리뷰 건수를 구하세요. 리뷰가 100건 이상인 평점만 표시하고, `rating` 순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        rating,
+        COUNT(*) AS review_count
+        FROM reviews
+        GROUP BY rating
+        HAVING COUNT(*) >= 100
+        ORDER BY rating;
+    tags: []
+
+  - id: L05-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `orders` 테이블에서 활성 주문(`status NOT IN ('cancelled', 'returned')`)만을 대상으로, `status`별 건수와 평균 금액(소수점 0자리)을 구하세요. 평균 금액이 300 초과인 상태만 표시하세요.
+    reference_sql:
+      common: |
+        SELECT
+        status,
+        COUNT(*)                    AS order_count,
+        ROUND(AVG(total_amount), 0) AS avg_amount
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY status
+        HAVING AVG(total_amount) > 300
+        ORDER BY avg_amount DESC;
+    tags: []
+
+  - id: L05-07
+    level: 2
+    type: "SELECT"
+    question: |
+      2023년과 2024년의 `orders` 데이터에서 월 매출이 50만 달러를 초과한 달을 찾으세요. `year_month`와 `monthly_revenue`를 날짜순으로 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        SUBSTR(ordered_at, 1, 7) AS year_month,
+        SUM(total_amount)        AS monthly_revenue
+        FROM orders
+        WHERE ordered_at BETWEEN '2023-01-01' AND '2024-12-31 23:59:59'
+        AND status NOT IN ('cancelled', 'returned')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        HAVING SUM(total_amount) > 500000
+        ORDER BY year_month;
+    tags: []
+
+  - id: L05-08
+    level: 2
+    type: "SELECT"
+    question: |
+      `payments` 테이블에서 결제 수단(`method`)별 고유 주문 수를 `COUNT(DISTINCT order_id)`로 구하세요. 고유 주문 수 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        method,
+        COUNT(DISTINCT order_id) AS unique_orders
+        FROM payments
+        GROUP BY method
+        ORDER BY unique_orders DESC;
+    tags: []
+
+  - id: L05-09
+    level: 2
+    type: "SELECT"
+    question: |
+      `orders` 테이블에서 연도별 주문 건수와 총 매출을 구하세요. 취소/반품 주문은 제외하세요.
+    reference_sql:
+      common: |
+        SELECT
+        SUBSTR(ordered_at, 1, 4) AS order_year,
+        COUNT(*)                 AS order_count,
+        SUM(total_amount)        AS yearly_revenue
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned')
+        GROUP BY SUBSTR(ordered_at, 1, 4)
+        ORDER BY order_year;
+    tags: []
+
+  - id: L05-10
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `category_id`별로 상품 수, 평균 가격(소수점 0자리), 총 재고(`stock_qty` 합계)를 구하세요. 상품 수가 5개 이상이고 평균 가격이 50 이상인 카테고리만 표시하고, 상품 수 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        category_id,
+        COUNT(*)                 AS product_count,
+        ROUND(AVG(price), 0)     AS avg_price,
+        SUM(stock_qty)           AS total_stock
+        FROM products
+        GROUP BY category_id
+        HAVING COUNT(*) >= 5
+        AND AVG(price) >= 50
+        ORDER BY product_count DESC;
+    tags: []

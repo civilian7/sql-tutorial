@@ -1,0 +1,166 @@
+metadata:
+  id: lesson-03-sort-limit
+  title: "정렬과 페이징 — 레슨 복습"
+  title_en: "Sorting and Paging — Lesson Review"
+  difficulty: beginner
+  lesson: "beginner/03-sort-limit"
+  concepts: ['ORDER BY', 'LIMIT', 'OFFSET']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/beginner"
+    filename: "lesson_03_sort_limit_review.mp4"
+    fps: 15
+    intro_text: "03강 정렬과 페이징 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "03강 정렬과 페이징 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L03-01
+    level: 2
+    type: "SELECT"
+    question: |
+      가장 최근에 접수된 주문 10개를 찾으세요. `order_number`, `ordered_at`, `status`, `total_amount`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT order_number, ordered_at, status, total_amount
+        FROM orders
+        ORDER BY ordered_at DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L03-02
+    level: 2
+    type: "SELECT"
+    question: |
+      모든 상품을 `stock_qty` 오름차순(재고 적은 순)으로 정렬하고, 재고가 같으면 `price` 내림차순으로 정렬하세요. `name`, `stock_qty`, `price`를 반환하되 20행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT name, stock_qty, price
+        FROM products
+        ORDER BY stock_qty ASC, price DESC
+        LIMIT 20;
+    tags: []
+
+  - id: L03-03
+    level: 2
+    type: "SELECT"
+    question: |
+      판매 중인 상품 카탈로그의 3페이지(페이지당 10개)를 상품명 가나다순으로 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, price, stock_qty
+        FROM products
+        WHERE is_active = 1
+        ORDER BY name ASC
+        LIMIT 10 OFFSET 20;
+    tags: []
+
+  - id: L03-04
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 포인트가 가장 많은 고객 5명의 `name`, `grade`, `point_balance`를 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, grade, point_balance
+        FROM customers
+        ORDER BY point_balance DESC
+        LIMIT 5;
+    tags: []
+
+  - id: L03-05
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `name`과 `price`를 가격 오름차순으로 정렬하세요. 가격이 같으면 상품명 알파벳 순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        ORDER BY price ASC, name ASC;
+    tags: []
+
+  - id: L03-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)이 큰 순서대로 정렬하세요. 상위 10개만 반환하세요.
+    reference_sql:
+      common: |
+        SELECT name, price, cost_price
+        FROM products
+        ORDER BY price - cost_price DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L03-07
+    level: 2
+    type: "SELECT"
+    question: |
+      `reviews` 테이블에서 `product_id`, `rating`, `created_at`을 조회하되, 최신 리뷰부터 정렬하여 6번째에서 10번째 리뷰(2페이지, 페이지당 5개)를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT product_id, rating, created_at
+        FROM reviews
+        ORDER BY created_at DESC
+        LIMIT 5 OFFSET 5;
+    tags: []
+
+  - id: L03-08
+    level: 2
+    type: "SELECT"
+    question: |
+      `staff` 테이블에서 `name`, `department`, `hired_at`을 조회하세요. 부서명 알파벳 순으로 정렬하되, 같은 부서 안에서는 입사일이 오래된 직원이 먼저 오도록 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT name, department, hired_at
+        FROM staff
+        ORDER BY department ASC, hired_at ASC;
+    tags: []
+
+  - id: L03-09
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 `name`과 `birth_date`를 조회하되, 생년월일이 NULL인 고객이 결과의 맨 뒤에 오도록 정렬하세요. NULL이 아닌 고객은 생년월일 오름차순으로 정렬하세요.
+      === "SQLite"
+    reference_sql:
+      common: |
+        SELECT name, birth_date
+        FROM customers
+        ORDER BY birth_date IS NULL ASC, birth_date ASC;
+        SELECT name, birth_date
+        FROM customers
+        ORDER BY birth_date IS NULL ASC, birth_date ASC;
+        SELECT name, birth_date
+        FROM customers
+        ORDER BY birth_date ASC NULLS LAST;
+    tags: []
+
+  - id: L03-10
+    level: 2
+    type: "SELECT"
+    question: |
+      `orders` 테이블에서 `order_number`, `total_amount`, `ordered_at`을 조회하세요. 주문 금액이 높은 순으로 정렬하고, 금액이 같으면 최신 주문이 먼저 오도록 정렬하여 상위 15개만 반환하세요.
+    reference_sql:
+      common: |
+        SELECT order_number, total_amount, ordered_at
+        FROM orders
+        ORDER BY total_amount DESC, ordered_at DESC
+        LIMIT 15;
+    tags: []

@@ -393,471 +393,149 @@ JSON 칼럼은 강력하지만 만능은 아닙니다.
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| json_extract | JSON 값 추출 | `json_extract(specs, '$.cpu')` |
-| -> / ->> | 단축 연산자 (MySQL/PG) | `specs->>'cpu'` |
-| json_each | JSON 키-값 순회 | `json_each(specs)` |
-| json_set | JSON 값 추가/수정 | `json_set(specs, '$.color', 'black')` |
-| json_remove | JSON 키 삭제 | `json_remove(specs, '$.tdp_watts')` |
-| JSON + GROUP BY | JSON 값 기준 집계 | `GROUP BY json_extract(specs, '$.ram')` |
-| JSON + WHERE | JSON 값으로 필터링 | `WHERE json_extract(specs, '$.cpu') LIKE '%Ryzen%'` |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 RAM이 `'16GB'`인 상품의 이름, 가격, RAM 값을 조회하세요. 가격 내림차순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT name, price, specs->>'$.ram' AS ram
-        FROM products
-        WHERE specs->>'$.ram' = '16GB'
-        ORDER BY price DESC;
-        ```
+    ```sql
+    SELECT name, price, specs->>'$.ram' AS ram
+    FROM products
+    WHERE specs->>'$.ram' = '16GB'
+    ORDER BY price DESC;
+    ```
 
-        **결과 (예시):**
-
-        | name                                                             | price   | ram  |
-        | ---------------------------------------------------------------- | ------: | ---- |
-        | ASUS ROG Zephyrus G16                                            | 4284100 | 16GB |
-        | ASUS ROG Strix G16CH 화이트                                         | 2988700 | 16GB |
-        | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] 무상 보증 3년 연장 + 전용 파우치 증정 이벤트 | 2389100 | 16GB |
-        | Razer Blade 18                                                   | 2349600 | 16GB |
-        | LG 그램 17 실버                                                      | 2336200 | 16GB |
-        | ...                                                              | ...     | ...  |
-
-
-    === "MySQL"
-        ```sql
-        SELECT name, price, specs->>'$.ram' AS ram
-        FROM products
-        WHERE specs->>'$.ram' = '16GB'
-        ORDER BY price DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT name, price, specs->>'ram' AS ram
-        FROM products
-        WHERE specs->>'ram' = '16GB'
-        ORDER BY price DESC;
-        ```
-
-
-### 연습 2
+### 문제 2
 `products` 테이블에서 `specs` 칼럼이 NULL이 아닌 상품의 이름과 CPU 값을 추출하세요. CPU 값이 있는 상품만 표시하고, 결과를 5건으로 제한하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT name, specs->>'$.cpu' AS cpu
-        FROM products
-        WHERE specs IS NOT NULL
-          AND specs->>'$.cpu' IS NOT NULL
-        LIMIT 5;
-        ```
+    ```sql
+    SELECT name, specs->>'$.cpu' AS cpu
+    FROM products
+    WHERE specs IS NOT NULL
+    AND specs->>'$.cpu' IS NOT NULL
+    LIMIT 5;
+    ```
 
-        **결과 (예시):**
-
-        | name                     | cpu                  |
-        | ------------------------ | -------------------- |
-        | Razer Blade 18 블랙        | Apple M3             |
-        | LG 일체형PC 27V70Q 실버       | Intel Core i5-13600K |
-        | Razer Blade 18 화이트       | Intel Core i9-13900H |
-        | 한성 보스몬스터 DX9900 실버       | AMD Ryzen 5 7600X    |
-        | ASUS ROG Strix G16CH 화이트 | AMD Ryzen 5 7600X    |
-
-
-    === "MySQL"
-        ```sql
-        SELECT name, specs->>'$.cpu' AS cpu
-        FROM products
-        WHERE specs IS NOT NULL
-          AND specs->>'$.cpu' IS NOT NULL
-        LIMIT 5;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT name, specs->>'cpu' AS cpu
-        FROM products
-        WHERE specs IS NOT NULL
-          AND specs->>'cpu' IS NOT NULL
-        LIMIT 5;
-        ```
-
-
-### 연습 3
+### 문제 3
 `specs` 칼럼에 사용된 모든 고유 키(key) 목록을 알파벳 순서로 조회하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT DISTINCT j.key
-        FROM products, json_each(products.specs) AS j
-        WHERE products.specs IS NOT NULL
-        ORDER BY j.key;
-        ```
+    ```sql
+    SELECT DISTINCT j.key
+    FROM products, json_each(products.specs) AS j
+    WHERE products.specs IS NOT NULL
+    ORDER BY j.key;
+    ```
 
-        **결과 (예시):**
-
-        | key             |
-        | --------------- |
-        | base_clock_ghz  |
-        | battery_hours   |
-        | boost_clock_ghz |
-        | capacity_gb     |
-        | clock_mhz       |
-        | ...             |
-
-
-    === "MySQL"
-        ```sql
-        SELECT DISTINCT jk.key_name
-        FROM products,
-             JSON_TABLE(
-                 JSON_KEYS(specs), '$[*]'
-                 COLUMNS (key_name VARCHAR(100) PATH '$')
-             ) AS jk
-        WHERE specs IS NOT NULL
-        ORDER BY jk.key_name;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT DISTINCT k
-        FROM products, jsonb_object_keys(specs) AS k
-        WHERE specs IS NOT NULL
-        ORDER BY k;
-        ```
-
-
-### 연습 4
+### 문제 4
 `specs`에 `cpu` 키가 있는 상품 중, 가격이 가장 비싼 상품 3개의 이름, CPU, 가격을 조회하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT name, specs->>'$.cpu' AS cpu, price
-        FROM products
-        WHERE specs->>'$.cpu' IS NOT NULL
-        ORDER BY price DESC
-        LIMIT 3;
-        ```
+    ```sql
+    SELECT name, specs->>'$.cpu' AS cpu, price
+    FROM products
+    WHERE specs->>'$.cpu' IS NOT NULL
+    ORDER BY price DESC
+    LIMIT 3;
+    ```
 
-        **결과 (예시):**
-
-        | name                  | cpu                  | price   |
-        | --------------------- | -------------------- | ------: |
-        | ASUS ROG Strix GT35   | Intel Core i7-13700K | 4314800 |
-        | ASUS ROG Zephyrus G16 | Apple M3             | 4284100 |
-        | Razer Blade 18 블랙     | Intel Core i7-13700H | 4182100 |
-
-
-    === "MySQL"
-        ```sql
-        SELECT name, specs->>'$.cpu' AS cpu, price
-        FROM products
-        WHERE specs->>'$.cpu' IS NOT NULL
-        ORDER BY price DESC
-        LIMIT 3;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT name, specs->>'cpu' AS cpu, price
-        FROM products
-        WHERE specs->>'cpu' IS NOT NULL
-        ORDER BY price DESC
-        LIMIT 3;
-        ```
-
-
-### 연습 5
+### 문제 5
 배터리 수명이 12시간 이상인 노트북의 이름, 가격, 배터리 수명을 조회하세요. 배터리 수명 내림차순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            price,
-            json_extract(specs, '$.battery_hours') AS battery_hours
-        FROM products
-        WHERE json_extract(specs, '$.battery_hours') >= 12
-        ORDER BY json_extract(specs, '$.battery_hours') DESC;
-        ```
+    ```sql
+    SELECT
+    name,
+    price,
+    json_extract(specs, '$.battery_hours') AS battery_hours
+    FROM products
+    WHERE json_extract(specs, '$.battery_hours') >= 12
+    ORDER BY json_extract(specs, '$.battery_hours') DESC;
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            JSON_EXTRACT(specs, '$.battery_hours') AS battery_hours
-        FROM products
-        WHERE JSON_EXTRACT(specs, '$.battery_hours') >= 12
-        ORDER BY JSON_EXTRACT(specs, '$.battery_hours') DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            (specs->>'battery_hours')::int AS battery_hours
-        FROM products
-        WHERE (specs->>'battery_hours')::int >= 12
-        ORDER BY (specs->>'battery_hours')::int DESC;
-        ```
-
-
-### 연습 6
+### 문제 6
 VRAM이 `'16GB'` 이상인 GPU 상품의 이름, 가격, VRAM, TDP(전력 소모)를 조회하세요. TDP 오름차순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            name,
-            price,
-            specs->>'$.vram'      AS vram,
-            json_extract(specs, '$.tdp_watts') AS tdp_watts
-        FROM products
-        WHERE specs->>'$.vram' IN ('16GB', '24GB')
-        ORDER BY json_extract(specs, '$.tdp_watts');
-        ```
+    ```sql
+    SELECT
+    name,
+    price,
+    specs->>'$.vram'      AS vram,
+    json_extract(specs, '$.tdp_watts') AS tdp_watts
+    FROM products
+    WHERE specs->>'$.vram' IN ('16GB', '24GB')
+    ORDER BY json_extract(specs, '$.tdp_watts');
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            specs->>'$.vram'      AS vram,
-            JSON_EXTRACT(specs, '$.tdp_watts') AS tdp_watts
-        FROM products
-        WHERE specs->>'$.vram' IN ('16GB', '24GB')
-        ORDER BY JSON_EXTRACT(specs, '$.tdp_watts');
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            name,
-            price,
-            specs->>'vram'      AS vram,
-            (specs->>'tdp_watts')::int AS tdp_watts
-        FROM products
-        WHERE specs->>'vram' IN ('16GB', '24GB')
-        ORDER BY (specs->>'tdp_watts')::int;
-        ```
-
-
-### 연습 7
+### 문제 7
 상품 ID 1의 specs에 `"color"` 키를 `"Space Gray"` 값으로 추가하는 UPDATE 문을 작성하세요. 이후 추가된 값을 조회하여 확인하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 키 추가
-        UPDATE products
-        SET specs = json_set(specs, '$.color', 'Space Gray')
-        WHERE id = 1;
+    ```sql
+    -- 키 추가
+    UPDATE products
+    SET specs = json_set(specs, '$.color', 'Space Gray')
+    WHERE id = 1;
+    
+    -- 확인
+    SELECT name, specs->>'$.color' AS color
+    FROM products
+    WHERE id = 1;
+    ```
 
-        -- 확인
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "MySQL"
-        ```sql
-        -- 키 추가
-        UPDATE products
-        SET specs = JSON_SET(specs, '$.color', 'Space Gray')
-        WHERE id = 1;
-
-        -- 확인
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- 키 추가
-        UPDATE products
-        SET specs = specs || '{"color": "Space Gray"}'::jsonb
-        WHERE id = 1;
-
-        -- 확인
-        SELECT name, specs->>'color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-
-### 연습 8
+### 문제 8
 연습 8에서 추가한 `"color"` 키를 상품 ID 1의 specs에서 삭제하는 UPDATE 문을 작성하세요. 이후 삭제됐는지 확인하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        -- 키 삭제
-        UPDATE products
-        SET specs = json_remove(specs, '$.color')
-        WHERE id = 1;
+    ```sql
+    -- 키 삭제
+    UPDATE products
+    SET specs = json_remove(specs, '$.color')
+    WHERE id = 1;
+    
+    -- 확인 (NULL이어야 함)
+    SELECT name, specs->>'$.color' AS color
+    FROM products
+    WHERE id = 1;
+    ```
 
-        -- 확인 (NULL이어야 함)
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "MySQL"
-        ```sql
-        -- 키 삭제
-        UPDATE products
-        SET specs = JSON_REMOVE(specs, '$.color')
-        WHERE id = 1;
-
-        -- 확인 (NULL이어야 함)
-        SELECT name, specs->>'$.color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- 키 삭제
-        UPDATE products
-        SET specs = specs - 'color'
-        WHERE id = 1;
-
-        -- 확인 (NULL이어야 함)
-        SELECT name, specs->>'color' AS color
-        FROM products
-        WHERE id = 1;
-        ```
-
-
-### 연습 9
+### 문제 9
 `specs`에 `screen_size` 키가 있는 상품을 화면 크기별로 그룹화하고, 각 그룹의 상품 수와 평균 가격을 조회하세요. 상품 수 내림차순으로 정렬하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            specs->>'$.screen_size' AS screen_size,
-            COUNT(*)                AS product_count,
-            ROUND(AVG(price))       AS avg_price
-        FROM products
-        WHERE specs->>'$.screen_size' IS NOT NULL
-        GROUP BY specs->>'$.screen_size'
-        ORDER BY product_count DESC;
-        ```
+    ```sql
+    SELECT
+    specs->>'$.screen_size' AS screen_size,
+    COUNT(*)                AS product_count,
+    ROUND(AVG(price))       AS avg_price
+    FROM products
+    WHERE specs->>'$.screen_size' IS NOT NULL
+    GROUP BY specs->>'$.screen_size'
+    ORDER BY product_count DESC;
+    ```
 
-        **결과 (예시):**
-
-        | screen_size | product_count | avg_price |
-        | ----------- | ------------: | --------: |
-        | 14 inch     |            13 |   2264508 |
-        | 27 inch     |            12 |   1167542 |
-        | 15.6 inch   |            10 |   1947630 |
-        | 32 inch     |             6 |   1001150 |
-        | 16 inch     |             6 |   2453700 |
-        | ...         | ...           | ...       |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            specs->>'$.screen_size' AS screen_size,
-            COUNT(*)                AS product_count,
-            ROUND(AVG(price))       AS avg_price
-        FROM products
-        WHERE specs->>'$.screen_size' IS NOT NULL
-        GROUP BY specs->>'$.screen_size'
-        ORDER BY product_count DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            specs->>'screen_size' AS screen_size,
-            COUNT(*)              AS product_count,
-            ROUND(AVG(price))     AS avg_price
-        FROM products
-        WHERE specs->>'screen_size' IS NOT NULL
-        GROUP BY specs->>'screen_size'
-        ORDER BY product_count DESC;
-        ```
-
-
-### 연습 10
+### 문제 10
 모니터 패널 타입(`panel`)별로 상품 수, 평균 주사율(`refresh_rate`), 최대 주사율을 집계하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            specs->>'$.panel'                             AS panel,
-            COUNT(*)                                      AS product_count,
-            ROUND(AVG(json_extract(specs, '$.refresh_rate'))) AS avg_refresh_rate,
-            MAX(json_extract(specs, '$.refresh_rate'))    AS max_refresh_rate
-        FROM products
-        WHERE specs->>'$.panel' IS NOT NULL
-        GROUP BY specs->>'$.panel'
-        ORDER BY avg_refresh_rate DESC;
-        ```
+    ```sql
+    SELECT
+    specs->>'$.panel'                             AS panel,
+    COUNT(*)                                      AS product_count,
+    ROUND(AVG(json_extract(specs, '$.refresh_rate'))) AS avg_refresh_rate,
+    MAX(json_extract(specs, '$.refresh_rate'))    AS max_refresh_rate
+    FROM products
+    WHERE specs->>'$.panel' IS NOT NULL
+    GROUP BY specs->>'$.panel'
+    ORDER BY avg_refresh_rate DESC;
+    ```
 
-    === "MySQL"
-        ```sql
-        SELECT
-            specs->>'$.panel'                                   AS panel,
-            COUNT(*)                                            AS product_count,
-            ROUND(AVG(JSON_EXTRACT(specs, '$.refresh_rate')))   AS avg_refresh_rate,
-            MAX(JSON_EXTRACT(specs, '$.refresh_rate'))           AS max_refresh_rate
-        FROM products
-        WHERE specs->>'$.panel' IS NOT NULL
-        GROUP BY specs->>'$.panel'
-        ORDER BY avg_refresh_rate DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            specs->>'panel'                                   AS panel,
-            COUNT(*)                                          AS product_count,
-            ROUND(AVG((specs->>'refresh_rate')::int))         AS avg_refresh_rate,
-            MAX((specs->>'refresh_rate')::int)                AS max_refresh_rate
-        FROM products
-        WHERE specs->>'panel' IS NOT NULL
-        GROUP BY specs->>'panel'
-        ORDER BY avg_refresh_rate DESC;
-        ```
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [26강: 저장 프로시저](26-stored-procedures.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [24강: 트리거](24-triggers.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| JSON 값 추출 | 1, 4 |
-| NULL 체크 + JSON | 2, 5 |
-| JSON 키 목록 | 3 |
-| JSON 집계 (GROUP BY) | 6, 9, 10 |
-| JSON 수정 (추가/삭제) | 7, 8 |
-
----
-다음: [26강: 저장 프로시저](26-stored-procedures.md)
+<!-- END_LESSON_EXERCISES -->

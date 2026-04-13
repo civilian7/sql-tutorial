@@ -1,0 +1,158 @@
+metadata:
+  id: lesson-02-where
+  title: "WHERE 필터링 — 레슨 복습"
+  title_en: "WHERE Filtering — Lesson Review"
+  difficulty: beginner
+  lesson: "beginner/02-where"
+  concepts: ['WHERE', '비교 연산자', 'AND', 'OR', 'BETWEEN', 'IN', 'LIKE']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/beginner"
+    filename: "lesson_02_where_review.mp4"
+    fps: 15
+    intro_text: "02강 WHERE 필터링 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "02강 WHERE 필터링 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L02-01
+    level: 2
+    type: "SELECT"
+    question: |
+      여성 고객(`gender = 'F'`) 중 SILVER 또는 GOLD 등급인 고객을 찾으세요. `name`, `grade`, `point_balance`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT name, grade, point_balance
+        FROM customers
+        WHERE gender = 'F'
+        AND grade IN ('SILVER', 'GOLD');
+    tags: []
+
+  - id: L02-02
+    level: 2
+    type: "SELECT"
+    question: |
+      판매 중(`is_active = 1`)이고 가격이 20만~80만 원 사이인 상품을 조회하세요. `name`과 `price`를 반환하되, 가격 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        WHERE is_active = 1
+        AND price BETWEEN 200000 AND 800000
+        ORDER BY price DESC;
+    tags: []
+
+  - id: L02-03
+    level: 2
+    type: "SELECT"
+    question: |
+      성별이 알 수 없고(NULL) 마지막 로그인 기록도 없는(`last_login_at IS NULL`) 고객을 찾으세요. `name`과 `created_at`을 반환하세요.
+    reference_sql:
+      common: |
+        SELECT name, created_at
+        FROM customers
+        WHERE gender IS NULL
+        AND last_login_at IS NULL;
+    tags: []
+
+  - id: L02-04
+    level: 2
+    type: "SELECT"
+    question: |
+      가격이 100만 원 이상인 상품의 `name`과 `price`를 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        WHERE price >= 1000000;
+    tags: []
+
+  - id: L02-05
+    level: 2
+    type: "SELECT"
+    question: |
+      재고가 0이 아닌 상품(`stock_qty <> 0`)의 `name`과 `stock_qty`를 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, stock_qty
+        FROM products
+        WHERE stock_qty <> 0;
+    tags: []
+
+  - id: L02-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 포인트 잔액이 500에서 2000 사이인 GOLD 등급 고객의 `name`과 `point_balance`를 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, point_balance
+        FROM customers
+        WHERE grade = 'GOLD'
+        AND point_balance BETWEEN 500 AND 2000;
+    tags: []
+
+  - id: L02-07
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 상태가 `'pending'` 또는 `'processing'`인 주문의 `order_number`와 `status`를 조회하세요. `IN` 연산자를 사용하세요.
+    reference_sql:
+      common: |
+        SELECT order_number, status
+        FROM orders
+        WHERE status IN ('pending', 'processing');
+    tags: []
+
+  - id: L02-08
+    level: 2
+    type: "SELECT"
+    question: |
+      상품명이 "Keyboard"로 끝나는 상품의 `name`과 `price`를 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        WHERE name LIKE '%Keyboard';
+    tags: []
+
+  - id: L02-09
+    level: 2
+    type: "SELECT"
+    question: |
+      `staff` 테이블에서 `department`가 `'Sales'`가 아닌 활성 직원(`is_active = 1`)의 `name`과 `department`를 조회하세요.
+    reference_sql:
+      common: |
+        SELECT name, department
+        FROM staff
+        WHERE is_active = 1
+        AND department <> 'Sales';
+    tags: []
+
+  - id: L02-10
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 VIP 등급이면서 비활성(`is_active = 0`)이거나, 포인트 잔액이 5000 이상인 고객의 `name`, `grade`, `point_balance`, `is_active`를 조회하세요. 괄호를 사용하여 조건 우선순위를 명확히 하세요.
+    reference_sql:
+      common: |
+        SELECT name, grade, point_balance, is_active
+        FROM customers
+        WHERE (grade = 'VIP' AND is_active = 0)
+        OR point_balance >= 5000;
+    tags: []

@@ -1,0 +1,328 @@
+metadata:
+  id: lesson-14-union
+  title: "집합 연산 — 레슨 복습"
+  title_en: "Set Operations — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/14-union"
+  concepts: ['UNION', 'UNION ALL', 'INTERSECT', 'EXCEPT']
+  estimated_minutes: 24
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_14_union_review.mp4"
+    fps: 15
+    intro_text: "14강 집합 연산 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "14강 집합 연산 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L14-01
+    level: 2
+    type: "SELECT"
+    question: |
+      VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을 `UNION`으로 합쳐서 하나의 목록으로 조회하세요. 이름순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT name, grade FROM customers WHERE grade = 'VIP'
+        UNION
+        SELECT name, grade FROM customers WHERE grade = 'GOLD'
+        ORDER BY name;
+    tags: []
+
+  - id: L14-02
+    level: 2
+    type: "SELECT"
+    question: |
+      모든 활성 상품(`is_active = 1`)의 `name`과 모든 카테고리의 `name`을 `UNION`으로 합쳐서 중복 없는 이름 목록을 만드세요. 결과 칼럼명은 `name`으로 하세요.
+    reference_sql:
+      common: |
+        SELECT name FROM products WHERE is_active = 1
+        UNION
+        SELECT name FROM categories
+        ORDER BY name;
+    tags: []
+
+  - id: L14-03
+    level: 2
+    type: "SELECT"
+    question: |
+      2023~2024년의 취소 주문과 반품 주문을 합친 "부정 이벤트" 목록을 만드세요. `UNION ALL`을 사용하고, `event_type`('cancellation' 또는 'return'), `order_number`, `customer_id`, `event_date`(취소는 `cancelled_at`, 반품은 `completed_at` 사용)를 포함하세요. `event_date` 내림차순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        'cancellation'  AS event_type,
+        order_number,
+        customer_id,
+        cancelled_at    AS event_date
+        FROM orders
+        WHERE status = 'cancelled'
+        AND cancelled_at BETWEEN '2023-01-01' AND '2024-12-31 23:59:59'
+        
+        UNION ALL
+        
+        SELECT
+        'return'        AS event_type,
+        order_number,
+        customer_id,
+        completed_at    AS event_date
+        FROM orders
+        WHERE status = 'returned'
+        AND completed_at BETWEEN '2023-01-01' AND '2024-12-31 23:59:59'
+        
+        ORDER BY event_date DESC;
+    tags: []
+
+  - id: L14-04
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년 리뷰와 2024년 상품 Q&A(질문만, `parent_id IS NULL`)를 합친 "고객 피드백" 목록을 만드세요. `UNION ALL`을 사용하고, `feedback_type`('review' 또는 'qna'), `product_id`, `customer_id`, `created_at`을 포함하세요. `created_at` 내림차순으로 정렬하고 상위 20건만 표시하세요.
+    reference_sql:
+      common: |
+        SELECT
+        'review' AS feedback_type,
+        product_id,
+        customer_id,
+        created_at
+        FROM reviews
+        WHERE created_at LIKE '2024%'
+        
+        UNION ALL
+        
+        SELECT
+        'qna' AS feedback_type,
+        product_id,
+        customer_id,
+        created_at
+        FROM product_qna
+        WHERE parent_id IS NULL
+        AND created_at LIKE '2024%'
+        
+        ORDER BY created_at DESC
+        LIMIT 20;
+    tags: []
+
+  - id: L14-05
+    level: 2
+    type: "SELECT"
+    question: |
+      결제 수단별 건수를 집계한 뒤, `UNION ALL`로 합계 행을 추가하세요. 합계 행의 `method`는 `'합계'`로 표시합니다. `status = 'completed'`인 결제만 대상입니다.
+    reference_sql:
+      common: |
+        SELECT
+        0 AS sort_key,
+        method,
+        COUNT(*) AS tx_count
+        FROM payments
+        WHERE status = 'completed'
+        GROUP BY method
+        
+        UNION ALL
+        
+        SELECT
+        1 AS sort_key,
+        '합계' AS method,
+        COUNT(*) AS tx_count
+        FROM payments
+        WHERE status = 'completed'
+        
+        ORDER BY sort_key, tx_count DESC;
+    tags: []
+
+  - id: L14-06
+    level: 2
+    type: "SELECT"
+    question: |
+      고객 등급별 인원수를 집계한 뒤, `UNION ALL`로 전체 합계 행(`'전체'`)을 추가하세요. `is_active = 1`인 고객만 대상입니다. 합계 행이 마지막에 오도록 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        0 AS sort_key,
+        grade,
+        COUNT(*) AS cnt
+        FROM customers
+        WHERE is_active = 1
+        GROUP BY grade
+        
+        UNION ALL
+        
+        SELECT
+        1 AS sort_key,
+        '전체' AS grade,
+        COUNT(*) AS cnt
+        FROM customers
+        WHERE is_active = 1
+        
+        ORDER BY sort_key, cnt DESC;
+    tags: []
+
+  - id: L14-07
+    level: 2
+    type: "SELECT"
+    question: |
+      고객 참여도 요약을 만드세요. `UNION ALL`을 사용하여 고객별 총 주문 수, 총 리뷰 수, 총 불만 수를 집계하세요. 유니온 결과를 서브쿼리(파생 테이블)로 감싸서 고객별 한 행으로 집계하고, 총 활동 수 기준 상위 10명을 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        customer_id,
+        SUM(activity_count) AS total_activity
+        FROM (
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM orders GROUP BY customer_id
+        
+        UNION ALL
+        
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM reviews GROUP BY customer_id
+        
+        UNION ALL
+        
+        SELECT customer_id, COUNT(*) AS activity_count
+        FROM complaints GROUP BY customer_id
+        ) AS all_activity
+        GROUP BY customer_id
+        ORDER BY total_activity DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L14-08
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 상태별 건수와 평균 금액을 집계한 뒤, `UNION ALL`로 전체 합계 행을 추가하세요. 결과를 서브쿼리로 감싸서 `pct`(각 상태의 건수가 전체 건수에서 차지하는 비율, 소수 첫째 자리까지)를 계산하세요.
+    reference_sql:
+      common: |
+        SELECT
+        status,
+        order_count,
+        avg_amount,
+        ROUND(100.0 * order_count / SUM(order_count) OVER (), 1) AS pct
+        FROM (
+        SELECT
+        0 AS sort_key,
+        status,
+        COUNT(*)            AS order_count,
+        ROUND(AVG(total_amount), 2) AS avg_amount
+        FROM orders
+        GROUP BY status
+        
+        UNION ALL
+        
+        SELECT
+        1 AS sort_key,
+        '합계' AS status,
+        COUNT(*)            AS order_count,
+        ROUND(AVG(total_amount), 2) AS avg_amount
+        FROM orders
+        ) AS t
+        ORDER BY sort_key, order_count DESC;
+    tags: []
+
+  - id: L14-09
+    level: 2
+    type: "SELECT"
+    question: |
+      공급업체별 활성 상품 수와 비활성 상품 수를 각각 집계하고, `UNION ALL`로 합친 뒤 서브쿼리로 감싸서 공급업체별 한 행(활성 수, 비활성 수)으로 만드세요. `suppliers` 테이블과 JOIN하여 회사명도 표시하세요.
+    reference_sql:
+      common: |
+        SELECT
+        s.company_name,
+        SUM(CASE WHEN t.status_type = 'active' THEN t.cnt ELSE 0 END) AS active_count,
+        SUM(CASE WHEN t.status_type = 'inactive' THEN t.cnt ELSE 0 END) AS inactive_count
+        FROM (
+        SELECT supplier_id, 'active' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 1
+        GROUP BY supplier_id
+        
+        UNION ALL
+        
+        SELECT supplier_id, 'inactive' AS status_type, COUNT(*) AS cnt
+        FROM products WHERE is_active = 0
+        GROUP BY supplier_id
+        ) AS t
+        INNER JOIN suppliers AS s ON t.supplier_id = s.id
+        GROUP BY s.company_name
+        ORDER BY active_count DESC;
+    tags: []
+
+  - id: L14-10
+    level: 2
+    type: "SELECT"
+    question: |
+      각 공급업체별로 "최고가 상품"과 "최저가 상품"을 한 목록으로 합치세요. `UNION ALL`을 사용하고, `price_type`('최고가' 또는 '최저가'), `company_name`, `product_name`, `price`를 포함하세요. `company_name`, `price_type` 순으로 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        '최고가' AS price_type,
+        s.company_name,
+        p.name  AS product_name,
+        p.price
+        FROM products AS p
+        INNER JOIN suppliers AS s ON p.supplier_id = s.id
+        WHERE p.is_active = 1
+        AND p.price = (
+        SELECT MAX(p2.price)
+        FROM products AS p2
+        WHERE p2.supplier_id = p.supplier_id AND p2.is_active = 1
+        )
+        
+        UNION ALL
+        
+        SELECT
+        '최저가' AS price_type,
+        s.company_name,
+        p.name  AS product_name,
+        p.price
+        FROM products AS p
+        INNER JOIN suppliers AS s ON p.supplier_id = s.id
+        WHERE p.is_active = 1
+        AND p.price = (
+        SELECT MIN(p2.price)
+        FROM products AS p2
+        WHERE p2.supplier_id = p.supplier_id AND p2.is_active = 1
+        )
+        
+        ORDER BY company_name, price_type;
+    tags: []
+
+  - id: L14-11
+    level: 2
+    type: "SELECT"
+    question: |
+      리뷰를 작성한 고객과 불만을 접수한 고객의 **교집합**을 구하세요. `INTERSECT`를 사용하고, 결과의 `customer_id` 수를 세세요.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS both_count
+        FROM (
+        SELECT customer_id FROM reviews
+        INTERSECT
+        SELECT customer_id FROM complaints
+        ) AS both_active;
+    tags: []
+
+  - id: L14-12
+    level: 2
+    type: "SELECT"
+    question: |
+      위시리스트에 상품을 등록한 고객 중, 한 번도 주문하지 않은 고객을 `EXCEPT`로 찾으세요. `customer_id`를 반환하고, 오름차순 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT customer_id FROM wishlists
+        EXCEPT
+        SELECT DISTINCT customer_id FROM orders
+        ORDER BY customer_id;
+    tags: []

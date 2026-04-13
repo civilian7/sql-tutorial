@@ -253,51 +253,31 @@ LIMIT 10;
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| 단순 CASE | 하나의 값을 여러 고정 값과 비교 | `CASE status WHEN 'pending' THEN '대기' ...` |
-| 검색 CASE | 독립적인 조건식을 순서대로 평가 | `CASE WHEN price < 50 THEN '저가' ...` |
-| ELSE | 모든 조건에 불일치 시 기본값 | `ELSE '기타' END` |
-| GROUP BY + CASE | CASE 결과로 그룹화하여 집계 | `GROUP BY CASE WHEN ... END` |
-| 조건부 집계 (피벗) | 집계 함수 안에서 CASE로 조건별 카운트/합계 | `COUNT(CASE WHEN status = 'ok' THEN 1 END)` |
-| ORDER BY + CASE | 계산된 표현식으로 커스텀 정렬 | `ORDER BY CASE WHEN ... THEN 1 ...` |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 주문의 `notes` 칼럼이 NULL인 경우 `'메모 없음'`으로 표시하세요. CASE 표현식을 사용하여 `order_number`, `status`, `memo`(notes가 NULL이면 `'메모 없음'`, 아니면 notes 값)를 반환하세요. 최근 주문 15건으로 제한하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        order_number,
-        status,
-        CASE
-            WHEN notes IS NULL THEN '메모 없음'
-            ELSE notes
-        END AS memo
+    order_number,
+    status,
+    CASE
+    WHEN notes IS NULL THEN '메모 없음'
+    ELSE notes
+    END AS memo
     FROM orders
     ORDER BY ordered_at DESC
     LIMIT 15;
     ```
 
-    **결과 (예시):**
-
-| order_number | status | memo |
-| ---------- | ---------- | ---------- |
-| ORD-20251211-413965 | pending | 메모 없음 |
-| ORD-20251226-416837 | pending | 메모 없음 |
-| ORD-20251231-417734 | pending | 파손 주의 부탁드립니다 |
-| ORD-20251231-417696 | return_requested | 메모 없음 |
-| ORD-20251231-417737 | pending | 메모 없음 |
-| ORD-20251231-417735 | pending | 메모 없음 |
-| ORD-20251231-417677 | pending | 메모 없음 |
-| ORD-20251231-417764 | pending | 메모 없음 |
-| ... | ... | ... |
-
-
-### 연습 2
+### 문제 2
 직원(`staff`) 목록을 정렬하되, `role`이 `'manager'`인 직원이 먼저, 그 다음 `'staff'`, 나머지가 마지막에 오도록 하세요. 같은 역할 내에서는 `name` 오름차순으로 정렬합니다. `name`, `department`, `role`을 반환하고, 활성 직원만 포함하세요.
 
 ??? success "정답"
@@ -306,346 +286,174 @@ LIMIT 10;
     FROM staff
     WHERE is_active = 1
     ORDER BY
-        CASE role
-            WHEN 'manager' THEN 1
-            WHEN 'staff'   THEN 2
-            ELSE 3
-        END,
-        name ASC;
+    CASE role
+    WHEN 'manager' THEN 1
+    WHEN 'staff'   THEN 2
+    ELSE 3
+    END,
+    name ASC;
     ```
 
-    **결과 (예시):**
-
-| name | department | role |
-| ---------- | ---------- | ---------- |
-| 권영희 | 마케팅 | manager |
-| 김영일 | 개발 | manager |
-| 이준혁 | 영업 | manager |
-| 황예준 | 경영 | manager |
-| 강주원 | 영업 | staff |
-| 고영숙 | 물류 | staff |
-| 구미정 | 물류 | staff |
-| 권민재 | 영업 | staff |
-| ... | ... | ... |
-
-
-### 연습 3
+### 문제 3
 결제 수단(`payments.method`)을 단순 CASE로 한글 레이블로 변환하세요: `'card'` → `'신용카드'`, `'bank_transfer'` → `'계좌이체'`, `'cash'` → `'현금'`, 그 외 → `'기타'`. `id`, `amount`, `method_label`을 반환하고 10행으로 제한하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        id,
-        amount,
-        CASE method
-            WHEN 'card'          THEN '신용카드'
-            WHEN 'bank_transfer' THEN '계좌이체'
-            WHEN 'cash'          THEN '현금'
-            ELSE '기타'
-        END AS method_label
+    id,
+    amount,
+    CASE method
+    WHEN 'card'          THEN '신용카드'
+    WHEN 'bank_transfer' THEN '계좌이체'
+    WHEN 'cash'          THEN '현금'
+    ELSE '기타'
+    END AS method_label
     FROM payments
     LIMIT 10;
     ```
 
-    **결과 (예시):**
-
-| id | amount | method_label |
-| ----------: | ----------: | ---------- |
-| 1 | 161900.0 | 신용카드 |
-| 2 | 493200.0 | 신용카드 |
-| 3 | 465500.0 | 신용카드 |
-| 4 | 355400.0 | 신용카드 |
-| 5 | 4542200.0 | 기타 |
-| 6 | 145100.0 | 신용카드 |
-| 7 | 423500.0 | 신용카드 |
-| 8 | 1926200.0 | 기타 |
-| ... | ... | ... |
-
-
-### 연습 4
+### 문제 4
 상품 목록에 `stock_status` 칼럼을 추가하세요: `stock_qty = 0`이면 `'품절'`, `1~10`이면 `'재고 부족'`, `11~100`이면 `'재고 있음'`, 100 초과면 `'재고 충분'`. 활성 상품 전체의 `name`, `stock_qty`, `stock_status`를 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        name,
-        stock_qty,
-        CASE
-            WHEN stock_qty = 0         THEN '품절'
-            WHEN stock_qty <= 10       THEN '재고 부족'
-            WHEN stock_qty <= 100      THEN '재고 있음'
-            ELSE '재고 충분'
-        END AS stock_status
+    name,
+    stock_qty,
+    CASE
+    WHEN stock_qty = 0         THEN '품절'
+    WHEN stock_qty <= 10       THEN '재고 부족'
+    WHEN stock_qty <= 100      THEN '재고 있음'
+    ELSE '재고 충분'
+    END AS stock_status
     FROM products
     WHERE is_active = 1
     ORDER BY stock_qty ASC;
     ```
 
-    **결과 (예시):**
-
-| name | stock_qty | stock_status |
-| ---------- | ----------: | ---------- |
-| Arctic Freezer 36 A-RGB 화이트 | 0 | 품절 |
-| 삼성 DDR4 16GB PC4-25600 | 0 | 품절 |
-| WD My Passport 2TB 블랙 | 0 | 품절 |
-| 삼성 DDR5 32GB PC5-38400 실버 | 0 | 품절 |
-| 로지텍 MX Keys Mini 실버 | 1 | 재고 부족 |
-| Dell U2723QE 실버 | 1 | 재고 부족 |
-| Dell S2425HS 블랙 | 1 | 재고 부족 |
-| SK하이닉스 DDR4 32GB PC4-25600 화이트 | 2 | 재고 부족 |
-| ... | ... | ... |
-
-
-
-### 연습 5
+### 문제 5
 세대별 분포 보고서를 만드세요: 활성 고객이 각 세대(Z세대: 1997년 이후 출생, 밀레니얼: 1981~1996, X세대: 1965~1980, 베이비붐+: 1965년 이전, 미확인: birth_date가 NULL)에 몇 명씩 있는지 집계하세요. `generation`과 `customer_count`를 반환하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        SELECT
-            CASE
-                WHEN birth_date IS NULL THEN '미확인'
-                WHEN CAST(SUBSTR(birth_date, 1, 4) AS INTEGER) >= 1997 THEN 'Z세대'
-                WHEN CAST(SUBSTR(birth_date, 1, 4) AS INTEGER) >= 1981 THEN '밀레니얼'
-                WHEN CAST(SUBSTR(birth_date, 1, 4) AS INTEGER) >= 1965 THEN 'X세대'
-                ELSE '베이비붐+'
-            END AS generation,
-            COUNT(*) AS customer_count
-        FROM customers
-        WHERE is_active = 1
-        GROUP BY generation
-        ORDER BY customer_count DESC;
-        ```
+    ```sql
+    SELECT
+    CASE
+    WHEN birth_date IS NULL THEN '미확인'
+    WHEN CAST(SUBSTR(birth_date, 1, 4) AS INTEGER) >= 1997 THEN 'Z세대'
+    WHEN CAST(SUBSTR(birth_date, 1, 4) AS INTEGER) >= 1981 THEN '밀레니얼'
+    WHEN CAST(SUBSTR(birth_date, 1, 4) AS INTEGER) >= 1965 THEN 'X세대'
+    ELSE '베이비붐+'
+    END AS generation,
+    COUNT(*) AS customer_count
+    FROM customers
+    WHERE is_active = 1
+    GROUP BY generation
+    ORDER BY customer_count DESC;
+    ```
 
-        **결과 (예시):**
-
-| generation | customer_count |
-| ---------- | ----------: |
-| 밀레니얼 | 17306 |
-| Z세대 | 7484 |
-| X세대 | 5835 |
-| 미확인 | 5481 |
-| 베이비붐+ | 659 |
-| ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        SELECT
-            CASE
-                WHEN birth_date IS NULL THEN '미확인'
-                WHEN YEAR(birth_date) >= 1997 THEN 'Z세대'
-                WHEN YEAR(birth_date) >= 1981 THEN '밀레니얼'
-                WHEN YEAR(birth_date) >= 1965 THEN 'X세대'
-                ELSE '베이비붐+'
-            END AS generation,
-            COUNT(*) AS customer_count
-        FROM customers
-        WHERE is_active = 1
-        GROUP BY generation
-        ORDER BY customer_count DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        SELECT
-            CASE
-                WHEN birth_date IS NULL THEN '미확인'
-                WHEN EXTRACT(YEAR FROM birth_date) >= 1997 THEN 'Z세대'
-                WHEN EXTRACT(YEAR FROM birth_date) >= 1981 THEN '밀레니얼'
-                WHEN EXTRACT(YEAR FROM birth_date) >= 1965 THEN 'X세대'
-                ELSE '베이비붐+'
-            END AS generation,
-            COUNT(*) AS customer_count
-        FROM customers
-        WHERE is_active = 1
-        GROUP BY generation
-        ORDER BY customer_count DESC;
-        ```
-
-
-### 연습 6
+### 문제 6
 리뷰의 `rating`을 텍스트 레이블로 변환하세요: 5 → `'최고'`, 4 → `'좋음'`, 3 → `'보통'`, 2 → `'불만'`, 1 → `'최악'`. 레이블별 리뷰 수와 평균 평점을 구하세요. `rating_label`, `review_count`, `avg_rating`을 `avg_rating` 내림차순으로 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        CASE rating
-            WHEN 5 THEN '최고'
-            WHEN 4 THEN '좋음'
-            WHEN 3 THEN '보통'
-            WHEN 2 THEN '불만'
-            WHEN 1 THEN '최악'
-        END AS rating_label,
-        COUNT(*)            AS review_count,
-        ROUND(AVG(rating), 2) AS avg_rating
+    CASE rating
+    WHEN 5 THEN '최고'
+    WHEN 4 THEN '좋음'
+    WHEN 3 THEN '보통'
+    WHEN 2 THEN '불만'
+    WHEN 1 THEN '최악'
+    END AS rating_label,
+    COUNT(*)            AS review_count,
+    ROUND(AVG(rating), 2) AS avg_rating
     FROM reviews
     GROUP BY rating
     ORDER BY avg_rating DESC;
     ```
 
-    **결과 (예시):**
-
-| rating_label | review_count | avg_rating |
-| ---------- | ----------: | ----------: |
-| 최고 | 38460 | 5.0 |
-| 좋음 | 28232 | 4.0 |
-| 보통 | 14391 | 3.0 |
-| 불만 | 9512 | 2.0 |
-| 최악 | 4762 | 1.0 |
-| ... | ... | ... |
-
-
-### 연습 7
+### 문제 7
 고객의 `point_balance`를 3단계로 분류하세요: 10만 이상 `'헤비 유저'`, 1만 이상 `'일반'`, 그 외 `'라이트'`. `grade`별로 각 단계에 해당하는 고객 수를 집계하세요. `grade`, `heavy_count`, `regular_count`, `light_count`를 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        grade,
-        COUNT(CASE WHEN point_balance >= 100000 THEN 1 END) AS heavy_count,
-        COUNT(CASE WHEN point_balance >= 10000
-                    AND point_balance < 100000 THEN 1 END) AS regular_count,
-        COUNT(CASE WHEN point_balance < 10000 THEN 1 END)  AS light_count
+    grade,
+    COUNT(CASE WHEN point_balance >= 100000 THEN 1 END) AS heavy_count,
+    COUNT(CASE WHEN point_balance >= 10000
+    AND point_balance < 100000 THEN 1 END) AS regular_count,
+    COUNT(CASE WHEN point_balance < 10000 THEN 1 END)  AS light_count
     FROM customers
     WHERE is_active = 1
     GROUP BY grade
     ORDER BY grade;
     ```
 
-    **결과 (예시):**
-
-| grade | heavy_count | regular_count | light_count |
-| ---------- | ----------: | ----------: | ----------: |
-| BRONZE | 2180 | 6224 | 14211 |
-| GOLD | 2127 | 3032 | 0 |
-| SILVER | 1517 | 2875 | 713 |
-| VIP | 3134 | 752 | 0 |
-
-
-### 연습 8
+### 문제 8
 주문 금액 구간별(`total_amount` 기준: 10만 미만 `'소액'`, 10만~50만 미만 `'중간'`, 50만 이상 `'고액'`) 주문 수와 총 매출을 집계하고, 고액 주문이 위에 오도록 정렬하세요. `amount_tier`, `order_count`, `total_revenue`를 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        CASE
-            WHEN total_amount < 100      THEN '소액'
-            WHEN total_amount < 500      THEN '중간'
-            ELSE '고액'
-        END AS amount_tier,
-        COUNT(*)          AS order_count,
-        SUM(total_amount) AS total_revenue
+    CASE
+    WHEN total_amount < 100      THEN '소액'
+    WHEN total_amount < 500      THEN '중간'
+    ELSE '고액'
+    END AS amount_tier,
+    COUNT(*)          AS order_count,
+    SUM(total_amount) AS total_revenue
     FROM orders
     WHERE status NOT IN ('cancelled', 'returned')
     GROUP BY amount_tier
     ORDER BY
-        CASE
-            WHEN total_amount < 100 THEN 3
-            WHEN total_amount < 500 THEN 2
-            ELSE 1
-        END;
+    CASE
+    WHEN total_amount < 100 THEN 3
+    WHEN total_amount < 500 THEN 2
+    ELSE 1
+    END;
     ```
 
-    **결과 (예시):**
-
-| amount_tier | order_count | total_revenue |
-| ---------- | ----------: | ----------: |
-| 고액 | 390714 | 404174876329.0 |
-
-
-### 연습 9
+### 문제 9
 결제 수단별 `'성공'`(status = `'completed'`)과 `'실패'`(그 외) 건수를 피벗하세요. `method`, `success_count`, `fail_count`, `success_rate`(성공률, 소수점 1자리)를 반환하고, 성공률 내림차순으로 정렬하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        method,
-        COUNT(CASE WHEN status = 'completed' THEN 1 END) AS success_count,
-        COUNT(CASE WHEN status != 'completed' THEN 1 END) AS fail_count,
-        ROUND(
-            COUNT(CASE WHEN status = 'completed' THEN 1 END) * 100.0
-            / COUNT(*),
-            1
-        ) AS success_rate
+    method,
+    COUNT(CASE WHEN status = 'completed' THEN 1 END) AS success_count,
+    COUNT(CASE WHEN status != 'completed' THEN 1 END) AS fail_count,
+    ROUND(
+    COUNT(CASE WHEN status = 'completed' THEN 1 END) * 100.0
+    / COUNT(*),
+    1
+    ) AS success_rate
     FROM payments
     GROUP BY method
     ORDER BY success_rate DESC;
     ```
 
-    **결과 (예시):**
-
-| method | success_count | fail_count | success_rate |
-| ---------- | ----------: | ----------: | ----------: |
-| naver_pay | 57725 | 5112 | 91.9 |
-| kakao_pay | 76533 | 6775 | 91.9 |
-| card | 172644 | 15191 | 91.9 |
-| bank_transfer | 38667 | 3395 | 91.9 |
-| point | 19247 | 1728 | 91.8 |
-| virtual_account | 19067 | 1719 | 91.7 |
-| ... | ... | ... | ... |
-
-
-### 연습 10
+### 문제 10
 각 상품의 2024년 분기별 매출을 별도 칼럼(`q1_revenue`, `q2_revenue`, `q3_revenue`, `q4_revenue`)으로 계산하세요. 조건부 집계(`SUM(CASE WHEN ... THEN ... END)`)를 사용하고, 2024년 판매 실적이 있는 상품만 포함합니다. 2024년 총 매출 내림차순으로 10행까지 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        p.name AS product_name,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q1_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-04-01' AND '2024-06-30 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q2_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-07-01' AND '2024-09-30 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q3_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-10-01' AND '2024-12-31 23:59:59'
-                 THEN oi.quantity * oi.unit_price ELSE 0 END) AS q4_revenue
+    p.name AS product_name,
+    SUM(CASE WHEN o.ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59'
+    THEN oi.quantity * oi.unit_price ELSE 0 END) AS q1_revenue,
+    SUM(CASE WHEN o.ordered_at BETWEEN '2024-04-01' AND '2024-06-30 23:59:59'
+    THEN oi.quantity * oi.unit_price ELSE 0 END) AS q2_revenue,
+    SUM(CASE WHEN o.ordered_at BETWEEN '2024-07-01' AND '2024-09-30 23:59:59'
+    THEN oi.quantity * oi.unit_price ELSE 0 END) AS q3_revenue,
+    SUM(CASE WHEN o.ordered_at BETWEEN '2024-10-01' AND '2024-12-31 23:59:59'
+    THEN oi.quantity * oi.unit_price ELSE 0 END) AS q4_revenue
     FROM order_items AS oi
     INNER JOIN orders    AS o ON oi.order_id   = o.id
     INNER JOIN products  AS p ON oi.product_id = p.id
     WHERE o.ordered_at LIKE '2024%'
-      AND o.status NOT IN ('cancelled', 'returned')
+    AND o.status NOT IN ('cancelled', 'returned')
     GROUP BY p.id, p.name
     ORDER BY (q1_revenue + q2_revenue + q3_revenue + q4_revenue) DESC
     LIMIT 10;
     ```
 
-    **결과 (예시):**
-
-| product_name | q1_revenue | q2_revenue | q3_revenue | q4_revenue |
-| ---------- | ----------: | ----------: | ----------: | ----------: |
-| ASUS Dual RTX 4060 Ti 실버 | 72998000.0 | 90174000.0 | 98762000.0 | 107350000.0 |
-| MSI GeForce RTX 5070 Ti VENTUS 3X 블랙 | 92281200.0 | 75502800.0 | 50335200.0 | 88086600.0 |
-| ASUS ROG STRIX RTX 4090 화이트 | 88456800.0 | 70028300.0 | 55285500.0 | 84771100.0 |
-| MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 53696500.0 | 73222500.0 | 48815000.0 | 97630000.0 |
-| 기가바이트 RTX 4060 EAGLE OC 실버 | 80157200.0 | 67500800.0 | 46406800.0 | 63282000.0 |
-| ASUS Dual RTX 4060 Ti | 42148000.0 | 67436800.0 | 63222000.0 | 84296000.0 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 41616900.0 | 32368700.0 | 87857900.0 | 83233800.0 |
-| MSI GeForce RTX 4090 SUPRIM X 화이트 | 41906700.0 | 45716400.0 | 76194000.0 | 76194000.0 |
-| ... | ... | ... | ... | ... |
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [8강: INNER JOIN](../intermediate/08-inner-join.md)으로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [6강: NULL 다루기](06-null.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| CASE + NULL 처리 | 1 |
-| ORDER BY + CASE 커스텀 정렬 | 2, 8 |
-| 단순 CASE 값 변환 | 3, 6 |
-| 검색 CASE 범주화 | 4 |
-| CASE + GROUP BY 집계 | 5 |
-| 조건부 집계 (COUNT/SUM + CASE 피벗) | 7, 9, 10 |
-
----
-다음: [8강: INNER JOIN](../intermediate/08-inner-join.md)
+<!-- END_LESSON_EXERCISES -->

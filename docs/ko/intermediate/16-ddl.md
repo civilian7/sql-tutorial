@@ -669,210 +669,102 @@ WHERE sequence_schema = 'public';
 ## 정리
 
 | DDL 문 | 용도 | 예시 |
-|--------|------|------|
-| CREATE TABLE | 새 테이블 생성 | `CREATE TABLE t (id INT PRIMARY KEY, ...)` |
-| ALTER TABLE ADD COLUMN | 칼럼 추가 | `ALTER TABLE t ADD COLUMN col TEXT` |
-| ALTER TABLE RENAME COLUMN | 칼럼 이름 변경 | `ALTER TABLE t RENAME COLUMN a TO b` |
-| ALTER TABLE DROP COLUMN | 칼럼 삭제 | `ALTER TABLE t DROP COLUMN col` |
-| ALTER TABLE RENAME TO | 테이블 이름 변경 | `ALTER TABLE t RENAME TO new_t` |
-| DROP TABLE | 테이블 삭제 | `DROP TABLE IF EXISTS t` |
-| TRUNCATE TABLE | 모든 행 삭제 (구조 유지) | `TRUNCATE TABLE t` |
-| CREATE TABLE AS SELECT | 쿼리 결과로 테이블 생성 | `CREATE TABLE t AS SELECT ...` |
-| CREATE SEQUENCE | 순차 번호 생성 객체 (PG) | `CREATE SEQUENCE seq START WITH 1` |
+|--------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 `temp_employees` 테이블을 만드세요. 칼럼: `id`(자동 증가 기본 키), `name`(필수, 문자열), `email`(필수, UNIQUE, 문자열), `department`(문자열, 기본값 `'General'`), `hire_date`(문자열/날짜).
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TABLE temp_employees (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            name       TEXT NOT NULL,
-            email      TEXT NOT NULL UNIQUE,
-            department TEXT DEFAULT 'General',
-            hire_date  TEXT
-        );
-        ```
+    ```sql
+    CREATE TABLE temp_employees (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name       TEXT NOT NULL,
+    email      TEXT NOT NULL UNIQUE,
+    department TEXT DEFAULT 'General',
+    hire_date  TEXT
+    );
+    ```
 
-    === "MySQL"
-        ```sql
-        CREATE TABLE temp_employees (
-            id         INT AUTO_INCREMENT PRIMARY KEY,
-            name       VARCHAR(200) NOT NULL,
-            email      VARCHAR(200) NOT NULL UNIQUE,
-            department VARCHAR(100) DEFAULT 'General',
-            hire_date  DATE
-        );
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE temp_employees (
-            id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name       VARCHAR(200) NOT NULL,
-            email      VARCHAR(200) NOT NULL UNIQUE,
-            department VARCHAR(100) DEFAULT 'General',
-            hire_date  DATE
-        );
-        ```
-
-
-### 연습 2
+### 문제 2
 `temp_employees` 테이블에 `phone` 칼럼(문자열, 선택)을 추가한 뒤, `department` 칼럼의 이름을 `dept`로 변경하세요.
 
 ??? success "정답"
     ```sql
     ALTER TABLE temp_employees ADD COLUMN phone TEXT;
-
+    
     ALTER TABLE temp_employees RENAME COLUMN department TO dept;
     ```
 
-
-### 연습 3
+### 문제 3
 **복합 기본 키**를 사용하는 `temp_order_log` 테이블을 만드세요. (`order_id`, `log_seq`)가 복합 기본 키입니다. 칼럼: `order_id`(정수, 필수), `log_seq`(정수, 필수), `action`(문자열, 필수, `'created'`, `'shipped'`, `'delivered'`, `'cancelled'` 중 하나만 허용), `logged_at`(기본값: 현재 시각).
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TABLE temp_order_log (
-            order_id  INTEGER NOT NULL,
-            log_seq   INTEGER NOT NULL,
-            action    TEXT    NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
-            logged_at TEXT    DEFAULT (datetime('now')),
-            PRIMARY KEY (order_id, log_seq)
-        );
-        ```
+    ```sql
+    CREATE TABLE temp_order_log (
+    order_id  INTEGER NOT NULL,
+    log_seq   INTEGER NOT NULL,
+    action    TEXT    NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
+    logged_at TEXT    DEFAULT (datetime('now')),
+    PRIMARY KEY (order_id, log_seq)
+    );
+    ```
 
-    === "MySQL"
-        ```sql
-        CREATE TABLE temp_order_log (
-            order_id  INT         NOT NULL,
-            log_seq   INT         NOT NULL,
-            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
-            logged_at DATETIME    DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (order_id, log_seq)
-        );
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE temp_order_log (
-            order_id  INTEGER     NOT NULL,
-            log_seq   INTEGER     NOT NULL,
-            action    VARCHAR(20) NOT NULL CHECK (action IN ('created', 'shipped', 'delivered', 'cancelled')),
-            logged_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (order_id, log_seq)
-        );
-        ```
-
-
-### 연습 4
+### 문제 4
 `DELETE FROM`과 `TRUNCATE TABLE`의 차이를 설명하세요. 그리고 `order_archive` 테이블의 모든 데이터를 삭제하는 구문을 DB별로 작성하세요.
 
 ??? success "정답"
-    **차이점:**
+    ```sql
+    -- SQLite는 TRUNCATE를 지원하지 않으므로 DELETE로 대체
+    DELETE FROM order_archive;
+    
+    -- 디스크 공간 회수가 필요하면
+    VACUUM;
+    ```
 
-    - `DELETE`는 행 단위로 삭제하며 트랜잭션 로그에 기록되고, WHERE 조건으로 일부만 삭제할 수 있습니다. 트리거가 실행되며, auto-increment 값은 유지됩니다.
-    - `TRUNCATE`는 데이터 페이지를 통째로 해제하여 훨씬 빠르고, WHERE 조건을 사용할 수 없습니다. 트리거가 실행되지 않으며, auto-increment 값이 리셋됩니다.
-
-    === "SQLite"
-        ```sql
-        -- SQLite는 TRUNCATE를 지원하지 않으므로 DELETE로 대체
-        DELETE FROM order_archive;
-
-        -- 디스크 공간 회수가 필요하면
-        VACUUM;
-        ```
-
-    === "MySQL"
-        ```sql
-        TRUNCATE TABLE order_archive;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        -- 기본 TRUNCATE
-        TRUNCATE TABLE order_archive;
-
-        -- 시퀀스도 리셋하려면
-        TRUNCATE TABLE order_archive RESTART IDENTITY;
-        ```
-
-
-### 연습 5
+### 문제 5
 상품 가격 이력을 저장하는 `price_history` 테이블을 만드세요. 칼럼: `id`(정수, 자동 증가 기본 키), `product_id`(정수, NOT NULL), `old_price`, `new_price`(둘 다 실수, NOT NULL), `changed_at`(NOT NULL). `new_price`는 0 이상이어야 합니다(CHECK). `product_id`는 `products(id)`를 참조하는 외래 키입니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TABLE price_history (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id INTEGER NOT NULL,
-            old_price  REAL    NOT NULL,
-            new_price  REAL    NOT NULL CHECK (new_price >= 0),
-            changed_at TEXT    NOT NULL,
-            FOREIGN KEY (product_id) REFERENCES products (id)
-        );
-        ```
+    ```sql
+    CREATE TABLE price_history (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER NOT NULL,
+    old_price  REAL    NOT NULL,
+    new_price  REAL    NOT NULL CHECK (new_price >= 0),
+    changed_at TEXT    NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products (id)
+    );
+    ```
 
-    === "MySQL"
-        ```sql
-        CREATE TABLE price_history (
-            id         INT AUTO_INCREMENT PRIMARY KEY,
-            product_id INT            NOT NULL,
-            old_price  DECIMAL(12,2)  NOT NULL,
-            new_price  DECIMAL(12,2)  NOT NULL CHECK (new_price >= 0),
-            changed_at DATETIME       NOT NULL,
-            FOREIGN KEY (product_id) REFERENCES products (id)
-        );
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE price_history (
-            id         INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            product_id INTEGER       NOT NULL,
-            old_price  NUMERIC(12,2) NOT NULL,
-            new_price  NUMERIC(12,2) NOT NULL CHECK (new_price >= 0),
-            changed_at TIMESTAMP     NOT NULL,
-            FOREIGN KEY (product_id) REFERENCES products (id)
-        );
-        ```
-
-
-### 연습 6
+### 문제 6
 다음 테이블 정의에서 잘못된 부분을 찾고 수정하세요.
-
 ```sql
 CREATE TABLE temp_inventory (
-    product_id INTEGER,
-    warehouse  TEXT,
-    quantity   INTEGER DEFAULT -1,
-    updated_at TEXT
+product_id INTEGER,
+warehouse  TEXT,
+quantity   INTEGER DEFAULT -1,
+updated_at TEXT
 );
 ```
 
 ??? success "정답"
-    세 가지 문제: (1) 기본 키가 없음, (2) quantity 기본값이 -1로 비현실적, (3) product_id에 NOT NULL이 빠져 있음. 수정된 버전:
-
     ```sql
     CREATE TABLE temp_inventory (
-        id         INTEGER PRIMARY KEY,
-        product_id INTEGER NOT NULL,
-        warehouse  TEXT    NOT NULL,
-        quantity   INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
-        updated_at TEXT,
-        FOREIGN KEY (product_id) REFERENCES products (id)
+    id         INTEGER PRIMARY KEY,
+    product_id INTEGER NOT NULL,
+    warehouse  TEXT    NOT NULL,
+    quantity   INTEGER NOT NULL DEFAULT 0 CHECK (quantity >= 0),
+    updated_at TEXT,
+    FOREIGN KEY (product_id) REFERENCES products (id)
     );
     ```
 
-
-### 연습 7
+### 문제 7
 `event_participants` 테이블을 삭제하세요. 테이블이 존재하지 않아도 오류가 발생하지 않도록 작성하세요.
 
 ??? success "정답"
@@ -880,26 +772,23 @@ CREATE TABLE temp_inventory (
     DROP TABLE IF EXISTS event_participants;
     ```
 
-
-### 연습 8
+### 문제 8
 주문 아이템을 저장하는 테이블을 만드세요. `quantity`는 1 이상, `unit_price`는 0 이상이어야 합니다. `order_id`는 `orders(id)`를, `product_id`는 `products(id)`를 참조합니다. 주문이 삭제되면 주문 아이템도 함께 삭제되어야 하고(CASCADE), 상품이 삭제되면 `product_id`는 NULL로 변경되어야 합니다(SET NULL).
 
 ??? success "정답"
     ```sql
     CREATE TABLE temp_order_details (
-        id         INTEGER PRIMARY KEY,
-        order_id   INTEGER NOT NULL,
-        product_id INTEGER,
-        quantity   INTEGER NOT NULL CHECK (quantity >= 1),
-        unit_price REAL    NOT NULL CHECK (unit_price >= 0),
-        FOREIGN KEY (order_id)   REFERENCES orders (id)   ON DELETE CASCADE,
-        FOREIGN KEY (product_id) REFERENCES products (id)  ON DELETE SET NULL
+    id         INTEGER PRIMARY KEY,
+    order_id   INTEGER NOT NULL,
+    product_id INTEGER,
+    quantity   INTEGER NOT NULL CHECK (quantity >= 1),
+    unit_price REAL    NOT NULL CHECK (unit_price >= 0),
+    FOREIGN KEY (order_id)   REFERENCES orders (id)   ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products (id)  ON DELETE SET NULL
     );
     ```
-    `product_id`는 `SET NULL`이 적용되므로 `NOT NULL`을 빼야 합니다 — NULL이 될 수 있어야 하기 때문입니다.
 
-
-### 연습 9
+### 문제 9
 GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 테이블을 CTAS로 만든 뒤, `ALTER TABLE`로 `note` 칼럼(문자열, 기본값 없음)을 추가하세요.
 
 ??? success "정답"
@@ -909,15 +798,13 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
     SELECT id, name, email, grade
     FROM customers
     WHERE grade = 'GOLD';
-
+    
     -- 2. 칼럼 추가
     ALTER TABLE gold_customers ADD COLUMN note TEXT;
     ```
 
-
-### 연습 10
+### 문제 10
 다음 요구사항을 만족하는 `product_audit` 테이블을 만드세요:
-
 - `id`: 자동 증가 기본 키
 - `product_id`: 정수, NOT NULL, `products(id)` 참조 외래 키
 - `action`: 문자열, NOT NULL, 'INSERT', 'UPDATE', 'DELETE' 중 하나만 허용 (CHECK)
@@ -927,102 +814,46 @@ GOLD 등급 고객의 `id`, `name`, `email`, `grade`를 담는 `gold_customers` 
 - `changed_at`: NOT NULL, 기본값은 현재 시각
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        CREATE TABLE product_audit (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            product_id  INTEGER NOT NULL,
-            action      TEXT    NOT NULL CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
-            old_price   REAL,
-            new_price   REAL,
-            changed_by  TEXT    NOT NULL,
-            changed_at  TEXT    NOT NULL DEFAULT (datetime('now')),
-            FOREIGN KEY (product_id) REFERENCES products (id)
-        );
-        ```
+    ```sql
+    CREATE TABLE product_audit (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id  INTEGER NOT NULL,
+    action      TEXT    NOT NULL CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
+    old_price   REAL,
+    new_price   REAL,
+    changed_by  TEXT    NOT NULL,
+    changed_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (product_id) REFERENCES products (id)
+    );
+    ```
 
-    === "MySQL"
-        ```sql
-        CREATE TABLE product_audit (
-            id          INT AUTO_INCREMENT PRIMARY KEY,
-            product_id  INT           NOT NULL,
-            action      VARCHAR(10)   NOT NULL CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
-            old_price   DECIMAL(12,2),
-            new_price   DECIMAL(12,2),
-            changed_by  VARCHAR(100)  NOT NULL,
-            changed_at  DATETIME      NOT NULL DEFAULT NOW(),
-            FOREIGN KEY (product_id) REFERENCES products (id)
-        );
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE TABLE product_audit (
-            id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            product_id  INTEGER       NOT NULL,
-            action      VARCHAR(10)   NOT NULL CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
-            old_price   NUMERIC(12,2),
-            new_price   NUMERIC(12,2),
-            changed_by  VARCHAR(100)  NOT NULL,
-            changed_at  TIMESTAMP     NOT NULL DEFAULT NOW(),
-            FOREIGN KEY (product_id) REFERENCES products (id)
-        );
-        ```
-
-
-### 연습 11
+### 문제 11
 PostgreSQL에서 `invoice_seq`라는 시퀀스를 만드세요. 1000번부터 시작하고 1씩 증가합니다. 그리고 이 시퀀스를 사용하여 `invoices` 테이블에 행을 삽입하는 INSERT 문을 작성하세요. 칼럼: `id`(시퀀스 값), `order_id`(정수), `issued_at`(현재 시각).
 
 ??? success "정답"
     ```sql
     -- 시퀀스 생성
     CREATE SEQUENCE invoice_seq
-        START WITH 1000
-        INCREMENT BY 1;
-
+    START WITH 1000
+    INCREMENT BY 1;
+    
     -- 테이블 생성
     CREATE TABLE invoices (
-        id        INTEGER PRIMARY KEY,
-        order_id  INTEGER NOT NULL,
-        issued_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id        INTEGER PRIMARY KEY,
+    order_id  INTEGER NOT NULL,
+    issued_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
-
+    
     -- 시퀀스를 사용한 INSERT
     INSERT INTO invoices (id, order_id, issued_at)
     VALUES (NEXTVAL('invoice_seq'), 1001, CURRENT_TIMESTAMP);
-
+    
     -- 확인
     SELECT * FROM invoices;
-
+    
     -- 정리
     DROP TABLE IF EXISTS invoices;
     DROP SEQUENCE IF EXISTS invoice_seq;
     ```
 
-    > SQLite와 MySQL은 시퀀스를 지원하지 않으므로 PostgreSQL 전용 문제입니다.
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **10~11개** | [17강: 트랜잭션](17-transactions.md)으로 이동 |
-| **8~9개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [15강: DML](15-dml.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| CREATE TABLE + 제약조건 | 1, 3, 5, 10 |
-| ALTER TABLE (ADD/RENAME) | 2 |
-| DELETE vs TRUNCATE | 4 |
-| DDL 문제점 식별 + 수정 | 6 |
-| DROP TABLE IF EXISTS | 7 |
-| FOREIGN KEY ON DELETE 옵션 | 8 |
-| CTAS (CREATE TABLE AS SELECT) | 9 |
-| SEQUENCE (시퀀스) | 11 |
-
----
-다음: [17강: 트랜잭션과 ACID](17-transactions.md)
+<!-- END_LESSON_EXERCISES -->

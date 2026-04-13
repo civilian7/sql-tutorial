@@ -402,313 +402,110 @@ flowchart TD
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| WITH (CTE) | 이름 붙인 임시 결과셋 | `WITH cte AS (...) SELECT ...` |
-| 다중 CTE | 여러 CTE를 쉼표로 연결 | `WITH a AS (...), b AS (...)` |
-| 재귀 CTE | 자기 자신을 참조 (계층 탐색) | `WITH RECURSIVE ... UNION ALL ...` |
-| 앵커 멤버 | 재귀의 시작점 (기본 케이스) | `WHERE parent_id IS NULL` |
-| 재귀 멤버 | 이전 결과와 JOIN하여 확장 | `JOIN category_tree ON ...` |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 재귀 CTE를 사용하여 1부터 12까지의 월 번호 시퀀스를 생성하고, 2024년 각 월의 주문 수를 구하세요. 주문이 없는 월도 0으로 표시해야 합니다. `month_num`, `year_month`, `order_count`를 반환하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        WITH RECURSIVE months AS (
-            SELECT 1 AS month_num
-            UNION ALL
-            SELECT month_num + 1
-            FROM months
-            WHERE month_num < 12
-        )
-        SELECT
-            m.month_num,
-            '2024-' || SUBSTR('0' || m.month_num, -2) AS year_month,
-            COUNT(o.id) AS order_count
-        FROM months AS m
-        LEFT JOIN orders AS o
-            ON SUBSTR(o.ordered_at, 1, 7) = '2024-' || SUBSTR('0' || m.month_num, -2)
-            AND o.status NOT IN ('cancelled', 'returned')
-        GROUP BY m.month_num
-        ORDER BY m.month_num;
-        ```
+    ```sql
+    WITH RECURSIVE months AS (
+    SELECT 1 AS month_num
+    UNION ALL
+    SELECT month_num + 1
+    FROM months
+    WHERE month_num < 12
+    )
+    SELECT
+    m.month_num,
+    '2024-' || SUBSTR('0' || m.month_num, -2) AS year_month,
+    COUNT(o.id) AS order_count
+    FROM months AS m
+    LEFT JOIN orders AS o
+    ON SUBSTR(o.ordered_at, 1, 7) = '2024-' || SUBSTR('0' || m.month_num, -2)
+    AND o.status NOT IN ('cancelled', 'returned')
+    GROUP BY m.month_num
+    ORDER BY m.month_num;
+    ```
 
-        **결과 (예시):**
-
-| month_num | year_month | order_count |
-| ----------: | ---------- | ----------: |
-| 1 | 2024-01 | 3857 |
-| 2 | 2024-02 | 4530 |
-| 3 | 2024-03 | 4903 |
-| 4 | 2024-04 | 4932 |
-| 5 | 2024-05 | 5001 |
-| 6 | 2024-06 | 3719 |
-| 7 | 2024-07 | 4454 |
-| 8 | 2024-08 | 4827 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        WITH RECURSIVE months AS (
-            SELECT 1 AS month_num
-            UNION ALL
-            SELECT month_num + 1
-            FROM months
-            WHERE month_num < 12
-        )
-        SELECT
-            m.month_num,
-            CONCAT('2024-', LPAD(m.month_num, 2, '0')) AS year_month,
-            COUNT(o.id) AS order_count
-        FROM months AS m
-        LEFT JOIN orders AS o
-            ON DATE_FORMAT(o.ordered_at, '%Y-%m') = CONCAT('2024-', LPAD(m.month_num, 2, '0'))
-            AND o.status NOT IN ('cancelled', 'returned')
-        GROUP BY m.month_num
-        ORDER BY m.month_num;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH RECURSIVE months AS (
-            SELECT 1 AS month_num
-            UNION ALL
-            SELECT month_num + 1
-            FROM months
-            WHERE month_num < 12
-        )
-        SELECT
-            m.month_num,
-            '2024-' || LPAD(m.month_num::text, 2, '0') AS year_month,
-            COUNT(o.id) AS order_count
-        FROM months AS m
-        LEFT JOIN orders AS o
-            ON TO_CHAR(o.ordered_at, 'YYYY-MM') = '2024-' || LPAD(m.month_num::text, 2, '0')
-            AND o.status NOT IN ('cancelled', 'returned')
-        GROUP BY m.month_num
-        ORDER BY m.month_num;
-        ```
-
-
-### 연습 2
+### 문제 2
 CTE를 사용하여 "이탈 위험 고객"을 찾으세요. 최소 3번 주문했지만 마지막 주문이 180일 이상 지난 고객입니다. `customer_id`, `name`, `grade`, `order_count`, `last_order_date`를 반환하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        WITH customer_recency AS (
-            SELECT
-                customer_id,
-                COUNT(*)        AS order_count,
-                MAX(ordered_at) AS last_order_date
-            FROM orders
-            WHERE status NOT IN ('cancelled', 'returned')
-            GROUP BY customer_id
-        )
-        SELECT
-            c.id    AS customer_id,
-            c.name,
-            c.grade,
-            cr.order_count,
-            cr.last_order_date
-        FROM customer_recency AS cr
-        INNER JOIN customers AS c ON cr.customer_id = c.id
-        WHERE cr.order_count >= 3
-          AND julianday('now') - julianday(cr.last_order_date) > 180
-        ORDER BY cr.last_order_date ASC;
-        ```
+    ```sql
+    WITH customer_recency AS (
+    SELECT
+    customer_id,
+    COUNT(*)        AS order_count,
+    MAX(ordered_at) AS last_order_date
+    FROM orders
+    WHERE status NOT IN ('cancelled', 'returned')
+    GROUP BY customer_id
+    )
+    SELECT
+    c.id    AS customer_id,
+    c.name,
+    c.grade,
+    cr.order_count,
+    cr.last_order_date
+    FROM customer_recency AS cr
+    INNER JOIN customers AS c ON cr.customer_id = c.id
+    WHERE cr.order_count >= 3
+    AND julianday('now') - julianday(cr.last_order_date) > 180
+    ORDER BY cr.last_order_date ASC;
+    ```
 
-        **결과 (예시):**
-
-| customer_id | name | grade | order_count | last_order_date |
-| ----------: | ---------- | ---------- | ----------: | ---------- |
-| 1761 | 이상훈 | BRONZE | 4 | 2018-09-05 19:29:12 |
-| 115 | 배성현 | BRONZE | 4 | 2019-01-13 20:22:06 |
-| 4017 | 김옥자 | BRONZE | 3 | 2019-03-10 17:38:26 |
-| 2145 | 송은정 | BRONZE | 4 | 2019-03-22 11:02:35 |
-| 3410 | 최상현 | BRONZE | 4 | 2019-11-10 20:37:22 |
-| 190 | 김명숙 | BRONZE | 9 | 2020-01-11 11:15:01 |
-| 2473 | 엄예진 | BRONZE | 3 | 2020-01-18 22:52:32 |
-| 437 | 장예지 | BRONZE | 22 | 2020-02-16 10:11:16 |
-| ... | ... | ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        WITH customer_recency AS (
-            SELECT
-                customer_id,
-                COUNT(*)        AS order_count,
-                MAX(ordered_at) AS last_order_date
-            FROM orders
-            WHERE status NOT IN ('cancelled', 'returned')
-            GROUP BY customer_id
-        )
-        SELECT
-            c.id    AS customer_id,
-            c.name,
-            c.grade,
-            cr.order_count,
-            cr.last_order_date
-        FROM customer_recency AS cr
-        INNER JOIN customers AS c ON cr.customer_id = c.id
-        WHERE cr.order_count >= 3
-          AND DATEDIFF(NOW(), cr.last_order_date) > 180
-        ORDER BY cr.last_order_date ASC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH customer_recency AS (
-            SELECT
-                customer_id,
-                COUNT(*)        AS order_count,
-                MAX(ordered_at) AS last_order_date
-            FROM orders
-            WHERE status NOT IN ('cancelled', 'returned')
-            GROUP BY customer_id
-        )
-        SELECT
-            c.id    AS customer_id,
-            c.name,
-            c.grade,
-            cr.order_count,
-            cr.last_order_date
-        FROM customer_recency AS cr
-        INNER JOIN customers AS c ON cr.customer_id = c.id
-        WHERE cr.order_count >= 3
-          AND CURRENT_DATE - cr.last_order_date::date > 180
-        ORDER BY cr.last_order_date ASC;
-        ```
-
-
-### 연습 3
+### 문제 3
 두 개의 CTE를 사용하여 2024년 월별 매출을 구하고, 전월 대비 변화량을 계산하세요. CTE 1: 월별 합계. CTE 2: `LAG`로 전월 값 추가. 메인 쿼리: 모든 칼럼과 `mom_change`, `mom_pct` 반환.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        WITH monthly AS (
-            SELECT
-                SUBSTR(ordered_at, 1, 7) AS year_month,
-                SUM(total_amount)        AS revenue
-            FROM orders
-            WHERE ordered_at LIKE '2024%'
-              AND status NOT IN ('cancelled', 'returned')
-            GROUP BY SUBSTR(ordered_at, 1, 7)
-        ),
-        with_lag AS (
-            SELECT
-                year_month,
-                revenue,
-                LAG(revenue) OVER (ORDER BY year_month) AS prev_revenue
-            FROM monthly
-        )
-        SELECT
-            year_month,
-            revenue,
-            prev_revenue,
-            ROUND(revenue - prev_revenue, 2) AS mom_change,
-            ROUND(100.0 * (revenue - prev_revenue) / prev_revenue, 1) AS mom_pct
-        FROM with_lag
-        ORDER BY year_month;
-        ```
+    ```sql
+    WITH monthly AS (
+    SELECT
+    SUBSTR(ordered_at, 1, 7) AS year_month,
+    SUM(total_amount)        AS revenue
+    FROM orders
+    WHERE ordered_at LIKE '2024%'
+    AND status NOT IN ('cancelled', 'returned')
+    GROUP BY SUBSTR(ordered_at, 1, 7)
+    ),
+    with_lag AS (
+    SELECT
+    year_month,
+    revenue,
+    LAG(revenue) OVER (ORDER BY year_month) AS prev_revenue
+    FROM monthly
+    )
+    SELECT
+    year_month,
+    revenue,
+    prev_revenue,
+    ROUND(revenue - prev_revenue, 2) AS mom_change,
+    ROUND(100.0 * (revenue - prev_revenue) / prev_revenue, 1) AS mom_pct
+    FROM with_lag
+    ORDER BY year_month;
+    ```
 
-        **결과 (예시):**
-
-| year_month | revenue | prev_revenue | mom_change | mom_pct |
-| ---------- | ----------: | ---------- | ---------- | ---------- |
-| 2024-01 | 3807789761.0 | (NULL) | (NULL) | (NULL) |
-| 2024-02 | 4701108852.0 | 3807789761.0 | 893319091.0 | 23.5 |
-| 2024-03 | 4935663129.0 | 4701108852.0 | 234554277.0 | 5.0 |
-| 2024-04 | 4954492231.0 | 4935663129.0 | 18829102.0 | 0.4 |
-| 2024-05 | 4912114419.0 | 4954492231.0 | -42377812.0 | -0.9 |
-| 2024-06 | 3853868900.0 | 4912114419.0 | -1058245519.0 | -21.5 |
-| 2024-07 | 4453107092.0 | 3853868900.0 | 599238192.0 | 15.5 |
-| 2024-08 | 4903583071.0 | 4453107092.0 | 450475979.0 | 10.1 |
-| ... | ... | ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        WITH monthly AS (
-            SELECT
-                DATE_FORMAT(ordered_at, '%Y-%m') AS year_month,
-                SUM(total_amount)                AS revenue
-            FROM orders
-            WHERE ordered_at >= '2024-01-01'
-              AND ordered_at <  '2025-01-01'
-              AND status NOT IN ('cancelled', 'returned')
-            GROUP BY DATE_FORMAT(ordered_at, '%Y-%m')
-        ),
-        with_lag AS (
-            SELECT
-                year_month,
-                revenue,
-                LAG(revenue) OVER (ORDER BY year_month) AS prev_revenue
-            FROM monthly
-        )
-        SELECT
-            year_month,
-            revenue,
-            prev_revenue,
-            ROUND(revenue - prev_revenue, 2) AS mom_change,
-            ROUND(100.0 * (revenue - prev_revenue) / prev_revenue, 1) AS mom_pct
-        FROM with_lag
-        ORDER BY year_month;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH monthly AS (
-            SELECT
-                TO_CHAR(ordered_at, 'YYYY-MM') AS year_month,
-                SUM(total_amount)              AS revenue
-            FROM orders
-            WHERE ordered_at >= '2024-01-01'
-              AND ordered_at <  '2025-01-01'
-              AND status NOT IN ('cancelled', 'returned')
-            GROUP BY TO_CHAR(ordered_at, 'YYYY-MM')
-        ),
-        with_lag AS (
-            SELECT
-                year_month,
-                revenue,
-                LAG(revenue) OVER (ORDER BY year_month) AS prev_revenue
-            FROM monthly
-        )
-        SELECT
-            year_month,
-            revenue,
-            prev_revenue,
-            ROUND(revenue - prev_revenue, 2) AS mom_change,
-            ROUND(100.0 * (revenue - prev_revenue) / prev_revenue, 1) AS mom_pct
-        FROM with_lag
-        ORDER BY year_month;
-        ```
-
-
-### 연습 4
+### 문제 4
 CTE를 사용하여 카테고리별 평균 상품 가격과 전체 평균 가격을 비교하세요. `category_name`, `avg_price`, `overall_avg`, `diff_from_overall`을 반환하세요. CTE 하나로 전체 평균을 구하고, 메인 쿼리에서 카테고리별 평균과 비교합니다.
 
 ??? success "정답"
     ```sql
     WITH overall AS (
-        SELECT ROUND(AVG(price), 2) AS overall_avg
-        FROM products
-        WHERE is_active = 1
+    SELECT ROUND(AVG(price), 2) AS overall_avg
+    FROM products
+    WHERE is_active = 1
     )
     SELECT
-        cat.name AS category_name,
-        ROUND(AVG(p.price), 2) AS avg_price,
-        o.overall_avg,
-        ROUND(AVG(p.price) - o.overall_avg, 2) AS diff_from_overall
+    cat.name AS category_name,
+    ROUND(AVG(p.price), 2) AS avg_price,
+    o.overall_avg,
+    ROUND(AVG(p.price) - o.overall_avg, 2) AS diff_from_overall
     FROM products AS p
     INNER JOIN categories AS cat ON p.category_id = cat.id
     CROSS JOIN overall AS o
@@ -717,380 +514,156 @@ CTE를 사용하여 카테고리별 평균 상품 가격과 전체 평균 가격
     ORDER BY avg_price DESC;
     ```
 
-        **결과 (예시):**
-
-| category_name | avg_price | overall_avg | diff_from_overall |
-| ---------- | ----------: | ----------: | ----------: |
-| 맥북 | 3292633.33 | 678774.85 | 2613858.48 |
-| 게이밍 노트북 | 2966560.61 | 678774.85 | 2287785.76 |
-| NVIDIA | 2429036.96 | 678774.85 | 1750262.11 |
-| 조립PC | 2210358.7 | 678774.85 | 1531583.85 |
-| 일반 노트북 | 1739673.49 | 678774.85 | 1060898.64 |
-| 2in1 | 1565324.44 | 678774.85 | 886549.59 |
-| 완제품 | 1504925.68 | 678774.85 | 826150.83 |
-| 전문가용 모니터 | 1328097.96 | 678774.85 | 649323.11 |
-| ... | ... | ... | ... |
-
-
-### 연습 5
+### 문제 5
 재귀 CTE를 사용하여 모든 말단 카테고리(자식이 없는 카테고리)의 전체 경로(브레드크럼)를 구하세요. `category_id`, `category_name`, `full_path`를 반환하세요.
 
 ??? success "정답"
-    === "SQLite / PostgreSQL"
-        ```sql
-        WITH RECURSIVE category_tree AS (
-            SELECT
-                id,
-                name,
-                parent_id,
-                name AS full_path
-            FROM categories
-            WHERE parent_id IS NULL
+    ```sql
+    WITH RECURSIVE category_tree AS (
+    SELECT
+    id,
+    name,
+    parent_id,
+    name AS full_path
+    FROM categories
+    WHERE parent_id IS NULL
+    
+    UNION ALL
+    
+    SELECT
+    c.id,
+    c.name,
+    c.parent_id,
+    ct.full_path || ' > ' || c.name
+    FROM categories AS c
+    INNER JOIN category_tree AS ct ON c.parent_id = ct.id
+    )
+    SELECT
+    ct.id   AS category_id,
+    ct.name AS category_name,
+    ct.full_path
+    FROM category_tree AS ct
+    WHERE ct.id NOT IN (SELECT parent_id FROM categories WHERE parent_id IS NOT NULL)
+    ORDER BY ct.full_path;
+    ```
 
-            UNION ALL
-
-            SELECT
-                c.id,
-                c.name,
-                c.parent_id,
-                ct.full_path || ' > ' || c.name
-            FROM categories AS c
-            INNER JOIN category_tree AS ct ON c.parent_id = ct.id
-        )
-        SELECT
-            ct.id   AS category_id,
-            ct.name AS category_name,
-            ct.full_path
-        FROM category_tree AS ct
-        WHERE ct.id NOT IN (SELECT parent_id FROM categories WHERE parent_id IS NOT NULL)
-        ORDER BY ct.full_path;
-        ```
-
-        **결과 (예시):**
-
-| category_id | category_name | full_path |
-| ----------: | ---------- | ---------- |
-| 16 | AMD | CPU > AMD |
-| 15 | Intel | CPU > Intel |
-| 49 | UPS/전원 | UPS/전원 |
-| 29 | AMD | 그래픽카드 > AMD |
-| 28 | NVIDIA | 그래픽카드 > NVIDIA |
-| 46 | 공유기 | 네트워크 장비 > 공유기 |
-| 48 | 랜카드 | 네트워크 장비 > 랜카드 |
-| 47 | 허브/스위치 | 네트워크 장비 > 허브/스위치 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        WITH RECURSIVE category_tree AS (
-            SELECT
-                id,
-                name,
-                parent_id,
-                name AS full_path
-            FROM categories
-            WHERE parent_id IS NULL
-
-            UNION ALL
-
-            SELECT
-                c.id,
-                c.name,
-                c.parent_id,
-                CONCAT(ct.full_path, ' > ', c.name)
-            FROM categories AS c
-            INNER JOIN category_tree AS ct ON c.parent_id = ct.id
-        )
-        SELECT
-            ct.id   AS category_id,
-            ct.name AS category_name,
-            ct.full_path
-        FROM category_tree AS ct
-        WHERE ct.id NOT IN (SELECT parent_id FROM categories WHERE parent_id IS NOT NULL)
-        ORDER BY ct.full_path;
-        ```
-
-
-### 연습 6
+### 문제 6
 재귀 CTE로 카테고리 트리를 탐색한 뒤, 각 최상위 카테고리별로 하위 카테고리 수와 소속 상품 수를 집계하세요. `root_category`, `subcategory_count`, `product_count`를 반환하세요.
 
 ??? success "정답"
-    === "SQLite / PostgreSQL"
-        ```sql
-        WITH RECURSIVE tree AS (
-            SELECT id, name AS root_name, id AS root_id
-            FROM categories
-            WHERE parent_id IS NULL
+    ```sql
+    WITH RECURSIVE tree AS (
+    SELECT id, name AS root_name, id AS root_id
+    FROM categories
+    WHERE parent_id IS NULL
+    
+    UNION ALL
+    
+    SELECT c.id, t.root_name, t.root_id
+    FROM categories AS c
+    INNER JOIN tree AS t ON c.parent_id = t.id
+    )
+    SELECT
+    t.root_name AS root_category,
+    COUNT(DISTINCT t.id) - 1 AS subcategory_count,
+    COUNT(DISTINCT p.id)     AS product_count
+    FROM tree AS t
+    LEFT JOIN products AS p ON p.category_id = t.id
+    GROUP BY t.root_id, t.root_name
+    ORDER BY product_count DESC;
+    ```
 
-            UNION ALL
-
-            SELECT c.id, t.root_name, t.root_id
-            FROM categories AS c
-            INNER JOIN tree AS t ON c.parent_id = t.id
-        )
-        SELECT
-            t.root_name AS root_category,
-            COUNT(DISTINCT t.id) - 1 AS subcategory_count,
-            COUNT(DISTINCT p.id)     AS product_count
-        FROM tree AS t
-        LEFT JOIN products AS p ON p.category_id = t.id
-        GROUP BY t.root_id, t.root_name
-        ORDER BY product_count DESC;
-        ```
-
-        **결과 (예시):**
-
-| root_category | subcategory_count | product_count |
-| ---------- | ----------: | ----------: |
-| 노트북 | 4 | 311 |
-| 마우스 | 3 | 233 |
-| 키보드 | 3 | 213 |
-| 저장장치 | 3 | 212 |
-| 모니터 | 3 | 208 |
-| 데스크톱 PC | 3 | 202 |
-| 메인보드 | 2 | 182 |
-| 메모리(RAM) | 2 | 167 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        WITH RECURSIVE tree AS (
-            SELECT id, name AS root_name, id AS root_id
-            FROM categories
-            WHERE parent_id IS NULL
-
-            UNION ALL
-
-            SELECT c.id, t.root_name, t.root_id
-            FROM categories AS c
-            INNER JOIN tree AS t ON c.parent_id = t.id
-        )
-        SELECT
-            t.root_name AS root_category,
-            COUNT(DISTINCT t.id) - 1 AS subcategory_count,
-            COUNT(DISTINCT p.id)     AS product_count
-        FROM tree AS t
-        LEFT JOIN products AS p ON p.category_id = t.id
-        GROUP BY t.root_id, t.root_name
-        ORDER BY product_count DESC;
-        ```
-
-
-### 연습 7
+### 문제 7
 재귀 CTE로 staff 테이블의 조직도를 탐색하여, 특정 매니저(manager_id IS NULL인 최상위)로부터의 깊이(level)와 그 아래 직속 부하 수를 구하세요. `manager_name`, `level`, `direct_reports`를 반환하세요.
 
 ??? success "정답"
-    === "SQLite / PostgreSQL"
-        ```sql
-        WITH RECURSIVE org AS (
-            SELECT id, name, manager_id, 0 AS level
-            FROM staff
-            WHERE manager_id IS NULL
+    ```sql
+    WITH RECURSIVE org AS (
+    SELECT id, name, manager_id, 0 AS level
+    FROM staff
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    SELECT s.id, s.name, s.manager_id, o.level + 1
+    FROM staff AS s
+    INNER JOIN org AS o ON s.manager_id = o.id
+    )
+    SELECT
+    m.name AS manager_name,
+    m.level,
+    COUNT(s.id) AS direct_reports
+    FROM org AS m
+    LEFT JOIN staff AS s ON s.manager_id = m.id
+    GROUP BY m.id, m.name, m.level
+    HAVING COUNT(s.id) > 0
+    ORDER BY m.level, direct_reports DESC;
+    ```
 
-            UNION ALL
-
-            SELECT s.id, s.name, s.manager_id, o.level + 1
-            FROM staff AS s
-            INNER JOIN org AS o ON s.manager_id = o.id
-        )
-        SELECT
-            m.name AS manager_name,
-            m.level,
-            COUNT(s.id) AS direct_reports
-        FROM org AS m
-        LEFT JOIN staff AS s ON s.manager_id = m.id
-        GROUP BY m.id, m.name, m.level
-        HAVING COUNT(s.id) > 0
-        ORDER BY m.level, direct_reports DESC;
-        ```
-
-        **결과 (예시):**
-
-| manager_name | level | direct_reports |
-| ---------- | ----------: | ----------: |
-| 한민재 | 0 | 8 |
-| 박경수 | 1 | 8 |
-| 이준혁 | 1 | 5 |
-| 장주원 | 1 | 4 |
-| 권영희 | 2 | 9 |
-| 최영미 | 2 | 6 |
-| 김진우 | 2 | 5 |
-| 황예준 | 2 | 2 |
-| ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        WITH RECURSIVE org AS (
-            SELECT id, name, manager_id, 0 AS level
-            FROM staff
-            WHERE manager_id IS NULL
-
-            UNION ALL
-
-            SELECT s.id, s.name, s.manager_id, o.level + 1
-            FROM staff AS s
-            INNER JOIN org AS o ON s.manager_id = o.id
-        )
-        SELECT
-            m.name AS manager_name,
-            m.level,
-            COUNT(s.id) AS direct_reports
-        FROM org AS m
-        LEFT JOIN staff AS s ON s.manager_id = m.id
-        GROUP BY m.id, m.name, m.level
-        HAVING COUNT(s.id) > 0
-        ORDER BY m.level, direct_reports DESC;
-        ```
-
-
-### 연습 8
+### 문제 8
 다중 CTE를 사용하여 결제 수단별 월간 매출 비중을 구하세요. CTE 1: 월별 결제 수단별 금액. CTE 2: 월별 총액. 메인 쿼리: `year_month`, `method`, `amount`, `monthly_total`, `pct`를 반환하세요. 2024년 데이터만 사용합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        WITH method_monthly AS (
-            SELECT
-                SUBSTR(p.paid_at, 1, 7) AS year_month,
-                p.method,
-                SUM(p.amount) AS amount
-            FROM payments AS p
-            INNER JOIN orders AS o ON p.order_id = o.id
-            WHERE p.paid_at LIKE '2024%'
-              AND p.status = 'completed'
-            GROUP BY SUBSTR(p.paid_at, 1, 7), p.method
-        ),
-        monthly_total AS (
-            SELECT
-                year_month,
-                SUM(amount) AS total
-            FROM method_monthly
-            GROUP BY year_month
-        )
-        SELECT
-            mm.year_month,
-            mm.method,
-            mm.amount,
-            mt.total AS monthly_total,
-            ROUND(100.0 * mm.amount / mt.total, 1) AS pct
-        FROM method_monthly AS mm
-        INNER JOIN monthly_total AS mt ON mm.year_month = mt.year_month
-        ORDER BY mm.year_month, mm.amount DESC;
-        ```
+    ```sql
+    WITH method_monthly AS (
+    SELECT
+    SUBSTR(p.paid_at, 1, 7) AS year_month,
+    p.method,
+    SUM(p.amount) AS amount
+    FROM payments AS p
+    INNER JOIN orders AS o ON p.order_id = o.id
+    WHERE p.paid_at LIKE '2024%'
+    AND p.status = 'completed'
+    GROUP BY SUBSTR(p.paid_at, 1, 7), p.method
+    ),
+    monthly_total AS (
+    SELECT
+    year_month,
+    SUM(amount) AS total
+    FROM method_monthly
+    GROUP BY year_month
+    )
+    SELECT
+    mm.year_month,
+    mm.method,
+    mm.amount,
+    mt.total AS monthly_total,
+    ROUND(100.0 * mm.amount / mt.total, 1) AS pct
+    FROM method_monthly AS mm
+    INNER JOIN monthly_total AS mt ON mm.year_month = mt.year_month
+    ORDER BY mm.year_month, mm.amount DESC;
+    ```
 
-        **결과 (예시):**
-
-| year_month | method | amount | monthly_total | pct |
-| ---------- | ---------- | ----------: | ----------: | ----------: |
-| 2024-01 | card | 1637985623.0 | 3741059908.0 | 43.8 |
-| 2024-01 | kakao_pay | 701582674.0 | 3741059908.0 | 18.8 |
-| 2024-01 | naver_pay | 604077057.0 | 3741059908.0 | 16.1 |
-| 2024-01 | bank_transfer | 397750334.0 | 3741059908.0 | 10.6 |
-| 2024-01 | virtual_account | 209801928.0 | 3741059908.0 | 5.6 |
-| 2024-01 | point | 189862292.0 | 3741059908.0 | 5.1 |
-| 2024-02 | card | 2157466285.0 | 4628277628.0 | 46.6 |
-| 2024-02 | kakao_pay | 794741444.0 | 4628277628.0 | 17.2 |
-| ... | ... | ... | ... | ... |
-
-
-    === "MySQL"
-        ```sql
-        WITH method_monthly AS (
-            SELECT
-                DATE_FORMAT(p.paid_at, '%Y-%m') AS year_month,
-                p.method,
-                SUM(p.amount) AS amount
-            FROM payments AS p
-            INNER JOIN orders AS o ON p.order_id = o.id
-            WHERE p.paid_at >= '2024-01-01'
-              AND p.paid_at <  '2025-01-01'
-              AND p.status = 'completed'
-            GROUP BY DATE_FORMAT(p.paid_at, '%Y-%m'), p.method
-        ),
-        monthly_total AS (
-            SELECT
-                year_month,
-                SUM(amount) AS total
-            FROM method_monthly
-            GROUP BY year_month
-        )
-        SELECT
-            mm.year_month,
-            mm.method,
-            mm.amount,
-            mt.total AS monthly_total,
-            ROUND(100.0 * mm.amount / mt.total, 1) AS pct
-        FROM method_monthly AS mm
-        INNER JOIN monthly_total AS mt ON mm.year_month = mt.year_month
-        ORDER BY mm.year_month, mm.amount DESC;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        WITH method_monthly AS (
-            SELECT
-                TO_CHAR(p.paid_at, 'YYYY-MM') AS year_month,
-                p.method,
-                SUM(p.amount) AS amount
-            FROM payments AS p
-            INNER JOIN orders AS o ON p.order_id = o.id
-            WHERE p.paid_at >= '2024-01-01'
-              AND p.paid_at <  '2025-01-01'
-              AND p.status = 'completed'
-            GROUP BY TO_CHAR(p.paid_at, 'YYYY-MM'), p.method
-        ),
-        monthly_total AS (
-            SELECT
-                year_month,
-                SUM(amount) AS total
-            FROM method_monthly
-            GROUP BY year_month
-        )
-        SELECT
-            mm.year_month,
-            mm.method,
-            mm.amount,
-            mt.total AS monthly_total,
-            ROUND(100.0 * mm.amount / mt.total, 1) AS pct
-        FROM method_monthly AS mm
-        INNER JOIN monthly_total AS mt ON mm.year_month = mt.year_month
-        ORDER BY mm.year_month, mm.amount DESC;
-        ```
-
-
-### 연습 9
+### 문제 9
 CTE와 윈도우 함수를 조합하여 각 카테고리에서 리뷰 평점이 가장 높은 상품 2개를 찾으세요. `category_name`, `product_name`, `avg_rating`, `review_count`, `rnk`를 반환하세요. 리뷰가 3개 이상인 상품만 대상으로 합니다.
 
 ??? success "정답"
     ```sql
     WITH product_ratings AS (
-        SELECT
-            p.id AS product_id,
-            p.name AS product_name,
-            cat.name AS category_name,
-            p.category_id,
-            ROUND(AVG(r.rating), 2) AS avg_rating,
-            COUNT(r.id) AS review_count
-        FROM products AS p
-        INNER JOIN categories AS cat ON p.category_id = cat.id
-        INNER JOIN reviews AS r ON r.product_id = p.id
-        GROUP BY p.id, p.name, cat.name, p.category_id
-        HAVING COUNT(r.id) >= 3
+    SELECT
+    p.id AS product_id,
+    p.name AS product_name,
+    cat.name AS category_name,
+    p.category_id,
+    ROUND(AVG(r.rating), 2) AS avg_rating,
+    COUNT(r.id) AS review_count
+    FROM products AS p
+    INNER JOIN categories AS cat ON p.category_id = cat.id
+    INNER JOIN reviews AS r ON r.product_id = p.id
+    GROUP BY p.id, p.name, cat.name, p.category_id
+    HAVING COUNT(r.id) >= 3
     ),
     ranked AS (
-        SELECT
-            category_name,
-            product_name,
-            avg_rating,
-            review_count,
-            RANK() OVER (
-                PARTITION BY category_id
-                ORDER BY avg_rating DESC
-            ) AS rnk
-        FROM product_ratings
+    SELECT
+    category_name,
+    product_name,
+    avg_rating,
+    review_count,
+    RANK() OVER (
+    PARTITION BY category_id
+    ORDER BY avg_rating DESC
+    ) AS rnk
+    FROM product_ratings
     )
     SELECT category_name, product_name, avg_rating, review_count, rnk
     FROM ranked
@@ -1098,53 +671,38 @@ CTE와 윈도우 함수를 조합하여 각 카테고리에서 리뷰 평점이 
     ORDER BY category_name, rnk;
     ```
 
-        **결과 (예시):**
-
-| category_name | product_name | avg_rating | review_count | rnk |
-| ---------- | ---------- | ----------: | ----------: | ----------: |
-| 2in1 | 레노버 ThinkPad X1 2in1 실버 | 4.8 | 5 | 1 |
-| 2in1 | 레노버 IdeaPad Flex 5 블랙 | 4.73 | 11 | 2 |
-| AMD | AMD Ryzen 7 7700X 블랙 | 4.4 | 20 | 1 |
-| AMD | MSI Radeon RX 7900 XTX GAMING X | 4.83 | 6 | 1 |
-| AMD | AMD Ryzen 7 7800X3D | 4.09 | 11 | 2 |
-| AMD | AMD Ryzen 9 9950X3D 블랙 | 4.09 | 96 | 2 |
-| AMD | MSI Radeon RX 7800 XT GAMING X | 4.6 | 5 | 2 |
-| AMD 소켓 | MSI MAG X870E TOMAHAWK WIFI 화이트 | 4.59 | 39 | 1 |
-| ... | ... | ... | ... | ... |
-
-
-### 연습 10
+### 문제 10
 3개의 CTE를 체이닝하여 "상품 성과 대시보드"를 만드세요. CTE 1: 상품별 총 판매 수량과 매출. CTE 2: 상품별 평균 리뷰 평점. CTE 3: 두 CTE를 JOIN. 메인 쿼리: `product_name`, `units_sold`, `revenue`, `avg_rating`을 반환하고 매출 상위 10개를 보여주세요.
 
 ??? success "정답"
     ```sql
     WITH sales AS (
-        SELECT
-            oi.product_id,
-            SUM(oi.quantity)              AS units_sold,
-            SUM(oi.quantity * oi.unit_price) AS revenue
-        FROM order_items AS oi
-        INNER JOIN orders AS o ON oi.order_id = o.id
-        WHERE o.status IN ('delivered', 'confirmed')
-        GROUP BY oi.product_id
+    SELECT
+    oi.product_id,
+    SUM(oi.quantity)              AS units_sold,
+    SUM(oi.quantity * oi.unit_price) AS revenue
+    FROM order_items AS oi
+    INNER JOIN orders AS o ON oi.order_id = o.id
+    WHERE o.status IN ('delivered', 'confirmed')
+    GROUP BY oi.product_id
     ),
     ratings AS (
-        SELECT
-            product_id,
-            ROUND(AVG(rating), 2) AS avg_rating
-        FROM reviews
-        GROUP BY product_id
+    SELECT
+    product_id,
+    ROUND(AVG(rating), 2) AS avg_rating
+    FROM reviews
+    GROUP BY product_id
     ),
     combined AS (
-        SELECT
-            p.name AS product_name,
-            COALESCE(s.units_sold, 0) AS units_sold,
-            COALESCE(s.revenue, 0)    AS revenue,
-            r.avg_rating
-        FROM products AS p
-        LEFT JOIN sales   AS s ON p.id = s.product_id
-        LEFT JOIN ratings AS r ON p.id = r.product_id
-        WHERE p.is_active = 1
+    SELECT
+    p.name AS product_name,
+    COALESCE(s.units_sold, 0) AS units_sold,
+    COALESCE(s.revenue, 0)    AS revenue,
+    r.avg_rating
+    FROM products AS p
+    LEFT JOIN sales   AS s ON p.id = s.product_id
+    LEFT JOIN ratings AS r ON p.id = r.product_id
+    WHERE p.is_active = 1
     )
     SELECT product_name, units_sold, revenue, avg_rating
     FROM combined
@@ -1152,39 +710,4 @@ CTE와 윈도우 함수를 조합하여 각 카테고리에서 리뷰 평점이 
     LIMIT 10;
     ```
 
-        **결과 (예시):**
-
-| product_name | units_sold | revenue | avg_rating |
-| ---------- | ----------: | ----------: | ----------: |
-| MSI GeForce RTX 5070 Ti VENTUS 3X 실버 | 471 | 2299186500.0 | 3.8 |
-| MSI GeForce RTX 4070 Ti Super GAMING X | 476 | 2201071600.0 | 3.85 |
-| AMD Ryzen 7 7700X 블랙 | 1778 | 1965045600.0 | 3.88 |
-| Razer Blade 14 실버 | 362 | 1610393200.0 | 4.21 |
-| AMD Ryzen 9 9900X 화이트 | 1916 | 1550427200.0 | 3.9 |
-| MSI GeForce RTX 4090 SUPRIM X 화이트 | 406 | 1546738200.0 | 4.13 |
-| 기가바이트 RTX 5090 AERO OC | 399 | 1534514100.0 | 3.93 |
-| ASUS ROG STRIX RTX 5090 | 427 | 1474174800.0 | 3.76 |
-| ... | ... | ... | ... |
-
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [20강: EXISTS](20-exists.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [18강: 윈도우 함수](18-window.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| 재귀 CTE (시퀀스 생성) | 1 |
-| 단일 CTE + 필터링 | 2, 4 |
-| CTE + 성장률 비교 | 3 |
-| 재귀 CTE (트리 탐색) | 5, 6, 7 |
-| 다중 CTE 체이닝 | 8, 9, 10 |
-
----
-다음: [20강: EXISTS와 상관 서브쿼리](20-exists.md)
+<!-- END_LESSON_EXERCISES -->

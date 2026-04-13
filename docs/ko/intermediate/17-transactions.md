@@ -374,322 +374,101 @@ ROLLBACK;  -- orders INSERT도 함께 취소됨 → 일관성 유지
 
 ---
 
+<!-- BEGIN_LESSON_EXERCISES -->
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-### 연습 1
-트랜잭션이란 무엇이며, 왜 필요한지 한 문장으로 설명하세요.
-
-??? success "정답"
-    트랜잭션은 여러 SQL 문을 하나의 논리적 작업 단위로 묶어, **전부 성공하면 COMMIT**, **하나라도 실패하면 ROLLBACK**하여 데이터의 일관성을 보장하는 메커니즘입니다.
-
-    여러 테이블에 걸친 작업(예: 주문 + 결제 + 재고)이 중간에 실패하면 데이터 불일치가 발생하므로, 트랜잭션으로 원자성을 보장해야 합니다.
-
-### 연습 2
-ACID 속성 중 **Atomicity(원자성)**와 **Durability(지속성)**의 차이를 설명하세요.
-
-??? success "정답"
-    - **Atomicity(원자성):** 트랜잭션 내 모든 작업이 전부 수행되거나 전부 취소됩니다. 중간 상태는 허용되지 않습니다.
-    - **Durability(지속성):** 한번 COMMIT된 데이터는 시스템 장애(정전, 크래시 등)가 발생하더라도 영구적으로 보존됩니다.
-
-    원자성은 "실행 중" 보장이고, 지속성은 "실행 완료 후" 보장입니다.
-
-### 연습 3
+### 문제 1
 다음 시나리오를 트랜잭션으로 작성하세요: 고객(id=30)의 포인트를 5000 차감하고, 해당 포인트를 orders(id=8001)의 total_amount에서 할인 적용하세요.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        BEGIN TRANSACTION;
+    ```sql
+    BEGIN TRANSACTION;
+    
+    UPDATE customers SET point_balance = point_balance - 5000 WHERE id = 30;
+    UPDATE orders SET total_amount = total_amount - 5000 WHERE id = 8001;
+    
+    COMMIT;
+    ```
 
-        UPDATE customers SET point_balance = point_balance - 5000 WHERE id = 30;
-        UPDATE orders SET total_amount = total_amount - 5000 WHERE id = 8001;
-
-        COMMIT;
-        ```
-
-    === "MySQL"
-        ```sql
-        START TRANSACTION;
-
-        UPDATE customers SET point_balance = point_balance - 5000 WHERE id = 30;
-        UPDATE orders SET total_amount = total_amount - 5000 WHERE id = 8001;
-
-        COMMIT;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        BEGIN;
-
-        UPDATE customers SET point_balance = point_balance - 5000 WHERE id = 30;
-        UPDATE orders SET total_amount = total_amount - 5000 WHERE id = 8001;
-
-        COMMIT;
-        ```
-
-### 연습 4
+### 문제 2
 아래 SQL에서 문제점을 찾고, 트랜잭션을 사용하여 안전하게 수정하세요.
-
 ```sql
 INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
 VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
-
 INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
 VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
-
 UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
 ```
 
 ??? success "정답"
-    **문제점:** 자동 커밋 모드에서 각 문장이 개별 커밋됩니다. 두 번째 INSERT나 UPDATE에서 오류가 발생하면 첫 번째 INSERT만 반영되어 데이터 불일치가 발생합니다.
+    ```sql
+    BEGIN TRANSACTION;
+    
+    INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
+    VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
+    
+    INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
+    VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
+    
+    UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
+    
+    COMMIT;
+    ```
 
-    === "SQLite"
-        ```sql
-        BEGIN TRANSACTION;
-
-        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
-
-        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
-
-        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
-
-        COMMIT;
-        ```
-
-    === "MySQL"
-        ```sql
-        START TRANSACTION;
-
-        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
-
-        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
-
-        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
-
-        COMMIT;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        BEGIN;
-
-        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (99001, 'ORD-99001', 10, 1, 'confirmed', 150000, 0, 0, 0, 1500, '2024-06-15', '2024-06-15', '2024-06-15');
-
-        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (99001, 'bank_transfer', 150000, 'completed', '2024-06-15', '2024-06-15');
-
-        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 50;
-
-        COMMIT;
-        ```
-
-### 연습 5
+### 문제 3
 SAVEPOINT를 사용하여 다음 시나리오를 작성하세요: 주문(id=100)에 상품 3개를 추가하되, 두 번째 상품 추가 후 문제가 발견되어 두 번째 상품만 취소하고, 나머지는 유지한 채 커밋합니다.
 
 ??? success "정답"
     ```sql
     BEGIN;
-
+    
     INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
     VALUES (100, 10, 1, 45000, 0, 45000);
-
+    
     SAVEPOINT sp_item2;
-
+    
     INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
     VALUES (100, 20, 1, 32000, 0, 32000);
-
+    
     -- 두 번째 상품에 문제 발견 → 취소
     ROLLBACK TO SAVEPOINT sp_item2;
-
+    
     -- 세 번째 상품은 정상 추가
     INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
     VALUES (100, 30, 2, 18000, 0, 36000);
-
+    
     COMMIT;
     ```
 
-    첫 번째 상품(301)과 세 번째 상품(303)만 최종 반영되고, 두 번째 상품(302)은 SAVEPOINT 롤백으로 취소됩니다.
-
-### 연습 6
-SQLite, MySQL, PostgreSQL의 기본 격리 수준을 각각 말하고, 격리 수준이 높을수록 어떤 트레이드오프가 있는지 설명하세요.
-
-??? success "정답"
-    | DB | 기본 격리 수준 |
-    |----|---------------|
-    | SQLite | SERIALIZABLE |
-    | MySQL (InnoDB) | REPEATABLE READ |
-    | PostgreSQL | READ COMMITTED |
-
-    격리 수준이 높을수록 Dirty Read, Non-Repeatable Read, Phantom Read 같은 동시성 문제를 더 많이 방지하지만, 그만큼 **잠금(Lock)이 많아지고 동시 처리 성능이 떨어집니다**. 반대로 격리 수준이 낮으면 성능은 좋지만 데이터 정합성 문제가 발생할 수 있습니다.
-
-### 연습 7
-자동 커밋 모드에서 아래 두 문장을 실행했을 때, 두 번째 문장이 실패하면 어떻게 되는지 설명하세요.
-
-```sql
-UPDATE products SET stock_qty = stock_qty - 5 WHERE id = 77;
-UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 9999;  -- 존재하지 않는 ID
-```
-
-??? success "정답"
-    자동 커밋 모드에서는 각 문장이 **독립적인 트랜잭션**으로 실행됩니다.
-
-    - 첫 번째 `UPDATE`는 성공하고 즉시 COMMIT됩니다. `id=77` 상품의 재고가 5 감소합니다.
-    - 두 번째 `UPDATE`는 `id=9999`가 존재하지 않으므로 영향받는 행이 0개입니다. SQL 오류가 발생하지는 않지만(WHERE 조건에 맞는 행이 없을 뿐), 의도한 동작이 아닙니다.
-
-    만약 두 작업이 논리적으로 하나의 단위라면, 명시적 트랜잭션으로 감싸고 애플리케이션에서 영향받은 행 수를 검사하여 0이면 ROLLBACK해야 합니다.
-
-### 연습 8
-다음 트랜잭션에서 `ROLLBACK TO SAVEPOINT sp_payment` 실행 후, 어떤 작업이 유지되고 어떤 작업이 취소되는지 설명하세요.
-
-```sql
-BEGIN;
-
-INSERT INTO orders (id, order_number, customer_id, status, total_amount, ordered_at)
-VALUES (8001, 'ORD-8001', 20, 'pending', 200000, '2024-07-01');
-
-SAVEPOINT sp_payment;
-
-INSERT INTO payments (order_id, method, amount, status, paid_at)
-VALUES (8001, 'credit_card', 200000, 'failed', '2024-07-01');
-
-ROLLBACK TO SAVEPOINT sp_payment;
-
-INSERT INTO payments (order_id, method, amount, status, paid_at)
-VALUES (8001, 'bank_transfer', 200000, 'completed', '2024-07-01');
-
-COMMIT;
-```
-
-??? success "정답"
-    - **유지:** `orders` 테이블의 INSERT (SAVEPOINT 이전에 실행)
-    - **취소:** `payments` 테이블의 첫 번째 INSERT (`credit_card`, `failed` — SAVEPOINT 이후에 실행되어 롤백됨)
-    - **최종 반영:** ROLLBACK TO 이후 다시 실행한 `payments` INSERT (`bank_transfer`, `completed`)
-
-    최종적으로 COMMIT 시 주문 1건(ORD-8001)과 은행 이체 결제 1건이 반영됩니다. 실패한 카드 결제는 데이터베이스에 남지 않습니다.
-
-### 연습 9
-ACID 속성 4가지를 다음 시나리오에 각각 대응시키세요:
-
-1. 주문 INSERT 후 서버가 갑자기 꺼졌지만, 재시작 후 데이터가 살아있다
-2. 주문과 결제를 함께 처리하는 도중 결제가 실패하여 주문도 함께 취소되었다
-3. A 사용자가 재고를 수정하는 동안 B 사용자의 조회에는 수정 전 값이 보인다
-4. 재고가 음수가 되는 UPDATE는 CHECK 제약조건에 의해 거부된다
-
-??? success "정답"
-    1. **Durability(지속성)** — COMMIT된 데이터는 시스템 장애 후에도 영구 보존
-    2. **Atomicity(원자성)** — 트랜잭션 내 작업이 전부 실행되거나 전부 취소
-    3. **Isolation(격리성)** — 동시 실행 중인 트랜잭션이 서로 간섭하지 않음
-    4. **Consistency(일관성)** — 트랜잭션 전후로 데이터베이스가 유효한 상태 유지 (제약조건 충족)
-
-### 연습 10
+### 문제 4
 주문 처리 트랜잭션을 작성하세요. 고객(id=45)이 상품(id=120)을 3개 주문하고, 단가는 55000원입니다. 주문(orders), 주문상세(order_items), 결제(payments), 재고(products.stock_qty) 4개 테이블을 하나의 트랜잭션으로 처리하세요. 결제는 카드 결제이고, 재고 변동도 inventory_transactions에 기록합니다.
 
 ??? success "정답"
-    === "SQLite"
-        ```sql
-        BEGIN TRANSACTION;
+    ```sql
+    BEGIN TRANSACTION;
+    
+    -- 주문
+    INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
+    VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, datetime('now'), datetime('now'), datetime('now'));
+    
+    -- 주문 상세
+    INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
+    VALUES (99003, 120, 3, 55000, 0, 165000);
+    
+    -- 결제
+    INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
+    VALUES (99003, 'credit_card', 165000, 'completed', datetime('now'), datetime('now'));
+    
+    -- 재고 차감
+    UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;
+    
+    -- 재고 변동 기록
+    INSERT INTO inventory_transactions (product_id, type, quantity, created_at)
+    VALUES (120, 'OUT', -3, datetime('now'));
+    
+    COMMIT;
+    ```
 
-        -- 주문
-        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, datetime('now'), datetime('now'), datetime('now'));
-
-        -- 주문 상세
-        INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-        VALUES (99003, 120, 3, 55000, 0, 165000);
-
-        -- 결제
-        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (99003, 'credit_card', 165000, 'completed', datetime('now'), datetime('now'));
-
-        -- 재고 차감
-        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;
-
-        -- 재고 변동 기록
-        INSERT INTO inventory_transactions (product_id, type, quantity, created_at)
-        VALUES (120, 'OUT', -3, datetime('now'));
-
-        COMMIT;
-        ```
-
-    === "MySQL"
-        ```sql
-        START TRANSACTION;
-
-        -- 주문
-        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, NOW(), NOW(), NOW());
-
-        -- 주문 상세
-        INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-        VALUES (99003, 120, 3, 55000, 0, 165000);
-
-        -- 결제
-        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (99003, 'credit_card', 165000, 'completed', NOW(), NOW());
-
-        -- 재고 차감
-        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;
-
-        -- 재고 변동 기록
-        INSERT INTO inventory_transactions (product_id, type, quantity, created_at)
-        VALUES (120, 'OUT', -3, NOW());
-
-        COMMIT;
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        BEGIN;
-
-        -- 주문
-        INSERT INTO orders (id, order_number, customer_id, address_id, status, total_amount, discount_amount, shipping_fee, point_used, point_earned, ordered_at, created_at, updated_at)
-        VALUES (99003, 'ORD-99003', 45, 1, 'confirmed', 165000, 0, 0, 0, 1650, NOW(), NOW(), NOW());
-
-        -- 주문 상세
-        INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
-        VALUES (99003, 120, 3, 55000, 0, 165000);
-
-        -- 결제
-        INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
-        VALUES (99003, 'credit_card', 165000, 'completed', NOW(), NOW());
-
-        -- 재고 차감
-        UPDATE products SET stock_qty = stock_qty - 3 WHERE id = 120;
-
-        -- 재고 변동 기록
-        INSERT INTO inventory_transactions (product_id, type, quantity, created_at)
-        VALUES (120, 'OUT', -3, NOW());
-
-        COMMIT;
-        ```
-
-    총 금액은 55,000 x 3 = 165,000원입니다. 5개 테이블(orders, order_items, payments, products, inventory_transactions)에 걸친 작업이 하나의 트랜잭션으로 묶여, 어느 하나라도 실패하면 전체가 롤백됩니다.
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [18강: 윈도우 함수](../advanced/18-window.md)로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음강으로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [16강: DDL](16-ddl.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| 트랜잭션 개념 (정의/ACID) | 1, 2, 9 |
-| BEGIN / COMMIT / ROLLBACK | 3, 4 |
-| SAVEPOINT + 부분 ROLLBACK | 5, 8 |
-| 격리 수준 | 6 |
-| 자동 커밋 모드 분석 | 7 |
-| 종합 트랜잭션 작성 | 10 |
-
----
-다음: [18강: 윈도우 함수](../advanced/18-window.md)
+<!-- END_LESSON_EXERCISES -->

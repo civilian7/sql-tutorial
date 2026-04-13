@@ -240,152 +240,100 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
 ## 정리
 
 | 개념 | 설명 | 예시 |
-|------|------|------|
-| EXISTS | 서브쿼리 결과가 1건이라도 있으면 TRUE | `WHERE EXISTS (SELECT 1 FROM ...)` |
-| NOT EXISTS | 서브쿼리 결과가 0건이면 TRUE | `WHERE NOT EXISTS (SELECT 1 FROM ...)` |
-| 상관 서브쿼리 | 외부 쿼리의 칼럼을 내부에서 참조 | `WHERE o.customer_id = c.id` |
-| 단락 평가 | EXISTS는 첫 일치 시 즉시 중단 | IN보다 대용량에서 효율적 |
-| NOT IN의 NULL 함정 | NULL 포함 시 전체 결과 사라짐 | NOT EXISTS로 대체 |
-| 안티 조인 | "없는 것 찾기" 3가지 패턴 | NOT EXISTS ≈ LEFT JOIN IS NULL > NOT IN |
-| HAVING + EXISTS | 집계 결과에 존재 조건 추가 | 그룹 중 특정 조건 만족하는 것만 |
+|------|------|------
+
+<!-- BEGIN_LESSON_EXERCISES -->
 
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
-## 연습 문제
-### 연습 1
+### 문제 1
 `NOT EXISTS`로 안티 조인을 구현하여, 배송(shipping)이 생성되었지만 아직 배송 완료(delivered_at IS NULL)되지 않은 주문을 찾으세요. `order_number`, `ordered_at`, `status`, `carrier`, `shipped_at`을 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        o.order_number,
-        o.ordered_at,
-        o.status,
-        s.carrier,
-        s.shipped_at
+    o.order_number,
+    o.ordered_at,
+    o.status,
+    s.carrier,
+    s.shipped_at
     FROM orders AS o
     INNER JOIN shipping AS s ON s.order_id = o.id
     WHERE NOT EXISTS (
-        SELECT 1
-        FROM shipping AS s2
-        WHERE s2.order_id = o.id
-          AND s2.delivered_at IS NOT NULL
+    SELECT 1
+    FROM shipping AS s2
+    WHERE s2.order_id = o.id
+    AND s2.delivered_at IS NOT NULL
     )
     ORDER BY s.shipped_at DESC
     LIMIT 20;
     ```
 
-    **결과 (예시):**
-
-| order_number | ordered_at | status | carrier | shipped_at |
-| ---------- | ---------- | ---------- | ---------- | ---------- |
-| ORD-20251225-416643 | 2025-12-25 22:47:11 | shipped | 한진택배 | 2025-12-28 22:47:11 |
-| ORD-20251225-416617 | 2025-12-25 22:03:22 | shipped | CJ대한통운 | 2025-12-28 22:03:22 |
-| ORD-20251225-416710 | 2025-12-25 21:52:00 | shipped | 우체국택배 | 2025-12-28 21:52:00 |
-| ORD-20251225-416598 | 2025-12-25 21:36:48 | shipped | 한진택배 | 2025-12-28 21:36:48 |
-| ORD-20251225-416688 | 2025-12-25 21:04:47 | shipped | 로젠택배 | 2025-12-28 21:04:47 |
-| ORD-20251225-416544 | 2025-12-25 20:52:05 | shipped | CJ대한통운 | 2025-12-28 20:52:05 |
-| ORD-20251225-416575 | 2025-12-25 18:53:49 | shipped | 한진택배 | 2025-12-28 18:53:49 |
-| ORD-20251225-416574 | 2025-12-25 18:32:36 | shipped | CJ대한통운 | 2025-12-28 18:32:36 |
-| ... | ... | ... | ... | ... |
-
-
-### 연습 2
+### 문제 2
 `EXISTS`와 상관 서브쿼리를 사용하여 같은 상품에 대해 리뷰 평점 5점과 1점이 모두 존재하는 상품을 찾으세요. `product_id`, `product_name`, `price`를 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        p.id    AS product_id,
-        p.name  AS product_name,
-        p.price
+    p.id    AS product_id,
+    p.name  AS product_name,
+    p.price
     FROM products AS p
     WHERE EXISTS (
-        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 5
+    SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 5
     )
     AND EXISTS (
-        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 1
+    SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 1
     )
     ORDER BY p.name;
     ```
 
-    **결과 (예시):**
-
-| product_id | product_name | price |
-| ----------: | ---------- | ----------: |
-| 269 | AMD Ryzen 5 9600X | 186400.0 |
-| 284 | AMD Ryzen 7 7700X 블랙 | 1105200.0 |
-| 1778 | AMD Ryzen 7 7800X3D 실버 | 245300.0 |
-| 1670 | AMD Ryzen 7 9700X 블랙 | 391500.0 |
-| 733 | AMD Ryzen 7 9800X3D 실버 [특별 한정판 에디션] RGB 라이팅 탑재, 소프트웨어 커스터마이징 지원 | 182100.0 |
-| 1376 | AMD Ryzen 9 7950X3D | 509100.0 |
-| 44 | AMD Ryzen 9 9900X | 290600.0 |
-| 286 | AMD Ryzen 9 9900X 화이트 | 809200.0 |
-| ... | ... | ... |
-
-
-### 연습 3
+### 문제 3
 상관 서브쿼리를 사용하여 각 직원이 처리한 주문 중 가장 금액이 큰 주문의 정보를 함께 표시하세요. `staff_name`, `department`, `max_order_amount`, `max_order_number`를 반환하세요. `max_order_number`는 해당 금액과 일치하는 주문 번호입니다.
 
 ??? success "정답"
     ```sql
     SELECT
-        s.name AS staff_name,
-        s.department,
-        (SELECT MAX(o.total_amount) FROM orders AS o WHERE o.staff_id = s.id) AS max_order_amount,
-        (SELECT o.order_number FROM orders AS o
-         WHERE o.staff_id = s.id
-         ORDER BY o.total_amount DESC
-         LIMIT 1) AS max_order_number
+    s.name AS staff_name,
+    s.department,
+    (SELECT MAX(o.total_amount) FROM orders AS o WHERE o.staff_id = s.id) AS max_order_amount,
+    (SELECT o.order_number FROM orders AS o
+    WHERE o.staff_id = s.id
+    ORDER BY o.total_amount DESC
+    LIMIT 1) AS max_order_number
     FROM staff AS s
     WHERE EXISTS (
-        SELECT 1 FROM orders WHERE staff_id = s.id
+    SELECT 1 FROM orders WHERE staff_id = s.id
     )
     ORDER BY max_order_amount DESC
     LIMIT 15;
     ```
 
-
-### 연습 4
+### 문제 4
 `NOT EXISTS`를 사용하여 한 번도 리뷰를 작성하지 않은 고객 중 5건 이상 주문한 고객을 찾으세요. `customer_id`, `name`, `grade`, `order_count`를 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        c.id AS customer_id,
-        c.name,
-        c.grade,
-        (SELECT COUNT(*) FROM orders WHERE customer_id = c.id
-            AND status NOT IN ('cancelled', 'returned')) AS order_count
+    c.id AS customer_id,
+    c.name,
+    c.grade,
+    (SELECT COUNT(*) FROM orders WHERE customer_id = c.id
+    AND status NOT IN ('cancelled', 'returned')) AS order_count
     FROM customers AS c
     WHERE NOT EXISTS (
-        SELECT 1 FROM reviews WHERE customer_id = c.id
+    SELECT 1 FROM reviews WHERE customer_id = c.id
     )
     AND (
-        SELECT COUNT(*) FROM orders WHERE customer_id = c.id
-            AND status NOT IN ('cancelled', 'returned')
+    SELECT COUNT(*) FROM orders WHERE customer_id = c.id
+    AND status NOT IN ('cancelled', 'returned')
     ) >= 5
     ORDER BY order_count DESC
     LIMIT 20;
     ```
 
-    **결과 (예시):**
-
-| customer_id | name | grade | order_count |
-| ----------: | ---------- | ---------- | ----------: |
-| 27069 | 김예준 | VIP | 27 |
-| 31228 | 고영희 | GOLD | 22 |
-| 1342 | 노광수 | SILVER | 19 |
-| 1676 | 하서연 | BRONZE | 18 |
-| 15336 | 조영식 | GOLD | 18 |
-| 17111 | 나은서 | BRONZE | 17 |
-| 25454 | 김명숙 | BRONZE | 16 |
-| 28522 | 이민준 | SILVER | 16 |
-| ... | ... | ... | ... |
-
-
-### 연습 5
+### 문제 5
 `EXISTS`를 사용하여 모든 결제 수단(credit_card, bank_transfer, cash 등)으로 한 번 이상 결제한 적이 있는 고객을 찾으세요. `customer_id`, `name`을 반환하세요. 힌트: 결제 수단 종류 수와 해당 고객이 사용한 결제 수단 수를 비교하세요.
 
 ??? success "정답"
@@ -393,119 +341,74 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     SELECT c.id AS customer_id, c.name
     FROM customers AS c
     WHERE NOT EXISTS (
-        SELECT DISTINCT p2.method
-        FROM payments AS p2
-        WHERE p2.status = 'completed'
-
-        EXCEPT
-
-        SELECT p.method
-        FROM payments AS p
-        INNER JOIN orders AS o ON p.order_id = o.id
-        WHERE o.customer_id = c.id
-          AND p.status = 'completed'
+    SELECT DISTINCT p2.method
+    FROM payments AS p2
+    WHERE p2.status = 'completed'
+    
+    EXCEPT
+    
+    SELECT p.method
+    FROM payments AS p
+    INNER JOIN orders AS o ON p.order_id = o.id
+    WHERE o.customer_id = c.id
+    AND p.status = 'completed'
     )
     AND EXISTS (
-        SELECT 1
-        FROM orders AS o
-        WHERE o.customer_id = c.id
+    SELECT 1
+    FROM orders AS o
+    WHERE o.customer_id = c.id
     )
     ORDER BY c.name;
     ```
 
-    **결과 (예시):**
-
-| customer_id | name |
-| ----------: | ---------- |
-| 37494 | 강경수 |
-| 3645 | 강경숙 |
-| 1109 | 강경자 |
-| 9195 | 강경자 |
-| 15102 | 강경자 |
-| 49065 | 강광수 |
-| 2334 | 강도윤 |
-| 6680 | 강도윤 |
-| ... | ... |
-
-
-### 연습 6
+### 문제 6
 `EXISTS`와 집계 조건을 결합하여, 평균 리뷰 평점이 4.0 이상인 상품을 하나 이상 보유한 카테고리를 찾으세요. `category_name`, `product_count`를 반환하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        cat.name AS category_name,
-        COUNT(p.id) AS product_count
+    cat.name AS category_name,
+    COUNT(p.id) AS product_count
     FROM categories AS cat
     INNER JOIN products AS p ON p.category_id = cat.id
     WHERE p.is_active = 1
     GROUP BY cat.id, cat.name
     HAVING EXISTS (
-        SELECT 1
-        FROM products AS p2
-        INNER JOIN reviews AS r ON r.product_id = p2.id
-        WHERE p2.category_id = cat.id
-        GROUP BY p2.id
-        HAVING AVG(r.rating) >= 4.0
+    SELECT 1
+    FROM products AS p2
+    INNER JOIN reviews AS r ON r.product_id = p2.id
+    WHERE p2.category_id = cat.id
+    GROUP BY p2.id
+    HAVING AVG(r.rating) >= 4.0
     )
     ORDER BY category_name;
     ```
 
-    **결과 (예시):**
-
-| category_name | product_count |
-| ---------- | ----------: |
-| 2in1 | 45 |
-| AMD | 13 |
-| AMD | 57 |
-| AMD 소켓 | 73 |
-| DDR4 | 58 |
-| DDR5 | 82 |
-| HDD | 52 |
-| Intel 소켓 | 87 |
-| ... | ... |
-
-
-### 연습 7
+### 문제 7
 해당 고객이 아직 **구매하지 않은** 찜 목록 상품을 모두 찾으세요. `customer_name`, `product_name`, `created_at`(찜 등록 일시)을 반환하세요. `order_items`와 `orders`에서 `customer_id`와 `product_id`가 일치하는지 확인하는 상관 서브쿼리와 함께 `NOT EXISTS`를 사용하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        c.name  AS customer_name,
-        p.name  AS product_name,
-        w.created_at
+    c.name  AS customer_name,
+    p.name  AS product_name,
+    w.created_at
     FROM wishlists AS w
     INNER JOIN customers AS c ON w.customer_id = c.id
     INNER JOIN products  AS p ON w.product_id  = p.id
     WHERE NOT EXISTS (
-        SELECT 1
-        FROM order_items AS oi
-        INNER JOIN orders AS o ON oi.order_id = o.id
-        WHERE o.customer_id  = w.customer_id
-          AND oi.product_id  = w.product_id
-          AND o.status NOT IN ('cancelled', 'returned')
+    SELECT 1
+    FROM order_items AS oi
+    INNER JOIN orders AS o ON oi.order_id = o.id
+    WHERE o.customer_id  = w.customer_id
+    AND oi.product_id  = w.product_id
+    AND o.status NOT IN ('cancelled', 'returned')
     )
     ORDER BY w.created_at DESC
     LIMIT 20;
     ```
 
-    **결과 (예시):**
-
-| customer_name | product_name | created_at |
-| ---------- | ---------- | ---------- |
-| 류지원 | 레오폴드 FC750R PD 실버 | 2025-12-30 23:55:59 |
-| 박정남 | WD Blue SN5000 1TB 화이트 | 2025-12-30 23:45:03 |
-| 김선영 | ASUS ROG STRIX RX 7900 XTX 화이트 | 2025-12-30 23:10:26 |
-| 류지원 | SteelSeries Rival 3 Gen 2 | 2025-12-30 23:10:19 |
-| 신도현 | HP Color LaserJet Pro MFP M479fdw 화이트 | 2025-12-30 23:06:32 |
-| 구서연 | SteelSeries Rival 3 Gen 2 실버 | 2025-12-30 23:00:13 |
-| 류은경 | Fractal Design Terra | 2025-12-30 22:49:34 |
-| 김아름 | TP-Link Archer AX73 실버 | 2025-12-30 22:42:53 |
-| ... | ... | ... |
-
-
-### 연습 8
+### 문제 8
 `NOT EXISTS`를 사용하여 2024년에 주문한 모든 고객이 공통으로 구매한 상품을 찾으세요. 즉, 2024년에 주문한 고객 중 해당 상품을 구매하지 않은 고객이 한 명도 없는 상품입니다. `product_id`, `product_name`을 반환하세요.
 
 ??? success "정답"
@@ -513,117 +416,80 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     SELECT p.id AS product_id, p.name AS product_name
     FROM products AS p
     WHERE NOT EXISTS (
-        SELECT c.id
-        FROM customers AS c
-        WHERE EXISTS (
-            SELECT 1 FROM orders AS o
-            WHERE o.customer_id = c.id
-              AND o.ordered_at LIKE '2024%'
-              AND o.status NOT IN ('cancelled', 'returned')
-        )
-        AND NOT EXISTS (
-            SELECT 1
-            FROM order_items AS oi
-            INNER JOIN orders AS o ON oi.order_id = o.id
-            WHERE o.customer_id = c.id
-              AND oi.product_id = p.id
-              AND o.ordered_at LIKE '2024%'
-              AND o.status NOT IN ('cancelled', 'returned')
-        )
+    SELECT c.id
+    FROM customers AS c
+    WHERE EXISTS (
+    SELECT 1 FROM orders AS o
+    WHERE o.customer_id = c.id
+    AND o.ordered_at LIKE '2024%'
+    AND o.status NOT IN ('cancelled', 'returned')
+    )
+    AND NOT EXISTS (
+    SELECT 1
+    FROM order_items AS oi
+    INNER JOIN orders AS o ON oi.order_id = o.id
+    WHERE o.customer_id = c.id
+    AND oi.product_id = p.id
+    AND o.ordered_at LIKE '2024%'
+    AND o.status NOT IN ('cancelled', 'returned')
+    )
     )
     ORDER BY p.name;
     ```
 
-
-### 연습 9
+### 문제 9
 불만을 접수한 적 있고 반품 이력도 있는 고객을 찾으세요. `customer_id`, `name`, `grade`, `complaint_count`, `return_count`를 반환하세요. 필터링에는 `EXISTS`를 사용하고, 건수 집계에는 서브쿼리 집계 또는 JOIN을 사용하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        c.id    AS customer_id,
-        c.name,
-        c.grade,
-        (SELECT COUNT(*) FROM complaints WHERE customer_id = c.id) AS complaint_count,
-        (SELECT COUNT(*) FROM orders AS o
-                        INNER JOIN returns AS r ON r.order_id = o.id
-                        WHERE o.customer_id = c.id)               AS return_count
+    c.id    AS customer_id,
+    c.name,
+    c.grade,
+    (SELECT COUNT(*) FROM complaints WHERE customer_id = c.id) AS complaint_count,
+    (SELECT COUNT(*) FROM orders AS o
+    INNER JOIN returns AS r ON r.order_id = o.id
+    WHERE o.customer_id = c.id)               AS return_count
     FROM customers AS c
     WHERE EXISTS (
-        SELECT 1 FROM complaints WHERE customer_id = c.id
+    SELECT 1 FROM complaints WHERE customer_id = c.id
     )
     AND EXISTS (
-        SELECT 1
-        FROM orders AS o
-        INNER JOIN returns AS r ON r.order_id = o.id
-        WHERE o.customer_id = c.id
+    SELECT 1
+    FROM orders AS o
+    INNER JOIN returns AS r ON r.order_id = o.id
+    WHERE o.customer_id = c.id
     )
     ORDER BY complaint_count DESC;
     ```
 
-    **결과 (예시):**
-
-| customer_id | name | grade | complaint_count | return_count |
-| ----------: | ---------- | ---------- | ----------: | ----------: |
-| 226 | 박정수 | VIP | 54 | 20 |
-| 1000 | 이미정 | VIP | 48 | 17 |
-| 356 | 정유진 | VIP | 47 | 14 |
-| 549 | 이미정 | VIP | 44 | 12 |
-| 840 | 문영숙 | VIP | 44 | 13 |
-| 903 | 김상철 | VIP | 43 | 12 |
-| 98 | 이영자 | VIP | 40 | 26 |
-| 97 | 김병철 | VIP | 38 | 16 |
-| ... | ... | ... | ... | ... |
-
-
-### 연습 10
+### 문제 10
 `EXISTS`를 사용하여 최소 3개 이상의 서로 다른 카테고리 상품을 주문한 고객을 찾으세요. `customer_id`, `name`, `category_count`를 반환하고, `category_count` 내림차순으로 10행까지 정렬하세요.
 
 ??? success "정답"
     ```sql
     SELECT
-        c.id AS customer_id,
-        c.name,
-        (
-            SELECT COUNT(DISTINCT p.category_id)
-            FROM order_items AS oi
-            INNER JOIN orders AS o ON oi.order_id = o.id
-            INNER JOIN products AS p ON oi.product_id = p.id
-            WHERE o.customer_id = c.id
-        ) AS category_count
+    c.id AS customer_id,
+    c.name,
+    (
+    SELECT COUNT(DISTINCT p.category_id)
+    FROM order_items AS oi
+    INNER JOIN orders AS o ON oi.order_id = o.id
+    INNER JOIN products AS p ON oi.product_id = p.id
+    WHERE o.customer_id = c.id
+    ) AS category_count
     FROM customers AS c
     WHERE EXISTS (
-        SELECT 1
-        FROM order_items AS oi
-        INNER JOIN orders AS o ON oi.order_id = o.id
-        INNER JOIN products AS p ON oi.product_id = p.id
-        WHERE o.customer_id = c.id
-        GROUP BY o.customer_id
-        HAVING COUNT(DISTINCT p.category_id) >= 3
+    SELECT 1
+    FROM order_items AS oi
+    INNER JOIN orders AS o ON oi.order_id = o.id
+    INNER JOIN products AS p ON oi.product_id = p.id
+    WHERE o.customer_id = c.id
+    GROUP BY o.customer_id
+    HAVING COUNT(DISTINCT p.category_id) >= 3
     )
     ORDER BY category_count DESC
     LIMIT 10;
     ```
 
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [21강: SELF/CROSS JOIN](21-self-cross-join.md)으로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 다음 강의로 |
-| **절반 이하** | 이 강의를 다시 읽어보세요 |
-| **3개 이하** | [19강: CTE](19-cte.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| NOT EXISTS (안티 조인) | 1, 4, 7 |
-| EXISTS + 상관 서브쿼리 | 2, 5, 6 |
-| 상관 서브쿼리 (스칼라) | 3 |
-| NOT EXISTS (전체 부정) | 8 |
-| EXISTS + 다중 조건 | 9, 10 |
-
----
-다음: [21강: SELF JOIN과 CROSS JOIN](21-self-cross-join.md)
+<!-- END_LESSON_EXERCISES -->

@@ -1,0 +1,296 @@
+metadata:
+  id: lesson-20-exists
+  title: "EXISTS와 안티 패턴 — 레슨 복습"
+  title_en: "EXISTS and Anti-patterns — Lesson Review"
+  difficulty: advanced
+  lesson: "advanced/20-exists"
+  concepts: ['EXISTS', 'NOT EXISTS', '안티 조인']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/advanced"
+    filename: "lesson_20_exists_review.mp4"
+    fps: 15
+    intro_text: "20강 EXISTS와 안티 패턴 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "20강 EXISTS와 안티 패턴 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L20-01
+    level: 2
+    type: "SELECT"
+    question: |
+      `NOT EXISTS`로 안티 조인을 구현하여, 배송(shipping)이 생성되었지만 아직 배송 완료(delivered_at IS NULL)되지 않은 주문을 찾으세요. `order_number`, `ordered_at`, `status`, `carrier`, `shipped_at`을 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        o.order_number,
+        o.ordered_at,
+        o.status,
+        s.carrier,
+        s.shipped_at
+        FROM orders AS o
+        INNER JOIN shipping AS s ON s.order_id = o.id
+        WHERE NOT EXISTS (
+        SELECT 1
+        FROM shipping AS s2
+        WHERE s2.order_id = o.id
+        AND s2.delivered_at IS NOT NULL
+        )
+        ORDER BY s.shipped_at DESC
+        LIMIT 20;
+    tags: []
+
+  - id: L20-02
+    level: 2
+    type: "SELECT"
+    question: |
+      `EXISTS`와 상관 서브쿼리를 사용하여 같은 상품에 대해 리뷰 평점 5점과 1점이 모두 존재하는 상품을 찾으세요. `product_id`, `product_name`, `price`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        p.id    AS product_id,
+        p.name  AS product_name,
+        p.price
+        FROM products AS p
+        WHERE EXISTS (
+        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 5
+        )
+        AND EXISTS (
+        SELECT 1 FROM reviews WHERE product_id = p.id AND rating = 1
+        )
+        ORDER BY p.name;
+    tags: []
+
+  - id: L20-03
+    level: 2
+    type: "SELECT"
+    question: |
+      상관 서브쿼리를 사용하여 각 직원이 처리한 주문 중 가장 금액이 큰 주문의 정보를 함께 표시하세요. `staff_name`, `department`, `max_order_amount`, `max_order_number`를 반환하세요. `max_order_number`는 해당 금액과 일치하는 주문 번호입니다.
+    reference_sql:
+      common: |
+        SELECT
+        s.name AS staff_name,
+        s.department,
+        (SELECT MAX(o.total_amount) FROM orders AS o WHERE o.staff_id = s.id) AS max_order_amount,
+        (SELECT o.order_number FROM orders AS o
+        WHERE o.staff_id = s.id
+        ORDER BY o.total_amount DESC
+        LIMIT 1) AS max_order_number
+        FROM staff AS s
+        WHERE EXISTS (
+        SELECT 1 FROM orders WHERE staff_id = s.id
+        )
+        ORDER BY max_order_amount DESC
+        LIMIT 15;
+    tags: []
+
+  - id: L20-04
+    level: 2
+    type: "SELECT"
+    question: |
+      `NOT EXISTS`를 사용하여 한 번도 리뷰를 작성하지 않은 고객 중 5건 이상 주문한 고객을 찾으세요. `customer_id`, `name`, `grade`, `order_count`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.id AS customer_id,
+        c.name,
+        c.grade,
+        (SELECT COUNT(*) FROM orders WHERE customer_id = c.id
+        AND status NOT IN ('cancelled', 'returned')) AS order_count
+        FROM customers AS c
+        WHERE NOT EXISTS (
+        SELECT 1 FROM reviews WHERE customer_id = c.id
+        )
+        AND (
+        SELECT COUNT(*) FROM orders WHERE customer_id = c.id
+        AND status NOT IN ('cancelled', 'returned')
+        ) >= 5
+        ORDER BY order_count DESC
+        LIMIT 20;
+    tags: []
+
+  - id: L20-05
+    level: 2
+    type: "SELECT"
+    question: |
+      `EXISTS`를 사용하여 모든 결제 수단(credit_card, bank_transfer, cash 등)으로 한 번 이상 결제한 적이 있는 고객을 찾으세요. `customer_id`, `name`을 반환하세요. 힌트: 결제 수단 종류 수와 해당 고객이 사용한 결제 수단 수를 비교하세요.
+    reference_sql:
+      common: |
+        SELECT c.id AS customer_id, c.name
+        FROM customers AS c
+        WHERE NOT EXISTS (
+        SELECT DISTINCT p2.method
+        FROM payments AS p2
+        WHERE p2.status = 'completed'
+        
+        EXCEPT
+        
+        SELECT p.method
+        FROM payments AS p
+        INNER JOIN orders AS o ON p.order_id = o.id
+        WHERE o.customer_id = c.id
+        AND p.status = 'completed'
+        )
+        AND EXISTS (
+        SELECT 1
+        FROM orders AS o
+        WHERE o.customer_id = c.id
+        )
+        ORDER BY c.name;
+    tags: []
+
+  - id: L20-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `EXISTS`와 집계 조건을 결합하여, 평균 리뷰 평점이 4.0 이상인 상품을 하나 이상 보유한 카테고리를 찾으세요. `category_name`, `product_count`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        cat.name AS category_name,
+        COUNT(p.id) AS product_count
+        FROM categories AS cat
+        INNER JOIN products AS p ON p.category_id = cat.id
+        WHERE p.is_active = 1
+        GROUP BY cat.id, cat.name
+        HAVING EXISTS (
+        SELECT 1
+        FROM products AS p2
+        INNER JOIN reviews AS r ON r.product_id = p2.id
+        WHERE p2.category_id = cat.id
+        GROUP BY p2.id
+        HAVING AVG(r.rating) >= 4.0
+        )
+        ORDER BY category_name;
+    tags: []
+
+  - id: L20-07
+    level: 2
+    type: "SELECT"
+    question: |
+      해당 고객이 아직 **구매하지 않은** 찜 목록 상품을 모두 찾으세요. `customer_name`, `product_name`, `created_at`(찜 등록 일시)을 반환하세요. `order_items`와 `orders`에서 `customer_id`와 `product_id`가 일치하는지 확인하는 상관 서브쿼리와 함께 `NOT EXISTS`를 사용하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.name  AS customer_name,
+        p.name  AS product_name,
+        w.created_at
+        FROM wishlists AS w
+        INNER JOIN customers AS c ON w.customer_id = c.id
+        INNER JOIN products  AS p ON w.product_id  = p.id
+        WHERE NOT EXISTS (
+        SELECT 1
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        WHERE o.customer_id  = w.customer_id
+        AND oi.product_id  = w.product_id
+        AND o.status NOT IN ('cancelled', 'returned')
+        )
+        ORDER BY w.created_at DESC
+        LIMIT 20;
+    tags: []
+
+  - id: L20-08
+    level: 2
+    type: "SELECT"
+    question: |
+      `NOT EXISTS`를 사용하여 2024년에 주문한 모든 고객이 공통으로 구매한 상품을 찾으세요. 즉, 2024년에 주문한 고객 중 해당 상품을 구매하지 않은 고객이 한 명도 없는 상품입니다. `product_id`, `product_name`을 반환하세요.
+    reference_sql:
+      common: |
+        SELECT p.id AS product_id, p.name AS product_name
+        FROM products AS p
+        WHERE NOT EXISTS (
+        SELECT c.id
+        FROM customers AS c
+        WHERE EXISTS (
+        SELECT 1 FROM orders AS o
+        WHERE o.customer_id = c.id
+        AND o.ordered_at LIKE '2024%'
+        AND o.status NOT IN ('cancelled', 'returned')
+        )
+        AND NOT EXISTS (
+        SELECT 1
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        WHERE o.customer_id = c.id
+        AND oi.product_id = p.id
+        AND o.ordered_at LIKE '2024%'
+        AND o.status NOT IN ('cancelled', 'returned')
+        )
+        )
+        ORDER BY p.name;
+    tags: []
+
+  - id: L20-09
+    level: 2
+    type: "SELECT"
+    question: |
+      불만을 접수한 적 있고 반품 이력도 있는 고객을 찾으세요. `customer_id`, `name`, `grade`, `complaint_count`, `return_count`를 반환하세요. 필터링에는 `EXISTS`를 사용하고, 건수 집계에는 서브쿼리 집계 또는 JOIN을 사용하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.id    AS customer_id,
+        c.name,
+        c.grade,
+        (SELECT COUNT(*) FROM complaints WHERE customer_id = c.id) AS complaint_count,
+        (SELECT COUNT(*) FROM orders AS o
+        INNER JOIN returns AS r ON r.order_id = o.id
+        WHERE o.customer_id = c.id)               AS return_count
+        FROM customers AS c
+        WHERE EXISTS (
+        SELECT 1 FROM complaints WHERE customer_id = c.id
+        )
+        AND EXISTS (
+        SELECT 1
+        FROM orders AS o
+        INNER JOIN returns AS r ON r.order_id = o.id
+        WHERE o.customer_id = c.id
+        )
+        ORDER BY complaint_count DESC;
+    tags: []
+
+  - id: L20-10
+    level: 2
+    type: "SELECT"
+    question: |
+      `EXISTS`를 사용하여 최소 3개 이상의 서로 다른 카테고리 상품을 주문한 고객을 찾으세요. `customer_id`, `name`, `category_count`를 반환하고, `category_count` 내림차순으로 10행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        c.id AS customer_id,
+        c.name,
+        (
+        SELECT COUNT(DISTINCT p.category_id)
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        WHERE o.customer_id = c.id
+        ) AS category_count
+        FROM customers AS c
+        WHERE EXISTS (
+        SELECT 1
+        FROM order_items AS oi
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        INNER JOIN products AS p ON oi.product_id = p.id
+        WHERE o.customer_id = c.id
+        GROUP BY o.customer_id
+        HAVING COUNT(DISTINCT p.category_id) >= 3
+        )
+        ORDER BY category_count DESC
+        LIMIT 10;
+    tags: []

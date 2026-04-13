@@ -1,0 +1,197 @@
+metadata:
+  id: lesson-13-utility-functions
+  title: "유틸리티 함수 — 레슨 복습"
+  title_en: "Utility Functions — Lesson Review"
+  difficulty: intermediate
+  lesson: "intermediate/13-utility-functions"
+  concepts: ['CAST', 'TYPEOF', 'ROUND', 'ABS', 'RANDOM']
+  estimated_minutes: 20
+
+  video:
+    output_dir: "lectures/intermediate"
+    filename: "lesson_13_utility_functions_review.mp4"
+    fps: 15
+    intro_text: "13강 유틸리티 함수 — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  tts:
+    enabled: false
+    provider: "clova"
+    voice: "nara"
+    speed: 1.0
+    intro_script: "13강 유틸리티 함수 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+
+problems:
+  - id: L13-01
+    level: 2
+    type: "SELECT"
+    question: |
+      활성 상품의 평균 가격, 최대 가격, 최소 가격을 각각 천의 자리에서 반올림하여 표시하세요. `avg_price`, `max_price`, `min_price`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        ROUND(AVG(price), -3) AS avg_price,
+        ROUND(MAX(price), -3) AS max_price,
+        ROUND(MIN(price), -3) AS min_price
+        FROM products
+        WHERE is_active = 1;
+    tags: []
+
+  - id: L13-02
+    level: 2
+    type: "SELECT"
+    question: |
+      상품의 판매가(`price`)와 원가(`cost_price`)의 차이(마진)를 절댓값으로 구하세요. `name`, `price`, `cost_price`, `margin`을 반환하고, 마진이 큰 순으로 10행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        price,
+        cost_price,
+        ABS(price - cost_price) AS margin
+        FROM products
+        WHERE is_active = 1
+        ORDER BY margin DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L13-03
+    level: 2
+    type: "SELECT"
+    question: |
+      홀수 ID 고객만 추출하여 `id`, `name`, `grade`를 반환하세요. 활성 고객만 대상으로 하고, 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT id, name, grade
+        FROM customers
+        WHERE id % 2 = 1
+        AND is_active = 1
+        LIMIT 10;
+    tags: []
+
+  - id: L13-04
+    level: 2
+    type: "SELECT"
+    question: |
+      활성 상품 중 랜덤으로 3개를 추출하여 `name`과 `price`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        WHERE is_active = 1
+        ORDER BY RANDOM()
+        LIMIT 3;
+    tags: []
+
+  - id: L13-05
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 번호(`order_number`)에서 마지막 5자리 일련번호를 정수로 변환하고, 주문 금액을 문자열로 변환하여 `'₩'`를 붙이세요. `order_number`, `seq_no`(정수), `amount_display`(문자열)를 반환하고 5행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        order_number,
+        CAST(SUBSTR(order_number, -5) AS INTEGER) AS seq_no,
+        '₩' || CAST(total_amount AS TEXT)         AS amount_display
+        FROM orders
+        LIMIT 5;
+    tags: []
+
+  - id: L13-06
+    level: 2
+    type: "SELECT"
+    question: |
+      전체 주문 대비 취소율을 계산하세요. 정수 나눗셈 함정을 피하여 소수점 1자리까지 표시합니다. `total_orders`, `cancelled_orders`, `cancel_rate_pct`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        COUNT(*) AS total_orders,
+        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled_orders,
+        ROUND(
+        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) * 100.0 / COUNT(*),
+        1
+        ) AS cancel_rate_pct
+        FROM orders;
+    tags: []
+
+  - id: L13-07
+    level: 2
+    type: "SELECT"
+    question: |
+      카테고리별 활성 상품 비율을 구하되, 비활성 상품이 0개인 카테고리에서 0으로 나누기 오류가 발생하지 않도록 `NULLIF`를 사용하세요. `category_id`, `active_count`, `inactive_count`, `ratio`를 반환하세요.
+    reference_sql:
+      common: |
+        SELECT
+        category_id,
+        SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) AS active_count,
+        SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END) AS inactive_count,
+        ROUND(
+        SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) * 1.0
+        / NULLIF(SUM(CASE WHEN is_active = 0 THEN 1 ELSE 0 END), 0),
+        2
+        ) AS ratio
+        FROM products
+        GROUP BY category_id;
+    tags: []
+
+  - id: L13-08
+    level: 2
+    type: "SELECT"
+    question: |
+      상품 가격을 100만 원 이상이면 `'고가'`, 아니면 `'일반'`으로 분류하세요. `IIF`(SQLite) 또는 `IF`(MySQL)를 사용합니다. `name`, `price`, `tier`를 반환하고, 가격 내림차순으로 10행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        price,
+        IIF(price >= 1000000, '고가', '일반') AS tier
+        FROM products
+        WHERE is_active = 1
+        ORDER BY price DESC
+        LIMIT 10;
+    tags: []
+
+  - id: L13-09
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 금액이 50만 원 미만이면 50만 원으로, 500만 원 초과이면 500만 원으로 제한(capping)하세요. `order_number`, `total_amount`, `capped_amount`를 반환하고, 10행으로 제한하세요.
+    reference_sql:
+      common: |
+        SELECT
+        order_number,
+        total_amount,
+        MIN(MAX(total_amount, 500000), 5000000) AS capped_amount
+        FROM orders
+        LIMIT 10;
+    tags: []
+
+  - id: L13-10
+    level: 2
+    type: "SELECT"
+    question: |
+      상품별 마진율(`(price - cost_price) / price * 100`)을 구하되, 가격이 0인 상품에서 오류가 발생하지 않도록 처리하세요. `name`, `price`, `cost_price`, `margin_pct`(소수점 1자리)를 반환하고, 마진율이 높은 순으로 10행까지 정렬하세요.
+    reference_sql:
+      common: |
+        SELECT
+        name,
+        price,
+        cost_price,
+        ROUND(
+        (price - cost_price) * 100.0 / NULLIF(price, 0),
+        1
+        ) AS margin_pct
+        FROM products
+        WHERE is_active = 1
+        ORDER BY margin_pct DESC
+        LIMIT 10;
+    tags: []
