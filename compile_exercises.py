@@ -27,9 +27,15 @@ import yaml
 
 
 EXERCISES_DIR = Path("exercises")
+LECTURES_DIR = Path("exercises/lectures")
 DOCS_KO_DIR = Path("docs/ko/exercises")
 DOCS_EN_DIR = Path("docs/en/exercises")
+DOCS_KO_LESSONS = Path("docs/ko")
 OUTPUT_DB = Path("output/exercise.db")
+
+# 강의 MD 플레이스홀더
+LESSON_BEGIN = "<!-- BEGIN_LESSON_EXERCISES -->"
+LESSON_END = "<!-- END_LESSON_EXERCISES -->"
 
 
 def load_yaml(path: Path) -> dict:
@@ -336,6 +342,161 @@ def _indent(sql: str, prefix: str = "    ") -> str:
     return f"\n{prefix}".join(lines)
 
 
+def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -> dict:
+    """Compile a lesson YAML and inject exercises into the lesson MD file."""
+    data = load_yaml(yaml_path)
+    meta = data.get("metadata", {})
+    exercise_id = meta["id"]
+    lesson_path = meta.get("lesson", "")  # e.g. "beginner/01-select"
+
+    title_safe = meta.get('title', '').encode('ascii', 'replace').decode('ascii')
+    print(f"  [{exercise_id}] {title_safe} -> {lesson_path}")
+
+    # Insert into exercise.db (same as regular exercises)
+    conn_db.execute(
+        "INSERT INTO exercise_sets (id, title, title_en, difficulty, concepts, prerequisites, estimated_minutes, sort_order) VALUES (?,?,?,?,?,?,?,?)",
+        (
+            exercise_id,
+            meta.get("title", ""),
+            meta.get("title_en", ""),
+            meta.get("difficulty", "beginner"),
+            json.dumps(meta.get("concepts", []), ensure_ascii=False),
+            json.dumps(meta.get("prerequisites", []), ensure_ascii=False),
+            meta.get("estimated_minutes"),
+            sort_base,
+        ),
+    )
+
+    problems = data.get("problems", [])
+
+    # Generate exercise markdown block
+    md_lines = []
+    md_lines.append(LESSON_BEGIN)
+    md_lines.append("")
+    md_lines.append('!!! note "레슨 복습 문제"')
+    md_lines.append('    이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. '
+                     '여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.')
+    md_lines.append("")
+
+    for i, prob in enumerate(problems):
+        pid = prob["id"]
+        sort_order = sort_base * 100 + i + 1
+
+        ref_sql = prob.get("reference_sql", {})
+        if isinstance(ref_sql, str):
+            ref_common = ref_sql
+            ref_sqlite = ref_mysql = ref_pg = None
+        else:
+            ref_common = ref_sql.get("common") or ref_sql.get("all")
+            ref_sqlite = ref_sql.get("sqlite")
+            ref_mysql = ref_sql.get("mysql")
+            ref_pg = ref_sql.get("postgresql")
+
+        supported = prob.get("supported_db", ["sqlite", "mysql", "postgresql"])
+        exec_sql = ref_sqlite or ref_common
+        exp_cols, exp_rows, exp_hash = None, None, None
+        if conn_tutorial and exec_sql:
+            exp_cols, exp_rows, exp_hash = compute_expected(conn_tutorial, exec_sql.strip())
+
+        hints = prob.get("hints", [])
+        hints_json = json.dumps(hints, ensure_ascii=False) if hints else None
+
+        validation = prob.get("validation", {"type": "result_match"})
+        prob_level = prob.get("level", meta.get("default_level", 3))
+        prob_type = prob.get("type", meta.get("default_type", "SELECT"))
+        prob_tags = prob.get("tags", [])
+
+        conn_db.execute(
+            """INSERT INTO problems (id, exercise_id, question, question_en,
+               level, type,
+               reference_sql_common, reference_sql_sqlite, reference_sql_mysql, reference_sql_postgresql,
+               supported_db, validation_json, hints_json, rubric, rubric_en,
+               max_score, tags_json, sort_order, expected_columns, expected_row_count, expected_hash)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            (
+                pid, exercise_id,
+                prob.get("question", ""),
+                prob.get("question_en", ""),
+                prob_level, prob_type,
+                ref_common, ref_sqlite, ref_mysql, ref_pg,
+                json.dumps(supported),
+                json.dumps(validation, ensure_ascii=False),
+                hints_json,
+                _to_str(prob.get("rubric", "")),
+                _to_str(prob.get("rubric_en", "")),
+                prob.get("max_score", 10),
+                json.dumps(prob_tags, ensure_ascii=False),
+                sort_order,
+                exp_cols, exp_rows, exp_hash,
+            ),
+        )
+
+        for tag in prob_tags:
+            conn_db.execute(
+                "INSERT OR IGNORE INTO problem_tags (problem_id, tag) VALUES (?,?)",
+                (pid, tag),
+            )
+
+        # Markdown block
+        num = i + 1
+        body = prob.get("question", "").strip()
+        answer_sql = ref_common or ref_sqlite or ""
+
+        md_lines.append(f"### 문제 {num}")
+        md_lines.append(body)
+        md_lines.append("")
+        md_lines.append(f'??? success "정답"')
+        md_lines.append(f"    ```sql")
+        for sql_line in answer_sql.strip().split("\n"):
+            md_lines.append(f"    {sql_line}")
+        md_lines.append(f"    ```")
+        md_lines.append("")
+
+    md_lines.append(LESSON_END)
+
+    # Inject into lesson MD if it has placeholder, or replace existing exercises
+    md_block = "\n".join(md_lines)
+
+    if lesson_path:
+        lesson_md_path = DOCS_KO_LESSONS / f"{lesson_path}.md"
+        if lesson_md_path.exists():
+            content = lesson_md_path.read_text(encoding="utf-8")
+
+            if LESSON_BEGIN in content:
+                # Replace between placeholders
+                before = content[:content.index(LESSON_BEGIN)]
+                after_marker = content.find(LESSON_END)
+                if after_marker >= 0:
+                    after = content[after_marker + len(LESSON_END):]
+                else:
+                    after = ""
+                new_content = before + md_block + after
+            else:
+                # Find existing "!!! note "레슨 복습 문제" and replace from there to end
+                marker = '!!! note "레슨 복습 문제"'
+                idx = content.find(marker)
+                if idx >= 0:
+                    # Go back to find the --- before the note
+                    before_idx = content.rfind("---", 0, idx)
+                    if before_idx >= 0:
+                        before = content[:before_idx + 3] + "\n\n"
+                    else:
+                        before = content[:idx]
+                    new_content = before + md_block + "\n"
+                else:
+                    # Append at end
+                    new_content = content.rstrip() + "\n\n---\n\n" + md_block + "\n"
+
+            lesson_md_path.write_text(new_content, encoding="utf-8")
+            print(f"    → {lesson_md_path} 갱신 ({len(problems)}문제)")
+
+    return {
+        "exercise_id": exercise_id,
+        "problem_count": len(problems),
+        "lesson_path": lesson_path,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Compile exercise YAML to mkdocs + exercise.db")
     parser.add_argument("--tutorial-db", type=str, default="output/ecommerce-ko.db",
@@ -346,11 +507,15 @@ def main():
     parser.add_argument("--file", type=str, help="Compile a single YAML file")
     args = parser.parse_args()
 
-    # Find YAML files
+    # Find YAML files (exclude lectures — processed separately)
     if args.file:
         yaml_files = [Path(args.file)]
     else:
-        yaml_files = sorted(EXERCISES_DIR.rglob("*.yaml"))
+        yaml_files = sorted(
+            f for f in EXERCISES_DIR.rglob("*.yaml")
+            if "lectures" not in f.parts
+        )
+    lecture_files = sorted(LECTURES_DIR.glob("*.yaml")) if LECTURES_DIR.exists() else []
 
     if not yaml_files:
         print("No YAML exercise files found in exercises/")
@@ -402,12 +567,28 @@ def main():
             import traceback
             traceback.print_exc()
 
+    # Compile lesson YAML files
+    lesson_problems = 0
+    if lecture_files and not args.file:
+        print(f"\n=== Lesson exercises ({len(lecture_files)} files) ===")
+        for j, lf in enumerate(lecture_files):
+            try:
+                result = compile_lesson_yaml(lf, conn_db, conn_tutorial,
+                                              sort_base=len(yaml_files) + j + 1)
+                lesson_problems += result["problem_count"]
+            except Exception as e:
+                print(f"  ERR {lf}: {e}")
+                import traceback
+                traceback.print_exc()
+
     conn_db.commit()
     conn_db.close()
     if conn_tutorial:
         conn_tutorial.close()
 
-    print(f"\nCompiled {len(yaml_files)} files, {total_problems} problems")
+    print(f"\nCompiled {len(yaml_files)} exercise files, {total_problems} problems")
+    if lecture_files:
+        print(f"  + {len(lecture_files)} lesson files, {lesson_problems} problems")
     print(f"  exercise.db: {args.output_db}")
     print(f"  mkdocs (ko): {DOCS_KO_DIR}/")
     print(f"  mkdocs (en): {DOCS_EN_DIR}/")

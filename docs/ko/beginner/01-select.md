@@ -285,6 +285,8 @@ FROM customers;
 
 ---
 
+<!-- BEGIN_LESSON_EXERCISES -->
+
 !!! note "레슨 복습 문제"
     이 레슨에서 배운 개념을 바로 확인하는 간단한 문제입니다. 여러 개념을 종합하는 실전 연습은 [연습 문제](../exercises/index.md) 섹션을 참고하세요.
 
@@ -296,11 +298,6 @@ FROM customers;
     SELECT * FROM categories;
     ```
 
-    | id | parent_id | name | slug | depth | sort_order | is_active | created_at | updated_at |
-    | -: | --------: | ---- | ---- | ----: | ---------: | --------: | ---------- | ---------- |
-    | 1 | (NULL) | 데스크톱 PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
-    | ... | ... | ... | ... | ... | ... | ... | ... | ... |
-
 ### 문제 2
 `products` 테이블에서 `name`과 `price`만 조회하세요.
 
@@ -309,24 +306,13 @@ FROM customers;
     SELECT name, price FROM products;
     ```
 
-    | name | price |
-    | ---- | ----: |
-    | Razer Blade 18 블랙 | 2987500 |
-    | ... | ... |
-
 ### 문제 3
 `staff` 테이블에서 `department`, `role`, `name` 순서로 조회하세요.
 
 ??? success "정답"
     ```sql
-    SELECT department, role, name
-    FROM staff;
+    SELECT department, role, name FROM staff;
     ```
-
-    | department | role | name |
-    | ---------- | ---- | ---- |
-    | 경영 | admin | 한민재 |
-    | ... | ... | ... |
 
 ### 문제 4
 `customers` 테이블에서 `name`, `email`, `grade`를 조회하되 별칭을 `고객명`, `이메일`, `등급`으로 붙이세요.
@@ -340,27 +326,14 @@ FROM customers;
     FROM customers;
     ```
 
-    | 고객명 | 이메일 | 등급 |
-    | ----- | ----- | --- |
-    | 정준호 | jjh0001@testmail.kr | SILVER |
-    | ... | ... | ... |
-
 ### 문제 5
 `products` 테이블에서 `name`, `price`를 조회하고, 10% 할인된 가격을 `할인가`라는 별칭으로 추가하세요.
 
 ??? success "정답"
     ```sql
-    SELECT
-        name,
-        price,
-        price * 0.9 AS 할인가
+    SELECT name, price, price * 0.9 AS 할인가
     FROM products;
     ```
-
-    | name | price | 할인가 |
-    | ---- | ----: | ----: |
-    | Razer Blade 18 블랙 | 2987500 | 2688750 |
-    | ... | ... | ... |
 
 ### 문제 6
 `products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)과 마진율(`(price - cost_price) * 100 / price`)을 별칭 `마진`, `마진율`로 추가하세요.
@@ -376,110 +349,40 @@ FROM customers;
     FROM products;
     ```
 
-    | name | price | cost_price | 마진 | 마진율 |
-    | ---- | ----: | ---------: | ---: | ----: |
-    | Razer Blade 18 블랙 | 2987500 | 3086700 | -99200 | -3 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 1360300 | 383700 | 22 |
-    | ... | ... | ... | ... | ... |
-
 ### 문제 7
 `orders` 테이블에서 고유한 `status` 값을 조회하세요.
 
 ??? success "정답"
     ```sql
-    SELECT DISTINCT status
-    FROM orders;
+    SELECT DISTINCT status FROM orders;
     ```
-
-    | status |
-    | ------ |
-    | cancelled |
-    | confirmed |
-    | delivered |
-    | paid |
-    | pending |
-    | ... |
 
 ### 문제 8
 `payments` 테이블에서 고유한 `method` 값을 조회하여, 테크샵이 지원하는 결제 수단을 확인하세요.
 
 ??? success "정답"
     ```sql
-    SELECT DISTINCT method
-    FROM payments;
+    SELECT DISTINCT method FROM payments;
     ```
-
-    | method |
-    | ------ |
-    | card |
-    | point |
-    | kakao_pay |
-    | bank_transfer |
-    | naver_pay |
-    | virtual_account |
 
 ### 문제 9
 `products` 테이블에서 `name`, `price`, `stock_qty`를 조회하고, `price * stock_qty`를 `재고가치`라는 별칭으로 추가하세요.
 
 ??? success "정답"
     ```sql
-    SELECT
-        name,
-        price,
-        stock_qty,
-        price * stock_qty AS 재고가치
+    SELECT name, price, stock_qty, price * stock_qty AS 재고가치
     FROM products;
     ```
 
-    | name | price | stock_qty | 재고가치 |
-    | ---- | ----: | --------: | ------: |
-    | Razer Blade 18 블랙 | 2987500 | 107 | 319662500 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | 1744000 | 499 | 870256000 |
-    | ... | ... | ... | ... |
-
 ### 문제 10
-`customers` 테이블에서 고유한 `grade`와 `gender` 조합을 조회하세요. 몇 가지 조합이 나오나요?
+`reviews` 테이블에서 고유한 `(product_id, rating)` 조합을 조회하고, `rating` 내림차순으로 정렬한 뒤 20행만 보세요.
 
 ??? success "정답"
     ```sql
-    SELECT DISTINCT grade, gender
-    FROM customers;
+    SELECT DISTINCT product_id, rating
+    FROM reviews
+    ORDER BY rating DESC
+    LIMIT 20;
     ```
 
-    | grade | gender |
-    | ----- | ------ |
-    | BRONZE | M |
-    | BRONZE | F |
-    | BRONZE | (NULL) |
-    | SILVER | M |
-    | SILVER | F |
-    | SILVER | (NULL) |
-    | GOLD | M |
-    | GOLD | F |
-    | GOLD | (NULL) |
-    | VIP | M |
-    | VIP | F |
-    | VIP | (NULL) |
-
-    4등급 × 3성별(M, F, NULL) = **12가지** 조합입니다.
-
-### 채점 가이드
-
-| 점수 | 다음 단계 |
-|:----:|----------|
-| **9~10개** | [2강: WHERE로 필터링](02-where.md)으로 이동 |
-| **7~8개** | 틀린 문제 해설을 복습한 뒤 2강으로 |
-| **4~6개** | 이 강의를 다시 읽어보세요 |
-| **0~3개** | [0강](00-introduction.md)부터 다시 시작하세요 |
-
-**문제별 영역:**
-
-| 영역 | 해당 문제 |
-|------|:--------:|
-| SELECT * / 특정 칼럼 | 1, 2, 3 |
-| AS (별칭) | 4, 5, 6 |
-| DISTINCT | 7, 8, 10 |
-| 산술 연산 | 5, 6, 9 |
-
----
-다음: [2강: WHERE로 필터링](02-where.md)
+<!-- END_LESSON_EXERCISES -->

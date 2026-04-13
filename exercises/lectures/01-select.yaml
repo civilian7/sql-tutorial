@@ -1,0 +1,176 @@
+metadata:
+  id: lesson-01-select
+  title: "SELECT 기초 — 레슨 복습"
+  title_en: "SELECT Basics — Lesson Review"
+  difficulty: beginner
+  lesson: "beginner/01-select"
+  concepts: [SELECT, "SELECT *", AS, DISTINCT, 산술 연산]
+  estimated_minutes: 10
+
+  # 동영상 생성 설정
+  video:
+    output_dir: "lectures/beginner"
+    filename: "lesson_01_select_review.mp4"
+    fps: 15
+    intro_text: "1강 SELECT — 복습 문제"
+    intro_effect: "fadeIn"
+    intro_duration_ms: 3000
+    question_effect: "slideUp"
+    question_duration_ms: 3000
+    answer_delay_ms: 2000
+    result_delay_ms: 3000
+    outro_text: "수고하셨습니다!"
+    outro_effect: "fadeOut"
+
+  # TTS 오디오 더빙 설정 (향후 구현)
+  tts:
+    enabled: false
+    provider: "clova"          # clova | google | azure
+    voice: "nara"              # 화자
+    speed: 1.0
+    intro_script: "1강 SELECT 복습 문제입니다."
+    outro_script: "수고하셨습니다. 다음 강의에서 만나요."
+    # 문제별 스크립트는 question 필드를 자동 사용
+    # 정답 시: "정답은 다음과 같습니다" + reference_sql 읽기 (선택)
+
+problems:
+  - id: L01-01
+    level: 1
+    type: "SELECT"
+    question: |
+      `categories` 테이블의 모든 칼럼을 조회하세요.
+    question_en: |
+      Retrieve all columns from the `categories` table.
+    reference_sql:
+      common: |
+        SELECT * FROM categories;
+    hints:
+      - ko: "SELECT *를 사용하면 모든 칼럼을 한꺼번에 조회할 수 있습니다"
+        en: "Use SELECT * to retrieve all columns at once"
+    tags: [SELECT, "*", categories]
+
+  - id: L01-02
+    level: 1
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `name`과 `price`만 조회하세요.
+    question_en: |
+      Retrieve only `name` and `price` from the `products` table.
+    reference_sql:
+      common: |
+        SELECT name, price FROM products;
+    tags: [SELECT, products]
+
+  - id: L01-03
+    level: 1
+    type: "SELECT"
+    question: |
+      `staff` 테이블에서 `department`, `role`, `name` 순서로 조회하세요.
+    question_en: |
+      Retrieve `department`, `role`, `name` from the `staff` table in that order.
+    reference_sql:
+      common: |
+        SELECT department, role, name FROM staff;
+    tags: [SELECT, staff]
+
+  - id: L01-04
+    level: 2
+    type: "SELECT"
+    question: |
+      `customers` 테이블에서 `name`, `email`, `grade`를 조회하되 별칭을 `고객명`, `이메일`, `등급`으로 붙이세요.
+    question_en: |
+      Retrieve `name`, `email`, `grade` from `customers` with aliases `고객명`, `이메일`, `등급`.
+    reference_sql:
+      common: |
+        SELECT
+            name  AS 고객명,
+            email AS 이메일,
+            grade AS 등급
+        FROM customers;
+    hints:
+      - ko: "AS 키워드로 칼럼 별칭을 지정합니다"
+        en: "Use the AS keyword to set column aliases"
+    tags: [SELECT, AS, customers]
+
+  - id: L01-05
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `name`, `price`를 조회하고, 10% 할인된 가격을 `할인가`라는 별칭으로 추가하세요.
+    question_en: |
+      Retrieve `name`, `price` from `products` and add a 10% discounted price as `할인가`.
+    reference_sql:
+      common: |
+        SELECT name, price, price * 0.9 AS 할인가
+        FROM products;
+    tags: [SELECT, AS, 산술연산, products]
+
+  - id: L01-06
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)과 마진율(`(price - cost_price) * 100 / price`)을 별칭 `마진`, `마진율`로 추가하세요.
+    question_en: |
+      Retrieve `name`, `price`, `cost_price` from `products` and add margin and margin rate.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            price,
+            cost_price,
+            price - cost_price                  AS 마진,
+            (price - cost_price) * 100 / price  AS 마진율
+        FROM products;
+    tags: [SELECT, AS, 산술연산, products]
+
+  - id: L01-07
+    level: 1
+    type: "SELECT"
+    question: |
+      `orders` 테이블에서 고유한 `status` 값을 조회하세요.
+    question_en: |
+      Retrieve distinct `status` values from the `orders` table.
+    reference_sql:
+      common: |
+        SELECT DISTINCT status FROM orders;
+    tags: [SELECT, DISTINCT, orders]
+
+  - id: L01-08
+    level: 1
+    type: "SELECT"
+    question: |
+      `payments` 테이블에서 고유한 `method` 값을 조회하여, 테크샵이 지원하는 결제 수단을 확인하세요.
+    question_en: |
+      Retrieve distinct `method` values from `payments` to check supported payment methods.
+    reference_sql:
+      common: |
+        SELECT DISTINCT method FROM payments;
+    tags: [SELECT, DISTINCT, payments]
+
+  - id: L01-09
+    level: 2
+    type: "SELECT"
+    question: |
+      `products` 테이블에서 `name`, `price`, `stock_qty`를 조회하고, `price * stock_qty`를 `재고가치`라는 별칭으로 추가하세요.
+    question_en: |
+      Retrieve `name`, `price`, `stock_qty` from `products` and add `price * stock_qty` as `재고가치`.
+    reference_sql:
+      common: |
+        SELECT name, price, stock_qty, price * stock_qty AS 재고가치
+        FROM products;
+    tags: [SELECT, AS, 산술연산, products]
+
+  - id: L01-10
+    level: 2
+    type: "SELECT"
+    question: |
+      `reviews` 테이블에서 고유한 `(product_id, rating)` 조합을 조회하고, `rating` 내림차순으로 정렬한 뒤 20행만 보세요.
+    question_en: |
+      Retrieve distinct `(product_id, rating)` pairs from `reviews`, sorted by `rating` DESC, limited to 20 rows.
+    reference_sql:
+      common: |
+        SELECT DISTINCT product_id, rating
+        FROM reviews
+        ORDER BY rating DESC
+        LIMIT 20;
+    tags: [SELECT, DISTINCT, "ORDER BY", LIMIT, reviews]
