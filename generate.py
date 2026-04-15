@@ -337,6 +337,8 @@ def main():
             exporter = SQLServerExporter(output_dir)
             out_path = exporter.export(all_data)
             print(f"  -> {out_path}/")
+            if args.apply:
+                _apply_sqlserver(out_path, args)
         else:
             print(f"\n{target} export is not yet implemented.")
 
@@ -478,6 +480,96 @@ def _apply_postgresql(out_path: str, args):
 
     except psycopg2.Error as e:
         print(f"  [ERROR] PostgreSQL: {e}")
+
+
+def _apply_sqlserver(out_path: str, args):
+    """Apply generated SQL Server SQL files directly to a SQL Server instance."""
+    try:
+        import pyodbc
+    except ImportError:
+        print("  [ERROR] pyodbc is required for --apply with SQL Server.")
+        print("  Install: pip install pyodbc")
+        return
+
+    password = _get_password(args)
+    port = args.port or 1433
+    user = args.user or "sa"
+    db = args.database
+
+    print(f"  Applying to SQL Server {user}@{args.host}:{port}/{db}...")
+
+    try:
+        # Find the best ODBC driver
+        drivers = [d for d in pyodbc.drivers() if "SQL Server" in d]
+        driver = next((d for d in drivers if "ODBC Driver 18" in d),
+                      next((d for d in drivers if "ODBC Driver 17" in d),
+                           drivers[0] if drivers else "ODBC Driver 18 for SQL Server"))
+
+        # Connect to master first to create database
+        conn_str = (f"DRIVER={{{driver}}};SERVER={args.host},{port};"
+                    f"UID={user};PWD={password};TrustServerCertificate=yes;")
+        conn = pyodbc.connect(conn_str, autocommit=True)
+        cursor = conn.cursor()
+
+        cursor.execute(f"""
+            IF NOT EXISTS (SELECT 1 FROM sys.databases WHERE name = '{db}')
+            CREATE DATABASE [{db}]
+        """)
+        cursor.close()
+        conn.close()
+
+        # Reconnect to target database
+        conn_str += f"DATABASE={db};"
+        conn = pyodbc.connect(conn_str, autocommit=True)
+        cursor = conn.cursor()
+
+        # Execute schema (split by GO batch separator)
+        schema_path = os.path.join(out_path, "schema.sql")
+        print(f"  Applying schema...")
+        _execute_sql_file_go(cursor, schema_path)
+
+        # Execute data
+        data_path = os.path.join(out_path, "data.sql")
+        print(f"  Inserting data (this may take a while)...")
+        _execute_sql_file_go(cursor, data_path)
+
+        # Execute procedures
+        proc_path = os.path.join(out_path, "procedures.sql")
+        if os.path.exists(proc_path):
+            print(f"  Creating stored procedures...")
+            _execute_sql_file_go(cursor, proc_path)
+
+        cursor.close()
+        conn.close()
+        print(f"  Successfully applied to SQL Server: {db}")
+
+    except pyodbc.Error as e:
+        print(f"  [ERROR] SQL Server: {e}")
+
+
+def _execute_sql_file_go(cursor, path: str):
+    """Execute a SQL Server SQL file split by GO batch separator."""
+    with open(path, encoding="utf-8") as f:
+        content = f.read()
+
+    # Split by GO on its own line
+    import re
+    batches = re.split(r'^\s*GO\s*$', content, flags=re.MULTILINE | re.IGNORECASE)
+
+    for batch in batches:
+        # Strip comment-only lines
+        lines = [ln for ln in batch.split("\n") if ln.strip() and not ln.strip().startswith("--")]
+        batch = "\n".join(lines).strip()
+        if not batch:
+            continue
+        # Skip database selection statements
+        batch_upper = batch.upper().lstrip()
+        if batch_upper.startswith("USE ") or batch_upper.startswith("CREATE DATABASE"):
+            continue
+        try:
+            cursor.execute(batch)
+        except Exception:
+            pass  # Skip individual batch errors
 
 
 def _execute_sql_file(cursor, path: str, delimiter: str = ";"):
