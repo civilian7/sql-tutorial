@@ -34,6 +34,8 @@ from src.generators.qna import QnAGenerator
 from src.exporters.sqlite_exporter import SQLiteExporter
 from src.exporters.mysql_exporter import MySQLExporter
 from src.exporters.postgresql_exporter import PostgreSQLExporter
+from src.exporters.oracle_exporter import OracleExporter
+from src.exporters.sqlserver_exporter import SQLServerExporter
 
 
 def load_config(path: str = "config.yaml") -> dict:
@@ -325,6 +327,16 @@ def main():
             print(f"  -> {out_path}/")
             if args.apply:
                 _apply_postgresql(out_path, args)
+        elif target == "oracle":
+            print(f"\nExporting to Oracle...")
+            exporter = OracleExporter(output_dir)
+            out_path = exporter.export(all_data)
+            print(f"  -> {out_path}/")
+        elif target == "sqlserver":
+            print(f"\nExporting to SQL Server...")
+            exporter = SQLServerExporter(output_dir)
+            out_path = exporter.export(all_data)
+            print(f"  -> {out_path}/")
         else:
             print(f"\n{target} export is not yet implemented.")
 

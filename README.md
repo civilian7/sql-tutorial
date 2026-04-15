@@ -1,6 +1,6 @@
 **[한국어](README.ko.md)** | English
 
-# SQL Tutorial — E-Commerce Database <small>v3.3</small>
+# SQL Tutorial — E-Commerce Database <small>v3.4</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -134,30 +134,42 @@ python compile_exercises.py    # YAML → exercise.db + mkdocs markdown
 
 ## Multi-DB Support
 
-### Data Generation (MySQL / PostgreSQL)
+### Data Generation (5 Databases)
 
 ```bash
 # SQL files only (no DB needed)
 python generate.py --target mysql --size small
+python generate.py --target oracle --size small
+python generate.py --target sqlserver --size small
 
-# Direct apply
+# Generate all 5 DB formats
+python generate.py --all --size small
+
+# MySQL/PostgreSQL support direct apply
 pip install mysql-connector-python   # or psycopg2-binary for PG
 python generate.py --target mysql --size small --apply --ask-password
 ```
 
-Each includes: proper types (DECIMAL, TIMESTAMP, BOOLEAN, ENUM), 25 stored procedures + 5 functions, table partitioning, and GRANT examples. PostgreSQL additionally includes: JSONB, custom ENUM types, materialized views.
+Each DB uses native types, stored procedures/functions, views, indexes, and triggers:
+
+| DB | DDL Features | SP/Functions |
+|----|-------------|-------------|
+| MySQL | ENUM, AUTO_INCREMENT, partitioning | 25 SP + 5 functions |
+| PostgreSQL | Custom ENUM, JSONB, Materialized Views | 25 SP + 5 functions |
+| Oracle | IDENTITY, NUMBER, VARCHAR2, CLOB, partitioning | 16 SP + 5 functions (PL/SQL) |
+| SQL Server | IDENTITY, NVARCHAR, BIT, partitioning | 14 SP (T-SQL) |
 
 ### Exercise SQL Tabs (5 Databases)
 
 When SQL syntax differs across databases, exercises show up to 5 tabbed answers:
 
-| DB | Scope | Notes |
-|----|-------|-------|
-| **SQLite** | Data generation + exercises | Default DB, single file |
-| **MySQL** | Data generation + exercises | DDL + INSERT SQL files, `--apply` supported |
-| **PostgreSQL** | Data generation + exercises | DDL + INSERT SQL files, `--apply` supported |
-| **Oracle** | Exercise SQL tabs | `FETCH FIRST N ROWS ONLY`, `NVL`, sequences, etc. |
-| **SQL Server** | Exercise SQL tabs | `TOP N`, `ISNULL`, `CONVERT`, T-SQL syntax |
+| DB | Data Generation | Exercise Tabs | Notes |
+|----|:--------------:|:-------------:|-------|
+| **SQLite** | :white_check_mark: | :white_check_mark: | Default DB, single file |
+| **MySQL** | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL files, `--apply` supported |
+| **PostgreSQL** | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL files, `--apply` supported |
+| **Oracle** | :white_check_mark: | :white_check_mark: | PL/SQL, IDENTITY, partitioning, 18 views |
+| **SQL Server** | :white_check_mark: | :white_check_mark: | T-SQL, NVARCHAR, partitioning, 18 views |
 
 Add Oracle/SQL Server SQL in exercise YAML using the `oracle` / `sqlserver` keys:
 
@@ -239,7 +251,7 @@ First run automatically installs Playwright + Chromium (~200MB). PDF rendering u
 ├── docs/                    # MkDocs tutorial (ko + en)
 ├── src/
 │   ├── generators/          # 23 data generators
-│   ├── exporters/           # SQLite, MySQL, PostgreSQL exporters
+│   ├── exporters/           # SQLite, MySQL, PostgreSQL, Oracle, SQL Server exporters
 │   └── utils/               # Phone numbers, growth curves, seasonality
 ├── tools/                   # Lesson YAML extraction, exercise result update
 ├── .github/workflows/       # CI (verify.yml)
@@ -265,9 +277,13 @@ Free for personal learning and non-commercial education. For commercial use: civ
 
 ## Changelog
 
+### v3.4.0 (2026-04-15)
+
+**Oracle / SQL Server Data Generation**: Added Oracle exporter (PL/SQL, IDENTITY, VARCHAR2, NUMBER, partitioning, 18 views, 16 SP + 5 functions) and SQL Server exporter (T-SQL, NVARCHAR, BIT, partitioning, 18 views, 14 SP). Use `--target oracle`, `--target sqlserver`, or `--all` for all 5 databases
+
 ### v3.3.0 (2026-04-15)
 
-**Oracle / SQL Server Support**: Added Oracle and SQL Server SQL tabs in exercises. Extended exercise.db schema (`reference_sql_oracle`, `reference_sql_sqlserver`). Up to 5 DB tabs (SQLite / MySQL / PostgreSQL / Oracle / SQL Server) when DB-specific SQL exists
+**Oracle / SQL Server Exercise Tabs**: Added Oracle and SQL Server SQL tabs in exercises. Extended exercise.db schema (`reference_sql_oracle`, `reference_sql_sqlserver`). Up to 5 DB tabs (SQLite / MySQL / PostgreSQL / Oracle / SQL Server) when DB-specific SQL exists
 
 ### v3.2.0 (2026-04-14)
 

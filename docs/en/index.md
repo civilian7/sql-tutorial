@@ -162,18 +162,16 @@ Microsoft's commercial RDBMS, tightly integrated with the .NET ecosystem and Win
 | SQLite | :white_check_mark: | :white_check_mark: | Default DB, single file |
 | MySQL | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL files, `--apply` supported |
 | PostgreSQL | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL files, `--apply` supported |
-| Oracle | — | :white_check_mark: | Oracle syntax tabs in exercises |
-| SQL Server | — | :white_check_mark: | T-SQL syntax tabs in exercises |
+| Oracle | :white_check_mark: | :white_check_mark: | PL/SQL, IDENTITY, partitioning, 18 views, 16 SP + 5 functions |
+| SQL Server | :white_check_mark: | :white_check_mark: | T-SQL, NVARCHAR, partitioning, 18 views, 14 SP |
 
 !!! tip "Oracle / SQL Server Users"
-    Oracle and SQL Server are currently supported through SQL tabs in exercises. For problems where DB syntax differs, you can see Oracle (`NVL`, `FETCH FIRST N ROWS ONLY`, sequences, etc.) and SQL Server (`TOP`, `ISNULL`, `CONVERT`, etc.) answers. Oracle/SQL Server data generator exporters are planned for future release.
+    Use `python generate.py --target oracle` or `--target sqlserver` to generate DDL + INSERT + stored procedure SQL files. Exercises also provide Oracle (`NVL`, `FETCH FIRST N ROWS ONLY`, etc.) and SQL Server (`TOP`, `ISNULL`, `CONVERT`, etc.) answer tabs where DB syntax differs.
 
 ### Future Support Plans
 
 | Database | Status | Notes |
 |----------|:------:|-------|
-| Oracle data generation | Planned | Exporter to be added (PL/SQL, sequences, etc.) |
-| SQL Server data generation | Planned | Exporter to be added (T-SQL, IDENTITY, etc.) |
 | DB2 | Under review | Legacy in finance and government |
 | CUBRID | Under review | Korean open-source RDBMS |
 | Tibero | Under review | Korean commercial RDBMS, Oracle-compatible |
@@ -345,7 +343,8 @@ Adjust to your own pace. Based on 1-2 hours per day.
 
 | Version | Date | Key Changes |
 |:-------:|:----:|-------------|
-| v3.3 | 2026-04-15 | Oracle / SQL Server exercise SQL tabs, 5 DB support |
+| v3.4 | 2026-04-15 | Oracle / SQL Server data generation exporters, full 5 DB support |
+| v3.3 | 2026-04-15 | Oracle / SQL Server exercise SQL tabs |
 | v3.2 | 2026-04-14 | 26 lesson review YAML integration (270 problems), total 910 problems |
 | v3.0 | 2026-04-12 | 27 lessons · 640 exercises (30 sets) complete, full English translation, persona learning paths, MkDocs build automation, PDF export |
 | v2.1 | 2026-04-11 | Document structure overhaul (schema/setup split), 18 MySQL/PG views added, expanded to 15 stored procedures, trigger/view/SP flowcharts, DB selection guide, study schedule |

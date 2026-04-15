@@ -1,6 +1,6 @@
 한국어 | **[English](README.md)**
 
-# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.3</small>
+# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.4</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -134,30 +134,42 @@ python compile_exercises.py    # YAML → exercise.db + mkdocs 마크다운
 
 ## 멀티 DB 지원
 
-### 데이터 생성 (MySQL / PostgreSQL)
+### 데이터 생성 (5개 DB)
 
 ```bash
 # SQL 파일만 생성
 python generate.py --target mysql --size small
+python generate.py --target oracle --size small
+python generate.py --target sqlserver --size small
 
-# DB에 직접 적용
+# 전체 DB 생성
+python generate.py --all --size small
+
+# MySQL/PostgreSQL은 직접 적용 가능
 pip install mysql-connector-python   # PG: psycopg2-binary
 python generate.py --target mysql --size small --apply --ask-password
 ```
 
-각 DB에 포함: 적절한 타입 (DECIMAL, TIMESTAMP, BOOLEAN, ENUM), 25 SP + 5 함수, 테이블 파티셔닝, GRANT 예시. PostgreSQL은 추가로 JSONB, 커스텀 ENUM, Materialized View 포함.
+각 DB에 포함: 네이티브 타입, 저장 프로시저/함수, 뷰, 인덱스, 트리거. DB별 특성:
+
+| DB | DDL 특성 | SP/함수 |
+|----|---------|---------|
+| MySQL | ENUM, AUTO_INCREMENT, 파티셔닝 | 25 SP + 5 함수 |
+| PostgreSQL | 커스텀 ENUM, JSONB, Materialized View | 25 SP + 5 함수 |
+| Oracle | IDENTITY, NUMBER, VARCHAR2, CLOB, 파티셔닝 | 16 SP + 5 함수 (PL/SQL) |
+| SQL Server | IDENTITY, NVARCHAR, BIT, 파티셔닝 | 14 SP (T-SQL) |
 
 ### 연습문제 SQL 탭 (5개 DB)
 
 연습문제와 레슨 복습에서 DB별 문법이 다른 경우, 최대 5개 탭으로 정답을 제공합니다:
 
-| DB | 지원 범위 | 비고 |
-|----|----------|------|
-| **SQLite** | 데이터 생성 + 연습문제 | 기본 DB, 파일 하나로 즉시 사용 |
-| **MySQL** | 데이터 생성 + 연습문제 | DDL + INSERT SQL 파일, `--apply` 직접 적용 |
-| **PostgreSQL** | 데이터 생성 + 연습문제 | DDL + INSERT SQL 파일, `--apply` 직접 적용 |
-| **Oracle** | 연습문제 SQL 탭 | `FETCH FIRST N ROWS ONLY`, `NVL`, 시퀀스 등 |
-| **SQL Server** | 연습문제 SQL 탭 | `TOP N`, `ISNULL`, `CONVERT` 등 T-SQL 문법 |
+| DB | 데이터 생성 | 연습문제 탭 | 비고 |
+|----|:----------:|:----------:|------|
+| **SQLite** | :white_check_mark: | :white_check_mark: | 기본 DB, 파일 하나로 즉시 사용 |
+| **MySQL** | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL 파일, `--apply` 직접 적용 |
+| **PostgreSQL** | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL 파일, `--apply` 직접 적용 |
+| **Oracle** | :white_check_mark: | :white_check_mark: | PL/SQL, IDENTITY, 파티셔닝, 18개 뷰 |
+| **SQL Server** | :white_check_mark: | :white_check_mark: | T-SQL, NVARCHAR, 파티셔닝, 18개 뷰 |
 
 Oracle과 SQL Server는 연습문제 YAML에 `oracle` / `sqlserver` 키로 SQL을 작성하면 자동으로 탭에 추가됩니다:
 
@@ -239,7 +251,7 @@ pdf.bat en       # 영어만
 ├── docs/                    # MkDocs 튜토리얼 (ko + en)
 ├── src/
 │   ├── generators/          # 23개 데이터 생성기
-│   ├── exporters/           # SQLite, MySQL, PostgreSQL 내보내기
+│   ├── exporters/           # SQLite, MySQL, PostgreSQL, Oracle, SQL Server 내보내기
 │   └── utils/               # 전화번호, 성장곡선, 계절성 유틸리티
 ├── tools/                   # 레슨 YAML 추출, 연습문제 결과 업데이트
 ├── .github/workflows/       # CI (verify.yml)
@@ -265,9 +277,13 @@ pdf.bat en       # 영어만
 
 ## 변경 이력
 
+### v3.4.0 (2026-04-15)
+
+**Oracle / SQL Server 데이터 생성**: Oracle exporter (PL/SQL, IDENTITY, VARCHAR2, NUMBER, 파티셔닝, 18개 뷰, 16 SP + 5 함수)와 SQL Server exporter (T-SQL, NVARCHAR, BIT, 파티셔닝, 18개 뷰, 14 SP) 추가. `--target oracle`, `--target sqlserver`, `--all`로 5개 DB 동시 생성 가능
+
 ### v3.3.0 (2026-04-15)
 
-**Oracle / SQL Server 지원**: 연습문제에 Oracle, SQL Server용 SQL 탭 추가. exercise.db 스키마 확장 (`reference_sql_oracle`, `reference_sql_sqlserver`). DB별 SQL이 있으면 최대 5개 탭 (SQLite / MySQL / PostgreSQL / Oracle / SQL Server) 표시
+**Oracle / SQL Server 연습문제 탭**: 연습문제에 Oracle, SQL Server용 SQL 탭 추가. exercise.db 스키마 확장 (`reference_sql_oracle`, `reference_sql_sqlserver`). DB별 SQL이 있으면 최대 5개 탭 (SQLite / MySQL / PostgreSQL / Oracle / SQL Server) 표시
 
 ### v3.2.0 (2026-04-14)
 
