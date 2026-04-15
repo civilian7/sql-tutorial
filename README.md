@@ -238,11 +238,9 @@ First run automatically installs Playwright + Chromium (~200MB). PDF rendering u
 ## Project Structure
 
 ```
-├── generate.py              # Database generator
-├── compile_exercises.py     # YAML exercises → exercise.db + mkdocs
-├── check_integrity.py       # Data integrity checker
-├── verify.py                # Tutorial verification (SQL, difficulty, quality)
-├── sync_sql.py              # Korean↔English SQL sync
+├── generate.py              # Wrapper → src/cli/generate.py
+├── compile_exercises.py     # Wrapper → src/cli/compile_exercises.py
+├── verify.py                # Wrapper → src/verify/verify.py
 ├── config.yaml              # Core config
 ├── config_detailed.yaml     # Detailed config (120+ params)
 ├── data/                    # Categories, products, suppliers, locale
@@ -250,10 +248,12 @@ First run automatically installs Playwright + Chromium (~200MB). PDF rendering u
 │   └── lectures/            # 26 lesson review exercise YAML
 ├── docs/                    # MkDocs tutorial (ko + en)
 ├── src/
+│   ├── cli/                 # Main scripts (generate, compile, sync, etc.)
+│   ├── verify/              # Verification scripts (SQL, quality, difficulty, DML)
+│   ├── tools/               # Utilities (YAML extraction, result update)
 │   ├── generators/          # 23 data generators
-│   ├── exporters/           # SQLite, MySQL, PostgreSQL, Oracle, SQL Server exporters
+│   ├── exporters/           # SQLite, MySQL, PostgreSQL, Oracle, SQL Server
 │   └── utils/               # Phone numbers, growth curves, seasonality
-├── tools/                   # Lesson YAML extraction, exercise result update
 ├── .github/workflows/       # CI (verify.yml)
 ├── serve.bat                # Local tutorial server
 ├── pdf.bat                  # PDF export (mkdocs-exporter + Chromium)

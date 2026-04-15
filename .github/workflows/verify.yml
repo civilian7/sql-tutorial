@@ -9,7 +9,8 @@ on:
       - 'data/**'
       - 'exercises/**'
       - 'generate.py'
-      - 'verify_*.py'
+      - 'compile_exercises.py'
+      - 'verify*.py'
       - 'requirements.txt'
       - '.github/workflows/**'
   pull_request:

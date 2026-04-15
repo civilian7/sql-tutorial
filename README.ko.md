@@ -238,11 +238,9 @@ pdf.bat en       # 영어만
 ## 프로젝트 구조
 
 ```
-├── generate.py              # 데이터베이스 생성기
-├── compile_exercises.py     # YAML 연습문제 → exercise.db + mkdocs
-├── check_integrity.py       # 데이터 무결성 검증
-├── verify.py                # 튜토리얼 통합 검증 (SQL, 난이도, 품질)
-├── sync_sql.py              # 한국어↔영어 SQL 동기화
+├── generate.py              # 래퍼 → src/cli/generate.py
+├── compile_exercises.py     # 래퍼 → src/cli/compile_exercises.py
+├── verify.py                # 래퍼 → src/verify/verify.py
 ├── config.yaml              # 핵심 설정
 ├── config_detailed.yaml     # 상세 설정 (120+ 파라미터)
 ├── data/                    # 카테고리, 상품, 공급업체, 로케일
@@ -250,10 +248,12 @@ pdf.bat en       # 영어만
 │   └── lectures/            # 26개 레슨 복습 문제 YAML
 ├── docs/                    # MkDocs 튜토리얼 (ko + en)
 ├── src/
+│   ├── cli/                 # 메인 실행 스크립트 (generate, compile, sync 등)
+│   ├── verify/              # 검증 스크립트 (SQL, 품질, 난이도, DML)
+│   ├── tools/               # 유틸리티 (YAML 추출, 결과 업데이트)
 │   ├── generators/          # 23개 데이터 생성기
-│   ├── exporters/           # SQLite, MySQL, PostgreSQL, Oracle, SQL Server 내보내기
-│   └── utils/               # 전화번호, 성장곡선, 계절성 유틸리티
-├── tools/                   # 레슨 YAML 추출, 연습문제 결과 업데이트
+│   ├── exporters/           # SQLite, MySQL, PostgreSQL, Oracle, SQL Server
+│   └── utils/               # 전화번호, 성장곡선, 계절성
 ├── .github/workflows/       # CI (verify.yml)
 ├── serve.bat                # 로컬 튜토리얼 서버
 ├── pdf.bat                  # PDF 내보내기 (mkdocs-exporter + Chromium)
