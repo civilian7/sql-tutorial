@@ -74,7 +74,9 @@ def create_exercise_db(db_path: Path):
             reference_sql_sqlite TEXT,
             reference_sql_mysql TEXT,
             reference_sql_postgresql TEXT,
-            supported_db    TEXT NOT NULL DEFAULT '["sqlite","mysql","postgresql"]',
+            reference_sql_oracle TEXT,
+            reference_sql_sqlserver TEXT,
+            supported_db    TEXT NOT NULL DEFAULT '["sqlite","mysql","postgresql","oracle","sqlserver"]',
             validation_json TEXT NOT NULL,
             hints_json      TEXT,
             rubric          TEXT,
@@ -203,14 +205,16 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
         ref_sql = prob.get("reference_sql", {})
         if isinstance(ref_sql, str):
             ref_common = ref_sql
-            ref_sqlite = ref_mysql = ref_pg = None
+            ref_sqlite = ref_mysql = ref_pg = ref_oracle = ref_sqlserver = None
         else:
             ref_common = ref_sql.get("common") or ref_sql.get("all")
             ref_sqlite = ref_sql.get("sqlite")
             ref_mysql = ref_sql.get("mysql")
             ref_pg = ref_sql.get("postgresql")
+            ref_oracle = ref_sql.get("oracle")
+            ref_sqlserver = ref_sql.get("sqlserver")
 
-        supported = prob.get("supported_db", ["sqlite", "mysql", "postgresql"])
+        supported = prob.get("supported_db", ["sqlite", "mysql", "postgresql", "oracle", "sqlserver"])
 
         # Compute expected results
         exec_sql = ref_sqlite or ref_common
@@ -240,15 +244,16 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
             """INSERT INTO problems (id, exercise_id, question, question_en,
                level, type,
                reference_sql_common, reference_sql_sqlite, reference_sql_mysql, reference_sql_postgresql,
+               reference_sql_oracle, reference_sql_sqlserver,
                supported_db, validation_json, hints_json, rubric, rubric_en,
                max_score, tags_json, sort_order, expected_columns, expected_row_count, expected_hash)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 pid, exercise_id,
                 prob.get("question", "") or prob.get("body", ""),
                 prob.get("question_en", "") or prob.get("body_en", ""),
                 prob_level, prob_type,
-                ref_common, ref_sqlite, ref_mysql, ref_pg,
+                ref_common, ref_sqlite, ref_mysql, ref_pg, ref_oracle, ref_sqlserver,
                 json.dumps(supported),
                 json.dumps(validation, ensure_ascii=False),
                 hints_json,
@@ -297,21 +302,22 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
 
         # Answer (collapsible)
         answer_sql = ref_common or ref_sqlite or ""
-        if ref_sqlite and ref_mysql and ref_pg:
+        db_tabs = [
+            ("SQLite", ref_sqlite),
+            ("MySQL", ref_mysql),
+            ("PostgreSQL", ref_pg),
+            ("Oracle", ref_oracle),
+            ("SQL Server", ref_sqlserver),
+        ]
+        has_db_specific = any(sql for _, sql in db_tabs)
+        if has_db_specific:
             # Multi-DB tabs
             md_ko_lines.append('\n??? success "정답"\n')
-            md_ko_lines.append(f'    === "SQLite"\n        ```sql\n        {_indent(ref_sqlite)}\n        ```\n')
-            if ref_mysql:
-                md_ko_lines.append(f'    === "MySQL"\n        ```sql\n        {_indent(ref_mysql)}\n        ```\n')
-            if ref_pg:
-                md_ko_lines.append(f'    === "PostgreSQL"\n        ```sql\n        {_indent(ref_pg)}\n        ```\n')
-
             md_en_lines.append('\n??? success "Answer"\n')
-            md_en_lines.append(f'    === "SQLite"\n        ```sql\n        {_indent(ref_sqlite)}\n        ```\n')
-            if ref_mysql:
-                md_en_lines.append(f'    === "MySQL"\n        ```sql\n        {_indent(ref_mysql)}\n        ```\n')
-            if ref_pg:
-                md_en_lines.append(f'    === "PostgreSQL"\n        ```sql\n        {_indent(ref_pg)}\n        ```\n')
+            for db_name, db_sql in db_tabs:
+                if db_sql:
+                    md_ko_lines.append(f'    === "{db_name}"\n        ```sql\n        {_indent(db_sql)}\n        ```\n')
+                    md_en_lines.append(f'    === "{db_name}"\n        ```sql\n        {_indent(db_sql)}\n        ```\n')
         else:
             md_ko_lines.append(f'\n??? success "정답"\n    ```sql\n    {_indent(answer_sql)}\n    ```\n')
             md_en_lines.append(f'\n??? success "Answer"\n    ```sql\n    {_indent(answer_sql)}\n    ```\n')
@@ -385,14 +391,16 @@ def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int)
         ref_sql = prob.get("reference_sql", {})
         if isinstance(ref_sql, str):
             ref_common = ref_sql
-            ref_sqlite = ref_mysql = ref_pg = None
+            ref_sqlite = ref_mysql = ref_pg = ref_oracle = ref_sqlserver = None
         else:
             ref_common = ref_sql.get("common") or ref_sql.get("all")
             ref_sqlite = ref_sql.get("sqlite")
             ref_mysql = ref_sql.get("mysql")
             ref_pg = ref_sql.get("postgresql")
+            ref_oracle = ref_sql.get("oracle")
+            ref_sqlserver = ref_sql.get("sqlserver")
 
-        supported = prob.get("supported_db", ["sqlite", "mysql", "postgresql"])
+        supported = prob.get("supported_db", ["sqlite", "mysql", "postgresql", "oracle", "sqlserver"])
         exec_sql = ref_sqlite or ref_common
         exp_cols, exp_rows, exp_hash = None, None, None
         if conn_tutorial and exec_sql:
@@ -410,15 +418,16 @@ def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int)
             """INSERT INTO problems (id, exercise_id, question, question_en,
                level, type,
                reference_sql_common, reference_sql_sqlite, reference_sql_mysql, reference_sql_postgresql,
+               reference_sql_oracle, reference_sql_sqlserver,
                supported_db, validation_json, hints_json, rubric, rubric_en,
                max_score, tags_json, sort_order, expected_columns, expected_row_count, expected_hash)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 pid, exercise_id,
                 prob.get("question", ""),
                 prob.get("question_en", ""),
                 prob_level, prob_type,
-                ref_common, ref_sqlite, ref_mysql, ref_pg,
+                ref_common, ref_sqlite, ref_mysql, ref_pg, ref_oracle, ref_sqlserver,
                 json.dumps(supported),
                 json.dumps(validation, ensure_ascii=False),
                 hints_json,
@@ -445,12 +454,32 @@ def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int)
         md_lines.append(f"### 문제 {num}")
         md_lines.append(body)
         md_lines.append("")
-        md_lines.append(f'??? success "정답"')
-        md_lines.append(f"    ```sql")
-        for sql_line in answer_sql.strip().split("\n"):
-            md_lines.append(f"    {sql_line}")
-        md_lines.append(f"    ```")
-        md_lines.append("")
+
+        db_tabs = [
+            ("SQLite", ref_sqlite),
+            ("MySQL", ref_mysql),
+            ("PostgreSQL", ref_pg),
+            ("Oracle", ref_oracle),
+            ("SQL Server", ref_sqlserver),
+        ]
+        has_db_specific = any(sql for _, sql in db_tabs)
+        if has_db_specific:
+            md_lines.append(f'??? success "정답"')
+            for db_name, db_sql in db_tabs:
+                if db_sql:
+                    md_lines.append(f'    === "{db_name}"')
+                    md_lines.append(f"        ```sql")
+                    for sql_line in db_sql.strip().split("\n"):
+                        md_lines.append(f"        {sql_line}")
+                    md_lines.append(f"        ```")
+                    md_lines.append("")
+        else:
+            md_lines.append(f'??? success "정답"')
+            md_lines.append(f"    ```sql")
+            for sql_line in answer_sql.strip().split("\n"):
+                md_lines.append(f"    {sql_line}")
+            md_lines.append(f"    ```")
+            md_lines.append("")
 
     md_lines.append(LESSON_END)
 
