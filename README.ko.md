@@ -1,6 +1,6 @@
 한국어 | **[English](README.md)**
 
-# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.4</small>
+# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.5</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -273,6 +273,18 @@ pdf.bat en       # 영어만
 | [@shinnyeonki](https://github.com/shinnyeonki) | PostgreSQL/MySQL 파티션 테이블 UNIQUE 제약조건 수정, products FK 위반 이슈 리포트 ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## 변경 이력
+
+### v3.5.0 (2026-04-16)
+
+**프로젝트 구조 개편**: 루트의 Python 파일을 `src/` 하위로 기능별 정리 (`src/cli/`, `src/verify/`, `src/tools/`). `python -m src.cli.generate` 방식으로 실행. 루트 래퍼 스크립트 삭제. CI 워크플로우 및 교재 전체 실행 명령 업데이트
+
+**Oracle / SQL Server SQL 정답**: 30개 연습문제에 Oracle/SQL Server 정답 SQL 추가 (날짜 함수, EXPLAIN, 세션 분석, 코호트 등). 컴파일 후 60개 DB별 탭 생성
+
+**SQL Server --apply 지원**: pyodbc 기반 `--apply` 직접 적용. GO 배치 구분자 파서 추가
+
+**SQLite SQL 스크립트**: .db 파일과 함께 `output/sqlite/schema.sql` + `data.sql` 동시 생성
+
+**버그 수정**: PostgreSQL `v_supplier_performance` 뷰 GROUP BY 누락, MySQL `_execute_sql_file` 주석+USE 처리 개선
 
 ### v3.4.0 (2026-04-15)
 

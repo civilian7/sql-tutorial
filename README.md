@@ -1,6 +1,6 @@
 **[한국어](README.ko.md)** | English
 
-# SQL Tutorial — E-Commerce Database <small>v3.4</small>
+# SQL Tutorial — E-Commerce Database <small>v3.5</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -273,6 +273,18 @@ Free for personal learning and non-commercial education. For commercial use: civ
 | [@shinnyeonki](https://github.com/shinnyeonki) | Fix partition table UNIQUE constraints for PostgreSQL/MySQL, report products FK violation ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## Changelog
+
+### v3.5.0 (2026-04-16)
+
+**Project Restructure**: Moved root Python files into `src/` subdirectories (`src/cli/`, `src/verify/`, `src/tools/`). Run via `python -m src.cli.generate`. Removed root wrapper scripts. Updated CI workflow and all tutorial commands
+
+**Oracle / SQL Server SQL Answers**: Added Oracle/SQL Server answer SQL to 30 exercises (date functions, EXPLAIN, session analysis, cohort, etc.). 60 DB-specific tabs generated after compilation
+
+**SQL Server --apply Support**: Direct apply via pyodbc. Added GO batch separator parser
+
+**SQLite SQL Scripts**: Generate `output/sqlite/schema.sql` + `data.sql` alongside the .db file
+
+**Bug Fixes**: PostgreSQL `v_supplier_performance` view GROUP BY fix, MySQL `_execute_sql_file` comment+USE handling
 
 ### v3.4.0 (2026-04-15)
 
