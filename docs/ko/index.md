@@ -166,7 +166,7 @@ Microsoft의 상용 RDBMS로, .NET 생태계 및 Windows 환경과 긴밀하게 
 | SQL Server | :white_check_mark: | :white_check_mark: | T-SQL, NVARCHAR, 파티셔닝, 18개 뷰, 14 SP |
 
 !!! tip "Oracle / SQL Server 사용자"
-    `python generate.py --target oracle` 또는 `--target sqlserver`로 DDL + INSERT + 저장 프로시저 SQL 파일을 생성할 수 있습니다. 연습문제에서도 DB별 문법이 다른 경우 Oracle(`NVL`, `FETCH FIRST N ROWS ONLY` 등)과 SQL Server(`TOP`, `ISNULL`, `CONVERT` 등)의 정답 탭을 제공합니다.
+    `python -m src.cli.generate --target oracle` 또는 `--target sqlserver`로 DDL + INSERT + 저장 프로시저 SQL 파일을 생성할 수 있습니다. 연습문제에서도 DB별 문법이 다른 경우 Oracle(`NVL`, `FETCH FIRST N ROWS ONLY` 등)과 SQL Server(`TOP`, `ISNULL`, `CONVERT` 등)의 정답 탭을 제공합니다.
 
 ### 향후 지원 계획
 

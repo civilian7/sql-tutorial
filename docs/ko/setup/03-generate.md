@@ -165,7 +165,7 @@ pip install -r requirements.txt
 === "SQLite (기본)"
 
     ```bash
-    python generate.py --size small
+    python -m src.cli.generate --size small
     ```
 
     `output/ecommerce-ko.db` 파일이 생성됩니다 (약 80MB, 68만 건). 약 20초 소요됩니다.
@@ -173,7 +173,7 @@ pip install -r requirements.txt
 === "MySQL"
 
     ```bash
-    python generate.py --size small --target mysql
+    python -m src.cli.generate --size small --target mysql
     ```
 
     `output/mysql/` 디렉토리에 `schema.sql`, `data.sql`, `procedures.sql`이 생성됩니다.
@@ -181,7 +181,7 @@ pip install -r requirements.txt
     서버에 바로 적용하려면:
 
     ```bash
-    python generate.py --size small --target mysql --apply --ask-password
+    python -m src.cli.generate --size small --target mysql --apply --ask-password
     ```
 
     02단계에서 설정한 root 비밀번호를 입력합니다.
@@ -189,7 +189,7 @@ pip install -r requirements.txt
 === "PostgreSQL"
 
     ```bash
-    python generate.py --size small --target postgresql
+    python -m src.cli.generate --size small --target postgresql
     ```
 
     `output/postgresql/` 디렉토리에 `schema.sql`, `data.sql`, `procedures.sql`이 생성됩니다.
@@ -197,7 +197,7 @@ pip install -r requirements.txt
     서버에 바로 적용하려면:
 
     ```bash
-    python generate.py --size small --target postgresql --apply --ask-password
+    python -m src.cli.generate --size small --target postgresql --apply --ask-password
     ```
 
     02단계에서 설정한 postgres 비밀번호를 입력합니다.
@@ -205,13 +205,13 @@ pip install -r requirements.txt
 === "전체 (한번에)"
 
     ```bash
-    python generate.py --size small --all
+    python -m src.cli.generate --size small --all
     ```
 
     SQLite DB + MySQL SQL + PostgreSQL SQL을 한번에 생성합니다.
 
 !!! info "macOS/Linux에서는 `python3`"
-    `python: command not found`가 나오면 `python3 generate.py --size small`로 실행하세요.
+    `python: command not found`가 나오면 `python -m src.cli.generate --size small`로 실행하세요.
 
 ### 생성 확인
 

@@ -84,10 +84,9 @@ If you see the following files in the project folder, everything is correct:
 
 ```
 sql-tutorial/
-├── generate.py          ← Data generator
 ├── requirements.txt     ← Python dependencies
 ├── config.yaml          ← Generation config
-├── src/                 ← Generator source code
+├── src/                 ← Generator, verifier, and utility source code
 ├── data/                ← Product/category master data
 ├── docs/                ← Tutorial documents
 └── output/              ← (After generation) DB/SQL output

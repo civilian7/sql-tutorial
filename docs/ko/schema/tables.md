@@ -489,10 +489,10 @@
     2. 생성기 실행 시 `--download-images` 옵션 추가:
 
         ```bash
-        python generate.py --download-images --pexels-key YOUR_API_KEY
+        python -m src.cli.generate --download-images --pexels-key YOUR_API_KEY
         # 또는 환경 변수 사용
         export PEXELS_API_KEY=YOUR_API_KEY
-        python generate.py --download-images
+        python -m src.cli.generate --download-images
         ```
 
     3. `output/images/` 디렉토리에 카테고리별 이미지가 저장되고, `image_url`이 로컬 경로로 갱신됩니다.

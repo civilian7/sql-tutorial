@@ -38,9 +38,9 @@
 | **용도** | SQL 학습, 빠른 테스트 | 성능 테스트, EXPLAIN 연습 | DB 벤치마크, 대용량 처리 |
 
 ```bash
-python generate.py --size small     # 학습용 (추천)
-python generate.py --size medium    # 성능 테스트
-python generate.py --size large     # 대용량 벤치마크
+python -m src.cli.generate --size small     # 학습용 (추천)
+python -m src.cli.generate --size medium    # 성능 테스트
+python -m src.cli.generate --size large     # 대용량 벤치마크
 ```
 
 ---
@@ -51,10 +51,10 @@ python generate.py --size large     # 대용량 벤치마크
 
 ```bash
 # 특정 1년만 생성
-python generate.py --start-date 2024-01-01 --end-date 2024-12-31
+python -m src.cli.generate --start-date 2024-01-01 --end-date 2024-12-31
 
 # 특정 분기만
-python generate.py --start-date 2024-07-01 --end-date 2024-09-30
+python -m src.cli.generate --start-date 2024-07-01 --end-date 2024-09-30
 ```
 
 `config.yaml`의 `yearly_growth`에 정의되지 않은 연도를 지정하면, 가장 가까운 연도를 기반으로 연 5% 성장률로 자동 보간합니다.
@@ -67,8 +67,8 @@ python generate.py --start-date 2024-07-01 --end-date 2024-09-30
 ## 다국어 설정
 
 ```bash
-python generate.py --locale ko    # 한국어 (기본)
-python generate.py --locale en    # 영어
+python -m src.cli.generate --locale ko    # 한국어 (기본)
+python -m src.cli.generate --locale en    # 영어
 ```
 
 ### 언어별 차이
@@ -87,7 +87,7 @@ python generate.py --locale en    # 영어
 
 1. `data/locale/ko.json`을 복사하여 `ja.json` 생성
 2. 각 섹션을 해당 언어로 번역
-3. `python generate.py --locale ja`로 실행
+3. `python -m src.cli.generate --locale ja`로 실행
 
 아래는 일본어(`ja.json`)를 추가하는 실제 예시입니다. 모든 키를 번역하면 되며, 구조는 동일합니다:
 
@@ -148,7 +148,7 @@ python generate.py --locale en    # 영어
 실무에서 자주 만나는 "지저분한" 데이터를 의도적으로 생성합니다. 데이터 정제(Data Cleaning) 연습에 유용합니다.
 
 ```bash
-python generate.py --dirty-data
+python -m src.cli.generate --dirty-data
 ```
 
 전체 데이터의 **5~10%**에 다음과 같은 노이즈가 추가됩니다:
@@ -178,9 +178,9 @@ python generate.py --dirty-data
 이 튜토리얼은 **시드값 42**를 기본으로 사용합니다. 따라서 여러분이 동일한 설정으로 생성하면, 레슨의 쿼리 예제와 결과표가 정확히 일치합니다.
 
 ```bash
-python generate.py --seed 42     # 항상 동일한 데이터
-python generate.py --seed 42     # 위와 바이트 단위까지 동일
-python generate.py --seed 100    # 완전히 다른 데이터
+python -m src.cli.generate --seed 42     # 항상 동일한 데이터
+python -m src.cli.generate --seed 42     # 위와 바이트 단위까지 동일
+python -m src.cli.generate --seed 100    # 완전히 다른 데이터
 ```
 
 **시드를 바꾸면?** 테이블 구조는 동일하지만 고객 이름, 주문 건수, 금액 등이 모두 달라집니다. 레슨의 쿼리 결과와 일치하지 않게 되지만, 자신만의 데이터로 연습하고 싶을 때 유용합니다.
@@ -470,10 +470,10 @@ output/
 ## 데이터 검증
 
 ```bash
-python verify.py                    # SQLite 검증
-python verify.py --target mysql     # MySQL 검증
-python verify.py --target postgresql  # PostgreSQL 검증
-python verify.py --all              # 전체 검증
+python -m src.verify.verify                    # SQLite 검증
+python -m src.verify.verify --target mysql     # MySQL 검증
+python -m src.verify.verify --target postgresql  # PostgreSQL 검증
+python -m src.verify.verify --all              # 전체 검증
 ```
 
 테이블 수, 뷰, 트리거, 행 수, FK 무결성을 자동으로 확인합니다. 상세 내용은 [05. 확인 및 첫 쿼리](05-verify.md#자동-검증-스크립트)를 참고하세요.
@@ -497,7 +497,7 @@ python verify.py --all              # 전체 검증
 !!! question "상품 이미지를 실제로 다운로드하려면?"
     [Pexels API](https://www.pexels.com/api/)에서 무료 키를 발급받은 후:
     ```bash
-    python generate.py --download-images --pexels-key YOUR_API_KEY
+    python -m src.cli.generate --download-images --pexels-key YOUR_API_KEY
     ```
 
 [← 03. 데이터 생성](03-generate.md){ .md-button }

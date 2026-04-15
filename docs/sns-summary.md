@@ -40,7 +40,7 @@
 > **빠른 시작**
 > ```
 > pip install -r requirements.txt
-> python generate.py --size small
+> python -m src.cli.generate --size small
 > ```
 > 20초면 80MB 데이터베이스가 생성됩니다.
 > 
@@ -89,7 +89,7 @@
 > **Quick start**
 > ```
 > pip install -r requirements.txt
-> python generate.py --size small
+> python -m src.cli.generate --size small
 > ```
 > 80MB database generated in ~20 seconds.
 > 

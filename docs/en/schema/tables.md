@@ -489,10 +489,10 @@ Multi-angle images per product. `is_primary` identifies the main image.
     2. Add the `--download-images` option when running the generator:
 
         ```bash
-        python generate.py --download-images --pexels-key YOUR_API_KEY
+        python -m src.cli.generate --download-images --pexels-key YOUR_API_KEY
         # Or use environment variable
         export PEXELS_API_KEY=YOUR_API_KEY
-        python generate.py --download-images
+        python -m src.cli.generate --download-images
         ```
 
     3. Images are saved by category in `output/images/`, and `image_url` is updated to the local path.

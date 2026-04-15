@@ -165,7 +165,7 @@ pip install -r requirements.txt
 === "SQLite (Default)"
 
     ```bash
-    python generate.py --size small
+    python -m src.cli.generate --size small
     ```
 
     Creates `output/ecommerce-ko.db` (~80MB, 680K rows). Takes about 20 seconds.
@@ -173,7 +173,7 @@ pip install -r requirements.txt
 === "MySQL"
 
     ```bash
-    python generate.py --size small --target mysql
+    python -m src.cli.generate --size small --target mysql
     ```
 
     Creates `schema.sql`, `data.sql`, and `procedures.sql` in the `output/mysql/` directory.
@@ -181,7 +181,7 @@ pip install -r requirements.txt
     To apply directly to the server:
 
     ```bash
-    python generate.py --size small --target mysql --apply --ask-password
+    python -m src.cli.generate --size small --target mysql --apply --ask-password
     ```
 
     Enter the root password you set in step 02.
@@ -189,7 +189,7 @@ pip install -r requirements.txt
 === "PostgreSQL"
 
     ```bash
-    python generate.py --size small --target postgresql
+    python -m src.cli.generate --size small --target postgresql
     ```
 
     Creates `schema.sql`, `data.sql`, and `procedures.sql` in the `output/postgresql/` directory.
@@ -197,7 +197,7 @@ pip install -r requirements.txt
     To apply directly to the server:
 
     ```bash
-    python generate.py --size small --target postgresql --apply --ask-password
+    python -m src.cli.generate --size small --target postgresql --apply --ask-password
     ```
 
     Enter the postgres password you set in step 02.
@@ -205,13 +205,13 @@ pip install -r requirements.txt
 === "All (At Once)"
 
     ```bash
-    python generate.py --size small --all
+    python -m src.cli.generate --size small --all
     ```
 
     Generates SQLite DB + MySQL SQL + PostgreSQL SQL all at once.
 
 !!! info "Use `python3` on macOS/Linux"
-    If you get `python: command not found`, run `python3 generate.py --size small` instead.
+    If you get `python: command not found`, run `python -m src.cli.generate --size small` instead.
 
 ### Verify Generation
 

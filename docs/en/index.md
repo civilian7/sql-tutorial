@@ -166,7 +166,7 @@ Microsoft's commercial RDBMS, tightly integrated with the .NET ecosystem and Win
 | SQL Server | :white_check_mark: | :white_check_mark: | T-SQL, NVARCHAR, partitioning, 18 views, 14 SP |
 
 !!! tip "Oracle / SQL Server Users"
-    Use `python generate.py --target oracle` or `--target sqlserver` to generate DDL + INSERT + stored procedure SQL files. Exercises also provide Oracle (`NVL`, `FETCH FIRST N ROWS ONLY`, etc.) and SQL Server (`TOP`, `ISNULL`, `CONVERT`, etc.) answer tabs where DB syntax differs.
+    Use `python -m src.cli.generate --target oracle` or `--target sqlserver` to generate DDL + INSERT + stored procedure SQL files. Exercises also provide Oracle (`NVL`, `FETCH FIRST N ROWS ONLY`, etc.) and SQL Server (`TOP`, `ISNULL`, `CONVERT`, etc.) answer tabs where DB syntax differs.
 
 ### Future Support Plans
 

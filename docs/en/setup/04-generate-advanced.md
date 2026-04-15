@@ -38,9 +38,9 @@ If you've learned the basic execution in [03. Generate Data](03-generate.md), th
 | **Use Case** | SQL learning, quick testing | Performance testing, EXPLAIN practice | DB benchmarks, large-scale processing |
 
 ```bash
-python generate.py --size small     # For learning (recommended)
-python generate.py --size medium    # Performance testing
-python generate.py --size large     # Large-scale benchmarks
+python -m src.cli.generate --size small     # For learning (recommended)
+python -m src.cli.generate --size medium    # Performance testing
+python -m src.cli.generate --size large     # Large-scale benchmarks
 ```
 
 ---
@@ -51,10 +51,10 @@ Default is 2016-01-01 to 2025-12-31 (10 years).
 
 ```bash
 # Generate only a specific year
-python generate.py --start-date 2024-01-01 --end-date 2024-12-31
+python -m src.cli.generate --start-date 2024-01-01 --end-date 2024-12-31
 
 # Only a specific quarter
-python generate.py --start-date 2024-07-01 --end-date 2024-09-30
+python -m src.cli.generate --start-date 2024-07-01 --end-date 2024-09-30
 ```
 
 If you specify a year not defined in `config.yaml`'s `yearly_growth`, it automatically interpolates based on the nearest year with a 5% annual growth rate.
@@ -67,8 +67,8 @@ If you specify a year not defined in `config.yaml`'s `yearly_growth`, it automat
 ## Locale Settings
 
 ```bash
-python generate.py --locale ko    # Korean (default)
-python generate.py --locale en    # English
+python -m src.cli.generate --locale ko    # Korean (default)
+python -m src.cli.generate --locale en    # English
 ```
 
 ### Differences by Language
@@ -87,7 +87,7 @@ python generate.py --locale en    # English
 
 1. Copy `data/locale/ko.json` to create `ja.json`
 2. Translate each section to the target language
-3. Run `python generate.py --locale ja`
+3. Run `python -m src.cli.generate --locale ja`
 
 Below is a practical example of adding Japanese (`ja.json`). Just translate all values while keeping the structure identical:
 
@@ -148,7 +148,7 @@ Below is a practical example of adding Japanese (`ja.json`). Just translate all 
 Intentionally generates "messy" data commonly encountered in real-world scenarios. Useful for data cleaning practice.
 
 ```bash
-python generate.py --dirty-data
+python -m src.cli.generate --dirty-data
 ```
 
 The following noise is added to **5-10%** of the total data:
@@ -178,9 +178,9 @@ The following noise is added to **5-10%** of the total data:
 This tutorial uses **seed 42** as the default. Therefore, if you generate with the same settings, the lesson query examples and result tables will match exactly.
 
 ```bash
-python generate.py --seed 42     # Always the same data
-python generate.py --seed 42     # Byte-for-byte identical to above
-python generate.py --seed 100    # Completely different data
+python -m src.cli.generate --seed 42     # Always the same data
+python -m src.cli.generate --seed 42     # Byte-for-byte identical to above
+python -m src.cli.generate --seed 100    # Completely different data
 ```
 
 **What if you change the seed?** The table structure remains the same, but customer names, order counts, amounts, etc. will all differ. The results won't match the lesson examples, but it's useful when you want to practice with your own data.
@@ -470,10 +470,10 @@ output/
 ## Data Verification
 
 ```bash
-python verify.py                    # SQLite verification
-python verify.py --target mysql     # MySQL verification
-python verify.py --target postgresql  # PostgreSQL verification
-python verify.py --all              # Full verification
+python -m src.verify.verify                    # SQLite verification
+python -m src.verify.verify --target mysql     # MySQL verification
+python -m src.verify.verify --target postgresql  # PostgreSQL verification
+python -m src.verify.verify --all              # Full verification
 ```
 
 Automatically checks table count, views, triggers, row counts, and FK integrity. For details, see [05. Verify and First Query](05-verify.md#automated-verification-script).
@@ -497,7 +497,7 @@ Automatically checks table count, views, triggers, row counts, and FK integrity.
 !!! question "How to Download with Product Images?"
     Get a free key from [Pexels API](https://www.pexels.com/api/), then:
     ```bash
-    python generate.py --download-images --pexels-key YOUR_API_KEY
+    python -m src.cli.generate --download-images --pexels-key YOUR_API_KEY
     ```
 
 [← 03. Generate Data](03-generate.md){ .md-button }

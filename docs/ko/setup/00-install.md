@@ -84,10 +84,9 @@
 
 ```
 sql-tutorial/
-├── generate.py          ← 데이터 생성기
 ├── requirements.txt     ← Python 의존성
 ├── config.yaml          ← 생성 설정
-├── src/                 ← 생성기 소스 코드
+├── src/                 ← 생성기·검증·유틸리티 소스 코드
 ├── data/                ← 상품·카테고리 마스터 데이터
 ├── docs/                ← 튜토리얼 문서
 └── output/              ← (생성 후) DB/SQL 출력

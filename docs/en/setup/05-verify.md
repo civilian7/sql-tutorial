@@ -116,25 +116,25 @@ Instead of manual checking, you can run the verification script to check connect
 === "SQLite"
 
     ```bash
-    python verify.py
+    python -m src.verify.verify
     ```
 
 === "MySQL"
 
     ```bash
-    python verify.py --target mysql
+    python -m src.verify.verify --target mysql
     ```
 
 === "PostgreSQL"
 
     ```bash
-    python verify.py --target postgresql
+    python -m src.verify.verify --target postgresql
     ```
 
 === "All"
 
     ```bash
-    python verify.py --all
+    python -m src.verify.verify --all
     ```
 
 If everything is normal, the output will look like this:
