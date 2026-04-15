@@ -132,7 +132,9 @@ python compile_exercises.py    # YAML → exercise.db + mkdocs markdown
 | `inventory_transactions` | 14,331 | Stock ledger |
 | `coupons` / `coupon_usage` | 20 / 111 | Coupons |
 
-## MySQL / PostgreSQL
+## Multi-DB Support
+
+### Data Generation (MySQL / PostgreSQL)
 
 ```bash
 # SQL files only (no DB needed)
@@ -143,9 +145,31 @@ pip install mysql-connector-python   # or psycopg2-binary for PG
 python generate.py --target mysql --size small --apply --ask-password
 ```
 
-Each includes: proper types (DECIMAL, TIMESTAMP, BOOLEAN, ENUM), 25 stored procedures + 5 functions, table partitioning, and GRANT examples.
+Each includes: proper types (DECIMAL, TIMESTAMP, BOOLEAN, ENUM), 25 stored procedures + 5 functions, table partitioning, and GRANT examples. PostgreSQL additionally includes: JSONB, custom ENUM types, materialized views.
 
-PostgreSQL additionally includes: JSONB, custom ENUM types, materialized views.
+### Exercise SQL Tabs (5 Databases)
+
+When SQL syntax differs across databases, exercises show up to 5 tabbed answers:
+
+| DB | Scope | Notes |
+|----|-------|-------|
+| **SQLite** | Data generation + exercises | Default DB, single file |
+| **MySQL** | Data generation + exercises | DDL + INSERT SQL files, `--apply` supported |
+| **PostgreSQL** | Data generation + exercises | DDL + INSERT SQL files, `--apply` supported |
+| **Oracle** | Exercise SQL tabs | `FETCH FIRST N ROWS ONLY`, `NVL`, sequences, etc. |
+| **SQL Server** | Exercise SQL tabs | `TOP N`, `ISNULL`, `CONVERT`, T-SQL syntax |
+
+Add Oracle/SQL Server SQL in exercise YAML using the `oracle` / `sqlserver` keys:
+
+```yaml
+reference_sql:
+  sqlite: |
+    SELECT * FROM orders LIMIT 10;
+  oracle: |
+    SELECT * FROM orders FETCH FIRST 10 ROWS ONLY;
+  sqlserver: |
+    SELECT TOP 10 * FROM orders;
+```
 
 ## Configuration
 
@@ -211,12 +235,13 @@ First run automatically installs Playwright + Chromium (~200MB). PDF rendering u
 ├── config_detailed.yaml     # Detailed config (120+ params)
 ├── data/                    # Categories, products, suppliers, locale
 ├── exercises/               # Exercise YAML (beginner/intermediate/advanced)
+│   └── lectures/            # 26 lesson review exercise YAML
 ├── docs/                    # MkDocs tutorial (ko + en)
 ├── src/
 │   ├── generators/          # 23 data generators
 │   ├── exporters/           # SQLite, MySQL, PostgreSQL exporters
 │   └── utils/               # Phone numbers, growth curves, seasonality
-├── tools/                   # Exercise result update tools
+├── tools/                   # Lesson YAML extraction, exercise result update
 ├── .github/workflows/       # CI (verify.yml)
 ├── serve.bat                # Local tutorial server
 ├── pdf.bat                  # PDF export (mkdocs-exporter + Chromium)

@@ -132,7 +132,9 @@ python compile_exercises.py    # YAML → exercise.db + mkdocs 마크다운
 | `inventory_transactions` | 14,331 | 재고 원장 |
 | `coupons` / `coupon_usage` | 20 / 111 | 쿠폰 |
 
-## MySQL / PostgreSQL
+## 멀티 DB 지원
+
+### 데이터 생성 (MySQL / PostgreSQL)
 
 ```bash
 # SQL 파일만 생성
@@ -144,6 +146,30 @@ python generate.py --target mysql --size small --apply --ask-password
 ```
 
 각 DB에 포함: 적절한 타입 (DECIMAL, TIMESTAMP, BOOLEAN, ENUM), 25 SP + 5 함수, 테이블 파티셔닝, GRANT 예시. PostgreSQL은 추가로 JSONB, 커스텀 ENUM, Materialized View 포함.
+
+### 연습문제 SQL 탭 (5개 DB)
+
+연습문제와 레슨 복습에서 DB별 문법이 다른 경우, 최대 5개 탭으로 정답을 제공합니다:
+
+| DB | 지원 범위 | 비고 |
+|----|----------|------|
+| **SQLite** | 데이터 생성 + 연습문제 | 기본 DB, 파일 하나로 즉시 사용 |
+| **MySQL** | 데이터 생성 + 연습문제 | DDL + INSERT SQL 파일, `--apply` 직접 적용 |
+| **PostgreSQL** | 데이터 생성 + 연습문제 | DDL + INSERT SQL 파일, `--apply` 직접 적용 |
+| **Oracle** | 연습문제 SQL 탭 | `FETCH FIRST N ROWS ONLY`, `NVL`, 시퀀스 등 |
+| **SQL Server** | 연습문제 SQL 탭 | `TOP N`, `ISNULL`, `CONVERT` 등 T-SQL 문법 |
+
+Oracle과 SQL Server는 연습문제 YAML에 `oracle` / `sqlserver` 키로 SQL을 작성하면 자동으로 탭에 추가됩니다:
+
+```yaml
+reference_sql:
+  sqlite: |
+    SELECT * FROM orders LIMIT 10;
+  oracle: |
+    SELECT * FROM orders FETCH FIRST 10 ROWS ONLY;
+  sqlserver: |
+    SELECT TOP 10 * FROM orders;
+```
 
 ## 설정
 
@@ -209,12 +235,13 @@ pdf.bat en       # 영어만
 ├── config_detailed.yaml     # 상세 설정 (120+ 파라미터)
 ├── data/                    # 카테고리, 상품, 공급업체, 로케일
 ├── exercises/               # 연습문제 YAML (beginner/intermediate/advanced)
+│   └── lectures/            # 26개 레슨 복습 문제 YAML
 ├── docs/                    # MkDocs 튜토리얼 (ko + en)
 ├── src/
 │   ├── generators/          # 23개 데이터 생성기
 │   ├── exporters/           # SQLite, MySQL, PostgreSQL 내보내기
 │   └── utils/               # 전화번호, 성장곡선, 계절성 유틸리티
-├── tools/                   # 연습문제 결과 업데이트 도구
+├── tools/                   # 레슨 YAML 추출, 연습문제 결과 업데이트
 ├── .github/workflows/       # CI (verify.yml)
 ├── serve.bat                # 로컬 튜토리얼 서버
 ├── pdf.bat                  # PDF 내보내기 (mkdocs-exporter + Chromium)
