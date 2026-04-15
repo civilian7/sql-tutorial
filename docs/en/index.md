@@ -343,6 +343,7 @@ Adjust to your own pace. Based on 1-2 hours per day.
 
 | Version | Date | Key Changes |
 |:-------:|:----:|-------------|
+| v3.6 | 2026-04-16 | Docker-based DB installation guide, Oracle --apply, interactive wizard |
 | v3.5 | 2026-04-16 | Project restructure (src/ consolidation), Oracle/SQL Server SQL answers for 30 problems, SQLite script output, bug fixes |
 | v3.4 | 2026-04-15 | Oracle / SQL Server data generation exporters, full 5 DB support |
 | v3.3 | 2026-04-15 | Oracle / SQL Server exercise SQL tabs |

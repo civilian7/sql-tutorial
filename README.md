@@ -1,6 +1,6 @@
 **[한국어](README.ko.md)** | English
 
-# SQL Tutorial — E-Commerce Database <small>v3.5</small>
+# SQL Tutorial — E-Commerce Database <small>v3.6</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -273,6 +273,14 @@ Free for personal learning and non-commercial education. For commercial use: civ
 | [@shinnyeonki](https://github.com/shinnyeonki) | Fix partition table UNIQUE constraints for PostgreSQL/MySQL, report products FK violation ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## Changelog
+
+### v3.6.0 (2026-04-16)
+
+**Docker-Based DB Installation Guide**: Rewrote 02-database.md around Docker Desktop. Includes Docker concept intro, installation, essential commands, and container setup for MySQL/PostgreSQL/SQL Server/Oracle. Native installation guide preserved as "Native Installation" tab
+
+**Oracle --apply Support**: Direct apply via oracledb (thin mode). PL/SQL block `/` separator parser. Oracle server apply available in interactive mode
+
+**Interactive Wizard**: Run `python -m src.cli.generate` without options for step-by-step guided setup. Scale/locale/DB selection/apply/connection info entered interactively
 
 ### v3.5.0 (2026-04-16)
 

@@ -1,6 +1,6 @@
 한국어 | **[English](README.md)**
 
-# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.5</small>
+# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.6</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -273,6 +273,14 @@ pdf.bat en       # 영어만
 | [@shinnyeonki](https://github.com/shinnyeonki) | PostgreSQL/MySQL 파티션 테이블 UNIQUE 제약조건 수정, products FK 위반 이슈 리포트 ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## 변경 이력
+
+### v3.6.0 (2026-04-16)
+
+**Docker 기반 DB 설치 가이드**: 02-database.md를 Docker Desktop 중심으로 재작성. Docker 개념 설명, Docker Desktop 설치, 기본 명령어, MySQL/PostgreSQL/SQL Server/Oracle 컨테이너 실행 가이드 포함. 기존 네이티브 설치 가이드는 "직접 설치" 탭으로 유지
+
+**Oracle --apply 지원**: oracledb(thin mode) 기반 `--apply` 직접 적용. PL/SQL 블록 `/` 구분자 파서 추가. 대화형 모드에서도 Oracle 서버 적용 선택 가능
+
+**대화형 모드 (Interactive Wizard)**: 옵션 없이 `python -m src.cli.generate` 실행 시 단계별 안내. 규모/언어/DB 선택/서버 적용/접속 정보를 대화형으로 입력
 
 ### v3.5.0 (2026-04-16)
 
