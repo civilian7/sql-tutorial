@@ -81,6 +81,47 @@
         - **Windows 버전 확인**: Windows 10 버전 2004 이상 또는 Windows 11 필요
         - **Windows 기능 켜기**: `제어판 > 프로그램 > Windows 기능 켜기/끄기`에서 "Linux용 Windows 하위 시스템"과 "가상 머신 플랫폼" 체크
 
+    ### Ubuntu 설치 후 필수 작업
+
+    Ubuntu 터미널을 열고 (시작 메뉴에서 "Ubuntu" 검색) 다음을 순서대로 실행합니다.
+
+    **1. 시스템 업데이트**
+
+    설치 직후의 패키지는 오래된 버전일 수 있습니다. 반드시 업데이트하세요:
+
+    ```bash
+    sudo apt update && sudo apt upgrade -y
+    ```
+
+    **2. 기본 도구 설치**
+
+    자주 쓰이는 도구를 미리 설치합니다:
+
+    ```bash
+    sudo apt install -y curl wget git unzip
+    ```
+
+    **3. Windows Terminal 사용 (강력 추천)**
+
+    Windows 기본 콘솔 대신 **[Windows Terminal](https://aka.ms/terminal)**을 사용하면 Ubuntu, PowerShell, 명령 프롬프트를 탭으로 전환할 수 있습니다. Windows 11에는 기본 설치되어 있고, Windows 10은 Microsoft Store에서 무료로 받을 수 있습니다.
+
+    설치 후 Windows Terminal을 열면 드롭다운에 **Ubuntu**가 자동으로 나타납니다.
+
+    **4. 파일 시스템 접근 방법**
+
+    | 방향 | 경로 | 설명 |
+    |------|------|------|
+    | WSL → Windows | `/mnt/c/Users/사용자명/` | C: 드라이브가 `/mnt/c`에 마운트 |
+    | Windows → WSL | `\\wsl$\Ubuntu\home\사용자명\` | 파일 탐색기 주소창에 입력 |
+
+    ```bash
+    # 예: Windows 바탕화면의 파일 확인
+    ls /mnt/c/Users/$USER/Desktop/
+    ```
+
+    !!! tip "프로젝트 파일 위치"
+        이 튜토리얼의 프로젝트 폴더는 **Windows 쪽**에 두는 것을 권장합니다. WSL에서 `/mnt/c/...` 경로로 접근하면 됩니다. WSL 내부(`/home/...`)에 두면 Windows IDE에서 접근이 번거로울 수 있습니다.
+
     ---
 
     ## 2단계: Docker Desktop 설치 { #2-docker-desktop }
@@ -161,6 +202,35 @@
 
     ```bash
     docker exec -it mysql mysql -u root -ptutorial -e "SELECT VERSION();"
+    ```
+
+    | 항목 | 값 |
+    |------|-----|
+    | 호스트 | `localhost` |
+    | 포트 | `3306` |
+    | 사용자 | `root` |
+    | 비밀번호 | `tutorial` |
+
+    ### MariaDB
+
+    MySQL 대신 MariaDB를 사용하려면 아래 명령을 사용합니다. MySQL과 호환되며, 이 튜토리얼의 MySQL SQL이 그대로 동작합니다.
+
+    !!! warning "MySQL과 동시 실행 불가"
+        MySQL과 MariaDB는 같은 포트(3306)를 사용합니다. **둘 중 하나만** 실행하세요. 이미 MySQL 컨테이너를 실행했다면 이 단계를 건너뛰세요.
+
+    ```bash
+    docker run -d \
+      --name mariadb \
+      -p 3306:3306 \
+      -e MARIADB_ROOT_PASSWORD=tutorial \
+      -v mariadb-data:/var/lib/mysql \
+      mariadb:11
+    ```
+
+    접속 확인:
+
+    ```bash
+    docker exec -it mariadb mariadb -u root -ptutorial -e "SELECT VERSION();"
     ```
 
     | 항목 | 값 |

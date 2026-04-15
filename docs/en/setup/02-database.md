@@ -81,6 +81,47 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
         - **Check Windows version**: Windows 10 version 2004+ or Windows 11 required
         - **Enable Windows features**: `Control Panel > Programs > Turn Windows features on or off` - check "Windows Subsystem for Linux" and "Virtual Machine Platform"
 
+    ### Essential Post-Installation Steps
+
+    Open the Ubuntu terminal (search "Ubuntu" in Start menu) and run these in order.
+
+    **1. System Update**
+
+    Packages may be outdated right after installation. Always update first:
+
+    ```bash
+    sudo apt update && sudo apt upgrade -y
+    ```
+
+    **2. Install Basic Tools**
+
+    Install commonly used tools:
+
+    ```bash
+    sudo apt install -y curl wget git unzip
+    ```
+
+    **3. Use Windows Terminal (Highly Recommended)**
+
+    Instead of the default Windows console, use **[Windows Terminal](https://aka.ms/terminal)** to switch between Ubuntu, PowerShell, and Command Prompt in tabs. It comes pre-installed on Windows 11. For Windows 10, get it free from the Microsoft Store.
+
+    After installation, **Ubuntu** appears automatically in the Windows Terminal dropdown.
+
+    **4. File System Access**
+
+    | Direction | Path | Description |
+    |-----------|------|-------------|
+    | WSL → Windows | `/mnt/c/Users/username/` | C: drive mounted at `/mnt/c` |
+    | Windows → WSL | `\\wsl$\Ubuntu\home\username\` | Enter in File Explorer address bar |
+
+    ```bash
+    # Example: check files on Windows Desktop
+    ls /mnt/c/Users/$USER/Desktop/
+    ```
+
+    !!! tip "Project File Location"
+        We recommend keeping the tutorial project folder on the **Windows side**. Access it from WSL via `/mnt/c/...`. Placing it inside WSL (`/home/...`) can make access from Windows IDEs inconvenient.
+
     ---
 
     ## Step 2: Install Docker Desktop { #step-2-install-docker-desktop }
@@ -161,6 +202,35 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 
     ```bash
     docker exec -it mysql mysql -u root -ptutorial -e "SELECT VERSION();"
+    ```
+
+    | Setting | Value |
+    |---------|-------|
+    | Host | `localhost` |
+    | Port | `3306` |
+    | User | `root` |
+    | Password | `tutorial` |
+
+    ### MariaDB
+
+    If you prefer MariaDB over MySQL, use the command below. It's compatible with MySQL, and this tutorial's MySQL SQL runs as-is on MariaDB.
+
+    !!! warning "Cannot Run Simultaneously with MySQL"
+        MySQL and MariaDB use the same port (3306). Run **only one** of them. If you already started a MySQL container, skip this step.
+
+    ```bash
+    docker run -d \
+      --name mariadb \
+      -p 3306:3306 \
+      -e MARIADB_ROOT_PASSWORD=tutorial \
+      -v mariadb-data:/var/lib/mysql \
+      mariadb:11
+    ```
+
+    Verify:
+
+    ```bash
+    docker exec -it mariadb mariadb -u root -ptutorial -e "SELECT VERSION();"
     ```
 
     | Setting | Value |
