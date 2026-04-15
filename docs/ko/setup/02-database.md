@@ -137,11 +137,54 @@
     | macOS (Apple Silicon) | [Docker Desktop for Mac (Apple Silicon)](https://desktop.docker.com/mac/main/arm64/Docker.dmg) |
     | Linux | [Docker Desktop for Linux](https://docs.docker.com/desktop/install/linux/) |
 
-    ### Windows 설치 시 참고
+    === "Windows"
 
-    1. 설치 중 **"Use WSL 2 instead of Hyper-V"** 옵션이 체크되어 있는지 확인합니다
-    2. 설치 완료 후 **재부팅**이 필요할 수 있습니다
-    3. 재부팅 후 Docker Desktop이 자동 시작되며, 시스템 트레이에 고래 아이콘이 나타납니다
+        1. 다운로드한 설치 파일 실행
+        2. **"Use WSL 2 instead of Hyper-V"** 옵션이 체크되어 있는지 확인
+        3. 설치 완료 후 **재부팅** (필요시)
+        4. 재부팅 후 Docker Desktop이 자동 시작 - 시스템 트레이에 고래 아이콘 확인
+
+    === "macOS"
+
+        1. 다운로드한 `.dmg` 파일을 열고 Docker 아이콘을 **Applications** 폴더로 드래그
+        2. **Applications**에서 Docker를 실행
+        3. 처음 실행 시 시스템 권한 요청 - **허용** 클릭
+        4. 상단 메뉴바에 고래 아이콘이 나타나면 준비 완료
+
+        !!! info "Apple Silicon (M1/M2/M3/M4)"
+            Apple Silicon Mac은 반드시 **Apple Silicon** 버전을 다운로드하세요. Intel 버전은 Rosetta 2 에뮬레이션으로 동작하지만 성능이 크게 떨어집니다.
+
+    === "Linux (Ubuntu)"
+
+        Docker Desktop 대신 **Docker Engine**을 직접 설치하는 것이 더 가볍고 일반적입니다:
+
+        ```bash
+        # 이전 버전 제거
+        sudo apt remove docker docker-engine docker.io containerd runc 2>/dev/null
+
+        # 저장소 설정
+        sudo apt update
+        sudo apt install -y ca-certificates curl gnupg
+        sudo install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+          https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+        # Docker 설치
+        sudo apt update
+        sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+        # 현재 사용자를 docker 그룹에 추가 (sudo 없이 docker 명령 사용)
+        sudo usermod -aG docker $USER
+        ```
+
+        !!! warning "그룹 변경 적용"
+            `usermod` 후에는 **로그아웃 후 다시 로그인**해야 그룹 변경이 적용됩니다. 또는 `newgrp docker`로 즉시 적용할 수 있습니다.
+
+        Docker Desktop GUI가 필요하다면 [공식 문서](https://docs.docker.com/desktop/install/ubuntu/)를 참고하세요.
 
     ### 설치 확인
 

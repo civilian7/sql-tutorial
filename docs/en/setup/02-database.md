@@ -137,11 +137,54 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
     | macOS (Apple Silicon) | [Docker Desktop for Mac (Apple Silicon)](https://desktop.docker.com/mac/main/arm64/Docker.dmg) |
     | Linux | [Docker Desktop for Linux](https://docs.docker.com/desktop/install/linux/) |
 
-    ### Windows Installation Notes
+    === "Windows"
 
-    1. Verify **"Use WSL 2 instead of Hyper-V"** is checked during installation
-    2. A **reboot** may be required after installation
-    3. After reboot, Docker Desktop starts automatically and a whale icon appears in the system tray
+        1. Run the downloaded installer
+        2. Verify **"Use WSL 2 instead of Hyper-V"** is checked
+        3. **Reboot** after installation (if required)
+        4. After reboot, Docker Desktop starts automatically - look for the whale icon in the system tray
+
+    === "macOS"
+
+        1. Open the downloaded `.dmg` file and drag the Docker icon to **Applications**
+        2. Launch Docker from **Applications**
+        3. On first launch, approve the system permission request
+        4. When the whale icon appears in the menu bar, Docker is ready
+
+        !!! info "Apple Silicon (M1/M2/M3/M4)"
+            Apple Silicon Macs must download the **Apple Silicon** version. The Intel version runs via Rosetta 2 emulation but with significantly reduced performance.
+
+    === "Linux (Ubuntu)"
+
+        Installing **Docker Engine** directly is lighter and more common than Docker Desktop on Linux:
+
+        ```bash
+        # Remove old versions
+        sudo apt remove docker docker-engine docker.io containerd runc 2>/dev/null
+
+        # Set up the repository
+        sudo apt update
+        sudo apt install -y ca-certificates curl gnupg
+        sudo install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+          https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+        # Install Docker
+        sudo apt update
+        sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+        # Add current user to docker group (run docker without sudo)
+        sudo usermod -aG docker $USER
+        ```
+
+        !!! warning "Group Change Takes Effect After Re-login"
+            After `usermod`, you must **log out and log back in** for the group change to take effect. Alternatively, run `newgrp docker` to apply immediately.
+
+        If you need the Docker Desktop GUI, see the [official docs](https://docs.docker.com/desktop/install/ubuntu/).
 
     ### Verify Installation
 
