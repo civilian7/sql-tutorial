@@ -1,6 +1,6 @@
 **[한국어](README.ko.md)** | English
 
-# SQL Tutorial — E-Commerce Database <small>v3.0</small>
+# SQL Tutorial — E-Commerce Database <small>v3.3</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -8,9 +8,9 @@
 
 > If you find this useful, please give it a :star: — it helps others discover this project!
 
-A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (27 lessons, 640 exercises).
+A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (27 lessons, 910 exercises).
 
-> **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **750,000 rows of realistic data** + full tutorial + exercises you can actually execute.
+> **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **750,000 rows of realistic data** + full tutorial + 910 exercises you can actually execute.
 
 ## Quick Start
 
@@ -28,12 +28,12 @@ Open `output/ecommerce-en.db` in any SQL tool and start learning.
 |-----------|---------|
 | **Database Generator** | 30 tables, 18 views, 5 triggers, 61 indexes |
 | **Tutorial** | 27 lessons (beginner → intermediate → advanced), bilingual (ko/en) |
-| **Exercises** | 640 problems (30 sets), with answers + explanations + result tables |
+| **Exercises** | 640 problems (30 sets) + 270 lesson reviews = 910 total |
 | **Stored Procedures** | 25 procedures + 5 functions (MySQL & PostgreSQL) |
-| **3 Databases** | SQLite (default), MySQL, PostgreSQL |
+| **5 Databases** | SQLite (default), MySQL, PostgreSQL, Oracle, SQL Server |
 | **Dirty Data Mode** | `--dirty-data` for data cleaning practice |
 | **Visual Diagrams** | Mermaid diagrams in every lesson |
-| **DB-specific SQL** | SQLite / MySQL / PostgreSQL tabs where syntax differs |
+| **DB-specific SQL** | SQLite / MySQL / PostgreSQL / Oracle / SQL Server tabs where syntax differs |
 
 ## Command Line Options
 
@@ -45,7 +45,7 @@ python generate.py [OPTIONS]
 --seed NUMBER                  Random seed (default: 42)
 --start-date YYYY-MM-DD        Start date (default: 2016-01-01)
 --end-date YYYY-MM-DD          End date (default: 2025-06-30)
---target {sqlite,mysql,postgresql}  Target DB (default: sqlite)
+--target {sqlite,mysql,postgresql,oracle,sqlserver}  Target DB (default: sqlite)
 --all                          Generate all DB formats
 --dirty-data                   Add 5-10% noise
 --apply                        Apply SQL directly to target DB
@@ -65,7 +65,7 @@ python generate.py [OPTIONS]
 
 ## Tutorial
 
-27 lessons with visual diagrams, DB-specific SQL tabs, and review exercises.
+27 lessons with visual diagrams, DB-specific SQL tabs (up to 5 databases), and review exercises.
 
 | Level | Lessons | Topics |
 |-------|---------|--------|
@@ -73,7 +73,7 @@ python generate.py [OPTIONS]
 | Intermediate | 08–17 | INNER/LEFT JOIN, Subqueries, Date/String, Utility Functions, UNION, DML, DDL, Transactions |
 | Advanced | 18–26 | Window Functions, CTE, EXISTS, Self/Cross JOIN, Views, Indexes, Triggers, JSON, Stored Procedures |
 
-## Exercises (640 Problems · 30 Sets)
+## Exercises (910 Problems · 30 Sets + 26 Lessons)
 
 | Level | Sets | Problems | Key Topics |
 |:-----:|:----:|:--------:|------------|
@@ -239,6 +239,14 @@ Free for personal learning and non-commercial education. For commercial use: civ
 | [@shinnyeonki](https://github.com/shinnyeonki) | Fix partition table UNIQUE constraints for PostgreSQL/MySQL, report products FK violation ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## Changelog
+
+### v3.3.0 (2026-04-15)
+
+**Oracle / SQL Server Support**: Added Oracle and SQL Server SQL tabs in exercises. Extended exercise.db schema (`reference_sql_oracle`, `reference_sql_sqlserver`). Up to 5 DB tabs (SQLite / MySQL / PostgreSQL / Oracle / SQL Server) when DB-specific SQL exists
+
+### v3.2.0 (2026-04-14)
+
+**Lesson Review YAML Integration**: Extracted 270 review problems from 26 lessons into standalone YAML files. Auto-injected into lesson markdown via `compile_exercises.py`. Total 910 problems (640 exercises + 270 lesson reviews)
 
 ### v3.0.0 (2026-04-12)
 

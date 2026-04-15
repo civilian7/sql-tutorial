@@ -1,6 +1,6 @@
 한국어 | **[English](README.md)**
 
-# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.0</small>
+# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.3</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -8,7 +8,7 @@
 
 > 이 콘텐츠가 마음에 드셨다면 :star: 스타 하나 부탁드립니다!
 
-컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (27개 레슨, 640개 연습문제)을 제공하는 프로젝트입니다.
+컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (27개 레슨, 910개 연습문제)을 제공하는 프로젝트입니다.
 
 > **왜 이 프로젝트를?** 대부분의 SQL 교재는 문제만 있고 데이터가 없어서 쿼리를 실행해볼 수 없습니다. 이 프로젝트는 **75만 건의 현실적 데이터**와 완전한 튜토리얼 + 실행 가능한 연습문제를 제공합니다.
 
@@ -28,12 +28,12 @@ python generate.py --size small
 |------|------|
 | **데이터베이스 생성기** | 30 테이블, 18 뷰, 5 트리거, 61 인덱스 |
 | **튜토리얼** | 27개 레슨 (초급→중급→고급), 한국어/영어 |
-| **연습문제** | 640개 (30세트), 정답 + 해설 + 결과 테이블 포함 |
+| **연습문제** | 640개 (30세트) + 270개 레슨 복습 = 총 910문제 |
 | **저장 프로시저** | 25개 프로시저 + 5개 함수 (MySQL & PostgreSQL) |
-| **3개 DB** | SQLite (기본), MySQL, PostgreSQL |
+| **5개 DB** | SQLite (기본), MySQL, PostgreSQL, Oracle, SQL Server |
 | **더티 데이터** | `--dirty-data` 데이터 정제 연습 |
 | **시각화 도표** | 모든 레슨에 Mermaid 다이어그램 |
-| **DB별 SQL** | SQLite / MySQL / PostgreSQL 탭 |
+| **DB별 SQL** | SQLite / MySQL / PostgreSQL / Oracle / SQL Server 탭 |
 
 ## 명령행 옵션
 
@@ -45,7 +45,7 @@ python generate.py [OPTIONS]
 --seed NUMBER                  랜덤 시드 (기본: 42)
 --start-date YYYY-MM-DD        시작일 (기본: 2016-01-01)
 --end-date YYYY-MM-DD          종료일 (기본: 2025-06-30)
---target {sqlite,mysql,postgresql}  대상 DB (기본: sqlite)
+--target {sqlite,mysql,postgresql,oracle,sqlserver}  대상 DB (기본: sqlite)
 --all                          모든 DB 생성
 --dirty-data                   5~10% 노이즈 추가
 --apply                        대상 DB에 직접 적용
@@ -65,7 +65,7 @@ python generate.py [OPTIONS]
 
 ## 튜토리얼
 
-27개 레슨에 시각적 도표, DB별 SQL 탭, 복습 문제가 포함됩니다.
+27개 레슨에 시각적 도표, DB별 SQL 탭 (최대 5개 DB), 복습 문제가 포함됩니다.
 
 | 레벨 | 레슨 | 주제 |
 |------|------|------|
@@ -73,7 +73,7 @@ python generate.py [OPTIONS]
 | 중급 | 08–17 | INNER/LEFT JOIN, 서브쿼리, 날짜/문자열, 숫자·변환, UNION, DML, DDL, 트랜잭션 |
 | 고급 | 18–26 | 윈도우 함수, CTE, EXISTS, Self/Cross JOIN, 뷰, 인덱스, 트리거, JSON, 저장 프로시저 |
 
-## 연습문제 (640문제 · 30세트)
+## 연습문제 (910문제 · 30세트 + 26레슨)
 
 | 레벨 | 세트 수 | 문제 수 | 주요 주제 |
 |:----:|:-------:|:-------:|----------|
@@ -237,6 +237,14 @@ pdf.bat en       # 영어만
 | [@shinnyeonki](https://github.com/shinnyeonki) | PostgreSQL/MySQL 파티션 테이블 UNIQUE 제약조건 수정, products FK 위반 이슈 리포트 ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## 변경 이력
+
+### v3.3.0 (2026-04-15)
+
+**Oracle / SQL Server 지원**: 연습문제에 Oracle, SQL Server용 SQL 탭 추가. exercise.db 스키마 확장 (`reference_sql_oracle`, `reference_sql_sqlserver`). DB별 SQL이 있으면 최대 5개 탭 (SQLite / MySQL / PostgreSQL / Oracle / SQL Server) 표시
+
+### v3.2.0 (2026-04-14)
+
+**레슨 복습 문제 YAML 통합**: 26개 강의에서 270개 복습 문제를 독립 YAML 파일로 추출. `compile_exercises.py`로 강의 MD 자동 삽입. 총 910문제 (연습 640 + 레슨 270)
 
 ### v3.0.0 (2026-04-12)
 
