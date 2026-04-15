@@ -49,7 +49,7 @@ Detailed learning about views is covered in [Lesson 22. Views](../advanced/22-vi
 | Operations/Analytics | v_supplier_performance, v_staff_workload, v_coupon_effectiveness, v_return_analysis, v_cart_abandonment | Return rate, ROI, GROUP_CONCAT |
 
 !!! info "View Support by DB"
-    All 18 views are available identically across SQLite, MySQL, and PostgreSQL.
+    All 18 views are available identically across SQLite, MySQL, PostgreSQL, Oracle, and SQL Server.
 
     In PostgreSQL, `v_monthly_sales` and `v_product_performance` are also provided as **Materialized Views** (with `mv_` prefix).
     Materialized Views physically store query results so they are not recalculated each time, significantly improving performance for large aggregate views.

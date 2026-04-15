@@ -20,7 +20,7 @@
 </li>
 <li markdown>
 <div class="tl-title" markdown>[01. 데이터베이스 선택](01-choose-db.md)</div>
-<p class="tl-desc">SQLite, MySQL, PostgreSQL 중 자신에게 맞는 DB를 고릅니다</p>
+<p class="tl-desc">SQLite, MySQL, PostgreSQL, Oracle, SQL Server 중 자신에게 맞는 DB를 고릅니다</p>
 <p class="tl-time">약 1분</p>
 </li>
 <li markdown>

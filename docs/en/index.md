@@ -2,8 +2,8 @@
 
 A hands-on SQL tutorial using a realistic **e-commerce database** (30 tables · 750K rows).
 
-Learn SQL by querying 10 years of business data from **TechShop**, a fictional online store selling computers and peripherals. Progress systematically through **27 lessons · 640 exercises**, from basics to advanced topics.
-Supports **SQLite, MySQL, and PostgreSQL** simultaneously — all examples and exercises include DB-specific tabs for comparison.
+Learn SQL by querying 10 years of business data from **TechShop**, a fictional online store selling computers and peripherals. Progress systematically through **27 lessons · 910 exercises**, from basics to advanced topics.
+Supports **SQLite, MySQL, PostgreSQL, Oracle, and SQL Server** — all examples and exercises include DB-specific tabs for comparison.
 
 ## About the Author
 
@@ -83,22 +83,22 @@ SQL is hard to learn from books alone. Memorizing syntax doesn't enable you to w
 
 **Realistic data** — 750K rows of data from a growing online store over 10 years includes sales growth trends, year-end peaks, customer churn, NULLs, and outliers. Not textbook-clean data, but the real thing you encounter in practice.
 
-**Three databases at once** — Solve the same problems in SQLite, MySQL, and PostgreSQL. Compare DB-specific syntax with a single tab switch, building SQL skills that aren't tied to any particular database.
+**Five databases at once** — Solve the same problems in SQLite, MySQL, PostgreSQL, Oracle, and SQL Server. Compare DB-specific syntax with a single tab switch, building SQL skills that aren't tied to any particular database.
 
 **Data you build yourself** — A seed-based generator is included, letting you freely adjust data size, language, and noise. You can use the tutorial's data as-is or create your own.
 
 | Traditional Resources | This Tutorial |
 |-----------------------|--------------|
 | Syntax explanations only, no practice data | **750K rows** with 10-year growth curves, seasonality, and customer behavior |
-| Covers only one DB | **SQLite, MySQL, PostgreSQL** — same problems across three DBs |
-| Answers only | Full answers + explanations + result tables for all **640 problems** |
+| Covers only one DB | **SQLite, MySQL, PostgreSQL, Oracle, SQL Server** — same problems across five DBs |
+| Answers only | Full answers + explanations + result tables for all **910 problems** |
 | Fixed data, no customization | **Seed-based generator** — freely adjust size, language, and noise |
 | Grammar-listing format | Practice centered on shopping mall **business scenarios** |
 | English or Korean only | Both data and documentation in **Korean/English** |
 
 ## Supported Databases { #supported-databases }
 
-This tutorial supports three databases simultaneously. Each has different characteristics — choose based on your needs, or try all three.
+This tutorial supports five databases. Each has different characteristics — choose based on your needs, or try multiple DBs.
 
 ### SQLite
 
@@ -133,14 +133,47 @@ The open-source RDBMS with the highest standards compliance. It excels in comple
 | Native Materialized Views, partitioning | Default replication setup more complex than MySQL |
 | PL/pgSQL, custom types, extension modules | Less web hosting support than MySQL |
 
-### Future Support Plans
+### Oracle
 
-Currently supporting SQLite, MySQL, and PostgreSQL, we plan to add support for the following databases in the future.
+The #1 commercial RDBMS in the enterprise market. Excels in large-scale transaction processing and high availability, widely used in finance, government, and enterprise systems.
+
+| Pros | Cons |
+|------|------|
+| Enterprise-grade stability and performance | High commercial license costs |
+| Powerful server-side logic with PL/SQL | Syntax differs significantly from other DBs |
+| Advanced features: partitioning, RAC, Data Guard | Complex installation and administration |
+| Rich built-in functions (NVL, DECODE, ROWNUM, etc.) | Free edition (XE) has resource limitations |
+
+### SQL Server
+
+Microsoft's commercial RDBMS, tightly integrated with the .NET ecosystem and Windows environments. Uses T-SQL (Transact-SQL) extended syntax.
+
+| Pros | Cons |
+|------|------|
+| Perfect integration with Windows/.NET | Linux support only from 2017 (relatively recent) |
+| Powerful SSMS (Management Studio) admin tool | Commercial license costs (Express is free) |
+| T-SQL extensions (TOP, ISNULL, CONVERT, etc.) | Some differences from SQL standard syntax |
+| Azure SQL cloud integration | Uses TOP/OFFSET FETCH instead of LIMIT |
+
+### Support Scope
+
+| DB | Data Generation | Exercise SQL Tabs | Notes |
+|----|:--------------:|:-----------------:|-------|
+| SQLite | :white_check_mark: | :white_check_mark: | Default DB, single file |
+| MySQL | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL files, `--apply` supported |
+| PostgreSQL | :white_check_mark: | :white_check_mark: | DDL + INSERT SQL files, `--apply` supported |
+| Oracle | — | :white_check_mark: | Oracle syntax tabs in exercises |
+| SQL Server | — | :white_check_mark: | T-SQL syntax tabs in exercises |
+
+!!! tip "Oracle / SQL Server Users"
+    Oracle and SQL Server are currently supported through SQL tabs in exercises. For problems where DB syntax differs, you can see Oracle (`NVL`, `FETCH FIRST N ROWS ONLY`, sequences, etc.) and SQL Server (`TOP`, `ISNULL`, `CONVERT`, etc.) answers. Oracle/SQL Server data generator exporters are planned for future release.
+
+### Future Support Plans
 
 | Database | Status | Notes |
 |----------|:------:|-------|
-| Oracle | Planned | #1 enterprise market share, PL/SQL |
-| SQL Server | Planned | .NET ecosystem, T-SQL |
+| Oracle data generation | Planned | Exporter to be added (PL/SQL, sequences, etc.) |
+| SQL Server data generation | Planned | Exporter to be added (T-SQL, IDENTITY, etc.) |
 | DB2 | Under review | Legacy in finance and government |
 | CUBRID | Under review | Korean open-source RDBMS |
 | Tibero | Under review | Korean commercial RDBMS, Oracle-compatible |
@@ -312,6 +345,8 @@ Adjust to your own pace. Based on 1-2 hours per day.
 
 | Version | Date | Key Changes |
 |:-------:|:----:|-------------|
+| v3.3 | 2026-04-15 | Oracle / SQL Server exercise SQL tabs, 5 DB support |
+| v3.2 | 2026-04-14 | 26 lesson review YAML integration (270 problems), total 910 problems |
 | v3.0 | 2026-04-12 | 27 lessons · 640 exercises (30 sets) complete, full English translation, persona learning paths, MkDocs build automation, PDF export |
 | v2.1 | 2026-04-11 | Document structure overhaul (schema/setup split), 18 MySQL/PG views added, expanded to 15 stored procedures, trigger/view/SP flowcharts, DB selection guide, study schedule |
 | v2.0 | 2026-04-01 | Full renewal — 30 tables, 3 DB simultaneous support, Korean/English support, seed-based generator |

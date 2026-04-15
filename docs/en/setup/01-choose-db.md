@@ -1,6 +1,6 @@
 # 01. Choose a Database
 
-This tutorial supports three databases: **SQLite, MySQL, and PostgreSQL**. All lessons and exercises provide DB-specific tabs, so you can learn the same content regardless of which DB you choose.
+This tutorial supports five databases: **SQLite, MySQL, PostgreSQL, Oracle, and SQL Server**. All lessons and exercises provide DB-specific tabs, so you can learn the same content regardless of which DB you choose.
 
 **Pick one right now.** Later, running the same queries on other DBs will naturally teach you the differences between them.
 
@@ -14,23 +14,24 @@ flowchart TD
     you mainly work in?"}
     C -->|"Web services / PHP"| D["✅ MySQL / MariaDB"]
     C -->|"Data analysis / Backend"| E["✅ PostgreSQL"]
+    C -->|"Enterprise / Finance"| H["✅ Oracle"]
+    C -->|"Windows / .NET"| I["✅ SQL Server"]
     C -->|"Not sure"| F{"Can you install
     a server?"}
     F -->|No| B
-    F -->|Yes| G["MySQL or PostgreSQL
-    See comparison below"]
+    F -->|Yes| G["See comparison below"]
 ```
 
 ## Quick Comparison
 
-| | SQLite | MySQL / MariaDB | PostgreSQL |
-|-|--------|----------------|------------|
-| **Difficulty** | Very Easy | Moderate | Moderate |
-| **Installation** | Not needed (file-based) | Server installation required | Server installation required |
-| **Best for** | Learning, embedded, mobile | Web services, CRUD apps | Analytics, complex queries, GIS |
-| **SQL Standard** | Mostly supported | Some gaps | Highest level |
-| **Stored Procedures** | Not supported | Supported | Supported |
-| **JSON** | Basic functions | JSON type | JSONB (high performance) |
+| | SQLite | MySQL / MariaDB | PostgreSQL | Oracle | SQL Server |
+|-|--------|----------------|------------|--------|------------|
+| **Difficulty** | Very Easy | Moderate | Moderate | Hard | Moderate |
+| **Installation** | Not needed (file-based) | Server required | Server required | Server required | Server required |
+| **Best for** | Learning, embedded, mobile | Web services, CRUD apps | Analytics, complex queries, GIS | Enterprise, finance, government | Windows, .NET, Azure |
+| **SQL Standard** | Mostly supported | Some gaps | Highest level | High (many extensions) | High (T-SQL extensions) |
+| **Stored Procedures** | Not supported | Supported | Supported | PL/SQL | T-SQL |
+| **JSON** | Basic functions | JSON type | JSONB (high performance) | JSON (21c+) | JSON (2016+) |
 
 For detailed pros and cons of each DB, see [Tutorial Introduction > Supported Databases](../index.md#supported-databases).
 
@@ -41,6 +42,8 @@ For detailed pros and cons of each DB, see [Tutorial Introduction > Supported Da
 | New to SQL | **SQLite** | Start immediately with a single file, no installation |
 | Working in web development | **MySQL** | Standard for PHP, WordPress, web hosting ecosystem |
 | Doing data analysis / backend | **PostgreSQL** | Highest SQL standard compliance, JSONB, window functions |
+| Enterprise / finance systems | **Oracle** | PL/SQL, large-scale transactions, high availability |
+| Windows / .NET environment | **SQL Server** | SSMS, Azure integration, T-SQL |
 | Developing mobile/desktop apps | **SQLite** | De facto standard for embedded DBs |
 | Not sure | **SQLite** | Easiest, and you can expand later |
 

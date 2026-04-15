@@ -4,7 +4,7 @@ Verify that the database was generated correctly.
 
 ## Open in a SQL Tool
 
-If you want to use multiple DBs in a single tool, we recommend **[DBeaver](https://dbeaver.io/download/)** (free, open source). It supports SQLite, MySQL, and PostgreSQL.
+If you want to use multiple DBs in a single tool, we recommend **[DBeaver](https://dbeaver.io/download/)** (free, open source). It supports SQLite, MySQL, PostgreSQL, Oracle, and SQL Server.
 
 !!! tip "ezQuery Coming Soon"
     Once **ezQuery**, currently in development, is released, it will become the official recommended tool for this tutorial. It will include the tutorial database as a built-in sample, allowing you to start practicing immediately after installation.

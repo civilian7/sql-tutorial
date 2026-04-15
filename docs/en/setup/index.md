@@ -4,7 +4,7 @@ To use this tutorial, you need to prepare the following:
 
 - **Project source** — Download from GitHub (Git or ZIP)
 - **Python 3.10+** — Required to run the data generator
-- **Database** — SQLite (no installation needed), MySQL, or PostgreSQL
+- **Database** — SQLite (no installation needed), MySQL, PostgreSQL, Oracle, or SQL Server
 - **SQL tool** — A program to open the generated database and run queries
 
 !!! info "Just want to read the docs?"
@@ -20,7 +20,7 @@ Follow the 5 steps below. Even for beginners, 30 minutes is enough.
 </li>
 <li markdown>
 <div class="tl-title" markdown>[01. Choose a Database](01-choose-db.md)</div>
-<p class="tl-desc">Pick the right DB for you from SQLite, MySQL, or PostgreSQL</p>
+<p class="tl-desc">Pick the right DB for you from SQLite, MySQL, PostgreSQL, Oracle, or SQL Server</p>
 <p class="tl-time">~1 min</p>
 </li>
 <li markdown>

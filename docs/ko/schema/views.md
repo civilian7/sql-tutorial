@@ -49,7 +49,7 @@
 | 운영/분석 | v_supplier_performance, v_staff_workload, v_coupon_effectiveness, v_return_analysis, v_cart_abandonment | 반품률, ROI, GROUP_CONCAT |
 
 !!! info "DB별 뷰 지원"
-    18개 뷰는 SQLite, MySQL, PostgreSQL 모두에서 동일하게 제공됩니다.
+    18개 뷰는 SQLite, MySQL, PostgreSQL, Oracle, SQL Server 모두에서 동일하게 제공됩니다.
 
     PostgreSQL에서는 `v_monthly_sales`와 `v_product_performance`가 **Materialized View**(`mv_` 접두어)로도 제공됩니다.
     Materialized View는 쿼리 결과를 물리적으로 저장하여 매번 재계산하지 않으므로, 대용량 집계 뷰에서 성능이 크게 향상됩니다.

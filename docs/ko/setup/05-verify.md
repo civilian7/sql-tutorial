@@ -4,7 +4,7 @@
 
 ## SQL 도구에서 열기
 
-여러 DB를 하나의 도구에서 사용하고 싶다면 **[DBeaver](https://dbeaver.io/download/)**(무료, 오픈소스)를 추천합니다. SQLite, MySQL, PostgreSQL을 모두 지원합니다.
+여러 DB를 하나의 도구에서 사용하고 싶다면 **[DBeaver](https://dbeaver.io/download/)**(무료, 오픈소스)를 추천합니다. SQLite, MySQL, PostgreSQL, Oracle, SQL Server를 모두 지원합니다.
 
 !!! tip "ezQuery 출시 예정"
     현재 개발 중인 **ezQuery**가 출시되면 이 튜토리얼의 공식 추천 도구가 될 예정입니다. 튜토리얼 데이터베이스를 샘플로 내장하여, 설치 후 바로 실습을 시작할 수 있습니다.
