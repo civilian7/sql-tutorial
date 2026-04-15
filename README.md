@@ -16,7 +16,7 @@ A Python tool that generates **realistic test databases** for an online computer
 
 ```bash
 pip install -r requirements.txt
-python generate.py --size small
+python -m src.cli.generate --size small
 # Output: output/ecommerce-en.db (~80MB, 750K rows)
 ```
 
@@ -38,7 +38,7 @@ Open `output/ecommerce-en.db` in any SQL tool and start learning.
 ## Command Line Options
 
 ```
-python generate.py [OPTIONS]
+python -m src.cli.generate [OPTIONS]
 
 --size {small,medium,large}    Data scale (default: medium)
 --locale {ko,en}               Data language (default: ko)
@@ -86,7 +86,7 @@ Problem types: `SELECT`, `JOIN/UNION`, `Aggregate`, `String/Date`, `Subquery/CTE
 Exercises are authored in YAML and compiled to both mkdocs pages and `exercise.db`:
 
 ```bash
-python compile_exercises.py    # YAML → exercise.db + mkdocs markdown
+python -m src.cli.compile_exercises    # YAML → exercise.db + mkdocs markdown
 ```
 
 ## Database (30 Tables)
@@ -138,16 +138,16 @@ python compile_exercises.py    # YAML → exercise.db + mkdocs markdown
 
 ```bash
 # SQL files only (no DB needed)
-python generate.py --target mysql --size small
-python generate.py --target oracle --size small
-python generate.py --target sqlserver --size small
+python -m src.cli.generate --target mysql --size small
+python -m src.cli.generate --target oracle --size small
+python -m src.cli.generate --target sqlserver --size small
 
 # Generate all 5 DB formats
-python generate.py --all --size small
+python -m src.cli.generate --all --size small
 
 # MySQL/PostgreSQL support direct apply
 pip install mysql-connector-python   # or psycopg2-binary for PG
-python generate.py --target mysql --size small --apply --ask-password
+python -m src.cli.generate --target mysql --size small --apply --ask-password
 ```
 
 Each DB uses native types, stored procedures/functions, views, indexes, and triggers:
@@ -238,9 +238,6 @@ First run automatically installs Playwright + Chromium (~200MB). PDF rendering u
 ## Project Structure
 
 ```
-├── generate.py              # Wrapper → src/cli/generate.py
-├── compile_exercises.py     # Wrapper → src/cli/compile_exercises.py
-├── verify.py                # Wrapper → src/verify/verify.py
 ├── config.yaml              # Core config
 ├── config_detailed.yaml     # Detailed config (120+ params)
 ├── data/                    # Categories, products, suppliers, locale

@@ -39,15 +39,6 @@
 ## 프로젝트 구조
 ```
 sql-tutorial/
-├── generate.py              # 래퍼 → src/cli/generate.py
-├── compile_exercises.py     # 래퍼 → src/cli/compile_exercises.py
-├── check_integrity.py       # 래퍼 → src/cli/check_integrity.py
-├── verify.py                # 래퍼 → src/verify/verify.py
-├── verify_sql.py            # 래퍼 → src/verify/verify_sql.py
-├── verify_quality.py        # 래퍼 → src/verify/verify_quality.py
-├── verify_difficulty.py     # 래퍼 → src/verify/verify_difficulty.py
-├── verify_dml.py            # 래퍼 → src/verify/verify_dml.py
-├── sync_sql.py              # 래퍼 → src/cli/sync_sql.py
 ├── config.yaml              # 핵심 설정 (날짜, 규모, 성장, 비율)
 ├── config_detailed.yaml     # 상세 설정 (120+ 파라미터)
 ├── requirements.txt         # Python 의존성
@@ -94,17 +85,17 @@ sql-tutorial/
 ## 실행 방법
 ```bash
 # 기본 실행 (SQLite만 생성)
-python generate.py
+python -m src.cli.generate
 
 # 전체 DB 포맷 생성
-python generate.py --all
+python -m src.cli.generate --all
 
 # 특정 DB만
-python generate.py --target postgresql
+python -m src.cli.generate --target postgresql
 
 # 데이터 규모 조절 (small/medium/large)
-python generate.py --size medium
+python -m src.cli.generate --size medium
 
 # 시드 고정 (재현 가능)
-python generate.py --seed 42
+python -m src.cli.generate --seed 42
 ```

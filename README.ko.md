@@ -16,7 +16,7 @@
 
 ```bash
 pip install -r requirements.txt
-python generate.py --size small
+python -m src.cli.generate --size small
 # 출력: output/ecommerce-ko.db (~80MB, 75만 건)
 ```
 
@@ -38,7 +38,7 @@ python generate.py --size small
 ## 명령행 옵션
 
 ```
-python generate.py [OPTIONS]
+python -m src.cli.generate [OPTIONS]
 
 --size {small,medium,large}    데이터 규모 (기본: medium)
 --locale {ko,en}               언어 (기본: ko)
@@ -86,7 +86,7 @@ python generate.py [OPTIONS]
 연습문제는 YAML로 작성하고 mkdocs + exercise.db로 컴파일합니다:
 
 ```bash
-python compile_exercises.py    # YAML → exercise.db + mkdocs 마크다운
+python -m src.cli.compile_exercises    # YAML → exercise.db + mkdocs 마크다운
 ```
 
 ## 데이터베이스 (30 테이블)
@@ -138,16 +138,16 @@ python compile_exercises.py    # YAML → exercise.db + mkdocs 마크다운
 
 ```bash
 # SQL 파일만 생성
-python generate.py --target mysql --size small
-python generate.py --target oracle --size small
-python generate.py --target sqlserver --size small
+python -m src.cli.generate --target mysql --size small
+python -m src.cli.generate --target oracle --size small
+python -m src.cli.generate --target sqlserver --size small
 
 # 전체 DB 생성
-python generate.py --all --size small
+python -m src.cli.generate --all --size small
 
 # MySQL/PostgreSQL은 직접 적용 가능
 pip install mysql-connector-python   # PG: psycopg2-binary
-python generate.py --target mysql --size small --apply --ask-password
+python -m src.cli.generate --target mysql --size small --apply --ask-password
 ```
 
 각 DB에 포함: 네이티브 타입, 저장 프로시저/함수, 뷰, 인덱스, 트리거. DB별 특성:
@@ -238,9 +238,6 @@ pdf.bat en       # 영어만
 ## 프로젝트 구조
 
 ```
-├── generate.py              # 래퍼 → src/cli/generate.py
-├── compile_exercises.py     # 래퍼 → src/cli/compile_exercises.py
-├── verify.py                # 래퍼 → src/verify/verify.py
 ├── config.yaml              # 핵심 설정
 ├── config_detailed.yaml     # 상세 설정 (120+ 파라미터)
 ├── data/                    # 카테고리, 상품, 공급업체, 로케일

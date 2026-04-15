@@ -8,9 +8,6 @@ on:
       - 'src/**'
       - 'data/**'
       - 'exercises/**'
-      - 'generate.py'
-      - 'compile_exercises.py'
-      - 'verify*.py'
       - 'requirements.txt'
       - '.github/workflows/**'
   pull_request:
@@ -44,24 +41,24 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Generate database (Korean)
-        run: python generate.py --size small
+        run: python -m src.cli.generate --size small
 
       - name: Generate database (English)
-        run: python generate.py --size small --locale en
+        run: python -m src.cli.generate --size small --locale en
 
       - name: Verify SQL (examples + answers)
-        run: python verify_sql.py
+        run: python -m src.verify.verify_sql
 
       - name: Verify content quality
-        run: python verify_quality.py || true
+        run: python -m src.verify.verify_quality || true
         continue-on-error: true
 
       - name: Verify difficulty curve
-        run: python verify_difficulty.py || true
+        run: python -m src.verify.verify_difficulty || true
         continue-on-error: true
 
       - name: Verify DML/DDL answers
-        run: python verify_dml.py || true
+        run: python -m src.verify.verify_dml || true
         continue-on-error: true
 
       - name: Build docs (Korean)
