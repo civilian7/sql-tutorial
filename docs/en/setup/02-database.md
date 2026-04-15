@@ -19,7 +19,71 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 
     ---
 
-    ## Step 1: Install Docker Desktop
+    ## Step 1: Install WSL 2 (Windows Only)
+
+    !!! info "macOS / Linux Users"
+        Skip this step and go directly to [Step 2: Install Docker Desktop](#step-2-install-docker-desktop).
+
+    **WSL (Windows Subsystem for Linux)** lets you run Linux inside Windows. Docker Desktop uses WSL 2 internally, so WSL 2 must be installed before Docker.
+
+    ### Install WSL 2
+
+    Open **PowerShell as Administrator** and run:
+
+    ```powershell
+    wsl --install
+    ```
+
+    This single command installs WSL 2 + **Ubuntu** (default distro). **Reboot** when complete.
+
+    !!! tip "Recommended Distro: Ubuntu"
+        `wsl --install` installs **Ubuntu** by default. Ubuntu is the most widely used distro in Docker docs, Stack Overflow, and tutorials, making it the easiest to troubleshoot. Use Ubuntu unless you have a specific reason not to.
+
+        For a different distro:
+        ```powershell
+        wsl --list --online              # List available distros
+        wsl --install -d Debian          # Install Debian
+        wsl --install -d Ubuntu-24.04    # Specific Ubuntu version
+        ```
+
+    ### Post-Reboot Setup
+
+    After reboot, an Ubuntu terminal opens automatically, asking you to set a **Linux username** and **password**. This account is only used inside Linux and is separate from your Windows account.
+
+    ```
+    Enter new UNIX username: tutorial
+    New password: ********
+    ```
+
+    ### Verify WSL 2
+
+    In PowerShell:
+
+    ```powershell
+    wsl --list --verbose
+    ```
+
+    Output like this means success:
+
+    ```
+      NAME      STATE    VERSION
+    * Ubuntu    Running  2
+    ```
+
+    Make sure `VERSION` is **2**. If it shows 1:
+
+    ```powershell
+    wsl --set-version Ubuntu 2
+    ```
+
+    !!! warning "If WSL Installation Fails"
+        - **Enable virtualization in BIOS**: Reboot and enable **Intel VT-x** or **AMD-V** in BIOS settings
+        - **Check Windows version**: Windows 10 version 2004+ or Windows 11 required
+        - **Enable Windows features**: `Control Panel > Programs > Turn Windows features on or off` - check "Windows Subsystem for Linux" and "Virtual Machine Platform"
+
+    ---
+
+    ## Step 2: Install Docker Desktop { #step-2-install-docker-desktop }
 
     ### Download
 
@@ -34,13 +98,9 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 
     ### Windows Installation Notes
 
-    1. If prompted, check **"Use WSL 2 instead of Hyper-V"**
-    2. If WSL 2 is not installed, Docker Desktop will guide you through the setup
-    3. A **reboot** may be required after installation
-    4. After reboot, Docker Desktop starts automatically and a whale icon appears in the system tray
-
-    !!! warning "Windows Home Users"
-        Docker Desktop works on Windows Home. However, **WSL 2** is required, so follow the automatic setup during installation.
+    1. Verify **"Use WSL 2 instead of Hyper-V"** is checked during installation
+    2. A **reboot** may be required after installation
+    3. After reboot, Docker Desktop starts automatically and a whale icon appears in the system tray
 
     ### Verify Installation
 
@@ -60,7 +120,7 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 
     ---
 
-    ## Step 2: Essential Docker Commands
+    ## Step 3: Essential Docker Commands
 
     Only the commands used in this tutorial:
 
@@ -82,7 +142,7 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 
     ---
 
-    ## Step 3: Run Database Containers
+    ## Step 4: Run Database Containers
 
     Run only the commands for your chosen DB. You can run multiple DBs simultaneously.
 
@@ -195,7 +255,7 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 
     ---
 
-    ## Step 4: Managing Containers
+    ## Step 5: Managing Containers
 
     ### Start / Stop
 

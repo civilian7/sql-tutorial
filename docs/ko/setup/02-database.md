@@ -19,7 +19,71 @@
 
     ---
 
-    ## 1단계: Docker Desktop 설치
+    ## 1단계: WSL 2 설치 (Windows만 해당)
+
+    !!! info "macOS / Linux 사용자"
+        이 단계를 건너뛰고 바로 [2단계: Docker Desktop 설치](#2-docker-desktop)로 이동하세요.
+
+    **WSL (Windows Subsystem for Linux)**은 Windows 안에서 Linux를 실행하는 기능입니다. Docker Desktop이 내부적으로 WSL 2를 사용하므로, Docker를 쓰려면 WSL 2가 먼저 설치되어 있어야 합니다.
+
+    ### WSL 2 설치
+
+    **PowerShell을 관리자 권한으로 실행**하고 다음 명령을 입력합니다:
+
+    ```powershell
+    wsl --install
+    ```
+
+    이 한 줄로 WSL 2 + **Ubuntu** (기본 배포판)가 자동 설치됩니다. 완료 후 **재부팅**합니다.
+
+    !!! tip "추천 배포판: Ubuntu"
+        `wsl --install`은 기본으로 **Ubuntu**를 설치합니다. Ubuntu는 Docker 공식 문서, Stack Overflow, 각종 튜토리얼에서 가장 많이 사용되는 배포판이라, 문제가 생겼을 때 검색으로 해결하기 가장 쉽습니다. 특별한 이유가 없다면 Ubuntu를 그대로 사용하세요.
+
+        다른 배포판을 원한다면:
+        ```powershell
+        wsl --list --online              # 설치 가능한 배포판 목록
+        wsl --install -d Debian          # Debian 설치
+        wsl --install -d Ubuntu-24.04    # 특정 Ubuntu 버전
+        ```
+
+    ### 재부팅 후 초기 설정
+
+    재부팅하면 Ubuntu 터미널이 자동으로 열리며, **Linux 사용자 이름**과 **비밀번호**를 설정하라고 합니다. 이 계정은 Linux 내부에서만 사용되며, Windows 계정과 별개입니다.
+
+    ```
+    Enter new UNIX username: tutorial
+    New password: ********
+    ```
+
+    ### WSL 2 설치 확인
+
+    PowerShell에서:
+
+    ```powershell
+    wsl --list --verbose
+    ```
+
+    다음과 비슷한 출력이 나오면 성공입니다:
+
+    ```
+      NAME      STATE    VERSION
+    * Ubuntu    Running  2
+    ```
+
+    `VERSION`이 **2**인지 확인하세요. 만약 1이라면:
+
+    ```powershell
+    wsl --set-version Ubuntu 2
+    ```
+
+    !!! warning "WSL 설치가 안 되는 경우"
+        - **BIOS에서 가상화 활성화**: 재부팅 후 BIOS 설정에서 **Intel VT-x** 또는 **AMD-V**를 켜세요
+        - **Windows 버전 확인**: Windows 10 버전 2004 이상 또는 Windows 11 필요
+        - **Windows 기능 켜기**: `제어판 > 프로그램 > Windows 기능 켜기/끄기`에서 "Linux용 Windows 하위 시스템"과 "가상 머신 플랫폼" 체크
+
+    ---
+
+    ## 2단계: Docker Desktop 설치 { #2-docker-desktop }
 
     ### 다운로드
 
@@ -34,13 +98,9 @@
 
     ### Windows 설치 시 참고
 
-    1. 설치 중 **"Use WSL 2 instead of Hyper-V"** 옵션이 나타나면 **체크**합니다
-    2. WSL 2가 설치되어 있지 않으면 Docker Desktop이 자동으로 안내합니다
-    3. 설치 완료 후 **재부팅**이 필요할 수 있습니다
-    4. 재부팅 후 Docker Desktop이 자동 시작되며, 시스템 트레이에 고래 아이콘이 나타납니다
-
-    !!! warning "Windows Home 사용자"
-        Windows Home에서도 Docker Desktop 사용이 가능합니다. 단, **WSL 2**가 필수이므로 설치 중 자동 설정을 따라주세요.
+    1. 설치 중 **"Use WSL 2 instead of Hyper-V"** 옵션이 체크되어 있는지 확인합니다
+    2. 설치 완료 후 **재부팅**이 필요할 수 있습니다
+    3. 재부팅 후 Docker Desktop이 자동 시작되며, 시스템 트레이에 고래 아이콘이 나타납니다
 
     ### 설치 확인
 
@@ -60,7 +120,7 @@
 
     ---
 
-    ## 2단계: 알아두면 좋은 Docker 기본 명령
+    ## 3단계: 알아두면 좋은 Docker 기본 명령
 
     이 튜토리얼에서 사용하는 명령만 정리했습니다.
 
@@ -82,7 +142,7 @@
 
     ---
 
-    ## 3단계: 데이터베이스 컨테이너 실행
+    ## 4단계: 데이터베이스 컨테이너 실행
 
     선택한 DB의 명령만 실행하세요. 여러 DB를 동시에 실행해도 됩니다.
 
@@ -195,7 +255,7 @@
 
     ---
 
-    ## 4단계: 컨테이너 관리
+    ## 5단계: 컨테이너 관리
 
     ### 시작 / 중지
 
