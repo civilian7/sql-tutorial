@@ -5,218 +5,324 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 !!! success "If Using SQLite Only"
     **Skip this page.** SQLite is built into Python, so no separate installation is needed. → [03. Generate Data](03-generate.md)
 
----
+=== "Docker (Recommended)"
 
-## MySQL / MariaDB
+    ## What is Docker?
 
-=== "Windows"
+    **Docker** is a tool that runs software in isolated environments called **containers**. Instead of installing MySQL or PostgreSQL directly on your computer, Docker creates the necessary environment for you, and you can cleanly remove it when you're done.
 
-    ### 1. Download
+    !!! tip "Why Docker?"
+        - Install a DB server with a **single command**
+        - Run MySQL, PostgreSQL, Oracle, and SQL Server **simultaneously**
+        - If something goes wrong, delete the container and recreate it - your system stays clean
+        - Docker-based development environments are the industry standard
 
-    Download **mysql-installer-community** (~300MB) from [MySQL Installer](https://dev.mysql.com/downloads/installer/).
+    ---
 
-    !!! tip "Download Without Oracle Account"
-        Click the **"No thanks, just start my download"** link at the bottom of the download page to download without logging in.
+    ## Step 1: Install Docker Desktop
 
-    ### 2. Install
+    ### Download
 
-    1. Setup Type: Select **Server only** (Workbench etc. can be installed separately later)
-    2. **Config Type**: Development Computer (keep default)
-    3. **Port**: 3306 (keep default)
-    4. **Authentication**: Use Strong Password Encryption (keep default)
-    5. **Root Password** — This password is used with the `--ask-password` option during data generation. **Make sure to remember it**
+    Download the version for your OS from the [Docker Desktop](https://www.docker.com/products/docker-desktop/) official site.
 
-    ### 3. Verify Installation
+    | OS | Download |
+    |----|---------|
+    | Windows | [Docker Desktop for Windows](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe) |
+    | macOS (Intel) | [Docker Desktop for Mac (Intel)](https://desktop.docker.com/mac/main/amd64/Docker.dmg) |
+    | macOS (Apple Silicon) | [Docker Desktop for Mac (Apple Silicon)](https://desktop.docker.com/mac/main/arm64/Docker.dmg) |
+    | Linux | [Docker Desktop for Linux](https://docs.docker.com/desktop/install/linux/) |
 
-    Open **Command Prompt**:
+    ### Windows Installation Notes
 
+    1. If prompted, check **"Use WSL 2 instead of Hyper-V"**
+    2. If WSL 2 is not installed, Docker Desktop will guide you through the setup
+    3. A **reboot** may be required after installation
+    4. After reboot, Docker Desktop starts automatically and a whale icon appears in the system tray
+
+    !!! warning "Windows Home Users"
+        Docker Desktop works on Windows Home. However, **WSL 2** is required, so follow the automatic setup during installation.
+
+    ### Verify Installation
+
+    Open a terminal (Command Prompt, PowerShell, or macOS/Linux terminal):
+
+    ```bash
+    docker --version
     ```
-    mysql --version
+
+    Output like `Docker version 27.x.x` means success.
+
+    ```bash
+    docker run hello-world
     ```
 
-    If the version is displayed, installation was successful. Also verify the connection:
+    If you see `Hello from Docker!`, everything is working.
 
+    ---
+
+    ## Step 2: Essential Docker Commands
+
+    Only the commands used in this tutorial:
+
+    | Command | Description | Example |
+    |---------|-------------|---------|
+    | `docker run` | Create + start a container | `docker run -d --name mysql ...` |
+    | `docker ps` | List running containers | `docker ps` |
+    | `docker ps -a` | List all containers (including stopped) | `docker ps -a` |
+    | `docker stop` | Stop a container | `docker stop mysql` |
+    | `docker start` | Restart a stopped container | `docker start mysql` |
+    | `docker rm` | Delete a container | `docker rm mysql` |
+    | `docker logs` | View container logs | `docker logs mysql` |
+
+    !!! info "Docker Desktop GUI"
+        If you're not comfortable with commands, you can do the same things in the **Docker Desktop** app with your mouse.
+
+        - **Containers** tab: List of running containers with start/stop/delete buttons
+        - **Logs** tab: Real-time container logs
+
+    ---
+
+    ## Step 3: Run Database Containers
+
+    Run only the commands for your chosen DB. You can run multiple DBs simultaneously.
+
+    ### MySQL
+
+    ```bash
+    docker run -d \
+      --name mysql \
+      -p 3306:3306 \
+      -e MYSQL_ROOT_PASSWORD=tutorial \
+      -v mysql-data:/var/lib/mysql \
+      mysql:8.0
     ```
-    mysql -u root -p
+
+    Verify:
+
+    ```bash
+    docker exec -it mysql mysql -u root -ptutorial -e "SELECT VERSION();"
     ```
 
-    If the `mysql>` prompt appears after entering the password, everything is working. Type `exit` to quit.
+    | Setting | Value |
+    |---------|-------|
+    | Host | `localhost` |
+    | Port | `3306` |
+    | User | `root` |
+    | Password | `tutorial` |
 
-    !!! warning "If `mysql` Cannot Be Found"
-        MySQL is not in PATH. Add the following path to your system PATH environment variable:
+    ### PostgreSQL
+
+    ```bash
+    docker run -d \
+      --name postgres \
+      -p 5432:5432 \
+      -e POSTGRES_PASSWORD=tutorial \
+      -v postgres-data:/var/lib/postgresql/data \
+      postgres:16
+    ```
+
+    Verify:
+
+    ```bash
+    docker exec -it postgres psql -U postgres -c "SELECT version();"
+    ```
+
+    | Setting | Value |
+    |---------|-------|
+    | Host | `localhost` |
+    | Port | `5432` |
+    | User | `postgres` |
+    | Password | `tutorial` |
+
+    ### SQL Server
+
+    ```bash
+    docker run -d \
+      --name mssql \
+      -p 1433:1433 \
+      -e ACCEPT_EULA=Y \
+      -e MSSQL_SA_PASSWORD=Tutorial1! \
+      -v mssql-data:/var/opt/mssql \
+      mcr.microsoft.com/mssql/server:2022-latest
+    ```
+
+    !!! warning "SQL Server Password Policy"
+        The password must be **at least 8 characters** and include **3 of 4 types**: uppercase, lowercase, numbers, and special characters. The example `Tutorial1!` satisfies this requirement.
+
+    Verify:
+
+    ```bash
+    docker exec -it mssql /opt/mssql-tools18/bin/sqlcmd \
+      -S localhost -U sa -P "Tutorial1!" -C -Q "SELECT @@VERSION;"
+    ```
+
+    | Setting | Value |
+    |---------|-------|
+    | Host | `localhost` |
+    | Port | `1433` |
+    | User | `sa` |
+    | Password | `Tutorial1!` |
+
+    ### Oracle
+
+    ```bash
+    docker run -d \
+      --name oracle \
+      -p 1521:1521 \
+      -e ORACLE_PASSWORD=tutorial \
+      -v oracle-data:/opt/oracle/oradata \
+      container-registry.oracle.com/database/express:latest
+    ```
+
+    !!! note "Oracle Initialization Time"
+        The Oracle container needs **3-5 minutes** for first-time initialization. Check progress with `docker logs -f oracle`. When you see `DATABASE IS READY TO USE!`, it's ready.
+
+    Verify:
+
+    ```bash
+    docker exec -it oracle sqlplus system/tutorial@//localhost:1521/XEPDB1
+    ```
+
+    If the `SQL>` prompt appears, type `EXIT` to quit.
+
+    | Setting | Value |
+    |---------|-------|
+    | Host | `localhost` |
+    | Port | `1521` |
+    | User | `system` |
+    | Password | `tutorial` |
+    | Service | `XEPDB1` |
+
+    ---
+
+    ## Step 4: Managing Containers
+
+    ### Start / Stop
+
+    Containers stop when you shut down your computer or close Docker Desktop. To restart:
+
+    ```bash
+    docker start mysql postgres mssql oracle   # choose what you need
+    ```
+
+    When done studying:
+
+    ```bash
+    docker stop mysql postgres mssql oracle
+    ```
+
+    ### Data is Preserved
+
+    The `-v` option (volume) in the `docker run` commands means your **data is preserved** even if you delete the container (`docker rm`). Recreating with the same volume name restores the previous data.
+
+    ### Full Cleanup
+
+    To completely remove the Docker environment after finishing the tutorial:
+
+    ```bash
+    # Stop + remove containers
+    docker stop mysql postgres mssql oracle
+    docker rm mysql postgres mssql oracle
+
+    # Remove data volumes too (cannot be undone)
+    docker volume rm mysql-data postgres-data mssql-data oracle-data
+    ```
+
+    ---
+
+    ## Connection Info for Data Generation
+
+    Use the connection info from the tables above when running `--apply` in [03. Generate Data](03-generate.md). The interactive mode guides you step by step:
+
+    ```bash
+    python -m src.cli.generate
+    ```
+
+=== "Native Installation"
+
+    Install DB servers directly on your system. More complex than Docker, but useful if you already have an existing setup or can't use Docker.
+
+    ---
+
+    ## MySQL / MariaDB
+
+    === "Windows"
+
+        Download **mysql-installer-community** (~300MB) from [MySQL Installer](https://dev.mysql.com/downloads/installer/).
+
+        1. Setup Type: **Server only**
+        2. **Port**: 3306, **Authentication**: Strong Password
+        3. Set **Root Password** - remember this for data generation
+
+        Verify: `mysql -u root -p`
+
+    === "macOS"
+
+        ```bash
+        brew install mysql
+        brew services start mysql
+        mysql_secure_installation    # Set root password
+        mysql -u root -p             # Verify
         ```
-        C:\Program Files\MySQL\MySQL Server 8.0\bin
+
+    === "Linux"
+
+        ```bash
+        sudo apt update && sudo apt install mysql-server
+        sudo systemctl start mysql && sudo systemctl enable mysql
+        sudo mysql_secure_installation
+        sudo mysql -u root -p
         ```
 
-    !!! info "To Use MariaDB Instead"
-        Download the MSI package from [mariadb.org](https://mariadb.org/download/). It's compatible with MySQL, and this tutorial's MySQL SQL runs as-is on MariaDB. The installation process is nearly identical to MySQL.
+    ---
 
-=== "macOS"
+    ## PostgreSQL
 
-    ### 1. Check Homebrew
+    === "Windows"
 
-    ```bash
-    brew --version
-    ```
+        Download the **EDB installer** from [postgresql.org](https://www.postgresql.org/download/windows/). Set the `postgres` superuser password during installation.
 
-    If Homebrew is not installed, install it first:
+        Verify: `psql -U postgres`
 
-    ```bash
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    ```
+    === "macOS"
 
-    ### 2. Install and Start
-
-    ```bash
-    brew install mysql
-    brew services start mysql
-    ```
-
-    ### 3. Security Setup
-
-    Set the root password:
-
-    ```bash
-    mysql_secure_installation
-    ```
-
-    Follow the prompts to set a root password. Answer `Y` to the remaining questions.
-
-    ### 4. Verify Connection
-
-    ```bash
-    mysql -u root -p
-    ```
-
-    If the `mysql>` prompt appears after entering the password, everything is working.
-
-=== "Linux (Ubuntu/Debian)"
-
-    ### 1. Install
-
-    ```bash
-    sudo apt update
-    sudo apt install mysql-server
-    ```
-
-    ### 2. Start Service
-
-    ```bash
-    sudo systemctl start mysql
-    sudo systemctl enable mysql   # Auto-start on boot
-    ```
-
-    ### 3. Security Setup
-
-    ```bash
-    sudo mysql_secure_installation
-    ```
-
-    Set a root password and answer `Y` to the remaining questions.
-
-    ### 4. Verify Connection
-
-    ```bash
-    sudo mysql -u root -p
-    ```
-
-    If the `mysql>` prompt appears, everything is working.
-
----
-
-## PostgreSQL
-
-=== "Windows"
-
-    ### 1. Download
-
-    Download the **EDB installer** from [postgresql.org](https://www.postgresql.org/download/windows/).
-
-    ### 2. Install
-
-    1. Installation directory: Keep default
-    2. **Component selection**: Check both PostgreSQL Server and pgAdmin 4
-    3. **Data directory**: Keep default
-    4. **Password** — This is the password for the `postgres` superuser. **Make sure to remember it**
-    5. **Port**: 5432 (keep default)
-    6. **Locale**: Korean, Korea or Default locale
-
-    ### 3. Verify Installation
-
-    Open **Command Prompt**:
-
-    ```
-    psql --version
-    ```
-
-    Verify the connection:
-
-    ```
-    psql -U postgres
-    ```
-
-    If the `postgres=#` prompt appears after entering the password, everything is working. Type `\q` to quit.
-
-    !!! warning "If `psql` Cannot Be Found"
-        Add the following path to your system PATH environment variable:
-        ```
-        C:\Program Files\PostgreSQL\16\bin
+        ```bash
+        brew install postgresql@16
+        brew services start postgresql@16
+        psql postgres
         ```
 
-=== "macOS"
+    === "Linux"
 
-    ### 1. Check Homebrew
+        ```bash
+        sudo apt update && sudo apt install postgresql postgresql-contrib
+        sudo systemctl start postgresql && sudo systemctl enable postgresql
+        sudo -u postgres psql
+        ```
 
-    ```bash
-    brew --version
-    ```
+    ---
 
-    If not installed: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+    ## SQL Server
 
-    ### 2. Install and Start
+    === "Windows"
 
-    ```bash
-    brew install postgresql@16
-    brew services start postgresql@16
-    ```
+        Download [SQL Server Express](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (free). Also install SQL Server Management Studio (SSMS).
 
-    ### 3. Verify Connection
+    === "Linux"
 
-    ```bash
-    psql postgres
-    ```
+        See the [Microsoft official docs](https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-setup).
 
-    If the `postgres=#` prompt appears, everything is working. On macOS, connection without a password is the default.
+    ---
 
-=== "Linux (Ubuntu/Debian)"
+    ## Oracle
 
-    ### 1. Install
+    === "Windows"
 
-    ```bash
-    sudo apt update
-    sudo apt install postgresql postgresql-contrib
-    ```
+        Download [Oracle Database Express Edition (XE)](https://www.oracle.com/database/technologies/xe-downloads.html). XE is free and sufficient for learning.
 
-    ### 2. Start Service
+    === "Linux"
 
-    ```bash
-    sudo systemctl start postgresql
-    sudo systemctl enable postgresql
-    ```
-
-    ### 3. Verify Connection
-
-    ```bash
-    sudo -u postgres psql
-    ```
-
-    If the `postgres=#` prompt appears, everything is working. Type `\q` to quit.
-
-    ### 4. Set Password (Optional)
-
-    ```bash
-    sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'your_password';"
-    ```
+        See the [Oracle official docs](https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/).
 
 ---
 
@@ -226,7 +332,7 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
 
     **Port Conflict**
 
-    MySQL (3306) or PostgreSQL (5432) ports may already be in use:
+    Another program may be using the same port:
     ```bash
     # Windows
     netstat -ano | findstr :3306
@@ -237,19 +343,18 @@ Install the DB you chose in [01. Choose a Database](01-choose-db.md).
     lsof -i :5432
     ```
 
-    **Service Won't Start**
+    **Docker Container Won't Start**
 
     ```bash
-    # MySQL
-    sudo systemctl status mysql
-
-    # PostgreSQL
-    sudo systemctl status postgresql
+    docker logs container_name    # Check error logs
+    docker ps -a                  # Check status
     ```
 
-    **Permission Issues (Linux)**
+    **Docker Desktop Won't Start (Windows)**
 
-    Forgetting `sudo` will cause permission errors. Most DB commands require `sudo`.
+    1. Keep Windows updated
+    2. Verify virtualization (VT-x/AMD-V) is enabled in BIOS
+    3. Check WSL 2 is properly installed: `wsl --list --verbose`
 
 [← 01. Choose a Database](01-choose-db.md){ .md-button }
 [03. Generate Data →](03-generate.md){ .md-button .md-button--primary }

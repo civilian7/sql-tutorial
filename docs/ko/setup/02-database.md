@@ -5,218 +5,355 @@
 !!! success "SQLite를 선택했다면"
     **이 페이지를 건너뛰세요.** SQLite는 Python에 내장되어 있어 별도 설치가 필요 없습니다. → [03. 데이터 생성](03-generate.md)
 
----
+=== "Docker (추천)"
 
-## MySQL / MariaDB
+    ## Docker란?
 
-=== "Windows"
+    **Docker**는 소프트웨어를 **컨테이너**라는 격리된 환경에서 실행하는 도구입니다. 컴퓨터에 MySQL이나 PostgreSQL을 직접 설치하는 대신, Docker가 알아서 필요한 환경을 만들어주고, 필요 없으면 깔끔하게 삭제할 수 있습니다.
 
-    ### 1. 다운로드
+    !!! tip "왜 Docker인가?"
+        - **한 줄 명령**으로 DB 서버 설치 완료
+        - MySQL, PostgreSQL, Oracle, SQL Server를 **동시에** 실행 가능
+        - 문제 생기면 컨테이너를 삭제하고 다시 만들면 끝 — 시스템이 오염되지 않음
+        - 실무에서도 Docker 기반 개발 환경이 표준
 
-    [MySQL Installer](https://dev.mysql.com/downloads/installer/)에서 **mysql-installer-community** (약 300MB)를 다운로드합니다.
+    ---
 
-    !!! tip "Oracle 계정 없이 다운로드"
-        다운로드 페이지 하단의 **"No thanks, just start my download"** 링크를 클릭하면 로그인 없이 받을 수 있습니다.
+    ## 1단계: Docker Desktop 설치
 
-    ### 2. 설치
+    ### 다운로드
 
-    1. 설치 유형: **Server only** 선택 (Workbench 등은 나중에 별도 설치 가능)
-    2. **Config Type**: Development Computer (기본값 유지)
-    3. **Port**: 3306 (기본값 유지)
-    4. **Authentication**: Use Strong Password Encryption (기본값 유지)
-    5. **Root Password 설정** — 이 비밀번호는 데이터 생성 시 `--ask-password` 옵션에서 사용합니다. **반드시 기억하세요**
+    [Docker Desktop](https://www.docker.com/products/docker-desktop/) 공식 사이트에서 운영체제에 맞는 버전을 다운로드합니다.
 
-    ### 3. 설치 확인
+    | OS | 다운로드 |
+    |----|---------|
+    | Windows | [Docker Desktop for Windows](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe) |
+    | macOS (Intel) | [Docker Desktop for Mac (Intel)](https://desktop.docker.com/mac/main/amd64/Docker.dmg) |
+    | macOS (Apple Silicon) | [Docker Desktop for Mac (Apple Silicon)](https://desktop.docker.com/mac/main/arm64/Docker.dmg) |
+    | Linux | [Docker Desktop for Linux](https://docs.docker.com/desktop/install/linux/) |
 
-    **명령 프롬프트**를 열고:
+    ### Windows 설치 시 참고
 
-    ```
-    mysql --version
-    ```
+    1. 설치 중 **"Use WSL 2 instead of Hyper-V"** 옵션이 나타나면 **체크**합니다
+    2. WSL 2가 설치되어 있지 않으면 Docker Desktop이 자동으로 안내합니다
+    3. 설치 완료 후 **재부팅**이 필요할 수 있습니다
+    4. 재부팅 후 Docker Desktop이 자동 시작되며, 시스템 트레이에 고래 아이콘이 나타납니다
 
-    버전이 출력되면 설치 성공입니다. 접속도 확인합니다:
+    !!! warning "Windows Home 사용자"
+        Windows Home에서도 Docker Desktop 사용이 가능합니다. 단, **WSL 2**가 필수이므로 설치 중 자동 설정을 따라주세요.
 
-    ```
-    mysql -u root -p
-    ```
+    ### 설치 확인
 
-    비밀번호 입력 후 `mysql>` 프롬프트가 나타나면 정상입니다. `exit`로 나옵니다.
-
-    !!! warning "`mysql`을 찾을 수 없다면"
-        MySQL이 PATH에 등록되지 않은 것입니다. 다음 경로를 시스템 환경 변수 PATH에 추가하세요:
-        ```
-        C:\Program Files\MySQL\MySQL Server 8.0\bin
-        ```
-
-    !!! info "MariaDB를 사용하려면"
-        [mariadb.org](https://mariadb.org/download/)에서 MSI 패키지를 다운로드합니다. MySQL과 호환되며, 이 튜토리얼의 MySQL SQL이 그대로 동작합니다. 설치 과정은 MySQL과 거의 동일합니다.
-
-=== "macOS"
-
-    ### 1. Homebrew 확인
+    터미널(명령 프롬프트, PowerShell, 또는 macOS/Linux 터미널)을 열고:
 
     ```bash
-    brew --version
+    docker --version
     ```
 
-    Homebrew가 없으면 먼저 설치합니다:
+    `Docker version 27.x.x` 같은 출력이 나오면 성공입니다.
 
     ```bash
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    docker run hello-world
     ```
 
-    ### 2. 설치 및 시작
+    `Hello from Docker!` 메시지가 나오면 정상 동작합니다.
+
+    ---
+
+    ## 2단계: 알아두면 좋은 Docker 기본 명령
+
+    이 튜토리얼에서 사용하는 명령만 정리했습니다.
+
+    | 명령 | 설명 | 예시 |
+    |------|------|------|
+    | `docker run` | 새 컨테이너 생성 + 실행 | `docker run -d --name mysql ...` |
+    | `docker ps` | 실행 중인 컨테이너 목록 | `docker ps` |
+    | `docker ps -a` | 모든 컨테이너 (중지 포함) | `docker ps -a` |
+    | `docker stop` | 컨테이너 중지 | `docker stop mysql` |
+    | `docker start` | 중지된 컨테이너 재시작 | `docker start mysql` |
+    | `docker rm` | 컨테이너 삭제 | `docker rm mysql` |
+    | `docker logs` | 컨테이너 로그 확인 | `docker logs mysql` |
+
+    !!! info "Docker Desktop GUI"
+        명령어가 익숙하지 않다면, **Docker Desktop** 앱에서 동일한 작업을 마우스로 할 수 있습니다.
+
+        - **Containers** 탭: 실행 중인 컨테이너 목록, 시작/중지/삭제 버튼
+        - **Logs** 탭: 컨테이너의 실시간 로그
+
+    ---
+
+    ## 3단계: 데이터베이스 컨테이너 실행
+
+    선택한 DB의 명령만 실행하세요. 여러 DB를 동시에 실행해도 됩니다.
+
+    ### MySQL
 
     ```bash
-    brew install mysql
-    brew services start mysql
-    ```
-
-    ### 3. 보안 설정
-
-    root 비밀번호를 설정합니다:
-
-    ```bash
-    mysql_secure_installation
-    ```
-
-    안내에 따라 root 비밀번호를 설정하세요. 나머지 질문은 모두 `Y`로 답하면 됩니다.
-
-    ### 4. 접속 확인
-
-    ```bash
-    mysql -u root -p
-    ```
-
-    비밀번호 입력 후 `mysql>` 프롬프트가 나타나면 정상입니다.
-
-=== "Linux (Ubuntu/Debian)"
-
-    ### 1. 설치
-
-    ```bash
-    sudo apt update
-    sudo apt install mysql-server
-    ```
-
-    ### 2. 서비스 시작
-
-    ```bash
-    sudo systemctl start mysql
-    sudo systemctl enable mysql   # 부팅 시 자동 시작
-    ```
-
-    ### 3. 보안 설정
-
-    ```bash
-    sudo mysql_secure_installation
-    ```
-
-    root 비밀번호를 설정하고 나머지 질문은 `Y`로 답합니다.
-
-    ### 4. 접속 확인
-
-    ```bash
-    sudo mysql -u root -p
-    ```
-
-    `mysql>` 프롬프트가 나타나면 정상입니다.
-
----
-
-## PostgreSQL
-
-=== "Windows"
-
-    ### 1. 다운로드
-
-    [postgresql.org](https://www.postgresql.org/download/windows/)에서 **EDB installer**를 다운로드합니다.
-
-    ### 2. 설치
-
-    1. 설치 디렉토리: 기본값 유지
-    2. **컴포넌트 선택**: PostgreSQL Server, pgAdmin 4 모두 체크
-    3. **데이터 디렉토리**: 기본값 유지
-    4. **Password 설정** — `postgres` 슈퍼유저의 비밀번호입니다. **반드시 기억하세요**
-    5. **Port**: 5432 (기본값 유지)
-    6. **Locale**: Korean, Korea 또는 Default locale
-
-    ### 3. 설치 확인
-
-    **명령 프롬프트**를 열고:
-
-    ```
-    psql --version
+    docker run -d \
+      --name mysql \
+      -p 3306:3306 \
+      -e MYSQL_ROOT_PASSWORD=tutorial \
+      -v mysql-data:/var/lib/mysql \
+      mysql:8.0
     ```
 
     접속 확인:
 
-    ```
-    psql -U postgres
+    ```bash
+    docker exec -it mysql mysql -u root -ptutorial -e "SELECT VERSION();"
     ```
 
-    비밀번호 입력 후 `postgres=#` 프롬프트가 나타나면 정상입니다. `\q`로 나옵니다.
+    | 항목 | 값 |
+    |------|-----|
+    | 호스트 | `localhost` |
+    | 포트 | `3306` |
+    | 사용자 | `root` |
+    | 비밀번호 | `tutorial` |
 
-    !!! warning "`psql`을 찾을 수 없다면"
-        다음 경로를 시스템 환경 변수 PATH에 추가하세요:
+    ### PostgreSQL
+
+    ```bash
+    docker run -d \
+      --name postgres \
+      -p 5432:5432 \
+      -e POSTGRES_PASSWORD=tutorial \
+      -v postgres-data:/var/lib/postgresql/data \
+      postgres:16
+    ```
+
+    접속 확인:
+
+    ```bash
+    docker exec -it postgres psql -U postgres -c "SELECT version();"
+    ```
+
+    | 항목 | 값 |
+    |------|-----|
+    | 호스트 | `localhost` |
+    | 포트 | `5432` |
+    | 사용자 | `postgres` |
+    | 비밀번호 | `tutorial` |
+
+    ### SQL Server
+
+    ```bash
+    docker run -d \
+      --name mssql \
+      -p 1433:1433 \
+      -e ACCEPT_EULA=Y \
+      -e MSSQL_SA_PASSWORD=Tutorial1! \
+      -v mssql-data:/var/opt/mssql \
+      mcr.microsoft.com/mssql/server:2022-latest
+    ```
+
+    !!! warning "SQL Server 비밀번호 정책"
+        비밀번호는 **8자 이상**, **대문자 + 소문자 + 숫자 + 특수문자** 중 3종류 이상을 포함해야 합니다. 위 예시의 `Tutorial1!`은 이 조건을 만족합니다.
+
+    접속 확인:
+
+    ```bash
+    docker exec -it mssql /opt/mssql-tools18/bin/sqlcmd \
+      -S localhost -U sa -P "Tutorial1!" -C -Q "SELECT @@VERSION;"
+    ```
+
+    | 항목 | 값 |
+    |------|-----|
+    | 호스트 | `localhost` |
+    | 포트 | `1433` |
+    | 사용자 | `sa` |
+    | 비밀번호 | `Tutorial1!` |
+
+    ### Oracle
+
+    ```bash
+    docker run -d \
+      --name oracle \
+      -p 1521:1521 \
+      -e ORACLE_PASSWORD=tutorial \
+      -v oracle-data:/opt/oracle/oradata \
+      container-registry.oracle.com/database/express:latest
+    ```
+
+    !!! note "Oracle 초기화 시간"
+        Oracle 컨테이너는 **첫 실행 시 3~5분** 정도 초기화 시간이 필요합니다. `docker logs -f oracle`로 진행 상황을 확인할 수 있으며, `DATABASE IS READY TO USE!` 메시지가 나타나면 사용 가능합니다.
+
+    접속 확인:
+
+    ```bash
+    docker exec -it oracle sqlplus system/tutorial@//localhost:1521/XEPDB1
+    ```
+
+    `SQL>` 프롬프트가 나타나면 `EXIT`로 나옵니다.
+
+    | 항목 | 값 |
+    |------|-----|
+    | 호스트 | `localhost` |
+    | 포트 | `1521` |
+    | 사용자 | `system` |
+    | 비밀번호 | `tutorial` |
+    | 서비스명 | `XEPDB1` |
+
+    ---
+
+    ## 4단계: 컨테이너 관리
+
+    ### 시작 / 중지
+
+    컴퓨터를 끄거나 Docker Desktop을 종료하면 컨테이너도 중지됩니다. 다시 시작하려면:
+
+    ```bash
+    docker start mysql postgres mssql oracle   # 필요한 것만 선택
+    ```
+
+    학습이 끝나면 중지:
+
+    ```bash
+    docker stop mysql postgres mssql oracle
+    ```
+
+    ### 데이터는 유지됩니다
+
+    위 `docker run` 명령에 `-v` 옵션(볼륨)을 넣었기 때문에, 컨테이너를 삭제(`docker rm`)해도 **데이터는 보존**됩니다. 같은 이름으로 다시 만들면 이전 데이터가 그대로 남아있습니다.
+
+    ### 전체 정리
+
+    튜토리얼을 완전히 끝내고 Docker 환경을 깨끗이 지우려면:
+
+    ```bash
+    # 컨테이너 중지 + 삭제
+    docker stop mysql postgres mssql oracle
+    docker rm mysql postgres mssql oracle
+
+    # 데이터 볼륨도 삭제 (되돌릴 수 없음)
+    docker volume rm mysql-data postgres-data mssql-data oracle-data
+    ```
+
+    ---
+
+    ## 데이터 생성 시 접속 정보
+
+    [03. 데이터 생성](03-generate.md)에서 `--apply` 옵션을 사용할 때 위 표의 접속 정보를 입력합니다. 대화형 모드를 사용하면 단계별로 안내됩니다:
+
+    ```bash
+    python -m src.cli.generate
+    ```
+
+=== "직접 설치"
+
+    DB 서버를 시스템에 직접 설치하는 방법입니다. Docker보다 설정이 복잡하지만, 이미 설치된 환경이 있거나 Docker를 사용할 수 없는 경우에 사용합니다.
+
+    ---
+
+    ## MySQL / MariaDB
+
+    === "Windows"
+
+        ### 1. 다운로드
+
+        [MySQL Installer](https://dev.mysql.com/downloads/installer/)에서 **mysql-installer-community** (약 300MB)를 다운로드합니다.
+
+        !!! tip "Oracle 계정 없이 다운로드"
+            다운로드 페이지 하단의 **"No thanks, just start my download"** 링크를 클릭하면 로그인 없이 받을 수 있습니다.
+
+        ### 2. 설치
+
+        1. 설치 유형: **Server only** 선택 (Workbench 등은 나중에 별도 설치 가능)
+        2. **Config Type**: Development Computer (기본값 유지)
+        3. **Port**: 3306 (기본값 유지)
+        4. **Authentication**: Use Strong Password Encryption (기본값 유지)
+        5. **Root Password 설정** - 이 비밀번호는 데이터 생성 시 `--ask-password` 옵션에서 사용합니다. **반드시 기억하세요**
+
+        ### 3. 설치 확인
+
+        **명령 프롬프트**를 열고:
+
         ```
-        C:\Program Files\PostgreSQL\16\bin
+        mysql --version
         ```
 
-=== "macOS"
+        버전이 출력되면 설치 성공입니다. 접속도 확인합니다:
 
-    ### 1. Homebrew 확인
+        ```
+        mysql -u root -p
+        ```
 
-    ```bash
-    brew --version
-    ```
+        비밀번호 입력 후 `mysql>` 프롬프트가 나타나면 정상입니다. `exit`로 나옵니다.
 
-    없으면: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+        !!! warning "`mysql`을 찾을 수 없다면"
+            MySQL이 PATH에 등록되지 않은 것입니다. 다음 경로를 시스템 환경 변수 PATH에 추가하세요:
+            ```
+            C:\Program Files\MySQL\MySQL Server 8.0\bin
+            ```
 
-    ### 2. 설치 및 시작
+    === "macOS"
 
-    ```bash
-    brew install postgresql@16
-    brew services start postgresql@16
-    ```
+        ```bash
+        brew install mysql
+        brew services start mysql
+        mysql_secure_installation    # root 비밀번호 설정
+        mysql -u root -p             # 접속 확인
+        ```
 
-    ### 3. 접속 확인
+    === "Linux"
 
-    ```bash
-    psql postgres
-    ```
+        ```bash
+        sudo apt update && sudo apt install mysql-server
+        sudo systemctl start mysql && sudo systemctl enable mysql
+        sudo mysql_secure_installation
+        sudo mysql -u root -p
+        ```
 
-    `postgres=#` 프롬프트가 나타나면 정상입니다. macOS에서는 기본적으로 비밀번호 없이 접속됩니다.
+    ---
 
-=== "Linux (Ubuntu/Debian)"
+    ## PostgreSQL
 
-    ### 1. 설치
+    === "Windows"
 
-    ```bash
-    sudo apt update
-    sudo apt install postgresql postgresql-contrib
-    ```
+        [postgresql.org](https://www.postgresql.org/download/windows/)에서 **EDB installer**를 다운로드하여 설치합니다. 설치 중 `postgres` 슈퍼유저의 비밀번호를 설정합니다.
 
-    ### 2. 서비스 시작
+        ```
+        psql -U postgres    # 접속 확인
+        ```
 
-    ```bash
-    sudo systemctl start postgresql
-    sudo systemctl enable postgresql
-    ```
+    === "macOS"
 
-    ### 3. 접속 확인
+        ```bash
+        brew install postgresql@16
+        brew services start postgresql@16
+        psql postgres        # 접속 확인
+        ```
 
-    ```bash
-    sudo -u postgres psql
-    ```
+    === "Linux"
 
-    `postgres=#` 프롬프트가 나타나면 정상입니다. `\q`로 나옵니다.
+        ```bash
+        sudo apt update && sudo apt install postgresql postgresql-contrib
+        sudo systemctl start postgresql && sudo systemctl enable postgresql
+        sudo -u postgres psql    # 접속 확인
+        ```
 
-    ### 4. 비밀번호 설정 (선택)
+    ---
 
-    ```bash
-    sudo -u postgres psql -c "ALTER USER postgres PASSWORD '비밀번호';"
-    ```
+    ## SQL Server
+
+    === "Windows"
+
+        [SQL Server Express](https://www.microsoft.com/ko-kr/sql-server/sql-server-downloads)를 다운로드합니다. Express 에디션은 무료입니다. 설치 후 SQL Server Management Studio (SSMS)도 함께 설치하세요.
+
+    === "Linux"
+
+        [Microsoft 공식 문서](https://learn.microsoft.com/ko-kr/sql/linux/sql-server-linux-setup)를 참고하세요.
+
+    ---
+
+    ## Oracle
+
+    === "Windows"
+
+        [Oracle Database Express Edition (XE)](https://www.oracle.com/database/technologies/xe-downloads.html)를 다운로드합니다. XE는 무료이며 학습용으로 충분합니다.
+
+    === "Linux"
+
+        [Oracle 공식 문서](https://docs.oracle.com/en/database/oracle/oracle-database/23/xeinl/)를 참고하세요.
 
 ---
 
@@ -226,7 +363,7 @@
 
     **포트 충돌**
 
-    MySQL(3306)이나 PostgreSQL(5432) 포트가 이미 사용 중일 수 있습니다:
+    다른 프로그램이 같은 포트를 사용하고 있을 수 있습니다:
     ```bash
     # Windows
     netstat -ano | findstr :3306
@@ -237,19 +374,18 @@
     lsof -i :5432
     ```
 
-    **서비스가 시작되지 않음**
+    **Docker 컨테이너가 시작되지 않음**
 
     ```bash
-    # MySQL
-    sudo systemctl status mysql
-
-    # PostgreSQL
-    sudo systemctl status postgresql
+    docker logs 컨테이너이름    # 에러 로그 확인
+    docker ps -a               # 상태 확인
     ```
 
-    **권한 문제 (Linux)**
+    **Docker Desktop이 시작되지 않음 (Windows)**
 
-    `sudo`를 빼먹으면 권한 오류가 발생합니다. DB 명령은 대부분 `sudo`가 필요합니다.
+    1. Windows 업데이트를 최신으로 유지하세요
+    2. BIOS에서 가상화(VT-x/AMD-V)가 활성화되어 있는지 확인하세요
+    3. WSL 2가 정상 설치되었는지 확인: `wsl --list --verbose`
 
 [← 01. 데이터베이스 선택](01-choose-db.md){ .md-button }
 [03. 데이터 생성 →](03-generate.md){ .md-button .md-button--primary }
