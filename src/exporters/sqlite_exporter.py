@@ -1236,6 +1236,21 @@ class SQLiteExporter:
         lang = locale.split("_")[0] if "_" in locale else locale
         self.db_path = os.path.join(output_dir, f"ecommerce-{lang}.db")
 
+    TABLE_ORDER = [
+        "categories", "suppliers", "products", "product_images", "product_prices",
+        "customers", "customer_addresses", "staff",
+        "orders", "order_items", "payments", "shipping",
+        "reviews", "inventory_transactions",
+        "carts", "cart_items", "coupons", "coupon_usage",
+        "wishlists", "complaints", "returns",
+        "calendar", "customer_grade_history",
+        "tags", "product_tags",
+        "product_views",
+        "point_transactions",
+        "promotions", "promotion_products",
+        "product_qna",
+    ]
+
     def export(self, data: dict[str, list[dict]]) -> str:
         """Export all data to a SQLite database."""
         if os.path.exists(self.db_path):
@@ -1251,22 +1266,7 @@ class SQLiteExporter:
         conn.executescript(SCHEMA_SQL)
 
         # Insert data (table order respects FK dependencies)
-        table_order = [
-            "categories", "suppliers", "products", "product_images", "product_prices",
-            "customers", "customer_addresses", "staff",
-            "orders", "order_items", "payments", "shipping",
-            "reviews", "inventory_transactions",
-            "carts", "cart_items", "coupons", "coupon_usage",
-            "wishlists", "complaints", "returns",
-            "calendar", "customer_grade_history",
-            "tags", "product_tags",
-            "product_views",
-            "point_transactions",
-            "promotions", "promotion_products",
-            "product_qna",
-        ]
-
-        for table in table_order:
+        for table in self.TABLE_ORDER:
             rows = data.get(table, [])
             if not rows:
                 continue
@@ -1286,7 +1286,86 @@ class SQLiteExporter:
         conn.execute("VACUUM")
         conn.close()
 
+        # Also write SQL script files
+        self._export_sql_scripts(data)
+
         return self.db_path
+
+    def _export_sql_scripts(self, data: dict[str, list[dict]]):
+        """Export SQL script files (schema.sql + data.sql) alongside the .db file."""
+        sql_dir = os.path.join(self.output_dir, "sqlite")
+        os.makedirs(sql_dir, exist_ok=True)
+
+        # schema.sql — DDL + indexes + views + triggers
+        schema_path = os.path.join(sql_dir, "schema.sql")
+        with open(schema_path, "w", encoding="utf-8") as f:
+            f.write("-- =============================================\n")
+            f.write("-- E-commerce Test Database - SQLite3\n")
+            f.write("-- =============================================\n\n")
+            f.write("PRAGMA foreign_keys = OFF;\n\n")
+            f.write(SCHEMA_SQL.strip())
+            f.write("\n\n")
+            f.write(INDEX_SQL.strip())
+            f.write("\n\n")
+            f.write(VIEW_SQL.strip())
+            f.write("\n\n")
+            f.write(TRIGGER_SQL.strip())
+            f.write("\n\nPRAGMA foreign_keys = ON;\n")
+
+        # data.sql — INSERT statements
+        data_path = os.path.join(sql_dir, "data.sql")
+        with open(data_path, "w", encoding="utf-8") as f:
+            f.write("-- =============================================\n")
+            f.write("-- E-commerce Test Data - SQLite3\n")
+            f.write("-- =============================================\n\n")
+            f.write("PRAGMA foreign_keys = OFF;\n\n")
+
+            for table in self.TABLE_ORDER:
+                rows = data.get(table, [])
+                if not rows:
+                    continue
+                self._write_inserts(f, table, rows)
+
+            f.write("\nPRAGMA foreign_keys = ON;\n")
+
+    def _write_inserts(self, f, table: str, rows: list[dict]):
+        """Write batched INSERT statements for SQL script output."""
+        if not rows:
+            return
+
+        columns = list(rows[0].keys())
+        col_names = ", ".join(columns)
+        batch_size = 1000
+
+        f.write(f"-- {table}: {len(rows)} rows\n")
+
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i:i + batch_size]
+            f.write(f"INSERT INTO {table} ({col_names}) VALUES\n")
+
+            value_lines = []
+            for row in batch:
+                vals = []
+                for col in columns:
+                    v = row[col]
+                    vals.append(self._format_value(v))
+                value_lines.append(f"({', '.join(vals)})")
+
+            f.write(",\n".join(value_lines))
+            f.write(";\n\n")
+
+    @staticmethod
+    def _format_value(value: Any) -> str:
+        """Format a Python value as a SQLite literal."""
+        if value is None:
+            return "NULL"
+        if isinstance(value, bool):
+            return "1" if value else "0"
+        if isinstance(value, (int, float)):
+            return str(value)
+        s = str(value)
+        s = s.replace("'", "''")
+        return f"'{s}'"
 
     def _insert_rows(self, conn: sqlite3.Connection, table: str, rows: list[dict]):
         """Perform batch INSERT."""
