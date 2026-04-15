@@ -290,6 +290,100 @@ Calculate average sessions per customer and average views per session.
     FROM session_stats;
         ```
 
+    === "Oracle"
+        ```sql
+        WITH view_gaps AS (
+        SELECT
+            customer_id,
+            viewed_at,
+            LAG(viewed_at) OVER (
+                PARTITION BY customer_id ORDER BY viewed_at
+            ) AS prev_viewed_at,
+            CASE
+                WHEN LAG(viewed_at) OVER (
+                    PARTITION BY customer_id ORDER BY viewed_at
+                ) IS NULL THEN 1
+                WHEN (CAST(viewed_at AS DATE) - CAST(LAG(viewed_at) OVER (
+                    PARTITION BY customer_id ORDER BY viewed_at
+                ) AS DATE)) * 24 * 60 > 30 THEN 1
+                ELSE 0
+            END AS is_new_session
+        FROM product_views
+        WHERE customer_id <= 1000
+    ),
+    with_session AS (
+        SELECT
+            customer_id,
+            viewed_at,
+            SUM(is_new_session) OVER (
+                PARTITION BY customer_id ORDER BY viewed_at
+                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            ) AS session_id
+        FROM view_gaps
+    ),
+    session_stats AS (
+        SELECT
+            customer_id,
+            session_id,
+            COUNT(*) AS views_in_session
+        FROM with_session
+        GROUP BY customer_id, session_id
+    )
+    SELECT
+        COUNT(DISTINCT customer_id) AS total_customers,
+        COUNT(*) AS total_sessions,
+        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+    FROM session_stats;
+        ```
+
+    === "SQL Server"
+        ```sql
+        WITH view_gaps AS (
+        SELECT
+            customer_id,
+            viewed_at,
+            LAG(viewed_at) OVER (
+                PARTITION BY customer_id ORDER BY viewed_at
+            ) AS prev_viewed_at,
+            CASE
+                WHEN LAG(viewed_at) OVER (
+                    PARTITION BY customer_id ORDER BY viewed_at
+                ) IS NULL THEN 1
+                WHEN DATEDIFF(MINUTE, LAG(viewed_at) OVER (
+                    PARTITION BY customer_id ORDER BY viewed_at
+                ), viewed_at) > 30 THEN 1
+                ELSE 0
+            END AS is_new_session
+        FROM product_views
+        WHERE customer_id <= 1000
+    ),
+    with_session AS (
+        SELECT
+            customer_id,
+            viewed_at,
+            SUM(is_new_session) OVER (
+                PARTITION BY customer_id ORDER BY viewed_at
+                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            ) AS session_id
+        FROM view_gaps
+    ),
+    session_stats AS (
+        SELECT
+            customer_id,
+            session_id,
+            COUNT(*) AS views_in_session
+        FROM with_session
+        GROUP BY customer_id, session_id
+    )
+    SELECT
+        COUNT(DISTINCT customer_id) AS total_customers,
+        COUNT(*) AS total_sessions,
+        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+    FROM session_stats;
+        ```
+
 
 ---
 
@@ -439,6 +533,108 @@ by acquisition channel and signup month.
             COUNT(DISTINCT CASE
                 WHEN o.ordered_at > (co.created_at::date + INTERVAL '60 days')
                  AND o.ordered_at <= (co.created_at::date + INTERVAL '90 days')
+                THEN co.customer_id
+            END) AS active_90d
+        FROM cohort AS co
+        LEFT JOIN orders AS o
+            ON co.customer_id = o.customer_id
+           AND o.status NOT IN ('cancelled')
+        GROUP BY co.channel, co.signup_month
+    )
+    SELECT
+        channel,
+        signup_month,
+        cohort_size,
+        active_30d,
+        ROUND(100.0 * active_30d / cohort_size, 1) AS retention_30d_pct,
+        active_60d,
+        ROUND(100.0 * active_60d / cohort_size, 1) AS retention_60d_pct,
+        active_90d,
+        ROUND(100.0 * active_90d / cohort_size, 1) AS retention_90d_pct
+    FROM cohort_activity
+    WHERE cohort_size >= 10
+    ORDER BY channel, signup_month;
+        ```
+
+    === "Oracle"
+        ```sql
+        WITH cohort AS (
+        SELECT
+            id AS customer_id,
+            COALESCE(acquisition_channel, 'unknown') AS channel,
+            SUBSTR(created_at, 1, 7) AS signup_month,
+            created_at
+        FROM customers
+        WHERE created_at LIKE '2024%'
+    ),
+    cohort_activity AS (
+        SELECT
+            co.channel,
+            co.signup_month,
+            COUNT(DISTINCT co.customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at <= CAST(co.created_at AS DATE) + 30
+                THEN co.customer_id
+            END) AS active_30d,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at > CAST(co.created_at AS DATE) + 30
+                 AND o.ordered_at <= CAST(co.created_at AS DATE) + 60
+                THEN co.customer_id
+            END) AS active_60d,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at > CAST(co.created_at AS DATE) + 60
+                 AND o.ordered_at <= CAST(co.created_at AS DATE) + 90
+                THEN co.customer_id
+            END) AS active_90d
+        FROM cohort co
+        LEFT JOIN orders o
+            ON co.customer_id = o.customer_id
+           AND o.status NOT IN ('cancelled')
+        GROUP BY co.channel, co.signup_month
+    )
+    SELECT
+        channel,
+        signup_month,
+        cohort_size,
+        active_30d,
+        ROUND(100.0 * active_30d / cohort_size, 1) AS retention_30d_pct,
+        active_60d,
+        ROUND(100.0 * active_60d / cohort_size, 1) AS retention_60d_pct,
+        active_90d,
+        ROUND(100.0 * active_90d / cohort_size, 1) AS retention_90d_pct
+    FROM cohort_activity
+    WHERE cohort_size >= 10
+    ORDER BY channel, signup_month;
+        ```
+
+    === "SQL Server"
+        ```sql
+        WITH cohort AS (
+        SELECT
+            id AS customer_id,
+            COALESCE(acquisition_channel, 'unknown') AS channel,
+            SUBSTRING(created_at, 1, 7) AS signup_month,
+            created_at
+        FROM customers
+        WHERE created_at LIKE '2024%'
+    ),
+    cohort_activity AS (
+        SELECT
+            co.channel,
+            co.signup_month,
+            COUNT(DISTINCT co.customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at <= DATEADD(DAY, 30, CAST(co.created_at AS DATE))
+                THEN co.customer_id
+            END) AS active_30d,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at > DATEADD(DAY, 30, CAST(co.created_at AS DATE))
+                 AND o.ordered_at <= DATEADD(DAY, 60, CAST(co.created_at AS DATE))
+                THEN co.customer_id
+            END) AS active_60d,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at > DATEADD(DAY, 60, CAST(co.created_at AS DATE))
+                 AND o.ordered_at <= DATEADD(DAY, 90, CAST(co.created_at AS DATE))
                 THEN co.customer_id
             END) AS active_90d
         FROM cohort AS co
@@ -647,6 +843,117 @@ Calculate revenue change rate per promotion.
     WHERE during_revenue > 0
     ORDER BY revenue_change_pct DESC
     LIMIT 20;
+        ```
+
+    === "Oracle"
+        ```sql
+        WITH promo_products AS (
+        SELECT
+            promo.id AS promo_id,
+            promo.name AS promo_name,
+            promo.started_at,
+            promo.ended_at,
+            pp.product_id
+        FROM promotions promo
+        INNER JOIN promotion_products pp ON promo.id = pp.promotion_id
+        WHERE promo.started_at >= '2024-01-01'
+    ),
+    promo_revenue AS (
+        SELECT
+            ppr.promo_id,
+            ppr.promo_name,
+            ppr.started_at,
+            ppr.ended_at,
+            SUM(CASE
+                WHEN o.ordered_at BETWEEN ppr.started_at AND ppr.ended_at
+                THEN oi.quantity * oi.unit_price ELSE 0
+            END) AS during_revenue,
+            SUM(CASE
+                WHEN o.ordered_at < ppr.started_at
+                 AND o.ordered_at >= (CAST(ppr.started_at AS DATE) - (CAST(ppr.ended_at AS DATE) - CAST(ppr.started_at AS DATE)))
+                THEN oi.quantity * oi.unit_price ELSE 0
+            END) AS before_revenue,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at BETWEEN ppr.started_at AND ppr.ended_at
+                THEN o.id
+            END) AS during_orders
+        FROM promo_products ppr
+        INNER JOIN order_items oi ON ppr.product_id = oi.product_id
+        INNER JOIN orders      o  ON oi.order_id = o.id
+        WHERE o.status NOT IN ('cancelled')
+        GROUP BY ppr.promo_id, ppr.promo_name, ppr.started_at, ppr.ended_at
+    )
+    SELECT
+        promo_name,
+        started_at,
+        ended_at,
+        during_orders,
+        ROUND(during_revenue, 0) AS during_revenue,
+        ROUND(before_revenue, 0) AS before_revenue,
+        CASE
+            WHEN before_revenue > 0
+            THEN ROUND(100.0 * (during_revenue - before_revenue) / before_revenue, 1)
+            ELSE NULL
+        END AS revenue_change_pct
+    FROM promo_revenue
+    WHERE during_revenue > 0
+    ORDER BY revenue_change_pct DESC
+    FETCH FIRST 20 ROWS ONLY;
+        ```
+
+    === "SQL Server"
+        ```sql
+        WITH promo_products AS (
+        SELECT
+            promo.id AS promo_id,
+            promo.name AS promo_name,
+            promo.started_at,
+            promo.ended_at,
+            pp.product_id
+        FROM promotions AS promo
+        INNER JOIN promotion_products AS pp ON promo.id = pp.promotion_id
+        WHERE promo.started_at >= '2024-01-01'
+    ),
+    promo_revenue AS (
+        SELECT
+            ppr.promo_id,
+            ppr.promo_name,
+            ppr.started_at,
+            ppr.ended_at,
+            SUM(CASE
+                WHEN o.ordered_at BETWEEN ppr.started_at AND ppr.ended_at
+                THEN oi.quantity * oi.unit_price ELSE 0
+            END) AS during_revenue,
+            SUM(CASE
+                WHEN o.ordered_at < ppr.started_at
+                 AND o.ordered_at >= DATEADD(DAY, -DATEDIFF(DAY, ppr.started_at, ppr.ended_at), ppr.started_at)
+                THEN oi.quantity * oi.unit_price ELSE 0
+            END) AS before_revenue,
+            COUNT(DISTINCT CASE
+                WHEN o.ordered_at BETWEEN ppr.started_at AND ppr.ended_at
+                THEN o.id
+            END) AS during_orders
+        FROM promo_products AS ppr
+        INNER JOIN order_items AS oi ON ppr.product_id = oi.product_id
+        INNER JOIN orders      AS o  ON oi.order_id = o.id
+        WHERE o.status NOT IN ('cancelled')
+        GROUP BY ppr.promo_id, ppr.promo_name, ppr.started_at, ppr.ended_at
+    )
+    SELECT TOP 20
+        promo_name,
+        started_at,
+        ended_at,
+        during_orders,
+        ROUND(during_revenue, 0) AS during_revenue,
+        ROUND(before_revenue, 0) AS before_revenue,
+        CASE
+            WHEN before_revenue > 0
+            THEN ROUND(100.0 * (during_revenue - before_revenue) / before_revenue, 1)
+            ELSE NULL
+        END AS revenue_change_pct
+    FROM promo_revenue
+    WHERE during_revenue > 0
+    ORDER BY revenue_change_pct DESC;
         ```
 
 

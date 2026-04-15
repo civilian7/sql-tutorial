@@ -37,6 +37,22 @@ SELECT * FROM orders WHERE total_amount > 1000000;
     SELECT * FROM orders WHERE total_amount > 1000000;
         ```
 
+    === "Oracle"
+        ```sql
+        EXPLAIN PLAN FOR
+    SELECT * FROM orders WHERE total_amount > 1000000;
+    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        ```
+
+    === "SQL Server"
+        ```sql
+        SET SHOWPLAN_ALL ON;
+    GO
+    SELECT * FROM orders WHERE total_amount > 1000000;
+    GO
+    SET SHOWPLAN_ALL OFF;
+        ```
+
 
 ---
 
@@ -69,6 +85,22 @@ Which is more efficient?
         ```sql
         EXPLAIN ANALYZE
     SELECT * FROM orders WHERE customer_id = 42;
+        ```
+
+    === "Oracle"
+        ```sql
+        EXPLAIN PLAN FOR
+    SELECT * FROM orders WHERE customer_id = 42;
+    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        ```
+
+    === "SQL Server"
+        ```sql
+        SET SHOWPLAN_ALL ON;
+    GO
+    SELECT * FROM orders WHERE customer_id = 42;
+    GO
+    SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -105,6 +137,22 @@ Which of these queries uses this index?
         ```sql
         EXPLAIN ANALYZE
     SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+        ```
+
+    === "Oracle"
+        ```sql
+        EXPLAIN PLAN FOR
+    SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        ```
+
+    === "SQL Server"
+        ```sql
+        SET SHOWPLAN_ALL ON;
+    GO
+    SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+    GO
+    SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -149,6 +197,26 @@ Which is more efficient?
     WHERE oi.order_id = 100;
         ```
 
+    === "Oracle"
+        ```sql
+        EXPLAIN PLAN FOR
+    SELECT p.* FROM products p
+    JOIN order_items oi ON p.id = oi.product_id
+    WHERE oi.order_id = 100;
+    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        ```
+
+    === "SQL Server"
+        ```sql
+        SET SHOWPLAN_ALL ON;
+    GO
+    SELECT p.* FROM products p
+    JOIN order_items oi ON p.id = oi.product_id
+    WHERE oi.order_id = 100;
+    GO
+    SET SHOWPLAN_ALL OFF;
+        ```
+
 
 ---
 
@@ -182,6 +250,22 @@ Compare with the idx_products_name index.
         ```sql
         EXPLAIN ANALYZE
     SELECT brand, price FROM products WHERE brand = 'Samsung';
+        ```
+
+    === "Oracle"
+        ```sql
+        EXPLAIN PLAN FOR
+    SELECT brand, price FROM products WHERE brand = 'Samsung';
+    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        ```
+
+    === "SQL Server"
+        ```sql
+        SET SHOWPLAN_ALL ON;
+    GO
+    SELECT brand, price FROM products WHERE brand = 'Samsung';
+    GO
+    SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -227,6 +311,28 @@ browsing history in product_views (~300K rows). Check if indexes are used.
     ORDER BY viewed_at DESC;
         ```
 
+    === "Oracle"
+        ```sql
+        EXPLAIN PLAN FOR
+    SELECT product_id, viewed_at, duration_seconds
+    FROM product_views
+    WHERE customer_id = 42
+    ORDER BY viewed_at DESC;
+    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        ```
+
+    === "SQL Server"
+        ```sql
+        SET SHOWPLAN_ALL ON;
+    GO
+    SELECT product_id, viewed_at, duration_seconds
+    FROM product_views
+    WHERE customer_id = 42
+    ORDER BY viewed_at DESC;
+    GO
+    SET SHOWPLAN_ALL OFF;
+        ```
+
 
 ---
 
@@ -268,6 +374,28 @@ on point_transactions (~130K rows). Check for temp tables or sort operations.
            SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
     FROM point_transactions
     WHERE customer_id = 42;
+        ```
+
+    === "Oracle"
+        ```sql
+        EXPLAIN PLAN FOR
+    SELECT customer_id, created_at, amount,
+           SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+    FROM point_transactions
+    WHERE customer_id = 42;
+    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        ```
+
+    === "SQL Server"
+        ```sql
+        SET SHOWPLAN_ALL ON;
+    GO
+    SELECT customer_id, created_at, amount,
+           SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+    FROM point_transactions
+    WHERE customer_id = 42;
+    GO
+    SET SHOWPLAN_ALL OFF;
         ```
 
 

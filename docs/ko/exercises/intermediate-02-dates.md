@@ -114,6 +114,36 @@
     ) AS sub;
         ```
 
+    === "Oracle"
+        ```sql
+        SELECT
+        ROUND(AVG(CAST(first_order AS DATE) - CAST(join_date AS DATE)), 1) AS avg_days_to_first_order
+    FROM (
+        SELECT
+            c.id,
+            c.created_at AS join_date,
+            MIN(o.ordered_at) AS first_order
+        FROM customers c
+        INNER JOIN orders o ON c.id = o.customer_id
+        GROUP BY c.id, c.created_at
+    );
+        ```
+
+    === "SQL Server"
+        ```sql
+        SELECT
+        ROUND(AVG(CAST(DATEDIFF(DAY, join_date, first_order) AS FLOAT)), 1) AS avg_days_to_first_order
+    FROM (
+        SELECT
+            c.id,
+            c.created_at AS join_date,
+            MIN(o.ordered_at) AS first_order
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.created_at
+    ) AS sub;
+        ```
+
 
 ---
 
@@ -156,6 +186,26 @@
         COUNT(*) AS order_count
     FROM orders
     GROUP BY EXTRACT(HOUR FROM ordered_at::timestamp)
+    ORDER BY hour;
+        ```
+
+    === "Oracle"
+        ```sql
+        SELECT
+        EXTRACT(HOUR FROM CAST(ordered_at AS TIMESTAMP)) AS hour,
+        COUNT(*) AS order_count
+    FROM orders
+    GROUP BY EXTRACT(HOUR FROM CAST(ordered_at AS TIMESTAMP))
+    ORDER BY hour;
+        ```
+
+    === "SQL Server"
+        ```sql
+        SELECT
+        DATEPART(HOUR, ordered_at) AS hour,
+        COUNT(*) AS order_count
+    FROM orders
+    GROUP BY DATEPART(HOUR, ordered_at)
     ORDER BY hour;
         ```
 
@@ -263,6 +313,60 @@
     ORDER BY MIN(days);
         ```
 
+    === "Oracle"
+        ```sql
+        SELECT
+        CASE
+            WHEN days <= 1 THEN '1일 이내'
+            WHEN days <= 2 THEN '2일'
+            WHEN days <= 3 THEN '3일'
+            ELSE '4일 이상'
+        END AS delivery_range,
+        COUNT(*) AS cnt
+    FROM (
+        SELECT
+            CAST(sh.delivered_at AS DATE) - CAST(o.ordered_at AS DATE) AS days
+        FROM shipping sh
+        INNER JOIN orders o ON sh.order_id = o.id
+        WHERE sh.delivered_at IS NOT NULL
+    )
+    GROUP BY
+        CASE
+            WHEN days <= 1 THEN '1일 이내'
+            WHEN days <= 2 THEN '2일'
+            WHEN days <= 3 THEN '3일'
+            ELSE '4일 이상'
+        END
+    ORDER BY MIN(days);
+        ```
+
+    === "SQL Server"
+        ```sql
+        SELECT
+        CASE
+            WHEN days <= 1 THEN N'1일 이내'
+            WHEN days <= 2 THEN N'2일'
+            WHEN days <= 3 THEN N'3일'
+            ELSE N'4일 이상'
+        END AS delivery_range,
+        COUNT(*) AS cnt
+    FROM (
+        SELECT
+            DATEDIFF(DAY, o.ordered_at, sh.delivered_at) AS days
+        FROM shipping AS sh
+        INNER JOIN orders AS o ON sh.order_id = o.id
+        WHERE sh.delivered_at IS NOT NULL
+    ) AS sub
+    GROUP BY
+        CASE
+            WHEN days <= 1 THEN N'1일 이내'
+            WHEN days <= 2 THEN N'2일'
+            WHEN days <= 3 THEN N'3일'
+            ELSE N'4일 이상'
+        END
+    ORDER BY MIN(days);
+        ```
+
 
 ---
 
@@ -323,6 +427,35 @@
     LIMIT 20;
         ```
 
+    === "Oracle"
+        ```sql
+        SELECT
+        c.name,
+        c.grade,
+        MAX(o.ordered_at) AS last_order,
+        CAST(DATE '2025-12-31' - CAST(MAX(o.ordered_at) AS DATE) AS INTEGER) AS days_ago
+    FROM customers c
+    INNER JOIN orders o ON c.id = o.customer_id
+    GROUP BY c.id, c.name, c.grade
+    HAVING CAST(DATE '2025-12-31' - CAST(MAX(o.ordered_at) AS DATE) AS INTEGER) >= 180
+    ORDER BY days_ago DESC
+    FETCH FIRST 20 ROWS ONLY;
+        ```
+
+    === "SQL Server"
+        ```sql
+        SELECT TOP 20
+        c.name,
+        c.grade,
+        MAX(o.ordered_at) AS last_order,
+        DATEDIFF(DAY, MAX(o.ordered_at), '2025-12-31') AS days_ago
+    FROM customers AS c
+    INNER JOIN orders AS o ON c.id = o.customer_id
+    GROUP BY c.id, c.name, c.grade
+    HAVING DATEDIFF(DAY, MAX(o.ordered_at), '2025-12-31') >= 180
+    ORDER BY days_ago DESC;
+        ```
+
 
 ---
 
@@ -381,6 +514,36 @@
     GROUP BY EXTRACT(DOW FROM ordered_at::timestamp), EXTRACT(HOUR FROM ordered_at::timestamp)
     ORDER BY orders DESC
     LIMIT 20;
+        ```
+
+    === "Oracle"
+        ```sql
+        SELECT
+        CASE TO_NUMBER(TO_CHAR(CAST(ordered_at AS DATE), 'D'))
+            WHEN 1 THEN '일' WHEN 2 THEN '월' WHEN 3 THEN '화'
+            WHEN 4 THEN '수' WHEN 5 THEN '목' WHEN 6 THEN '금' WHEN 7 THEN '토'
+        END AS day_name,
+        EXTRACT(HOUR FROM CAST(ordered_at AS TIMESTAMP)) AS hour,
+        COUNT(*) AS orders
+    FROM orders
+    GROUP BY TO_NUMBER(TO_CHAR(CAST(ordered_at AS DATE), 'D')),
+             EXTRACT(HOUR FROM CAST(ordered_at AS TIMESTAMP))
+    ORDER BY orders DESC
+    FETCH FIRST 20 ROWS ONLY;
+        ```
+
+    === "SQL Server"
+        ```sql
+        SELECT TOP 20
+        CASE DATEPART(WEEKDAY, ordered_at)
+            WHEN 1 THEN N'일' WHEN 2 THEN N'월' WHEN 3 THEN N'화'
+            WHEN 4 THEN N'수' WHEN 5 THEN N'목' WHEN 6 THEN N'금' WHEN 7 THEN N'토'
+        END AS day_name,
+        DATEPART(HOUR, ordered_at) AS hour,
+        COUNT(*) AS orders
+    FROM orders
+    GROUP BY DATEPART(WEEKDAY, ordered_at), DATEPART(HOUR, ordered_at)
+    ORDER BY orders DESC;
         ```
 
 
@@ -459,6 +622,28 @@
         ROUND(AVG(completed_at::date - requested_at::date), 1) AS avg_days,
         MIN(completed_at::date - requested_at::date) AS min_days,
         MAX(completed_at::date - requested_at::date) AS max_days
+    FROM returns
+    WHERE status = 'completed'
+      AND completed_at IS NOT NULL;
+        ```
+
+    === "Oracle"
+        ```sql
+        SELECT
+        ROUND(AVG(CAST(completed_at AS DATE) - CAST(requested_at AS DATE)), 1) AS avg_days,
+        MIN(CAST(completed_at AS DATE) - CAST(requested_at AS DATE)) AS min_days,
+        MAX(CAST(completed_at AS DATE) - CAST(requested_at AS DATE)) AS max_days
+    FROM returns
+    WHERE status = 'completed'
+      AND completed_at IS NOT NULL;
+        ```
+
+    === "SQL Server"
+        ```sql
+        SELECT
+        ROUND(AVG(CAST(DATEDIFF(DAY, requested_at, completed_at) AS FLOAT)), 1) AS avg_days,
+        MIN(DATEDIFF(DAY, requested_at, completed_at)) AS min_days,
+        MAX(DATEDIFF(DAY, requested_at, completed_at)) AS max_days
     FROM returns
     WHERE status = 'completed'
       AND completed_at IS NOT NULL;

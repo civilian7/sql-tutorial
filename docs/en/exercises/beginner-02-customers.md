@@ -410,6 +410,37 @@ Show product name and tag list (comma-separated).
     LIMIT 20;
         ```
 
+    === "Oracle"
+        ```sql
+        SELECT
+        p.name AS product_name,
+        p.brand,
+        COUNT(pt.tag_id) AS tag_count,
+        LISTAGG(t.name, ', ') WITHIN GROUP (ORDER BY t.name) AS tags
+    FROM product_tags pt
+    INNER JOIN products p ON pt.product_id = p.id
+    INNER JOIN tags     t ON pt.tag_id     = t.id
+    GROUP BY p.id, p.name, p.brand
+    HAVING COUNT(pt.tag_id) >= 3
+    ORDER BY tag_count DESC
+    FETCH FIRST 20 ROWS ONLY;
+        ```
+
+    === "SQL Server"
+        ```sql
+        SELECT TOP 20
+        p.name AS product_name,
+        p.brand,
+        COUNT(pt.tag_id) AS tag_count,
+        STRING_AGG(t.name, ', ') AS tags
+    FROM product_tags AS pt
+    INNER JOIN products AS p ON pt.product_id = p.id
+    INNER JOIN tags     AS t ON pt.tag_id     = t.id
+    GROUP BY p.id, p.name, p.brand
+    HAVING COUNT(pt.tag_id) >= 3
+    ORDER BY tag_count DESC;
+        ```
+
 
 ---
 
