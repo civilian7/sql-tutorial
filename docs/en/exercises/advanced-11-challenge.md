@@ -561,8 +561,10 @@ who ordered again in month+1, month+2, and month+3.
 
 
 ??? success "Answer"
-    ```sql
-    WITH cohort AS (
+
+    === "SQLite"
+        ```sql
+        WITH cohort AS (
         SELECT
             id AS customer_id,
             SUBSTR(created_at, 1, 7) AS signup_month,
@@ -600,7 +602,7 @@ who ordered again in month+1, month+2, and month+3.
     FROM cohort_orders
     GROUP BY signup_month
     ORDER BY signup_month;
-    ```
+        ```
 
 
 ---
@@ -619,8 +621,10 @@ in ANY month after N months (not just exactly month N).
 
 
 ??? success "Answer"
-    ```sql
-    WITH cohort AS (
+
+    === "SQLite"
+        ```sql
+        WITH cohort AS (
         SELECT
             id AS customer_id,
             SUBSTR(created_at, 1, 7) AS signup_month,
@@ -658,7 +662,7 @@ in ANY month after N months (not just exactly month N).
     FROM cohort_orders
     GROUP BY signup_month
     ORDER BY signup_month;
-    ```
+        ```
 
 
 ---
@@ -878,8 +882,10 @@ Use LAG to get previous order date and compute JULIANDAY difference.
 
 
 ??? success "Answer"
-    ```sql
-    WITH order_gaps AS (
+
+    === "SQLite"
+        ```sql
+        WITH order_gaps AS (
         SELECT
             customer_id,
             ordered_at,
@@ -903,7 +909,7 @@ Use LAG to get previous order date and compute JULIANDAY difference.
     HAVING COUNT(*) >= 3
     ORDER BY avg_cycle_days ASC
     LIMIT 20;
-    ```
+        ```
 
 
 ---
@@ -922,8 +928,10 @@ of their first order.
 
 
 ??? success "Answer"
-    ```sql
-    WITH first_order AS (
+
+    === "SQLite"
+        ```sql
+        WITH first_order AS (
         SELECT
             customer_id,
             MIN(ordered_at) AS first_ordered_at
@@ -971,7 +979,7 @@ of their first order.
         END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_90d_pct
     FROM first_order AS fo
     LEFT JOIN repeat_order AS ro ON fo.customer_id = ro.customer_id;
-    ```
+        ```
 
 
 ---
@@ -1028,8 +1036,10 @@ Calculate lift percentage per promotion.
 
 
 ??? success "Answer"
-    ```sql
-    WITH promo_daily AS (
+
+    === "SQLite"
+        ```sql
+        WITH promo_daily AS (
         SELECT
             pr.id AS promo_id,
             pr.name AS promo_name,
@@ -1061,7 +1071,7 @@ Calculate lift percentage per promotion.
     CROSS JOIN overall_daily AS od
     ORDER BY lift_pct DESC
     LIMIT 15;
-    ```
+        ```
 
 
 ---
@@ -1168,8 +1178,10 @@ with month-over-month change.
 
 
 ??? success "Answer"
-    ```sql
-    WITH monthly_carrier AS (
+
+    === "SQLite"
+        ```sql
+        WITH monthly_carrier AS (
         SELECT
             carrier,
             SUBSTR(shipped_at, 1, 7) AS ship_month,
@@ -1190,7 +1202,7 @@ with month-over-month change.
         ROUND(avg_days - LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month), 2) AS mom_change
     FROM monthly_carrier
     ORDER BY carrier, ship_month;
-    ```
+        ```
 
 
 ---
@@ -1210,8 +1222,10 @@ Show start date, end date, and streak length.
 
 
 ??? success "Answer"
-    ```sql
-    WITH daily AS (
+
+    === "SQLite"
+        ```sql
+        WITH daily AS (
         SELECT
             SUBSTR(ordered_at, 1, 10) AS order_date,
             ROUND(SUM(total_amount), 2) AS revenue
@@ -1251,7 +1265,7 @@ Show start date, end date, and streak length.
     GROUP BY grp
     HAVING COUNT(*) >= 3
     ORDER BY start_date;
-    ```
+        ```
 
 
 ---
@@ -1271,8 +1285,10 @@ Show customer name, streak start month, end month, and duration.
 
 
 ??? success "Answer"
-    ```sql
-    WITH customer_months AS (
+
+    === "SQLite"
+        ```sql
+        WITH customer_months AS (
         SELECT DISTINCT
             customer_id,
             SUBSTR(ordered_at, 1, 7) AS order_month,
@@ -1311,7 +1327,7 @@ Show customer name, streak start month, end month, and duration.
     INNER JOIN customers AS c ON s.customer_id = c.id
     ORDER BY s.consecutive_months DESC, c.name
     LIMIT 20;
-    ```
+        ```
 
 
 ---
@@ -1331,8 +1347,10 @@ Calculate sessions per customer and average views per session.
 
 
 ??? success "Answer"
-    ```sql
-    WITH view_gaps AS (
+
+    === "SQLite"
+        ```sql
+        WITH view_gaps AS (
         SELECT
             customer_id,
             viewed_at,
@@ -1372,7 +1390,7 @@ Calculate sessions per customer and average views per session.
         ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
         ROUND(AVG(views_in_session), 1) AS avg_views_per_session
     FROM session_stats;
-    ```
+        ```
 
 
 ---
@@ -1391,8 +1409,10 @@ Compare session counts with the 30-minute version.
 
 
 ??? success "Answer"
-    ```sql
-    WITH view_gaps AS (
+
+    === "SQLite"
+        ```sql
+        WITH view_gaps AS (
         SELECT
             customer_id,
             viewed_at,
@@ -1432,7 +1452,7 @@ Compare session counts with the 30-minute version.
         ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
         ROUND(AVG(views_in_session), 1) AS avg_views_per_session
     FROM session_stats;
-    ```
+        ```
 
 
 ---
@@ -1492,8 +1512,10 @@ Calculate the median delivery duration (in days) by carrier.
 
 
 ??? success "Answer"
-    ```sql
-    WITH delivery_days AS (
+
+    === "SQLite"
+        ```sql
+        WITH delivery_days AS (
         SELECT
             carrier,
             ROUND(JULIANDAY(delivered_at) - JULIANDAY(shipped_at), 1) AS days,
@@ -1510,7 +1532,7 @@ Calculate the median delivery duration (in days) by carrier.
     WHERE rn IN (cnt / 2, cnt / 2 + 1)
     GROUP BY carrier
     ORDER BY median_days;
-    ```
+        ```
 
 
 ---
@@ -1646,8 +1668,10 @@ e.g., Mon/Tue/Wed views -> Thu gap -> Fri/Sat views = 2 islands (3 days, 2 days)
 
 
 ??? success "Answer"
-    ```sql
-    WITH active_days AS (
+
+    === "SQLite"
+        ```sql
+        WITH active_days AS (
         SELECT DISTINCT
             customer_id,
             SUBSTR(viewed_at, 1, 10) AS view_date
@@ -1682,7 +1706,7 @@ e.g., Mon/Tue/Wed views -> Thu gap -> Fri/Sat views = 2 islands (3 days, 2 days)
     INNER JOIN customers AS c ON i.customer_id = c.id
     ORDER BY i.island_days DESC, c.name
     LIMIT 20;
-    ```
+        ```
 
 
 ---
