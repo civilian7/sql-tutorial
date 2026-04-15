@@ -978,7 +978,7 @@ LEFT JOIN (
     JOIN products p3 ON oi.product_id = p3.id
     GROUP BY p3.supplier_id
 ) ret ON s.id = ret.supplier_id
-GROUP BY s.id, s.company_name;
+GROUP BY s.id, s.company_name, sales.total_revenue, sales.total_sold, ret.return_count;
 
 CREATE OR REPLACE VIEW v_hourly_pattern AS
 SELECT
