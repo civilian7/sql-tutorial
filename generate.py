@@ -492,12 +492,19 @@ def _execute_sql_file(cursor, path: str, delimiter: str = ";"):
         statements = content.split(";\n")
 
     for stmt in statements:
-        stmt = stmt.strip()
-        if stmt and not stmt.startswith("--"):
-            try:
-                cursor.execute(stmt)
-            except Exception:
-                pass  # Skip individual statement errors (e.g., DROP IF EXISTS)
+        # Strip comment-only lines, keep actual SQL
+        lines = [ln for ln in stmt.split("\n") if ln.strip() and not ln.strip().startswith("--")]
+        stmt = "\n".join(lines).strip()
+        if not stmt:
+            continue
+        # Skip database selection statements (handled by --database option)
+        stmt_upper = stmt.upper().lstrip()
+        if stmt_upper.startswith("USE ") or stmt_upper.startswith("CREATE DATABASE") or stmt_upper.startswith("\\C "):
+            continue
+        try:
+            cursor.execute(stmt)
+        except Exception:
+            pass  # Skip individual statement errors (e.g., DROP IF EXISTS)
 
 
 def _resolve_date_range(config: dict, args):
