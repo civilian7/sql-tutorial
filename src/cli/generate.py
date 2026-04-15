@@ -176,7 +176,7 @@ def _interactive_mode() -> argparse.Namespace:
 
     # 4. Apply to server?
     apply_targets = []
-    applyable = [t for t in targets if t in ("mysql", "postgresql", "sqlserver")]
+    applyable = [t for t in targets if t in ("mysql", "postgresql", "sqlserver", "oracle")]
     if applyable:
         if _ask_yn(f"4. 생성 후 서버에 바로 적용할까요? ({', '.join(applyable)})"):
             apply_targets = applyable
@@ -509,6 +509,10 @@ def main():
             exporter = OracleExporter(output_dir)
             out_path = exporter.export(all_data)
             print(f"  -> {out_path}/")
+            if target in apply_targets:
+                _apply_with_config(target, out_path, args, db_configs)
+            elif args.apply:
+                _apply_oracle(out_path, args)
         elif target == "sqlserver":
             print(f"\nExporting to SQL Server...")
             exporter = SQLServerExporter(output_dir)
@@ -544,6 +548,8 @@ def _apply_with_config(target: str, out_path: str, args, db_configs: dict):
             _apply_postgresql(out_path, args)
         elif target == "sqlserver":
             _apply_sqlserver(out_path, args)
+        elif target == "oracle":
+            _apply_oracle(out_path, args)
     finally:
         args.host, args.port, args.user, args.password, args.database = orig
 
@@ -680,6 +686,93 @@ def _apply_postgresql(out_path: str, args):
 
     except psycopg2.Error as e:
         print(f"  [ERROR] PostgreSQL: {e}")
+
+
+def _apply_oracle(out_path: str, args):
+    """Apply generated Oracle SQL files directly to an Oracle instance."""
+    try:
+        import oracledb
+    except ImportError:
+        print("  [ERROR] python-oracledb is required for --apply with Oracle.")
+        print("  Install: pip install oracledb")
+        return
+
+    password = _get_password(args)
+    port = args.port or 1521
+    user = args.user or "system"
+    db = args.database
+
+    print(f"  Applying to Oracle {user}@{args.host}:{port}/{db}...")
+
+    try:
+        # Connect using thin mode (no Oracle Client needed)
+        dsn = f"{args.host}:{port}/{db}"
+        conn = oracledb.connect(user=user, password=password, dsn=dsn)
+        cursor = conn.cursor()
+
+        # Execute schema (split by ; for Oracle DDL)
+        schema_path = os.path.join(out_path, "schema.sql")
+        print(f"  Applying schema...")
+        _execute_oracle_sql(cursor, conn, schema_path)
+
+        # Execute data
+        data_path = os.path.join(out_path, "data.sql")
+        print(f"  Inserting data (this may take a while)...")
+        _execute_oracle_sql(cursor, conn, data_path)
+
+        # Execute procedures (PL/SQL blocks separated by /)
+        proc_path = os.path.join(out_path, "procedures.sql")
+        if os.path.exists(proc_path):
+            print(f"  Creating stored procedures...")
+            _execute_oracle_plsql(cursor, conn, proc_path)
+
+        cursor.close()
+        conn.close()
+        print(f"  Successfully applied to Oracle: {db}")
+
+    except oracledb.Error as e:
+        print(f"  [ERROR] Oracle: {e}")
+
+
+def _execute_oracle_sql(cursor, conn, path: str):
+    """Execute an Oracle SQL file statement by statement (DDL/DML split by ;)."""
+    with open(path, encoding="utf-8") as f:
+        content = f.read()
+
+    statements = content.split(";\n")
+    for stmt in statements:
+        lines = [ln for ln in stmt.split("\n") if ln.strip() and not ln.strip().startswith("--")]
+        stmt = "\n".join(lines).strip()
+        if not stmt:
+            continue
+        # Skip SPOOL, SET, WHENEVER etc.
+        stmt_upper = stmt.upper().lstrip()
+        if any(stmt_upper.startswith(k) for k in ("SPOOL ", "SET ", "WHENEVER ", "PROMPT ", "EXIT", "QUIT")):
+            continue
+        try:
+            cursor.execute(stmt)
+            conn.commit()
+        except Exception:
+            pass
+
+
+def _execute_oracle_plsql(cursor, conn, path: str):
+    """Execute Oracle PL/SQL file split by / on its own line."""
+    import re
+    with open(path, encoding="utf-8") as f:
+        content = f.read()
+
+    blocks = re.split(r'^\s*/\s*$', content, flags=re.MULTILINE)
+    for block in blocks:
+        lines = [ln for ln in block.split("\n") if ln.strip() and not ln.strip().startswith("--")]
+        block = "\n".join(lines).strip()
+        if not block:
+            continue
+        try:
+            cursor.execute(block)
+            conn.commit()
+        except Exception:
+            pass
 
 
 def _apply_sqlserver(out_path: str, args):
