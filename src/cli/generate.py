@@ -85,8 +85,176 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+# =============================================
+# Interactive mode
+# =============================================
+
+def _pick(prompt: str, options: list[tuple[str, str]], default: int = 1) -> str:
+    """Display a numbered menu and return the chosen key."""
+    print(f"\n{prompt}")
+    for i, (key, label) in enumerate(options, 1):
+        marker = "*" if i == default else " "
+        print(f"  {marker} {i}. {label}")
+    while True:
+        raw = input(f"  선택 [{default}]: ").strip()
+        if not raw:
+            return options[default - 1][0]
+        if raw.isdigit() and 1 <= int(raw) <= len(options):
+            return options[int(raw) - 1][0]
+        print(f"  1~{len(options)} 사이 숫자를 입력하세요.")
+
+
+def _pick_multi(prompt: str, options: list[tuple[str, str]], defaults: list[int] | None = None) -> list[str]:
+    """Display a numbered menu and return multiple chosen keys."""
+    if defaults is None:
+        defaults = [1]
+    print(f"\n{prompt}")
+    for i, (key, label) in enumerate(options, 1):
+        marker = "*" if i in defaults else " "
+        print(f"  {marker} {i}. {label}")
+    default_str = ",".join(str(d) for d in defaults)
+    while True:
+        raw = input(f"  선택 (쉼표 구분, 예: 1,3) [{default_str}]: ").strip()
+        if not raw:
+            return [options[d - 1][0] for d in defaults]
+        try:
+            nums = [int(x.strip()) for x in raw.split(",")]
+            if all(1 <= n <= len(options) for n in nums):
+                return [options[n - 1][0] for n in nums]
+        except ValueError:
+            pass
+        print(f"  1~{len(options)} 사이 숫자를 쉼표로 구분하세요.")
+
+
+def _ask_yn(prompt: str, default: bool = False) -> bool:
+    """Ask a yes/no question."""
+    hint = "[Y/n]" if default else "[y/N]"
+    raw = input(f"\n{prompt} {hint}: ").strip().lower()
+    if not raw:
+        return default
+    return raw in ("y", "yes")
+
+
+def _ask_str(prompt: str, default: str = "") -> str:
+    """Ask for a string input."""
+    if default:
+        raw = input(f"  {prompt} [{default}]: ").strip()
+        return raw if raw else default
+    return input(f"  {prompt}: ").strip()
+
+
+def _interactive_mode() -> argparse.Namespace:
+    """Run the interactive wizard and return an args-like namespace."""
+    import getpass
+
+    print()
+    print("=" * 50)
+    print("  SQL Tutorial - Database Generator")
+    print("=" * 50)
+
+    # 1. Size
+    size = _pick("1. 데이터 규모를 선택하세요:", [
+        ("small",  "Small  - ~75만 건, ~80MB, ~20초 (학습용, 추천)"),
+        ("medium", "Medium - ~700만 건, ~800MB, ~3분 (개발용)"),
+        ("large",  "Large  - ~3500만 건, ~4GB, ~15분 (성능 테스트)"),
+    ], default=1)
+
+    # 2. Locale
+    locale = _pick("2. 데이터 언어를 선택하세요:", [
+        ("ko", "한국어 (Korean)"),
+        ("en", "English"),
+    ], default=1)
+
+    # 3. Target DBs
+    targets = _pick_multi("3. 생성할 데이터베이스를 선택하세요 (복수 가능):", [
+        ("sqlite",     "SQLite      - 파일 하나, 설치 불필요"),
+        ("mysql",      "MySQL       - 웹 서비스 표준"),
+        ("postgresql", "PostgreSQL  - SQL 표준 최고 준수"),
+        ("oracle",     "Oracle      - 엔터프라이즈"),
+        ("sqlserver",  "SQL Server  - Windows/.NET"),
+    ], defaults=[1])
+
+    # 4. Apply to server?
+    apply_targets = []
+    applyable = [t for t in targets if t in ("mysql", "postgresql", "sqlserver")]
+    if applyable:
+        if _ask_yn(f"4. 생성 후 서버에 바로 적용할까요? ({', '.join(applyable)})"):
+            apply_targets = applyable
+
+    # 5. Connection info per apply target
+    db_configs = {}
+    DEFAULT_PORTS = {"mysql": 3306, "postgresql": 5432, "sqlserver": 1433, "oracle": 1521}
+    DEFAULT_USERS = {"mysql": "root", "postgresql": "postgres", "sqlserver": "sa", "oracle": "system"}
+    for t in apply_targets:
+        print(f"\n  --- {t.upper()} 접속 정보 ---")
+        host = _ask_str("호스트", "localhost")
+        port = _ask_str("포트", str(DEFAULT_PORTS.get(t, 3306)))
+        user = _ask_str("사용자", DEFAULT_USERS.get(t, "root"))
+        pw = getpass.getpass(f"  비밀번호: ")
+        database = _ask_str("데이터베이스명", "ecommerce_test")
+        db_configs[t] = {"host": host, "port": int(port), "user": user, "password": pw, "database": database}
+
+    # 6. Dirty data?
+    dirty = _ask_yn("5. 노이즈 데이터를 추가할까요? (데이터 정제 연습용, 5~10%)")
+
+    # Summary
+    print()
+    print("-" * 50)
+    print("  설정 요약")
+    print("-" * 50)
+    print(f"  규모:     {size}")
+    print(f"  언어:     {locale}")
+    print(f"  대상 DB:  {', '.join(targets)}")
+    if apply_targets:
+        print(f"  서버 적용: {', '.join(apply_targets)}")
+    if dirty:
+        print(f"  노이즈:   추가")
+    print("-" * 50)
+
+    if not _ask_yn("이대로 생성할까요?", default=True):
+        print("취소되었습니다.")
+        sys.exit(0)
+
+    # Build namespace matching parse_args output
+    ns = argparse.Namespace()
+    ns.size = size
+    ns.seed = None
+    ns.target = None
+    ns.all = False
+    ns.start_date = None
+    ns.end_date = None
+    ns.locale = locale
+    ns.dirty_data = dirty
+    ns.download_images = False
+    ns.pexels_key = None
+    ns.config = "config.yaml"
+    ns.apply = bool(apply_targets)
+    ns.host = "localhost"
+    ns.port = None
+    ns.user = None
+    ns.password = None
+    ns.ask_password = False
+    ns.database = "ecommerce_test"
+    # Custom fields for multi-target apply
+    ns._targets = targets
+    ns._apply_targets = apply_targets
+    ns._db_configs = db_configs
+    return ns
+
+
+def _is_interactive(args: argparse.Namespace) -> bool:
+    """Check if any CLI option was explicitly provided."""
+    return (args.size is None and args.target is None and not args.all
+            and args.seed is None and args.locale is None
+            and not args.dirty_data and not args.apply)
+
+
 def main():
     args = parse_args()
+
+    if _is_interactive(args):
+        args = _interactive_mode()
+
     config = load_config(args.config)
 
     if args.size:
@@ -98,7 +266,9 @@ def main():
     # Resolve date range: --start-date/--end-date > --start-year/--end-year > config
     _resolve_date_range(config, args)
     _ensure_yearly_growth(config)
-    if args.all:
+    if hasattr(args, '_targets') and args._targets:
+        config["targets"] = args._targets
+    elif args.all:
         config["targets"] = ["sqlite", "mysql", "postgresql", "sqlserver", "oracle"]
     elif args.target:
         config["targets"] = [args.target]
@@ -306,6 +476,9 @@ def main():
 
     # Export
     t1 = time.time()
+    apply_targets = getattr(args, '_apply_targets', [])
+    db_configs = getattr(args, '_db_configs', {})
+
     for target in config["targets"]:
         if target == "sqlite":
             print(f"\nExporting to SQLite...")
@@ -318,14 +491,18 @@ def main():
             exporter = MySQLExporter(output_dir)
             out_path = exporter.export(all_data)
             print(f"  -> {out_path}/")
-            if args.apply:
+            if target in apply_targets:
+                _apply_with_config(target, out_path, args, db_configs)
+            elif args.apply:
                 _apply_mysql(out_path, args)
         elif target == "postgresql":
             print(f"\nExporting to PostgreSQL...")
             exporter = PostgreSQLExporter(output_dir)
             out_path = exporter.export(all_data)
             print(f"  -> {out_path}/")
-            if args.apply:
+            if target in apply_targets:
+                _apply_with_config(target, out_path, args, db_configs)
+            elif args.apply:
                 _apply_postgresql(out_path, args)
         elif target == "oracle":
             print(f"\nExporting to Oracle...")
@@ -337,7 +514,9 @@ def main():
             exporter = SQLServerExporter(output_dir)
             out_path = exporter.export(all_data)
             print(f"  -> {out_path}/")
-            if args.apply:
+            if target in apply_targets:
+                _apply_with_config(target, out_path, args, db_configs)
+            elif args.apply:
                 _apply_sqlserver(out_path, args)
         else:
             print(f"\n{target} export is not yet implemented.")
@@ -346,6 +525,27 @@ def main():
     total_time = time.time() - t0
     print(f"\nExport complete ({export_time:.1f}s)")
     print(f"Total elapsed time: {total_time:.1f}s")
+
+
+def _apply_with_config(target: str, out_path: str, args, db_configs: dict):
+    """Apply using per-target connection config from interactive mode."""
+    cfg = db_configs.get(target, {})
+    # Temporarily override args with interactive config
+    orig = (args.host, args.port, args.user, args.password, args.database)
+    args.host = cfg.get("host", args.host)
+    args.port = cfg.get("port", args.port)
+    args.user = cfg.get("user", args.user)
+    args.password = cfg.get("password", args.password)
+    args.database = cfg.get("database", args.database)
+    try:
+        if target == "mysql":
+            _apply_mysql(out_path, args)
+        elif target == "postgresql":
+            _apply_postgresql(out_path, args)
+        elif target == "sqlserver":
+            _apply_sqlserver(out_path, args)
+    finally:
+        args.host, args.port, args.user, args.password, args.database = orig
 
 
 def _get_password(args) -> str:
@@ -629,7 +829,7 @@ def _ensure_yearly_growth(config: dict):
     defined_years = sorted(int(y) for y in growth.keys())
 
     if not defined_years:
-        # No growth data at all — generate flat defaults
+        # No growth data at all - generate flat defaults
         for y in range(start, end + 1):
             growth[y] = {
                 "new_customers": 5000,
