@@ -8,8 +8,6 @@
 !!! abstract "학습 범위"
     `IS NULL`, `IS NOT NULL`, `COALESCE`, `IFNULL`, NULL과 집계 함수, NULL 정렬
 
-## 기초 (1~10)
-
 IS NULL, IS NOT NULL, COALESCE의 기본 사용법을 연습합니다.
 
 ---
@@ -176,8 +174,6 @@ IS NULL, IS NOT NULL, COALESCE의 기본 사용법을 연습합니다.
     ```
 
 ---
-
-## 응용 (11~20)
 
 COALESCE 활용, NULL과 집계 함수의 관계, NULL 정렬을 연습합니다.
 
@@ -366,8 +362,6 @@ COALESCE 활용, NULL과 집계 함수의 관계, NULL 정렬을 연습합니다
     > 실제 운영에서는 이런 추정치를 사용할 때 별도의 플래그 칼럼으로 추정값 여부를 구분합니다.
 
 ---
-
-## 실전 (21~30)
 
 NULL 분석, 데이터 품질 점검, NULL 안전 비교를 연습합니다.
 

@@ -16,9 +16,6 @@
 
 ---
 
-
-## Basic (1-5): UNION, UNION ALL Basics
-
 ### Problem 1. Combine customers who wrote reviews and customers who filed complaints into a single deduplicated list.
 
 UNION merges two SELECT results while automatically removing duplicates.
@@ -39,9 +36,7 @@ UNION merges two SELECT results while automatically removing duplicates.
     LIMIT 20;
     ```
 
-
 ---
-
 
 ### Problem 2. Combine review author IDs and complaint author IDs including duplicates, and count the total.
 
@@ -75,9 +70,7 @@ UNION ALL does not remove duplicates, so a customer present in both sets appears
 
     The difference between the two results is "the number of customers active in both."
 
-
 ---
-
 
 ### Problem 3. Combine the order counts for 2024 and 2025 into a single result.
 
@@ -108,9 +101,7 @@ Write separate SELECT statements for each year's aggregation and combine with UN
     | 2024 | ... | ... |
     | 2025 | ... | ... |
 
-
 ---
-
 
 ### Problem 4. Combine wishlisted product IDs and ordered product IDs (deduplicated) and count the total unique products.
 
@@ -129,9 +120,7 @@ UNION automatically removes duplicates when combining two sets.
     );
     ```
 
-
 ---
-
 
 ### Problem 5. Combine order cancellation events and return request events into a single timeline. Most recent 20.
 
@@ -163,11 +152,7 @@ Combine events from different tables using UNION ALL to create a unified timelin
     | 반품 | 1234 | 2025-... |
     | ... | ... | ... |
 
-
 ---
-
-
-## Applied (6-10): UNION ALL Aggregate Rows, INTERSECT, EXCEPT
 
 ### Problem 6. Show 2025 monthly revenue with an annual total row appended.
 
@@ -197,9 +182,7 @@ Use UNION ALL to combine monthly aggregation with an overall total into a single
     ORDER BY month;
     ```
 
-
 ---
-
 
 ### Problem 7. Show payment method counts with a total row at the end.
 
@@ -229,9 +212,7 @@ Use UNION ALL to combine GROUP BY results and a total row.
         tx_count DESC;
     ```
 
-
 ---
-
 
 ### Problem 8. Find customers who have both written a review and filed a complaint (intersection).
 
@@ -253,9 +234,7 @@ INTERSECT returns the intersection of two SELECT results.
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 9. Find products that were wishlisted but never ordered (set difference).
 
@@ -277,9 +256,7 @@ EXCEPT returns the difference: the first SELECT minus the second SELECT.
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 10. Find customers who ordered in 2024 but not in 2025.
 
@@ -307,11 +284,7 @@ Use EXCEPT to compute the set difference of customers by year. Useful for churn 
     LIMIT 20;
     ```
 
-
 ---
-
-
-## Advanced (11-15): Subquery Combinations, Set Operations + Aggregation
 
 ### Problem 11. Combine customer activity counts into a single report (orders, reviews, complaints, wishlists).
 
@@ -344,9 +317,7 @@ Use UNION ALL to merge counts from multiple activity types into one summary tabl
     | 리뷰 | ... |
     | 불만 접수 | ... |
 
-
 ---
-
 
 ### Problem 12. Find loyal customers who ordered in both 2024 and 2025, showing name, grade, and order counts for each year.
 
@@ -380,9 +351,7 @@ Use INTERSECT to find loyal customers, then add per-year order counts via scalar
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 13. Find orders that received complaints but were not returned. Show order number and amount.
 
@@ -404,9 +373,7 @@ Use EXCEPT to subtract return orders from complaint orders.
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 14. Compute per-product "review count + wishlist count" using a UNION ALL subquery. Top 10.
 
@@ -436,9 +403,7 @@ Combine interest from two tables using UNION ALL, then aggregate externally.
     | (popular product 1) | 42 |
     | ... | ... |
 
-
 ---
-
 
 ### Problem 15. Compute quarterly new signups and ordering customers for 2024, combined into one report.
 
@@ -475,6 +440,5 @@ Combine quarterly aggregations of different metrics using UNION ALL to create a 
     | Q2 | 신규가입 | ... |
     | Q2 | 주문고객 | ... |
     | ... | ... | ... |
-
 
 ---

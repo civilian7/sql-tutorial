@@ -130,21 +130,21 @@ problems:
         SELECT
             COALESCE(gender, '미입력') AS gender,
             COUNT(*) AS cnt,
-            ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct
+            ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers), 1) AS pct
         FROM customers
         GROUP BY gender;
-    supported_db: [sqlite, mysql, postgresql]
+    supported_db: [sqlite, mysql, postgresql, oracle, sqlserver]
     validation:
       type: result_match
       ordered: false
     hints:
-      - ko: "COALESCE(gender, '미입력')으로 NULL 처리. 비율은 100.0 * COUNT(*) / SUM(COUNT(*)) OVER ()로 계산"
-        en: "Use COALESCE(gender, 'N/A') to handle NULLs. Calculate the ratio with 100.0 * COUNT(*) / SUM(COUNT(*)) OVER ()"
+      - ko: "COALESCE(gender, '미입력')으로 NULL 처리. 비율은 100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers)로 계산"
+        en: "Use COALESCE(gender, 'N/A') to handle NULLs. Calculate the ratio with 100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers)"
     rubric:
-      ko: "COALESCE와 윈도우 함수를 사용해야 함"
-      en: "Must use COALESCE and window function"
+      ko: "COALESCE와 서브쿼리를 사용해야 함"
+      en: "Must use COALESCE and subquery"
     max_score: 10
-    tags: [SELECT, GROUP BY, COUNT, COALESCE, SUM OVER, customers]
+    tags: [SELECT, GROUP BY, COUNT, COALESCE, subquery, customers]
 
   - id: b02-06
     level: 1
@@ -520,45 +520,29 @@ problems:
     tags: [INNER JOIN, GROUP BY, HAVING, GROUP_CONCAT, product_tags, products, tags]
 
   - id: b02-17
-    level: 3
-    type: "Subquery/CTE"
-    title: "가입 경로별 고객 분포"
-    title_en: "Customer Acquisition Channel Distribution"
+    level: 2
+    type: "SELECT"
+    title: "가입 경로별 고객 수와 비율"
+    title_en: "Customer Count and Percentage by Acquisition Channel"
     question: |
-      고객의 가입 경로(acquisition_channel)별로 고객 수, 비율, 평균 구매 금액을 보여주세요.
+      고객의 가입 경로(acquisition_channel)별로 고객 수와 비율(%)을 구하세요. NULL은 '미분류'로 표시합니다.
     question_en: |
-      Show customer count, percentage, and average purchase amount by acquisition channel.
+      Find the customer count and percentage by acquisition channel. Show NULL as 'Unknown'.
     reference_sql:
       common: |
-        WITH channel_stats AS (
-            SELECT
-                COALESCE(c.acquisition_channel, 'unknown') AS channel,
-                COUNT(DISTINCT c.id) AS customer_count,
-                COUNT(o.id) AS order_count,
-                ROUND(COALESCE(SUM(o.total_amount), 0), 0) AS total_revenue
-            FROM customers AS c
-            LEFT JOIN orders AS o
-                ON c.id = o.customer_id
-               AND o.status NOT IN ('cancelled')
-            GROUP BY COALESCE(c.acquisition_channel, 'unknown')
-        )
         SELECT
-            channel,
-            customer_count,
-            ROUND(100.0 * customer_count / SUM(customer_count) OVER (), 1) AS pct,
-            order_count,
-            CASE WHEN customer_count > 0
-                THEN ROUND(1.0 * total_revenue / customer_count, 0)
-                ELSE 0
-            END AS avg_revenue_per_customer
-        FROM channel_stats
+            COALESCE(acquisition_channel, '미분류') AS channel,
+            COUNT(*) AS customer_count,
+            ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers), 1) AS pct
+        FROM customers
+        GROUP BY COALESCE(acquisition_channel, '미분류')
         ORDER BY customer_count DESC;
-    supported_db: [sqlite, mysql, postgresql]
+    supported_db: [sqlite, mysql, postgresql, oracle, sqlserver]
     validation:
       type: result_match
       ordered: true
     hints:
-      - ko: "`customers.acquisition_channel` 사용 (NULL 가능). `COALESCE`로 NULL을 '미분류'로 표시. LEFT JOIN `orders`로 구매 금액 계산."
-        en: "Use `customers.acquisition_channel` (can be NULL). Use `COALESCE` to show NULL as 'Unknown'. LEFT JOIN `orders` for purchase amounts."
+      - ko: "`COALESCE(acquisition_channel, '미분류')`로 NULL 처리. 비율은 `(SELECT COUNT(*) FROM customers)`로 전체 수를 구해 계산."
+        en: "Use `COALESCE(acquisition_channel, 'Unknown')` to handle NULLs. Calculate the ratio with `(SELECT COUNT(*) FROM customers)`."
     max_score: 10
-    tags: [CTE, LEFT JOIN, COALESCE, SUM OVER, CASE, customers, orders]
+    tags: [SELECT, GROUP BY, COUNT, COALESCE, subquery, customers]

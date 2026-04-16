@@ -8,8 +8,6 @@
 !!! abstract "Concepts"
     `IS NULL`, `IS NOT NULL`, `COALESCE`, `IFNULL`, NULL and aggregate functions, NULL sorting
 
-## Basic (1~10)
-
 Practice the basic usage of IS NULL, IS NOT NULL, and COALESCE.
 
 ---
@@ -176,8 +174,6 @@ Practice the basic usage of IS NULL, IS NOT NULL, and COALESCE.
     ```
 
 ---
-
-## Applied (11~20)
 
 Practice COALESCE usage, the relationship between NULL and aggregate functions, and NULL sorting.
 
@@ -366,8 +362,6 @@ Practice COALESCE usage, the relationship between NULL and aggregate functions, 
     > In real operations, when using such estimates, a separate flag column is used to distinguish estimated values from actual ones.
 
 ---
-
-## Practical (21~30)
 
 Practice NULL analysis, data quality checks, and NULL-safe comparisons.
 

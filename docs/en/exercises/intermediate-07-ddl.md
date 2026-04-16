@@ -9,10 +9,6 @@
 
 ---
 
-
-## Basic (1~5): CREATE TABLE and Constraints
-
-
 ### Problem 1
 
 **Create a basic table.** Create a `temp_memo` table with the following requirements.
@@ -22,10 +18,8 @@
 - `content`: Text, NULL allowed
 - `created_at`: Text, NOT NULL, default to current timestamp
 
-
 ??? tip "Hint"
     Use `INTEGER PRIMARY KEY AUTOINCREMENT` for auto-increment PK and `DEFAULT CURRENT_TIMESTAMP` for the default value.
-
 
 ??? success "Answer"
     ```sql
@@ -47,9 +41,7 @@
     | 2   | content    | TEXT    | 0       |                   | 0  |
     | 3   | created_at | TEXT    | 1       | CURRENT_TIMESTAMP | 0  |
 
-
 ---
-
 
 ### Problem 2
 
@@ -58,10 +50,8 @@
 - `id`: Integer, auto-increment primary key
 - `name`: Text, NOT NULL, UNIQUE
 
-
 ??? tip "Hint"
     Adding `UNIQUE` after the column definition prevents duplicate values in that column.
-
 
 ??? success "Answer"
     ```sql
@@ -85,9 +75,7 @@
     | 1  | 전자제품 |
     | 2  | 주변기기 |
 
-
 ---
-
 
 ### Problem 3
 
@@ -98,10 +86,8 @@
 - `price`: Real, NOT NULL, must be >= 0
 - `stock_qty`: Integer, NOT NULL, must be >= 0, default 0
 
-
 ??? tip "Hint"
     Use `CHECK(price >= 0)` and `CHECK(stock_qty >= 0)` to prevent negative values.
-
 
 ??? success "Answer"
     ```sql
@@ -125,9 +111,7 @@
     |----|--------|-------|-----------|
     | 1  | 키보드 | 89000 | 50        |
 
-
 ---
-
 
 ### Problem 4
 
@@ -139,10 +123,8 @@
 - `grade`: Text, NOT NULL, default `'BRONZE'`, `CHECK(grade IN ('BRONZE','SILVER','GOLD','VIP'))`
 - `is_active`: Integer, NOT NULL, default 1
 
-
 ??? tip "Hint"
     Using `DEFAULT 'BRONZE'` with `CHECK(grade IN (...))` means omitting the value inserts `'BRONZE'`, and values outside the allowed list are rejected.
-
 
 ??? success "Answer"
     ```sql
@@ -169,9 +151,7 @@
     | 1  | 김테스트 | kim@testmail.kr   | BRONZE | 1         |
     | 2  | 이테스트 | lee@testmail.kr   | GOLD   | 1         |
 
-
 ---
-
 
 ### Problem 5
 
@@ -182,10 +162,8 @@
 - `total_amount`: Real, NOT NULL, CHECK >= 0
 - `ordered_at`: Text, NOT NULL
 
-
 ??? tip "Hint"
     In SQLite, FK enforcement must be enabled with `PRAGMA foreign_keys = ON;` before use. Define FK with `REFERENCES table(column)`.
-
 
 ??? success "Answer"
     ```sql
@@ -214,21 +192,14 @@
     |----|-------------|--------------|------------|
     | 1  | 1           | 150000       | 2025-01-15 |
 
-
 ---
-
-
-## Applied (6~10): ALTER TABLE, Composite Keys, ON DELETE
-
 
 ### Problem 6
 
 **Add columns to an existing table.** Add a `brand` column (TEXT, NOT NULL, default `'TBD'`) and a `weight_grams` column (INTEGER, NULL allowed) to `temp_product`.
 
-
 ??? tip "Hint"
     SQLite's `ALTER TABLE ... ADD COLUMN` adds one column at a time. Execute twice.
-
 
 ??? success "Answer"
     ```sql
@@ -248,18 +219,14 @@
     | 4   | brand        | TEXT    | 1       | 'TBD'      | 0  |
     | 5   | weight_grams | INTEGER | 0       |            | 0  |
 
-
 ---
-
 
 ### Problem 7
 
 **Rename a table.** Rename `temp_memo` to `temp_note`. Then verify in the table list.
 
-
 ??? tip "Hint"
     Use `ALTER TABLE old_name RENAME TO new_name`.
-
 
 ??? success "Answer"
     ```sql
@@ -279,9 +246,7 @@
     | temp_product  |
     | temp_tag      |
 
-
 ---
-
 
 ### Problem 8
 
@@ -292,10 +257,8 @@
 - `product_name`: Text, NOT NULL
 - `quantity`: Integer, NOT NULL, CHECK > 0
 
-
 ??? tip "Hint"
     `REFERENCES temp_order(id) ON DELETE CASCADE` auto-deletes child rows when the parent is deleted. `PRAGMA foreign_keys = ON` is required.
-
 
 ??? success "Answer"
     ```sql
@@ -334,9 +297,7 @@
 
     After deletion: (0 rows)
 
-
 ---
-
 
 ### Problem 9
 
@@ -346,10 +307,8 @@
 - `title`: Text, NOT NULL
 - `assignee_id`: Integer, NULL allowed, references `temp_customer(id)`, ON DELETE SET NULL
 
-
 ??? tip "Hint"
     `ON DELETE SET NULL` changes the child's FK column to NULL when the parent is deleted. The FK column cannot be `NOT NULL`.
-
 
 ??? success "Answer"
     ```sql
@@ -387,9 +346,7 @@
     | 1  | 재고 확인 |             |
     | 2  | 배송 처리 | 2           |
 
-
 ---
-
 
 ### Problem 10
 
@@ -399,10 +356,8 @@
 - `tag_id`: Integer, NOT NULL
 - PRIMARY KEY is (product_id, tag_id)
 
-
 ??? tip "Hint"
     A composite PK (not AUTOINCREMENT) is declared as a table constraint: `PRIMARY KEY (col1, col2)`.
-
 
 ??? success "Answer"
     ```sql
@@ -429,12 +384,7 @@
     | 1          | 20     |
     | 2          | 10     |
 
-
 ---
-
-
-## Advanced (11~15): Design, CTAS, Error Fixing
-
 
 ### Problem 11
 
@@ -451,12 +401,10 @@ CREATE TABLE temp_employee (
 );
 ```
 
-
 ??? tip "Hint"
     1. Check whether `AUTOINCREMENT` is in the correct position.
     2. If `name` is missing NOT NULL, employees without names are possible.
     3. `DEFAULT` has no default value after it.
-
 
 ??? success "Answer"
     ```sql
@@ -487,18 +435,14 @@ CREATE TABLE temp_employee (
     |----|-------------|-------|--------|------------|------------|
     | 1  | 테스트 직원 |       |        | 미배정     | 2025-01-01 |
 
-
 ---
-
 
 ### Problem 12
 
 **Use CTAS (CREATE TABLE AS SELECT) to create a 2024 order summary table.** Create a `temp_order_summary_2024` table from `orders` with per-customer order count, total amount, and average amount.
 
-
 ??? tip "Hint"
     `CREATE TABLE name AS SELECT ...` saves the SELECT result as a new table. Use `WHERE ordered_at LIKE '2024%'` to filter for 2024.
-
 
 ??? success "Answer"
     ```sql
@@ -527,9 +471,7 @@ CREATE TABLE temp_employee (
     !!! note
         Tables created with CTAS do not copy constraints like PK, FK, or CHECK. Add them separately if needed.
 
-
 ---
-
 
 ### Problem 13
 
@@ -538,12 +480,10 @@ CREATE TABLE temp_employee (
 !!! info "Note"
     SQLite does not have a `TRUNCATE TABLE` command. Use `DELETE FROM` instead. MySQL/PostgreSQL support `TRUNCATE TABLE`, which is faster than DELETE (table reset instead of row-by-row deletion).
 
-
 ??? tip "Hint"
     - Delete data only: `DELETE FROM table;`
     - Delete table: `DROP TABLE table;`
     - Safe delete: `DROP TABLE IF EXISTS table;`
-
 
 ??? success "Answer"
     ```sql
@@ -573,9 +513,7 @@ CREATE TABLE temp_employee (
         | Auto-increment reset | No | Yes (MySQL) |
         | SQLite support | Yes | No |
 
-
 ---
-
 
 ### Problem 14
 
@@ -590,10 +528,8 @@ Requirements:
 5. Validity period (start date, end date) is required
 6. Active flag defaults to 1 (active)
 
-
 ??? tip "Hint"
     Map each requirement to a constraint: unique -> `UNIQUE`, allowed list -> `CHECK IN`, positive -> `CHECK > 0`, optional -> NULL allowed, required -> `NOT NULL`, default -> `DEFAULT`.
-
 
 ??? success "Answer"
     ```sql
@@ -623,18 +559,14 @@ Requirements:
     | 1  | WELCOME10 | percent | 10             | 50000            | 1         | 2025-01-01 | 2025-12-31 |
     | 2  | FLAT5000  | fixed   | 5000           |                  | 1         | 2025-06-01 | 2025-06-30 |
 
-
 ---
-
 
 ### Problem 15
 
 **Cleanup: Drop all temporary tables created in this exercise.** Query `sqlite_master` for tables starting with `temp_`, then DROP them all.
 
-
 ??? tip "Hint"
     First check the list with `SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'temp_%'`, then delete each with `DROP TABLE IF EXISTS`. Mind FK reference order (delete children first).
-
 
 ??? success "Answer"
     ```sql

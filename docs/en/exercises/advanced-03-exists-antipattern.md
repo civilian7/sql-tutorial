@@ -14,8 +14,6 @@
 !!! abstract "Concepts"
     `EXISTS`, `NOT EXISTS`, Correlated subquery, Anti-join pattern, Universal Quantification
 
-## Basic (1~5)
-
 Practice the basic usage of EXISTS and NOT EXISTS.
 
 ---
@@ -260,8 +258,6 @@ Identify “blue-chip customers” who consistently purchase without making a cl
     | ... | ... | ... | ... | ... |
 
 ---
-
-## Applied (6~10)
 
 Covers complex EXISTS conditions combining correlated subqueries and aggregates.
 
@@ -521,8 +517,6 @@ Combines two EXISTS/NOT EXISTS conditions.
     | ... | ... | ... | ... | ... | ... |
 
 ---
-
-## Practical (11~15)
 
 Covers advanced scenarios such as universal qualification, compound NOT EXISTS, and anti-patterns.
 

@@ -14,8 +14,6 @@
 !!! abstract "Concepts"
     JOIN, Subqueries, Date functions, Aggregation, UNION, Diagnosing and fixing errors from intermediate syntax (Lessons 08~17) including DML
 
-## Basic (1~8): JOIN and Table Alias Errors
-
 ### Problem 1
 
 Find and fix the error in the following query.
@@ -262,8 +260,6 @@ WHERE sh.status = 'shipped';
     ```
 
 ---
-
-## Applied (9~16): 카디널리티, Aggregation, Subqueries, 날짜
 
 ### Problem 9
 
@@ -543,8 +539,6 @@ ORDER BY avg_rating DESC;
     ```
 
 ---
-
-## Advanced (17~25): UNION, NULL, DML, Complex Diagnostics
 
 ### Problem 17
 

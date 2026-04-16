@@ -19,9 +19,7 @@ Each question has a **Question Frequency** tag, and we recommend that you practi
 
 ---
 
-
 ### Problem 1. Second highest selling product ★★★
-
 
 Find the product with the **second highest total sales** among all products.
 Use `DENSE_RANK` because there may be multiple products with the same sales as the product with the highest sales.
@@ -32,11 +30,9 @@ Use `DENSE_RANK` because there may be multiple products with the same sales as t
 |-------------|----------|-------------|-------------|
 | ... | ... | ... | 2 |
 
-
 ??? tip "Hint"
     - `DENSE_RANK() OVER (ORDER BY total_revenue DESC)`: Ranking where ties are allowed
     - Sum up sales by product in CTE → Ranking → `WHERE rank = 2`
-
 
 ??? success "Answer"
     ```sql
@@ -65,12 +61,9 @@ Use `DENSE_RANK` because there may be multiple products with the same sales as t
     WHERE revenue_rank = 2;
     ```
 
-
 ---
 
-
 ### Problem 2. Running Total ★★★
-
 
 Find the **monthly sales** and **year-to-date (YTD)** for 2024.
 
@@ -80,11 +73,9 @@ Find the **monthly sales** and **year-to-date (YTD)** for 2024.
 |-------|----------------|------------|
 | 2024-01 | ... | ... |
 
-
 ??? tip "Hint"
     - `SUM(monthly_revenue) OVER (ORDER BY month)` = running total
     - The basic frame of the window function is `UNBOUNDED PRECEDING ~ CURRENT ROW`
-
 
 ??? success "Answer"
     ```sql
@@ -99,12 +90,9 @@ Find the **monthly sales** and **year-to-date (YTD)** for 2024.
     ORDER BY month;
     ```
 
-
 ---
 
-
 ### Problem 3. Identifying duplicate data ★★★
-
 
 **Find cases where the same customer ordered the same product on the same day (suspected duplicates).
 Only the most recent order is marked as valid and the rest are flagged as duplicates.
@@ -114,11 +102,9 @@ Only the most recent order is marked as valid and the rest are flagged as duplic
 | order_id | customer_name | product_name | ordered_at | is_duplicate |
 |---------|-------------|-------------|-----------|-------------|
 
-
 ??? tip "Hint"
     - `ROW_NUMBER() OVER (PARTITION BY customer_id, product_id, DATE(ordered_at) ORDER BY ordered_at DESC)`
     - Valid if `rn = 1`, duplicate if `rn > 1`
-
 
 ??? success "Answer"
     ```sql
@@ -149,12 +135,9 @@ Only the most recent order is marked as valid and the rest are flagged as duplic
     ORDER BY od.customer_id, od.product_id, DATE(od.ordered_at), od.rn;
     ```
 
-
 ---
 
-
 ### Problem 4. Finding the median ★★☆
-
 
 Find the **median** of the order amount for each customer.
 SQLite does not have a `MEDIAN` function, so it is implemented as a window function.
@@ -165,12 +148,10 @@ SQLite does not have a `MEDIAN` function, so it is implemented as a window funct
 |-------------|------------|-------------|
 | ... | ... | ... |
 
-
 ??? tip "Hint"
     - Ranking as `ROW_NUMBER()`, total number of cases as `COUNT(*) OVER()`
     - Median = (n+1)/2nd if the total number of cases is odd, average of n/2 and n/2+1 if the total number of cases is even.
     - Extract center row with `WHERE rn IN (cnt/2, cnt/2+1, (cnt+1)/2)`
-
 
 ??? success "Answer"
     ```sql
@@ -203,12 +184,9 @@ SQLite does not have a `MEDIAN` function, so it is implemented as a window funct
     LIMIT 20;
     ```
 
-
 ---
 
-
 ### Problem 5. Login for N consecutive days (Islands) ★★★
-
 
 Consider `product_views` as your login log, and find customers **active for more than 3 consecutive days**.
 
@@ -217,12 +195,10 @@ Consider `product_views` as your login log, and find customers **active for more
 | customer_name | streak_days | streak_start | streak_end |
 |-------------|-----------|------------|----------|
 
-
 ??? tip "Hint"
     - `DATE(viewed_at)` Detect groups of consecutive dates after removing duplicates
     - `DATE(viewed_at, '-' || (ROW_NUMBER()-1) || ' days')` → Same value if in the same group
     - `HAVING COUNT(*) >= 3`
-
 
 ??? success "Answer"
     ```sql
@@ -262,12 +238,9 @@ Consider `product_views` as your login log, and find customers **active for more
     LIMIT 20;
     ```
 
-
 ---
 
-
 ### Problem 6. Top-N by category (ranking within group) ★★★
-
 
 Extract the **two products with the highest review ratings** from each category.
 Only products with 10 or more reviews are eligible. In case of a tie, the product with the most reviews will take precedence.
@@ -277,12 +250,10 @@ Only products with 10 or more reviews are eligible. In case of a tie, the produc
 | category | product_name | avg_rating | review_count | rank |
 |----------|-------------|-----------|-------------|------|
 
-
 ??? tip "Hint"
     - Filter number of reviews by `HAVING COUNT(*) >= 10`
     - `ROW_NUMBER() OVER (PARTITION BY category ORDER BY avg_rating DESC, review_count DESC)`
     - `WHERE rn <= 2`
-
 
 ??? success "Answer"
     ```sql
@@ -312,12 +283,9 @@ Only products with 10 or more reviews are eligible. In case of a tie, the produc
     ORDER BY category, rn;
     ```
 
-
 ---
 
-
 ### Problem 7. Year-on-year (YoY) growth rate ★★★
-
 
 Find the year-over-year growth rate (YoY %) of **quarterly sales**.
 It covers data from 2023 to 2025.
@@ -327,11 +295,9 @@ It covers data from 2023 to 2025.
 | year | quarter | revenue | prev_year_revenue | yoy_growth_pct |
 |------|---------|---------|------------------|---------------|
 
-
 ??? tip "Hint"
     - Refer to sales in the same quarter of the previous year as `LAG(revenue, 4) OVER (ORDER BY year, quarter)` — since quarters are 1 to 4, 4 transitions are the same quarter of the previous year.
     - or `LAG(revenue, 1) OVER (PARTITION BY quarter ORDER BY year)`
-
 
 ??? success "Answer"
     ```sql
@@ -361,12 +327,9 @@ It covers data from 2023 to 2025.
     ORDER BY year, quarter;
     ```
 
-
 ---
 
-
 ### Problem 8. Moving Average ★★☆
-
 
 Find the **7-day moving average of daily sales** for 2024.
 The moving average is the average of the previous 7 days including the current day.
@@ -376,11 +339,9 @@ The moving average is the average of the previous 7 days including the current d
 | order_date | daily_revenue | ma_7d |
 |-----------|-------------|------|
 
-
 ??? tip "Hint"
     - `AVG(daily_revenue) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`
     - LEFT JOIN with `calendar` to include days without orders as 0
-
 
 ??? success "Answer"
     ```sql
@@ -406,12 +367,9 @@ The moving average is the average of the previous 7 days including the current d
     ORDER BY order_date;
     ```
 
-
 ---
 
-
 ### Problem 9. Percentile ★★☆
-
 
 Find the values ​​where the total purchase amount for each customer falls within the **top 10%, 25%, 50% (median), 75%, and 90%** boundaries.
 
@@ -422,11 +380,9 @@ Find the values ​​where the total purchase amount for each customer falls wi
 | 10 | ... |
 | 25 | ... |
 
-
 ??? tip "Hint"
     - Assign percentile group to `NTILE(100) OVER (ORDER BY total_spent)`
     - Each percentile boundary value: MAX value in `WHERE percentile_group IN (10, 25, 50, 75, 90)`
-
 
 ??? success "Answer"
     ```sql
@@ -453,12 +409,9 @@ Find the values ​​where the total purchase amount for each customer falls wi
     ORDER BY pctl;
     ```
 
-
 ---
 
-
 ### Problem 10. Change rate compared to previous day + 7-day moving change rate ★★☆
-
 
 **Percent change from previous day (DoD %)** for the number of daily orders in December 2024
 Find the **change rate (WoW %) compared to 7 days ago** at the same time.
@@ -468,12 +421,10 @@ Find the **change rate (WoW %) compared to 7 days ago** at the same time.
 | order_date | order_count | prev_day | dod_pct | prev_week | wow_pct |
 |-----------|------------|---------|--------|----------|--------|
 
-
 ??? tip "Hint"
     - `LAG(order_count, 1)` = the previous day, `LAG(order_count, 7)` = 7 days ago
     - Rate of change = `(current_day - previous) / previous * 100`
     - `calendar` Includes days missed due to LEFT JOIN
-
 
 ??? success "Answer"
     ```sql
@@ -501,12 +452,9 @@ Find the **change rate (WoW %) compared to 7 days ago** at the same time.
     ORDER BY order_date;
     ```
 
-
 ---
 
-
 ### Problem 11. Recursive CTE: Organizational Tree ★★★
-
 
 Print the **full organizational hierarchy** using `manager_id` in the `staff` table.
 Include depth, supervisor name, and full path (CEO > ... > yourself).
@@ -518,12 +466,10 @@ Include depth, supervisor name, and full path (CEO > ... > yourself).
 | CEO Name | management | admin | 0 | NULL | CEO Name |
 | ... | ... | ... | 1 | CEO Name | CEO Name > ... |
 
-
 ??? tip "Hint"
     - Recursive CTE: `WHERE manager_id IS NULL` is the anchor (root)
     - Join with `s.manager_id = tree.id` in the recursive part
     - Accumulate paths with `path || ' > ' || s.name`
-
 
 ??? success "Answer"
     ```sql
@@ -559,12 +505,9 @@ Include depth, supervisor name, and full path (CEO > ... > yourself).
     ORDER BY path;
     ```
 
-
 ---
 
-
 ### Problem 12. Recursive CTE: Creating date sequences ★★☆
-
 
 **Generate all dates in December 2024 as recursive CTEs**,
 Find the number of orders and sales for each date. (Days without orders are also displayed as 0)
@@ -575,12 +518,10 @@ Find the number of orders and sales for each date. (Days without orders are also
 |----|-----------|---------|
 | 2024-12-01 | ... | ... |
 
-
 ??? tip "Hint"
     - Anchor: `SELECT '2024-12-01' AS dt`
     - Recursion: `SELECT DATE(dt, '+1 day') FROM dates WHERE dt < '2024-12-31'`
     - Combine order data with `LEFT JOIN orders`
-
 
 ??? success "Answer"
     ```sql
@@ -603,12 +544,9 @@ Find the number of orders and sales for each date. (Days without orders are also
     ORDER BY d.dt;
     ```
 
-
 ---
 
-
 ### Problem 13. Cohort analysis (repurchase by subscription month) ★★★
-
 
 Based on the customer's **subscription month (cohort)**, find the percentage of customers purchasing from 0 to 3 months after subscription.
 This applies to customers signing up in 2024.
@@ -618,12 +556,10 @@ This applies to customers signing up in 2024.
 | cohort | size | m0_pct | m1_pct | m2_pct | m3_pct |
 |--------|------|-------|-------|-------|-------|
 
-
 ??? tip "Hint"
     - Cohort: `SUBSTR(created_at, 1, 7)`
     - Month Offset: Convert `(julianday(order_month-01) - julianday(signup_month-01)) / 30` to integer
     - `COUNT(DISTINCT CASE WHEN offset = N THEN customer_id END)` / cohort size
-
 
 ??? success "Answer"
     ```sql
@@ -664,12 +600,9 @@ This applies to customers signing up in 2024.
     ORDER BY c.cohort_month;
     ```
 
-
 ---
 
-
 ### Problem 14. Category hierarchy aggregation (Recursive + GROUP BY) ★★☆
-
 
 Find the **total sales by category** from the `categories` tree.
 Roll up all sales from the lower category (small/medium) to the upper category (large).
@@ -679,11 +612,9 @@ Roll up all sales from the lower category (small/medium) to the upper category (
 | top_category | sub_category_count | product_count | total_revenue |
 |-------------|-------------------|-------------|-------------|
 
-
 ??? tip "Hint"
     - Find the root (depth=0) ancestor of each category with recursive CTE
     - After recursive search, base on root `GROUP BY`
-
 
 ??? success "Answer"
     ```sql
@@ -713,12 +644,9 @@ Roll up all sales from the lower category (small/medium) to the upper category (
     ORDER BY total_revenue DESC;
     ```
 
-
 ---
 
-
 ### Problem 15. Self-Join: Employee with higher salary (number of sales processed) than boss ★★★
-
 
 Find the number of orders processed by each employee, and find **the employee who processed more orders than his/her boss**.
 (based on orders.staff_id)
@@ -728,12 +656,10 @@ Find the number of orders processed by each employee, and find **the employee wh
 | staff_name | department | handled_orders | manager_name | manager_orders |
 |-----------|-----------|---------------|-------------|---------------|
 
-
 ??? tip "Hint"
     - `staff AS s JOIN staff AS m ON s.manager_id = m.id` (Self-Join)
     - Number of orders for each employee: counted as `orders.staff_id`
     - `WHERE s_count > m_count`
-
 
 ??? success "Answer"
     ```sql
@@ -760,12 +686,9 @@ Find the number of orders processed by each employee, and find **the employee wh
     ORDER BY emp.handled_orders DESC;
     ```
 
-
 ---
 
-
 ### Problem 16. Multi-level analysis: Measuring discount effect ★★☆
-
 
 Compare customers who used the coupon with those who did not and find:
 (1) Average order amount by group, (2) Repurchase rate, (3) Average review rating.
@@ -775,12 +698,10 @@ Compare customers who used the coupon with those who did not and find:
 | segment | customer_count | avg_order_value | repeat_rate_pct | avg_rating |
 |---------|--------------|----------------|----------------|-----------|
 
-
 ??? tip "Hint"
     - Coupon usage: Classify segments by presence of `coupon_usage`
     - Repurchase rate: Customers who ordered more than 2 items / All customers
     - Aggregate each of the three tables (orders, coupon_usage, reviews) into CTE and then merge them.
-
 
 ??? success "Answer"
     ```sql
@@ -827,12 +748,9 @@ Compare customers who used the coupon with those who did not and find:
     ORDER BY os.segment;
     ```
 
-
 ---
 
-
 ### Problem 17. Data quality check: NULL/outlier detection ★★☆
-
 
 Report the following data quality issues with one query:
 (1) Order amount is 0 or less, (2) Delivery date < Order date, (3) Outside review rating range, (4) Order on a future date.
@@ -842,12 +760,10 @@ Report the following data quality issues with one query:
 | issue_type | table_name | record_count | sample_ids |
 |-----------|-----------|-------------|-----------|
 
-
 ??? tip "Hint"
     - Combine the results of each quality check with `UNION ALL`
     - List sample ID as `GROUP_CONCAT(id, ',')`
     - Future date: `ordered_at > '2025-12-31'`
-
 
 ??? success "Answer"
     ```sql
@@ -888,12 +804,9 @@ Report the following data quality issues with one query:
     WHERE ordered_at > DATE('now', '+1 day');
     ```
 
-
 ---
 
-
 ### Problem 18. Time series anomaly detection: 3-sigma rule ★☆☆
-
 
 Find outlier days that fall outside the **average +/- 3 standard deviations** of your daily sales.
 
@@ -902,12 +815,10 @@ Find outlier days that fall outside the **average +/- 3 standard deviations** of
 | order_date | daily_revenue | avg_revenue | stddev | z_score |
 |-----------|-------------|-----------|-------|--------|
 
-
 ??? tip "Hint"
     - Standard deviation: Manual calculation as it is not directly supported by SQLite
     - `SQRT(AVG(x*x) - AVG(x)*AVG(x))` = population standard deviation
     - If Z-score = `(value - mean) / stddev`, `ABS(z) > 3`, it is an outlier.
-
 
 ??? success "Answer"
     ```sql
@@ -937,12 +848,9 @@ Find outlier days that fall outside the **average +/- 3 standard deviations** of
     ORDER BY ABS((d.daily_revenue - s.avg_rev) / s.stddev_rev) DESC;
     ```
 
-
 ---
 
-
 ### Problem 19. Complex analysis: RFM segmentation ★★★
-
 
 Segment your customers by **RFM(Recency, Frequency, Monetary)**.
 Divide each indicator into a scale of 1 to 5, and calculate the number of customers and average sales for each segment.
@@ -953,13 +861,11 @@ Divide each indicator into a scale of 1 to 5, and calculate the number of custom
 |------------|--------|--------|--------|--------------|------------|
 | Champions | 5 | 5 | 5 | ... | ... |
 
-
 ??? tip "Hint"
     - Recency: Days since last order → `NTILE(5)` (the more recent, the higher the score)
     - Frequency: Number of orders → `NTILE(5)`
     - Monetary: Total purchase amount → `NTILE(5)`
     - Segment classification: R+F+M sum is 13~15=Champions, 10~12=Loyal, 7~9=Potential, 4~6=AtRisk, 3=Lost
-
 
 ??? success "Answer"
     ```sql
@@ -1006,12 +912,9 @@ Divide each indicator into a scale of 1 to 5, and calculate the number of custom
     ORDER BY AVG(rfm_total) DESC;
     ```
 
-
 ---
 
-
 ### Problem 20. Comprehensive scenario: Marketing campaign effectiveness analysis ★★★
-
 
 Break down the following by promotions in 2024:
 (1) Number of participating customers, (2) Sales during promotion period vs. sales during the previous same period (incremental effect),
@@ -1022,13 +925,11 @@ Break down the following by promotions in 2024:
 | promo_name | promo_type | participants | promo_revenue | pre_revenue | lift_pct | post_repurchase_pct | cac |
 |-----------|-----------|------------|-------------|-----------|---------|-------------------|-----|
 
-
 ??? tip "Hint"
     - Set period to `started_at`/`ended_at` in `promotions`
     - Previous same period: `DATE(started_at, '-' || (julianday(ended_at)-julianday(started_at)) || ' days')`
     - New Customer: Customer who placed their first order during the promotion period.
     - Separated into CTE levels 4-5
-
 
 ??? success "Answer"
     ```sql

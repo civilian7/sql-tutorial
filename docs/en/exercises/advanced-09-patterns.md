@@ -20,9 +20,7 @@ We cover practical techniques across various tables, such as Top-N, gap analysis
 
 ---
 
-
 ### Problem 1. Top-3 sales products by category (ROW_NUMBER)
-
 
 Extract the top 3 selling products in 2024 from each **bottom category** (depth = 2).
 In case of identical sales, the product with the highest sales volume takes precedence.
@@ -31,12 +29,10 @@ In case of identical sales, the product with the highest sales volume takes prec
 |----------|-------------|---------|-----------|------|
 | ... | ... | ... | ... | 1 |
 
-
 ??? tip "Hint"
     - `ROW_NUMBER() OVER (PARTITION BY cat.id ORDER BY revenue DESC, units_sold DESC)`
     - Rank by CTE and then filter by `WHERE rn <= 3`
     - Targets only the lowest category with `categories.depth = 2`
-
 
 ??? success "Answer"
     ```sql
@@ -74,12 +70,9 @@ In case of identical sales, the product with the highest sales volume takes prec
     ORDER BY category, rn;
     ```
 
-
 ---
 
-
 ### Problem 2. Finding dates without orders (Gap Analysis)
-
 
 Using the `calendar` table, find all **dates** in 2024 that did not have a single order.
 Weekday/weekend classification and public holidays are also displayed.
@@ -88,12 +81,10 @@ Weekday/weekend classification and public holidays are also displayed.
 |----------|----------|-----------|-----------|-------------|
 | 2024-01-01 | Monday | 0 | 1 | New Year's Day |
 
-
 ??? tip "Hint"
     - Check order availability based on any date with `calendar LEFT JOIN orders`
     - Filter days without orders with `WHERE o.id IS NULL`
     - `calendar.date_key BETWEEN '2024-01-01' AND '2024-12-31'`
-
 
 ??? success "Answer"
     ```sql
@@ -112,12 +103,9 @@ Weekday/weekend classification and public holidays are also displayed.
     ORDER BY cal.date_key;
     ```
 
-
 ---
 
-
 ### Problem 3. Sales pivot table by day of the week (CASE + SUM)
-
 
 Display 2024 **month x day of week** sales in pivot format.
 The rows are the months (YYYY-MM), and the columns are the seven days of the week (Mon-Sun).
@@ -126,12 +114,10 @@ The rows are the months (YYYY-MM), and the columns are the seven days of the wee
 |------------|-----|-----|-----|-----|-----|-----|-----|
 | 2024-01 | ... | ... | ... | ... | ... | ... | ... |
 
-
 ??? tip "Hint"
     - `SUM(CASE WHEN STRFTIME('%w', ordered_at) = '1' THEN total_amount ELSE 0 END) AS mon`
     - In SQLite’s `%w`, 0=Sun, 1=Mon, ..., 6=Sat
     - Extract month: `SUBSTR(ordered_at, 1, 7)`
-
 
 ??? success "Answer"
     ```sql
@@ -152,12 +138,9 @@ The rows are the months (YYYY-MM), and the columns are the seven days of the wee
     ORDER BY year_month;
     ```
 
-
 ---
 
-
 ### Problem 4. Running Percentage
-
 
 Find the sales by product in 2024 and calculate the **cumulative sales ratio (%)** in descending order of sales.
 It even displays products that account for 80% of total sales.
@@ -167,12 +150,10 @@ It even displays products that account for 80% of total sales.
 | ... | ... | 12.3 | 12.3 |
 | ... | ... | 8.5 | 20.8 |
 
-
 ??? tip "Hint"
     - `SUM(revenue) OVER (ORDER BY revenue DESC)` / Calculate cumulative percentage with overall total
     - CTE Step 1: Total sales by product
     - CTE Step 2: After calculating the cumulative ratio `WHERE cumulative_pct <= 80`
-
 
 ??? success "Answer"
     ```sql
@@ -203,12 +184,9 @@ It even displays products that account for 80% of total sales.
     ORDER BY revenue DESC;
     ```
 
-
 ---
 
-
 ### Problem 5. Monthly proportion change by payment method
-
 
 Please show the trend in the percentage of monthly payment amount by **payment method** in 2024.
 Calculate the share of your payment method in each month.
@@ -217,12 +195,10 @@ Calculate the share of your payment method in each month.
 |------------|---------|------------------|-------------|-------------|----------|
 | 2024-01 | 62.3 | 15.1 | 12.0 | 8.5 | 2.1 |
 
-
 ??? tip "Hint"
     - Total by means with `CASE WHEN method = 'card' THEN amount ELSE 0 END`
     - Calculate proportion by dividing the total of each method by the total monthly total
     - Minor payment methods (virtual_account, point) are grouped with ‘other’
-
 
 ??? success "Answer"
     ```sql
@@ -246,12 +222,9 @@ Calculate the share of your payment method in each month.
     ORDER BY year_month;
     ```
 
-
 ---
 
-
 ### Problem 6. Session analysis: based on 30-minute intervals (product_views)
-
 
 Identify **browsing sessions** by customer in the `product_views` table.
 If there is more than 30 minutes between the previous view, it is considered a new session.
@@ -261,12 +234,10 @@ Find the number of sessions per customer, average number of views per session, a
 |------------|---------------|----------------------|-------------------|
 | ... | ... | ... | ... |
 
-
 ??? tip "Hint"
     - Refer to previous inquiry time with `LAG(viewed_at) OVER (PARTITION BY customer_id ORDER BY viewed_at)`
     - If interval > 1800 seconds, start new session (`julianday` difference * 86400)
     - Assign session number to `SUM(is_new_session) OVER (PARTITION BY customer_id ORDER BY viewed_at)`
-
 
 ??? success "Answer"
     ```sql
@@ -314,12 +285,9 @@ Find the number of sessions per customer, average number of views per session, a
     LIMIT 20;
     ```
 
-
 ---
 
-
 ### Problem 7. Consecutive Days
-
 
 Find the top 10 customers with the most **number of consecutive days ordering** in 2024.
 Consecutive orders mean that the days run consecutively without missing a single day.
@@ -328,12 +296,10 @@ Consecutive orders mean that the days run consecutively without missing a single
 |-------------|-----------------|------------|----------|
 | ... | 5 | 2024-11-25 | 2024-11-29 |
 
-
 ??? tip "Hint"
     - Subtracting `ROW_NUMBER()` from `DATE(ordered_at)` ensures that consecutive groups have the same value.
     - `DATE(ordered_at, '-' || ROW_NUMBER() || ' days')` pattern
     - There may be multiple orders on the same day, so process `DISTINCT DATE(ordered_at)` first
-
 
 ??? success "Answer"
     ```sql
@@ -377,12 +343,9 @@ Consecutive orders mean that the days run consecutively without missing a single
     LIMIT 10;
     ```
 
-
 ---
 
-
 ### Problem 8. Pareto analysis: Proportion of customers generating 80% of sales
-
 
 Perform a Pareto analysis to determine which **top percent of customers account for 80% of sales**.
 Sort customers by sales and get cumulative percentage.
@@ -390,12 +353,10 @@ Sort customers by sales and get cumulative percentage.
 | customer_name | total_spent | pct_of_revenue | cumulative_pct | customer_rank | total_customers | customer_pct |
 |-------------|-----------|---------------|---------------|-------------|----------------|-------------|
 
-
 ??? tip "Hint"
     - Total sales by customer → Sort in descending order of sales
     - `SUM(total_spent) OVER (ORDER BY total_spent DESC)` / total total
     - Customer rank ratio as `ROW_NUMBER()` / `COUNT(*) OVER ()`
-
 
 ??? success "Answer"
     ```sql
@@ -433,12 +394,9 @@ Sort customers by sales and get cumulative percentage.
     ORDER BY customer_rank;
     ```
 
-
 ---
 
-
 ### Problem 9. Churn rate analysis by grade (Churn)
-
 
 Find the percentage (churn rate) of **customers who have had no orders within the last 6 months (2025-01-01 ~ 2025-06-30) by customer level.
 Displays the total number of customers by level, number of active customers, number of abandoned customers, and bounce rate.
@@ -447,12 +405,10 @@ Displays the total number of customers by level, number of active customers, num
 |-------|----------------|-----------------|------------------|---------------|
 | VIP | ... | ... | ... | ... |
 
-
 ??? tip "Hint"
     - In `customers LEFT JOIN orders`, classify as active/deactivated based on order date condition.
     - Active if there is an order within 6 months, discontinued if not
     - Conditional count with `SUM(CASE WHEN ... THEN 1 ELSE 0 END)`
-
 
 ??? success "Answer"
     ```sql
@@ -481,12 +437,9 @@ Displays the total number of customers by level, number of active customers, num
         CASE grade WHEN 'VIP' THEN 1 WHEN 'GOLD' THEN 2 WHEN 'SILVER' THEN 3 ELSE 4 END;
     ```
 
-
 ---
 
-
 ### Problem 10. Analysis of shopping cart → order conversion time
-
 
 For cases where the shopping cart (`carts`) status is 'converted', analyze **the time taken from creating the shopping cart to ordering**.
 Find the average/median/min/max conversion time (in hours) and the average conversion time by day of the week.
@@ -494,12 +447,10 @@ Find the average/median/min/max conversion time (in hours) and the average conve
 | day_name | avg_hours | min_hours | max_hours | converted_count |
 |----------|----------|----------|----------|----------------|
 
-
 ??? tip "Hint"
     - Match the closest order with `customer_id` and `created_at` in the 'converted' shopping cart.
     - Calculate time as `julianday(o.ordered_at) - julianday(c.created_at)` * 24
     - Separate days by `STRFTIME('%w', c.created_at)`
-
 
 ??? success "Answer"
     ```sql
@@ -539,12 +490,9 @@ Find the average/median/min/max conversion time (in hours) and the average conve
     ORDER BY dow;
     ```
 
-
 ---
 
-
 ### Problem 11. Purchase funnel analysis (View → Cart → Order)
-
 
 Analyze the 3-stage funnel of **Product inquiry → Add to cart → Order**.
 Calculate the number of unique customers and conversion rate (%) for each stage based on 2024 data.
@@ -555,14 +503,12 @@ Calculate the number of unique customers and conversion rate (%) for each stage 
 | 2. Cart | 800 | 53.3 |
 | 3. Order | 600 | 75.0 |
 
-
 ??? tip "Hint"
     - Step 1: Number of unique customers in `product_views`
     - Step 2: Number of unique customers in `cart_items → carts`
     - Step 3: Number of unique customers in `orders`
     - Conversion rate: current step / previous step * 100
     - Combine 3 steps into one result with `UNION ALL`
-
 
 ??? success "Answer"
     ```sql
@@ -609,12 +555,9 @@ Calculate the number of unique customers and conversion rate (%) for each stage 
     ORDER BY step;
     ```
 
-
 ---
 
-
 ### Problem 12. Deduplication of duplicate data
-
 
 If the same customer writes multiple reviews for the same product **on the same day**,
 Keep only the most recent review and identify the ids of the rest.
@@ -623,12 +566,10 @@ Keep only the most recent review and identify the ids of the rest.
 | duplicate_review_id | customer_name | product_name | created_at | keep_review_id |
 |-------------------|-------------|-------------|-----------|---------------|
 
-
 ??? tip "Hint"
     - Assign `rn = 1` to the latest one with `ROW_NUMBER() OVER (PARTITION BY customer_id, product_id, DATE(created_at) ORDER BY created_at DESC)`
     - Rows with `rn > 1` are targeted for deletion.
     - Display the ID of the row with `rn = 1` in the same partition as keep_review_id
-
 
 ??? success "Answer"
     ```sql
@@ -661,12 +602,9 @@ Keep only the most recent review and identify the ids of the rest.
     ORDER BY rr.customer_id, rr.product_id, rr.created_at;
     ```
 
-
 ---
 
-
 ### Problem 13. Supplier dependence analysis
-
 
 Find the proportion of each **supplier** in total sales,
 Classify suppliers with more than 10% of sales as **high risk dependent**.
@@ -676,12 +614,10 @@ We also analyze the number of products, sales, proportion, and return rate.
 |----------|-------------|---------|-----------|----------------|-----------|
 | ... | ... | ... | 15.2 | 3.1 | HIGH |
 
-
 ??? tip "Hint"
     - Sum up sales by supplier with `products → suppliers`
     - Return rate: Number of returns/number of orders for the supplier’s products
     - `CASE WHEN revenue_pct >= 10 THEN 'HIGH' ... END`
-
 
 ??? success "Answer"
     ```sql
@@ -726,12 +662,9 @@ We also analyze the number of products, sales, proportion, and return rate.
     ORDER BY ss.revenue DESC;
     ```
 
-
 ---
 
-
 ### Problem 14. Cohort retention matrix (based on month of subscription)
-
 
 Cohorts are formed based on the customer’s **subscription month**,
 Please show us the percentage of customers who repurchased 1 to 6 months after signing up (retention) in a matrix.
@@ -741,12 +674,10 @@ This cohort is eligible for enrollment in the first half of 2024 (January to Jun
 |--------|-----------|-------|-------|-------|-------|-------|-------|
 | 2024-01 | 150 | 45.0 | 32.0 | 28.5 | ... | ... | ... |
 
-
 ??? tip "Hint"
     - Cohort: `SUBSTR(c.created_at, 1, 7)` = joining month
     - Active flag: Check if there is an order N months after signing up
     - Calculate monthly difference: `CAST((julianday(SUBSTR(o.ordered_at,1,7)||'-01') - julianday(SUBSTR(c.created_at,1,7)||'-01')) / 30 AS INTEGER)`
-
 
 ??? success "Answer"
     ```sql
@@ -794,12 +725,9 @@ This cohort is eligible for enrollment in the first half of 2024 (January to Jun
     ORDER BY cohort;
     ```
 
-
 ---
 
-
 ### Problem 15. Comprehensive Dashboard: Executive KPI Snapshot
-
 
 Create a **December 2024 Executive Dashboard** to report to the CEO in a single query.
 Print the following KPIs in one line:
@@ -812,13 +740,11 @@ Print the following KPIs in one line:
 | revenue | mom_growth_pct | order_count | new_customers | repeat_customers | avg_order_value | avg_delivery_days | return_rate_pct | cs_tickets |
 |---------|---------------|------------|-------------|-----------------|----------------|------------------|----------------|-----------|
 
-
 ??? tip "Hint"
     - Obtain aggregates from multiple tables using subqueries/CTEs and then combine them into one row with `CROSS JOIN`
     - Previous month’s sales are separately CTE as `WHERE ordered_at LIKE '2024-11%'`
     - New customers: Customers who place their first order in December 2024
     - Repurchase: Customers with an order history before December
-
 
 ??? success "Answer"
     ```sql

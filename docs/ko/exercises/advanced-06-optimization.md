@@ -18,7 +18,6 @@ SQLite의 `EXPLAIN QUERY PLAN`을 사용하여 쿼리의 실행 방식을 분석
 
 ---
 
-
 ### 문제 1. EXPLAIN QUERY PLAN 기초 — SCAN vs SEARCH
 
 다음 두 쿼리의 실행 계획을 확인하고, `SCAN TABLE`과 `SEARCH TABLE`의 차이를 설명하세요.
@@ -30,7 +29,6 @@ SELECT * FROM orders WHERE customer_id = 100;
 -- 쿼리 B
 SELECT * FROM orders WHERE notes LIKE '%급히 배송%';
 ```
-
 
 ??? tip "힌트"
     - `EXPLAIN QUERY PLAN`을 각 쿼리 앞에 붙여 실행
@@ -55,15 +53,12 @@ SELECT * FROM orders WHERE notes LIKE '%급히 배송%';
     | 실행 방식 | SEARCH (인덱스) | SCAN (전체 스캔) |
     | 이유 | idx_orders_customer_id 존재 | LIKE '%...' 패턴은 인덱스 사용 불가 |
 
-
 ---
-
 
 ### 문제 2. 기존 인덱스 목록 확인
 
 현재 데이터베이스에 생성된 모든 인덱스를 테이블별로 확인하세요.
 테이블명, 인덱스명, 생성 SQL을 표시합니다.
-
 
 ??? tip "힌트"
     - `sqlite_master` 테이블에서 `type = 'index'`인 행을 조회
@@ -90,15 +85,12 @@ SELECT * FROM orders WHERE notes LIKE '%급히 배송%';
     | orders | idx_orders_customer_status | CREATE INDEX idx_orders_customer_status ON orders(customer_id, status) |
     | ... | ... | ... |
 
-
 ---
-
 
 ### 문제 3. 테이블별 인덱스 개수 요약
 
 각 테이블에 몇 개의 인덱스가 있는지 집계하세요.
 인덱스가 0개인 테이블은 제외합니다.
-
 
 ??? tip "힌트"
     - `sqlite_master`에서 `type = 'index'`를 GROUP BY `tbl_name`
@@ -123,14 +115,11 @@ SELECT * FROM orders WHERE notes LIKE '%급히 배송%';
     | complaints | 6 |
     | ... | ... |
 
-
 ---
-
 
 ### 문제 4. 단순 인덱스 생성과 효과 확인
 
 `payments` 테이블의 `method` 칼럼에 인덱스를 생성하고, 생성 전후의 실행 계획을 비교하세요.
-
 
 ??? tip "힌트"
     - 먼저 `EXPLAIN QUERY PLAN SELECT ... WHERE method = 'card'`로 현재 상태 확인
@@ -158,9 +147,7 @@ SELECT * FROM orders WHERE notes LIKE '%급히 배송%';
     | 인덱스 생성 전 | SCAN TABLE payments |
     | 인덱스 생성 후 | SEARCH TABLE payments USING INDEX idx_payments_method |
 
-
 ---
-
 
 ### 문제 5. JOIN 쿼리의 실행 계획 분석
 
@@ -175,7 +162,6 @@ INNER JOIN products AS p ON oi.product_id = p.id
 WHERE o.ordered_at LIKE '2024-12%'
   AND o.status = 'delivered';
 ```
-
 
 ??? tip "힌트"
     - `EXPLAIN QUERY PLAN`을 쿼리 앞에 추가하여 실행
@@ -205,9 +191,7 @@ WHERE o.ordered_at LIKE '2024-12%'
     - order_items: `idx_order_items_order_id`로 해당 주문의 상세 항목 조회
     - products: PK(rowid)로 상품 정보 직접 접근
 
-
 ---
-
 
 ### 문제 6. 커버링 인덱스(Covering Index) 생성
 
@@ -219,7 +203,6 @@ SELECT ordered_at, total_amount
 FROM orders
 WHERE customer_id = 100;
 ```
-
 
 ??? tip "힌트"
     - 커버링 인덱스: WHERE 조건 칼럼 + SELECT 칼럼을 모두 포함하는 인덱스
@@ -245,15 +228,12 @@ WHERE customer_id = 100;
     | 일반 인덱스 | 인덱스 → rowid → 테이블 행 접근 (2단계) |
     | 커버링 인덱스 | 인덱스에서 직접 반환 (1단계, 테이블 미접근) |
 
-
 ---
-
 
 ### 문제 7. 부분 인덱스(Partial Index) 생성
 
 활성 상품(`is_active = 1`)만을 대상으로 카테고리별 검색이 빈번하다고 가정합니다.
 부분 인덱스를 생성하여 비활성 상품을 인덱스에서 제외하세요.
-
 
 ??? tip "힌트"
     - `CREATE INDEX ... WHERE is_active = 1` 구문으로 부분 인덱스 생성
@@ -288,9 +268,7 @@ WHERE customer_id = 100;
     | `category_id = 5 AND is_active = 1` | idx_products_active_category (부분 인덱스) |
     | `category_id = 5` (is_active 조건 없음) | idx_products_category_id (일반 인덱스) |
 
-
 ---
-
 
 ### 문제 8. 복합 인덱스 칼럼 순서의 중요성
 
@@ -304,7 +282,6 @@ SELECT * FROM orders WHERE status = 'delivered' AND ordered_at >= '2024-01-01';
 -- 쿼리 B: ordered_at으로 범위만
 SELECT * FROM orders WHERE ordered_at >= '2024-01-01';
 ```
-
 
 ??? tip "힌트"
     - 복합 인덱스의 **첫 번째 칼럼**이 WHERE 절에서 등호 조건으로 사용될 때 가장 효과적
@@ -333,15 +310,12 @@ SELECT * FROM orders WHERE ordered_at >= '2024-01-01';
     | status = ? AND ordered_at >= ? | (status, ordered_at) | 등호 조건 칼럼이 선행 |
     | ordered_at >= ? | (ordered_at, status) | 첫 번째 칼럼만으로 범위 검색 |
 
-
 ---
-
 
 ### 문제 9. 인덱스 선택도(Selectivity) 분석
 
 `orders` 테이블의 `status` 칼럼과 `customer_id` 칼럼의 선택도를 비교하세요.
 어느 칼럼에 인덱스를 생성하는 것이 더 효과적인지 판단합니다.
-
 
 ??? tip "힌트"
     - 선택도 = 고유 값의 수 / 전체 행 수
@@ -367,9 +341,7 @@ SELECT * FROM orders WHERE ordered_at >= '2024-01-01';
     - customer_id 인덱스가 더 효과적: 한 고객의 주문만 빠르게 찾을 수 있음
     - status 인덱스는 전체의 약 11%(delivered 등)를 반환 → 인덱스 효과가 낮을 수 있음
 
-
 ---
-
 
 ### 문제 10. 인덱스가 사용되지 않는 경우 파악
 
@@ -386,7 +358,6 @@ SELECT * FROM orders WHERE customer_id = 100 OR status = 'cancelled';
 -- 쿼리 C: 부정 조건
 SELECT * FROM orders WHERE customer_id != 100;
 ```
-
 
 ??? tip "힌트"
     - 칼럼에 함수를 적용하면 인덱스를 사용할 수 없습니다 (SARGable 위반)
@@ -425,9 +396,7 @@ SELECT * FROM orders WHERE customer_id != 100;
     | `col_a = ? OR col_b = ?` | 제한적 | 서로 다른 칼럼의 OR |
     | `col != ?` | X | 대다수 행 반환, 스캔이 효율적 |
 
-
 ---
-
 
 ### 문제 11. 서브쿼리를 JOIN으로 변환하여 성능 개선
 
@@ -443,7 +412,6 @@ SELECT
 FROM products AS p
 WHERE p.is_active = 1;
 ```
-
 
 ??? tip "힌트"
     - 상관 서브쿼리는 외부 쿼리의 각 행마다 실행됩니다
@@ -484,9 +452,7 @@ WHERE p.is_active = 1;
     | 상관 서브쿼리 | 상품 수 x 2 | 느림 |
     | JOIN (사전 집계) | 1회 | 빠름 |
 
-
 ---
-
 
 ### 문제 12. SARGable 조건으로 쿼리 개선
 
@@ -502,7 +468,6 @@ SELECT * FROM products WHERE price * 0.9 > 1000000;
 -- 비효율 C: LIKE 선행 와일드카드
 SELECT * FROM customers WHERE name LIKE '%김%';
 ```
-
 
 ??? tip "힌트"
     - 함수/계산을 칼럼이 아닌 **비교 값 쪽**으로 옮기면 인덱스를 사용할 수 있습니다
@@ -535,9 +500,7 @@ SELECT * FROM customers WHERE name LIKE '%김%';
     | `price * 0.9 > 1000000` | `price > 1111111.11` | O |
     | `name LIKE '%김%'` | `name LIKE '김%'` | O (접두사만) |
 
-
 ---
-
 
 ### 문제 13. EXISTS vs IN 성능 비교
 
@@ -551,7 +514,6 @@ SELECT * FROM customers WHERE id IN (SELECT DISTINCT customer_id FROM reviews);
 SELECT * FROM customers AS c
 WHERE EXISTS (SELECT 1 FROM reviews AS r WHERE r.customer_id = c.id);
 ```
-
 
 ??? tip "힌트"
     - `EXPLAIN QUERY PLAN`으로 두 쿼리의 실행 계획을 확인
@@ -580,15 +542,12 @@ WHERE EXISTS (SELECT 1 FROM reviews AS r WHERE r.customer_id = c.id);
     - reviews에 `idx_reviews_customer_id`가 있으므로, EXISTS가 인덱스를 활용하여 효율적
     - IN은 서브쿼리 전체를 먼저 실행한 뒤 비교하므로, 결과가 클 때 메모리 사용 증가
 
-
 ---
-
 
 ### 문제 14. 불필요한 인덱스 식별
 
 인덱스가 너무 많으면 INSERT/UPDATE 성능이 저하됩니다.
 `orders` 테이블의 인덱스 중 중복되거나 불필요한 것이 있는지 분석하세요.
-
 
 ??? tip "힌트"
     - 복합 인덱스 `(customer_id, status)`가 있으면 단일 인덱스 `(customer_id)`는 중복
@@ -617,9 +576,7 @@ WHERE EXISTS (SELECT 1 FROM reviews AS r WHERE r.customer_id = c.id);
     **결론**: `idx_orders_customer_id`는 `idx_orders_customer_status`에 포함되므로 제거 후보.
     단, 커버링 인덱스 효과(status 불필요 시 더 작은 인덱스)를 고려하면 유지할 수도 있음.
 
-
 ---
-
 
 ### 문제 15. 종합 — 느린 쿼리 최적화 워크숍
 
@@ -645,7 +602,6 @@ WHERE oi.order_id = o.id
 GROUP BY cat.name, strftime('%Y-%m', o.ordered_at)
 ORDER BY cat.name, month;
 ```
-
 
 ??? tip "힌트"
     1. `strftime('%Y', ordered_at) = '2024'` → 범위 조건으로 변환 (SARGable)

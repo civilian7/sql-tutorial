@@ -12,8 +12,6 @@
 !!! abstract "Concepts"
     `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG`, `LEAD`, `SUM/AVG/COUNT OVER`, `FIRST_VALUE`, `LAST_VALUE`, `ROWS BETWEEN`
 
-## Basic (1~5)
-
 Practice the basic syntax of window functions.
 
 ---
@@ -251,8 +249,6 @@ Payments completed in 2024 (`status = 'completed'`) are tallied by means, and qu
     | ... | ... | ... | ... |
 
 ---
-
-## Applied (6~10)
 
 Utilizes analytical functions such as LAG/LEAD and moving average.
 
@@ -546,8 +542,6 @@ Only products with 3 or more reviews are eligible.
     | ... | ... | ... | ... | ... | ... |
 
 ---
-
-## Practical (11~15)
 
 Solve practical analysis scenarios with complex window function combinations.
 

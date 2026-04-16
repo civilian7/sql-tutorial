@@ -15,9 +15,6 @@
 
 ---
 
-
-## Basic (1-7): WHERE Subqueries, IN/NOT IN
-
 ### Problem 1. Find products whose name and price are higher than the overall average price.
 
 Use a scalar subquery to select only products more expensive than the average price of all products. Sort by price descending, top 10.
@@ -39,9 +36,7 @@ Use a scalar subquery to select only products more expensive than the average pr
     | (product above average 1) | 2500000 |
     | ... | ... |
 
-
 ---
-
 
 ### Problem 2. Find the name, price, and category ID of the most expensive product.
 
@@ -57,9 +52,7 @@ Use a subquery to find the maximum price, then find the product matching that pr
     WHERE price = (SELECT MAX(price) FROM products);
     ```
 
-
 ---
-
 
 ### Problem 3. Find the name and email of customers who have placed at least one order.
 
@@ -77,9 +70,7 @@ Use an IN subquery to find only customers whose customer_id exists in the orders
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 4. Find the name and grade of customers who have never written a review.
 
@@ -104,9 +95,7 @@ Use a NOT IN subquery. Sort by grade descending (VIP, GOLD, SILVER, BRONZE), the
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 5. Find products that have been added to a wishlist at least once, showing name and price.
 
@@ -124,9 +113,7 @@ Use an IN subquery to find products whose product_id exists in the wishlists tab
     LIMIT 10;
     ```
 
-
 ---
-
 
 ### Problem 6. Find products that have never been ordered, showing name and stock quantity.
 
@@ -143,9 +130,7 @@ Use a NOT IN subquery to find products that never appear in order_items.
     ORDER BY stock_qty DESC;
     ```
 
-
 ---
-
 
 ### Problem 7. Find orders with amounts greater than the average order amount. Exclude cancelled orders. Show order number, amount, and order date.
 
@@ -168,11 +153,7 @@ Use a scalar subquery to compute the average order amount, then filter for order
     LIMIT 10;
     ```
 
-
 ---
-
-
-## Applied (8-14): FROM Subqueries, Correlated Subqueries, SELECT Scalars
 
 ### Problem 8. Find the average price per category, then find products more expensive than their category average.
 
@@ -195,9 +176,7 @@ Use a FROM clause subquery (inline view) to compute the average price per catego
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 9. Use a SELECT clause scalar subquery to compute each customer's order count. Show only customers with 3 or more orders, sorted by order count descending, top 15.
 
@@ -224,9 +203,7 @@ Practice scalar subqueries that compute a value for each row in the SELECT claus
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 10. Use a correlated subquery to retrieve each product's most recent review date. Top 15.
 
@@ -248,9 +225,7 @@ A correlated subquery executes the subquery for each row of the outer query.
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 11. Use a FROM subquery to compute total order amount per customer, then show the top 10.
 
@@ -273,9 +248,7 @@ Create a derived table in the FROM clause that aggregates orders, then JOIN with
     LIMIT 10;
     ```
 
-
 ---
-
 
 ### Problem 12. Use EXISTS to find only products that have at least one review.
 
@@ -297,9 +270,7 @@ EXISTS checks whether the subquery returns any results. Compare with IN.
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 13. Find customer-product combinations that were wishlisted but never ordered. Most recent 20.
 
@@ -329,9 +300,7 @@ Use a NOT EXISTS correlated subquery to check whether a customer has ordered tha
     LIMIT 20;
     ```
 
-
 ---
-
 
 ### Problem 14. Find the most expensive product in each category, showing name and price.
 
@@ -352,11 +321,7 @@ Use a correlated subquery to compare each product's price with the maximum price
     ORDER BY p.price DESC;
     ```
 
-
 ---
-
-
-## Advanced (15-20): Nested Subqueries, Multi-level, Subquery vs JOIN Comparison
 
 ### Problem 15. Find products ordered by VIP customers that have an average rating of 4 or above.
 
@@ -391,9 +356,7 @@ Multi-level subquery: first get VIP customer IDs, then get product IDs from thei
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 16. Compare each customer's average order amount with the overall average, and find customers whose average is higher.
 
@@ -428,9 +391,7 @@ Use a FROM subquery to compute per-customer averages, then compare with the over
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 17. Find products whose total sales quantity exceeds the average sales quantity across all products.
 
@@ -462,9 +423,7 @@ This uses a dual structure: aggregation inside a FROM subquery, and another subq
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 18. Find reviews whose rating is below the product's average rating. Most recent 15.
 
@@ -493,9 +452,7 @@ Use a correlated subquery in the WHERE clause to compare each review's rating wi
     LIMIT 15;
     ```
 
-
 ---
-
 
 ### Problem 19. Subquery vs JOIN comparison: Write the query "customers who have written a review" using two different approaches.
 
@@ -526,9 +483,7 @@ Write the same result using (A) IN subquery and (B) JOIN, and understand the dif
     - **IN subquery**: Deduplication is automatic, no DISTINCT needed. Efficient when the subquery result is small.
     - **JOIN**: Advantageous when you need additional columns (review content, etc.). May be better optimized for large datasets.
 
-
 ---
-
 
 ### Problem 20. Find customers who have purchased products from 3 or more categories, showing name and category count.
 
@@ -555,6 +510,5 @@ Use a FROM subquery to aggregate the number of purchase categories per customer,
     ORDER BY cc.cat_count DESC, c.name
     LIMIT 15;
     ```
-
 
 ---

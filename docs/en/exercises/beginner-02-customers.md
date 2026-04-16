@@ -113,7 +113,7 @@ Retrieve the name, signup date, and grade of the 10 most recently registered cus
 Find the customer count and percentage by gender. Include NULL values.
 
 
-**Hint 1:** Use COALESCE(gender, 'N/A') to handle NULLs. Calculate the ratio with 100.0 * COUNT(*) / SUM(COUNT(*)) OVER ()
+**Hint 1:** Use COALESCE(gender, 'N/A') to handle NULLs. Calculate the ratio with 100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers)
 
 
 ??? success "Answer"
@@ -121,7 +121,7 @@ Find the customer count and percentage by gender. Include NULL values.
     SELECT
         COALESCE(gender, '미입력') AS gender,
         COUNT(*) AS cnt,
-        ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct
+        ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers), 1) AS pct
     FROM customers
     GROUP BY gender;
     ```
@@ -462,39 +462,23 @@ Show product name and tag list (comma-separated).
 ---
 
 
-### 17. Customer Acquisition Channel Distribution
+### 17. Customer Count and Percentage by Acquisition Channel
 
 
-Show customer count, percentage, and average purchase amount by acquisition channel.
+Find the customer count and percentage by acquisition channel. Show NULL as 'Unknown'.
 
 
-**Hint 1:** Use `customers.acquisition_channel` (can be NULL). Use `COALESCE` to show NULL as 'Unknown'. LEFT JOIN `orders` for purchase amounts.
+**Hint 1:** Use `COALESCE(acquisition_channel, 'Unknown')` to handle NULLs. Calculate the ratio with `(SELECT COUNT(*) FROM customers)`.
 
 
 ??? success "Answer"
     ```sql
-    WITH channel_stats AS (
-        SELECT
-            COALESCE(c.acquisition_channel, 'unknown') AS channel,
-            COUNT(DISTINCT c.id) AS customer_count,
-            COUNT(o.id) AS order_count,
-            ROUND(COALESCE(SUM(o.total_amount), 0), 0) AS total_revenue
-        FROM customers AS c
-        LEFT JOIN orders AS o
-            ON c.id = o.customer_id
-           AND o.status NOT IN ('cancelled')
-        GROUP BY COALESCE(c.acquisition_channel, 'unknown')
-    )
     SELECT
-        channel,
-        customer_count,
-        ROUND(100.0 * customer_count / SUM(customer_count) OVER (), 1) AS pct,
-        order_count,
-        CASE WHEN customer_count > 0
-            THEN ROUND(1.0 * total_revenue / customer_count, 0)
-            ELSE 0
-        END AS avg_revenue_per_customer
-    FROM channel_stats
+        COALESCE(acquisition_channel, '미분류') AS channel,
+        COUNT(*) AS customer_count,
+        ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM customers), 1) AS pct
+    FROM customers
+    GROUP BY COALESCE(acquisition_channel, '미분류')
     ORDER BY customer_count DESC;
     ```
 

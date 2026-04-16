@@ -14,18 +14,12 @@
 
 ---
 
-
-## Basic (1~5): BEGIN, COMMIT, ROLLBACK
-
-
 ### Problem 1
 
 **Execute the most basic transaction.** Create a temporary table `temp_account`, INSERT two accounts, and COMMIT.
 
-
 ??? tip "Hint"
     `BEGIN;` -> 2 INSERT statements -> `COMMIT;`. Changes are not visible to other connections until COMMIT.
-
 
 ??? success "Answer"
     ```sql
@@ -53,18 +47,14 @@
     | 1  | 김철수 | 100000  |
     | 2  | 이영희 | 200000  |
 
-
 ---
-
 
 ### Problem 2
 
 **Use ROLLBACK to undo changes.** Accidentally set 김철수's balance to 0 in `temp_account`, then ROLLBACK to recover.
 
-
 ??? tip "Hint"
     `BEGIN;` -> UPDATE -> verify result -> `ROLLBACK;` -> verify recovery. ROLLBACK undoes all changes since BEGIN.
-
 
 ??? success "Answer"
     ```sql
@@ -93,18 +83,14 @@
     |----|--------|---------|
     | 1  | 김철수 | 100000  |
 
-
 ---
-
 
 ### Problem 3
 
 **Verify atomicity.** Simulate a bank transfer: 김철수 -> 이영희, 30,000 won. Wrap withdrawal and deposit in a single transaction and verify both balances after transfer.
 
-
 ??? tip "Hint"
     Two UPDATEs inside a transaction: one `balance - 30000`, the other `balance + 30000`. Both must succeed before COMMIT.
-
 
 ??? success "Answer"
     ```sql
@@ -139,18 +125,14 @@
     | 1  | 김철수 | 70000   |
     | 2  | 이영희 | 230000  |
 
-
 ---
-
 
 ### Problem 4
 
 **ROLLBACK on failure.** Attempt to transfer 500,000 won (more than 김철수's balance of 70,000). Check for insufficient funds and ROLLBACK.
 
-
 ??? tip "Hint"
     After the UPDATE, check with SELECT if balance is negative. If negative, ROLLBACK. In real applications, this decision is made in program code.
-
 
 ??? success "Answer"
     ```sql
@@ -176,18 +158,14 @@
     |----|--------|---------|
     | 1  | 김철수 | 70000   |
 
-
 ---
-
 
 ### Problem 5
 
 **Bundle multiple INSERTs in a transaction to understand performance.** Understand the difference when INSERTing 100 log records into `temp_log` with and without transactions.
 
-
 ??? tip "Hint"
     In SQLite, INSERT without a transaction triggers disk writes (fsync) for every row. Wrapping with `BEGIN`/`COMMIT` results in only one write.
-
 
 ??? success "Answer"
     ```sql
@@ -218,21 +196,14 @@
     !!! info "Why are transactions faster?"
         Without a transaction, SQLite performs a WAL/journal write + fsync for every row. 100 rows means 100 disk syncs. Wrapping in a transaction means **only 1 sync**, which can be dozens of times faster.
 
-
 ---
-
-
-## Applied (6~10): SAVEPOINT and Multi-step Transactions
-
 
 ### Problem 6
 
 **Use SAVEPOINT for partial rollback.** Add 3 accounts, but treat the 3rd insertion as a mistake and use SAVEPOINT to keep only the first 2.
 
-
 ??? tip "Hint"
     `SAVEPOINT sp1;` -> INSERT -> `SAVEPOINT sp2;` -> INSERT -> ... `ROLLBACK TO sp2;` undoes only changes after sp2.
-
 
 ??? success "Answer"
     ```sql
@@ -264,9 +235,7 @@
     | 3  | 박민수 | 150000  |
     | 4  | 정수연 | 80000   |
 
-
 ---
-
 
 ### Problem 7
 
@@ -278,10 +247,8 @@ Scenario:
 3. 박민수 balance -50,000 (mistake) -> ROLLBACK TO B
 4. 박민수 balance +5,000 (correction) -> COMMIT
 
-
 ??? tip "Hint"
     SAVEPOINTs are identified by name. `ROLLBACK TO B` undoes only changes after B and preserves changes between A and B.
-
 
 ??? success "Answer"
     ```sql
@@ -319,18 +286,14 @@ Scenario:
     | 3  | 박민수 | 155000  |
     | 4  | 정수연 | 80000   |
 
-
 ---
-
 
 ### Problem 8
 
 **Implement batch processing with SAVEPOINTs.** Apply 1% interest to all accounts, but cancel interest for any account with balance under 100 won.
 
-
 ??? tip "Hint"
     Set a SAVEPOINT for each account, UPDATE, then check the condition for individual rollback. Here we apply to all accounts at once then verify.
-
 
 ??? success "Answer"
     ```sql
@@ -363,18 +326,14 @@ Scenario:
     | 3  | 박민수 | 156550  |
     | 4  | 정수연 | 80800   |
 
-
 ---
-
 
 ### Problem 9
 
 **Understand RELEASE SAVEPOINT.** Create a SAVEPOINT, and once normal processing is confirmed, RELEASE it to remove the savepoint.
 
-
 ??? tip "Hint"
     `RELEASE SAVEPOINT sp1;` removes that SAVEPOINT. After that, `ROLLBACK TO sp1` is no longer possible. RELEASE is not COMMIT -- the outer transaction is still in progress.
-
 
 ??? success "Answer"
     ```sql
@@ -400,9 +359,7 @@ Scenario:
     |----|--------|---------|
     | 5  | 최지우 | 301000  |
 
-
 ---
-
 
 ### Problem 10
 
@@ -411,10 +368,8 @@ Scenario:
 !!! info "Note"
     In SQLite, DDL (CREATE TABLE, DROP TABLE) is included in transactions. In MySQL/Oracle, DDL triggers an implicit COMMIT making rollback impossible.
 
-
 ??? tip "Hint"
     In SQLite, `BEGIN` -> `CREATE TABLE` -> `INSERT` -> `ROLLBACK` cancels the table creation itself.
-
 
 ??? success "Answer"
     ```sql
@@ -452,12 +407,7 @@ Scenario:
         | Oracle | No (implicit COMMIT) |
         | SQL Server | Yes (full support) |
 
-
 ---
-
-
-## Advanced (11~15): Business Scenarios
-
 
 ### Problem 11
 
@@ -467,10 +417,8 @@ Scenario:
 2. Insert a transaction record into `temp_log`
 3. If balance goes negative after deduction, ROLLBACK everything
 
-
 ??? tip "Hint"
     UPDATE -> verify balance with SELECT -> if negative, ROLLBACK; if positive, INSERT + COMMIT. In SQLite without a programming language, conditional branching is difficult, so verify manually.
-
 
 ??? success "Answer"
     ```sql
@@ -501,18 +449,14 @@ Scenario:
     |----|--------|---------|
     | 1  | 김철수 | 30800   |
 
-
 ---
-
 
 ### Problem 12
 
 **Implement a point transfer transaction.** Transfer 50,000 points from 이영희 (id=2) to 박민수 (id=3). Use SAVEPOINT to complete the transfer including the record.
 
-
 ??? tip "Hint"
     Withdrawal -> SAVEPOINT -> Deposit -> Transfer record -> COMMIT. If deposit fails, roll back to SAVEPOINT.
-
 
 ??? success "Answer"
     ```sql
@@ -547,9 +491,7 @@ Scenario:
     | 4  | 정수연 | 80800   |
     | 5  | 최지우 | 301000  |
 
-
 ---
-
 
 ### Problem 13
 
@@ -560,10 +502,8 @@ Grade criteria:
 - Balance >= 100,000: GOLD
 - Otherwise: SILVER
 
-
 ??? tip "Hint"
     First create `temp_grade` table, then `BEGIN` -> `DELETE` (clear existing data) -> `INSERT ... SELECT` for grade calculation -> `COMMIT`.
-
 
 ??? success "Answer"
     ```sql
@@ -605,9 +545,7 @@ Grade criteria:
     | 4          | 정수연 | SILVER | 80800   |
     | 1          | 김철수 | SILVER | 30800   |
 
-
 ---
-
 
 ### Problem 14
 
@@ -619,10 +557,8 @@ Grade criteria:
 
 If any step fails, the entire operation must be cancelled.
 
-
 ??? tip "Hint"
     Using SAVEPOINTs at each step makes it easier to identify where failures occurred. COMMIT if everything is fine.
-
 
 ??? success "Answer"
     ```sql
@@ -665,18 +601,14 @@ If any step fails, the entire operation must be cancelled.
     | ... | 주문 취소 요청 - 고객: 김철수  | 2025-...            |
     | ... | 김철수 50,000원 결제 - 잔액... | 2025-...            |
 
-
 ---
-
 
 ### Problem 15
 
 **Cleanup: Drop all temporary tables created in the transaction exercises.** Wrap the deletion itself in a single transaction.
 
-
 ??? tip "Hint"
     In SQLite, DDL is included in transactions. `BEGIN` -> `DROP TABLE` multiple times -> `COMMIT` is possible.
-
 
 ??? success "Answer"
     ```sql

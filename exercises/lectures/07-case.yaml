@@ -223,25 +223,20 @@ problems:
     level: 2
     type: "SELECT"
     question: |
-      각 상품의 2024년 분기별 매출을 별도 칼럼(`q1_revenue`, `q2_revenue`, `q3_revenue`, `q4_revenue`)으로 계산하세요. 조건부 집계(`SUM(CASE WHEN ... THEN ... END)`)를 사용하고, 2024년 판매 실적이 있는 상품만 포함합니다. 2024년 총 매출 내림차순으로 10행까지 반환하세요.
+      `orders` 테이블에서 주문 상태(status)별로 건수를 세되, CASE를 이용해 한국어 라벨(`대기`, `결제완료`, `배송중`, `완료`, `취소`, `기타`)로 분류하세요. 건수가 많은 순서로 정렬합니다.
     reference_sql:
       common: |
         SELECT
-        p.name AS product_name,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59'
-        THEN oi.quantity * oi.unit_price ELSE 0 END) AS q1_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-04-01' AND '2024-06-30 23:59:59'
-        THEN oi.quantity * oi.unit_price ELSE 0 END) AS q2_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-07-01' AND '2024-09-30 23:59:59'
-        THEN oi.quantity * oi.unit_price ELSE 0 END) AS q3_revenue,
-        SUM(CASE WHEN o.ordered_at BETWEEN '2024-10-01' AND '2024-12-31 23:59:59'
-        THEN oi.quantity * oi.unit_price ELSE 0 END) AS q4_revenue
-        FROM order_items AS oi
-        INNER JOIN orders    AS o ON oi.order_id   = o.id
-        INNER JOIN products  AS p ON oi.product_id = p.id
-        WHERE o.ordered_at LIKE '2024%'
-        AND o.status NOT IN ('cancelled', 'returned')
-        GROUP BY p.id, p.name
-        ORDER BY (q1_revenue + q2_revenue + q3_revenue + q4_revenue) DESC
-        LIMIT 10;
-    tags: []
+            CASE status
+                WHEN 'pending' THEN '대기'
+                WHEN 'paid' THEN '결제완료'
+                WHEN 'shipped' THEN '배송중'
+                WHEN 'delivered' THEN '완료'
+                WHEN 'cancelled' THEN '취소'
+                ELSE '기타'
+            END AS status_label,
+            COUNT(*) AS cnt
+        FROM orders
+        GROUP BY status_label
+        ORDER BY cnt DESC;
+    tags: [CASE, GROUP BY, orders]

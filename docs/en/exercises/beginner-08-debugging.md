@@ -10,8 +10,6 @@
 !!! abstract "Concepts"
     Finding and fixing syntax/logic errors from Beginner Lessons 1-7
 
-## Basic (1~10)
-
 Find syntax errors.
 
 ---
@@ -282,8 +280,6 @@ FROM products;
 
 ---
 
-## Applied (11~20)
-
 Find logic errors.
 
 ---
@@ -551,8 +547,6 @@ GROUP BY ordered_at;
     ```
 
 ---
-
-## Practical (21~30)
 
 Find subtle errors.
 

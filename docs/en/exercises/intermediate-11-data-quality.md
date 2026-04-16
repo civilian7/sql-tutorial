@@ -17,8 +17,6 @@
 !!! abstract "Concepts"
     NULL/duplicate/range checks, Referential integrity verification, Date inversion detection, Outlier discovery, Comprehensive quality dashboard
 
-## Basic (1~7): NULL, Duplicates, Value Ranges
-
 ### Problem 1
 
 Calculate the NULL ratio for each column in the customers table. Compute NULL count and percentage (%) for `birth_date`, `gender`, and `last_login_at`.
@@ -145,8 +143,6 @@ Check if the same product is duplicated within the same order. Output duplicate 
     ```
 
 ---
-
-## Applied (8~14): FK Integrity, Date Inversions, Status Mismatches
 
 ### Problem 8
 
@@ -304,8 +300,6 @@ Find products where the current price (`products.price`) does not match the curr
     ```
 
 ---
-
-## Advanced (15~20): Comprehensive Quality Reports
 
 ### Problem 15
 

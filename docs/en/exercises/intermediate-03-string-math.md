@@ -11,8 +11,6 @@
 !!! abstract "Concepts"
     `SUBSTR`, `LENGTH`, `UPPER`/`LOWER`, `REPLACE`, `TRIM`, `INSTR`, `GROUP_CONCAT`, `COALESCE`, `ROUND`, `ABS`, `CAST`, `NULLIF`, `IIF`/`CASE`, `printf`
 
-## Basic (1~7)
-
 Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
 
 ---
@@ -259,8 +257,6 @@ Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).
     > The first 2 characters of the SKU represent the category.
 
 ---
-
-## Applied (8~14)
 
 Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
 
@@ -527,8 +523,6 @@ Practice GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND.
     > `TYPEOF()` is a SQLite-specific function that checks the actual type of stored values.
 
 ---
-
-## Practical (15~20)
 
 Practice complex formatting, data transformation, and pattern matching.
 

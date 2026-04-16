@@ -16,11 +16,9 @@ Cancellation (`cancelled`) and return (`returned`, `return_requested`) orders ar
 
 ---
 
-
 ### Problem 1. Monthly sales trend (last 3 years)
 
 Find monthly sales, number of orders, and average order value from 2022 to 2024.
-
 
 ??? tip "Hint"
     - Extract year-month with `SUBSTR(ordered_at, 1, 7)`
@@ -47,14 +45,11 @@ Find monthly sales, number of orders, and average order value from 2022 to 2024.
     | 2022-02 | 285 | 175000000 | 614035 |
     | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 2. Proportion of sales by category
 
 Find the sales of each major category and its proportion (%) compared to the total in 2024.
-
 
 ??? tip "Hint"
     - `categories.depth = 0` is the main category
@@ -91,15 +86,12 @@ Find the sales of each major category and its proportion (%) compared to the tot
     | Peripherals | 3100000000 | 26.9 |
     | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 3. Top 20 customer sales rankings
 
 Display information about the top 20 customers by total purchase amount for all time periods.
 Includes customer name, level, number of orders, total purchase amount, and rank.
-
 
 ??? tip "Hint"
     - Use `RANK()` or `ROW_NUMBER()` window functions
@@ -127,15 +119,12 @@ Includes customer name, level, number of orders, total purchase amount, and rank
     | 2 | Lee Seoyeon | VIP | 38 | 48000000 |
     | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 4. Sales pattern by day of the week
 
 Find the average number of orders and average sales by day of the week (Mon-Sun) from all order data.
 Find out which days of the week have the highest sales.
-
 
 ??? tip "Hint"
     - SQLite: `strftime('%w', ordered_at)` → 0 (Sun)~6 (Sat)
@@ -177,14 +166,11 @@ Find out which days of the week have the highest sales.
     | Monday | 15 | 9200000 |
     | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 5. Quarterly sales and growth rate compared to the previous quarter
 
 Find quarterly sales from 2022 to 2024 and growth rate (%) compared to the previous quarter.
-
 
 ??? tip "Hint"
     - Branch: `(CAST(SUBSTR(ordered_at,6,2) AS INTEGER) + 2) / 3`
@@ -225,14 +211,11 @@ Find quarterly sales from 2022 to 2024 and growth rate (%) compared to the previ
     | 2022-Q4 | 680000000 | 1050 | 490000000 | 38.8 |
     | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 6. Trend in sales proportion by payment method
 
 Find the sales share (%) of each payment method (card, bank_transfer, kakao_pay, etc.) by month in 2024.
-
 
 ??? tip "Hint"
     - Classify payment method as `payments.method`
@@ -269,14 +252,11 @@ Find the sales share (%) of each payment method (card, bank_transfer, kakao_pay,
     | 2024-01 | bank_transfer | 120000000 | 11.5 |
     | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 7. Top 3 products by category (Top-N per Group)
 
 Select the top three sales products in each major category in 2024.
-
 
 ??? tip "Hint"
     - Count product sales by category in CTE
@@ -319,14 +299,11 @@ Select the top three sales products in each major category in 2024.
     | Computer | 3 | (Laptop C) | 78 | 234000000 |
     | Peripherals | 1 | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 8. Year-on-year (YoY) sales growth rate
 
 Find the sales for each month in 2023 and 2024 and the growth rate (%) compared to the same month of the previous year.
-
 
 ??? tip "Hint"
     - `LAG(revenue, 12)` — See sales 12 months ago
@@ -366,15 +343,12 @@ Find the sales for each month in 2023 and 2024 and the growth rate (%) compared 
     | 2024-01 | 235000000 | 210000000 | 11.9 |
     | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 9. Moving Average — 3-month moving average of sales
 
 Find the three-month moving average of monthly sales.
 Moving averages smooth out seasonal fluctuations when identifying trends.
-
 
 ??? tip "Hint"
     - `AVG(revenue) OVER (ORDER BY year_month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)`
@@ -414,15 +388,12 @@ Moving averages smooth out seasonal fluctuations when identifying trends.
     | 2023-04 | 205000000 | 206666667 | 207500000 |
     | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 10. ABC Analysis — Cumulative sales ratio by product
 
 Sort sales by product in descending order in 2024, and assign A/B/C grades based on cumulative sales ratio.
 (A: Top 70%, B: 70~90%, C: Rest)
-
 
 ??? tip "Hint"
     - Cumulative ratio: `SUM(revenue) OVER (ORDER BY revenue DESC) / SUM(revenue) OVER ()`
@@ -472,14 +443,11 @@ Sort sales by product in descending order in 2024, and assign A/B/C grades based
     | ... | ... | ... | ... |
     | (Budget Mouse) | 5000000 | 91.2 | C |
 
-
 ---
-
 
 ### Problem 11. Comparison of sales from new customers vs. repeat customers
 
 Separate the number of orders and sales from new customers (first order that month) and repeat customers by month in 2024.
-
 
 ??? tip "Hint"
     - Month of first order for each customer: obtained as `MIN(ordered_at)`
@@ -527,14 +495,11 @@ Separate the number of orders and sales from new customers (first order that mon
     | 2024-02 | Repeat | 320 | 180000000 |
     | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 12. Trend of average unit price by customer level
 
 Find the average order amount by customer level (BRONZE/SILVER/GOLD/VIP) by month in 2024.
-
 
 ??? tip "Hint"
     - Graded as `customers.grade`
@@ -570,15 +535,12 @@ Find the average order amount by customer level (BRONZE/SILVER/GOLD/VIP) by mont
     | 2024-01 | BRONZE | 185 | 380000 |
     | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 13. Delivery time analysis by shipping company
 
 Find the average delivery days, minimum/maximum lead days, and number of deliveries by carrier in 2024.
 Only items that have been delivered are eligible.
-
 
 ??? tip "Hint"
     - Delivery time: `JULIANDAY(delivered_at) - JULIANDAY(shipped_at)`
@@ -613,15 +575,12 @@ Only items that have been delivered are eligible.
     | Hanjin Express | 2800 | 2.1 | 0.5 | 6.0 | 55.2 |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 14. Sales impact by discount rate section
 
 Divide the discount rate for orders in 2024 (discount_amount / (total_amount + discount_amount)) into sections,
 Analyze the number of orders, average order amount, and total sales for each segment.
-
 
 ??? tip "Hint"
     - Discount rate = `discount_amount / (total_amount + discount_amount) * 100`
@@ -680,15 +639,12 @@ Analyze the number of orders, average order amount, and total sales for each seg
     | 11~20% | 800 | 900000 | 720000000 |
     | Over 20% | 200 | 1100000 | 220000000 |
 
-
 ---
-
 
 ### Problem 15. Promotion ROI analysis
 
 Analyze the sales effect (ROI) of each promotion compared to the input discount amount.
 During the promotion period, sales and discount amounts for promotional products are counted.
-
 
 ??? tip "Hint"
     - Identify target product with `promotions` + `promotion_products`
@@ -740,14 +696,11 @@ During the promotion period, sales and discount amounts for promotional products
     | Year-end Special | flash | fixed 50000 | 280 | 250000000 | 14000000 | 236000000 | 1685.7 |
     | ... | ... | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 16. Shopping Cart → Purchase Conversion Rate
 
 Find the percentage of products in your shopping cart that were converted into actual purchases by category.
-
 
 ??? tip "Hint"
     - Number of products contained in `cart_items` vs. number of identical products actually ordered by the same customer
@@ -794,15 +747,12 @@ Find the percentage of products in your shopping cart that were converted into a
     | (General Category) | 800 | 320 | 40.0 |
     | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 17. Simultaneous purchase patterns (shopping cart analysis)
 
 Find pairs of products purchased together in the same order.
 Shows only product pairs with more than 5 simultaneous purchases.
-
 
 ??? tip "Hint"
     - Self-join `order_items` to create different product pairs of the same order
@@ -835,15 +785,12 @@ Shows only product pairs with more than 5 simultaneous purchases.
     | (SSD C) | (Memory D) | 18 |
     | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 18. Correlation between review ratings and sales
 
 Analyze the relationship between average review rating and sales for each product.
 Calculate average sales by rating range (1~2, 2~3, 3~4, 4~5).
-
 
 ??? tip "Hint"
     - First calculate the average rating and sales for each product
@@ -895,15 +842,12 @@ Calculate average sales by rating range (1~2, 2~3, 3~4, 4~5).
     | 3.0~3.9 | 80 | 45000000 | 18 | 3.52 |
     | 4.0~5.0 | 120 | 62000000 | 25 | 4.35 |
 
-
 ---
-
 
 ### Problem 19. Analysis of point usage effects
 
 Compare the average order amount and repurchase rate for orders that used points and those that did not.
 (As of 2024)
-
 
 ??? tip "Hint"
     - If `orders.point_used > 0`, order using points
@@ -945,15 +889,12 @@ Compare the average order amount and repurchase rate for orders that used points
     | Points used | 2800 | 720000 | 65.3 |
     | Not used | 3500 | 550000 | 42.1 |
 
-
 ---
-
 
 ### Problem 20. Comprehensive management dashboard
 
 Create a comprehensive 2024 management dashboard for CEOs with a single query.
 Includes total sales, number of orders, number of customers, average unit price, return rate, average delivery date, and average review rating.
-
 
 ??? tip "Hint"
     - Calculate each indicator individually using subquery or CTE and then combine them

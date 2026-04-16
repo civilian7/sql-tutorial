@@ -19,15 +19,11 @@ It covers analysis scenarios frequently encountered in practice, including custo
 
 ---
 
-## Customer Analysis (1~7)
-
-
 ### Problem 1. RFM basics — calculation of key indicators for each customer
 
 The marketing team requested RFM metrics for each customer for customer segmentation.
 Find the last order date (Recency), total number of orders (Frequency), and total purchase amount (Monetary) for each customer.
 Excludes canceled/returned orders. Only the top 20 are shown.
-
 
 ??? tip "Hint"
     - Recency: `MAX(ordered_at)`
@@ -58,16 +54,13 @@ Excludes canceled/returned orders. Only the top 20 are shown.
     | 128 | 이서연 | VIP | 2025-03-12 14:55:20 | 38 | 48000000 |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 2. RFM quartile segment
 
 Divide your customers into quartiles (Q1 to Q4) based on RFM metrics.
 The more recent the Recency, the higher the score (4), and the larger the Frequency and Monetary, the higher the score (4).
 Displays each customer's R/F/M score and total score.
-
 
 ??? tip "Hint"
     - Divide each indicator into 4 equal parts with `NTILE(4)`
@@ -129,15 +122,12 @@ Displays each customer's R/F/M score and total score.
     | 128 | 이서연 | VIP | 4 | 4 | 4 | 12 | Champion |
     | ... | ... | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 3. Cohort retention analysis
 
 Find the monthly retention (repurchase rate) of customers who made their first purchase in 2023 through cohort analysis.
 Calculate the retention rate for 0 months (first purchase), 1 month, 2 months, ... 6 months after signing up.
-
 
 ??? tip "Hint"
     - Cohort = group of customers with the same first purchase month
@@ -193,16 +183,13 @@ Calculate the retention rate for 0 months (first purchase), 1 month, 2 months, .
     | 2023-01 | 120 | 3 | 30 | 25.0 |
     | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 4. Detecting Churning Customers
 
 Classify customers who haven't made a purchase in more than six months since their last order as "churn risk."
 Find the distribution of churned customers by grade and the average purchase amount before churning.
 (Base date: 2025-03-31)
-
 
 ??? tip "Hint"
     - Exit criteria: `JULIANDAY('2025-03-31') - JULIANDAY(MAX(ordered_at)) > 180`
@@ -248,15 +235,12 @@ Find the distribution of churned customers by grade and the average purchase amo
     | GOLD | At risk | 45 | 720000 | 5.2 | 220 |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 5. Estimating customer lifetime value (LTV)
 
 Estimate the average Life Time Value (LTV) for each customer tier.
 LTV = average order value x number of orders per year x average duration of activity (years)
-
 
 ??? tip "Hint"
     - Activity period = (last order date - first order date) / 365. Processed as a minimum of 1 year
@@ -309,15 +293,12 @@ LTV = average order value x number of orders per year x average duration of acti
     | SILVER | 1200 | 580000 | 3.1 | 3.0 | 5394000 |
     | BRONZE | 3500 | 380000 | 1.8 | 2.2 | 1504800 |
 
-
 ---
-
 
 ### Problem 6. Comparison of customer quality by subscription channel
 
 Number of customers, average number of orders, average purchase amount by subscription channel (`acquisition_channel`),
 Compare VIP/GOLD conversion rates.
-
 
 ??? tip "Hint"
     - `customers.acquisition_channel`: organic/search_ad/social/referral/direct
@@ -361,15 +342,12 @@ Compare VIP/GOLD conversion rates.
     | social | 1000 | 3.1 | 2200000 | 6.5 | 15.0 |
     | direct | 600 | 2.5 | 1800000 | 5.0 | 18.0 |
 
-
 ---
-
 
 ### Problem 7. Tracking grade changes
 
 Using the `customer_grade_history` table, find the number of customers whose ratings went up and down in 2024.
 It also displays the number of cases by grade change path (e.g. SILVER → GOLD).
-
 
 ??? tip "Hint"
     - `customer_grade_history`: `customer_id`, `old_grade`, `new_grade`, `changed_at`
@@ -413,18 +391,13 @@ It also displays the number of cases by grade change path (e.g. SILVER → GOLD)
     | SILVER → BRONZE | Downgraded | 80 |
     | VIP → GOLD | Downgraded | 8 |
 
-
 ---
-
-## Inventory Management (8~12)
-
 
 ### Problem 8. ABC inventory classification
 
 Sort products ABC based on current inventory amount (stock_qty x cost_price).
 (A: Top 70%, B: 70~90%, C: Rest)
 Displays the number of products in each grade and the total inventory amount.
-
 
 ??? tip "Hint"
     - Inventory amount = `stock_qty * cost_price`
@@ -477,15 +450,12 @@ Displays the number of products in each grade and the total inventory amount.
     | B | 60 | 380000000 | 21.7 | 120 |
     | C | 150 | 170000000 | 9.7 | 200 |
 
-
 ---
-
 
 ### Problem 9. Dead stock detection
 
 Find active products that haven't sold at all in the last 6 months.
 Displays inventory quantity, inventory amount, and last sale date.
-
 
 ??? tip "Hint"
     - Check last 6 months orders in `order_items` + `orders`
@@ -526,16 +496,13 @@ Displays inventory quantity, inventory amount, and last sale date.
     | (Soon Discontinued) | Memory | 30 | 9000000 | 2024-06-22 | 282 |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 10. Reorder Point Calculation
 
 Calculate when to reorder based on the average daily shipment volume for each product.
 Reorder point = average daily shipment x lead time (7 days) x safety factor (1.5)
 Find products that are currently in stock at or below the reorder point.
-
 
 ??? tip "Hint"
     - Last 3 months shipment volume: `inventory_transactions` to `type = 'outbound'`
@@ -587,15 +554,12 @@ Find products that are currently in stock at or below the reorder point.
     | (Popular Memory) | 12 | 1.8 | 19 | 7 | Order now |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 11. Inventory turnover by category
 
 Calculate inventory turnover by category.
 Inventory Turnover = Annual Cost of Goods Sold (COGS) / Average Inventory Amount
-
 
 ??? tip "Hint"
     - Cost of goods sold (COGS): `SUM(oi.quantity * p.cost_price)` (sales in 2024)
@@ -644,15 +608,12 @@ Inventory Turnover = Annual Cost of Goods Sold (COGS) / Average Inventory Amount
     | (General Category) | 80 | 1800000000 | 500000000 | 3.6 | 101 |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 12. Monthly trend of inventory arrival and departure
 
 Calculate monthly receipts, shipments, net changes, and month-end cumulative inventory for 2024.
 This is based on the sum of all products.
-
 
 ??? tip "Hint"
     - `type` in `inventory_transactions`: inbound (positive), outbound (negative)
@@ -688,17 +649,12 @@ This is based on the sum of all products.
     | 2024-03 | 5500 | 5100 | 400 | 1100 |
     | ... | ... | ... | ... | ... |
 
-
 ---
-
-## CS Performance Analysis (13~17)
-
 
 ### Problem 13. Inquiry processing time analysis
 
 Find the average processing time, median (approximate), and SLA compliance rate by inquiry type (category) in 2024.
 SLA: Resolution within 3 days for general inquiries, 1 day for claims, 0.5 days for emergencies
-
 
 ??? tip "Hint"
     - Processing time: `JULIANDAY(resolved_at) - JULIANDAY(created_at)`
@@ -743,15 +699,12 @@ SLA: Resolution within 3 days for general inquiries, 1 day for claims, 0.5 days 
     | general_inquiry | 350 | 0.8 | 0.0 | 4.0 | 85.0 |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 14. Return reason analysis and trend
 
 Find the number, rate, and average refund amount by return reason in 2024.
 We also check quarterly trends.
-
 
 ??? tip "Hint"
     - `returns` table: `reason`, `refund_amount`, `requested_at`
@@ -793,15 +746,12 @@ We also check quarterly trends.
     ORDER BY quarter, return_count DESC;
     ```
 
-
 ---
-
 
 ### Problem 15. Comparison of performance by CS employee
 
 Compare the number of inquiries handled by each CS employee, resolution rate, average processing time, and customer satisfaction (rate without compensation).
 The difference from the overall average is also displayed.
-
 
 ??? tip "Hint"
     - `complaints.staff_id` → `staff` JOIN
@@ -844,15 +794,12 @@ The difference from the overall average is also displayed.
     | Kim Haneul | 72 | 91.7 | 1.2 | 68.0 | 65.0 | 1.5 |
     | ... | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 16. Escalation analysis
 
 Analyze the characteristics of escalated (escalated = 1) inquiries.
 Understand which types, channels, and priorities are generating the most escalations.
-
 
 ??? tip "Hint"
     - The thing that is `complaints.escalated = 1`
@@ -887,15 +834,12 @@ Understand which types, channels, and priorities are generating the most escalat
     | refund_request | email | high | 18 | 9 | 50.0 | 2.2 |
     | ... | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 17. CS incidence rate by product
 
 Find the CS (inquiries + returns) incidence rate of the top 30 products in sales.
 Products with a high incidence of CS require quality improvement.
-
 
 ??? tip "Hint"
     - Ratio of inquiries/returns to number of sales
@@ -959,17 +903,12 @@ Products with a high incidence of CS require quality improvement.
     | (Normal Product C) | 200 | 5 | 3 | 8 | 4.0 |
     | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
-## Comprehensive dashboard (18~20)
-
 
 ### Problem 18. Daily operations dashboard
 
 Create a dashboard that shows your operational status at a glance on a specific date (2024-12-15).
 Includes number of same-day orders, sales, new subscribers, completed deliveries, and number of outstanding CS cases.
-
 
 ??? tip "Hint"
     - Calculate each indicator as a scalar subquery or CTE
@@ -1031,15 +970,12 @@ Includes number of same-day orders, sales, new subscribers, completed deliveries
     |---|---|---|---|---|---|---|---|---|
     | 2024-12-15 | 65 | 42000000 | 58 | 38000000 | 10.5 | 12 | 52 | 35 |
 
-
 ---
-
 
 ### Problem 19. Comprehensive evaluation of suppliers
 
 Evaluate each supplier’s overall performance.
 Consolidate number of units supplied, total sales, return rate, average review rating, and inventory availability into one report.
-
 
 ??? tip "Hint"
     - `suppliers` → `products` → JOIN various tables
@@ -1111,9 +1047,7 @@ Consolidate number of units supplied, total sales, return rate, average review r
     | Digital Partner | 38 | 2100000000 | 2800 | 4.2 | 4.0 | 1200 |
     | ... | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 20. Monthly Management Comprehensive Report (December 2024)
 
@@ -1126,7 +1060,6 @@ Integrates key KPIs from four areas: sales, customers, inventory, and CS into on
 | Customers | Active customer count, new signups, repeat purchase rate |
 | Inventory | Out-of-stock product count, inventory value, low-stock alert count |
 | CS | Unresolved cases, avg resolution time, resolution rate |
-
 
 ??? tip "Hint"
     - Write each area as a separate CTE and then CROSS JOIN

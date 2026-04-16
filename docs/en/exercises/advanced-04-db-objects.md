@@ -14,8 +14,6 @@
 !!! abstract "Concepts"
     `CREATE VIEW`, View query, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), Audit Logging, Stored procedure concepts (MySQL/PG)
 
-## Views (1~7)
-
 Practice creating, using, and managing views.
 
 ---
@@ -773,8 +771,6 @@ Save statistics for each product as a table and implement an update pattern.
 
 ---
 
-## Trigger (8~14)
-
 Practice defining, creating, and using triggers.
 
 ---
@@ -1187,8 +1183,6 @@ Delete the existing `trg_stock_deduct` trigger and recreate it with an improved 
     > Separating the BEFORE trigger (validation) and AFTER trigger (execution) makes the logic clearer.
 
 ---
-
-## Stored procedures (15~20)
 
 Stored procedures are not supported by SQLite. Provided in MySQL/PostgreSQL syntax.
 

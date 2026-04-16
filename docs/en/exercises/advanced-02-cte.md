@@ -12,8 +12,6 @@
 !!! abstract "Concepts"
     `WITH`, Recursive CTE(`WITH RECURSIVE`), Multiple CTE Chaining, CTE + Aggregate/JOIN/Window Function
 
-## Basic (1~5)
-
 Practice single CTE and CTE + JOIN/aggregation.
 
 ---
@@ -298,8 +296,6 @@ Calculate sales by category as of 2024 and display cumulative proportions in des
     | ... | ... | ... | ... |
 
 ---
-
-## Applied (6~10)
 
 Utilizes recursive CTEs and multiple CTEs.
 
@@ -613,8 +609,6 @@ We chain three CTEs: (1) RFM raw metrics, (2) NTILE scores, and (3) segment labe
     | ... | ... | ... | ... |
 
 ---
-
-## Practical (11~15)
 
 We cover advanced patterns such as chaining more than 3 CTEs, leveraging recursion depth, and creating date sequences.
 

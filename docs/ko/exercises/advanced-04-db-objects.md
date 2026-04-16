@@ -14,8 +14,6 @@
 !!! abstract "학습 범위"
     `CREATE VIEW`, 뷰 쿼리, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), 감사 로깅, 저장 프로시저 개념(MySQL/PG)
 
-## 뷰 (1~7)
-
 뷰(View)의 생성, 활용, 관리를 연습합니다.
 
 ---
@@ -773,8 +771,6 @@ SQLite의 시스템 카탈로그를 사용합니다.
 
 ---
 
-## 트리거 (8~14)
-
 트리거(Trigger)의 정의, 생성, 활용을 연습합니다.
 
 ---
@@ -1187,8 +1183,6 @@ SQLite의 시스템 카탈로그를 사용합니다.
     > BEFORE 트리거(검증)와 AFTER 트리거(실행)를 분리하면 로직이 명확해집니다.
 
 ---
-
-## 저장 프로시저 (15~20)
 
 저장 프로시저는 SQLite에서 지원하지 않습니다. MySQL/PostgreSQL 구문으로 제공합니다.
 

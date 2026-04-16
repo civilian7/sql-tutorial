@@ -10,8 +10,6 @@
 !!! abstract "학습 범위"
     `CASE WHEN THEN ELSE END`, 단순 CASE, 검색 CASE, CASE + 집계/정렬
 
-## 기초 (1~10)
-
 단순 CASE와 검색 CASE의 기본 사용법을 연습합니다.
 
 ---
@@ -244,8 +242,6 @@
     ```
 
 ---
-
-## 응용 (11~20)
 
 CASE + GROUP BY, CASE + ORDER BY, CASE + 집계 함수를 조합합니다.
 
@@ -482,8 +478,6 @@ CASE + GROUP BY, CASE + ORDER BY, CASE + 집계 함수를 조합합니다.
     ```
 
 ---
-
-## 실전 (21~30)
 
 비즈니스 분류, 복합 조건, CASE 응용을 연습합니다.
 

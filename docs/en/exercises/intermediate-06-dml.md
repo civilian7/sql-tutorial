@@ -15,9 +15,6 @@
 
 ---
 
-
-## Basic (1-7): INSERT, UPDATE, DELETE Basics
-
 ### Problem 1. Create a practice product table and insert one product.
 
 First create a `temp_products` table, then add data with an INSERT statement.
@@ -42,9 +39,7 @@ First create a `temp_products` table, then add data with an INSERT statement.
     DROP TABLE temp_products;
     ```
 
-
 ---
-
 
 ### Problem 2. Insert multiple rows into the practice product table at once.
 
@@ -76,9 +71,7 @@ Add multiple rows in a single INSERT by separating VALUES with commas.
     | 9002 | 테스트 패드 | 15000 |
     | 9003 | 테스트 모니터 | 350000 |
 
-
 ---
-
 
 ### Problem 3. Update the price of a specific product in the practice table.
 
@@ -108,9 +101,7 @@ Use UPDATE + WHERE to modify only specific rows. Be careful: UPDATE without WHER
     DROP TABLE temp_products;
     ```
 
-
 ---
-
 
 ### Problem 4. Delete a specific product from the practice table.
 
@@ -139,9 +130,7 @@ Use DELETE + WHERE to delete only specific rows.
     DROP TABLE temp_products;
     ```
 
-
 ---
-
 
 ### Problem 5. Create a practice customer table and bulk-change all 'BRONZE' grades to 'SILVER'.
 
@@ -172,9 +161,7 @@ Use WHERE to UPDATE multiple rows at once.
     DROP TABLE temp_customers;
     ```
 
-
 ---
-
 
 ### Problem 6. Delete all customers with zero points from the practice table. Compare counts before and after deletion.
 
@@ -202,9 +189,7 @@ Use DELETE + WHERE for conditional deletion, then verify the count.
     DROP TABLE temp_customers;
     ```
 
-
 ---
-
 
 ### Problem 7. Increase all product prices by 10% in the practice table.
 
@@ -234,11 +219,7 @@ UPDATE without WHERE applies to all rows. This is an intentional bulk modificati
     DROP TABLE temp_products;
     ```
 
-
 ---
-
-
-## Applied (8-14): UPSERT, Conditional UPDATE, INSERT...SELECT
 
 ### Problem 8. Use INSERT OR REPLACE (UPSERT) to insert a product, updating price if it already exists.
 
@@ -272,9 +253,7 @@ SQLite's `INSERT OR REPLACE` deletes the existing row and inserts a new one when
     DROP TABLE temp_products;
     ```
 
-
 ---
-
 
 ### Problem 9. Write a more precise UPSERT using ON CONFLICT. Only update the price on conflict.
 
@@ -314,9 +293,7 @@ SQLite's `INSERT OR REPLACE` deletes the existing row and inserts a new one when
     | 1 | 무선 마우스 | WM-001 | 42000 | 2025-06-01 |
     | 2 | 기계식 키보드 | MK-001 | 89000 | 2025-01-01 |
 
-
 ---
-
 
 ### Problem 10. Conditional UPDATE: Increase prices by 5% only for products with stock below 10.
 
@@ -353,9 +330,7 @@ Use WHERE to selectively UPDATE only rows matching a specific condition.
     DROP TABLE temp_products;
     ```
 
-
 ---
-
 
 ### Problem 11. Use INSERT...SELECT to copy VIP customers into a separate table.
 
@@ -388,9 +363,7 @@ Use the result of a SELECT directly as input for INSERT. Useful for data migrati
     DROP TABLE temp_vip;
     ```
 
-
 ---
-
 
 ### Problem 12. Use INSERT...SELECT to create a 2025 monthly revenue summary table.
 
@@ -419,9 +392,7 @@ Save the result of an aggregation query into a new table. Useful for creating re
     DROP TABLE temp_monthly_sales;
     ```
 
-
 ---
-
 
 ### Problem 13. Use CASE in a conditional UPDATE: award bonus points by grade.
 
@@ -460,9 +431,7 @@ Use a CASE expression in the SET clause to apply different values based on condi
     DROP TABLE temp_customers;
     ```
 
-
 ---
-
 
 ### Problem 14. Use a subquery in UPDATE: deduct stock based on order quantities.
 
@@ -500,11 +469,7 @@ Use a subquery in the SET clause to apply aggregated values from another table.
     DROP TABLE temp_products;
     ```
 
-
 ---
-
-
-## Advanced (15-20): Multi-step DML, Bulk Changes, Safe Delete Patterns
 
 ### Problem 15. Product catalog copy and cleanup: perform a 3-step process of copy, mark, delete.
 
@@ -540,9 +505,7 @@ Practice the data cleanup workflow used in real-world scenarios.
     DROP TABLE temp_products;
     ```
 
-
 ---
-
 
 ### Problem 16. Safe delete pattern: verify deletion targets before deleting.
 
@@ -579,9 +542,7 @@ In practice, always verify with SELECT before running DELETE.
     DROP TABLE temp_orders;
     ```
 
-
 ---
-
 
 ### Problem 17. Use INSERT...SELECT with aggregation to create a per-customer purchase statistics table.
 
@@ -615,9 +576,7 @@ Save the result of a multi-table JOIN + aggregation into a new table.
     DROP TABLE temp_customer_stats;
     ```
 
-
 ---
-
 
 ### Problem 18. Combine multiple conditions in a bulk UPDATE: deactivate customers with no orders in the past year.
 
@@ -657,9 +616,7 @@ A complex UPDATE combining subqueries and date conditions.
     DROP TABLE temp_customers;
     ```
 
-
 ---
-
 
 ### Problem 19. Perform multi-step DML like a transaction: refund points and restore stock on order cancellation.
 
@@ -733,9 +690,7 @@ In practice, order cancellation requires modifying multiple tables simultaneousl
     DROP TABLE temp_products;
     ```
 
-
 ---
-
 
 ### Problem 20. Data normalization: split a denormalized table into two normalized tables.
 
@@ -797,6 +752,5 @@ Use INSERT...SELECT to extract a master table and a detail table from a single d
     DROP TABLE temp_brands;
     DROP TABLE temp_norm_products;
     ```
-
 
 ---

@@ -10,8 +10,6 @@
 !!! abstract "Concepts"
     `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `ROUND`, `COUNT(DISTINCT)` + Previous lecture contents
 
-## Basic (1~10)
-
 Practice one aggregate function at a time.
 
 ---
@@ -234,8 +232,6 @@ Practice one aggregate function at a time.
     > There is a customer who holds approximately 3.34 million points.
 
 ---
-
-## Applied (11~20)
 
 Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate functions, and WHERE filters.
 
@@ -467,8 +463,6 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     > Discounts were applied to approximately 21% of the total 34,908 orders.
 
 ---
-
-## Practical (21~30)
 
 We cover complex conditions + aggregates, arithmetic operations + aggregates, and frequently used questions in practice.
 

@@ -11,8 +11,6 @@
 !!! abstract "학습 범위"
     `SUBSTR`, `LENGTH`, `UPPER`/`LOWER`, `REPLACE`, `TRIM`, `INSTR`, `GROUP_CONCAT`, `COALESCE`, `ROUND`, `ABS`, `CAST`, `NULLIF`, `IIF`/`CASE`, `printf`
 
-## 기초 (1~7)
-
 기본 문자열 함수(LENGTH, UPPER, SUBSTR, REPLACE)를 연습합니다.
 
 ---
@@ -259,8 +257,6 @@
     > SKU의 첫 2글자가 카테고리를 나타냅니다.
 
 ---
-
-## 응용 (8~14)
 
 GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND를 연습합니다.
 
@@ -528,8 +524,6 @@ GROUP_CONCAT, INSTR, NULLIF, CAST, ROUND를 연습합니다.
     > `TYPEOF()`는 SQLite 전용 함수로 저장된 값의 실제 타입을 확인합니다.
 
 ---
-
-## 실전 (15~20)
 
 복합 포매팅, 데이터 변환, 패턴 매칭을 연습합니다.
 

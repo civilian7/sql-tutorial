@@ -18,7 +18,6 @@ Use SQLite's `EXPLAIN QUERY PLAN` to analyze how queries are executed and create
 
 ---
 
-
 ### Problem 1. EXPLAIN QUERY PLAN Basics — SCAN vs SEARCH
 
 Check the execution plans of the following two queries, and explain the difference between `SCAN TABLE` and `SEARCH TABLE`.
@@ -30,7 +29,6 @@ SELECT * FROM orders WHERE customer_id = 100;
 -- Query B
 SELECT * FROM orders WHERE notes LIKE '%urgent delivery%';
 ```
-
 
 ??? tip "Hint"
     - Execute by adding `EXPLAIN QUERY PLAN` in front of each query.
@@ -55,15 +53,12 @@ SELECT * FROM orders WHERE notes LIKE '%urgent delivery%';
     | Execution method | SEARCH (index) | SCAN (full scan) |
     | Reason | idx_orders_customer_id exists | LIKE '%...' pattern cannot use index |
 
-
 ---
-
 
 ### Problem 2. Check the existing index list
 
 Check all indexes created in the current database by table.
 Displays table name, index name, and creation SQL.
-
 
 ??? tip "Hint"
     - Search for row `type = 'index'` in `sqlite_master` table.
@@ -90,15 +85,12 @@ Displays table name, index name, and creation SQL.
     | orders | idx_orders_customer_status | CREATE INDEX idx_orders_customer_status ON orders(customer_id, status) |
     | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 3. Summary of index count for each table
 
 Count how many indexes each table has.
 Exclude tables with an index of 0.
-
 
 ??? tip "Hint"
     - GROUP BY `tbl_name` `type = 'index'` IN `sqlite_master`
@@ -123,14 +115,11 @@ Exclude tables with an index of 0.
     | complaints | 6 |
     | ... | ... |
 
-
 ---
-
 
 ### Problem 4. Create a simple index and check the effect
 
 Create an index on the `method` column of the `payments` table, and compare the execution plan before and after creation.
-
 
 ??? tip "Hint"
     - First check the current status with `EXPLAIN QUERY PLAN SELECT ... WHERE method = 'card'`
@@ -158,9 +147,7 @@ Create an index on the `method` column of the `payments` table, and compare the 
     | Before index creation | SCAN TABLE payments |
     | After index creation | SEARCH TABLE payments USING INDEX idx_payments_method |
 
-
 ---
-
 
 ### Problem 5. Analysis of execution plan of JOIN query
 
@@ -175,7 +162,6 @@ INNER JOIN products AS p ON oi.product_id = p.id
 WHERE o.ordered_at LIKE '2024-12%'
   AND o.status = 'delivered';
 ```
-
 
 ??? tip "Hint"
     - Execute by adding `EXPLAIN QUERY PLAN` in front of the query
@@ -205,9 +191,7 @@ WHERE o.ordered_at LIKE '2024-12%'
     - order_items: View detailed items of the order with `idx_order_items_order_id`
     - products: Direct access to product information with PK (rowid)
 
-
 ---
-
 
 ### Problem 6. Creating a Covering Index
 
@@ -219,7 +203,6 @@ SELECT ordered_at, total_amount
 FROM orders
 WHERE customer_id = 100;
 ```
-
 
 ??? tip "Hint"
     - Covering index: Index that includes both WHERE condition column + SELECT column
@@ -245,15 +228,12 @@ WHERE customer_id = 100;
     | Regular index | Index -> rowid -> table row access (2 steps) |
     | Covering index | Return directly from index (1 step, no table access) |
 
-
 ---
-
 
 ### Problem 7. Creating a partial index
 
 Assume frequent category searches targeting only the active product (`is_active = 1`).
 Create a partial index to exclude inactive products from the index.
-
 
 ??? tip "Hint"
     - Create partial index with `CREATE INDEX ... WHERE is_active = 1` syntax
@@ -288,9 +268,7 @@ Create a partial index to exclude inactive products from the index.
     | `category_id = 5 AND is_active = 1` | idx_products_active_category (partial index) |
     | `category_id = 5` (no is_active condition) | idx_products_category_id (regular index) |
 
-
 ---
-
 
 ### Problem 8. Importance of composite index column order
 
@@ -304,7 +282,6 @@ SELECT * FROM orders WHERE status = 'delivered' AND ordered_at >= '2024-01-01';
 -- Query B: range on ordered_at only
 SELECT * FROM orders WHERE ordered_at >= '2024-01-01';
 ```
-
 
 ??? tip "Hint"
     - Most effective when the **first column** of a composite index is used as an equals condition in the WHERE clause
@@ -333,15 +310,12 @@ SELECT * FROM orders WHERE ordered_at >= '2024-01-01';
     | status = ? AND ordered_at >= ? | (status, ordered_at) | Equality condition column is leading |
     | ordered_at >= ? | (ordered_at, status) | Range search using only the first column |
 
-
 ---
-
 
 ### Problem 9. Index selectivity analysis
 
 Compare the selectivity of the `status` and `customer_id` columns in the `orders` table.
 Determine which column it is more effective to create an index on.
-
 
 ??? tip "Hint"
     - Selectivity = number of unique values ​​/ total number of rows
@@ -367,9 +341,7 @@ Determine which column it is more effective to create an index on.
     - customer_id index is more effective: can quickly find only one customer's order
     - The status index returns about 11% of the total (delivered, etc.) → the index effect may be low
 
-
 ---
-
 
 ### Problem 10. Determine when an index is not used
 
@@ -386,7 +358,6 @@ SELECT * FROM orders WHERE customer_id = 100 OR status = 'cancelled';
 -- Query C: negation condition
 SELECT * FROM orders WHERE customer_id != 100;
 ```
-
 
 ??? tip "Hint"
     - If you apply a function to a column, you cannot use the index (SARGable violation)
@@ -425,9 +396,7 @@ SELECT * FROM orders WHERE customer_id != 100;
     | `col_a = ? OR col_b = ?` | Limited | OR across different columns |
     | `col != ?` | X | Returns most rows, scan is efficient |
 
-
 ---
-
 
 ### Problem 11. Improve performance by converting subqueries to JOINs
 
@@ -443,7 +412,6 @@ SELECT
 FROM products AS p
 WHERE p.is_active = 1;
 ```
-
 
 ??? tip "Hint"
     - Correlated subqueries are executed for each row in the outer query.
@@ -484,9 +452,7 @@ WHERE p.is_active = 1;
     | Correlated subquery | Product count x 2 | Slow |
     | JOIN (pre-aggregated) | Once | Fast |
 
-
 ---
-
 
 ### Problem 12. Improving queries with SARGable conditions
 
@@ -502,7 +468,6 @@ SELECT * FROM products WHERE price * 0.9 > 1000000;
 -- Inefficient C: LIKE with leading wildcard
 SELECT * FROM customers WHERE name LIKE '%Kim%';
 ```
-
 
 ??? tip "Hint"
     - You can use an index by moving the function/calculation to the **comparison value** side rather than the column.
@@ -535,9 +500,7 @@ SELECT * FROM customers WHERE name LIKE '%Kim%';
     | `price * 0.9 > 1000000` | `price > 1111111.11` | O |
     | `name LIKE '%Kim%'` | `name LIKE 'Kim%'` | O (prefix only) |
 
-
 ---
-
 
 ### Problem 13. EXISTS vs IN performance comparison
 
@@ -551,7 +514,6 @@ SELECT * FROM customers WHERE id IN (SELECT DISTINCT customer_id FROM reviews);
 SELECT * FROM customers AS c
 WHERE EXISTS (SELECT 1 FROM reviews AS r WHERE r.customer_id = c.id);
 ```
-
 
 ??? tip "Hint"
     - Check the execution plan of both queries with `EXPLAIN QUERY PLAN`
@@ -580,15 +542,12 @@ WHERE EXISTS (SELECT 1 FROM reviews AS r WHERE r.customer_id = c.id);
     - Since reviews have `idx_reviews_customer_id`, EXISTS utilizes the index to efficiently
     - IN executes the entire subquery first and then compares it, so memory usage increases when the result is large.
 
-
 ---
-
 
 ### Problem 14. Identifying unnecessary indexes
 
 Too many indexes will result in poor INSERT/UPDATE performance.
 Analyze whether any of the indexes in the `orders` table are redundant or unnecessary.
-
 
 ??? tip "Hint"
     - If there is a composite index `(customer_id, status)`, the single index `(customer_id)` is redundant.
@@ -617,9 +576,7 @@ Analyze whether any of the indexes in the `orders` table are redundant or unnece
     **Conclusion**: `idx_orders_customer_id` is included in `idx_orders_customer_status` and is therefore a candidate for removal.
     However, considering the covering index effect (smaller index when status is not needed), it can be maintained.
 
-
 ---
-
 
 ### Problem 15. Summary — Slow Query Optimization Workshop
 
@@ -645,7 +602,6 @@ WHERE oi.order_id = o.id
 GROUP BY cat.name, strftime('%Y-%m', o.ordered_at)
 ORDER BY cat.name, month;
 ```
-
 
 ??? tip "Hint"
     1. `strftime('%Y', ordered_at) = '2024'` → Convert to range condition (SARGable)

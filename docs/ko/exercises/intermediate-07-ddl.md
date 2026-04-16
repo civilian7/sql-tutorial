@@ -9,10 +9,6 @@
 
 ---
 
-
-## 기초 (1~5): CREATE TABLE과 제약조건
-
-
 ### 문제 1
 
 **기본 테이블을 만드세요.** 아래 요구사항으로 `temp_memo` 테이블을 생성하세요.
@@ -22,10 +18,8 @@
 - `content`: 텍스트, NULL 허용
 - `created_at`: 텍스트, NOT NULL, 기본값 현재시각
 
-
 ??? tip "힌트"
     `INTEGER PRIMARY KEY AUTOINCREMENT`로 자동증가 PK를, `DEFAULT CURRENT_TIMESTAMP`로 기본값을 설정합니다.
-
 
 ??? success "정답"
     ```sql
@@ -47,9 +41,7 @@
     | 2   | content    | TEXT    | 0       |                   | 0  |
     | 3   | created_at | TEXT    | 1       | CURRENT_TIMESTAMP | 0  |
 
-
 ---
-
 
 ### 문제 2
 
@@ -58,10 +50,8 @@
 - `id`: 정수, 자동증가 기본키
 - `name`: 텍스트, NOT NULL, UNIQUE
 
-
 ??? tip "힌트"
     칼럼 정의 뒤에 `UNIQUE`를 붙이면 해당 칼럼에 중복 값이 들어갈 수 없습니다.
-
 
 ??? success "정답"
     ```sql
@@ -85,9 +75,7 @@
     | 1  | 전자제품 |
     | 2  | 주변기기 |
 
-
 ---
-
 
 ### 문제 3
 
@@ -98,10 +86,8 @@
 - `price`: 실수, NOT NULL, 0 이상
 - `stock_qty`: 정수, NOT NULL, 0 이상, 기본값 0
 
-
 ??? tip "힌트"
     `CHECK(price >= 0)`과 `CHECK(stock_qty >= 0)`으로 음수를 방지합니다.
-
 
 ??? success "정답"
     ```sql
@@ -125,9 +111,7 @@
     |----|--------|-------|-----------|
     | 1  | 키보드 | 89000 | 50        |
 
-
 ---
-
 
 ### 문제 4
 
@@ -139,10 +123,8 @@
 - `grade`: 텍스트, NOT NULL, 기본값 `'BRONZE'`, `CHECK(grade IN ('BRONZE','SILVER','GOLD','VIP'))`
 - `is_active`: 정수, NOT NULL, 기본값 1
 
-
 ??? tip "힌트"
     `DEFAULT 'BRONZE'`와 `CHECK(grade IN (...))`을 함께 사용하면, 값을 생략하면 `'BRONZE'`가 들어가고, 허용 목록 외 값은 거부됩니다.
-
 
 ??? success "정답"
     ```sql
@@ -169,9 +151,7 @@
     | 1  | 김테스트 | kim@testmail.kr   | BRONZE | 1         |
     | 2  | 이테스트 | lee@testmail.kr   | GOLD   | 1         |
 
-
 ---
-
 
 ### 문제 5
 
@@ -182,10 +162,8 @@
 - `total_amount`: 실수, NOT NULL, CHECK >= 0
 - `ordered_at`: 텍스트, NOT NULL
 
-
 ??? tip "힌트"
     SQLite에서 FK 검사를 활성화하려면 `PRAGMA foreign_keys = ON;`을 먼저 실행해야 합니다. `REFERENCES 테이블(칼럼)`으로 FK를 정의합니다.
-
 
 ??? success "정답"
     ```sql
@@ -214,21 +192,14 @@
     |----|-------------|--------------|------------|
     | 1  | 1           | 150000       | 2025-01-15 |
 
-
 ---
-
-
-## 응용 (6~10): ALTER TABLE, 복합 키, ON DELETE
-
 
 ### 문제 6
 
 **기존 테이블에 칼럼을 추가하세요.** `temp_product` 테이블에 `brand` 칼럼(TEXT, NOT NULL, 기본값 `'미정'`)과 `weight_grams` 칼럼(INTEGER, NULL 허용)을 추가하세요.
 
-
 ??? tip "힌트"
     SQLite의 `ALTER TABLE ... ADD COLUMN`은 한 번에 칼럼 하나만 추가합니다. 두 번 실행하세요.
-
 
 ??? success "정답"
     ```sql
@@ -248,18 +219,14 @@
     | 4   | brand        | TEXT    | 1       | '미정'     | 0  |
     | 5   | weight_grams | INTEGER | 0       |            | 0  |
 
-
 ---
-
 
 ### 문제 7
 
 **테이블 이름을 변경하세요.** `temp_memo`를 `temp_note`로 이름을 바꾸세요. 그리고 테이블 목록에서 확인하세요.
 
-
 ??? tip "힌트"
     `ALTER TABLE old_name RENAME TO new_name`을 사용합니다.
-
 
 ??? success "정답"
     ```sql
@@ -279,9 +246,7 @@
     | temp_product  |
     | temp_tag      |
 
-
 ---
-
 
 ### 문제 8
 
@@ -292,10 +257,8 @@
 - `product_name`: 텍스트, NOT NULL
 - `quantity`: 정수, NOT NULL, CHECK > 0
 
-
 ??? tip "힌트"
     `REFERENCES temp_order(id) ON DELETE CASCADE`로 부모 삭제 시 자식 자동 삭제. `PRAGMA foreign_keys = ON`이 필수입니다.
-
 
 ??? success "정답"
     ```sql
@@ -334,9 +297,7 @@
 
     삭제 후: (0행)
 
-
 ---
-
 
 ### 문제 9
 
@@ -346,10 +307,8 @@
 - `title`: 텍스트, NOT NULL
 - `assignee_id`: 정수, NULL 허용, `temp_customer(id)` 참조, ON DELETE SET NULL
 
-
 ??? tip "힌트"
     `ON DELETE SET NULL`은 부모가 삭제되면 자식의 FK 칼럼을 NULL로 변경합니다. FK 칼럼이 `NOT NULL`이면 사용할 수 없습니다.
-
 
 ??? success "정답"
     ```sql
@@ -387,9 +346,7 @@
     | 1  | 재고 확인 |             |
     | 2  | 배송 처리 | 2           |
 
-
 ---
-
 
 ### 문제 10
 
@@ -399,10 +356,8 @@
 - `tag_id`: 정수, NOT NULL
 - PRIMARY KEY는 (product_id, tag_id)
 
-
 ??? tip "힌트"
     `AUTOINCREMENT`가 아닌 복합 PK는 칼럼 정의가 아니라 테이블 제약으로 선언합니다: `PRIMARY KEY (col1, col2)`.
-
 
 ??? success "정답"
     ```sql
@@ -429,12 +384,7 @@
     | 1          | 20     |
     | 2          | 10     |
 
-
 ---
-
-
-## 실전 (11~15): 설계, CTAS, 오류 수정
-
 
 ### 문제 11
 
@@ -451,12 +401,10 @@ CREATE TABLE temp_employee (
 );
 ```
 
-
 ??? tip "힌트"
     1. `AUTOINCREMENT`의 위치가 올바른지 확인하세요.
     2. `name`에 NOT NULL이 빠져 있다면 이름 없는 직원이 가능합니다.
     3. `DEFAULT` 뒤에 기본값이 없습니다.
-
 
 ??? success "정답"
     ```sql
@@ -487,18 +435,14 @@ CREATE TABLE temp_employee (
     |----|-------------|-------|--------|------------|------------|
     | 1  | 테스트 직원 |       |        | 미배정     | 2025-01-01 |
 
-
 ---
-
 
 ### 문제 12
 
 **CTAS (CREATE TABLE AS SELECT)로 2024년 주문 요약 테이블을 만드세요.** `orders`에서 고객별 주문 건수, 총 결제금액, 평균 결제금액을 계산한 `temp_order_summary_2024` 테이블을 생성하세요.
 
-
 ??? tip "힌트"
     `CREATE TABLE 이름 AS SELECT ...`는 SELECT 결과를 새 테이블로 저장합니다. `WHERE ordered_at LIKE '2024%'`로 2024년만 필터링하세요.
-
 
 ??? success "정답"
     ```sql
@@ -527,9 +471,7 @@ CREATE TABLE temp_employee (
     !!! note
         CTAS로 만든 테이블에는 PK, FK, CHECK 등 제약조건이 복사되지 않습니다. 필요하면 별도로 추가해야 합니다.
 
-
 ---
-
 
 ### 문제 13
 
@@ -538,12 +480,10 @@ CREATE TABLE temp_employee (
 !!! info "참고"
     SQLite에는 `TRUNCATE TABLE` 명령이 없습니다. 대신 `DELETE FROM`을 사용합니다. MySQL/PostgreSQL에서는 `TRUNCATE TABLE`을 사용할 수 있으며, DELETE보다 빠릅니다 (행 단위 삭제가 아닌 테이블 초기화).
 
-
 ??? tip "힌트"
     - 데이터만 삭제: `DELETE FROM 테이블;`
     - 테이블 삭제: `DROP TABLE 테이블;`
     - 안전 삭제: `DROP TABLE IF EXISTS 테이블;`
-
 
 ??? success "정답"
     ```sql
@@ -573,9 +513,7 @@ CREATE TABLE temp_employee (
         | 자동증가 초기화 | 안 됨 | 초기화됨 (MySQL) |
         | SQLite 지원 | O | X |
 
-
 ---
-
 
 ### 문제 14
 
@@ -590,10 +528,8 @@ CREATE TABLE temp_employee (
 5. 유효기간(시작일, 종료일)은 필수입니다
 6. 활성 여부는 기본값 1(활성)입니다
 
-
 ??? tip "힌트"
     각 요구사항을 제약조건으로 매핑하세요: 유일 → `UNIQUE`, 허용 목록 → `CHECK IN`, 양수 → `CHECK > 0`, 선택 → NULL 허용, 필수 → `NOT NULL`, 기본값 → `DEFAULT`.
-
 
 ??? success "정답"
     ```sql
@@ -623,18 +559,14 @@ CREATE TABLE temp_employee (
     | 1  | WELCOME10 | percent | 10             | 50000            | 1         | 2025-01-01 | 2025-12-31 |
     | 2  | FLAT5000  | fixed   | 5000           |                  | 1         | 2025-06-01 | 2025-06-30 |
 
-
 ---
-
 
 ### 문제 15
 
 **정리: 이번 연습에서 만든 모든 임시 테이블을 삭제하세요.** `sqlite_master`에서 `temp_`로 시작하는 테이블을 조회한 뒤 모두 DROP하세요.
 
-
 ??? tip "힌트"
     먼저 `SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'temp_%'`로 목록을 확인하고, 각각 `DROP TABLE IF EXISTS`로 삭제합니다. FK 참조 순서에 주의하세요 (자식 먼저 삭제).
-
 
 ??? success "정답"
     ```sql

@@ -10,8 +10,6 @@
 !!! abstract "Concepts"
     `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`, Aliases (`AS`), arithmetic operations
 
-## Basic (1~10)
-
 Practice one concept at a time.
 
 ---
@@ -301,8 +299,6 @@ Practice one concept at a time.
     | ... |
 
 ---
-
-## Applied (11~20)
 
 Practice combining multiple concepts.
 
@@ -597,8 +593,6 @@ Practice combining multiple concepts.
     | ... | ... | ... | ... |
 
 ---
-
-## Practical (21~30)
 
 Utilize multiple tables and complex conditions.
 

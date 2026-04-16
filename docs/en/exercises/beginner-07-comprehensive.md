@@ -12,8 +12,6 @@
 !!! abstract "Concepts"
     All Beginner topics: `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, Aggregate functions, `GROUP BY`, `HAVING`, `IS NULL`, `COALESCE`, `CASE`
 
-## Basic (1~10)
-
 Practice combining 2-3 concepts.
 
 ---
@@ -220,8 +218,6 @@ Practice combining 2-3 concepts.
     ```
 
 ---
-
-## Applied (11~20)
 
 Business scenarios combining 3-4 concepts.
 
@@ -464,8 +460,6 @@ Business scenarios combining 3-4 concepts.
     ```
 
 ---
-
-## Practical (21~30)
 
 Real-world analysis tasks combining 4+ concepts.
 

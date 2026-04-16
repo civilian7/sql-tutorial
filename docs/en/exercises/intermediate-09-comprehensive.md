@@ -15,8 +15,6 @@
 !!! abstract "Concepts"
     All intermediate: `JOIN`, Subqueries, Date functions, String functions, `CASE`, `UNION`, `GROUP BY`/`HAVING`, Aggregate functions
 
-## Basic (1~8): Combining 2~3 Concepts
-
 ### Problem 1
 
 **JOIN + GROUP BY:** Find active product count and average price per category. Top 10 by product count.
@@ -254,8 +252,6 @@
     | ...  | ...     | ...       | 고가        |
 
 ---
-
-## Applied (9~16): Combining 3~4 Concepts, Business Analysis
 
 ### Problem 9
 
@@ -552,8 +548,6 @@
     | Dormant       | ...            | ...  |
 
 ---
-
-## Advanced (17~25): Complex Real-world Scenarios
 
 ### Problem 17
 

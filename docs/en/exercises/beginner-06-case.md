@@ -10,8 +10,6 @@
 !!! abstract "Concepts"
     `CASE WHEN THEN ELSE END`, Simple CASE, Searched CASE, CASE + aggregation/sorting
 
-## Basic (1~10)
-
 Practice the basic usage of simple CASE and searched CASE.
 
 ---
@@ -244,8 +242,6 @@ Practice the basic usage of simple CASE and searched CASE.
     ```
 
 ---
-
-## Applied (11~20)
 
 Combine CASE + GROUP BY, CASE + ORDER BY, and CASE + aggregate functions.
 
@@ -482,8 +478,6 @@ Combine CASE + GROUP BY, CASE + ORDER BY, and CASE + aggregate functions.
     ```
 
 ---
-
-## Practical (21~30)
 
 Practice business classification, compound conditions, and CASE applications.
 

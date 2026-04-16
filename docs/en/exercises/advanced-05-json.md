@@ -21,12 +21,10 @@ The `specs` column of the products table stores specification information for ea
 
 ---
 
-
 ### Problem 1. JSON Basic Extraction — Laptop CPU List
 
 Extract product names and CPU specifications from all active products in the Laptop category.
 Products with NULL CPU specifications are excluded.
-
 
 ??? tip "Hint"
     - Extract JSON internal values ​​with `json_extract(specs, '$.cpu')`
@@ -50,15 +48,12 @@ Products with NULL CPU specifications are excluded.
     | (laptop product name) | Intel Core i7-13700H |
     | ... | ... |
 
-
 ---
-
 
 ### Problem 2. JSON Multiple Field Extraction — Notebook Spec Sheet
 
 Create a spec sheet by extracting the screen size, CPU, RAM (GB), storage capacity (GB), and battery (hours) of your laptop product at once.
 Sort by price descending.
-
 
 ??? tip "Hint"
     - Call `json_extract` multiple times to extract each field into a separate column
@@ -88,15 +83,12 @@ Sort by price descending.
     | (laptop name) | 2500000 | 16 inch | Intel Core i9-13900H | 32 | 1024 | 12 |
     | ... | ... | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 3. Identifying products with NULL specs
 
 Check the distribution by category of products without specs information (NULL).
 The goal is to determine which categories are missing specification information.
-
 
 ??? tip "Hint"
     - `WHERE p.specs IS NULL` condition
@@ -120,15 +112,12 @@ The goal is to determine which categories are missing specification information.
     | (peripheral category) | 45 |
     | ... | ... |
 
-
 ---
-
 
 ### Problem 4. List JSON keys — utilizing json_each
 
 Pick a laptop product and list all the keys included in the specs JSON.
 `json_each` uses table-valued functions.
-
 
 ??? tip "Hint"
     - `json_each(specs)` returns each key-value pair in a JSON object as a row
@@ -161,15 +150,12 @@ Pick a laptop product and list all the keys included in the specs JSON.
     | storage_gb | 512 | integer |
     | battery_hours | 10 | integer |
 
-
 ---
-
 
 ### Problem 5. JSON Condition Filtering — Finding High-Performance Laptops
 
 Look for a laptop with at least 32GB of RAM and at least 1024GB of storage.
 Displays product name, price, RAM, and storage capacity.
-
 
 ??? tip "Hint"
     - Use JSON value as condition in WHERE clause like `json_extract(specs, '$.ram_gb') >= 32`
@@ -198,15 +184,12 @@ Displays product name, price, RAM, and storage capacity.
     | (high-spec laptop) | 3200000 | 32 | 1024 | Intel Core i9-13900H |
     | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 6. JSON-based group aggregation — average price by CPU
 
 Find the average price and number of products by CPU specification for laptops and desktops.
 Shows only CPUs with 3 or more products.
-
 
 ??? tip "Hint"
     - Use `json_extract(specs, '$.cpu')` for `GROUP BY`
@@ -236,15 +219,12 @@ Shows only CPUs with 3 or more products.
     | AMD Ryzen 9 7950X | 4 | 2500000 | 2000000 | 3000000 |
     | ... | ... | ... | ... | ... |
 
-
 ---
-
 
 ### Problem 7. JSON-based statistics — Analysis by monitor panel type
 
 In the monitor category, tally the number of products, average price, and average refresh rate by panel type (IPS/VA/OLED).
 Also check the resolution distribution of each panel type.
-
 
 ??? tip "Hint"
     - Use `json_extract(specs, '$.panel')`, `json_extract(specs, '$.refresh_rate')`
@@ -275,15 +255,12 @@ Also check the resolution distribution of each panel type.
     | IPS | 25 | 450000 | 120 | 8 | 10 | 7 |
     | VA | 12 | 380000 | 100 | 5 | 5 | 2 |
 
-
 ---
-
 
 ### Problem 8. Modifying JSON value with json_set (within SELECT)
 
 Use SQLite's `json_set` function to check the result of adding the `"warranty_years": 3` field to the laptop product's specs.
 Preview the converted JSON from a SELECT, not an actual UPDATE.
-
 
 ??? tip "Hint"
     - `json_set(specs, '$.warranty_years', 3)` adds a new key to an existing JSON
@@ -307,15 +284,12 @@ Preview the converted JSON from a SELECT, not an actual UPDATE.
     |---|---|---|
     | (laptop name) | {"screen_size":"15.6 inch",...} | {"screen_size":"15.6 inch",...,"warranty_years":3} |
 
-
 ---
-
 
 ### Problem 9. Removing a JSON key with json_remove (within a SELECT)
 
 Compare the original with the result of removing the `tdp_watts` key from the GPU product's specs.
 Use the `json_remove` function.
-
 
 ??? tip "Hint"
     - `json_remove(specs, '$.tdp_watts')` returns JSON with the specified key removed
@@ -338,15 +312,12 @@ Use the `json_remove` function.
     |---|---|---|
     | (GPU name) | {"vram":"16GB","clock_mhz":2100,"tdp_watts":300} | {"vram":"16GB","clock_mhz":2100} |
 
-
 ---
-
 
 ### Problem 10. Comprehensive JSON analysis — Specification comparison report by category
 
 Analyze product specs for all categories to find a list of unique keys included in JSON for each category and the occurrence rate of each key.
 This report allows you to see at a glance what specification information exists in which category.
-
 
 ??? tip "Hint"
     - Spread all keys into rows with `json_each(specs)`, then GROUP BY with category + key combination

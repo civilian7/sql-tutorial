@@ -11,8 +11,6 @@
 !!! abstract "Concepts"
     `GROUP BY`, `HAVING`, Aggregate functions + `GROUP BY`, Multi-column grouping
 
-## Basic
-
 ### Problem 1. Find the number of products per brand.
 
 Query the number of registered products per brand. Sort by product count in descending order.
@@ -200,8 +198,6 @@ Query the number of complaints and average response count (response_count) per c
     ```
 
 ---
-
-## Applied
 
 ### Problem 11. Find brands with 10 or more products.
 
@@ -407,8 +403,6 @@ Calculate the customer count per grade and acquisition_channel combination, and 
     ```
 
 ---
-
-## Advanced
 
 ### Problem 21. Find the quarterly revenue and average order amount for 2024.
 
