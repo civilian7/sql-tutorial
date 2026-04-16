@@ -15,7 +15,23 @@ Since the documentation is updated frequently, **we recommend using Git to alway
 
     === "Windows"
 
+        Choose one of the following methods:
+
+        **Option 1: Installer** (most common)
+
         Download and install from [git-scm.com](https://git-scm.com/download/win). Keep the default options during installation.
+
+        **Option 2: winget** (built into Windows 11)
+
+        ```powershell
+        winget install Git.Git
+        ```
+
+        **Option 3: Chocolatey**
+
+        ```powershell
+        choco install git
+        ```
 
         After installation, verify in **Command Prompt** or **Git Bash**:
 

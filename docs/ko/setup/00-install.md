@@ -15,7 +15,23 @@
 
     === "Windows"
 
+        아래 방법 중 하나를 선택하세요:
+
+        **방법 1: 설치 파일** (가장 일반적)
+
         [git-scm.com](https://git-scm.com/download/win)에서 다운로드하여 설치합니다. 설치 중 기본 옵션을 그대로 두면 됩니다.
+
+        **방법 2: winget** (Windows 11 기본 내장)
+
+        ```powershell
+        winget install Git.Git
+        ```
+
+        **방법 3: Chocolatey**
+
+        ```powershell
+        choco install git
+        ```
 
         설치 후 **명령 프롬프트** 또는 **Git Bash**에서 확인:
 
