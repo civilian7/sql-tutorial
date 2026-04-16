@@ -1,6 +1,6 @@
 **[한국어](README.ko.md)** | English
 
-# SQL Tutorial — E-Commerce Database <small>v3.6</small>
+# SQL Tutorial — E-Commerce Database <small>v4.0</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -8,9 +8,9 @@
 
 > If you find this useful, please give it a :star: — it helps others discover this project!
 
-A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (27 lessons, 910 exercises).
+A Python tool that generates **realistic test databases** for an online computer & peripherals store, bundled with a comprehensive **SQL tutorial** (27 lessons, 1,065 exercises).
 
-> **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **750,000 rows of realistic data** + full tutorial + 910 exercises you can actually execute.
+> **Why this project?** Most SQL textbooks have exercises but no data — you write queries but can't run them. This project gives you **750,000 rows of realistic data** + full tutorial + 1,065 exercises you can actually execute.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ Open `output/ecommerce-en.db` in any SQL tool and start learning.
 |-----------|---------|
 | **Database Generator** | 30 tables, 18 views, 5 triggers, 61 indexes |
 | **Tutorial** | 27 lessons (beginner → intermediate → advanced), bilingual (ko/en) |
-| **Exercises** | 640 problems (30 sets) + 270 lesson reviews = 910 total |
+| **Exercises** | 640 problems (30 sets) + 270 lesson reviews = 1,065 total |
 | **Stored Procedures** | 25 procedures + 5 functions (MySQL & PostgreSQL) |
 | **5 Databases** | SQLite (default), MySQL, PostgreSQL, Oracle, SQL Server |
 | **Dirty Data Mode** | `--dirty-data` for data cleaning practice |
@@ -73,7 +73,7 @@ python -m src.cli.generate [OPTIONS]
 | Intermediate | 08–17 | INNER/LEFT JOIN, Subqueries, Date/String, Utility Functions, UNION, DML, DDL, Transactions |
 | Advanced | 18–26 | Window Functions, CTE, EXISTS, Self/Cross JOIN, Views, Indexes, Triggers, JSON, Stored Procedures |
 
-## Exercises (910 Problems · 30 Sets + 26 Lessons)
+## Exercises (1,065 Problems · 49 Sets + 26 Lessons)
 
 | Level | Sets | Problems | Key Topics |
 |:-----:|:----:|:--------:|------------|
@@ -274,6 +274,16 @@ Free for personal learning and non-commercial education. For commercial use: civ
 
 ## Changelog
 
+### v4.0.0 (2026-04-16)
+
+**Exercise YAML Consolidation**: Converted 26 manual MD sets (550 problems) to YAML. All 49 sets + 26 lessons = 1,065 problems managed by compiler. Auto-inserted execution result tables below answers (ko/en DBs). Removed exercise.db generation
+
+**DB Comment System**: 384 AI-optimized comments (30 tables + 293 columns + 38 indexes + 18 views + 5 triggers). Native support: SQLite(_sc_metadata), MySQL(ALTER TABLE COMMENT), PostgreSQL/Oracle(COMMENT ON), SQL Server(sp_addextendedproperty)
+
+**SQL Playground**: Browser-based SQL execution via sql.js (WebAssembly). Compact DB (~1MB), table sidebar, sample queries, Ctrl+Enter execution. Works on GitHub Pages without a server
+
+**Tutorial Quality**: Terminology standardization, floating-point data type table, macOS Git(Command Line Tools), Windows Git(winget/Chocolatey), Linux RHEL/Fedora install, curriculum audit (concept inversion fixes, section removal, admonition headers, PK/FK icon alignment)
+
 ### v3.6.0 (2026-04-16)
 
 **Docker-Based DB Installation Guide**: Rewrote 02-database.md around Docker Desktop. Includes Docker concept intro, installation, essential commands, and container setup for MySQL/PostgreSQL/SQL Server/Oracle. Native installation guide preserved as "Native Installation" tab
@@ -304,7 +314,7 @@ Free for personal learning and non-commercial education. For commercial use: civ
 
 ### v3.2.0 (2026-04-14)
 
-**Lesson Review YAML Integration**: Extracted 270 review problems from 26 lessons into standalone YAML files. Auto-injected into lesson markdown via `compile_exercises.py`. Total 910 problems (640 exercises + 270 lesson reviews)
+**Lesson Review YAML Integration**: Extracted 270 review problems from 26 lessons into standalone YAML files. Auto-injected into lesson markdown via `compile_exercises.py`. Total 1,065 problems (640 exercises + 270 lesson reviews)
 
 ### v3.0.0 (2026-04-12)
 

@@ -1,6 +1,6 @@
 한국어 | **[English](README.md)**
 
-# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v3.6</small>
+# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v4.0</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -8,7 +8,7 @@
 
 > 이 콘텐츠가 마음에 드셨다면 :star: 스타 하나 부탁드립니다!
 
-컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (27개 레슨, 910개 연습문제)을 제공하는 프로젝트입니다.
+컴퓨터 및 주변기기 쇼핑몰의 **현실적인 테스트 데이터베이스**를 생성하고, **SQL 튜토리얼** (27개 레슨, 1,065개 연습문제)을 제공하는 프로젝트입니다.
 
 > **왜 이 프로젝트를?** 대부분의 SQL 교재는 문제만 있고 데이터가 없어서 쿼리를 실행해볼 수 없습니다. 이 프로젝트는 **75만 건의 현실적 데이터**와 완전한 튜토리얼 + 실행 가능한 연습문제를 제공합니다.
 
@@ -28,7 +28,7 @@ python -m src.cli.generate --size small
 |------|------|
 | **데이터베이스 생성기** | 30 테이블, 18 뷰, 5 트리거, 61 인덱스 |
 | **튜토리얼** | 27개 레슨 (초급→중급→고급), 한국어/영어 |
-| **연습문제** | 640개 (30세트) + 270개 레슨 복습 = 총 910문제 |
+| **연습문제** | 640개 (30세트) + 270개 레슨 복습 = 총 1,065문제 |
 | **저장 프로시저** | 25개 프로시저 + 5개 함수 (MySQL & PostgreSQL) |
 | **5개 DB** | SQLite (기본), MySQL, PostgreSQL, Oracle, SQL Server |
 | **더티 데이터** | `--dirty-data` 데이터 정제 연습 |
@@ -73,7 +73,7 @@ python -m src.cli.generate [OPTIONS]
 | 중급 | 08–17 | INNER/LEFT JOIN, 서브쿼리, 날짜/문자열, 숫자·변환, UNION, DML, DDL, 트랜잭션 |
 | 고급 | 18–26 | 윈도우 함수, CTE, EXISTS, Self/Cross JOIN, 뷰, 인덱스, 트리거, JSON, 저장 프로시저 |
 
-## 연습문제 (910문제 · 30세트 + 26레슨)
+## 연습문제 (1,065문제 · 30세트 + 26레슨)
 
 | 레벨 | 세트 수 | 문제 수 | 주요 주제 |
 |:----:|:-------:|:-------:|----------|
@@ -274,6 +274,16 @@ pdf.bat en       # 영어만
 
 ## 변경 이력
 
+### v4.0.0 (2026-04-16)
+
+**연습문제 YAML 통합**: 수동 MD 26세트(550문제)를 YAML로 전환. 전체 49세트 + 26레슨 = 1,065문제가 컴파일러로 일괄 관리. 정답 아래 실행 결과 테이블 자동 삽입 (ko/en DB 각각). exercise.db 생성 코드 제거
+
+**DB 코멘트 시스템**: 30테이블 + 293칼럼 + 38인덱스 + 18뷰 + 5트리거 = 384건 AI 최적화 포맷 코멘트. SQLite(_sc_metadata), MySQL(ALTER TABLE COMMENT), PostgreSQL/Oracle(COMMENT ON), SQL Server(sp_addextendedproperty) 네이티브 지원
+
+**SQL 플레이그라운드**: sql.js(WebAssembly) 기반 브라우저 SQL 실행 환경. 축소 DB(~1MB), 테이블 사이드바, 샘플 쿼리, Ctrl+Enter 실행. GitHub Pages에서 서버 없이 동작
+
+**교재 품질 개선**: 용어 통일(칼럼/기본 키/외래 키/인덱스), 데이터 타입 대응표 부동소수점 추가, macOS Git(Command Line Tools), Windows Git(winget/Chocolatey), Linux RHEL/Fedora 설치 안내, 커리큘럼 감사(개념 역전 수정, 섹션 분류 제거, admonition 헤더 통일, PK/FK 아이콘 정렬)
+
 ### v3.6.0 (2026-04-16)
 
 **Docker 기반 DB 설치 가이드**: 02-database.md를 Docker Desktop 중심으로 재작성. Docker 개념 설명, Docker Desktop 설치, 기본 명령어, MySQL/PostgreSQL/SQL Server/Oracle 컨테이너 실행 가이드 포함. 기존 네이티브 설치 가이드는 "직접 설치" 탭으로 유지
@@ -304,7 +314,7 @@ pdf.bat en       # 영어만
 
 ### v3.2.0 (2026-04-14)
 
-**레슨 복습 문제 YAML 통합**: 26개 강의에서 270개 복습 문제를 독립 YAML 파일로 추출. `compile_exercises.py`로 강의 MD 자동 삽입. 총 910문제 (연습 640 + 레슨 270)
+**레슨 복습 문제 YAML 통합**: 26개 강의에서 270개 복습 문제를 독립 YAML 파일로 추출. `compile_exercises.py`로 강의 MD 자동 삽입. 총 1,065문제 (연습 640 + 레슨 270)
 
 ### v3.0.0 (2026-04-12)
 
