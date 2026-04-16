@@ -58,7 +58,7 @@
 /* Editor */
 #pg-editor-wrap { border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-top: none; }
 #pg-editor-wrap .CodeMirror {
-  height: 200px; font-size: 0.88rem;
+  height: 200px; font-size: 0.78rem;
 }
 #pg-editor-wrap .CodeMirror-vscrollbar { display: block !important; }
 #pg-editor-wrap .CodeMirror-scroll { overflow-y: scroll !important; }

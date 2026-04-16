@@ -53,7 +53,7 @@ Run SQL queries directly in your browser. No server connection needed.
 .pg-shortcut { font-size: 0.72rem; color: var(--md-default-fg-color--light, #999); }
 
 #pg-editor-wrap { border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-top: none; }
-#pg-editor-wrap .CodeMirror { height: 200px; font-size: 0.88rem; }
+#pg-editor-wrap .CodeMirror { height: 200px; font-size: 0.78rem; }
 #pg-editor-wrap .CodeMirror-vscrollbar { display: block !important; }
 #pg-editor-wrap .CodeMirror-scroll { overflow-y: scroll !important; }
 
