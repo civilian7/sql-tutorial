@@ -298,6 +298,19 @@ FROM customers;
     SELECT * FROM categories;
     ```
 
+
+    **실행 결과** (총 53행 중 상위 7행)
+
+    | id | parent_id | name | slug | depth | sort_order | is_active | created_at | updated_at |
+    |---|---|---|---|---|---|---|---|---|
+    | 1 | NULL | 데스크톱 PC | desktop-pc | 0 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | 2 | 1 | 완제품 | desktop-prebuilt | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | 3 | 1 | 조립PC | desktop-custom | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | 4 | 1 | 베어본 | desktop-barebone | 1 | 3 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | 5 | NULL | 노트북 | laptop | 0 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | 6 | 5 | 일반 노트북 | laptop-general | 1 | 1 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+    | 7 | 5 | 게이밍 노트북 | laptop-gaming | 1 | 2 | 1 | 2016-01-01 00:00:00 | 2016-01-01 00:00:00 |
+
 ### 문제 2
 `products` 테이블에서 `name`과 `price`만 조회하세요.
 
@@ -306,6 +319,19 @@ FROM customers;
     SELECT name, price FROM products;
     ```
 
+
+    **실행 결과** (총 281행 중 상위 7행)
+
+    | name | price |
+    |---|---|
+    | Razer Blade 18 블랙 | 2,987,500.00 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 |
+    | 삼성 DDR4 32GB PC4-25600 | 43,500.00 |
+    | Dell U2724D | 894,100.00 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 167,000.00 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 383,100.00 |
+    | 삼성 DDR5 32GB PC5-38400 | 211,800.00 |
+
 ### 문제 3
 `staff` 테이블에서 `department`, `role`, `name` 순서로 조회하세요.
 
@@ -313,6 +339,17 @@ FROM customers;
     ```sql
     SELECT department, role, name FROM staff;
     ```
+
+
+    **실행 결과** (5행)
+
+    | department | role | name |
+    |---|---|---|
+    | 경영 | admin | 한민재 |
+    | 경영 | admin | 장주원 |
+    | 경영 | admin | 박경수 |
+    | 영업 | manager | 이준혁 |
+    | 마케팅 | manager | 권영희 |
 
 ### 문제 4
 `customers` 테이블에서 `name`, `email`, `grade`를 조회하되 별칭을 `고객명`, `이메일`, `등급`으로 붙이세요.
@@ -326,6 +363,19 @@ FROM customers;
     FROM customers;
     ```
 
+
+    **실행 결과** (총 5,230행 중 상위 7행)
+
+    | 고객명 | 이메일 | 등급 |
+    |---|---|---|
+    | 정준호 | user1@testmail.kr | BRONZE |
+    | 김경수 | user2@testmail.kr | GOLD |
+    | 김민재 | user3@testmail.kr | VIP |
+    | 진정자 | user4@testmail.kr | GOLD |
+    | 이정수 | user5@testmail.kr | SILVER |
+    | 김준혁 | user6@testmail.kr | BRONZE |
+    | 김명자 | user7@testmail.kr | BRONZE |
+
 ### 문제 5
 `products` 테이블에서 `name`, `price`를 조회하고, 10% 할인된 가격을 `할인가`라는 별칭으로 추가하세요.
 
@@ -334,6 +384,19 @@ FROM customers;
     SELECT name, price, price * 0.9 AS 할인가
     FROM products;
     ```
+
+
+    **실행 결과** (총 281행 중 상위 7행)
+
+    | name | price | 할인가 |
+    |---|---|---|
+    | Razer Blade 18 블랙 | 2,987,500.00 | 2,688,750.00 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 | 1,569,600.00 |
+    | 삼성 DDR4 32GB PC4-25600 | 43,500.00 | 39,150.00 |
+    | Dell U2724D | 894,100.00 | 804,690.00 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 167,000.00 | 150,300.00 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 383,100.00 | 344,790.00 |
+    | 삼성 DDR5 32GB PC5-38400 | 211,800.00 | 190,620.00 |
 
 ### 문제 6
 `products` 테이블에서 `name`, `price`, `cost_price`를 조회하고, 마진(`price - cost_price`)과 마진율(`(price - cost_price) * 100 / price`)을 별칭 `마진`, `마진율`로 추가하세요.
@@ -349,6 +412,19 @@ FROM customers;
     FROM products;
     ```
 
+
+    **실행 결과** (총 281행 중 상위 7행)
+
+    | name | price | cost_price | 마진 | 마진율 |
+    |---|---|---|---|---|
+    | Razer Blade 18 블랙 | 2,987,500.00 | 3,086,700.00 | -99,200.00 | -3.32 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 | 1,360,300.00 | 383,700.00 | 22.00 |
+    | 삼성 DDR4 32GB PC4-25600 | 43,500.00 | 37,900.00 | 5,600.00 | 12.87 |
+    | Dell U2724D | 894,100.00 | 565,700.00 | 328,400.00 | 36.73 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 167,000.00 | 121,400.00 | 45,600.00 | 27.31 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 383,100.00 | 431,800.00 | -48,700.00 | -12.71 |
+    | 삼성 DDR5 32GB PC5-38400 | 211,800.00 | 151,900.00 | 59,900.00 | 28.28 |
+
 ### 문제 7
 `orders` 테이블에서 고유한 `status` 값을 조회하세요.
 
@@ -356,6 +432,19 @@ FROM customers;
     ```sql
     SELECT DISTINCT status FROM orders;
     ```
+
+
+    **실행 결과** (총 9행 중 상위 7행)
+
+    | status |
+    |---|
+    | cancelled |
+    | confirmed |
+    | delivered |
+    | paid |
+    | pending |
+    | preparing |
+    | return_requested |
 
 ### 문제 8
 `payments` 테이블에서 고유한 `method` 값을 조회하여, 테크샵이 지원하는 결제 수단을 확인하세요.
@@ -365,6 +454,18 @@ FROM customers;
     SELECT DISTINCT method FROM payments;
     ```
 
+
+    **실행 결과** (6행)
+
+    | method |
+    |---|
+    | card |
+    | kakao_pay |
+    | naver_pay |
+    | bank_transfer |
+    | point |
+    | virtual_account |
+
 ### 문제 9
 `products` 테이블에서 `name`, `price`, `stock_qty`를 조회하고, `price * stock_qty`를 `재고가치`라는 별칭으로 추가하세요.
 
@@ -373,6 +474,19 @@ FROM customers;
     SELECT name, price, stock_qty, price * stock_qty AS 재고가치
     FROM products;
     ```
+
+
+    **실행 결과** (총 281행 중 상위 7행)
+
+    | name | price | stock_qty | 재고가치 |
+    |---|---|---|---|
+    | Razer Blade 18 블랙 | 2,987,500.00 | 107 | 319,662,500.00 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 | 499 | 870,256,000.00 |
+    | 삼성 DDR4 32GB PC4-25600 | 43,500.00 | 359 | 15,616,500.00 |
+    | Dell U2724D | 894,100.00 | 337 | 301,311,700.00 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 167,000.00 | 59 | 9,853,000.00 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 383,100.00 | 460 | 176,226,000.00 |
+    | 삼성 DDR5 32GB PC5-38400 | 211,800.00 | 340 | 72,012,000.00 |
 
 ### 문제 10
 `reviews` 테이블에서 고유한 `(product_id, rating)` 조합을 조회하고, `rating` 내림차순으로 정렬한 뒤 20행만 보세요.
@@ -384,5 +498,18 @@ FROM customers;
     ORDER BY rating DESC
     LIMIT 20;
     ```
+
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | product_id | rating |
+    |---|---|
+    | 1 | 5 |
+    | 2 | 5 |
+    | 3 | 5 |
+    | 4 | 5 |
+    | 5 | 5 |
+    | 6 | 5 |
+    | 7 | 5 |
 
 <!-- END_LESSON_EXERCISES -->

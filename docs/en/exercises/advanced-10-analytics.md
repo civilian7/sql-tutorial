@@ -73,6 +73,13 @@ and compare calculated running total with balance_after.
     ```
 
 
+    **Result** (1 rows)
+
+    | id | type | reason | amount | balance_after | calculated_balance | diff | created_at |
+    |---|---|---|---|---|---|---|---|
+    | 225 | earn | signup | 4421 | 4421 | 4421 | 0 | 2016-04-04 02:36:11 |
+
+
 ---
 
 
@@ -124,6 +131,19 @@ Also verify if old_grade matches the LAG result.
     ```
 
 
+    **Result** (top 7 of 30 rows)
+
+    | customer_id | name | old_grade | new_grade | prev_new_grade | check_status | reason | changed_at |
+    |---|---|---|---|---|---|---|---|
+    | 2 | Danny Johnson | BRONZE | VIP | BRONZE | OK | upgrade | 2017-01-01 00:00:00 |
+    | 2 | Danny Johnson | VIP | BRONZE | VIP | OK | downgrade | 2022-01-01 00:00:00 |
+    | 2 | Danny Johnson | BRONZE | VIP | BRONZE | OK | upgrade | 2023-01-01 00:00:00 |
+    | 2 | Danny Johnson | VIP | GOLD | VIP | OK | downgrade | 2024-01-01 00:00:00 |
+    | 2 | Danny Johnson | GOLD | VIP | GOLD | OK | upgrade | 2025-01-01 00:00:00 |
+    | 3 | Adam Moore | BRONZE | VIP | BRONZE | OK | upgrade | 2017-01-01 00:00:00 |
+    | 3 | Adam Moore | VIP | GOLD | VIP | OK | downgrade | 2023-01-01 00:00:00 |
+
+
 ---
 
 
@@ -163,6 +183,13 @@ calculate conversion rates for the funnel: view -> add to cart -> purchase.
         ROUND(100.0 * step3_purchase / step1_views, 2) AS view_to_purchase_pct
     FROM funnel;
     ```
+
+
+    **Result** (1 rows)
+
+    | step1_views | step2_cart | view_to_cart_pct | step3_purchase | cart_to_purchase_pct | view_to_purchase_pct |
+    |---|---|---|---|---|---|
+    | 120,970 | 8918 | 7.37 | 63,835 | 715.80 | 52.77 |
 
 
 ---
@@ -418,6 +445,13 @@ Calculate average sessions per customer and average views per session.
         ROUND(AVG(views_in_session), 1) AS avg_views_per_session
     FROM session_stats;
         ```
+
+
+    **Result** (1 rows)
+
+    | total_customers | total_sessions | avg_sessions_per_customer | avg_views_per_session |
+    |---|---|---|---|
+    | 520 | 108,210 | 208.10 | 1.10 |
 
 
 ---
@@ -692,6 +726,19 @@ by acquisition channel and signup month.
     WHERE cohort_size >= 10
     ORDER BY channel, signup_month;
         ```
+
+
+    **Result** (top 7 of 33 rows)
+
+    | channel | signup_month | cohort_size | active_30d | retention_30d_pct | active_60d | retention_60d_pct | active_90d | retention_90d_pct |
+    |---|---|---|---|---|---|---|---|---|
+    | organic | 2024-03 | 10 | 2 | 20.00 | 0 | 0.0 | 1 | 10.00 |
+    | organic | 2024-06 | 15 | 1 | 6.70 | 1 | 6.70 | 2 | 13.30 |
+    | organic | 2024-07 | 12 | 0 | 0.0 | 2 | 16.70 | 1 | 8.30 |
+    | organic | 2024-08 | 13 | 2 | 15.40 | 2 | 15.40 | 0 | 0.0 |
+    | organic | 2024-09 | 14 | 0 | 0.0 | 2 | 14.30 | 1 | 7.10 |
+    | organic | 2024-10 | 13 | 0 | 0.0 | 1 | 7.70 | 2 | 15.40 |
+    | organic | 2024-12 | 17 | 4 | 23.50 | 0 | 0.0 | 1 | 5.90 |
 
 
 ---
@@ -992,6 +1039,19 @@ Calculate revenue change rate per promotion.
         ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | promo_name | started_at | ended_at | during_orders | during_revenue | before_revenue | revenue_change_pct |
+    |---|---|---|---|---|---|---|
+    | Printer Special Deal 2025 | 2025-05-14 00:00:00 | 2025-05-24 00:00:00 | 1 | 1,019,500.00 | 257,900.00 | 295.30 |
+    | Cyber Monday 2024 | 2024-11-03 00:00:00 | 2024-11-04 00:00:00 | 11 | 8,009,800.00 | 3,046,600.00 | 162.90 |
+    | Gaming Gear Festa 2025 | 2025-08-11 00:00:00 | 2025-08-18 00:00:00 | 46 | 47,280,300.00 | 22,759,100.00 | 107.70 |
+    | Flash Sale | 2024-04-08 00:00:00 | 2024-04-11 00:00:00 | 3 | 4,439,100.00 | 2,250,700.00 | 97.20 |
+    | Summer Cooling Festival 2024 | 2024-07-06 00:00:00 | 2024-07-20 00:00:00 | 32 | 4,501,600.00 | 2,559,900.00 | 75.90 |
+    | Cyber Monday 2025 | 2025-11-09 00:00:00 | 2025-11-10 00:00:00 | 22 | 10,785,500.00 | 6,471,700.00 | 66.70 |
+    | Summer Cooling Festival 2025 | 2025-07-14 00:00:00 | 2025-07-28 00:00:00 | 32 | 3,570,900.00 | 2,301,300.00 | 55.20 |
+
+
 ---
 
 
@@ -1042,6 +1102,17 @@ Show each staff member's hierarchy level and full path (CEO > Director > Manager
     FROM org
     ORDER BY path;
     ```
+
+
+    **Result** (5 rows)
+
+    | level | name | department | role | path |
+    |---|---|---|---|---|
+    | 0 | Michael Thomas | Management | admin | Michael Thomas |
+    | 1 | Jaime Phelps | Sales | manager | Michael Thomas > Jaime Phelps |
+    | 1 | Jonathan Smith | Management | admin | Michael Thomas > Jonathan Smith |
+    | 2 | Nicole Hamilton | Marketing | manager | Michael Thomas > Jonathan Smith > Nic... |
+    | 1 | Michael Mcguire | Management | admin | Michael Thomas > Michael Mcguire |
 
 
 ---
@@ -1110,6 +1181,19 @@ Display in order: question -> answer -> follow-up question -> follow-up answer.
     ```
 
 
+    **Result** (top 7 of 50 rows)
+
+    | product_id | product_name | depth | author | content_preview | created_at |
+    |---|---|---|---|---|---|
+    | 1 | Razer Blade 18 Black | 0 | [Q] Michael Cooley | Does this support overclocking? | 2022-10-12 07:21:38 |
+    | 1 | Razer Blade 18 Black | 1 | [A] Jaime Phelps | Yes, there is an additional M.2 slot ... | 2022-10-13 01:21:38 |
+    | 1 | Razer Blade 18 Black | 0 | [Q] Richard Schwartz | Can I use this with a Mac? | 2025-10-24 12:46:50 |
+    | 1 | Razer Blade 18 Black | 1 | [A] Nicole Hamilton | We cannot disclose unreleased product... | 2025-10-25 22:46:50 |
+    | 1 | Razer Blade 18 Black | 0 | [Q] Madison Mccoy | Can I use this with a Mac? | 2025-01-13 21:09:26 |
+    | 1 | Razer Blade 18 Black | 1 | [A] Nicole Hamilton | The actual power consumption is liste... | 2025-01-14 07:09:26 |
+    | 2 | MSI GeForce RTX 4070 Ti Super GAMING X | 0 | [Q] Adam Ponce | Is the manual available in English? | 2022-05-20 18:52:36 |
+
+
 ---
 
 
@@ -1171,6 +1255,19 @@ e.g., A -> B -> C (A discontinued, replaced by B, B discontinued, replaced by C)
     ORDER BY chain_length DESC, origin_name
     LIMIT 30;
     ```
+
+
+    **Result** (top 7 of 18 rows)
+
+    | discontinued_product | final_successor | chain_length | successor_price | status |
+    |---|---|---|---|---|
+    | ASUS TUF Gaming RTX 5080 White | ASUS Dual RTX 4060 Ti Black | 1 | 2,674,800.00 | Current Model |
+    | Canon PIXMA G3910 Silver | Epson L15160 | 1 | 1,019,500.00 | Current Model |
+    | Canon imageCLASS MF655Cdw Black | Epson L15160 | 1 | 1,019,500.00 | Current Model |
+    | Dell XPS Desktop 8960 Silver | HP Z2 Mini G1a Black | 1 | 895,000.00 | Current Model |
+    | Hansung BossMonster DX7700 White | Jooyon Rionine i9 High-End | 1 | 1,849,900.00 | Current Model |
+    | JBL Quantum ONE White | Razer Kraken V4 Black | 1 | 123,900.00 | Current Model |
+    | Lenovo IdeaPad Flex 5 | HP Pavilion x360 14 Black | 1 | 1,479,700.00 | Current Model |
 
 
 ---
@@ -1251,6 +1348,15 @@ Compare RFM differences between downgraded vs maintained/upgraded customers.
     ```
 
 
+    **Result** (3 rows)
+
+    | trend | customer_count | avg_recency | avg_frequency | avg_monetary | avg_rfm_total | avg_total_spent | avg_order_count |
+    |---|---|---|---|---|---|---|---|
+    | Downgraded | 774 | 2.31 | 3.10 | 3.10 | 8.51 | 14,850,629.00 | 14.70 |
+    | Maintained | 546 | 2.96 | 1.44 | 1.55 | 5.95 | 1,939,686.00 | 2.30 |
+    | Upgraded | 779 | 2.63 | 3.00 | 3.00 | 8.63 | 14,536,357.00 | 14.50 |
+
+
 ---
 
 
@@ -1285,6 +1391,19 @@ Show customer name, previous grade, change date, and reason.
     ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | customer_name | email | old_grade | new_grade | changed_at | reason |
+    |---|---|---|---|---|---|
+    | Jeremy Ellis | user4429@testmail.kr | BRONZE | VIP | 2025-01-01 00:00:00 | upgrade |
+    | Matthew Gibson | user4420@testmail.kr | BRONZE | VIP | 2025-01-01 00:00:00 | upgrade |
+    | Katherine Baker | user4356@testmail.kr | BRONZE | VIP | 2025-01-01 00:00:00 | upgrade |
+    | Sarah Mcguire | user4355@testmail.kr | BRONZE | VIP | 2025-01-01 00:00:00 | upgrade |
+    | Brittany Hobbs | user4327@testmail.kr | BRONZE | VIP | 2025-01-01 00:00:00 | upgrade |
+    | Judy Bridges | user4326@testmail.kr | BRONZE | VIP | 2025-01-01 00:00:00 | upgrade |
+    | Stephen Fisher | user4323@testmail.kr | BRONZE | VIP | 2025-01-01 00:00:00 | upgrade |
+
+
 ---
 
 
@@ -1316,6 +1435,19 @@ to find customers with mismatches.
     ORDER BY ABS(difference) DESC
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | customer_id | name | current_balance | calculated_balance | difference |
+    |---|---|---|---|---|
+    | 97 | Jason Rivera | 3,518,880 | 2,332,397 | 1,186,483 |
+    | 226 | Allen Snyder | 3,955,828 | 2,863,301 | 1,092,527 |
+    | 162 | Brenda Garcia | 2,450,166 | 1,521,994 | 928,172 |
+    | 549 | Ronald Arellano | 2,276,622 | 1,449,259 | 827,363 |
+    | 227 | James Banks | 2,297,542 | 1,516,187 | 781,355 |
+    | 3 | Adam Moore | 1,564,015 | 859,898 | 704,117 |
+    | 98 | Gabriel Walters | 2,218,590 | 1,514,981 | 703,609 |
 
 
 ---

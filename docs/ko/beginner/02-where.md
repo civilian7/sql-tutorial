@@ -288,6 +288,19 @@ WHERE notes IS NOT NULL;
     AND grade IN ('SILVER', 'GOLD');
     ```
 
+
+    **실행 결과** (총 281행 중 상위 7행)
+
+    | name | grade | point_balance |
+    |---|---|---|
+    | 진정자 | GOLD | 930,784 |
+    | 성민석 | SILVER | 306,268 |
+    | 박지훈 | GOLD | 286,912 |
+    | 배종수 | GOLD | 310,498 |
+    | 박서윤 | GOLD | 290,330 |
+    | 윤현주 | SILVER | 570,129 |
+    | 구영호 | SILVER | 231,707 |
+
 ### 문제 2
 판매 중(`is_active = 1`)이고 가격이 20만~80만 원 사이인 상품을 조회하세요. `name`과 `price`를 반환하되, 가격 내림차순으로 정렬하세요.
 
@@ -300,6 +313,19 @@ WHERE notes IS NOT NULL;
     ORDER BY price DESC;
     ```
 
+
+    **실행 결과** (총 74행 중 상위 7행)
+
+    | name | price |
+    |---|---|
+    | MSI MAG Z790 TOMAHAWK WIFI | 795,600.00 |
+    | 넷기어 Orbi 970 블랙 | 762,500.00 |
+    | 한성 보스몬스터 DX9900 실버 | 739,900.00 |
+    | ASUS ExpertCenter PN65 실버 | 722,100.00 |
+    | ASRock B850M Pro RS 실버 | 665,600.00 |
+    | ASRock X670E Steel Legend 실버 | 648,600.00 |
+    | 넷기어 Nighthawk RS700S 블랙 | 629,300.00 |
+
 ### 문제 3
 성별이 알 수 없고(NULL) 마지막 로그인 기록도 없는(`last_login_at IS NULL`) 고객을 찾으세요. `name`과 `created_at`을 반환하세요.
 
@@ -311,6 +337,19 @@ WHERE notes IS NOT NULL;
     AND last_login_at IS NULL;
     ```
 
+
+    **실행 결과** (총 22행 중 상위 7행)
+
+    | name | created_at |
+    |---|---|
+    | 이영식 | 2016-02-23 17:09:54 |
+    | 최성수 | 2017-05-04 04:39:09 |
+    | 김명자 | 2019-04-21 10:06:38 |
+    | 박광수 | 2019-05-18 00:02:05 |
+    | 최보람 | 2020-11-10 21:56:36 |
+    | 이민지 | 2020-04-25 04:05:37 |
+    | 이준영 | 2020-12-10 21:16:30 |
+
 ### 문제 4
 가격이 100만 원 이상인 상품의 `name`과 `price`를 조회하세요.
 
@@ -321,6 +360,19 @@ WHERE notes IS NOT NULL;
     WHERE price >= 1000000;
     ```
 
+
+    **실행 결과** (총 65행 중 상위 7행)
+
+    | name | price |
+    |---|---|
+    | Razer Blade 18 블랙 | 2,987,500.00 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 |
+    | LG 일체형PC 27V70Q 실버 | 1,093,200.00 |
+    | Razer Blade 18 화이트 | 2,483,600.00 |
+    | ASUS ROG Strix G16CH 화이트 | 3,671,500.00 |
+    | 한성 보스몬스터 DX5800 블랙 | 1,129,400.00 |
+    | ASUS TUF Gaming RTX 5080 화이트 | 4,526,600.00 |
+
 ### 문제 5
 재고가 0이 아닌 상품(`stock_qty <> 0`)의 `name`과 `stock_qty`를 조회하세요.
 
@@ -330,6 +382,19 @@ WHERE notes IS NOT NULL;
     FROM products
     WHERE stock_qty <> 0;
     ```
+
+
+    **실행 결과** (총 280행 중 상위 7행)
+
+    | name | stock_qty |
+    |---|---|
+    | Razer Blade 18 블랙 | 107 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 499 |
+    | 삼성 DDR4 32GB PC4-25600 | 359 |
+    | Dell U2724D | 337 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 59 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 460 |
+    | 삼성 DDR5 32GB PC5-38400 | 340 |
 
 ### 문제 6
 `customers` 테이블에서 포인트 잔액이 500에서 2000 사이인 GOLD 등급 고객의 `name`과 `point_balance`를 조회하세요.
@@ -352,6 +417,19 @@ WHERE notes IS NOT NULL;
     WHERE status IN ('pending', 'processing');
     ```
 
+
+    **실행 결과** (총 82행 중 상위 7행)
+
+    | order_number | status |
+    |---|---|
+    | ORD-20251212-37108 | pending |
+    | ORD-20251228-37466 | pending |
+    | ORD-20251228-37467 | pending |
+    | ORD-20251228-37468 | pending |
+    | ORD-20251228-37469 | pending |
+    | ORD-20251228-37471 | pending |
+    | ORD-20251228-37472 | pending |
+
 ### 문제 8
 상품명이 "Keyboard"로 끝나는 상품의 `name`과 `price`를 조회하세요.
 
@@ -373,6 +451,17 @@ WHERE notes IS NOT NULL;
     AND department <> 'Sales';
     ```
 
+
+    **실행 결과** (5행)
+
+    | name | department |
+    |---|---|
+    | 한민재 | 경영 |
+    | 장주원 | 경영 |
+    | 박경수 | 경영 |
+    | 이준혁 | 영업 |
+    | 권영희 | 마케팅 |
+
 ### 문제 10
 `customers` 테이블에서 VIP 등급이면서 비활성(`is_active = 0`)이거나, 포인트 잔액이 5000 이상인 고객의 `name`, `grade`, `point_balance`, `is_active`를 조회하세요. 괄호를 사용하여 조건 우선순위를 명확히 하세요.
 
@@ -383,5 +472,18 @@ WHERE notes IS NOT NULL;
     WHERE (grade = 'VIP' AND is_active = 0)
     OR point_balance >= 5000;
     ```
+
+
+    **실행 결과** (총 2,243행 중 상위 7행)
+
+    | name | grade | point_balance | is_active |
+    |---|---|---|---|
+    | 김경수 | GOLD | 664,723 | 1 |
+    | 김민재 | VIP | 1,564,015 | 1 |
+    | 진정자 | GOLD | 930,784 | 1 |
+    | 이정수 | SILVER | 963,430 | 1 |
+    | 성민석 | SILVER | 306,268 | 1 |
+    | 박지훈 | GOLD | 286,912 | 1 |
+    | 장준서 | GOLD | 499,365 | 1 |
 
 <!-- END_LESSON_EXERCISES -->

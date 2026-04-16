@@ -55,6 +55,19 @@ to rank within groups, then filter `WHERE rn = 1`.
     ```
 
 
+    **Result** (top 7 of 40 rows)
+
+    | category | product | revenue |
+    |---|---|---|
+    | Gaming Laptop | Razer Blade 18 Black | 1,179,690,100.00 |
+    | NVIDIA | ASUS Dual RTX 4060 Ti Black | 901,407,600.00 |
+    | AMD | MSI Radeon RX 7900 XTX GAMING X White | 602,487,200.00 |
+    | 2-in-1 | Lenovo ThinkPad X1 2in1 Silver | 582,223,200.00 |
+    | Intel | Intel Core Ultra 5 245KF | 563,595,600.00 |
+    | General Laptop | ASUS ExpertBook B5 [Special Limited E... | 555,152,000.00 |
+    | Gaming Monitor | Samsung Odyssey G5 27 Black | 538,902,000.00 |
+
+
 ---
 
 
@@ -93,6 +106,19 @@ then compare current > prev1 > prev2.
     ```
 
 
+    **Result** (top 7 of 22 rows)
+
+    | month | revenue | prev_1 | prev_2 |
+    |---|---|---|---|
+    | 2016-04 | 16,878,372.00 | 14,806,662.00 | 13,115,835.00 |
+    | 2016-05 | 31,432,968.00 | 16,878,372.00 | 14,806,662.00 |
+    | 2016-10 | 38,989,248.00 | 32,257,785.00 | 19,122,587.00 |
+    | 2018-01 | 85,442,344.00 | 83,561,937.00 | 52,363,290.00 |
+    | 2018-09 | 134,594,321.00 | 85,713,577.00 | 40,611,909.00 |
+    | 2018-12 | 167,642,638.00 | 93,642,089.00 | 63,988,837.00 |
+    | 2019-01 | 228,770,158.00 | 167,642,638.00 | 93,642,089.00 |
+
+
 ---
 
 
@@ -118,6 +144,19 @@ Calculate monthly revenue and cumulative revenue for 2024.
     GROUP BY SUBSTR(ordered_at, 1, 7)
     ORDER BY month;
     ```
+
+
+    **Result** (top 7 of 12 rows)
+
+    | month | monthly_revenue | cumulative_revenue |
+    |---|---|---|
+    | 2024-01 | 301,075,320.00 | 301,075,320.00 |
+    | 2024-02 | 426,177,449.00 | 727,252,769.00 |
+    | 2024-03 | 536,322,767.00 | 1,263,575,536.00 |
+    | 2024-04 | 470,154,081.00 | 1,733,729,617.00 |
+    | 2024-05 | 459,724,596.00 | 2,193,454,213.00 |
+    | 2024-06 | 377,040,302.00 | 2,570,494,515.00 |
+    | 2024-07 | 363,944,597.00 | 2,934,439,112.00 |
 
 
 ---
@@ -153,6 +192,19 @@ Calculate a 3-month moving average of revenue.
     FROM monthly
     ORDER BY month;
     ```
+
+
+    **Result** (top 7 of 120 rows)
+
+    | month | revenue | moving_avg_3m |
+    |---|---|---|
+    | 2016-01 | 15,816,169.00 | 15,816,169.00 |
+    | 2016-02 | 13,115,835.00 | 14,466,002.00 |
+    | 2016-03 | 14,806,662.00 | 14,579,555.00 |
+    | 2016-04 | 16,878,372.00 | 14,933,623.00 |
+    | 2016-05 | 31,432,968.00 | 21,039,334.00 |
+    | 2016-06 | 26,381,091.00 | 24,897,477.00 |
+    | 2016-07 | 30,436,884.00 | 29,416,981.00 |
 
 
 ---
@@ -231,6 +283,13 @@ extract values with `MAX(CASE WHEN percentile = N ...)`.
     ```
 
 
+    **Result** (1 rows)
+
+    | p10 | p25 | p50_median | p75 | p90 |
+    |---|---|---|---|---|
+    | 180,500.00 | 1,183,200.00 | 4,654,232.00 | 13,607,591.00 | 31,606,150.00 |
+
+
 ---
 
 
@@ -274,6 +333,19 @@ Calculate yearly revenue rank by category and show year-over-year rank changes.
     ```
 
 
+    **Result** (top 7 of 148 rows)
+
+    | year | category | revenue | rank | prev_rank | rank_change |
+    |---|---|---|---|---|---|
+    | 2022 | Gaming Laptop | 832,586,500.00 | 1 | NULL | NULL |
+    | 2022 | Gaming Monitor | 372,536,900.00 | 2 | NULL | NULL |
+    | 2022 | General Laptop | 368,304,500.00 | 3 | NULL | NULL |
+    | 2022 | AMD | 360,526,000.00 | 4 | NULL | NULL |
+    | 2022 | NVIDIA | 331,064,700.00 | 5 | NULL | NULL |
+    | 2022 | AMD Socket | 257,637,700.00 | 6 | NULL | NULL |
+    | 2022 | Intel | 217,901,700.00 | 7 | NULL | NULL |
+
+
 ---
 
 
@@ -315,6 +387,13 @@ then `100.0 * next_step / prev_step` for conversion rates.
     ```
 
 
+    **Result** (1 rows)
+
+    | step1_signup | step2_first_order | cvr_1_2 | step3_review | cvr_2_3 | step4_repeat | cvr_2_4 |
+    |---|---|---|---|---|---|---|
+    | 5230 | 2809 | 53.70 | 1899 | 67.60 | 2319 | 82.60 |
+
+
 ---
 
 
@@ -348,6 +427,14 @@ traverse children with `c.parent_id = tree.id`.
     GROUP BY depth
     ORDER BY depth;
     ```
+
+
+    **Result** (2 rows)
+
+    | depth | category_count | categories |
+    |---|---|---|
+    | 0 | 18 | Desktop PC, Laptop, Monitor, CPU, Mot... |
+    | 1 | 35 | Barebone, Custom Build, Pre-built, 2-... |
 
 
 ---
@@ -387,6 +474,13 @@ to get previous order date for same customer-product, then calculate JULIANDAY d
     FROM repeat_purchases
     WHERE prev_order_date IS NOT NULL;
     ```
+
+
+    **Result** (1 rows)
+
+    | avg_repurchase_days | min_days | max_days | repurchase_count |
+    |---|---|---|---|
+    | 370.30 | 0 | 3240 | 22,778 |
 
 
 ---

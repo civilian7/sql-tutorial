@@ -425,6 +425,19 @@ DROP INDEX IF EXISTS idx_orders_status_date;
     ORDER BY tbl_name, name;
     ```
 
+
+    **실행 결과** (총 62행 중 상위 7행)
+
+    | name | tbl_name | sql | index_type |
+    |---|---|---|---|
+    | idx_calendar_year_month | calendar | CREATE INDEX idx_calendar_year_month ... | 복합 |
+    | idx_cart_items_cart_id | cart_items | CREATE INDEX idx_cart_items_cart_id O... | 단일 |
+    | idx_carts_customer_id | carts | CREATE INDEX idx_carts_customer_id ON... | 단일 |
+    | idx_complaints_category | complaints | CREATE INDEX idx_complaints_category ... | 단일 |
+    | idx_complaints_customer_id | complaints | CREATE INDEX idx_complaints_customer_... | 단일 |
+    | idx_complaints_order_id | complaints | CREATE INDEX idx_complaints_order_id ... | 단일 |
+    | idx_complaints_staff_id | complaints | CREATE INDEX idx_complaints_staff_id ... | 단일 |
+
 ### 문제 4
 연습 4에서 만든 `idx_payments_method_status` 인덱스를 삭제하고, 연습 6에서 만든 `idx_customers_email_unique` 인덱스도 삭제하여 원래 상태로 복원하세요.
 

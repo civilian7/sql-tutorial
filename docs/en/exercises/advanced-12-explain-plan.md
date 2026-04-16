@@ -71,6 +71,13 @@ SELECT * FROM orders WHERE total_amount > 1000000;
         ```
 
 
+    **Result** (1 rows)
+
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 2 | 0 | 216 | SCAN orders |
+
+
 ---
 
 
@@ -119,6 +126,13 @@ Which is more efficient?
     GO
     SET SHOWPLAN_ALL OFF;
         ```
+
+
+    **Result** (1 rows)
+
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 3 | 0 | 60 | SEARCH orders USING INDEX idx_orders_... |
 
 
 ---
@@ -171,6 +185,13 @@ Which of these queries uses this index?
     GO
     SET SHOWPLAN_ALL OFF;
         ```
+
+
+    **Result** (1 rows)
+
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 3 | 0 | 61 | SEARCH orders USING INDEX idx_orders_... |
 
 
 ---
@@ -235,6 +256,14 @@ Which is more efficient?
         ```
 
 
+    **Result** (2 rows)
+
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 3 | 0 | 54 | SEARCH oi USING COVERING INDEX idx_or... |
+    | 7 | 0 | 45 | SEARCH p USING INTEGER PRIMARY KEY (r... |
+
+
 ---
 
 
@@ -284,6 +313,13 @@ Compare with the idx_products_name index.
     GO
     SET SHOWPLAN_ALL OFF;
         ```
+
+
+    **Result** (1 rows)
+
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 2 | 0 | 216 | SCAN products |
 
 
 ---
@@ -351,6 +387,14 @@ browsing history in product_views (~300K rows). Check if indexes are used.
         ```
 
 
+    **Result** (2 rows)
+
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 4 | 0 | 61 | SEARCH product_views USING INDEX idx_... |
+    | 15 | 0 | 0 | USE TEMP B-TREE FOR ORDER BY |
+
+
 ---
 
 
@@ -416,6 +460,16 @@ on point_transactions (~130K rows). Check for temp tables or sort operations.
         ```
 
 
+    **Result** (4 rows)
+
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 3 | 0 | 0 | CO-ROUTINE (subquery-2) |
+    | 7 | 3 | 61 | SEARCH point_transactions USING INDEX... |
+    | 28 | 3 | 0 | USE TEMP B-TREE FOR LAST TERM OF ORDE... |
+    | 51 | 0 | 49 | SCAN (subquery-2) |
+
+
 ---
 
 
@@ -443,6 +497,19 @@ WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) > 10;
     GROUP BY c.id, c.name, c.email
     HAVING COUNT(o.id) > 10;
     ```
+
+
+    **Result** (top 7 of 876 rows)
+
+    | name | email | order_count | total_spent |
+    |---|---|---|---|
+    | Gregory Hudson | user1004@testmail.kr | 22 | 17,676,624.00 |
+    | Justin Murphy | user1005@testmail.kr | 55 | 74,882,199.00 |
+    | Jeremy Mccormick | user1007@testmail.kr | 34 | 32,737,209.00 |
+    | Heather Warren | user1011@testmail.kr | 29 | 21,353,795.00 |
+    | Jeffrey Collins | user1012@testmail.kr | 24 | 19,264,630.00 |
+    | Theresa Smith | user1014@testmail.kr | 20 | 14,743,243.00 |
+    | Leonard Wade | user1023@testmail.kr | 12 | 9,332,530.00 |
 
 
 ---

@@ -202,6 +202,24 @@
     ```
 
 
+    **실행 결과** (6행)
+
+    | name | sql |
+    |---|---|
+    | coupons | CREATE TABLE coupons (
+    id        ... |
+    | customers | CREATE TABLE customers (
+    id      ... |
+    | order_items | CREATE TABLE order_items (
+    id    ... |
+    | payments | CREATE TABLE payments (
+    id       ... |
+    | products | CREATE TABLE products (
+    id       ... |
+    | reviews | CREATE TABLE reviews (
+    id        ... |
+
+
 ---
 
 

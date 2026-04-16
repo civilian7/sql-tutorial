@@ -48,6 +48,19 @@ Exclude cancelled/returned orders.
     ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | customer_id | customer_name | grade | last_order_date | order_count | total_spent |
+    |---|---|---|---|---|---|
+    | 226 | Allen Snyder | VIP | 2025-12-21 21:52:24 | 303 | 403,448,758.00 |
+    | 97 | Jason Rivera | VIP | 2025-12-28 11:37:58 | 342 | 366,385,931.00 |
+    | 162 | Brenda Garcia | VIP | 2025-12-20 10:21:05 | 249 | 253,180,338.00 |
+    | 356 | Courtney Huff | VIP | 2025-10-24 16:44:53 | 223 | 244,604,910.00 |
+    | 549 | Ronald Arellano | VIP | 2025-12-04 12:11:17 | 219 | 235,775,349.00 |
+    | 227 | James Banks | VIP | 2025-12-19 22:54:22 | 230 | 234,708,853.00 |
+    | 98 | Gabriel Walters | VIP | 2025-11-29 11:04:23 | 275 | 230,165,991.00 |
+
+
 ---
 
 
@@ -100,6 +113,19 @@ Recency: higher score for more recent. Frequency and Monetary: higher score for 
     ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | customer_id | name | grade | last_order_date | frequency | monetary | r_score | f_score | m_score | rfm_total |
+    |---|---|---|---|---|---|---|---|---|---|
+    | 486 | Hannah Norton | GOLD | 2025-11-13 20:04:57 | 37 | 51,239,619.00 | 4 | 4 | 4 | 12 |
+    | 10 | John Stark | GOLD | 2025-11-14 12:11:23 | 26 | 29,486,071.00 | 4 | 4 | 4 | 12 |
+    | 1490 | April Lopez | VIP | 2025-11-14 14:54:42 | 50 | 36,214,359.00 | 4 | 4 | 4 | 12 |
+    | 647 | Leslie Mccoy | VIP | 2025-11-14 19:43:56 | 33 | 29,875,991.00 | 4 | 4 | 4 | 12 |
+    | 1241 | Cheryl Garcia | BRONZE | 2025-11-15 09:53:27 | 18 | 13,800,255.00 | 4 | 4 | 4 | 12 |
+    | 256 | Jessica Craig | GOLD | 2025-11-15 11:09:38 | 22 | 26,613,941.00 | 4 | 4 | 4 | 12 |
+    | 2328 | Julie Hamilton | VIP | 2025-11-15 22:09:51 | 24 | 26,820,326.00 | 4 | 4 | 4 | 12 |
+
+
 ---
 
 
@@ -137,6 +163,19 @@ Show last order date, total orders, total spend, and days since last order.
        AND JULIANDAY('2025-12-31') - JULIANDAY(MAX(o.ordered_at)) >= 365
     ORDER BY total_spent DESC;
     ```
+
+
+    **Result** (top 7 of 288 rows)
+
+    | customer_id | name | grade | email | last_order_date | order_count | total_spent | days_since_last_order |
+    |---|---|---|---|---|---|---|---|
+    | 70 | Robert Turner | BRONZE | user70@testmail.kr | 2024-10-26 22:15:57 | 94 | 67,311,037.00 | 430 |
+    | 1101 | Alexandra Elliott | BRONZE | user1101@testmail.kr | 2024-12-01 12:26:06 | 52 | 62,415,347.00 | 394 |
+    | 514 | Steven Johnson | BRONZE | user514@testmail.kr | 2024-03-28 19:31:36 | 5 | 52,141,700.00 | 642 |
+    | 1660 | Thomas Phillips | BRONZE | user1660@testmail.kr | 2024-10-01 22:51:13 | 21 | 48,143,594.00 | 455 |
+    | 72 | Michael Hutchinson | BRONZE | user72@testmail.kr | 2024-12-02 16:19:45 | 51 | 46,080,909.00 | 393 |
+    | 1322 | Donald Landry | BRONZE | user1322@testmail.kr | 2023-12-31 12:30:32 | 5 | 41,506,100.00 | 730 |
+    | 812 | Ryan Perry | BRONZE | user812@testmail.kr | 2024-12-22 14:49:30 | 36 | 40,546,071.00 | 373 |
 
 
 ---
@@ -200,6 +239,16 @@ Compare average order value, average order count, review rate, and average revie
     ```
 
 
+    **Result** (4 rows)
+
+    | grade | customer_count | avg_orders_per_customer | avg_order_value | reviewers | review_rate_pct | avg_rating |
+    |---|---|---|---|---|---|---|
+    | VIP | 368 | 38.20 | 1,093,231.76 | 339 | 92.10 | 3.91 |
+    | GOLD | 524 | 15.10 | 1,011,117.46 | 426 | 81.30 | 3.89 |
+    | SILVER | 479 | 10.70 | 921,070.65 | 355 | 74.10 | 3.89 |
+    | BRONZE | 3859 | 2.00 | 878,974.74 | 779 | 20.20 | 3.93 |
+
+
 ---
 
 
@@ -257,6 +306,19 @@ within 1 year and 2 years after signup.
     HAVING CAST(join_year AS INTEGER) <= 2023
     ORDER BY join_year;
     ```
+
+
+    **Result** (top 7 of 8 rows)
+
+    | join_year | cohort_size | active_year_1 | retention_1y_pct | active_year_2 | retention_2y_pct |
+    |---|---|---|---|---|---|
+    | 2016 | 52 | 49 | 94.20 | 45 | 86.50 |
+    | 2017 | 83 | 75 | 90.40 | 73 | 88.00 |
+    | 2018 | 155 | 134 | 86.50 | 138 | 89.00 |
+    | 2019 | 217 | 195 | 89.90 | 193 | 88.90 |
+    | 2020 | 348 | 311 | 89.40 | 290 | 83.30 |
+    | 2021 | 499 | 403 | 80.80 | 348 | 69.70 |
+    | 2022 | 386 | 298 | 77.20 | 273 | 70.70 |
 
 
 ---
@@ -319,6 +381,18 @@ Show customer count and average monetary per segment.
     GROUP BY segment
     ORDER BY avg_monetary DESC;
     ```
+
+
+    **Result** (6 rows)
+
+    | segment | customer_count | avg_monetary | avg_frequency |
+    |---|---|---|---|
+    | 챔피언 | 787 | 30,627,193.48 | 29.50 |
+    | 충성 고객 | 488 | 15,686,318.24 | 15.00 |
+    | 이탈 위험 | 465 | 2,994,776.44 | 3.80 |
+    | 잠재 충성 | 549 | 2,092,261.26 | 2.50 |
+    | 기타 | 258 | 1,280,113.41 | 2.60 |
+    | 휴면 | 246 | 566,714.23 | 1.30 |
 
 
 ---

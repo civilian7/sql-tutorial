@@ -273,4 +273,15 @@ The `customer_addresses` table already uses this pattern.
     ```
 
 
+    **Result** (5 rows)
+
+    | customer_id | address_count |
+    |---|---|
+    | 1 | 3 |
+    | 2 | 3 |
+    | 3 | 3 |
+    | 12 | 3 |
+    | 20 | 3 |
+
+
 ---

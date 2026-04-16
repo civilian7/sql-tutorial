@@ -41,6 +41,14 @@ Find the number of active and inactive customers separately.
     ```
 
 
+    **Result** (2 rows)
+
+    | is_active | customer_count |
+    |---|---|
+    | 0 | 1570 |
+    | 1 | 3660 |
+
+
 ---
 
 
@@ -60,6 +68,16 @@ Find the number of customers per grade.
     GROUP BY grade
     ORDER BY cnt DESC;
     ```
+
+
+    **Result** (4 rows)
+
+    | grade | cnt |
+    |---|---|
+    | BRONZE | 3859 |
+    | GOLD | 524 |
+    | SILVER | 479 |
+    | VIP | 368 |
 
 
 ---
@@ -83,6 +101,19 @@ Retrieve the name, email, and point balance of VIP-grade customers, sorted by po
     ```
 
 
+    **Result** (top 7 of 368 rows)
+
+    | name | email | point_balance |
+    |---|---|---|
+    | Allen Snyder | user226@testmail.kr | 3,955,828 |
+    | Jason Rivera | user97@testmail.kr | 3,518,880 |
+    | Brenda Garcia | user162@testmail.kr | 2,450,166 |
+    | Courtney Huff | user356@testmail.kr | 2,383,491 |
+    | James Banks | user227@testmail.kr | 2,297,542 |
+    | Ronald Arellano | user549@testmail.kr | 2,276,622 |
+    | Gabriel Walters | user98@testmail.kr | 2,218,590 |
+
+
 ---
 
 
@@ -102,6 +133,19 @@ Retrieve the name, signup date, and grade of the 10 most recently registered cus
     ORDER BY created_at DESC
     LIMIT 10;
     ```
+
+
+    **Result** (top 7 of 10 rows)
+
+    | name | created_at | grade |
+    |---|---|---|
+    | Robert Simmons | 2025-12-30 20:49:59 | BRONZE |
+    | Olivia Watson | 2025-12-30 18:50:02 | BRONZE |
+    | Jennifer Mcgrath | 2025-12-30 10:18:14 | BRONZE |
+    | Nicholas Richardson | 2025-12-30 06:02:53 | BRONZE |
+    | Warren Olsen | 2025-12-30 05:59:32 | BRONZE |
+    | Bradley Daugherty | 2025-12-30 05:43:21 | BRONZE |
+    | Michael Moore | 2025-12-29 17:18:36 | BRONZE |
 
 
 ---
@@ -127,6 +171,15 @@ Find the customer count and percentage by gender. Include NULL values.
     ```
 
 
+    **Result** (3 rows)
+
+    | gender | cnt | pct |
+    |---|---|---|
+    | 미입력 | 529 | 10.10 |
+    | F | 1669 | 31.90 |
+    | M | 3032 | 58.00 |
+
+
 ---
 
 
@@ -149,6 +202,19 @@ Retrieve the name, grade, and point balance of the top 20 customers with the hig
     ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | name | grade | point_balance |
+    |---|---|---|
+    | Allen Snyder | VIP | 3,955,828 |
+    | Jason Rivera | VIP | 3,518,880 |
+    | Brenda Garcia | VIP | 2,450,166 |
+    | Courtney Huff | VIP | 2,383,491 |
+    | James Banks | VIP | 2,297,542 |
+    | Ronald Arellano | VIP | 2,276,622 |
+    | Gabriel Walters | VIP | 2,218,590 |
+
+
 ---
 
 
@@ -167,6 +233,13 @@ Find the number of customers whose birth_date is NULL.
     FROM customers
     WHERE birth_date IS NULL;
     ```
+
+
+    **Result** (1 rows)
+
+    | no_birthdate |
+    |---|
+    | 738 |
 
 
 ---
@@ -192,6 +265,19 @@ Find the number of new customers per signup year.
     ```
 
 
+    **Result** (top 7 of 10 rows)
+
+    | join_year | new_customers |
+    |---|---|
+    | 2016 | 100 |
+    | 2017 | 180 |
+    | 2018 | 300 |
+    | 2019 | 450 |
+    | 2020 | 700 |
+    | 2021 | 800 |
+    | 2022 | 650 |
+
+
 ---
 
 
@@ -212,6 +298,13 @@ Find the count and percentage of customers whose last_login_at is NULL.
     FROM customers
     WHERE last_login_at IS NULL;
     ```
+
+
+    **Result** (1 rows)
+
+    | never_logged_in | pct |
+    |---|---|
+    | 281 | 5.40 |
 
 
 ---
@@ -239,6 +332,16 @@ Find the average and maximum point balance per grade.
     ```
 
 
+    **Result** (4 rows)
+
+    | grade | cnt | avg_points | max_points |
+    |---|---|---|---|
+    | VIP | 368 | 407,015.00 | 3,955,828 |
+    | GOLD | 524 | 147,711.00 | 2,007,717 |
+    | SILVER | 479 | 95,042.00 | 1,266,757 |
+    | BRONZE | 3859 | 16,779.00 | 956,983 |
+
+
 ---
 
 
@@ -261,6 +364,13 @@ Find the customer count by email domain (after the @).
     ORDER BY cnt DESC
     LIMIT 10;
     ```
+
+
+    **Result** (1 rows)
+
+    | domain | cnt |
+    |---|---|
+    | testmail.kr | 5230 |
 
 
 ---
@@ -289,6 +399,19 @@ Retrieve the name and address count of customers who have registered 2 or more s
     ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | name | address_count |
+    |---|---|
+    | Joshua Atkins | 3 |
+    | Danny Johnson | 3 |
+    | Adam Moore | 3 |
+    | Michael Velasquez | 3 |
+    | Maria Daniels | 3 |
+    | Duane Evans MD | 3 |
+    | Jeremy Curtis | 3 |
+
+
 ---
 
 
@@ -309,6 +432,19 @@ Retrieve the name, signup date, and grade of customers who joined in 2024 with a
       AND grade IN ('VIP', 'GOLD')
     ORDER BY created_at;
     ```
+
+
+    **Result** (top 7 of 140 rows)
+
+    | name | created_at | grade |
+    |---|---|---|
+    | Andrea Berry | 2024-01-05 14:23:16 | GOLD |
+    | Theresa Lynch | 2024-01-07 05:39:40 | GOLD |
+    | Dr. Donna Barber | 2024-01-07 12:17:28 | VIP |
+    | Lauren Bradley | 2024-01-07 19:33:43 | VIP |
+    | David Dorsey | 2024-01-11 06:40:22 | GOLD |
+    | Clayton Howell | 2024-01-16 06:45:22 | GOLD |
+    | David Levy | 2024-01-23 05:29:21 | VIP |
 
 
 ---
@@ -333,6 +469,19 @@ Find the number of signups per month in 2024.
     GROUP BY SUBSTR(created_at, 1, 7)
     ORDER BY month;
     ```
+
+
+    **Result** (top 7 of 12 rows)
+
+    | month | signups |
+    |---|---|
+    | 2024-01 | 52 |
+    | 2024-02 | 48 |
+    | 2024-03 | 71 |
+    | 2024-04 | 53 |
+    | 2024-05 | 43 |
+    | 2024-06 | 68 |
+    | 2024-07 | 62 |
 
 
 ---
@@ -362,6 +511,17 @@ Divide point balances into ranges -- 0, 1-1,000, 1,001-5,000, 5,001-10,000, and 
     GROUP BY point_range
     ORDER BY MIN(point_balance);
     ```
+
+
+    **Result** (5 rows)
+
+    | point_range | cnt |
+    |---|---|
+    | 없음 | 2506 |
+    | 1~1,000 | 137 |
+    | 1,001~5,000 | 344 |
+    | 5,001~10,000 | 148 |
+    | 10,001 이상 | 2095 |
 
 
 ---
@@ -459,6 +619,19 @@ Show product name and tag list (comma-separated).
         ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | product_name | brand | tag_count | tags |
+    |---|---|---|---|
+    | Razer Blade 16 Silver | Razer | 8 | Water/Dust Resistant, Ergonomic, Gami... |
+    | Razer Blade 18 Black | Razer | 8 | USB-C, Touchscreen, Gaming, Student, ... |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | MSI | 7 | Low Noise, Wi-Fi 7, Touchscreen, Work... |
+    | Razer Blade 18 White | Razer | 7 | QHD, Wi-Fi 6E, Gaming, Portable, High... |
+    | Logitech K580 | Logitech | 7 | FHD, Video Editing, Graphic Design, E... |
+    | SteelSeries Prime Wireless Black | SteelSeries | 7 | RGB Lighting, USB-C, PCIe 4.0, Gaming... |
+    | SteelSeries Aerox 5 Wireless Silver | SteelSeries | 7 | OLED, High Refresh Rate, DDR5, Gaming... |
+
+
 ---
 
 
@@ -481,6 +654,17 @@ Find the customer count and percentage by acquisition channel. Show NULL as 'Unk
     GROUP BY COALESCE(acquisition_channel, '미분류')
     ORDER BY customer_count DESC;
     ```
+
+
+    **Result** (5 rows)
+
+    | channel | customer_count | pct |
+    |---|---|---|
+    | search_ad | 1543 | 29.50 |
+    | social | 1425 | 27.20 |
+    | organic | 1146 | 21.90 |
+    | referral | 708 | 13.50 |
+    | direct | 408 | 7.80 |
 
 
 ---

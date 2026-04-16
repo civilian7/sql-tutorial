@@ -196,7 +196,68 @@ def compute_expected(conn_tutorial, sql: str) -> tuple:
         return None, None, None
 
 
-def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -> dict:
+MAX_RESULT_ROWS = 7  # Show top N rows in result preview
+
+
+def _execute_and_format(conn, sql: str, lang: str = "ko") -> str:
+    """Execute SQL and return a markdown result table (top rows only)."""
+    if not conn or not sql:
+        return ""
+    try:
+        # Handle multi-statement SQL (DML etc.) - skip
+        stripped = sql.strip().rstrip(";").strip()
+        upper = stripped.upper()
+        if any(upper.startswith(k) for k in ("INSERT", "UPDATE", "DELETE", "CREATE", "DROP", "ALTER", "BEGIN", "COMMIT")):
+            return ""
+
+        cursor = conn.execute(sql.strip())
+        if not cursor.description:
+            return ""
+        columns = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        total = len(rows)
+        if total == 0:
+            return ""
+
+        # Build markdown table
+        display_rows = rows[:MAX_RESULT_ROWS]
+        lines = []
+        header_label = "실행 결과" if lang == "ko" else "Result"
+        if total > MAX_RESULT_ROWS:
+            if lang == "ko":
+                lines.append(f"\n    **{header_label}** (총 {total:,}행 중 상위 {MAX_RESULT_ROWS}행)\n")
+            else:
+                lines.append(f"\n    **{header_label}** (top {MAX_RESULT_ROWS} of {total:,} rows)\n")
+        else:
+            lines.append(f"\n    **{header_label}** ({total:,}{('행' if lang == 'ko' else ' rows')})\n")
+
+        # Header
+        lines.append("    | " + " | ".join(str(c) for c in columns) + " |")
+        lines.append("    |" + "|".join("---" for _ in columns) + "|")
+
+        # Rows
+        for row in display_rows:
+            cells = []
+            for v in row:
+                if v is None:
+                    cells.append("NULL")
+                elif isinstance(v, float):
+                    cells.append(f"{v:,.2f}" if abs(v) >= 1 else f"{v}")
+                elif isinstance(v, int):
+                    cells.append(f"{v:,}" if abs(v) >= 10000 else str(v))
+                else:
+                    s = str(v)
+                    if len(s) > 40:
+                        s = s[:37] + "..."
+                    cells.append(s)
+            lines.append("    | " + " | ".join(cells) + " |")
+
+        return "\n".join(lines) + "\n"
+    except Exception:
+        return ""
+
+
+def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int, conn_tutorial_en=None) -> dict:
     """Compile a single YAML file into exercise.db + mkdocs markdown."""
     data = load_yaml(yaml_path)
     meta = data.get("metadata", {})
@@ -372,6 +433,16 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
             md_ko_lines.append(f'\n??? success "정답"\n    ```sql\n    {_indent(answer_sql)}\n    ```\n')
             md_en_lines.append(f'\n??? success "Answer"\n    ```sql\n    {_indent(answer_sql)}\n    ```\n')
 
+        # Insert execution result table
+        exec_sql_for_result = ref_sqlite or ref_common or answer_sql
+        if exec_sql_for_result:
+            result_ko = _execute_and_format(conn_tutorial, exec_sql_for_result.strip(), "ko")
+            if result_ko:
+                md_ko_lines.append(result_ko)
+            result_en = _execute_and_format(conn_tutorial_en or conn_tutorial, exec_sql_for_result.strip(), "en")
+            if result_en:
+                md_en_lines.append(result_en)
+
         md_ko_lines.append("\n---\n")
         md_en_lines.append("\n---\n")
 
@@ -531,6 +602,13 @@ def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int)
             md_lines.append(f"    ```")
             md_lines.append("")
 
+        # Insert execution result for lesson exercises
+        exec_sql_for_result = ref_sqlite or ref_common or answer_sql
+        if exec_sql_for_result:
+            result_table = _execute_and_format(conn_tutorial, exec_sql_for_result.strip(), "ko")
+            if result_table:
+                md_lines.append(result_table)
+
     md_lines.append(LESSON_END)
 
     # Inject into lesson MD if it has placeholder, or replace existing exercises
@@ -602,11 +680,18 @@ def main():
 
     print(f"Found {len(yaml_files)} exercise files")
 
-    # Connect to tutorial DB for expected result computation
+    # Connect to tutorial DBs for expected result computation
     conn_tutorial = None
     if os.path.exists(args.tutorial_db):
         conn_tutorial = sqlite3.connect(args.tutorial_db)
-        print(f"Using tutorial DB: {args.tutorial_db}")
+        print(f"Using tutorial DB (ko): {args.tutorial_db}")
+
+    # English DB for result tables in en docs
+    en_db_path = args.tutorial_db.replace("-ko.db", "-en.db")
+    conn_tutorial_en = None
+    if os.path.exists(en_db_path):
+        conn_tutorial_en = sqlite3.connect(en_db_path)
+        print(f"Using tutorial DB (en): {en_db_path}")
 
     if args.validate_only:
         # Just parse and validate
@@ -628,7 +713,7 @@ def main():
     total_problems = 0
     for i, yf in enumerate(yaml_files):
         try:
-            result = compile_yaml_file(yf, conn_db, conn_tutorial, sort_base=i + 1)
+            result = compile_yaml_file(yf, conn_db, conn_tutorial, sort_base=i + 1, conn_tutorial_en=conn_tutorial_en)
             total_problems += result["problem_count"]
 
             # Write mkdocs markdown
@@ -664,6 +749,8 @@ def main():
     conn_db.close()
     if conn_tutorial:
         conn_tutorial.close()
+    if conn_tutorial_en:
+        conn_tutorial_en.close()
 
     print(f"\nCompiled {len(yaml_files)} exercise files, {total_problems} problems")
     if lecture_files:

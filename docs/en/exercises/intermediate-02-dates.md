@@ -47,6 +47,19 @@ Find the number of orders and revenue per month in 2025. Exclude cancelled order
     ```
 
 
+    **Result** (top 7 of 12 rows)
+
+    | month | orders | revenue |
+    |---|---|---|
+    | 2025-01 | 461 | 491,947,609.00 |
+    | 2025-02 | 428 | 422,980,126.00 |
+    | 2025-03 | 619 | 656,638,842.00 |
+    | 2025-04 | 467 | 517,070,656.00 |
+    | 2025-05 | 466 | 514,287,052.00 |
+    | 2025-06 | 436 | 457,780,698.00 |
+    | 2025-07 | 402 | 404,813,220.00 |
+
+
 ---
 
 
@@ -76,6 +89,16 @@ Find the revenue and order count per quarter (Q1-Q4) in 2024.
     GROUP BY quarter
     ORDER BY quarter;
     ```
+
+
+    **Result** (4 rows)
+
+    | quarter | orders | revenue |
+    |---|---|---|
+    | Q1 | 1330 | 1,263,575,536.00 |
+    | Q2 | 1271 | 1,306,918,979.00 |
+    | Q3 | 1355 | 1,340,721,817.00 |
+    | Q4 | 1518 | 1,435,560,379.00 |
 
 
 ---
@@ -168,6 +191,13 @@ Find the average number of days from signup to first order across all customers.
         ```
 
 
+    **Result** (1 rows)
+
+    | avg_days_to_first_order |
+    |---|
+    | 164.10 |
+
+
 ---
 
 
@@ -233,6 +263,19 @@ Find the number of orders per hour of day (0-23).
         ```
 
 
+    **Result** (top 7 of 24 rows)
+
+    | hour | order_count |
+    |---|---|
+    | 0 | 473 |
+    | 1 | 340 |
+    | 2 | 172 |
+    | 3 | 200 |
+    | 4 | 195 |
+    | 5 | 359 |
+    | 6 | 631 |
+
+
 ---
 
 
@@ -257,6 +300,19 @@ Find the daily revenue for the last 30 days (based on 2025-11-01 to 2025-11-30).
     GROUP BY SUBSTR(ordered_at, 1, 10)
     ORDER BY order_date;
     ```
+
+
+    **Result** (top 7 of 30 rows)
+
+    | order_date | orders | revenue |
+    |---|---|---|
+    | 2025-11-01 | 23 | 18,638,420.00 |
+    | 2025-11-02 | 22 | 16,401,346.00 |
+    | 2025-11-03 | 24 | 25,193,599.00 |
+    | 2025-11-04 | 18 | 16,932,899.00 |
+    | 2025-11-05 | 13 | 8,753,619.00 |
+    | 2025-11-06 | 20 | 48,635,756.00 |
+    | 2025-11-07 | 14 | 10,072,100.00 |
 
 
 ---
@@ -391,6 +447,15 @@ Divide delivery duration into ranges (within 1 day, 2 days, 3 days, 4+ days) and
         ```
 
 
+    **Result** (3 rows)
+
+    | delivery_range | cnt |
+    |---|---|
+    | 2일 | 2894 |
+    | 3일 | 5885 |
+    | 4일 이상 | 26,739 |
+
+
 ---
 
 
@@ -478,6 +543,19 @@ Find the number of days since each customer's last order. Only customers with 18
     HAVING DATEDIFF(DAY, MAX(o.ordered_at), '2025-12-31') >= 180
     ORDER BY days_ago DESC;
         ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | name | grade | last_order | days_ago |
+    |---|---|---|---|
+    | Lance Barrett | BRONZE | 2019-11-27 11:00:22 | 2225 |
+    | Austin Hunt | BRONZE | 2020-06-05 18:47:34 | 2034 |
+    | Joshua Bradshaw | BRONZE | 2020-07-25 22:23:10 | 1984 |
+    | Anthony Williams | BRONZE | 2020-08-05 13:14:36 | 1973 |
+    | Becky Watkins | BRONZE | 2020-08-13 11:55:26 | 1965 |
+    | Steven Rodriguez | BRONZE | 2020-09-16 21:29:41 | 1931 |
+    | Justin Bautista | BRONZE | 2020-11-02 13:43:56 | 1884 |
 
 
 ---
@@ -570,6 +648,19 @@ Find the order count by day of week (Mon-Sun) and hour (0-23). Show top 20 combi
         ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | day_name | hour | orders |
+    |---|---|---|
+    | 일 | 21 | 534 |
+    | 토 | 21 | 513 |
+    | 토 | 20 | 469 |
+    | 월 | 20 | 462 |
+    | 월 | 21 | 458 |
+    | 화 | 21 | 454 |
+    | 일 | 20 | 445 |
+
+
 ---
 
 
@@ -601,6 +692,19 @@ Find the yearly revenue and year-over-year growth rate (%). Exclude cancelled or
     FROM yearly
     ORDER BY year;
     ```
+
+
+    **Result** (top 7 of 10 rows)
+
+    | year | revenue | prev_year | growth_pct |
+    |---|---|---|---|
+    | 2016 | 301,871,490.00 | NULL | NULL |
+    | 2017 | 630,467,381.00 | 301,871,490.00 | 108.90 |
+    | 2018 | 1,203,414,419.00 | 630,467,381.00 | 90.90 |
+    | 2019 | 2,523,296,474.00 | 1,203,414,419.00 | 109.70 |
+    | 2020 | 4,251,046,262.00 | 2,523,296,474.00 | 68.50 |
+    | 2021 | 5,771,175,319.00 | 4,251,046,262.00 | 35.80 |
+    | 2022 | 4,999,116,420.00 | 5,771,175,319.00 | -13.40 |
 
 
 ---
@@ -673,6 +777,13 @@ Find the average number of days from return request to completion. Only complete
         ```
 
 
+    **Result** (1 rows)
+
+    | avg_days | min_days | max_days |
+    |---|---|---|
+    | 5.90 | 2 | 9 |
+
+
 ---
 
 
@@ -710,6 +821,19 @@ Find the count of first-time buyers and repeat buyers per month in 2024.
     ```
 
 
+    **Result** (top 7 of 12 rows)
+
+    | month | new_customers | returning_customers |
+    |---|---|---|
+    | 2024-01 | 32 | 293 |
+    | 2024-02 | 30 | 403 |
+    | 2024-03 | 50 | 522 |
+    | 2024-04 | 34 | 444 |
+    | 2024-05 | 35 | 361 |
+    | 2024-06 | 28 | 369 |
+    | 2024-07 | 34 | 357 |
+
+
 ---
 
 
@@ -737,6 +861,19 @@ Find the name, number of changes, first price, and current price of products who
     ORDER BY price_changes DESC
     LIMIT 15;
     ```
+
+
+    **Result** (top 7 of 15 rows)
+
+    | name | price_changes | first_price | current_price |
+    |---|---|---|---|
+    | ASRock B850M Pro RS White | 5 | 418,600.00 | 419,600.00 |
+    | ASRock B860M Pro RS White | 5 | 538,500.00 | 610,100.00 |
+    | ASRock X870E Taichi Silver | 5 | 575,800.00 | 543,100.00 |
+    | ASUS Dual RTX 4060 Ti Black | 5 | 2,003,500.00 | 2,674,800.00 |
+    | ASUS Dual RTX 5070 Ti Silver | 5 | 1,136,500.00 | 986,400.00 |
+    | ASUS ExpertCenter PN65 Silver | 5 | 647,000.00 | 722,100.00 |
+    | ASUS ROG MAXIMUS Z890 HERO Black | 5 | 973,100.00 | 1,150,400.00 |
 
 
 ---
@@ -776,6 +913,14 @@ average daily order count and average daily revenue.
     FROM daily_orders
     GROUP BY is_weekend;
     ```
+
+
+    **Result** (2 rows)
+
+    | day_type | total_days | total_orders | avg_daily_orders | avg_daily_revenue |
+    |---|---|---|---|---|
+    | 평일 | 262 | 3766 | 14.40 | 14,062,210.00 |
+    | 주말 | 104 | 1708 | 16.40 | 15,985,362.00 |
 
 
 ---

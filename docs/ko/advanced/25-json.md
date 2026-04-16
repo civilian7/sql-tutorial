@@ -411,6 +411,19 @@ RAM이 `'16GB'`인 상품의 이름, 가격, RAM 값을 조회하세요. 가격 
     ORDER BY price DESC;
     ```
 
+
+    **실행 결과** (총 15행 중 상위 7행)
+
+    | name | price | ram |
+    |---|---|---|
+    | ASUS ROG Strix G16CH 화이트 | 3,671,500.00 | 16GB |
+    | ASUS ROG Zephyrus G16 | 3,429,900.00 | 16GB |
+    | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] ... | 2,080,300.00 | 16GB |
+    | ASUS ExpertBook B5 화이트 | 2,068,800.00 | 16GB |
+    | 레노버 ThinkPad X1 2in1 실버 | 1,866,100.00 | 16GB |
+    | Razer Blade 18 | 1,806,800.00 | 16GB |
+    | 주연 리오나인 R7 시스템 | 1,800,000.00 | 16GB |
+
 ### 문제 2
 `products` 테이블에서 `specs` 칼럼이 NULL이 아닌 상품의 이름과 CPU 값을 추출하세요. CPU 값이 있는 상품만 표시하고, 결과를 5건으로 제한하세요.
 
@@ -423,6 +436,17 @@ RAM이 `'16GB'`인 상품의 이름, 가격, RAM 값을 조회하세요. 가격 
     LIMIT 5;
     ```
 
+
+    **실행 결과** (5행)
+
+    | name | cpu |
+    |---|---|
+    | Razer Blade 18 블랙 | Apple M3 |
+    | LG 일체형PC 27V70Q 실버 | Intel Core i5-13600K |
+    | Razer Blade 18 화이트 | Intel Core i9-13900H |
+    | 한성 보스몬스터 DX9900 실버 | AMD Ryzen 5 7600X |
+    | ASUS ROG Strix G16CH 화이트 | AMD Ryzen 5 7600X |
+
 ### 문제 3
 `specs` 칼럼에 사용된 모든 고유 키(key) 목록을 알파벳 순서로 조회하세요.
 
@@ -433,6 +457,19 @@ RAM이 `'16GB'`인 상품의 이름, 가격, RAM 값을 조회하세요. 가격 
     WHERE products.specs IS NOT NULL
     ORDER BY j.key;
     ```
+
+
+    **실행 결과** (총 23행 중 상위 7행)
+
+    | key |
+    |---|
+    | base_clock_ghz |
+    | battery_hours |
+    | boost_clock_ghz |
+    | capacity_gb |
+    | clock_mhz |
+    | cores |
+    | cpu |
 
 ### 문제 4
 `specs`에 `cpu` 키가 있는 상품 중, 가격이 가장 비싼 상품 3개의 이름, CPU, 가격을 조회하세요.
@@ -445,6 +482,15 @@ RAM이 `'16GB'`인 상품의 이름, 가격, RAM 값을 조회하세요. 가격 
     ORDER BY price DESC
     LIMIT 3;
     ```
+
+
+    **실행 결과** (3행)
+
+    | name | cpu | price |
+    |---|---|---|
+    | MacBook Air 15 M3 실버 | Intel Core i9-13900H | 5,481,100.00 |
+    | Razer Blade 18 블랙 | Intel Core i7-13700H | 4,353,100.00 |
+    | Razer Blade 16 실버 | AMD Ryzen 9 7945HX | 3,702,900.00 |
 
 ### 문제 5
 배터리 수명이 12시간 이상인 노트북의 이름, 가격, 배터리 수명을 조회하세요. 배터리 수명 내림차순으로 정렬하세요.
@@ -460,6 +506,19 @@ RAM이 `'16GB'`인 상품의 이름, 가격, RAM 값을 조회하세요. 가격 
     ORDER BY json_extract(specs, '$.battery_hours') DESC;
     ```
 
+
+    **실행 결과** (총 12행 중 상위 7행)
+
+    | name | price | battery_hours |
+    |---|---|---|
+    | LG 그램 17 실버 | 1,697,400.00 | 15 |
+    | Razer Blade 18 | 1,806,800.00 | 15 |
+    | 레노버 ThinkPad X1 Carbon | 1,389,800.00 | 15 |
+    | MSI Vector 16 HX 실버 | 1,345,900.00 | 15 |
+    | 레노버 IdeaPad Flex 5 화이트 | 1,657,300.00 | 14 |
+    | ASUS ROG Strix Scar 16 | 2,452,500.00 | 14 |
+    | Razer Blade 18 블랙 | 4,353,100.00 | 14 |
+
 ### 문제 6
 VRAM이 `'16GB'` 이상인 GPU 상품의 이름, 가격, VRAM, TDP(전력 소모)를 조회하세요. TDP 오름차순으로 정렬하세요.
 
@@ -474,6 +533,19 @@ VRAM이 `'16GB'` 이상인 GPU 상품의 이름, 가격, VRAM, TDP(전력 소모
     WHERE specs->>'$.vram' IN ('16GB', '24GB')
     ORDER BY json_extract(specs, '$.tdp_watts');
     ```
+
+
+    **실행 결과** (총 8행 중 상위 7행)
+
+    | name | price | vram | tdp_watts |
+    |---|---|---|---|
+    | SAPPHIRE PULSE RX 7800 XT 블랙 | 862,500.00 | 16GB | 205 |
+    | 기가바이트 RTX 4090 AERO OC 화이트 | 1,280,900.00 | 16GB | 301 |
+    | ASUS Dual RX 9070 실버 | 1,344,800.00 | 24GB | 312 |
+    | ASUS TUF Gaming RTX 5080 화이트 | 4,526,600.00 | 24GB | 339 |
+    | SAPPHIRE NITRO+ RX 7900 XTX 블랙 | 867,300.00 | 24GB | 340 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 383,100.00 | 16GB | 411 |
+    | SAPPHIRE PULSE RX 7800 XT 실버 | 1,146,300.00 | 24GB | 427 |
 
 ### 문제 7
 상품 ID 1의 specs에 `"color"` 키를 `"Space Gray"` 값으로 추가하는 UPDATE 문을 작성하세요. 이후 추가된 값을 조회하여 확인하세요.
@@ -522,6 +594,18 @@ VRAM이 `'16GB'` 이상인 GPU 상품의 이름, 가격, VRAM, TDP(전력 소모
     ORDER BY product_count DESC;
     ```
 
+
+    **실행 결과** (6행)
+
+    | screen_size | product_count | avg_price |
+    |---|---|---|
+    | 14 inch | 13 | 2,112,669.00 |
+    | 27 inch | 12 | 1,085,900.00 |
+    | 15.6 inch | 10 | 1,765,740.00 |
+    | 32 inch | 6 | 970,783.00 |
+    | 16 inch | 6 | 2,522,717.00 |
+    | 24 inch | 4 | 1,194,175.00 |
+
 ### 문제 10
 모니터 패널 타입(`panel`)별로 상품 수, 평균 주사율(`refresh_rate`), 최대 주사율을 집계하세요.
 
@@ -537,5 +621,14 @@ VRAM이 `'16GB'` 이상인 GPU 상품의 이름, 가격, VRAM, TDP(전력 소모
     GROUP BY specs->>'$.panel'
     ORDER BY avg_refresh_rate DESC;
     ```
+
+
+    **실행 결과** (3행)
+
+    | panel | product_count | avg_refresh_rate | max_refresh_rate |
+    |---|---|---|---|
+    | VA | 6 | 135.00 | 240 |
+    | OLED | 8 | 135.00 | 240 |
+    | IPS | 8 | 114.00 | 165 |
 
 <!-- END_LESSON_EXERCISES -->

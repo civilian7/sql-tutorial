@@ -59,6 +59,15 @@ Mark products with 0 stock as "out of stock".
     ```
 
 
+    **Result** (3 rows)
+
+    | product_name | category | supplier | stock_qty | stock_status | price |
+    |---|---|---|---|---|---|
+    | Arctic Freezer 36 A-RGB White | Air Cooling | Arctic Corp. | 0 | 품절 | 23,000.00 |
+    | Samsung SPA-KFG0BUB | Membrane | Samsung Official Distribution | 4 | 긴급 | 30,700.00 |
+    | Logitech G502 HERO Silver | Wired | Logitech Corp. | 8 | 부족 | 71,100.00 |
+
+
 ---
 
 
@@ -150,6 +159,19 @@ B-grade: next 15%. C-grade: remaining.
     ```
 
 
+    **Result** (top 7 of 30 rows)
+
+    | product_name | category | revenue | pct_of_total | cumulative_pct | abc_class |
+    |---|---|---|---|---|---|
+    | Razer Blade 18 Black | Gaming Laptop | 1,079,568,800.00 | 3.08 | 3.08 | A |
+    | Razer Blade 16 Silver | Gaming Laptop | 859,072,800.00 | 2.45 | 5.52 | A |
+    | ASUS Dual RTX 4060 Ti Black | NVIDIA | 858,610,800.00 | 2.45 | 7.97 | A |
+    | Razer Blade 18 Black | Gaming Laptop | 839,487,500.00 | 2.39 | 10.36 | A |
+    | Razer Blade 18 White | Gaming Laptop | 665,604,800.00 | 1.90 | 12.26 | A |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | NVIDIA | 647,024,000.00 | 1.84 | 14.11 | A |
+    | MSI Radeon RX 7900 XTX GAMING X White | AMD | 585,793,600.00 | 1.67 | 15.77 | A |
+
+
 ---
 
 
@@ -219,6 +241,19 @@ Identify suppliers with high return rates.
     ```
 
 
+    **Result** (top 7 of 45 rows)
+
+    | supplier_name | product_count | units_sold | total_revenue | return_count | return_rate_pct | avg_rating | review_count |
+    |---|---|---|---|---|---|---|---|
+    | Brother Corp. | 1 | 21 | 4,254,600.00 | 2 | 9.52 | 4.00 | 1 |
+    | Hansung Computer | 4 | 295 | 311,361,100.00 | 19 | 6.44 | 3.75 | 32 |
+    | Dell Corp. | 3 | 566 | 528,065,100.00 | 27 | 4.77 | 4.21 | 63 |
+    | Lenovo Corp. | 5 | 577 | 996,843,200.00 | 25 | 4.33 | 3.58 | 59 |
+    | Razer Corp. | 9 | 2958 | 4,004,408,800.00 | 120 | 4.06 | 3.89 | 272 |
+    | Canon Corp. | 5 | 892 | 292,499,200.00 | 36 | 4.04 | 3.94 | 97 |
+    | Jooyon Tech | 4 | 255 | 357,712,900.00 | 10 | 3.92 | 4.00 | 25 |
+
+
 ---
 
 
@@ -269,6 +304,19 @@ Turnover ratio = monthly outbound quantity / end-of-month cumulative stock.
     FROM with_cumulative
     ORDER BY year_month;
     ```
+
+
+    **Result** (top 7 of 12 rows)
+
+    | year_month | total_in | total_out | cumulative_net_stock | turnover_ratio |
+    |---|---|---|---|---|
+    | 2024-01 | 1996 | -199 | 2195 | -0.09 |
+    | 2024-02 | 935 | -163 | 3293 | -0.05 |
+    | 2024-03 | 3500 | -248 | 7041 | -0.04 |
+    | 2024-04 | 3513 | -122 | 10,676 | -0.01 |
+    | 2024-05 | 3394 | -253 | 14,323 | -0.02 |
+    | 2024-06 | 2671 | -171 | 17,165 | -0.01 |
+    | 2024-07 | 2899 | -138 | 20,202 | -0.01 |
 
 
 ---
@@ -325,6 +373,19 @@ Show ABC grade, product count, and low-stock (stock_qty <= 10) product percentag
     FROM ranked
     ORDER BY revenue DESC;
     ```
+
+
+    **Result** (top 7 of 40 rows)
+
+    | category | product_count | revenue | cumulative_pct | abc_class | low_stock_pct |
+    |---|---|---|---|---|---|
+    | Gaming Laptop | 9 | 4,684,236,900.00 | 13.30 | A | 0.0 |
+    | NVIDIA | 7 | 2,695,883,800.00 | 21.00 | A | 0.0 |
+    | Gaming Monitor | 10 | 2,645,570,200.00 | 28.60 | A | 0.0 |
+    | AMD | 8 | 2,419,754,300.00 | 35.50 | A | 0.0 |
+    | General Laptop | 10 | 2,324,971,800.00 | 42.10 | A | 0.0 |
+    | 2-in-1 | 9 | 1,852,395,500.00 | 47.40 | A | 0.0 |
+    | Intel Socket | 13 | 1,506,501,500.00 | 51.70 | A | 0.0 |
 
 
 ---

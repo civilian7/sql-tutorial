@@ -46,6 +46,19 @@ Retrieve the name and price of products that are more expensive than the overall
     ```
 
 
+    **Result** (top 7 of 83 rows)
+
+    | name | price |
+    |---|---|
+    | MacBook Air 15 M3 Silver | 5,481,100.00 |
+    | ASUS TUF Gaming RTX 5080 White | 4,526,600.00 |
+    | ASUS Dual RTX 5070 Ti [Special Limite... | 4,496,700.00 |
+    | Razer Blade 18 Black | 4,353,100.00 |
+    | Razer Blade 16 Silver | 3,702,900.00 |
+    | ASUS ROG Strix G16CH White | 3,671,500.00 |
+    | ASUS ROG Zephyrus G16 | 3,429,900.00 |
+
+
 ---
 
 
@@ -76,6 +89,13 @@ Find the name, category, total quantity sold, and total revenue of the #1 best-s
     ```
 
 
+    **Result** (1 rows)
+
+    | name | category | total_sold | total_revenue |
+    |---|---|---|---|
+    | Crucial T700 2TB Silver | SSD | 1439 | 369,823,000.00 |
+
+
 ---
 
 
@@ -102,6 +122,19 @@ Retrieve only the products that are more expensive than the average price of the
     ORDER BY p.price DESC
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | name | price | category | avg_price |
+    |---|---|---|---|
+    | ASUS TUF Gaming RTX 5080 White | 4,526,600.00 | NVIDIA | 2,406,500.00 |
+    | ASUS Dual RTX 5070 Ti [Special Limite... | 4,496,700.00 | NVIDIA | 2,406,500.00 |
+    | Razer Blade 18 Black | 4,353,100.00 | Gaming Laptop | 2,684,477.78 |
+    | Razer Blade 16 Silver | 3,702,900.00 | Gaming Laptop | 2,684,477.78 |
+    | ASUS ROG Strix G16CH White | 3,671,500.00 | Custom Build | 1,719,809.09 |
+    | ASUS ROG Zephyrus G16 | 3,429,900.00 | Gaming Laptop | 2,684,477.78 |
+    | ASUS ROG Strix GT35 | 3,296,800.00 | Custom Build | 1,719,809.09 |
 
 
 ---
@@ -138,6 +171,19 @@ Find products with an average rating of 4.5 or higher but whose total revenue is
     ```
 
 
+    **Result** (top 7 of 10 rows)
+
+    | name | avg_rating | revenue |
+    |---|---|---|
+    | be quiet! Dark Power 13 1000W | 5.00 | 22,268,000.00 |
+    | Samsung DM500TDA Silver | 4.80 | 254,851,000.00 |
+    | LG 27UQ85R White | 4.60 | 669,675,000.00 |
+    | LG 32UN880 Ergo White | 4.56 | 2,101,132,800.00 |
+    | WD Elements 2TB Black | 4.53 | 863,861,600.00 |
+    | Windows 11 Home Black | 4.52 | 994,396,200.00 |
+    | ASUS ExpertCenter PN65 Silver | 4.50 | 73,654,200.00 |
+
+
 ---
 
 
@@ -167,6 +213,16 @@ Classify orders by amount into tiers -- small (under 50K), medium (50K-200K), la
     GROUP BY tier
     ORDER BY MIN(total_amount);
     ```
+
+
+    **Result** (4 rows)
+
+    | tier | cnt | pct | avg_amount |
+    |---|---|---|---|
+    | 소액 (5만 미만) | 2201 | 6.20 | 35,888.07 |
+    | 중액 (5~20만) | 9333 | 26.10 | 117,617.99 |
+    | 대액 (20~50만) | 7372 | 20.70 | 324,592.77 |
+    | 고액 (50만 이상) | 16,792 | 47.00 | 1,945,613.63 |
 
 
 ---
@@ -203,6 +259,19 @@ Find customer-product combinations that are in a wishlist but have never been or
     ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | customer | product | wishlisted_at |
+    |---|---|---|
+    | Olivia Watson | Jooyon Rionine Mini PC | 2025-12-30 19:11:10 |
+    | Kyle Ferguson | Samsung Galaxy Book4 360 Black | 2025-12-30 17:42:08 |
+    | James Mcgrath | TP-Link TL-SG108 | 2025-12-30 11:47:20 |
+    | Nathaniel Martinez | Seagate IronWolf 4TB Black | 2025-12-30 10:41:18 |
+    | Bryan Powers | SK hynix Platinum P41 2TB Black | 2025-12-30 10:16:54 |
+    | Warren Olsen | TeamGroup T-Force Vulcan DDR5 32GB 52... | 2025-12-30 09:25:54 |
+    | Alexander Logan | APC Back-UPS Pro Gaming BGM1500B Black | 2025-12-30 06:38:37 |
+
+
 ---
 
 
@@ -228,6 +297,19 @@ Find the count, average payment amount, and installment ratio per card issuer.
     GROUP BY card_issuer
     ORDER BY tx_count DESC;
     ```
+
+
+    **Result** (7 rows)
+
+    | card_issuer | tx_count | avg_amount | installment_pct |
+    |---|---|---|---|
+    | Visa | 5098 | 993,810.92 | 48.50 |
+    | Mastercard | 4039 | 1,063,479.07 | 47.90 |
+    | American Express | 2513 | 1,040,512.18 | 48.50 |
+    | Discover | 1710 | 990,776.67 | 48.60 |
+    | Capital One | 1377 | 961,365.07 | 48.50 |
+    | Chase | 1252 | 991,999.22 | 47.60 |
+    | Citi | 852 | 901,753.10 | 48.00 |
 
 
 ---
@@ -256,6 +338,17 @@ Find the count, resolution rate, and average processing time per customer inquir
     GROUP BY channel
     ORDER BY total DESC;
     ```
+
+
+    **Result** (5 rows)
+
+    | channel | total | resolution_pct | avg_days |
+    |---|---|---|---|
+    | website | 1341 | 94.70 | 1.20 |
+    | phone | 913 | 94.10 | 1.20 |
+    | email | 796 | 95.40 | 1.20 |
+    | chat | 583 | 95.50 | 1.20 |
+    | kakao | 180 | 95.00 | 1.20 |
 
 
 ---
@@ -290,6 +383,19 @@ Find the name, review count, and wishlist count of customers who have both writt
     ```
 
 
+    **Result** (top 7 of 15 rows)
+
+    | name | review_count | wishlist_count |
+    |---|---|---|
+    | Jason Rivera | 72 | 2 |
+    | Courtney Huff | 63 | 1 |
+    | James Banks | 59 | 1 |
+    | Lisa Chambers | 45 | 2 |
+    | Austin Townsend | 43 | 1 |
+    | April Rasmussen | 40 | 1 |
+    | David York | 37 | 1 |
+
+
 ---
 
 
@@ -316,6 +422,19 @@ Find the image count per product, including products with no images.
     ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | name | image_count | has_primary |
+    |---|---|---|
+    | ASRock B850M Pro RS Silver | 1 | 1 |
+    | ASRock Z890 Taichi Black | 1 | 1 |
+    | ASUS Dual RTX 4060 Ti Black | 1 | 1 |
+    | ASUS ROG Strix G16CH White | 1 | 1 |
+    | ASUS ROG Swift OLED PG27AQDM Silver | 1 | 1 |
+    | Arctic Liquid Freezer III 240 | 1 | 1 |
+    | Arctic Liquid Freezer III Pro 420 A-R... | 1 | 1 |
+
+
 ---
 
 
@@ -338,6 +457,15 @@ Find the count and percentage per cart status (active/converted/abandoned).
     GROUP BY status
     ORDER BY cnt DESC;
     ```
+
+
+    **Result** (3 rows)
+
+    | status | cnt | pct |
+    |---|---|---|
+    | converted | 1486 | 49.50 |
+    | abandoned | 899 | 30.00 |
+    | active | 615 | 20.50 |
 
 
 ---
@@ -364,6 +492,19 @@ Combine order cancellation events and return request events into a single timeli
     ORDER BY event_date DESC
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | event_type | reference | event_date |
+    |---|---|---|
+    | 반품 | 37371 | 2026-01-08 07:26:14 |
+    | 반품 | 37537 | 2026-01-07 02:35:31 |
+    | 반품 | 37409 | 2026-01-05 04:25:32 |
+    | 반품 | 37515 | 2026-01-05 01:26:34 |
+    | 반품 | 37405 | 2026-01-02 10:13:52 |
+    | 취소 | ORD-20251231-37545 | 2026-01-01 23:35:58 |
+    | 취소 | ORD-20251230-37531 | 2025-12-31 08:00:28 |
 
 
 ---

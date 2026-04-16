@@ -277,6 +277,19 @@ LIMIT 10;
     LIMIT 15;
     ```
 
+
+    **실행 결과** (총 15행 중 상위 7행)
+
+    | order_number | status | memo |
+    |---|---|---|
+    | ORD-20251231-37555 | pending | 메모 없음 |
+    | ORD-20251231-37543 | pending | 층간소음 주의, 살짝 노크해주세요 |
+    | ORD-20251231-37552 | pending | 메모 없음 |
+    | ORD-20251231-37548 | pending | 메모 없음 |
+    | ORD-20251231-37542 | pending | 회사 정문 경비실로 보내주세요 |
+    | ORD-20251231-37546 | pending | 경비실에 맡겨주세요 |
+    | ORD-20251231-37547 | pending | 파손 주의 부탁드립니다 |
+
 ### 문제 2
 직원(`staff`) 목록을 정렬하되, `role`이 `'manager'`인 직원이 먼저, 그 다음 `'staff'`, 나머지가 마지막에 오도록 하세요. 같은 역할 내에서는 `name` 오름차순으로 정렬합니다. `name`, `department`, `role`을 반환하고, 활성 직원만 포함하세요.
 
@@ -293,6 +306,17 @@ LIMIT 10;
     END,
     name ASC;
     ```
+
+
+    **실행 결과** (5행)
+
+    | name | department | role |
+    |---|---|---|
+    | 권영희 | 마케팅 | manager |
+    | 이준혁 | 영업 | manager |
+    | 박경수 | 경영 | admin |
+    | 장주원 | 경영 | admin |
+    | 한민재 | 경영 | admin |
 
 ### 문제 3
 결제 수단(`payments.method`)을 단순 CASE로 한글 레이블로 변환하세요: `'card'` → `'신용카드'`, `'bank_transfer'` → `'계좌이체'`, `'cash'` → `'현금'`, 그 외 → `'기타'`. `id`, `amount`, `method_label`을 반환하고 10행으로 제한하세요.
@@ -312,6 +336,19 @@ LIMIT 10;
     LIMIT 10;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | id | amount | method_label |
+    |---|---|---|
+    | 1 | 167,000.00 | 신용카드 |
+    | 2 | 211,800.00 | 신용카드 |
+    | 3 | 704,800.00 | 신용카드 |
+    | 4 | 167,000.00 | 신용카드 |
+    | 5 | 534,490.00 | 기타 |
+    | 6 | 167,000.00 | 신용카드 |
+    | 7 | 687,400.00 | 신용카드 |
+
 ### 문제 4
 상품 목록에 `stock_status` 칼럼을 추가하세요: `stock_qty = 0`이면 `'품절'`, `1~10`이면 `'재고 부족'`, `11~100`이면 `'재고 있음'`, 100 초과면 `'재고 충분'`. 활성 상품 전체의 `name`, `stock_qty`, `stock_status`를 반환하세요.
 
@@ -330,6 +367,19 @@ LIMIT 10;
     WHERE is_active = 1
     ORDER BY stock_qty ASC;
     ```
+
+
+    **실행 결과** (총 219행 중 상위 7행)
+
+    | name | stock_qty | stock_status |
+    |---|---|---|
+    | Arctic Freezer 36 A-RGB 화이트 | 0 | 품절 |
+    | 삼성 SPA-KFG0BUB | 4 | 재고 부족 |
+    | 로지텍 G502 HERO 실버 | 8 | 재고 부족 |
+    | FK 테스트 | 10 | 재고 부족 |
+    | ASUS ROG Strix Scar 16 | 18 | 재고 있음 |
+    | MSI MPG X870E CARBON WIFI 블랙 | 21 | 재고 있음 |
+    | LG 27UQ85R 블랙 | 26 | 재고 있음 |
 
 ### 문제 5
 세대별 분포 보고서를 만드세요: 활성 고객이 각 세대(Z세대: 1997년 이후 출생, 밀레니얼: 1981~1996, X세대: 1965~1980, 베이비붐+: 1965년 이전, 미확인: birth_date가 NULL)에 몇 명씩 있는지 집계하세요. `generation`과 `customer_count`를 반환하세요.
@@ -351,6 +401,17 @@ LIMIT 10;
     ORDER BY customer_count DESC;
     ```
 
+
+    **실행 결과** (5행)
+
+    | generation | customer_count |
+    |---|---|
+    | 밀레니얼 | 1762 |
+    | Z세대 | 776 |
+    | X세대 | 561 |
+    | 미확인 | 497 |
+    | 베이비붐+ | 64 |
+
 ### 문제 6
 리뷰의 `rating`을 텍스트 레이블로 변환하세요: 5 → `'최고'`, 4 → `'좋음'`, 3 → `'보통'`, 2 → `'불만'`, 1 → `'최악'`. 레이블별 리뷰 수와 평균 평점을 구하세요. `rating_label`, `review_count`, `avg_rating`을 `avg_rating` 내림차순으로 반환하세요.
 
@@ -371,6 +432,17 @@ LIMIT 10;
     ORDER BY avg_rating DESC;
     ```
 
+
+    **실행 결과** (5행)
+
+    | rating_label | review_count | avg_rating |
+    |---|---|---|
+    | 최고 | 3433 | 5.00 |
+    | 좋음 | 2575 | 4.00 |
+    | 보통 | 1265 | 3.00 |
+    | 불만 | 839 | 2.00 |
+    | 최악 | 434 | 1.00 |
+
 ### 문제 7
 고객의 `point_balance`를 3단계로 분류하세요: 10만 이상 `'헤비 유저'`, 1만 이상 `'일반'`, 그 외 `'라이트'`. `grade`별로 각 단계에 해당하는 고객 수를 집계하세요. `grade`, `heavy_count`, `regular_count`, `light_count`를 반환하세요.
 
@@ -387,6 +459,16 @@ LIMIT 10;
     GROUP BY grade
     ORDER BY grade;
     ```
+
+
+    **실행 결과** (4행)
+
+    | grade | heavy_count | regular_count | light_count |
+    |---|---|---|---|
+    | BRONZE | 187 | 597 | 1505 |
+    | GOLD | 231 | 293 | 0 |
+    | SILVER | 130 | 289 | 60 |
+    | VIP | 293 | 75 | 0 |
 
 ### 문제 8
 주문 금액 구간별(`total_amount` 기준: 10만 미만 `'소액'`, 10만~50만 미만 `'중간'`, 50만 이상 `'고액'`) 주문 수와 총 매출을 집계하고, 고액 주문이 위에 오도록 정렬하세요. `amount_tier`, `order_count`, `total_revenue`를 반환하세요.
@@ -412,6 +494,13 @@ LIMIT 10;
     END;
     ```
 
+
+    **실행 결과** (1행)
+
+    | amount_tier | order_count | total_revenue |
+    |---|---|---|
+    | 고액 | 35,205 | 35,580,915,707.00 |
+
 ### 문제 9
 결제 수단별 `'성공'`(status = `'completed'`)과 `'실패'`(그 외) 건수를 피벗하세요. `method`, `success_count`, `fail_count`, `success_rate`(성공률, 소수점 1자리)를 반환하고, 성공률 내림차순으로 정렬하세요.
 
@@ -430,6 +519,18 @@ LIMIT 10;
     GROUP BY method
     ORDER BY success_rate DESC;
     ```
+
+
+    **실행 결과** (6행)
+
+    | method | success_count | fail_count | success_rate |
+    |---|---|---|---|
+    | card | 15,556 | 1285 | 92.40 |
+    | naver_pay | 5270 | 445 | 92.20 |
+    | bank_transfer | 3429 | 289 | 92.20 |
+    | point | 1770 | 151 | 92.10 |
+    | kakao_pay | 6886 | 600 | 92.00 |
+    | virtual_account | 1705 | 171 | 90.90 |
 
 ### 문제 10
 `orders` 테이블에서 주문 상태(status)별로 건수를 세되, CASE를 이용해 한국어 라벨(`대기`, `결제완료`, `배송중`, `완료`, `취소`, `기타`)로 분류하세요. 건수가 많은 순서로 정렬합니다.
@@ -450,5 +551,17 @@ LIMIT 10;
     GROUP BY status_label
     ORDER BY cnt DESC;
     ```
+
+
+    **실행 결과** (6행)
+
+    | status_label | cnt |
+    |---|---|
+    | 기타 | 35,417 |
+    | 취소 | 1859 |
+    | 완료 | 125 |
+    | 대기 | 82 |
+    | 배송중 | 51 |
+    | 결제완료 | 23 |
 
 <!-- END_LESSON_EXERCISES -->

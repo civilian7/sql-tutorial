@@ -274,6 +274,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ORDER BY name;
     ```
 
+
+    **실행 결과** (총 753행 중 상위 7행)
+
+    | name | grade |
+    |---|---|
+    | 강경숙 | VIP |
+    | 강명자 | VIP |
+    | 강민석 | VIP |
+    | 강민재 | VIP |
+    | 강상철 | VIP |
+    | 강서준 | GOLD |
+    | 강서현 | GOLD |
+
 ### 문제 2
 모든 활성 상품(`is_active = 1`)의 `name`과 모든 카테고리의 `name`을 `UNION`으로 합쳐서 중복 없는 이름 목록을 만드세요. 결과 칼럼명은 `name`으로 하세요.
 
@@ -284,6 +297,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     SELECT name FROM categories
     ORDER BY name;
     ```
+
+
+    **실행 결과** (총 257행 중 상위 7행)
+
+    | name |
+    |---|
+    | 2in1 |
+    | AMD |
+    | AMD Ryzen 9 9900X |
+    | AMD 소켓 |
+    | APC Back-UPS Pro Gaming BGM1500B 블랙 |
+    | ASRock B850M Pro RS 실버 |
+    | ASRock B850M Pro RS 화이트 |
 
 ### 문제 3
 2023~2024년의 취소 주문과 반품 주문을 합친 "부정 이벤트" 목록을 만드세요. `UNION ALL`을 사용하고, `event_type`('cancellation' 또는 'return'), `order_number`, `customer_id`, `event_date`(취소는 `cancelled_at`, 반품은 `completed_at` 사용)를 포함하세요. `event_date` 내림차순으로 정렬하세요.
@@ -313,6 +339,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ORDER BY event_date DESC;
     ```
 
+
+    **실행 결과** (총 579행 중 상위 7행)
+
+    | event_type | order_number | customer_id | event_date |
+    |---|---|---|---|
+    | cancellation | ORD-20241229-31194 | 1616 | 2024-12-31 11:37:44 |
+    | cancellation | ORD-20241228-31179 | 1971 | 2024-12-30 00:01:41 |
+    | cancellation | ORD-20241228-31177 | 2552 | 2024-12-28 21:35:05 |
+    | cancellation | ORD-20241226-31148 | 1420 | 2024-12-27 20:44:43 |
+    | cancellation | ORD-20241225-31134 | 1303 | 2024-12-26 18:43:50 |
+    | cancellation | ORD-20241223-31096 | 3326 | 2024-12-25 19:56:46 |
+    | cancellation | ORD-20241222-31087 | 1220 | 2024-12-24 13:53:00 |
+
 ### 문제 4
 2024년 리뷰와 2024년 상품 Q&A(질문만, `parent_id IS NULL`)를 합친 "고객 피드백" 목록을 만드세요. `UNION ALL`을 사용하고, `feedback_type`('review' 또는 'qna'), `product_id`, `customer_id`, `created_at`을 포함하세요. `created_at` 내림차순으로 정렬하고 상위 20건만 표시하세요.
 
@@ -341,6 +380,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     LIMIT 20;
     ```
 
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | feedback_type | product_id | customer_id | created_at |
+    |---|---|---|---|
+    | review | 241 | 3714 | 2024-12-31 23:05:31 |
+    | review | 209 | 3905 | 2024-12-31 10:47:07 |
+    | qna | 109 | 1544 | 2024-12-31 05:50:42 |
+    | qna | 223 | 3974 | 2024-12-29 19:05:30 |
+    | review | 214 | 1903 | 2024-12-29 10:19:21 |
+    | review | 246 | 2324 | 2024-12-28 23:13:40 |
+    | review | 182 | 1530 | 2024-12-28 20:28:36 |
+
 ### 문제 5
 결제 수단별 건수를 집계한 뒤, `UNION ALL`로 합계 행을 추가하세요. 합계 행의 `method`는 `'합계'`로 표시합니다. `status = 'completed'`인 결제만 대상입니다.
 
@@ -366,6 +418,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ORDER BY sort_key, tx_count DESC;
     ```
 
+
+    **실행 결과** (7행)
+
+    | sort_key | method | tx_count |
+    |---|---|---|
+    | 0 | card | 15,556 |
+    | 0 | kakao_pay | 6886 |
+    | 0 | naver_pay | 5270 |
+    | 0 | bank_transfer | 3429 |
+    | 0 | point | 1770 |
+    | 0 | virtual_account | 1705 |
+    | 1 | 합계 | 34,616 |
+
 ### 문제 6
 고객 등급별 인원수를 집계한 뒤, `UNION ALL`로 전체 합계 행(`'전체'`)을 추가하세요. `is_active = 1`인 고객만 대상입니다. 합계 행이 마지막에 오도록 정렬하세요.
 
@@ -390,6 +455,17 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     
     ORDER BY sort_key, cnt DESC;
     ```
+
+
+    **실행 결과** (5행)
+
+    | sort_key | grade | cnt |
+    |---|---|---|
+    | 0 | BRONZE | 2289 |
+    | 0 | GOLD | 524 |
+    | 0 | SILVER | 479 |
+    | 0 | VIP | 368 |
+    | 1 | 전체 | 3660 |
 
 ### 문제 7
 고객 참여도 요약을 만드세요. `UNION ALL`을 사용하여 고객별 총 주문 수, 총 리뷰 수, 총 불만 수를 집계하세요. 유니온 결과를 서브쿼리(파생 테이블)로 감싸서 고객별 한 행으로 집계하고, 총 활동 수 기준 상위 10명을 반환하세요.
@@ -417,6 +493,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ORDER BY total_activity DESC
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | customer_id | total_activity |
+    |---|---|
+    | 97 | 463 |
+    | 226 | 410 |
+    | 98 | 398 |
+    | 162 | 352 |
+    | 356 | 319 |
+    | 227 | 318 |
+    | 549 | 313 |
 
 ### 문제 8
 주문 상태별 건수와 평균 금액을 집계한 뒤, `UNION ALL`로 전체 합계 행을 추가하세요. 결과를 서브쿼리로 감싸서 `pct`(각 상태의 건수가 전체 건수에서 차지하는 비율, 소수 첫째 자리까지)를 계산하세요.
@@ -449,6 +538,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ORDER BY sort_key, order_count DESC;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | status | order_count | avg_amount | pct |
+    |---|---|---|---|
+    | confirmed | 34,393 | 999,813.63 | 45.80 |
+    | cancelled | 1859 | 1,045,258.09 | 2.50 |
+    | return_requested | 507 | 1,600,567.46 | 0.7 |
+    | returned | 493 | 1,337,615.77 | 0.7 |
+    | delivered | 125 | 1,566,145.88 | 0.2 |
+    | pending | 82 | 1,063,783.45 | 0.1 |
+    | shipped | 51 | 1,452,363.65 | 0.1 |
+
 ### 문제 9
 공급업체별 활성 상품 수와 비활성 상품 수를 각각 집계하고, `UNION ALL`로 합친 뒤 서브쿼리로 감싸서 공급업체별 한 행(활성 수, 비활성 수)으로 만드세요. `suppliers` 테이블과 JOIN하여 회사명도 표시하세요.
 
@@ -473,6 +575,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     GROUP BY s.company_name
     ORDER BY active_count DESC;
     ```
+
+
+    **실행 결과** (총 45행 중 상위 7행)
+
+    | company_name | active_count | inactive_count |
+    |---|---|---|
+    | 삼성전자 공식 유통 | 22 | 4 |
+    | 에이수스코리아 | 21 | 5 |
+    | MSI코리아 | 12 | 1 |
+    | 서린시스테크 | 11 | 1 |
+    | 로지텍코리아 | 11 | 6 |
+    | TP-Link코리아 | 11 | 0 |
+    | LG전자 공식 유통 | 11 | 0 |
 
 ### 문제 10
 각 공급업체별로 "최고가 상품"과 "최저가 상품"을 한 목록으로 합치세요. `UNION ALL`을 사용하고, `price_type`('최고가' 또는 '최저가'), `company_name`, `product_name`, `price`를 포함하세요. `company_name`, `price_type` 순으로 정렬하세요.
@@ -512,6 +627,19 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ORDER BY company_name, price_type;
     ```
 
+
+    **실행 결과** (총 82행 중 상위 7행)
+
+    | price_type | company_name | product_name | price |
+    |---|---|---|---|
+    | 최고가 | AMD코리아 | AMD Ryzen 9 9900X | 591,800.00 |
+    | 최저가 | AMD코리아 | AMD Ryzen 9 9900X | 335,700.00 |
+    | 최고가 | APC코리아 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 516,300.00 |
+    | 최저가 | APC코리아 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 516,300.00 |
+    | 최고가 | ASRock코리아 | ASRock B850M Pro RS 실버 | 665,600.00 |
+    | 최저가 | ASRock코리아 | ASRock B860M Pro RS 화이트 | 230,100.00 |
+    | 최고가 | HP코리아 | HP EliteBook 840 G10 블랙 [특별 한정판 에디션] ... | 2,080,300.00 |
+
 ### 문제 11
 리뷰를 작성한 고객과 불만을 접수한 고객의 **교집합**을 구하세요. `INTERSECT`를 사용하고, 결과의 `customer_id` 수를 세세요.
 
@@ -525,6 +653,13 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     ) AS both_active;
     ```
 
+
+    **실행 결과** (1행)
+
+    | both_count |
+    |---|
+    | 1231 |
+
 ### 문제 12
 위시리스트에 상품을 등록한 고객 중, 한 번도 주문하지 않은 고객을 `EXCEPT`로 찾으세요. `customer_id`를 반환하고, 오름차순 정렬하세요.
 
@@ -535,5 +670,18 @@ VIP 등급 고객의 이름과 등급, GOLD 등급 고객의 이름과 등급을
     SELECT DISTINCT customer_id FROM orders
     ORDER BY customer_id;
     ```
+
+
+    **실행 결과** (총 346행 중 상위 7행)
+
+    | customer_id |
+    |---|
+    | 25 |
+    | 158 |
+    | 312 |
+    | 331 |
+    | 358 |
+    | 371 |
+    | 531 |
 
 <!-- END_LESSON_EXERCISES -->

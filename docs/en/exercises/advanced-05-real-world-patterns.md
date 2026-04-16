@@ -64,6 +64,19 @@ Calculate monthly revenue and month-over-month growth rate using LAG window func
     ```
 
 
+    **Result** (top 7 of 120 rows)
+
+    | year_month | revenue | order_count | prev_month_revenue | mom_growth_pct |
+    |---|---|---|---|---|
+    | 2016-01 | 14,194,769.00 | 34 | NULL | NULL |
+    | 2016-02 | 12,984,335.00 | 23 | 14,194,769.00 | -8.50 |
+    | 2016-03 | 14,154,562.00 | 29 | 12,984,335.00 | 9.00 |
+    | 2016-04 | 16,878,372.00 | 30 | 14,154,562.00 | 19.20 |
+    | 2016-05 | 28,570,768.00 | 37 | 16,878,372.00 | 69.30 |
+    | 2016-06 | 23,793,991.00 | 30 | 28,570,768.00 | -16.70 |
+    | 2016-07 | 29,696,984.00 | 29 | 23,793,991.00 | 24.80 |
+
+
 ---
 
 
@@ -105,6 +118,19 @@ Select the top 3 products by revenue in each category.
     ```
 
 
+    **Result** (top 7 of 109 rows)
+
+    | category | product_name | revenue | units_sold | rank |
+    |---|---|---|---|---|
+    | 2-in-1 | Lenovo ThinkPad X1 2in1 Silver | 554,231,700.00 | 297 | 1 |
+    | 2-in-1 | HP Envy x360 15 Silver | 326,727,400.00 | 269 | 2 |
+    | 2-in-1 | HP Pavilion x360 14 Black | 319,615,200.00 | 216 | 3 |
+    | AMD | AMD Ryzen 9 9900X | 601,913,300.00 | 1600 | 1 |
+    | AMD | MSI Radeon RX 7900 XTX GAMING X White | 585,793,600.00 | 386 | 2 |
+    | AMD | ASUS Dual RX 9070 Silver | 515,058,400.00 | 383 | 3 |
+    | AMD Socket | ASRock X670E Steel Legend Silver | 370,658,400.00 | 704 | 1 |
+
+
 ---
 
 
@@ -133,6 +159,13 @@ and top 10 most-abandoned products.
     INNER JOIN products  AS p  ON ci.product_id = p.id
     WHERE c.status = 'abandoned';
     ```
+
+
+    **Result** (1 rows)
+
+    | abandoned_carts | abandoned_items | lost_revenue |
+    |---|---|---|
+    | 899 | 2747 | 2,618,976,000.00 |
 
 
 ---
@@ -167,6 +200,14 @@ Calculate usage count, total discount, and ROI per coupon.
     WHERE o.status NOT IN ('cancelled', 'returned', 'return_requested')
     GROUP BY CASE WHEN co.order_id IS NOT NULL THEN '쿠폰 사용' ELSE '쿠폰 미사용' END;
     ```
+
+
+    **Result** (2 rows)
+
+    | segment | order_count | avg_order_value | total_revenue |
+    |---|---|---|---|
+    | 쿠폰 미사용 | 33,034 | 981,325.10 | 32,417,093,466.00 |
+    | 쿠폰 사용 | 1664 | 1,413,662.58 | 2,352,334,541.00 |
 
 
 ---
@@ -204,6 +245,19 @@ Show order count, average order value, and weekend/weekday comparison by hour (0
     ```
 
 
+    **Result** (top 7 of 24 rows)
+
+    | hour | order_count | avg_order_value | weekend_orders | weekday_orders | weekend_weekday_ratio |
+    |---|---|---|---|---|---|
+    | 0 | 451 | 987,171.96 | 123 | 328 | 0.38 |
+    | 1 | 327 | 1,008,633.48 | 102 | 225 | 0.45 |
+    | 2 | 158 | 963,984.31 | 45 | 113 | 0.4 |
+    | 3 | 188 | 1,068,912.30 | 52 | 136 | 0.38 |
+    | 4 | 185 | 1,076,325.90 | 62 | 123 | 0.5 |
+    | 5 | 345 | 1,165,922.99 | 95 | 250 | 0.38 |
+    | 6 | 606 | 922,406.57 | 196 | 410 | 0.48 |
+
+
 ---
 
 
@@ -235,6 +289,19 @@ Create an order count heatmap matrix: 24 hours x 7 days of week.
     GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
     ORDER BY hour;
     ```
+
+
+    **Result** (top 7 of 24 rows)
+
+    | hour | mon | tue | wed | thu | fri | sat | sun | total |
+    |---|---|---|---|---|---|---|---|---|
+    | 0 | 69 | 67 | 60 | 62 | 70 | 66 | 57 | 451 |
+    | 1 | 48 | 58 | 38 | 37 | 44 | 51 | 51 | 327 |
+    | 2 | 22 | 25 | 17 | 23 | 26 | 25 | 20 | 158 |
+    | 3 | 28 | 36 | 21 | 26 | 25 | 27 | 25 | 188 |
+    | 4 | 28 | 14 | 27 | 31 | 23 | 26 | 36 | 185 |
+    | 5 | 57 | 42 | 49 | 53 | 49 | 56 | 39 | 345 |
+    | 6 | 101 | 77 | 70 | 68 | 94 | 90 | 106 | 606 |
 
 
 ---

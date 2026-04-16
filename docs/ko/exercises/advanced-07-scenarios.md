@@ -79,6 +79,13 @@
     ```
 
 
+    **실행 결과** (1행)
+
+    | orders | revenue | avg_order | new_customers | wow_growth_pct |
+    |---|---|---|---|---|
+    | 108 | 92,193,999.00 | 853,648.00 | 15 | -13.00 |
+
+
 ---
 
 
@@ -139,6 +146,19 @@
     ```
 
 
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | name | category | revenue | units_sold | avg_rating | reviews | returns | alert |
+    |---|---|---|---|---|---|---|---|
+    | Razer Blade 18 블랙 | 게이밍 노트북 | 169,770,900.00 | 39 | 4.10 | 20 | 23 | High Returns |
+    | Razer Blade 16 실버 | 게이밍 노트북 | 137,007,300.00 | 37 | 3.95 | 19 | 13 | High Returns |
+    | MacBook Air 15 M3 실버 | 맥북 | 131,546,400.00 | 24 | 3.75 | 4 | 2 |  |
+    | ASUS Dual RTX 4060 Ti 블랙 | NVIDIA | 117,691,200.00 | 44 | 3.75 | 16 | 16 | High Returns |
+    | ASUS Dual RTX 5070 Ti 실버 | NVIDIA | 109,490,400.00 | 111 | 3.65 | 23 | 8 | High Returns |
+    | ASUS ROG Swift PG32UCDM 실버 | 게이밍 모니터 | 96,405,300.00 | 51 | 3.67 | 24 | 10 | High Returns |
+    | Razer Blade 18 블랙 | 게이밍 노트북 | 95,600,000.00 | 32 | 3.92 | 25 | 10 | High Returns |
+
+
 ---
 
 
@@ -170,6 +190,19 @@
        AND MAX(o.ordered_at) < DATE('2025-12-31', '-6 months')
     ORDER BY total_spent DESC;
     ```
+
+
+    **실행 결과** (총 827행 중 상위 7행)
+
+    | name | email | grade | last_order | order_count | total_spent | days_inactive |
+    |---|---|---|---|---|---|---|
+    | 이영철 | user33@testmail.kr | VIP | 2025-06-05 17:58:17 | 172 | 174,223,341.00 | 208 |
+    | 전영희 | user359@testmail.kr | SILVER | 2025-03-16 15:13:13 | 89 | 99,843,125.00 | 289 |
+    | 김민재 | user551@testmail.kr | BRONZE | 2025-06-01 14:44:44 | 71 | 99,783,432.00 | 212 |
+    | 양현정 | user844@testmail.kr | VIP | 2025-05-28 19:15:41 | 46 | 79,718,969.00 | 216 |
+    | 오은경 | user553@testmail.kr | GOLD | 2025-03-22 19:11:40 | 78 | 77,049,170.00 | 283 |
+    | 김상철 | user903@testmail.kr | GOLD | 2025-04-13 09:52:14 | 67 | 75,881,651.00 | 261 |
+    | 노시우 | user70@testmail.kr | BRONZE | 2024-10-26 22:15:57 | 97 | 70,981,337.00 | 430 |
 
 
 ---
@@ -204,6 +237,18 @@
     ```
 
 
+    **실행 결과** (6행)
+
+    | method | paid_count | paid_amount | refund_count | refund_amount | net_revenue |
+    |---|---|---|---|---|---|
+    | card | 182 | 153,966,200.00 | 10 | 12,925,184.00 | 141,041,016.00 |
+    | kakao_pay | 91 | 89,478,577.00 | 8 | 8,251,931.00 | 81,226,646.00 |
+    | naver_pay | 76 | 60,848,112.00 | 4 | 2,169,400.00 | 58,678,712.00 |
+    | bank_transfer | 51 | 56,388,551.00 | 1 | 253,200.00 | 56,135,351.00 |
+    | point | 23 | 28,788,195.00 | 1 | 555,500.00 | 28,232,695.00 |
+    | virtual_account | 36 | 27,679,127.00 | 3 | 5,461,600.00 | 22,217,527.00 |
+
+
 ---
 
 
@@ -233,6 +278,16 @@
     GROUP BY sh.carrier
     ORDER BY delayed_count DESC;
     ```
+
+
+    **실행 결과** (4행)
+
+    | carrier | delayed_count | avg_days | max_days |
+    |---|---|---|---|
+    | CJ대한통운 | 7071 | 3.50 | 4 |
+    | 한진택배 | 4507 | 3.50 | 4 |
+    | 로젠택배 | 3617 | 3.50 | 4 |
+    | 우체국택배 | 2731 | 3.50 | 4 |
 
 
 ---
@@ -283,6 +338,13 @@
     ```
 
 
+    **실행 결과** (1행)
+
+    | name | sku | stock_qty | avg_daily_sales | days_of_stock | supplier | contact_name | supplier_phone |
+    |---|---|---|---|---|---|---|---|
+    | Arctic Freezer 36 A-RGB 화이트 | CO-AIR-ARC-00049 | 0 | 0.2 | 0 | 아틱코리아 | 최재현 | 020-2200-4333 |
+
+
 ---
 
 
@@ -325,6 +387,19 @@
     ```
 
 
+    **실행 결과** (총 98행 중 상위 7행)
+
+    | name | grade | email | title | category | priority | created_at | days_open | total_spent |
+    |---|---|---|---|---|---|---|---|---|
+    | 이경숙 | VIP | user614@testmail.kr | 환불 처리 언제 되나요? | refund_request | urgent | 2020-01-10 11:19:37 | 2181 | 148,203,887.00 |
+    | 이성민 | VIP | user388@testmail.kr | 환불 요청합니다 | refund_request | urgent | 2020-08-22 12:41:19 | 1956 | 133,207,783.00 |
+    | 노예지 | VIP | user1420@testmail.kr | 색상이 다르게 왔습니다 | wrong_item | urgent | 2024-07-11 05:53:51 | 537 | 124,382,602.00 |
+    | 황지영 | VIP | user1097@testmail.kr | 주문한 것과 다른 제품이 배송됐습니다 | wrong_item | urgent | 2020-12-15 06:41:56 | 1841 | 85,987,658.00 |
+    | 이서윤 | VIP | user1522@testmail.kr | 배송 지연 문의 | delivery_issue | urgent | 2021-04-23 22:21:29 | 1712 | 51,532,028.00 |
+    | 김보람 | GOLD | user875@testmail.kr | 환불 처리 언제 되나요? | refund_request | urgent | 2020-03-04 11:54:29 | 2127 | 49,812,024.00 |
+    | 이영진 | VIP | user2227@testmail.kr | 다른 주소로 배송됐습니다 | delivery_issue | urgent | 2024-03-17 16:26:20 | 653 | 46,684,135.00 |
+
+
 ---
 
 
@@ -359,6 +434,13 @@
         (SELECT ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM orders WHERE ordered_at LIKE '2024%'), 1)
          FROM returns WHERE requested_at LIKE '2024%') AS return_rate;
     ```
+
+
+    **실행 결과** (1행)
+
+    | revenue | orders | new_customers | active_customers | avg_order_value | cancel_rate | return_rate |
+    |---|---|---|---|---|---|---|
+    | 5,346,776,711.00 | 5474 | 700 | 1692 | 976,759.00 | 5.40 | 2.70 |
 
 
 ---

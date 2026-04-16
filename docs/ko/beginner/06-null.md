@@ -269,6 +269,13 @@ SELECT
     WHERE manager_id IS NULL;
     ```
 
+
+    **실행 결과** (1행)
+
+    | name | department | role |
+    |---|---|---|
+    | 한민재 | 경영 | admin |
+
 ### 문제 2
 `customers` 테이블에서 `phone`이 NULL인 고객의 `name`, `email`을 조회하되, `email`도 NULL이면 `'연락처 없음'`으로 대체하세요.
 
@@ -295,6 +302,17 @@ SELECT
     LIMIT 5;
     ```
 
+
+    **실행 결과** (5행)
+
+    | name | price | stock_qty | price_per_unit |
+    |---|---|---|---|
+    | Razer Blade 18 블랙 | 2,987,500.00 | 107 | 27,920.56 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 | 499 | 3,494.99 |
+    | 삼성 DDR4 32GB PC4-25600 | 43,500.00 | 359 | 121.17 |
+    | Dell U2724D | 894,100.00 | 337 | 2,653.12 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 167,000.00 | 59 | 2,830.51 |
+
 ### 문제 4
 `customers` 테이블에서 `last_login_at`이 NULL인 고객의 `name`, `email`, `created_at`을 조회하세요. `email`이 NULL이면 `'없음'`, `created_at`이 NULL이면 `'알 수 없음'`으로 대체하세요. 결과를 10행으로 제한하세요.
 
@@ -308,6 +326,19 @@ SELECT
     WHERE last_login_at IS NULL
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | name | email | created_at |
+    |---|---|---|
+    | 윤준영 | user25@testmail.kr | 2016-02-03 04:18:52 |
+    | 이영식 | user43@testmail.kr | 2016-02-23 17:09:54 |
+    | 송서준 | user66@testmail.kr | 2016-05-07 02:57:58 |
+    | 김지우 | user77@testmail.kr | 2016-04-29 00:44:20 |
+    | 박아름 | user80@testmail.kr | 2016-08-13 13:52:58 |
+    | 김정훈 | user101@testmail.kr | 2017-04-08 22:00:58 |
+    | 이경수 | user107@testmail.kr | 2017-12-01 07:23:31 |
 
 ### 문제 5
 담당 직원이 없는(`staff_id IS NULL`) 주문을 모두 조회하세요. `order_number`, `status`, `notes`를 표시하되, notes가 NULL이면 `'—'`으로 대체하세요.
@@ -324,6 +355,19 @@ SELECT
     LIMIT 20;
     ```
 
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | order_number | status | notes |
+    |---|---|---|
+    | ORD-20251231-37555 | pending | — |
+    | ORD-20251231-37543 | pending | 층간소음 주의, 살짝 노크해주세요 |
+    | ORD-20251231-37552 | pending | — |
+    | ORD-20251231-37548 | pending | — |
+    | ORD-20251231-37542 | pending | 회사 정문 경비실로 보내주세요 |
+    | ORD-20251231-37546 | pending | 경비실에 맡겨주세요 |
+    | ORD-20251231-37547 | pending | 파손 주의 부탁드립니다 |
+
 ### 문제 6
 멤버십 `grade`별로 성별이 확인된 고객 수와 성별 미입력 고객 수를 함께 조회하세요. 그룹화 기준으로 `COALESCE(gender, 'Unknown')`을 사용하세요.
 
@@ -338,6 +382,19 @@ SELECT
     ORDER BY grade, gender_status;
     ```
 
+
+    **실행 결과** (총 12행 중 상위 7행)
+
+    | grade | gender_status | customer_count |
+    |---|---|---|
+    | BRONZE | F | 1302 |
+    | BRONZE | M | 2128 |
+    | BRONZE | Unknown | 429 |
+    | GOLD | F | 140 |
+    | GOLD | M | 343 |
+    | GOLD | Unknown | 41 |
+    | SILVER | F | 141 |
+
 ### 문제 7
 `orders` 테이블에서 `cancelled_at`이 NULL인(취소되지 않은) 주문 수와 NULL이 아닌(취소된) 주문 수를 각각 구하세요. 별칭은 `not_cancelled`, `cancelled`로 지정하세요.
 
@@ -348,6 +405,13 @@ SELECT
     COUNT(CASE WHEN cancelled_at IS NOT NULL THEN 1 END) AS cancelled
     FROM orders;
     ```
+
+
+    **실행 결과** (1행)
+
+    | not_cancelled | cancelled |
+    |---|---|
+    | 35,698 | 1859 |
 
 ### 문제 8
 `products` 테이블에서 `weight_grams` 칼럼이 NULL인 상품 수와 전체 상품 수를 구하고, NULL 비율(소수점 1자리)을 계산하세요. 별칭은 `total_products`, `missing_weight`, `pct_missing`으로 지정하세요.
@@ -360,6 +424,13 @@ SELECT
     ROUND(100.0 * (COUNT(*) - COUNT(weight_grams)) / COUNT(*), 1) AS pct_missing
     FROM products;
     ```
+
+
+    **실행 결과** (1행)
+
+    | total_products | missing_weight | pct_missing |
+    |---|---|---|
+    | 281 | 13 | 4.60 |
 
 ### 문제 9
 `reviews` 테이블에서 `content`가 NULL인 리뷰와 NULL이 아닌 리뷰의 평균 `rating`을 각각 구하세요. `COUNT(*)`와 `AVG(rating)`을 함께 표시하세요.
@@ -374,6 +445,14 @@ SELECT
     GROUP BY CASE WHEN content IS NULL THEN 'No Content' ELSE 'Has Content' END;
     ```
 
+
+    **실행 결과** (2행)
+
+    | content_status | review_count | avg_rating |
+    |---|---|---|
+    | Has Content | 7708 | 3.90 |
+    | No Content | 838 | 3.93 |
+
 ### 문제 10
 생년월일 미입력, 성별 미입력, 로그인 이력 없음 각각의 고객 수와 전체 고객 수를 함께 조회하세요.
 
@@ -386,5 +465,12 @@ SELECT
     SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in
     FROM customers;
     ```
+
+
+    **실행 결과** (1행)
+
+    | total_customers | missing_birth_date | missing_gender | never_logged_in |
+    |---|---|---|---|
+    | 5230 | 738 | 529 | 281 |
 
 <!-- END_LESSON_EXERCISES -->

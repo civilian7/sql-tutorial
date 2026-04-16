@@ -195,6 +195,19 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | review_id | customer_name | product_name | rating | created_at |
+    |---|---|---|---|---|
+    | 8535 | 홍서윤 | Norton AntiVirus Plus 실버 | 5 | 2026-01-13 12:09:18 |
+    | 8530 | 김우진 | 넷기어 GS308 실버 | 5 | 2026-01-11 21:02:15 |
+    | 8541 | 박경수 | Arctic Liquid Freezer III Pro 420 A-R... | 5 | 2026-01-07 20:55:20 |
+    | 8517 | 김미정 | ASUS Dual RTX 5070 Ti 실버 | 5 | 2026-01-07 09:24:04 |
+    | 8536 | 김은지 | be quiet! Dark Power 13 1000W | 5 | 2026-01-06 21:29:23 |
+    | 8502 | 우재호 | TP-Link TL-SG108 | 5 | 2026-01-06 15:27:04 |
+    | 8527 | 김명숙 | Microsoft Ergonomic Keyboard 실버 | 5 | 2026-01-04 18:00:26 |
+
 ### 문제 2
 결제 수단별로 해당 수단을 사용한 고유 고객 수를 구하세요. `method`와 `unique_customers`를 반환하고, `unique_customers` 내림차순으로 정렬하세요.
 
@@ -209,6 +222,18 @@ ORDER BY o.total_amount DESC;
     GROUP BY p.method
     ORDER BY unique_customers DESC;
     ```
+
+
+    **실행 결과** (6행)
+
+    | method | unique_customers |
+    |---|---|
+    | card | 2316 |
+    | kakao_pay | 1777 |
+    | naver_pay | 1598 |
+    | bank_transfer | 1332 |
+    | virtual_account | 923 |
+    | point | 892 |
 
 ### 문제 3
 총 구매액(취소·반품 제외 주문의 `total_amount` 합계) 기준 상위 5명의 고객을 구하세요. `customer_name`, `grade`, `order_count`, `total_spent`를 반환하세요.
@@ -228,6 +253,17 @@ ORDER BY o.total_amount DESC;
     LIMIT 5;
     ```
 
+
+    **실행 결과** (5행)
+
+    | customer_name | grade | order_count | total_spent |
+    |---|---|---|---|
+    | 박정수 | VIP | 303 | 403,448,758.00 |
+    | 김병철 | VIP | 342 | 366,385,931.00 |
+    | 강명자 | VIP | 249 | 253,180,338.00 |
+    | 정유진 | VIP | 223 | 244,604,910.00 |
+    | 이미정 | VIP | 219 | 235,775,349.00 |
+
 ### 문제 4
 주문번호(`order_number`), 고객명(`customer_name`), 주문 상태(`status`)를 조회하되, 주문 상태가 `'shipped'`인 것만 필터링하세요. 주문일(`ordered_at`) 내림차순으로 정렬하고 10행으로 제한하세요.
 
@@ -243,6 +279,19 @@ ORDER BY o.total_amount DESC;
     ORDER BY o.ordered_at DESC
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | order_number | customer_name | status |
+    |---|---|---|
+    | ORD-20251225-37416 | 민지현 | shipped |
+    | ORD-20251225-37402 | 이옥순 | shipped |
+    | ORD-20251225-37410 | 이영환 | shipped |
+    | ORD-20251225-37403 | 배정남 | shipped |
+    | ORD-20251225-37411 | 최지훈 | shipped |
+    | ORD-20251225-37408 | 백영호 | shipped |
+    | ORD-20251225-37406 | 양은주 | shipped |
 
 ### 문제 5
 배송(`shipping`) 테이블과 주문(`orders`) 테이블을 조인하여, 배송 완료(`delivered`)된 주문의 `order_number`, `carrier`, `tracking_number`, `delivered_at`을 조회하세요. `delivered_at` 내림차순으로 정렬하고 10행으로 제한하세요.
@@ -261,6 +310,19 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | order_number | carrier | tracking_number | delivered_at |
+    |---|---|---|---|
+    | ORD-20251225-37399 | 한진택배 | 376080377423 | 2026-01-01 23:36:22 |
+    | ORD-20251225-37404 | 한진택배 | 652516112449 | 2026-01-01 22:02:51 |
+    | ORD-20251225-37414 | CJ대한통운 | 100421839710 | 2026-01-01 13:49:43 |
+    | ORD-20251225-37413 | 우체국택배 | 543173530520 | 2025-12-31 14:25:31 |
+    | ORD-20251225-37412 | 우체국택배 | 456720771228 | 2025-12-30 22:50:46 |
+    | ORD-20251224-37387 | 우체국택배 | 339128234015 | 2025-12-30 19:29:43 |
+    | ORD-20251225-37401 | CJ대한통운 | 187550547718 | 2025-12-30 12:03:50 |
+
 ### 문제 6
 주문 항목(`order_items`)에서 상품명(`products.name`), 공급업체명(`suppliers.company_name`), 수량(`quantity`), 단가(`unit_price`)를 조회하세요. 3개 테이블을 조인하고, 단가 내림차순으로 정렬하여 10행으로 제한하세요.
 
@@ -278,6 +340,19 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | product_name | supplier_name | quantity | unit_price |
+    |---|---|---|---|
+    | MacBook Air 15 M3 실버 | 애플코리아 | 1 | 5,481,100.00 |
+    | MacBook Air 15 M3 실버 | 애플코리아 | 1 | 5,481,100.00 |
+    | MacBook Air 15 M3 실버 | 애플코리아 | 1 | 5,481,100.00 |
+    | MacBook Air 15 M3 실버 | 애플코리아 | 1 | 5,481,100.00 |
+    | MacBook Air 15 M3 실버 | 애플코리아 | 1 | 5,481,100.00 |
+    | MacBook Air 15 M3 실버 | 애플코리아 | 1 | 5,481,100.00 |
+    | MacBook Air 15 M3 실버 | 애플코리아 | 1 | 5,481,100.00 |
+
 ### 문제 7
 공급업체별로 해당 업체의 상품이 포함된 총 주문 건수(`order_count`)와 총 판매 수량(`total_qty`)을 구하세요. `company_name`, `order_count`, `total_qty`를 반환하고, `total_qty` 내림차순으로 정렬하세요.
 
@@ -293,6 +368,19 @@ ORDER BY o.total_amount DESC;
     GROUP BY sup.id, sup.company_name
     ORDER BY total_qty DESC;
     ```
+
+
+    **실행 결과** (총 45행 중 상위 7행)
+
+    | company_name | order_count | total_qty |
+    |---|---|---|
+    | 로지텍코리아 | 7106 | 8580 |
+    | 삼성전자 공식 유통 | 7169 | 8557 |
+    | 서린시스테크 | 5143 | 6547 |
+    | 스틸시리즈코리아 | 5014 | 5772 |
+    | 에이수스코리아 | 4945 | 5696 |
+    | 비콰이어트코리아 | 3516 | 4325 |
+    | MSI코리아 | 3531 | 4055 |
 
 ### 문제 8
 담당 직원(`staff`)별로 처리한 주문 수(`order_count`)와 총 매출(`total_revenue`)을 구하세요. 취소·반품 주문은 제외하고, `staff_name`, `department`, `order_count`, `total_revenue`를 반환하세요. `total_revenue` 내림차순으로 정렬하고 상위 10명만 반환하세요.
@@ -330,6 +418,19 @@ ORDER BY o.total_amount DESC;
     LIMIT 10;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | customer_name | product_name | rating | created_at |
+    |---|---|---|---|
+    | 홍서윤 | Norton AntiVirus Plus 실버 | 5 | 2026-01-13 12:09:18 |
+    | 김우진 | 넷기어 GS308 실버 | 5 | 2026-01-11 21:02:15 |
+    | 박경수 | Arctic Liquid Freezer III Pro 420 A-R... | 5 | 2026-01-07 20:55:20 |
+    | 김미정 | ASUS Dual RTX 5070 Ti 실버 | 5 | 2026-01-07 09:24:04 |
+    | 김은지 | be quiet! Dark Power 13 1000W | 5 | 2026-01-06 21:29:23 |
+    | 우재호 | TP-Link TL-SG108 | 5 | 2026-01-06 15:27:04 |
+    | 김명숙 | Microsoft Ergonomic Keyboard 실버 | 5 | 2026-01-04 18:00:26 |
+
 ### 문제 10
 카테고리별로 해당 카테고리 상품의 총 주문 금액(`total_revenue`)과 주문 건수(`order_count`)를 구하세요. `categories.name`, `order_count`, `total_revenue`를 반환하고, 최상위 카테고리(`depth = 0`)만 대상으로 합니다. `total_revenue` 내림차순으로 정렬하세요.
 
@@ -346,5 +447,12 @@ ORDER BY o.total_amount DESC;
     WHERE cat.depth = 0
     ORDER BY total_revenue DESC;
     ```
+
+
+    **실행 결과** (1행)
+
+    | category_name | order_count | total_revenue |
+    |---|---|---|
+    | 케이스 | 13,903 | 4,541,847,600.00 |
 
 <!-- END_LESSON_EXERCISES -->

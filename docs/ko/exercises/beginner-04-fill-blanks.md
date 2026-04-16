@@ -47,6 +47,19 @@ ORDER BY name;
     ```
 
 
+    **실행 결과** (총 368행 중 상위 7행)
+
+    | name | email | grade |
+    |---|---|---|
+    | 강경숙 | user3645@testmail.kr | VIP |
+    | 강명자 | user162@testmail.kr | VIP |
+    | 강민석 | user824@testmail.kr | VIP |
+    | 강민재 | user1516@testmail.kr | VIP |
+    | 강상철 | user1613@testmail.kr | VIP |
+    | 강순옥 | user3678@testmail.kr | VIP |
+    | 강옥순 | user2454@testmail.kr | VIP |
+
+
 ---
 
 
@@ -75,6 +88,19 @@ LIMIT 10;
     ```
 
 
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | name | price |
+    |---|---|
+    | MacBook Air 15 M3 실버 | 5,481,100.00 |
+    | ASUS TUF Gaming RTX 5080 화이트 | 4,526,600.00 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소... | 4,496,700.00 |
+    | Razer Blade 18 블랙 | 4,353,100.00 |
+    | Razer Blade 16 실버 | 3,702,900.00 |
+    | ASUS ROG Strix G16CH 화이트 | 3,671,500.00 |
+    | ASUS ROG Zephyrus G16 | 3,429,900.00 |
+
+
 ---
 
 
@@ -99,6 +125,19 @@ GROUP BY category_id;
     FROM products
     GROUP BY category_id;
     ```
+
+
+    **실행 결과** (총 40행 중 상위 7행)
+
+    | category_id | product_count |
+    |---|---|
+    | 2 | 5 |
+    | 3 | 11 |
+    | 4 | 2 |
+    | 6 | 10 |
+    | 7 | 9 |
+    | 8 | 9 |
+    | 9 | 1 |
 
 
 ---
@@ -129,6 +168,19 @@ ___ ;
     ```
 
 
+    **실행 결과** (총 953행 중 상위 7행)
+
+    | customer_id | order_count |
+    |---|---|
+    | 2 | 77 |
+    | 3 | 161 |
+    | 4 | 95 |
+    | 5 | 114 |
+    | 8 | 38 |
+    | 10 | 29 |
+    | 12 | 41 |
+
+
 ---
 
 
@@ -155,6 +207,19 @@ LIMIT 10;
     INNER JOIN categories AS cat ON p.category_id = cat.id
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | name | category |
+    |---|---|
+    | Razer Blade 18 블랙 | 게이밍 노트북 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | NVIDIA |
+    | 삼성 DDR4 32GB PC4-25600 | DDR4 |
+    | Dell U2724D | 일반 모니터 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | DDR5 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | AMD |
+    | 삼성 DDR5 32GB PC5-38400 | DDR5 |
 
 
 ---
@@ -185,6 +250,19 @@ WHERE ___ ;
     ```
 
 
+    **실행 결과** (총 2,391행 중 상위 7행)
+
+    | name | email |
+    |---|---|
+    | 정준호 | user1@testmail.kr |
+    | 김준혁 | user6@testmail.kr |
+    | 김명자 | user7@testmail.kr |
+    | 주경희 | user9@testmail.kr |
+    | 김상호 | user11@testmail.kr |
+    | 김정식 | user13@testmail.kr |
+    | 임순자 | user17@testmail.kr |
+
+
 ---
 
 
@@ -209,6 +287,19 @@ WHERE ordered_at ___ ;
     FROM orders
     WHERE ordered_at BETWEEN '2024-01-01' AND '2024-03-31 23:59:59';
     ```
+
+
+    **실행 결과** (총 1,412행 중 상위 7행)
+
+    | order_number | total_amount | ordered_at |
+    |---|---|---|
+    | ORD-20240101-25455 | 42,600.00 | 2024-01-01 02:48:53 |
+    | ORD-20240101-25453 | 160,400.00 | 2024-01-01 03:38:36 |
+    | ORD-20240101-25457 | 616,200.00 | 2024-01-01 06:57:33 |
+    | ORD-20240101-25466 | 243,600.00 | 2024-01-01 07:55:46 |
+    | ORD-20240101-25465 | 189,100.00 | 2024-01-01 09:35:17 |
+    | ORD-20240101-25454 | 117,700.00 | 2024-01-01 10:48:07 |
+    | ORD-20240101-25463 | 325,800.00 | 2024-01-01 12:01:21 |
 
 
 ---
@@ -248,6 +339,19 @@ FROM products;
     ```
 
 
+    **실행 결과** (총 280행 중 상위 7행)
+
+    | name | stock_qty | stock_status |
+    |---|---|---|
+    | Razer Blade 18 블랙 | 107 | 충분 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 499 | 충분 |
+    | 삼성 DDR4 32GB PC4-25600 | 359 | 충분 |
+    | Dell U2724D | 337 | 충분 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 59 | 보통 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 460 | 충분 |
+    | 삼성 DDR5 32GB PC5-38400 | 340 | 충분 |
+
+
 ---
 
 
@@ -278,6 +382,19 @@ LIMIT 10;
     ```
 
 
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | name | birth_date |
+    |---|---|
+    | 정준호 | 1995-02-06 |
+    | 김경수 | 1995-06-12 |
+    | 김민재 | 1998-05-02 |
+    | 진정자 | 1994-12-02 |
+    | 이정수 | 1989-12-22 |
+    | 김준혁 | 1991-05-12 |
+    | 김명자 | 미입력 |
+
+
 ---
 
 
@@ -304,6 +421,19 @@ ORDER BY price DESC;
     WHERE price > (SELECT AVG(price) FROM products)
     ORDER BY price DESC;
     ```
+
+
+    **실행 결과** (총 83행 중 상위 7행)
+
+    | name | price |
+    |---|---|
+    | MacBook Air 15 M3 실버 | 5,481,100.00 |
+    | ASUS TUF Gaming RTX 5080 화이트 | 4,526,600.00 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소... | 4,496,700.00 |
+    | Razer Blade 18 블랙 | 4,353,100.00 |
+    | Razer Blade 16 실버 | 3,702,900.00 |
+    | ASUS ROG Strix G16CH 화이트 | 3,671,500.00 |
+    | ASUS ROG Zephyrus G16 | 3,429,900.00 |
 
 
 ---
@@ -340,6 +470,16 @@ GROUP BY grade;
     ```
 
 
+    **실행 결과** (4행)
+
+    | grade | customer_count | avg_points | max_points |
+    |---|---|---|---|
+    | BRONZE | 3859 | 16,779.00 | 956,983 |
+    | GOLD | 524 | 147,711.00 | 2,007,717 |
+    | SILVER | 479 | 95,042.00 | 1,266,757 |
+    | VIP | 368 | 407,015.00 | 3,955,828 |
+
+
 ---
 
 
@@ -366,6 +506,19 @@ LIMIT 10;
     WHERE email LIKE '%@testmail.kr'
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | name | email |
+    |---|---|
+    | 정준호 | user1@testmail.kr |
+    | 김경수 | user2@testmail.kr |
+    | 김민재 | user3@testmail.kr |
+    | 진정자 | user4@testmail.kr |
+    | 이정수 | user5@testmail.kr |
+    | 김준혁 | user6@testmail.kr |
+    | 김명자 | user7@testmail.kr |
 
 
 ---
@@ -402,6 +555,19 @@ ORDER BY year, month;
     ```
 
 
+    **실행 결과** (총 120행 중 상위 7행)
+
+    | year | month | order_count |
+    |---|---|---|
+    | 2016 | 01 | 38 |
+    | 2016 | 02 | 27 |
+    | 2016 | 03 | 34 |
+    | 2016 | 04 | 30 |
+    | 2016 | 05 | 39 |
+    | 2016 | 06 | 34 |
+    | 2016 | 07 | 30 |
+
+
 ---
 
 
@@ -426,6 +592,19 @@ WHERE status ___ ;
     FROM payments
     WHERE status IN ('completed', 'refunded');
     ```
+
+
+    **실행 결과** (총 36,546행 중 상위 7행)
+
+    | id | order_id | method | amount | status |
+    |---|---|---|---|---|
+    | 1 | 1 | card | 167,000.00 | completed |
+    | 2 | 2 | card | 211,800.00 | completed |
+    | 3 | 3 | card | 704,800.00 | completed |
+    | 4 | 4 | card | 167,000.00 | completed |
+    | 5 | 5 | kakao_pay | 534,490.00 | completed |
+    | 6 | 6 | card | 167,000.00 | completed |
+    | 7 | 7 | card | 687,400.00 | completed |
 
 
 ---
@@ -468,6 +647,17 @@ LIMIT 5;
     ORDER BY o.ordered_at DESC
     LIMIT 5;
     ```
+
+
+    **실행 결과** (5행)
+
+    | order_number | customer | paid | shipping_status |
+    |---|---|---|---|
+    | ORD-20251231-37555 | 송지영 | 74,800.00 | NULL |
+    | ORD-20251231-37543 | 박민서 | 134,100.00 | NULL |
+    | ORD-20251231-37552 | 강미경 | 254,300.00 | NULL |
+    | ORD-20251231-37548 | 윤영희 | 187,700.00 | NULL |
+    | ORD-20251231-37542 | 문도현 | 155,700.00 | NULL |
 
 
 ---

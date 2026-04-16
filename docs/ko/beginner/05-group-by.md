@@ -236,6 +236,14 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY order_count DESC;
     ```
 
+
+    **실행 결과** (2행)
+
+    | status | order_count |
+    |---|---|
+    | confirmed | 34,393 |
+    | cancelled | 1859 |
+
 ### 문제 2
 `payments` 테이블에서 결제 수단(`method`)별로 수집된 총 금액과 거래 건수를 구하세요. 총 금액 내림차순으로 정렬하세요.
 
@@ -251,6 +259,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY total_collected DESC;
     ```
 
+
+    **실행 결과** (6행)
+
+    | method | transaction_count | total_collected |
+    |---|---|---|
+    | card | 15,556 | 15,537,036,997.00 |
+    | kakao_pay | 6886 | 6,781,114,303.00 |
+    | naver_pay | 5270 | 5,420,480,093.00 |
+    | bank_transfer | 3429 | 3,456,454,657.00 |
+    | point | 1770 | 1,780,334,619.00 |
+    | virtual_account | 1705 | 1,706,777,095.00 |
+
 ### 문제 3
 `customers` 테이블에서 `grade`별로 평균 포인트(`point_balance`)를 구하세요. 평균 포인트 내림차순으로 정렬하세요.
 
@@ -263,6 +283,16 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     GROUP BY grade
     ORDER BY avg_points DESC;
     ```
+
+
+    **실행 결과** (4행)
+
+    | grade | avg_points |
+    |---|---|
+    | VIP | 407,014.69 |
+    | GOLD | 147,710.69 |
+    | SILVER | 95,042.33 |
+    | BRONZE | 16,779.46 |
 
 ### 문제 4
 `customers` 테이블에서 `grade`와 `gender` 두 칼럼으로 그룹화하여 고객 수를 구하세요. `gender`가 NULL인 행도 포함하세요.
@@ -278,6 +308,19 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY grade, gender;
     ```
 
+
+    **실행 결과** (총 12행 중 상위 7행)
+
+    | grade | gender | customer_count |
+    |---|---|---|
+    | BRONZE | NULL | 429 |
+    | BRONZE | F | 1302 |
+    | BRONZE | M | 2128 |
+    | GOLD | NULL | 41 |
+    | GOLD | F | 140 |
+    | GOLD | M | 343 |
+    | SILVER | NULL | 45 |
+
 ### 문제 5
 `reviews` 테이블에서 `rating`별 리뷰 건수를 구하세요. 리뷰가 100건 이상인 평점만 표시하고, `rating` 순으로 정렬하세요.
 
@@ -291,6 +334,17 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     HAVING COUNT(*) >= 100
     ORDER BY rating;
     ```
+
+
+    **실행 결과** (5행)
+
+    | rating | review_count |
+    |---|---|
+    | 1 | 434 |
+    | 2 | 839 |
+    | 3 | 1265 |
+    | 4 | 2575 |
+    | 5 | 3433 |
 
 ### 문제 6
 `orders` 테이블에서 활성 주문(`status NOT IN ('cancelled', 'returned')`)만을 대상으로, `status`별 건수와 평균 금액(소수점 0자리)을 구하세요. 평균 금액이 300 초과인 상태만 표시하세요.
@@ -308,6 +362,19 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY avg_amount DESC;
     ```
 
+
+    **실행 결과** (7행)
+
+    | status | order_count | avg_amount |
+    |---|---|---|
+    | return_requested | 507 | 1,600,567.00 |
+    | delivered | 125 | 1,566,146.00 |
+    | shipped | 51 | 1,452,364.00 |
+    | pending | 82 | 1,063,783.00 |
+    | confirmed | 34,393 | 999,814.00 |
+    | paid | 23 | 587,912.00 |
+    | preparing | 24 | 510,285.00 |
+
 ### 문제 7
 2023년과 2024년의 `orders` 데이터에서 월 매출이 50만 달러를 초과한 달을 찾으세요. `year_month`와 `monthly_revenue`를 날짜순으로 반환하세요.
 
@@ -324,6 +391,19 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     ORDER BY year_month;
     ```
 
+
+    **실행 결과** (총 24행 중 상위 7행)
+
+    | year_month | monthly_revenue |
+    |---|---|
+    | 2023-01 | 274,226,287.00 |
+    | 2023-02 | 333,966,148.00 |
+    | 2023-03 | 491,087,654.00 |
+    | 2023-04 | 403,110,649.00 |
+    | 2023-05 | 361,101,076.00 |
+    | 2023-06 | 288,736,533.00 |
+    | 2023-07 | 319,249,348.00 |
+
 ### 문제 8
 `payments` 테이블에서 결제 수단(`method`)별 고유 주문 수를 `COUNT(DISTINCT order_id)`로 구하세요. 고유 주문 수 내림차순으로 정렬하세요.
 
@@ -336,6 +416,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     GROUP BY method
     ORDER BY unique_orders DESC;
     ```
+
+
+    **실행 결과** (6행)
+
+    | method | unique_orders |
+    |---|---|
+    | card | 16,841 |
+    | kakao_pay | 7486 |
+    | naver_pay | 5715 |
+    | bank_transfer | 3718 |
+    | point | 1921 |
+    | virtual_account | 1876 |
 
 ### 문제 9
 `orders` 테이블에서 연도별 주문 건수와 총 매출을 구하세요. 취소/반품 주문은 제외하세요.
@@ -351,6 +443,19 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     GROUP BY SUBSTR(ordered_at, 1, 4)
     ORDER BY order_year;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | order_year | order_count | yearly_revenue |
+    |---|---|---|
+    | 2016 | 388 | 288,397,247.00 |
+    | 2017 | 657 | 619,679,681.00 |
+    | 2018 | 1238 | 1,179,049,206.00 |
+    | 2019 | 2422 | 2,438,425,607.00 |
+    | 2020 | 4078 | 4,182,596,871.00 |
+    | 2021 | 5501 | 5,672,563,917.00 |
+    | 2022 | 4882 | 4,922,471,211.00 |
 
 ### 문제 10
 `products` 테이블에서 `category_id`별로 상품 수, 평균 가격(소수점 0자리), 총 재고(`stock_qty` 합계)를 구하세요. 상품 수가 5개 이상이고 평균 가격이 50 이상인 카테고리만 표시하고, 상품 수 내림차순으로 정렬하세요.
@@ -368,5 +473,18 @@ HAVING AVG(point_balance) > 500;  -- 평균 포인트가 500 초과인 등급만
     AND AVG(price) >= 50
     ORDER BY product_count DESC;
     ```
+
+
+    **실행 결과** (총 31행 중 상위 7행)
+
+    | category_id | product_count | avg_price | total_stock |
+    |---|---|---|---|
+    | 18 | 13 | 529,754.00 | 3826 |
+    | 30 | 13 | 219,008.00 | 3812 |
+    | 43 | 12 | 277,150.00 | 3085 |
+    | 3 | 11 | 1,719,809.00 | 2241 |
+    | 31 | 11 | 158,482.00 | 2681 |
+    | 36 | 11 | 158,000.00 | 3094 |
+    | 37 | 11 | 41,064.00 | 3141 |
 
 <!-- END_LESSON_EXERCISES -->

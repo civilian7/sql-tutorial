@@ -67,6 +67,19 @@ GROUP BY p.id, p.name;
     ```
 
 
+    **실행 결과** (총 217행 중 상위 7행)
+
+    | name | revenue | avg_rating |
+    |---|---|---|
+    | Razer Blade 18 블랙 | 104,562,500.00 | 3.92 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 94,176,000.00 | 4.12 |
+    | 삼성 DDR4 32GB PC4-25600 | 3,088,500.00 | 3.94 |
+    | Dell U2724D | 10,729,200.00 | 4.19 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | 9,018,000.00 | 3.61 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | 21,836,700.00 | 4.08 |
+    | 삼성 DDR5 32GB PC5-38400 | 13,767,000.00 | 3.97 |
+
+
 ---
 
 
@@ -92,6 +105,19 @@ WHERE birth_date = NULL;
     FROM customers
     WHERE birth_date IS NULL;
     ```
+
+
+    **실행 결과** (총 738행 중 상위 7행)
+
+    | name | email |
+    |---|---|
+    | 김명자 | user7@testmail.kr |
+    | 김정식 | user13@testmail.kr |
+    | 윤순옥 | user14@testmail.kr |
+    | 이서연 | user21@testmail.kr |
+    | 강민석 | user24@testmail.kr |
+    | 김서준 | user27@testmail.kr |
+    | 윤지훈 | user36@testmail.kr |
 
 
 ---
@@ -122,6 +148,19 @@ WHERE r.rating >= 3;
     ```
 
 
+    **실행 결과** (총 7,277행 중 상위 7행)
+
+    | name | price | rating |
+    |---|---|---|
+    | Razer Blade 18 블랙 | 2,987,500.00 | 3 |
+    | Razer Blade 18 블랙 | 2,987,500.00 | 3 |
+    | Razer Blade 18 블랙 | 2,987,500.00 | 3 |
+    | Razer Blade 18 블랙 | 2,987,500.00 | 4 |
+    | Razer Blade 18 블랙 | 2,987,500.00 | 4 |
+    | Razer Blade 18 블랙 | 2,987,500.00 | 4 |
+    | Razer Blade 18 블랙 | 2,987,500.00 | 4 |
+
+
 ---
 
 
@@ -148,6 +187,19 @@ INNER JOIN categories AS cat ON p.category_id = cat.id;
     INNER JOIN categories AS cat ON p.category_id = cat.id
     GROUP BY cat.name;
     ```
+
+
+    **실행 결과** (총 38행 중 상위 7행)
+
+    | name | product_count |
+    |---|---|
+    | 2in1 | 9 |
+    | AMD | 10 |
+    | AMD 소켓 | 10 |
+    | DDR4 | 7 |
+    | DDR5 | 8 |
+    | HDD | 3 |
+    | Intel | 5 |
 
 
 ---
@@ -180,6 +232,19 @@ GROUP BY cat.name;
     GROUP BY cat.name
     HAVING COUNT(*) >= 5;
     ```
+
+
+    **실행 결과** (총 27행 중 상위 7행)
+
+    | name | expensive_count |
+    |---|---|
+    | 2in1 | 9 |
+    | AMD | 10 |
+    | AMD 소켓 | 10 |
+    | DDR5 | 8 |
+    | Intel | 5 |
+    | Intel 소켓 | 13 |
+    | NVIDIA | 7 |
 
 
 ---
@@ -221,6 +286,19 @@ LIMIT 10;
     ORDER BY category_count DESC
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | name | category_count |
+    |---|---|
+    | 강명자 | 38 |
+    | 김성민 | 38 |
+    | 정유진 | 38 |
+    | 이경숙 | 38 |
+    | 최선영 | 38 |
+    | 이윤서 | 38 |
+    | 박은서 | 38 |
 
 
 ---
@@ -327,6 +405,19 @@ ORDER BY month;
     ```
 
 
+    **실행 결과** (총 120행 중 상위 7행)
+
+    | month | revenue |
+    |---|---|
+    | 2016-01 | 14,194,769.00 |
+    | 2016-02 | 12,984,335.00 |
+    | 2016-03 | 14,154,562.00 |
+    | 2016-04 | 16,878,372.00 |
+    | 2016-05 | 28,570,768.00 |
+    | 2016-06 | 23,793,991.00 |
+    | 2016-07 | 29,696,984.00 |
+
+
 ---
 
 
@@ -367,6 +458,19 @@ GROUP BY s.id, s.company_name;
     LEFT JOIN returns AS ret ON ret.order_id = oi.order_id
     GROUP BY s.id, s.company_name;
     ```
+
+
+    **실행 결과** (총 60행 중 상위 7행)
+
+    | company_name | return_count | sale_count | return_rate |
+    |---|---|---|---|
+    | 삼성전자 공식 유통 | 210 | 7542 | 2.78 |
+    | LG전자 공식 유통 | 60 | 1661 | 3.61 |
+    | 인텔코리아 | 83 | 2582 | 3.21 |
+    | AMD코리아 | 48 | 1653 | 2.90 |
+    | 엔비디아코리아 | 0 | 0 | NULL |
+    | 한성컴퓨터 | 19 | 266 | 7.14 |
+    | 주연테크 | 10 | 208 | 4.81 |
 
 
 ---
@@ -439,6 +543,19 @@ SELECT title, category, created_at FROM complaints;
     ORDER BY event_date DESC
     LIMIT 20;
     ```
+
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | type | reference | event_date |
+    |---|---|---|
+    | 문의 | 전원이 켜지지 않아요 | 2026-01-13 20:27:26 |
+    | 문의 | 제품 사용법 문의 | 2026-01-11 05:32:28 |
+    | 문의 | 부분 환불 요청 | 2026-01-10 08:43:56 |
+    | 문의 | 화면에 불량 화소가 있습니다 | 2026-01-08 10:26:57 |
+    | 문의 | 제품 사용법 문의 | 2026-01-08 08:28:26 |
+    | 문의 | 제품 사용법 문의 | 2026-01-05 13:56:10 |
+    | 문의 | 사이즈 교환 가능한가요? | 2026-01-04 21:17:27 |
 
 
 ---

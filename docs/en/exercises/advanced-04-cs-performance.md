@@ -53,6 +53,19 @@ Show count, resolution rate, and average resolution time by category.
     ```
 
 
+    **Result** (7 rows)
+
+    | category | total_count | resolved_count | resolution_rate_pct | avg_resolution_days |
+    |---|---|---|---|---|
+    | general_inquiry | 378 | 356 | 94.20 | 2.00 |
+    | price_inquiry | 140 | 129 | 92.10 | 1.80 |
+    | delivery_issue | 135 | 130 | 96.30 | 0.7 |
+    | refund_request | 92 | 87 | 94.60 | 0.7 |
+    | product_defect | 74 | 70 | 94.60 | 0.7 |
+    | wrong_item | 42 | 41 | 97.60 | 0.4 |
+    | exchange_request | 34 | 34 | 100.00 | 1.20 |
+
+
 ---
 
 
@@ -103,6 +116,17 @@ and customer count. Display team averages for comparison.
     ```
 
 
+    **Result** (5 rows)
+
+    | staff_name | case_count | customer_count | resolution_rate | avg_days | team_avg_cases | team_avg_rate | team_avg_days |
+    |---|---|---|---|---|---|---|---|
+    | Michael Thomas | 178 | 167 | 96.10 | 1.30 | 179.00 | 94.60 | 1.40 |
+    | Michael Mcguire | 183 | 178 | 95.60 | 1.50 | 179.00 | 94.60 | 1.40 |
+    | Nicole Hamilton | 177 | 174 | 94.90 | 1.60 | 179.00 | 94.60 | 1.40 |
+    | Jaime Phelps | 183 | 175 | 93.40 | 1.30 | 179.00 | 94.60 | 1.40 |
+    | Jonathan Smith | 174 | 168 | 93.10 | 1.50 | 179.00 | 94.60 | 1.40 |
+
+
 ---
 
 
@@ -130,6 +154,18 @@ Also analyze which reasons are common per product category.
     GROUP BY r.reason
     ORDER BY return_count DESC;
     ```
+
+
+    **Result** (6 rows)
+
+    | reason | return_count | pct | avg_refund |
+    |---|---|---|---|
+    | change_of_mind | 343 | 34.30 | 1,160,924.02 |
+    | defective | 263 | 26.30 | 1,278,164.64 |
+    | damaged_in_transit | 165 | 16.50 | 1,043,268.48 |
+    | wrong_item | 95 | 9.50 | 1,128,795.79 |
+    | not_as_described | 88 | 8.80 | 1,290,557.95 |
+    | late_delivery | 46 | 4.60 | 741,530.43 |
 
 
 ---
@@ -188,6 +224,19 @@ and complaint-to-order ratio.
     LEFT JOIN monthly_returns    AS mr ON mo.year_month = mr.year_month
     ORDER BY mo.year_month;
     ```
+
+
+    **Result** (top 7 of 12 rows)
+
+    | year_month | order_count | complaint_count | return_count | complaint_rate_pct | return_rate_pct |
+    |---|---|---|---|---|---|
+    | 2024-01 | 346 | 43 | 9 | 12.43 | 2.60 |
+    | 2024-02 | 465 | 40 | 14 | 8.60 | 3.01 |
+    | 2024-03 | 601 | 50 | 23 | 8.32 | 3.83 |
+    | 2024-04 | 506 | 61 | 12 | 12.06 | 2.37 |
+    | 2024-05 | 415 | 47 | 10 | 11.33 | 2.41 |
+    | 2024-06 | 415 | 49 | 11 | 11.81 | 2.65 |
+    | 2024-07 | 414 | 49 | 6 | 11.84 | 1.45 |
 
 
 ---
@@ -254,6 +303,19 @@ Show total complaints, open count, total spend, and last complaint date.
     ```
 
 
+    **Result** (top 7 of 91 rows)
+
+    | customer_name | grade | email | total_complaints | open_count | last_complaint_date | total_spent | priority |
+    |---|---|---|---|---|---|---|---|
+    | Brenda Garcia | VIP | user162@testmail.kr | 24 | 1 | 2025-03-25 05:20:31 | 254,525,838.00 | 우선 처리 |
+    | Courtney Huff | VIP | user356@testmail.kr | 19 | 2 | 2024-08-28 10:20:59 | 248,498,783.00 | 우선 처리 |
+    | Gabriel Walters | VIP | user98@testmail.kr | 29 | 1 | 2024-10-07 08:05:39 | 248,168,491.00 | 우선 처리 |
+    | James Banks | VIP | user227@testmail.kr | 13 | 1 | 2025-05-10 11:44:37 | 244,859,844.00 | 우선 처리 |
+    | David York | GOLD | user1581@testmail.kr | 11 | 1 | 2025-08-30 11:40:39 | 208,621,108.00 | 우선 처리 |
+    | Terri Jones | VIP | user33@testmail.kr | 11 | 1 | 2023-08-06 03:15:06 | 174,223,341.00 | 우선 처리 |
+    | Adam Moore | VIP | user3@testmail.kr | 9 | 1 | 2025-12-09 09:46:23 | 164,856,056.00 | 우선 처리 |
+
+
 ---
 
 
@@ -292,6 +354,17 @@ Format: 12 months (columns) x staff (rows).
     GROUP BY COALESCE(s.name, '미배정')
     ORDER BY total DESC;
     ```
+
+
+    **Result** (5 rows)
+
+    | staff_name | jan | feb | mar | apr | may | jun | jul | aug | sep | oct | nov | dec | total |
+    |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+    | Michael Thomas | 7 | 9 | 11 | 11 | 12 | 6 | 15 | 14 | 8 | 8 | 14 | 9 | 124 |
+    | Nicole Hamilton | 9 | 8 | 12 | 12 | 8 | 10 | 8 | 7 | 17 | 13 | 13 | 5 | 122 |
+    | Jaime Phelps | 8 | 10 | 6 | 9 | 8 | 11 | 7 | 14 | 13 | 13 | 8 | 10 | 117 |
+    | Jonathan Smith | 6 | 10 | 6 | 14 | 7 | 9 | 10 | 10 | 9 | 10 | 12 | 9 | 112 |
+    | Michael Mcguire | 12 | 2 | 10 | 13 | 10 | 11 | 8 | 4 | 12 | 6 | 10 | 11 | 109 |
 
 
 ---

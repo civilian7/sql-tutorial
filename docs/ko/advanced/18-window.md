@@ -392,6 +392,19 @@ LIMIT 12;
     LIMIT 10;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | product_name | price | overall_rank |
+    |---|---|---|
+    | MacBook Air 15 M3 실버 | 5,481,100.00 | 1 |
+    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소... | 4,496,700.00 | 2 |
+    | Razer Blade 18 블랙 | 4,353,100.00 | 3 |
+    | Razer Blade 16 실버 | 3,702,900.00 | 4 |
+    | ASUS ROG Strix G16CH 화이트 | 3,671,500.00 | 5 |
+    | ASUS ROG Strix GT35 | 3,296,800.00 | 6 |
+    | MacBook Air 15 M3 실버 (리퍼비시) | 3,288,660.00 | 7 |
+
 ### 문제 2
 연도별 신규 고객 가입 수의 누적 합계를 계산하세요 (쇼핑몰 개업부터 각 연도까지의 누적 고객 수). `year`, `new_signups`, `cumulative_customers`를 반환하세요.
 
@@ -410,6 +423,19 @@ LIMIT 12;
     ) AS yearly
     ORDER BY year;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | year | new_signups | cumulative_customers |
+    |---|---|---|
+    | 2016 | 100 | 100 |
+    | 2017 | 180 | 280 |
+    | 2018 | 300 | 580 |
+    | 2019 | 450 | 1030 |
+    | 2020 | 700 | 1730 |
+    | 2021 | 800 | 2530 |
+    | 2022 | 650 | 3180 |
 
 ### 문제 3
 2023년과 2024년의 각 월별로 전년 동월 대비 매출 증감률(YoY)을 계산하세요. `LAG(revenue, 12)`를 사용하여 전년 동월과 비교합니다. `year_month`, `revenue`, `same_month_last_year`, `yoy_growth_pct`를 반환하세요.
@@ -437,6 +463,19 @@ LIMIT 12;
     WHERE year_month >= '2023-01'
     ORDER BY year_month;
     ```
+
+
+    **실행 결과** (총 24행 중 상위 7행)
+
+    | year_month | revenue | same_month_last_year | yoy_growth_pct |
+    |---|---|---|---|
+    | 2023-01 | 274,226,287.00 | NULL | NULL |
+    | 2023-02 | 333,966,148.00 | NULL | NULL |
+    | 2023-03 | 491,087,654.00 | NULL | NULL |
+    | 2023-04 | 403,110,649.00 | NULL | NULL |
+    | 2023-05 | 361,101,076.00 | NULL | NULL |
+    | 2023-06 | 288,736,533.00 | NULL | NULL |
+    | 2023-07 | 319,249,348.00 | NULL | NULL |
 
 ### 문제 4
 `ROW_NUMBER()`를 사용하여 각 고객의 주문에 순번을 매기고, 첫 번째 주문만 추출하세요. `customer_id`, `name`, `order_number`, `ordered_at`, `total_amount`를 반환하세요.
@@ -469,6 +508,19 @@ LIMIT 12;
     LIMIT 15;
     ```
 
+
+    **실행 결과** (총 15행 중 상위 7행)
+
+    | customer_id | name | order_number | ordered_at | total_amount |
+    |---|---|---|---|---|
+    | 90 | 유현지 | ORD-20160109-00012 | 2016-01-09 10:20:06 | 211,800.00 |
+    | 98 | 이영자 | ORD-20160107-00010 | 2016-01-10 12:08:34 | 537,800.00 |
+    | 85 | 김건우 | ORD-20160112-00016 | 2016-01-15 17:24:53 | 704,800.00 |
+    | 15 | 강은서 | ORD-20160111-00015 | 2016-01-16 08:39:08 | 211,800.00 |
+    | 72 | 윤정남 | ORD-20160117-00023 | 2016-01-17 16:32:31 | 167,000.00 |
+    | 18 | 홍경희 | ORD-20160103-00004 | 2016-01-18 01:56:50 | 167,000.00 |
+    | 30 | 이명자 | ORD-20160123-00029 | 2016-01-31 18:55:50 | 378,369.00 |
+
 ### 문제 5
 `RANK()`와 `DENSE_RANK()`를 함께 사용하여 카테고리별 상품 가격 순위를 매기세요. `category_name`, `product_name`, `price`, `rank`, `dense_rank`를 반환하고 상위 15개를 보여주세요. 두 순위 함수의 차이를 결과에서 확인할 수 있습니다.
 
@@ -486,6 +538,19 @@ LIMIT 12;
     ORDER BY cat.name, rank
     LIMIT 15;
     ```
+
+
+    **실행 결과** (총 15행 중 상위 7행)
+
+    | category_name | product_name | price | rank | dense_rank |
+    |---|---|---|---|---|
+    | 2in1 | 레노버 ThinkPad X1 2in1 실버 | 1,866,100.00 | 1 | 1 |
+    | 2in1 | 레노버 IdeaPad Flex 5 화이트 | 1,524,800.00 | 2 | 2 |
+    | 2in1 | HP Pavilion x360 14 블랙 | 1,479,700.00 | 3 | 3 |
+    | 2in1 | 삼성 갤럭시북4 360 블랙 | 1,388,600.00 | 4 | 4 |
+    | 2in1 | 삼성 갤럭시북4 360 블랙 | 1,267,000.00 | 5 | 5 |
+    | 2in1 | HP Envy x360 15 실버 | 1,214,600.00 | 6 | 6 |
+    | 2in1 | 삼성 갤럭시북5 360 블랙 | 1,179,900.00 | 7 | 7 |
 
 ### 문제 6
 2024년 월별 매출의 3개월 이동 평균을 계산하세요. `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` 프레임을 사용합니다. `year_month`, `monthly_revenue`, `moving_avg_3m`을 반환하세요.
@@ -513,6 +578,19 @@ LIMIT 12;
     ORDER BY year_month;
     ```
 
+
+    **실행 결과** (총 12행 중 상위 7행)
+
+    | year_month | monthly_revenue | moving_avg_3m |
+    |---|---|---|
+    | 2024-01 | 298,764,720.00 | 298,764,720.00 |
+    | 2024-02 | 413,105,149.00 | 355,934,934.50 |
+    | 2024-03 | 527,614,956.00 | 413,161,608.33 |
+    | 2024-04 | 463,645,381.00 | 468,121,828.67 |
+    | 2024-05 | 444,935,778.00 | 478,732,038.33 |
+    | 2024-06 | 373,863,202.00 | 427,481,453.67 |
+    | 2024-07 | 360,080,397.00 | 392,959,792.33 |
+
 ### 문제 7
 `NTILE(4)`를 사용하여 고객을 총 구매 금액 기준으로 4개 분위(quartile)로 나누세요. `name`, `grade`, `total_spent`, `quartile`을 반환하고 `quartile`과 `total_spent` 내림차순으로 정렬하세요. 상위 20개를 보여주세요.
 
@@ -538,6 +616,19 @@ LIMIT 12;
     LIMIT 20;
     ```
 
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | name | grade | total_spent | quartile |
+    |---|---|---|---|
+    | 박정수 | VIP | 407,119,725.00 | 1 |
+    | 김병철 | VIP | 375,955,231.00 | 1 |
+    | 이미정 | VIP | 255,055,649.00 | 1 |
+    | 강명자 | VIP | 253,180,338.00 | 1 |
+    | 정유진 | VIP | 248,498,783.00 | 1 |
+    | 이영자 | VIP | 239,477,591.00 | 1 |
+    | 김성민 | VIP | 237,513,053.00 | 1 |
+
 ### 문제 8
 각 상품별로 주문 시점 기준 누적 판매 수량을 계산하세요. `product_name`, `ordered_at`, `quantity`, `cumulative_qty`를 반환하세요. 특정 상품 하나(id = 1)에 대해 조회하세요.
 
@@ -558,6 +649,19 @@ LIMIT 12;
     AND o.status NOT IN ('cancelled', 'returned')
     ORDER BY o.ordered_at;
     ```
+
+
+    **실행 결과** (총 285행 중 상위 7행)
+
+    | product_name | ordered_at | quantity | cumulative_qty |
+    |---|---|---|---|
+    | Razer Blade 18 블랙 | 2016-11-13 20:04:12 | 1 | 1 |
+    | Razer Blade 18 블랙 | 2016-11-19 08:54:25 | 1 | 2 |
+    | Razer Blade 18 블랙 | 2016-12-01 11:39:37 | 1 | 3 |
+    | Razer Blade 18 블랙 | 2017-01-16 13:21:17 | 1 | 4 |
+    | Razer Blade 18 블랙 | 2017-01-25 17:37:37 | 1 | 5 |
+    | Razer Blade 18 블랙 | 2017-01-30 14:18:22 | 1 | 6 |
+    | Razer Blade 18 블랙 | 2017-03-05 13:05:56 | 1 | 7 |
 
 ### 문제 9
 부서별로 직원 급여(hire 순서 기준) 누적 합계와 부서 평균 대비 차이를 함께 표시하세요. `department`, `name`, `role`, `hired_at`, `running_headcount`, `dept_avg_headcount`를 반환하세요. `running_headcount`는 `COUNT(*) OVER`로, `dept_avg_headcount`는 `COUNT(*) OVER (PARTITION BY department)`으로 구합니다.
@@ -581,6 +685,17 @@ LIMIT 12;
     WHERE is_active = 1
     ORDER BY department, hired_at;
     ```
+
+
+    **실행 결과** (5행)
+
+    | department | name | role | hired_at | running_headcount | dept_total_headcount |
+    |---|---|---|---|---|---|
+    | 경영 | 한민재 | admin | 2016-05-23 | 1 | 3 |
+    | 경영 | 장주원 | admin | 2017-08-20 | 2 | 3 |
+    | 경영 | 박경수 | admin | 2022-10-12 | 3 | 3 |
+    | 마케팅 | 권영희 | manager | 2024-08-05 | 1 | 1 |
+    | 영업 | 이준혁 | manager | 2022-03-02 | 1 | 1 |
 
 ### 문제 10
 각 고객의 주문 간 간격(일)을 계산하고, 고객별 평균 주문 간격을 구하세요. `LAG`로 이전 주문일을 참조합니다. `customer_id`, `name`, `order_count`, `avg_days_between_orders`를 반환하세요.
@@ -615,6 +730,19 @@ LIMIT 12;
     LIMIT 15;
     ```
 
+
+    **실행 결과** (총 15행 중 상위 7행)
+
+    | customer_id | name | order_count | avg_days_between_orders |
+    |---|---|---|---|
+    | 97 | 김병철 | 346 | 10.00 |
+    | 226 | 박정수 | 307 | 10.60 |
+    | 549 | 이미정 | 220 | 12.00 |
+    | 4840 | 김승현 | 7 | 12.00 |
+    | 356 | 정유진 | 226 | 12.20 |
+    | 98 | 이영자 | 283 | 12.80 |
+    | 162 | 강명자 | 249 | 13.00 |
+
 ### 문제 11
 카테고리별로 각 상품의 이름, 가격, 해당 카테고리에서 가장 저렴한 상품명(`cheapest_in_category`)과 가장 비싼 상품명(`priciest_in_category`)을 함께 표시하세요. `FIRST_VALUE`와 `LAST_VALUE`를 사용하며, 활성 상품만 대상으로 합니다. `category`, `product_name`, `price`, `cheapest_in_category`, `priciest_in_category`를 반환하고 상위 15개를 보여주세요.
 
@@ -640,5 +768,18 @@ LIMIT 12;
     ORDER BY cat.name, p.price
     LIMIT 15;
     ```
+
+
+    **실행 결과** (총 15행 중 상위 7행)
+
+    | category | product_name | price | cheapest_in_category | priciest_in_category |
+    |---|---|---|---|---|
+    | 2in1 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 707,940.00 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 레노버 ThinkPad X1 2in1 실버 |
+    | 2in1 | HP Envy x360 15 실버 (리퍼비시) | 728,760.00 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 레노버 ThinkPad X1 2in1 실버 |
+    | 2in1 | 삼성 갤럭시북4 360 블랙 (리퍼비시) | 760,200.00 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 레노버 ThinkPad X1 2in1 실버 |
+    | 2in1 | 삼성 갤럭시북4 360 블랙 (리퍼비시) | 833,160.00 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 레노버 ThinkPad X1 2in1 실버 |
+    | 2in1 | HP Pavilion x360 14 블랙 (리퍼비시) | 887,820.00 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 레노버 ThinkPad X1 2in1 실버 |
+    | 2in1 | 레노버 IdeaPad Flex 5 화이트 (리퍼비시) | 914,880.00 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 레노버 ThinkPad X1 2in1 실버 |
+    | 2in1 | 레노버 ThinkPad X1 2in1 실버 (리퍼비시) | 1,119,660.00 | 삼성 갤럭시북5 360 블랙 (리퍼비시) | 레노버 ThinkPad X1 2in1 실버 |
 
 <!-- END_LESSON_EXERCISES -->

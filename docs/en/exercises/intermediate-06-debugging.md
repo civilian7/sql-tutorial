@@ -67,6 +67,19 @@ GROUP BY p.id, p.name;
     ```
 
 
+    **Result** (top 7 of 217 rows)
+
+    | name | revenue | avg_rating |
+    |---|---|---|
+    | Razer Blade 18 Black | 104,562,500.00 | 3.92 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 94,176,000.00 | 4.12 |
+    | Samsung DDR4 32GB PC4-25600 | 3,088,500.00 | 3.94 |
+    | Dell U2724D | 10,729,200.00 | 4.19 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz ... | 9,018,000.00 | 3.61 |
+    | MSI Radeon RX 9070 VENTUS 3X White | 21,836,700.00 | 4.08 |
+    | Samsung DDR5 32GB PC5-38400 | 13,767,000.00 | 3.97 |
+
+
 ---
 
 
@@ -92,6 +105,19 @@ WHERE birth_date = NULL;
     FROM customers
     WHERE birth_date IS NULL;
     ```
+
+
+    **Result** (top 7 of 738 rows)
+
+    | name | email |
+    |---|---|
+    | Ashley Jones | user7@testmail.kr |
+    | Andrew Reeves | user13@testmail.kr |
+    | Martha Murphy | user14@testmail.kr |
+    | Heather Gonzalez MD | user21@testmail.kr |
+    | Barbara White | user24@testmail.kr |
+    | Donald Watts | user27@testmail.kr |
+    | Angela Barrera | user36@testmail.kr |
 
 
 ---
@@ -122,6 +148,19 @@ WHERE r.rating >= 3;
     ```
 
 
+    **Result** (top 7 of 7,277 rows)
+
+    | name | price | rating |
+    |---|---|---|
+    | Razer Blade 18 Black | 2,987,500.00 | 3 |
+    | Razer Blade 18 Black | 2,987,500.00 | 3 |
+    | Razer Blade 18 Black | 2,987,500.00 | 3 |
+    | Razer Blade 18 Black | 2,987,500.00 | 4 |
+    | Razer Blade 18 Black | 2,987,500.00 | 4 |
+    | Razer Blade 18 Black | 2,987,500.00 | 4 |
+    | Razer Blade 18 Black | 2,987,500.00 | 4 |
+
+
 ---
 
 
@@ -148,6 +187,19 @@ INNER JOIN categories AS cat ON p.category_id = cat.id;
     INNER JOIN categories AS cat ON p.category_id = cat.id
     GROUP BY cat.name;
     ```
+
+
+    **Result** (top 7 of 38 rows)
+
+    | name | product_count |
+    |---|---|
+    | 2-in-1 | 9 |
+    | AMD | 10 |
+    | AMD Socket | 10 |
+    | Air Cooling | 5 |
+    | Barebone | 2 |
+    | Case | 11 |
+    | Custom Build | 11 |
 
 
 ---
@@ -180,6 +232,19 @@ GROUP BY cat.name;
     GROUP BY cat.name
     HAVING COUNT(*) >= 5;
     ```
+
+
+    **Result** (top 7 of 27 rows)
+
+    | name | expensive_count |
+    |---|---|
+    | 2-in-1 | 9 |
+    | AMD | 10 |
+    | AMD Socket | 10 |
+    | Case | 10 |
+    | Custom Build | 11 |
+    | DDR5 | 8 |
+    | External Storage | 6 |
 
 
 ---
@@ -221,6 +286,19 @@ LIMIT 10;
     ORDER BY category_count DESC
     LIMIT 10;
     ```
+
+
+    **Result** (top 7 of 10 rows)
+
+    | name | category_count |
+    |---|---|
+    | Brenda Garcia | 38 |
+    | James Banks | 38 |
+    | Courtney Huff | 38 |
+    | Thomas Moran | 38 |
+    | Eduardo Taylor | 38 |
+    | Dennis Herrera | 38 |
+    | Christina Suarez | 38 |
 
 
 ---
@@ -327,6 +405,19 @@ ORDER BY month;
     ```
 
 
+    **Result** (top 7 of 120 rows)
+
+    | month | revenue |
+    |---|---|
+    | 2016-01 | 14,194,769.00 |
+    | 2016-02 | 12,984,335.00 |
+    | 2016-03 | 14,154,562.00 |
+    | 2016-04 | 16,878,372.00 |
+    | 2016-05 | 28,570,768.00 |
+    | 2016-06 | 23,793,991.00 |
+    | 2016-07 | 29,696,984.00 |
+
+
 ---
 
 
@@ -367,6 +458,19 @@ GROUP BY s.id, s.company_name;
     LEFT JOIN returns AS ret ON ret.order_id = oi.order_id
     GROUP BY s.id, s.company_name;
     ```
+
+
+    **Result** (top 7 of 60 rows)
+
+    | company_name | return_count | sale_count | return_rate |
+    |---|---|---|---|
+    | Samsung Official Distribution | 210 | 7542 | 2.78 |
+    | LG Official Distribution | 60 | 1661 | 3.61 |
+    | Intel Corp. | 83 | 2582 | 3.21 |
+    | AMD Corp. | 48 | 1653 | 2.90 |
+    | NVIDIA Corp. | 0 | 0 | NULL |
+    | Hansung Computer | 19 | 266 | 7.14 |
+    | Jooyon Tech | 10 | 208 | 4.81 |
 
 
 ---
@@ -439,6 +543,19 @@ SELECT title, category, created_at FROM complaints;
     ORDER BY event_date DESC
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | type | reference | event_date |
+    |---|---|---|
+    | 문의 | Not powering on | 2026-01-13 20:27:26 |
+    | 문의 | Product usage question | 2026-01-11 05:32:28 |
+    | 문의 | Partial refund request | 2026-01-10 08:43:56 |
+    | 문의 | Screen has dead pixels | 2026-01-08 10:26:57 |
+    | 문의 | Product usage question | 2026-01-08 08:28:26 |
+    | 문의 | Product usage question | 2026-01-05 13:56:10 |
+    | 문의 | Can I exchange for a different size? | 2026-01-04 21:17:27 |
 
 
 ---

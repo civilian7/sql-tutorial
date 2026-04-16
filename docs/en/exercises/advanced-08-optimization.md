@@ -109,6 +109,19 @@ Pre-aggregated subqueries with `LEFT JOIN` execute only once.
     ```
 
 
+    **Result** (top 7 of 218 rows)
+
+    | name | price | order_count | avg_rating |
+    |---|---|---|---|
+    | Razer Blade 18 Black | 2,987,500.00 | 310 | 3.92 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 | 392 | 4.12 |
+    | Samsung DDR4 32GB PC4-25600 | 43,500.00 | 871 | 3.94 |
+    | Dell U2724D | 894,100.00 | 261 | 4.19 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz ... | 167,000.00 | 743 | 3.61 |
+    | MSI Radeon RX 9070 VENTUS 3X White | 383,100.00 | 532 | 4.08 |
+    | Samsung DDR5 32GB PC5-38400 | 211,800.00 | 669 | 3.97 |
+
+
 ---
 
 
@@ -131,6 +144,19 @@ Improve queries by specifying only needed columns.
     ORDER BY total_amount DESC
     LIMIT 10;
     ```
+
+
+    **Result** (top 7 of 10 rows)
+
+    | order_number | customer_id | total_amount | status | ordered_at |
+    |---|---|---|---|---|
+    | ORD-20241213-30931 | 1982 | 17,655,465.00 | confirmed | 2024-12-13 07:50:22 |
+    | ORD-20241218-31013 | 1910 | 10,836,900.00 | confirmed | 2024-12-18 12:38:50 |
+    | ORD-20241207-30840 | 1906 | 5,858,600.00 | confirmed | 2024-12-07 13:56:37 |
+    | ORD-20241224-31105 | 1775 | 5,734,000.00 | confirmed | 2024-12-24 22:55:06 |
+    | ORD-20241219-31036 | 3516 | 5,414,100.00 | confirmed | 2024-12-19 14:27:47 |
+    | ORD-20241219-31034 | 2306 | 5,008,700.00 | confirmed | 2024-12-19 21:12:07 |
+    | ORD-20241227-31152 | 3647 | 4,859,300.00 | confirmed | 2024-12-27 21:46:34 |
 
 
 ---

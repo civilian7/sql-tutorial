@@ -270,6 +270,19 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     LIMIT 20;
     ```
 
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | order_number | ordered_at | status | carrier | shipped_at |
+    |---|---|---|---|---|
+    | ORD-20251225-37402 | 2025-12-25 22:53:08 | shipped | 우체국택배 | 2025-12-28 22:53:08 |
+    | ORD-20251225-37410 | 2025-12-25 22:48:04 | shipped | 한진택배 | 2025-12-28 22:48:04 |
+    | ORD-20251225-37403 | 2025-12-25 18:40:27 | shipped | 우체국택배 | 2025-12-28 18:40:27 |
+    | ORD-20251224-37398 | 2025-12-24 19:58:48 | shipped | 우체국택배 | 2025-12-27 19:58:48 |
+    | ORD-20251225-37408 | 2025-12-25 18:14:11 | shipped | CJ대한통운 | 2025-12-27 18:14:11 |
+    | ORD-20251225-37406 | 2025-12-25 17:53:34 | shipped | CJ대한통운 | 2025-12-27 17:53:34 |
+    | ORD-20251225-37416 | 2025-12-25 23:23:43 | shipped | CJ대한통운 | 2025-12-26 23:23:43 |
+
 ### 문제 2
 `EXISTS`와 상관 서브쿼리를 사용하여 같은 상품에 대해 리뷰 평점 5점과 1점이 모두 존재하는 상품을 찾으세요. `product_id`, `product_name`, `price`를 반환하세요.
 
@@ -288,6 +301,19 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     )
     ORDER BY p.name;
     ```
+
+
+    **실행 결과** (총 182행 중 상위 7행)
+
+    | product_id | product_name | price |
+    |---|---|---|
+    | 44 | AMD Ryzen 9 9900X | 335,700.00 |
+    | 251 | AMD Ryzen 9 9900X | 591,800.00 |
+    | 171 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 516,300.00 |
+    | 140 | ASRock B850M Pro RS 블랙 | 201,000.00 |
+    | 47 | ASRock B850M Pro RS 실버 | 665,600.00 |
+    | 164 | ASRock B850M Pro RS 화이트 | 419,600.00 |
+    | 149 | ASRock B860M Pro RS 실버 | 351,700.00 |
 
 ### 문제 3
 상관 서브쿼리를 사용하여 각 직원이 처리한 주문 중 가장 금액이 큰 주문의 정보를 함께 표시하세요. `staff_name`, `department`, `max_order_amount`, `max_order_number`를 반환하세요. `max_order_number`는 해당 금액과 일치하는 주문 번호입니다.
@@ -333,6 +359,19 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     LIMIT 20;
     ```
 
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | customer_id | name | grade | order_count |
+    |---|---|---|---|
+    | 494 | 이지우 | GOLD | 22 |
+    | 124 | 김시우 | BRONZE | 13 |
+    | 2164 | 백중수 | SILVER | 13 |
+    | 1207 | 김지민 | SILVER | 12 |
+    | 1620 | 장정순 | BRONZE | 12 |
+    | 2236 | 문정식 | BRONZE | 12 |
+    | 2487 | 오수민 | BRONZE | 12 |
+
 ### 문제 5
 `EXISTS`를 사용하여 모든 결제 수단(credit_card, bank_transfer, cash 등)으로 한 번 이상 결제한 적이 있는 고객을 찾으세요. `customer_id`, `name`을 반환하세요. 힌트: 결제 수단 종류 수와 해당 고객이 사용한 결제 수단 수를 비교하세요.
 
@@ -361,6 +400,19 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     ORDER BY c.name;
     ```
 
+
+    **실행 결과** (총 378행 중 상위 7행)
+
+    | customer_id | name |
+    |---|---|
+    | 1492 | 강도윤 |
+    | 162 | 강명자 |
+    | 1516 | 강민재 |
+    | 1613 | 강상철 |
+    | 912 | 강서현 |
+    | 266 | 강수빈 |
+    | 3678 | 강순옥 |
+
 ### 문제 6
 `EXISTS`와 집계 조건을 결합하여, 평균 리뷰 평점이 4.0 이상인 상품을 하나 이상 보유한 카테고리를 찾으세요. `category_name`, `product_count`를 반환하세요.
 
@@ -383,6 +435,19 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     )
     ORDER BY category_name;
     ```
+
+
+    **실행 결과** (총 36행 중 상위 7행)
+
+    | category_name | product_count |
+    |---|---|
+    | 2in1 | 14 |
+    | AMD | 4 |
+    | AMD | 12 |
+    | AMD 소켓 | 18 |
+    | DDR4 | 10 |
+    | DDR5 | 16 |
+    | Intel 소켓 | 20 |
 
 ### 문제 7
 해당 고객이 아직 **구매하지 않은** 찜 목록 상품을 모두 찾으세요. `customer_name`, `product_name`, `created_at`(찜 등록 일시)을 반환하세요. `order_items`와 `orders`에서 `customer_id`와 `product_id`가 일치하는지 확인하는 상관 서브쿼리와 함께 `NOT EXISTS`를 사용하세요.
@@ -407,6 +472,19 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     ORDER BY w.created_at DESC
     LIMIT 20;
     ```
+
+
+    **실행 결과** (총 20행 중 상위 7행)
+
+    | customer_name | product_name | created_at |
+    |---|---|---|
+    | 박성호 | 주연 리오나인 미니PC | 2025-12-30 19:11:10 |
+    | 김영숙 | 삼성 갤럭시북4 360 블랙 | 2025-12-30 17:42:08 |
+    | 백지후 | TP-Link TL-SG108 | 2025-12-30 11:47:20 |
+    | 이영수 | Seagate IronWolf 4TB 블랙 | 2025-12-30 10:41:18 |
+    | 이정순 | SK하이닉스 Platinum P41 2TB 블랙 | 2025-12-30 10:16:54 |
+    | 문하은 | TeamGroup T-Force Vulcan DDR5 32GB 52... | 2025-12-30 09:25:54 |
+    | 김현주 | APC Back-UPS Pro Gaming BGM1500B 블랙 | 2025-12-30 06:38:37 |
 
 ### 문제 8
 `NOT EXISTS`를 사용하여 2024년에 주문한 모든 고객이 공통으로 구매한 상품을 찾으세요. 즉, 2024년에 주문한 고객 중 해당 상품을 구매하지 않은 고객이 한 명도 없는 상품입니다. `product_id`, `product_name`을 반환하세요.
@@ -463,6 +541,19 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     ORDER BY complaint_count DESC;
     ```
 
+
+    **실행 결과** (총 503행 중 상위 7행)
+
+    | customer_id | name | grade | complaint_count | return_count |
+    |---|---|---|---|---|
+    | 98 | 이영자 | VIP | 29 | 15 |
+    | 97 | 김병철 | VIP | 25 | 10 |
+    | 162 | 강명자 | VIP | 24 | 1 |
+    | 226 | 박정수 | VIP | 19 | 9 |
+    | 356 | 정유진 | VIP | 19 | 3 |
+    | 549 | 이미정 | VIP | 19 | 6 |
+    | 517 | 이예준 | SILVER | 18 | 4 |
+
 ### 문제 10
 `EXISTS`를 사용하여 최소 3개 이상의 서로 다른 카테고리 상품을 주문한 고객을 찾으세요. `customer_id`, `name`, `category_count`를 반환하고, `category_count` 내림차순으로 10행까지 정렬하세요.
 
@@ -491,5 +582,18 @@ WHERE id NOT IN (SELECT customer_id FROM orders);
     ORDER BY category_count DESC
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | customer_id | name | category_count |
+    |---|---|---|
+    | 162 | 강명자 | 38 |
+    | 227 | 김성민 | 38 |
+    | 356 | 정유진 | 38 |
+    | 614 | 이경숙 | 38 |
+    | 775 | 최선영 | 38 |
+    | 839 | 이윤서 | 38 |
+    | 1678 | 박은서 | 38 |
 
 <!-- END_LESSON_EXERCISES -->

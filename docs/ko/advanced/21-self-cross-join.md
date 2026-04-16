@@ -373,6 +373,17 @@ ORDER BY c.date_key;
     ORDER BY s.department, s.name;
     ```
 
+
+    **실행 결과** (5행)
+
+    | employee | department | role | manager |
+    |---|---|---|---|
+    | 박경수 | 경영 | admin | 한민재 |
+    | 장주원 | 경영 | admin | 한민재 |
+    | 한민재 | 경영 | admin | NULL |
+    | 권영희 | 마케팅 | manager | 박경수 |
+    | 이준혁 | 영업 | manager | 한민재 |
+
 ### 문제 2
 같은 부서에 속한 직원 쌍을 찾으세요. 중복 쌍을 제거하고(`id < id`), 부서명과 두 직원의 이름을 표시하세요.
 
@@ -388,6 +399,15 @@ ORDER BY c.date_key;
     AND s1.id < s2.id
     ORDER BY s1.department, s1.name;
     ```
+
+
+    **실행 결과** (3행)
+
+    | department | staff_a | staff_b |
+    |---|---|---|
+    | 경영 | 장주원 | 박경수 |
+    | 경영 | 한민재 | 박경수 |
+    | 경영 | 한민재 | 장주원 |
 
 ### 문제 3
 같은 등급(`grade`)의 고객 쌍을 찾되, 중복 쌍을 제거하세요(`id < id`). 등급, 고객 A 이름, 고객 B 이름을 표시하고 상위 10건만 출력하세요.
@@ -407,6 +427,19 @@ ORDER BY c.date_key;
     ORDER BY c1.grade, c1.name
     LIMIT 10;
     ```
+
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | grade | customer_a | customer_b |
+    |---|---|---|
+    | BRONZE | 강건우 | 강성수 |
+    | BRONZE | 강건우 | 강성진 |
+    | BRONZE | 강건우 | 강성훈 |
+    | BRONZE | 강건우 | 강영미 |
+    | BRONZE | 강건우 | 강영식 |
+    | BRONZE | 강건우 | 강영희 |
+    | BRONZE | 강건우 | 강예진 |
 
 ### 문제 4
 같은 공급업체가 공급하는 상품 쌍을 찾아, 가격 차이와 함께 표시하세요. 중복 쌍은 제거합니다.
@@ -429,6 +462,19 @@ ORDER BY c.date_key;
     LIMIT 10;
     ```
 
+
+    **실행 결과** (총 10행 중 상위 7행)
+
+    | supplier | product_a | product_b | price_a | price_b | price_diff |
+    |---|---|---|---|---|---|
+    | 애플코리아 | MacBook Air 15 M3 실버 | Apple Magic Keyboard 실버 (리퍼비시) | 5,481,100.00 | 89,820.00 | 5,391,280.00 |
+    | 애플코리아 | Apple Magic Keyboard 실버 | MacBook Air 15 M3 실버 | 149,700.00 | 5,481,100.00 | 5,331,400.00 |
+    | 에이수스코리아 | ASUS TUF Gaming RTX 5080 화이트 | ASUS PCE-BE92BT (리퍼비시) | 4,526,600.00 | 28,320.00 | 4,498,280.00 |
+    | 에이수스코리아 | ASUS TUF Gaming RTX 5080 화이트 | ASUS PCE-BE92BT 블랙 (리퍼비시) | 4,526,600.00 | 44,940.00 | 4,481,660.00 |
+    | 에이수스코리아 | ASUS TUF Gaming RTX 5080 화이트 | ASUS PCE-BE92BT | 4,526,600.00 | 47,200.00 | 4,479,400.00 |
+    | 에이수스코리아 | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소... | ASUS PCE-BE92BT (리퍼비시) | 4,496,700.00 | 28,320.00 | 4,468,380.00 |
+    | 에이수스코리아 | ASUS TUF Gaming RTX 5080 화이트 | ASUS XG-C100C 블랙 (리퍼비시) | 4,526,600.00 | 70,740.00 | 4,455,860.00 |
+
 ### 문제 5
 같은 고객이 서로 다른 주소로 주문한 경우를 찾으세요. (`customer_addresses` 테이블 SELF JOIN)
 
@@ -449,6 +495,19 @@ ORDER BY c.date_key;
     LIMIT 15;
     ```
 
+
+    **실행 결과** (총 15행 중 상위 7행)
+
+    | name | address_1 | address_2 |
+    |---|---|---|
+    | 강건우 | 서울특별시 마포구 논현거리 639 (민준박면) | 서울특별시 남구 테헤란8가 782 (지현김최마을) |
+    | 강건우 | 서울특별시 마포구 논현거리 639 (민준박면) | 인천광역시 영등포구 서초대길 645-68 (종수송마을) |
+    | 강건우 | 인천광역시 영등포구 서초대길 645-68 (종수송마을) | 서울특별시 남구 테헤란8가 782 (지현김최마을) |
+    | 강경수 | 전라남도 포천시 가락672길 754-92 | 세종특별자치시 은평구 양재천22거리 785 (광수이이리) |
+    | 강경숙 | 제주특별자치도 청주시 서원구 서초대8길 556 (옥자진읍) | 경상북도 안성시 강남대거리 89 |
+    | 강경희 | 대전광역시 동구 잠실길 747 | 세종특별자치시 동대문구 논현107거리 596-5 (수진한김동) |
+    | 강경희 | 대전광역시 동구 잠실길 747 | 인천광역시 노원구 강남대3로 42 |
+
 ### 문제 6
 각 고객 등급이 전체 활성 고객 수에서 차지하는 비율(%)을 구하세요. CROSS JOIN으로 전체 수를 붙여 계산합니다. 소수 첫째 자리까지 반올림하세요.
 
@@ -468,6 +527,16 @@ ORDER BY c.date_key;
     GROUP BY grade, gt.total
     ORDER BY pct DESC;
     ```
+
+
+    **실행 결과** (4행)
+
+    | grade | grade_count | pct |
+    |---|---|---|
+    | BRONZE | 2289 | 62.50 |
+    | GOLD | 524 | 14.30 |
+    | SILVER | 479 | 13.10 |
+    | VIP | 368 | 10.10 |
 
 ### 문제 7
 2024년 4개 분기(`Q1`~`Q4`)와 결제 수단(`DISTINCT method`)의 모든 조합을 CROSS JOIN으로 생성하고, 각 조합의 결제 금액 합계를 LEFT JOIN으로 구하세요. 결제가 없는 셀은 0으로 표시하세요.
@@ -509,6 +578,19 @@ ORDER BY c.date_key;
     ORDER BY qr.q, m.method;
     ```
 
+
+    **실행 결과** (총 24행 중 상위 7행)
+
+    | q | method | total_amount |
+    |---|---|---|
+    | Q1 | bank_transfer | 98,541,709.00 |
+    | Q1 | card | 526,711,551.00 |
+    | Q1 | kakao_pay | 244,005,919.00 |
+    | Q1 | naver_pay | 196,322,827.00 |
+    | Q1 | point | 89,533,449.00 |
+    | Q1 | virtual_account | 56,765,116.00 |
+    | Q2 | bank_transfer | 107,063,738.00 |
+
 ### 문제 8
 2024년 각 월과 각 공급업체의 조합에 대해, 해당 월의 입고 수량을 보여주세요. 입고가 없는 셀은 0으로 표시합니다.
 
@@ -543,6 +625,19 @@ ORDER BY c.date_key;
     ORDER BY m.m, s.company_name
     LIMIT 30;
     ```
+
+
+    **실행 결과** (총 30행 중 상위 7행)
+
+    | year_month | supplier | inbound_qty |
+    |---|---|---|
+    | 2024-01 | AMD코리아 | 0 |
+    | 2024-01 | APC코리아 | 0 |
+    | 2024-01 | ASRock코리아 | 0 |
+    | 2024-01 | HP코리아 | 0 |
+    | 2024-01 | LG전자 공식 유통 | 0 |
+    | 2024-01 | MSI코리아 | 213 |
+    | 2024-01 | NZXT코리아 | 0 |
 
 ### 문제 9
 고객 등급(`DISTINCT grade`)과 최상위 카테고리(`depth = 0`)의 모든 조합을 CROSS JOIN으로 생성하고, 각 조합의 주문 건수를 LEFT JOIN으로 구하세요. 주문이 없는 조합은 0으로 표시하세요.
@@ -579,6 +674,19 @@ ORDER BY c.date_key;
     ORDER BY g.grade, tc.name;
     ```
 
+
+    **실행 결과** (총 72행 중 상위 7행)
+
+    | grade | category | order_count |
+    |---|---|---|
+    | BRONZE | CPU | 805 |
+    | BRONZE | UPS/전원 | 89 |
+    | BRONZE | 그래픽카드 | 798 |
+    | BRONZE | 네트워크 장비 | 1214 |
+    | BRONZE | 노트북 | 815 |
+    | BRONZE | 데스크톱 PC | 176 |
+    | BRONZE | 마우스 | 1659 |
+
 ### 문제 10
 `categories` 테이블을 SELF JOIN하여 부모 카테고리명(`parent_name`)과 자식 카테고리명(`child_name`)을 조회하세요. 부모가 없는 최상위 카테고리의 `parent_name`은 `'(최상위)'`로 표시합니다.
 
@@ -592,5 +700,18 @@ ORDER BY c.date_key;
     LEFT JOIN categories AS parent ON child.parent_id = parent.id
     ORDER BY parent.name, child.name;
     ```
+
+
+    **실행 결과** (총 53행 중 상위 7행)
+
+    | parent_name | child_name | depth |
+    |---|---|---|
+    | (최상위) | CPU | 0 |
+    | (최상위) | UPS/전원 | 0 |
+    | (최상위) | 그래픽카드 | 0 |
+    | (최상위) | 네트워크 장비 | 0 |
+    | (최상위) | 노트북 | 0 |
+    | (최상위) | 데스크톱 PC | 0 |
+    | (최상위) | 마우스 | 0 |
 
 <!-- END_LESSON_EXERCISES -->

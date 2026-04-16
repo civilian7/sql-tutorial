@@ -90,6 +90,13 @@
     ```
 
 
+    **실행 결과** (1행)
+
+    | total | null_birthdate | pct_birthdate | null_gender | pct_gender | null_login | pct_login |
+    |---|---|---|---|---|---|---|
+    | 5230 | 738 | 14.10 | 529 | 10.10 | 281 | 5.40 |
+
+
 ---
 
 
@@ -181,6 +188,19 @@
     WHERE total_amount > (SELECT AVG(total_amount) * 10 FROM orders)
     ORDER BY total_amount DESC;
     ```
+
+
+    **실행 결과** (총 121행 중 상위 7행)
+
+    | order_number | total_amount | ordered_at |
+    |---|---|---|
+    | ORD-20201121-08810 | 50,867,500.00 | 2020-11-21 12:04:42 |
+    | ORD-20250305-32265 | 46,820,024.00 | 2025-03-05 09:01:08 |
+    | ORD-20230523-22331 | 46,094,971.00 | 2023-05-23 08:50:55 |
+    | ORD-20200209-05404 | 43,677,500.00 | 2020-02-09 23:36:36 |
+    | ORD-20221231-20394 | 43,585,700.00 | 2022-12-31 21:35:59 |
+    | ORD-20251218-37240 | 38,626,400.00 | 2025-12-18 17:09:12 |
+    | ORD-20220106-15263 | 37,987,600.00 | 2022-01-06 17:24:14 |
 
 
 ---
@@ -301,6 +321,13 @@
         (SELECT COUNT(*) FROM products WHERE stock_qty < 0) AS negative_stock,
         (SELECT COUNT(*) FROM orders WHERE total_amount <= 0 AND status NOT IN ('cancelled')) AS zero_amount_orders;
     ```
+
+
+    **실행 결과** (1행)
+
+    | orders_before_signup | orphan_payments | invalid_delivery_dates | duplicate_items | negative_stock | zero_amount_orders |
+    |---|---|---|---|---|---|
+    | 0 | 0 | 0 | NULL | 0 | 0 |
 
 
 ---

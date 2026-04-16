@@ -61,6 +61,19 @@ Show customer name, product name, and review count.
     ```
 
 
+    **Result** (top 7 of 321 rows)
+
+    | customer_name | product_name | review_count |
+    |---|---|---|
+    | Gabriel Walters | G.SKILL Trident Z5 DDR5 64GB 6000MHz ... | 5 |
+    | Jason Rivera | SteelSeries Aerox 5 Wireless Silver | 4 |
+    | Gabriel Walters | Samsung DDR5 32GB PC5-38400 | 4 |
+    | Gabriel Walters | Samsung Odyssey G7 32 White | 4 |
+    | Brenda Garcia | ASUS PCE-BE92BT | 4 |
+    | Allen Snyder | Samsung DDR4 32GB PC4-25600 | 4 |
+    | Allen Snyder | Keychron Q1 Pro Silver | 4 |
+
+
 ---
 
 
@@ -93,6 +106,14 @@ Show weekday/weekend label, order count, average order value, and total revenue.
     GROUP BY cal.is_weekend
     ORDER BY cal.is_weekend;
     ```
+
+
+    **Result** (2 rows)
+
+    | day_type | order_count | avg_order_value | total_revenue |
+    |---|---|---|---|
+    | Weekday | 23,745 | 1,003,330.80 | 23,824,089,843.00 |
+    | Weekend | 10,953 | 999,300.48 | 10,945,338,164.00 |
 
 
 ---
@@ -139,6 +160,19 @@ Use LAG to show only days where the count increased vs the previous day.
     ```
 
 
+    **Result** (top 7 of 11 rows)
+
+    | order_date | order_count | prev_count | diff |
+    |---|---|---|---|
+    | 2024-12-03 | 15 | 14 | 1 |
+    | 2024-12-06 | 14 | 9 | 5 |
+    | 2024-12-07 | 15 | 14 | 1 |
+    | 2024-12-08 | 18 | 15 | 3 |
+    | 2024-12-14 | 17 | 13 | 4 |
+    | 2024-12-17 | 17 | 14 | 3 |
+    | 2024-12-20 | 18 | 14 | 4 |
+
+
 ---
 
 
@@ -176,6 +210,19 @@ Show category name, product name, price, and rank.
     ```
 
 
+    **Result** (top 7 of 32 rows)
+
+    | category | product_name | price | rank |
+    |---|---|---|---|
+    | Gaming Laptop | Razer Blade 18 Black | 2,987,500.00 | 3 |
+    | General Laptop | ASUS ExpertBook B5 White | 2,068,800.00 | 3 |
+    | Custom Build | ASUS ROG Strix G16CH Silver | 1,879,100.00 | 3 |
+    | NVIDIA | MSI GeForce RTX 4070 Ti Super GAMING X | 1,744,000.00 | 3 |
+    | Professional Monitor | LG 32EP950 OLED White | 1,545,700.00 | 3 |
+    | Gaming Monitor | LG UltraGear 27GR95QE White | 1,511,700.00 | 3 |
+    | 2-in-1 | HP Pavilion x360 14 Black | 1,479,700.00 | 3 |
+
+
 ---
 
 
@@ -206,6 +253,14 @@ Compare customer count, average order value, and average order count per group.
     GROUP BY CASE WHEN c.id % 2 = 0 THEN 'A' ELSE 'B' END
     ORDER BY bucket;
     ```
+
+
+    **Result** (2 rows)
+
+    | bucket | customer_count | total_orders | avg_order_value | avg_orders_per_customer |
+    |---|---|---|---|---|
+    | A | 2615 | 17,147 | 1,010,823.23 | 6.60 |
+    | B | 2615 | 17,551 | 993,495.65 | 6.70 |
 
 
 ---
@@ -240,6 +295,19 @@ Root: parent_id IS NULL. Inner: non-root with children. Leaf: no children.
     ```
 
 
+    **Result** (top 7 of 53 rows)
+
+    | id | name | parent_id | depth | node_type |
+    |---|---|---|---|---|
+    | 1 | Desktop PC | NULL | 0 | root |
+    | 5 | Laptop | NULL | 0 | root |
+    | 10 | Monitor | NULL | 0 | root |
+    | 14 | CPU | NULL | 0 | root |
+    | 17 | Motherboard | NULL | 0 | root |
+    | 20 | Memory (RAM) | NULL | 0 | root |
+    | 23 | Storage | NULL | 0 | root |
+
+
 ---
 
 
@@ -268,6 +336,19 @@ calculate daily total orders, cancelled orders, and cancellation rate.
     GROUP BY SUBSTR(ordered_at, 1, 10)
     ORDER BY order_date;
     ```
+
+
+    **Result** (top 7 of 31 rows)
+
+    | order_date | total_orders | cancelled_orders | cancel_rate_pct |
+    |---|---|---|---|
+    | 2025-12-01 | 23 | 2 | 8.70 |
+    | 2025-12-02 | 20 | 1 | 5.00 |
+    | 2025-12-03 | 21 | 0 | 0.0 |
+    | 2025-12-04 | 19 | 1 | 5.26 |
+    | 2025-12-05 | 24 | 1 | 4.17 |
+    | 2025-12-06 | 22 | 0 | 0.0 |
+    | 2025-12-07 | 20 | 0 | 0.0 |
 
 
 ---
@@ -299,6 +380,19 @@ for 3, 6, and 12 months. Show order number, total, and monthly amounts.
     ORDER BY total_amount DESC
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | order_number | total_amount | monthly_3m | monthly_6m | monthly_12m |
+    |---|---|---|---|---|
+    | ORD-20201121-08810 | 50,867,500.00 | 16,955,833.00 | 8,477,917.00 | 4,238,958.00 |
+    | ORD-20250305-32265 | 46,820,024.00 | 15,606,675.00 | 7,803,337.00 | 3,901,669.00 |
+    | ORD-20200209-05404 | 43,677,500.00 | 14,559,167.00 | 7,279,583.00 | 3,639,792.00 |
+    | ORD-20251218-37240 | 38,626,400.00 | 12,875,467.00 | 6,437,733.00 | 3,218,867.00 |
+    | ORD-20220106-15263 | 37,987,600.00 | 12,662,533.00 | 6,331,267.00 | 3,165,633.00 |
+    | ORD-20200820-07684 | 37,518,200.00 | 12,506,067.00 | 6,253,033.00 | 3,126,517.00 |
+    | ORD-20220224-15869 | 35,397,700.00 | 11,799,233.00 | 5,899,617.00 | 2,949,808.00 |
 
 
 ---
@@ -339,6 +433,19 @@ Show name, grade, original birth_date, and estimated birth_year.
     ORDER BY c.grade, c.id
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | id | name | grade | birth_date | estimated_birth_year |
+    |---|---|---|---|---|
+    | 7 | Ashley Jones | BRONZE | NULL | 1,988.00 |
+    | 13 | Andrew Reeves | BRONZE | NULL | 1,988.00 |
+    | 14 | Martha Murphy | BRONZE | NULL | 1,988.00 |
+    | 24 | Barbara White | BRONZE | NULL | 1,988.00 |
+    | 36 | Angela Barrera | BRONZE | NULL | 1,988.00 |
+    | 38 | Dana Miles | BRONZE | NULL | 1,988.00 |
+    | 42 | Emma Nguyen | BRONZE | NULL | 1,988.00 |
 
 
 ---
@@ -384,6 +491,19 @@ and mark all but the earliest using ROW_NUMBER.
     ```
 
 
+    **Result** (top 7 of 30 rows)
+
+    | id | customer_id | product_id | created_at | rn | action |
+    |---|---|---|---|---|---|
+    | 88 | 3 | 142 | 2020-10-21 05:28:28 | 1 | KEEP |
+    | 1202 | 3 | 164 | 2018-12-05 10:45:35 | 1 | KEEP |
+    | 1456 | 3 | 234 | 2025-06-24 10:23:47 | 1 | KEEP |
+    | 996 | 19 | 4 | 2017-10-28 18:51:00 | 1 | KEEP |
+    | 82 | 19 | 144 | 2024-09-29 00:02:22 | 1 | KEEP |
+    | 1378 | 81 | 1 | 2017-10-25 09:20:52 | 1 | KEEP |
+    | 1997 | 81 | 106 | 2023-02-11 22:00:20 | 1 | KEEP |
+
+
 ---
 
 
@@ -413,6 +533,17 @@ by acquisition_channel.
     GROUP BY COALESCE(c.acquisition_channel, 'unknown')
     ORDER BY conversion_rate_pct DESC;
     ```
+
+
+    **Result** (5 rows)
+
+    | channel | signup_count | converted_count | conversion_rate_pct |
+    |---|---|---|---|
+    | social | 8685 | 741 | 8.50 |
+    | search_ad | 10,504 | 838 | 8.00 |
+    | referral | 5134 | 384 | 7.50 |
+    | direct | 3156 | 210 | 6.70 |
+    | organic | 9656 | 620 | 6.40 |
 
 
 ---
@@ -451,6 +582,19 @@ Identify products where they differ.
     ORDER BY ABS(p.stock_qty - f.net_flow) DESC
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | product_name | current_stock | calculated_stock | discrepancy |
+    |---|---|---|---|
+    | Netgear GS316PP | 104 | 1590 | -1486 |
+    | TP-Link TL-SG1016D Silver | 275 | 1569 | -1294 |
+    | LG 27UQ85R Black | 26 | 1280 | -1254 |
+    | CORSAIR RM1000x White | 58 | 1262 | -1204 |
+    | Sony WH-CH720N Silver | 89 | 1259 | -1170 |
+    | Razer Basilisk V3 Pro 35K White | 99 | 1268 | -1169 |
+    | Logitech G PRO X SUPERLIGHT 2 White | 152 | 1300 | -1148 |
 
 
 ---
@@ -497,6 +641,19 @@ Use LAG to compare with the previous 2 orders' status.
     ```
 
 
+    **Result** (top 7 of 30 rows)
+
+    | customer_id | customer_name | order_number | status | prev_1 | prev_2 | ordered_at |
+    |---|---|---|---|---|---|---|
+    | 2 | Danny Johnson | ORD-20160830-00269 | confirmed | confirmed | confirmed | 2016-08-30 10:49:39 |
+    | 2 | Danny Johnson | ORD-20160904-00274 | confirmed | confirmed | confirmed | 2016-09-04 08:47:04 |
+    | 2 | Danny Johnson | ORD-20160915-00287 | confirmed | confirmed | confirmed | 2016-09-15 20:07:17 |
+    | 2 | Danny Johnson | ORD-20161024-00334 | confirmed | confirmed | confirmed | 2016-10-24 12:13:06 |
+    | 2 | Danny Johnson | ORD-20161101-00343 | confirmed | confirmed | confirmed | 2016-11-01 10:44:08 |
+    | 2 | Danny Johnson | ORD-20170122-00444 | confirmed | confirmed | confirmed | 2017-01-22 08:39:07 |
+    | 2 | Danny Johnson | ORD-20170305-00501 | confirmed | confirmed | confirmed | 2017-03-05 20:35:01 |
+
+
 ---
 
 
@@ -536,6 +693,19 @@ Show category, rank, product name, and revenue.
     WHERE rn <= 3
     ORDER BY category, rn;
     ```
+
+
+    **Result** (top 7 of 113 rows)
+
+    | category | rank | product_name | revenue |
+    |---|---|---|---|
+    | 2-in-1 | 1 | Lenovo ThinkPad X1 2in1 Silver | 554,231,700.00 |
+    | 2-in-1 | 2 | HP Envy x360 15 Silver | 326,727,400.00 |
+    | 2-in-1 | 3 | HP Pavilion x360 14 Black | 319,615,200.00 |
+    | AMD | 1 | AMD Ryzen 9 9900X | 452,187,900.00 |
+    | AMD | 1 | MSI Radeon RX 7900 XTX GAMING X White | 585,793,600.00 |
+    | AMD | 2 | AMD Ryzen 9 9900X | 149,725,400.00 |
+    | AMD | 2 | ASUS Dual RX 9070 Silver | 515,058,400.00 |
 
 
 ---
@@ -714,6 +884,18 @@ who ordered again in month+1, month+2, and month+3.
         ```
 
 
+    **Result** (6 rows)
+
+    | signup_month | cohort_size | m1 | m1_pct | m2 | m2_pct | m3 | m3_pct |
+    |---|---|---|---|---|---|---|---|
+    | 2024-01 | 28 | 3 | 10.70 | 5 | 17.90 | 4 | 14.30 |
+    | 2024-02 | 26 | 7 | 26.90 | 3 | 11.50 | 5 | 19.20 |
+    | 2024-03 | 44 | 10 | 22.70 | 11 | 25.00 | 2 | 4.50 |
+    | 2024-04 | 26 | 4 | 15.40 | 4 | 15.40 | 2 | 7.70 |
+    | 2024-05 | 24 | 4 | 16.70 | 7 | 29.20 | 2 | 8.30 |
+    | 2024-06 | 36 | 4 | 11.10 | 4 | 11.10 | 6 | 16.70 |
+
+
 ---
 
 
@@ -854,6 +1036,18 @@ in ANY month after N months (not just exactly month N).
         ```
 
 
+    **Result** (6 rows)
+
+    | signup_month | cohort_size | rolling_m1 | rolling_m1_pct | rolling_m2 | rolling_m2_pct | rolling_m3 | rolling_m3_pct |
+    |---|---|---|---|---|---|---|---|
+    | 2024-01 | 28 | 28 | 100.00 | 28 | 100.00 | 26 | 92.90 |
+    | 2024-02 | 26 | 26 | 100.00 | 26 | 100.00 | 25 | 96.20 |
+    | 2024-03 | 44 | 43 | 97.70 | 43 | 97.70 | 42 | 95.50 |
+    | 2024-04 | 26 | 26 | 100.00 | 24 | 92.30 | 24 | 92.30 |
+    | 2024-05 | 24 | 24 | 100.00 | 24 | 100.00 | 24 | 100.00 |
+    | 2024-06 | 36 | 35 | 97.20 | 35 | 97.20 | 33 | 91.70 |
+
+
 ---
 
 
@@ -896,6 +1090,19 @@ from product_views. DAU/MAU ratio is the stickiness metric.
     ```
 
 
+    **Result** (top 7 of 31 rows)
+
+    | view_date | dau | mau | stickiness_pct |
+    |---|---|---|---|
+    | 2024-12-01 | 94 | 1056 | 8.90 |
+    | 2024-12-02 | 118 | 1056 | 11.17 |
+    | 2024-12-03 | 111 | 1056 | 10.51 |
+    | 2024-12-04 | 106 | 1056 | 10.04 |
+    | 2024-12-05 | 109 | 1056 | 10.32 |
+    | 2024-12-06 | 111 | 1056 | 10.51 |
+    | 2024-12-07 | 102 | 1056 | 9.66 |
+
+
 ---
 
 
@@ -932,6 +1139,19 @@ Use `AVG() OVER (ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`.
     FROM daily_revenue
     ORDER BY order_date;
     ```
+
+
+    **Result** (top 7 of 31 rows)
+
+    | order_date | revenue | moving_avg_7d |
+    |---|---|---|
+    | 2024-12-01 | 10,287,445.00 | 10,287,445.00 |
+    | 2024-12-02 | 11,732,557.00 | 11,010,001.00 |
+    | 2024-12-03 | 11,867,860.00 | 11,295,954.00 |
+    | 2024-12-04 | 11,198,303.00 | 11,271,541.25 |
+    | 2024-12-05 | 5,489,585.00 | 10,115,150.00 |
+    | 2024-12-06 | 15,937,500.00 | 11,085,541.67 |
+    | 2024-12-07 | 15,895,514.00 | 11,772,680.57 |
 
 
 ---
@@ -971,6 +1191,19 @@ Use the last 24 months of data.
     ```
 
 
+    **Result** (top 7 of 24 rows)
+
+    | year_month | revenue | moving_avg_3m |
+    |---|---|---|
+    | 2024-01 | 288,908,320.00 | 288,908,320.00 |
+    | 2024-02 | 403,127,749.00 | 346,018,035.00 |
+    | 2024-03 | 519,844,502.00 | 403,960,190.00 |
+    | 2024-04 | 451,877,581.00 | 458,283,277.00 |
+    | 2024-05 | 425,264,478.00 | 465,662,187.00 |
+    | 2024-06 | 362,715,211.00 | 413,285,757.00 |
+    | 2024-07 | 343,929,897.00 | 377,303,195.00 |
+
+
 ---
 
 
@@ -1001,6 +1234,19 @@ Use PARTITION BY year so cumulative resets each year.
     GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 1, 7)
     ORDER BY year_month;
     ```
+
+
+    **Result** (top 7 of 36 rows)
+
+    | year | year_month | monthly_revenue | cumulative_revenue |
+    |---|---|---|---|
+    | 2023 | 2023-01 | 270,083,587.00 | 270,083,587.00 |
+    | 2023 | 2023-02 | 327,431,648.00 | 597,515,235.00 |
+    | 2023 | 2023-03 | 477,735,354.00 | 1,075,250,589.00 |
+    | 2023 | 2023-04 | 396,849,049.00 | 1,472,099,638.00 |
+    | 2023 | 2023-05 | 349,749,072.00 | 1,821,848,710.00 |
+    | 2023 | 2023-06 | 279,698,633.00 | 2,101,547,343.00 |
+    | 2023 | 2023-07 | 312,983,148.00 | 2,414,530,491.00 |
 
 
 ---
@@ -1052,6 +1298,19 @@ Show cumulative revenue percentage and customer rank.
     WHERE rank <= 50 OR 100.0 * cumulative_revenue / total_revenue BETWEEN 78 AND 82
     ORDER BY rank;
     ```
+
+
+    **Result** (top 7 of 167 rows)
+
+    | rank | revenue | cumulative_pct | customer_pct | pareto_group |
+    |---|---|---|---|---|
+    | 1 | 403,448,758.00 | 1.16 | 0.04 | Top 80% |
+    | 2 | 366,385,931.00 | 2.21 | 0.07 | Top 80% |
+    | 3 | 253,180,338.00 | 2.94 | 0.11 | Top 80% |
+    | 4 | 244,604,910.00 | 3.65 | 0.14 | Top 80% |
+    | 5 | 235,775,349.00 | 4.32 | 0.18 | Top 80% |
+    | 6 | 234,708,853.00 | 5.00 | 0.21 | Top 80% |
+    | 7 | 230,165,991.00 | 5.66 | 0.25 | Top 80% |
 
 
 ---
@@ -1154,6 +1413,19 @@ Use LAG to get previous order date and compute JULIANDAY difference.
     HAVING COUNT(*) >= 3
     ORDER BY avg_cycle_days ASC;
         ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | customer_name | grade | gap_count | avg_cycle_days | min_days | max_days |
+    |---|---|---|---|---|---|
+    | Jason Rivera | VIP | 341 | 10.10 | 0 | 112 |
+    | Allen Snyder | VIP | 302 | 10.80 | 0 | 88 |
+    | Ronald Arellano | VIP | 218 | 12.00 | 0 | 74 |
+    | Jennifer Bradshaw | VIP | 6 | 12.10 | 0 | 26 |
+    | Courtney Huff | VIP | 222 | 12.30 | 0 | 125 |
+    | Julia Carson | GOLD | 3 | 12.40 | 3 | 20 |
+    | Brenda Garcia | VIP | 248 | 12.90 | 0 | 102 |
 
 
 ---
@@ -1330,6 +1602,13 @@ of their first order.
         ```
 
 
+    **Result** (1 rows)
+
+    | total_customers | repurchase_30d | repurchase_30d_pct | repurchase_60d | repurchase_60d_pct | repurchase_90d | repurchase_90d_pct |
+    |---|---|---|---|---|---|---|
+    | 2793 | 704 | 25.20 | 1016 | 36.40 | 1229 | 44.00 |
+
+
 ---
 
 
@@ -1366,6 +1645,19 @@ does not match customers.point_balance.
     ORDER BY ABS(c.point_balance - COALESCE(ps.calculated_balance, 0)) DESC
     LIMIT 20;
     ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | customer_id | name | stored_balance | calculated_balance | drift |
+    |---|---|---|---|---|
+    | 97 | Jason Rivera | 3,518,880 | 2,332,397 | 1,186,483 |
+    | 226 | Allen Snyder | 3,955,828 | 2,863,301 | 1,092,527 |
+    | 162 | Brenda Garcia | 2,450,166 | 1,521,994 | 928,172 |
+    | 549 | Ronald Arellano | 2,276,622 | 1,449,259 | 827,363 |
+    | 227 | James Banks | 2,297,542 | 1,516,187 | 781,355 |
+    | 3 | Adam Moore | 1,564,015 | 859,898 | 704,117 |
+    | 98 | Gabriel Walters | 2,218,590 | 1,514,981 | 703,609 |
 
 
 ---
@@ -1493,6 +1785,19 @@ Calculate lift percentage per promotion.
         ```
 
 
+    **Result** (top 7 of 15 rows)
+
+    | promo_name | promo_revenue | promo_days | promo_avg_daily | baseline_avg_daily | lift_pct |
+    |---|---|---|---|---|---|
+    | Year-End Thank You Sale 2025 | 416,811,391.00 | 15 | 27,787,426.00 | 14,012,174.00 | 98.30 |
+    | Surprise Deal | 74,259,378.00 | 3 | 24,753,126.00 | 14,012,174.00 | 76.70 |
+    | Spring Sale 2025 | 311,900,316.00 | 15 | 20,793,354.00 | 14,012,174.00 | 48.40 |
+    | Autumn Gift Sale 2024 | 225,867,067.00 | 11 | 20,533,370.00 | 14,012,174.00 | 46.50 |
+    | Back to School Laptop Sale 2025 | 373,010,414.00 | 22 | 16,955,019.00 | 14,012,174.00 | 21.00 |
+    | Gaming Gear Festa 2025 | 131,978,627.00 | 8 | 16,497,328.00 | 14,012,174.00 | 17.70 |
+    | Back to School Laptop Sale 2024 | 350,818,175.00 | 22 | 15,946,281.00 | 14,012,174.00 | 13.80 |
+
+
 ---
 
 
@@ -1532,6 +1837,19 @@ Find category pairs most frequently bought together in the same order.
     ORDER BY co_occurrence DESC
     LIMIT 15;
     ```
+
+
+    **Result** (top 7 of 15 rows)
+
+    | category_1 | category_2 | co_occurrence |
+    |---|---|---|
+    | Power Supply (PSU) | Case | 3139 |
+    | SSD | Case | 2999 |
+    | SSD | Power Supply (PSU) | 2990 |
+    | AMD | Case | 2209 |
+    | AMD | Power Supply (PSU) | 2182 |
+    | DDR5 | Case | 1768 |
+    | Intel | Case | 1757 |
 
 
 ---
@@ -1579,6 +1897,19 @@ e.g., VIP -> GOLD -> SILVER
       AND gs.prev_reason = 'downgrade'
     ORDER BY gs.customer_id, gs.changed_at;
     ```
+
+
+    **Result** (top 7 of 292 rows)
+
+    | customer_id | customer_name | grade_before | grade_mid | grade_after | changed_at |
+    |---|---|---|---|---|---|
+    | 4 | Virginia Steele | VIP | GOLD | SILVER | 2024-01-01 00:00:00 |
+    | 8 | Tyler Rodriguez | VIP | GOLD | SILVER | 2022-01-01 00:00:00 |
+    | 10 | John Stark | GOLD | SILVER | BRONZE | 2021-01-01 00:00:00 |
+    | 12 | Michael Velasquez | VIP | GOLD | SILVER | 2023-01-01 00:00:00 |
+    | 14 | Martha Murphy | VIP | GOLD | SILVER | 2020-01-01 00:00:00 |
+    | 14 | Martha Murphy | GOLD | SILVER | BRONZE | 2021-01-01 00:00:00 |
+    | 15 | Lydia Lawrence | VIP | GOLD | SILVER | 2023-01-01 00:00:00 |
 
 
 ---
@@ -1672,6 +2003,19 @@ with month-over-month change.
     FROM monthly_carrier
     ORDER BY carrier, ship_month;
         ```
+
+
+    **Result** (top 7 of 120 rows)
+
+    | carrier | ship_month | delivery_count | avg_days | prev_month_days | mom_change |
+    |---|---|---|---|---|---|
+    | DHL | 2024-01 | 43 | 2.60 | NULL | NULL |
+    | DHL | 2024-02 | 52 | 2.69 | 2.60 | 0.09 |
+    | DHL | 2024-03 | 83 | 2.52 | 2.69 | -0.17 |
+    | DHL | 2024-04 | 84 | 2.50 | 2.52 | -0.02 |
+    | DHL | 2024-05 | 56 | 2.43 | 2.50 | -0.07 |
+    | DHL | 2024-06 | 57 | 2.58 | 2.43 | 0.15 |
+    | DHL | 2024-07 | 64 | 2.58 | 2.58 | 0.0 |
 
 
 ---
@@ -1825,6 +2169,19 @@ Show start date, end date, and streak length.
         ```
 
 
+    **Result** (top 7 of 25 rows)
+
+    | start_date | end_date | streak_days |
+    |---|---|---|
+    | 2024-01-04 | 2024-01-07 | 4 |
+    | 2024-01-17 | 2024-01-21 | 5 |
+    | 2024-01-26 | 2024-01-28 | 3 |
+    | 2024-03-04 | 2024-03-06 | 3 |
+    | 2024-03-27 | 2024-03-29 | 3 |
+    | 2024-05-14 | 2024-05-16 | 3 |
+    | 2024-06-20 | 2024-06-23 | 4 |
+
+
 ---
 
 
@@ -1970,6 +2327,19 @@ Show customer name, streak start month, end month, and duration.
     INNER JOIN customers AS c ON s.customer_id = c.id
     ORDER BY s.consecutive_months DESC, c.name;
         ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | customer_name | grade | start_month | end_month | consecutive_months |
+    |---|---|---|---|---|
+    | Jason Rivera | VIP | 2016-07 | 2022-05 | 71 |
+    | Ronald Arellano | VIP | 2018-10 | 2022-07 | 46 |
+    | Allen Snyder | VIP | 2017-01 | 2020-09 | 45 |
+    | James Banks | VIP | 2017-05 | 2020-07 | 39 |
+    | Darren Wang | VIP | 2020-10 | 2023-11 | 38 |
+    | Courtney Huff | VIP | 2018-04 | 2021-03 | 36 |
+    | Sandra Callahan | GOLD | 2017-11 | 2020-09 | 35 |
 
 
 ---
@@ -2123,6 +2493,13 @@ Calculate sessions per customer and average views per session.
         ```
 
 
+    **Result** (1 rows)
+
+    | total_customers | total_sessions | avg_sessions_per_customer | avg_views_per_session |
+    |---|---|---|---|
+    | 267 | 65,248 | 244.40 | 1.10 |
+
+
 ---
 
 
@@ -2273,6 +2650,13 @@ Compare session counts with the 30-minute version.
         ```
 
 
+    **Result** (1 rows)
+
+    | total_customers | total_sessions | avg_sessions_per_customer | avg_views_per_session |
+    |---|---|---|---|
+    | 267 | 67,538 | 253.00 | 1.00 |
+
+
 ---
 
 
@@ -2313,6 +2697,16 @@ SQLite lacks MEDIAN, so implement it using NTILE or ROW_NUMBER.
             WHEN 'SILVER' THEN 3 WHEN 'BRONZE' THEN 4
         END;
     ```
+
+
+    **Result** (4 rows)
+
+    | grade | median_amount |
+    |---|---|
+    | VIP | 481,750.00 |
+    | GOLD | 456,200.00 |
+    | SILVER | 423,000.00 |
+    | BRONZE | 317,400.00 |
 
 
 ---
@@ -2395,6 +2789,17 @@ Calculate the median delivery duration (in days) by carrier.
         ```
 
 
+    **Result** (5 rows)
+
+    | carrier | median_days |
+    |---|---|
+    | USPS | 2.00 |
+    | DHL | 3.00 |
+    | FedEx | 3.00 |
+    | OnTrac | 3.00 |
+    | UPS | 3.00 |
+
+
 ---
 
 
@@ -2454,6 +2859,15 @@ for view -> cart -> purchase funnel.
     ```
 
 
+    **Result** (3 rows)
+
+    | device_type | viewers | carters | view_to_cart_pct | buyers | cart_to_buy_pct | view_to_buy_pct |
+    |---|---|---|---|---|---|---|
+    | desktop | 3658 | 486 | 13.29 | 2710 | 557.61 | 74.08 |
+    | mobile | 3660 | 513 | 14.02 | 2707 | 527.68 | 73.96 |
+    | tablet | 3385 | 201 | 5.94 | 2301 | 1,144.78 | 67.98 |
+
+
 ---
 
 
@@ -2509,6 +2923,18 @@ For multi-channel customers, give credit to the last-touch channel before purcha
     LEFT JOIN channel_conversions AS cc ON cv.referrer_source = cc.referrer_source
     ORDER BY last_touch_conversions DESC;
     ```
+
+
+    **Result** (6 rows)
+
+    | referrer_source | total_views | unique_viewers | last_touch_conversions | conversion_rate_pct |
+    |---|---|---|---|---|
+    | search | 114,520 | 3652 | 995 | 27.25 |
+    | direct | 65,716 | 3603 | 541 | 15.02 |
+    | ad | 49,030 | 3549 | 411 | 11.58 |
+    | recommendation | 49,429 | 3544 | 405 | 11.43 |
+    | social | 32,707 | 3402 | 291 | 8.55 |
+    | email | 16,469 | 2929 | 150 | 5.12 |
 
 
 ---
@@ -2646,6 +3072,19 @@ e.g., Mon/Tue/Wed views -> Thu gap -> Fri/Sat views = 2 islands (3 days, 2 days)
         ```
 
 
+    **Result** (top 7 of 20 rows)
+
+    | customer_name | island_start | island_end | island_days |
+    |---|---|---|---|
+    | Gabriel Walters | 2016-01-09 | 2016-02-17 | 40 |
+    | Jason Rivera | 2020-02-28 | 2020-03-25 | 27 |
+    | Adam Moore | 2016-03-05 | 2016-03-29 | 25 |
+    | Gabriel Walters | 2016-04-18 | 2016-05-12 | 25 |
+    | Jason Rivera | 2017-10-13 | 2017-11-06 | 25 |
+    | Terri Jones | 2018-02-19 | 2018-03-15 | 25 |
+    | Brenda Garcia | 2021-08-30 | 2021-09-21 | 23 |
+
+
 ---
 
 
@@ -2730,6 +3169,19 @@ month-over-month revenue change, and top product by revenue.
     FROM with_growth
     ORDER BY year_month;
     ```
+
+
+    **Result** (top 7 of 12 rows)
+
+    | year_month | revenue | order_count | new_customers | active_customers | avg_order_value | mom_growth_pct | top_product |
+    |---|---|---|---|---|---|---|---|
+    | 2024-01 | 288,908,320.00 | 314 | 52 | 269 | 920,090.00 | NULL | Razer Blade 18 Black |
+    | 2024-02 | 403,127,749.00 | 416 | 48 | 335 | 969,057.00 | 39.50 | Razer Blade 16 Silver |
+    | 2024-03 | 519,844,502.00 | 555 | 71 | 421 | 936,657.00 | 29.00 | Razer Blade 16 Silver |
+    | 2024-04 | 451,877,581.00 | 466 | 53 | 353 | 969,694.00 | -13.10 | ASUS ROG Swift PG32UCDM Silver |
+    | 2024-05 | 425,264,478.00 | 385 | 43 | 315 | 1,104,583.00 | -5.90 | Razer Blade 18 Black |
+    | 2024-06 | 362,715,211.00 | 389 | 68 | 324 | 932,430.00 | -14.70 | ASUS ROG Strix Scar 16 |
+    | 2024-07 | 343,929,897.00 | 381 | 62 | 311 | 902,703.00 | -5.20 | Razer Blade 18 Black |
 
 
 ---
@@ -2828,6 +3280,19 @@ Show product name and CPU for products where specs is not NULL.
       AND JSON_VALUE(specs, '$.cpu') IS NOT NULL
     ORDER BY price DESC;
         ```
+
+
+    **Result** (top 7 of 20 rows)
+
+    | name | brand | price | cpu | ram | storage |
+    |---|---|---|---|---|---|
+    | MacBook Air 15 M3 Silver | Apple | 5,481,100.00 | Intel Core i9-13900H | 8GB | 256GB |
+    | Razer Blade 18 Black | Razer | 4,353,100.00 | Intel Core i7-13700H | 8GB | 1024GB |
+    | Razer Blade 16 Silver | Razer | 3,702,900.00 | AMD Ryzen 9 7945HX | 32GB | 512GB |
+    | ASUS ROG Strix G16CH White | ASUS | 3,671,500.00 | AMD Ryzen 5 7600X | 16GB | 2048GB |
+    | ASUS ROG Zephyrus G16 | ASUS | 3,429,900.00 | Apple M3 | 16GB | 512GB |
+    | ASUS ROG Strix GT35 | ASUS | 3,296,800.00 | Intel Core i7-13700K | 64GB | 2048GB |
+    | Razer Blade 18 Black | Razer | 2,987,500.00 | Apple M3 | 8GB | 256GB |
 
 
 ---
