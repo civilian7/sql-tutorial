@@ -42,6 +42,37 @@
 }
 
 /* CodeMirror wrapper */
+/* Table list (collapsible) */
+.pg-tables {
+  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
+  border-top: none;
+}
+.pg-tables summary {
+  padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+  color: var(--md-default-fg-color--light, #666);
+  background: var(--md-code-bg-color, #f5f5f5);
+  user-select: none;
+}
+.pg-tables summary:hover { color: var(--md-accent-fg-color, #5c6bc0); }
+.pg-tables-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 2px; padding: 6px; background: var(--md-code-bg-color, #f5f5f5);
+}
+.pg-table-chip {
+  padding: 3px 8px; font-size: 0.73rem;
+  font-family: var(--md-code-font-family, monospace);
+  color: var(--md-default-fg-color, #333);
+  cursor: pointer; border-radius: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pg-table-chip:hover {
+  background: var(--md-accent-fg-color--transparent, rgba(92,107,192,0.1));
+  color: var(--md-accent-fg-color, #5c6bc0);
+}
+.pg-table-chip .pg-chip-rows {
+  font-size: 0.65rem; color: var(--md-default-fg-color--lighter, #aaa); margin-left: 4px;
+}
+
 #pg-editor-wrap { border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-top: none; }
 #pg-editor-wrap .CodeMirror { height: 180px; font-size: 0.88rem; }
 
@@ -103,6 +134,10 @@
         <button class="pg-sample-btn" data-sql="SELECT c.name, COUNT(o.id) AS orders\nFROM customers c\nJOIN orders o ON c.id = o.customer_id\nGROUP BY c.id\nORDER BY orders DESC LIMIT 5;">주문 TOP 5</button>
       </div>
     </div>
+    <details class="pg-tables" id="pg-tables">
+      <summary>테이블 목록 (클릭하면 SELECT 쿼리 삽입)</summary>
+      <div class="pg-tables-grid" id="pg-tables-grid"></div>
+    </details>
     <div id="pg-editor-wrap"></div>
     <div class="pg-result" id="pg-result"></div>
   </div>
@@ -125,6 +160,7 @@
       document.getElementById('pg-loading').style.display = 'none';
       document.getElementById('pg-app').style.display = '';
       initEditor();
+      loadTables();
     } catch (e) {
       document.getElementById('pg-loading').innerHTML = '<div class="pg-error">로드 실패: ' + esc(e.message) + '</div>';
     }
@@ -141,6 +177,26 @@
       tabSize: 2,
       autofocus: true,
       extraKeys: { 'Ctrl-Enter': run }
+    });
+  }
+
+  function loadTables() {
+    const grid = document.getElementById('pg-tables-grid');
+    const res = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != '_sc_metadata' ORDER BY name");
+    if (!res.length) return;
+    res[0].values.forEach(row => {
+      const name = row[0];
+      const cnt = db.exec("SELECT COUNT(*) FROM " + name);
+      const rows = cnt.length ? cnt[0].values[0][0] : 0;
+      const chip = document.createElement('span');
+      chip.className = 'pg-table-chip';
+      chip.innerHTML = name + '<span class="pg-chip-rows">(' + rows + ')</span>';
+      chip.addEventListener('click', () => {
+        editor.setValue('SELECT * FROM ' + name + ' LIMIT 20;');
+        run();
+        document.getElementById('pg-tables').open = false;
+      });
+      grid.appendChild(chip);
     });
   }
 
