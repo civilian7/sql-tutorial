@@ -25,15 +25,18 @@ Since the documentation is updated frequently, **we recommend using Git to alway
 
     === "macOS"
 
-        In **Terminal**:
+        Type `git --version` in **Terminal**. If Git is not installed, a **Command Line Tools** installation dialog will appear automatically. Click "Install".
 
         ```bash
-        # Included with Xcode command line tools (usually already installed)
+        # This triggers the automatic install prompt if Git is missing
         git --version
 
-        # If not available, install with Homebrew
-        brew install git
+        # Or install directly
+        xcode-select --install
         ```
+
+        !!! tip "Different from Homebrew's Git?"
+            `xcode-select --install` provides Apple's stable Git version. Homebrew (`brew install git`) provides the latest version, but either works fine for this tutorial. If you haven't installed Homebrew yet, **Command Line Tools alone is sufficient**.
 
     === "Linux (Ubuntu/Debian)"
 

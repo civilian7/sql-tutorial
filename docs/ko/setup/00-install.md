@@ -25,15 +25,18 @@
 
     === "macOS"
 
-        **터미널**에서:
+        **터미널**에서 `git --version`을 입력하세요. Git이 설치되어 있지 않으면 **Command Line Tools** 설치 팝업이 자동으로 나타납니다. "설치"를 클릭하면 됩니다.
 
         ```bash
-        # Xcode 명령줄 도구에 포함 (대부분 이미 설치됨)
+        # 입력하면 설치 안내가 자동으로 나타남
         git --version
 
-        # 없으면 Homebrew로 설치
-        brew install git
+        # 또는 직접 설치
+        xcode-select --install
         ```
+
+        !!! tip "Homebrew의 Git과 다른가요?"
+            `xcode-select --install`로 설치되는 Git은 Apple이 관리하는 안정 버전입니다. Homebrew(`brew install git`)는 최신 버전을 제공하지만, 이 튜토리얼에서는 어느 쪽이든 문제없습니다. 아직 Homebrew를 설치하지 않았다면 **Command Line Tools만으로 충분**합니다.
 
     === "Linux (Ubuntu/Debian)"
 
