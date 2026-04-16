@@ -1,29 +1,16 @@
 # CTE 활용
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `categories` — 카테고리 (부모-자식 계층)  
+    `staff` — 직원 (부서, 역할, 관리자)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `calendar` — 날짜 차원 (요일, 공휴일)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `categories` — 카테고리 (부모-자식 계층)<br>
-    `staff` — 직원 (매니저 계층)<br>
-    `orders` — 주문 (상태, 금액, 일시)<br>
-    `customers` — 고객 (등급, 포인트, 가입채널)<br>
-    `order_items` — 주문 상세 (수량, 단가)<br>
-    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-    `calendar` — 날짜 참조 (공휴일, 주말)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `WITH`<br>
-    재귀 CTE(`WITH RECURSIVE`)<br>
-    다중 CTE 체이닝<br>
-    CTE + 집계/JOIN/윈도우 함수
-
-</div>
+!!! abstract "학습 범위"
+    `WITH`, 재귀 CTE(`WITH RECURSIVE`), 다중 CTE 체이닝, CTE + 집계/JOIN/윈도우 함수
 
 !!! info "시작하기 전에"
     이 연습은 **고급 19강**(CTE)에서 배운 내용을 실전에 적용합니다.

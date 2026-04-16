@@ -1,35 +1,16 @@
 # Window Functions in Practice
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `reviews` — Reviews (rating, content)  
+    `payments` — Payments (method, amount, status)  
+    `categories` — Categories (parent-child hierarchy)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — orders (status, amount, date/time)<br>
-    `order_items` — Order details (quantity, unit price)<br>
-    `products` — products (name, price, stock, brand)<br>
-    `customers` — customers (tier, points, signup channel)<br>
-    `reviews` — reviews (rating, content)<br>
-    `payments` — payments (method, amount, status)<br>
-    `categories` — Category (parent-child hierarchy)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `ROW_NUMBER`<br>
-    `RANK`<br>
-    `DENSE_RANK`<br>
-    `NTILE`<br>
-    `LAG`<br>
-    `LEAD`<br>
-    `SUM/AVG/COUNT OVER`<br>
-    `FIRST_VALUE`<br>
-    `LAST_VALUE`<br>
-    `ROWS BETWEEN`
-
-</div>
+!!! abstract "Concepts"
+    `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG`, `LEAD`, `SUM/AVG/COUNT OVER`, `FIRST_VALUE`, `LAST_VALUE`, `ROWS BETWEEN`
 
 !!! info "Before You Begin"
     This exercise puts into practice what you learned in **Advanced Lesson 18** (Window Functions).

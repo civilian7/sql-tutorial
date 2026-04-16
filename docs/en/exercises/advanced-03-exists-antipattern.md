@@ -1,32 +1,18 @@
 # EXISTS and Anti-Patterns
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `reviews` — Reviews (rating, content)  
+    `wishlists` — Wishlists (customer-product)  
+    `complaints` — Complaints (type, priority)  
+    `categories` — Categories (parent-child hierarchy)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `customers` — Customer<br>
-    `orders` — Order<br>
-    `order_items` — Order Details<br>
-    `products` — Product<br>
-    `reviews` — Review<br>
-    `wishlists` — Wishlist<br>
-    `complaints` — File a complaint<br>
-    `categories` — Category<br>
-    `payments` — Payment
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `EXISTS`<br>
-    `NOT EXISTS`<br>
-    Correlated subquery<br>
-    Anti-join pattern<br>
-    Universal Quantification
-
-</div>
+!!! abstract "Concepts"
+    `EXISTS`, `NOT EXISTS`, Correlated subquery, Anti-join pattern, Universal Quantification
 
 !!! info "Before You Begin"
     This exercise puts into practice what you learned in **Advanced Lesson 20** (EXISTS).

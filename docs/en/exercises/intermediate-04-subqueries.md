@@ -1,31 +1,17 @@
 # Mastering Subqueries
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `reviews` — Reviews (rating, content)  
+    `wishlists` — Wishlists (customer-product)  
+    `categories` — Categories (parent-child hierarchy)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — Products<br>
-    `customers` — Customers<br>
-    `orders` — Orders<br>
-    `order_items` — Order details<br>
-    `reviews` — Reviews<br>
-    `wishlists` — Wishlists<br>
-    `categories` — Categories<br>
-    `payments` — Payments
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    Scalar subqueries<br>
-    `IN`/`NOT IN`<br>
-    `EXISTS`/`NOT EXISTS`<br>
-    FROM clause subqueries (inline views)<br>
-    Correlated subqueries
-
-</div>
+!!! abstract "Concepts"
+    Scalar subqueries, `IN`/`NOT IN`, `EXISTS`/`NOT EXISTS`, FROM clause subqueries (inline views), Correlated subqueries
 
 ---
 

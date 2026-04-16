@@ -2,7 +2,16 @@
 
 !!! info "Tables"
 
-    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `inventory_transactions` — Inventory (type, quantity)
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `payments` — Payments (method, amount, status)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `inventory_transactions` — Inventory (type, quantity)  
+
 
 
 !!! abstract "Concepts"

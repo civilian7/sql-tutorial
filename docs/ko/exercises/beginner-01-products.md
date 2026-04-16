@@ -2,7 +2,12 @@
 
 !!! info "사용 테이블"
 
-    `categories` — 카테고리 (부모-자식 계층)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `suppliers` — 공급업체 (업체명, 연락처)
+    `categories` — 카테고리 (부모-자식 계층)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `suppliers` — 공급업체 (업체명, 연락처)  
+
 
 
 !!! abstract "학습 범위"

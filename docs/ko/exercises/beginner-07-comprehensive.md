@@ -1,35 +1,16 @@
 # 종합 문제
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `payments` — 결제 (방법, 금액, 상태)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `suppliers` — 공급업체 (업체명, 연락처)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-    `customers` — 고객 (등급, 포인트, 가입채널)<br>
-    `orders` — 주문 (상태, 금액, 일시)<br>
-    `reviews` — 리뷰 (평점, 내용)<br>
-    `payments` — 결제 (방법, 금액, 상태)<br>
-    `categories` — 카테고리 (부모-자식 계층)<br>
-    `suppliers` — 공급업체 (회사명, 연락처)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    입문 전체: `SELECT`<br>
-    `WHERE`<br>
-    `ORDER BY`<br>
-    `LIMIT`<br>
-    집계 함수<br>
-    `GROUP BY`<br>
-    `HAVING`<br>
-    `IS NULL`<br>
-    `COALESCE`<br>
-    `CASE`
-
-</div>
+!!! abstract "학습 범위"
+    입문 전체: `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, 집계 함수, `GROUP BY`, `HAVING`, `IS NULL`, `COALESCE`, `CASE`
 
 !!! info "시작하기 전에"
     이 연습은 **입문 1~7강의 모든 개념**을 조합합니다. 각 문제에서 2~5개의 개념을 동시에 활용해야 합니다.

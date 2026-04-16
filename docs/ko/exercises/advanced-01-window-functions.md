@@ -1,35 +1,16 @@
 # 윈도우 함수 실전
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `payments` — 결제 (방법, 금액, 상태)  
+    `categories` — 카테고리 (부모-자식 계층)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `orders` — 주문 (상태, 금액, 일시)<br>
-    `order_items` — 주문 상세 (수량, 단가)<br>
-    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-    `customers` — 고객 (등급, 포인트, 가입채널)<br>
-    `reviews` — 리뷰 (평점, 내용)<br>
-    `payments` — 결제 (방법, 금액, 상태)<br>
-    `categories` — 카테고리 (부모-자식 계층)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `ROW_NUMBER`<br>
-    `RANK`<br>
-    `DENSE_RANK`<br>
-    `NTILE`<br>
-    `LAG`<br>
-    `LEAD`<br>
-    `SUM/AVG/COUNT OVER`<br>
-    `FIRST_VALUE`<br>
-    `LAST_VALUE`<br>
-    `ROWS BETWEEN`
-
-</div>
+!!! abstract "학습 범위"
+    `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG`, `LEAD`, `SUM/AVG/COUNT OVER`, `FIRST_VALUE`, `LAST_VALUE`, `ROWS BETWEEN`
 
 !!! info "시작하기 전에"
     이 연습은 **고급 18강**(윈도우 함수)에서 배운 내용을 실전에 적용합니다.

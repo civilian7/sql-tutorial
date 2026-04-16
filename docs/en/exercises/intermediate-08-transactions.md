@@ -1,29 +1,13 @@
 # Transactions
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — Orders<br>
-    `products` — Products<br>
-    `customers` — Customers<br>
-    `payments` — Payments (copied to temp tables for practice)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `BEGIN`<br>
-    `COMMIT`<br>
-    `ROLLBACK`<br>
-    `SAVEPOINT`<br>
-    `RELEASE`<br>
-    Atomicity<br>
-    Concurrency control
-
-</div>
+!!! abstract "Concepts"
+    `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `RELEASE`, Atomicity, Concurrency control
 
 !!! warning "Before You Begin"
     Transaction exercises **modify actual data**. Use temporary tables for safe practice. All problems in this exercise are designed to not affect original data by using temporary tables or ROLLBACK.

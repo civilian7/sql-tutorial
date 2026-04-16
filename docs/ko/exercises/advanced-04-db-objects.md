@@ -1,36 +1,18 @@
 # DB 객체 설계
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `inventory_transactions` — 재고 입출고 (유형, 수량)  
+    `staff` — 직원 (부서, 역할, 관리자)  
+    `payments` — 결제 (방법, 금액, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `customers` — 고객<br>
-    `categories` — 카테고리<br>
-    `reviews` — 리뷰<br>
-    `inventory_transactions` — 입출고 이력<br>
-    `staff` — 직원<br>
-    `payments` — 결제
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `CREATE VIEW`<br>
-    뷰 쿼리<br>
-    `DROP VIEW`<br>
-    `CREATE TRIGGER` (AFTER/BEFORE<br>
-    INSERT/UPDATE/DELETE<br>
-    WHEN<br>
-    OLD/NEW)<br>
-    감사 로깅<br>
-    저장 프로시저 개념(MySQL/PG)
-
-</div>
+!!! abstract "학습 범위"
+    `CREATE VIEW`, 뷰 쿼리, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), 감사 로깅, 저장 프로시저 개념(MySQL/PG)
 
 !!! info "시작하기 전에"
     이 연습은 **고급 22강**(뷰), **24강**(트리거), **26강**(저장 프로시저)에서 배운 내용을 실전에 적용합니다.

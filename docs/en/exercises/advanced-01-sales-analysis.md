@@ -2,7 +2,16 @@
 
 !!! info "Tables"
 
-    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `payments` — Payments (method, amount, status)
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `categories` — Categories (parent-child hierarchy)  
+
+    `payments` — Payments (method, amount, status)  
+
 
 
 !!! abstract "Concepts"

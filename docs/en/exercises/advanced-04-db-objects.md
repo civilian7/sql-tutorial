@@ -1,36 +1,18 @@
 # DB Object Design
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `categories` — Categories (parent-child hierarchy)  
+    `reviews` — Reviews (rating, content)  
+    `inventory_transactions` — Inventory (type, quantity)  
+    `staff` — Staff (dept, role, manager)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — Order<br>
-    `order_items` — Order Details<br>
-    `products` — Product<br>
-    `customers` — Customer<br>
-    `categories` — Category<br>
-    `reviews` — Review<br>
-    `inventory_transactions` — Incoming/outgoing history<br>
-    `staff` — Employee<br>
-    `payments` — Payment
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `CREATE VIEW`<br>
-    View query<br>
-    `DROP VIEW`<br>
-    `CREATE TRIGGER` (AFTER/BEFORE<br>
-    INSERT/UPDATE/DELETE<br>
-    WHEN<br>
-    OLD/NEW)<br>
-    Audit Logging<br>
-    Stored procedure concepts (MySQL/PG)
-
-</div>
+!!! abstract "Concepts"
+    `CREATE VIEW`, View query, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), Audit Logging, Stored procedure concepts (MySQL/PG)
 
 !!! info "Before You Begin"
     This exercise puts into practice what you learned in **Advanced Lesson 22** (Views), **Lecture 24** (Trigger), and **Lecture 26** (Stored Procedures).

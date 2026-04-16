@@ -1,27 +1,12 @@
 # NULL Handling
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `products` — Products (name, price, stock, brand)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `customers` — customers (tier, points, signup channel)<br>
-    `orders` — orders (status, amount, date/time)<br>
-    `products` — products (name, price, stock, brand)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `IS NULL`<br>
-    `IS NOT NULL`<br>
-    `COALESCE`<br>
-    `IFNULL`<br>
-    NULL and aggregate functions<br>
-    NULL sorting
-
-</div>
+!!! abstract "Concepts"
+    `IS NULL`, `IS NOT NULL`, `COALESCE`, `IFNULL`, NULL and aggregate functions, NULL sorting
 
 !!! info "Before You Begin"
     This exercise uses concepts from **Beginner Lessons 1-6**.

@@ -1,35 +1,21 @@
 # Data Quality Checks
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `customers` — Customers (grade, points, channel)  
+    `products` — Products (name, price, stock, brand)  
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `payments` — Payments (method, amount, status)  
+    `shipping` — Shipping (carrier, tracking, status)  
+    `reviews` — Reviews (rating, content)  
+    `returns` — Returns (reason, status)  
+    `customer_addresses` — Addresses (address, default flag)  
+    `coupons` — Coupons (discount, validity)  
+    `coupon_usage` — Coupon usage records  
+    `product_prices` — Price history (change reason)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `customers` — Customers<br>
-    `products` — Products<br>
-    `orders` — Orders<br>
-    `order_items` — Order details<br>
-    `payments` — Payments<br>
-    `shipping` — Shipping<br>
-    `reviews` — Reviews<br>
-    `returns` — Returns/Exchanges<br>
-    `customer_addresses` — Shipping addresses<br>
-    `coupons` — Coupons<br>
-    `coupon_usage` — Coupon usage<br>
-    `product_prices` — Price change history
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    NULL/duplicate/range checks<br>
-    Referential integrity verification<br>
-    Date inversion detection<br>
-    Outlier discovery<br>
-    Comprehensive quality dashboard
-
-</div>
+!!! abstract "Concepts"
+    NULL/duplicate/range checks, Referential integrity verification, Date inversion detection, Outlier discovery, Comprehensive quality dashboard
 
 !!! info "Before You Begin"
     Data is never perfect. NULL values, duplicates, referential integrity violations, date inversions, outliers --

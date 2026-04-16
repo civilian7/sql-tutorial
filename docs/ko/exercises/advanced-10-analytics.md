@@ -2,7 +2,32 @@
 
 !!! info "사용 테이블"
 
-    `point_transactions` — 포인트 (적립, 사용, 소멸)  ·  `customer_grade_history` — 등급 이력 (변경 전후)  ·  `product_views` — 조회 로그 (고객, 상품, 일시)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `carts` — 장바구니 (상태)  ·  `cart_items` — 장바구니 상품 (수량)  ·  `promotions` — 프로모션 (기간, 할인)  ·  `promotion_products` — 프로모션 대상 상품  ·  `staff` — 직원 (부서, 역할, 관리자)  ·  `product_qna` — 상품 Q&A (질문-답변)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `customers` — 고객 (등급, 포인트, 가입채널)
+    `point_transactions` — 포인트 (적립, 사용, 소멸)  
+
+    `customer_grade_history` — 등급 이력 (변경 전후)  
+
+    `product_views` — 조회 로그 (고객, 상품, 일시)  
+
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `carts` — 장바구니 (상태)  
+
+    `cart_items` — 장바구니 상품 (수량)  
+
+    `promotions` — 프로모션 (기간, 할인)  
+
+    `promotion_products` — 프로모션 대상 상품  
+
+    `staff` — 직원 (부서, 역할, 관리자)  
+
+    `product_qna` — 상품 Q&A (질문-답변)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+
 
 
 !!! abstract "학습 범위"

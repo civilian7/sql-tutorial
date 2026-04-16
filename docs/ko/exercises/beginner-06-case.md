@@ -1,27 +1,14 @@
 # CASE 표현식
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `payments` — 결제 (방법, 금액, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-    `customers` — 고객 (등급, 포인트, 가입채널)<br>
-    `orders` — 주문 (상태, 금액, 일시)<br>
-    `reviews` — 리뷰 (평점, 내용)<br>
-    `payments` — 결제 (방법, 금액, 상태)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `CASE WHEN THEN ELSE END`<br>
-    단순 CASE<br>
-    검색 CASE<br>
-    CASE + 집계/정렬
-
-</div>
+!!! abstract "학습 범위"
+    `CASE WHEN THEN ELSE END`, 단순 CASE, 검색 CASE, CASE + 집계/정렬
 
 !!! info "시작하기 전에"
     이 연습은 **입문 1~7강**에서 배운 내용을 사용합니다.

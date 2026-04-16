@@ -1,36 +1,19 @@
 # Intermediate Comprehensive Exercises
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `customers` — Customers (grade, points, channel)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `categories` — Categories (parent-child hierarchy)  
+    `payments` — Payments (method, amount, status)  
+    `reviews` — Reviews (rating, content)  
+    `shipping` — Shipping (carrier, tracking, status)  
+    `complaints` — Complaints (type, priority)  
+    `wishlists` — Wishlists (customer-product)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — Orders<br>
-    `customers` — Customers<br>
-    `order_items` — Order details<br>
-    `products` — Products<br>
-    `categories` — Categories<br>
-    `payments` — Payments<br>
-    `reviews` — Reviews<br>
-    `shipping` — Shipping<br>
-    `complaints` — Complaints<br>
-    `wishlists` — Wishlists
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    All intermediate: `JOIN`<br>
-    Subqueries<br>
-    Date functions<br>
-    String functions<br>
-    `CASE`<br>
-    `UNION`<br>
-    `GROUP BY`/`HAVING`<br>
-    Aggregate functions
-
-</div>
+!!! abstract "Concepts"
+    All intermediate: `JOIN`, Subqueries, Date functions, String functions, `CASE`, `UNION`, `GROUP BY`/`HAVING`, Aggregate functions
 
 !!! info "Before You Begin"
     이 연습은 **중급 과정(8~17강)에서 배운 모든 개념**을 조합합니다.

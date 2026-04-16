@@ -2,7 +2,12 @@
 
 !!! info "Tables"
 
-    `categories` — Categories (parent-child hierarchy)  ·  `products` — Products (name, price, stock, brand)  ·  `suppliers` — Suppliers (company, contact)
+    `categories` — Categories (parent-child hierarchy)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `suppliers` — Suppliers (company, contact)  
+
 
 
 !!! abstract "Concepts"

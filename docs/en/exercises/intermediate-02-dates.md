@@ -2,7 +2,20 @@
 
 !!! info "Tables"
 
-    `calendar` — Calendar (weekday, holiday)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `products` — Products (name, price, stock, brand)  ·  `promotions` — Promotions (period, discount)  ·  `returns` — Returns (reason, status)  ·  `shipping` — Shipping (carrier, tracking, status)
+    `calendar` — Calendar (weekday, holiday)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `promotions` — Promotions (period, discount)  
+
+    `returns` — Returns (reason, status)  
+
+    `shipping` — Shipping (carrier, tracking, status)  
+
 
 
 !!! abstract "Concepts"

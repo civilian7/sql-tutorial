@@ -2,7 +2,18 @@
 
 !!! info "사용 테이블"
 
-    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `customer_addresses` — 배송지 (주소, 기본 여부)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `tags` — 태그 (이름, 카테고리)  ·  `product_tags` — 상품-태그 연결
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+
+    `customer_addresses` — 배송지 (주소, 기본 여부)  
+
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `tags` — 태그 (이름, 카테고리)  
+
+    `product_tags` — 상품-태그 연결  
+
 
 
 !!! abstract "학습 범위"

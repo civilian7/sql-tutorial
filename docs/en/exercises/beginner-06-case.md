@@ -1,27 +1,14 @@
 # CASE Expressions
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `reviews` — Reviews (rating, content)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — products (name, price, stock, brand)<br>
-    `customers` — customers (tier, points, signup channel)<br>
-    `orders` — orders (status, amount, date/time)<br>
-    `reviews` — reviews (rating, content)<br>
-    `payments` — payments (method, amount, status)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `CASE WHEN THEN ELSE END`<br>
-    Simple CASE<br>
-    Searched CASE<br>
-    CASE + aggregation/sorting
-
-</div>
+!!! abstract "Concepts"
+    `CASE WHEN THEN ELSE END`, Simple CASE, Searched CASE, CASE + aggregation/sorting
 
 !!! info "Before You Begin"
     This exercise uses concepts from **Beginner Lessons 1-7**.

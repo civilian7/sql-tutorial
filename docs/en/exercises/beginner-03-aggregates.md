@@ -1,30 +1,14 @@
 # aggregate function
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `reviews` — Reviews (rating, content)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — products (name, price, stock, brand)<br>
-    `customers` — customers (tier, points, signup channel)<br>
-    `orders` — orders (status, amount, date/time)<br>
-    `reviews` — reviews (rating, content)<br>
-    `payments` — payments (method, amount, status)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `COUNT`<br>
-    `SUM`<br>
-    `AVG`<br>
-    `MIN`<br>
-    `MAX`<br>
-    `ROUND`<br>
-    `COUNT(DISTINCT)` + Previous lecture contents
-
-</div>
+!!! abstract "Concepts"
+    `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `ROUND`, `COUNT(DISTINCT)` + Previous lecture contents
 
 !!! info "Before You Begin"
     This exercise uses only what you learned in **Introduction Lessons 1-4**.

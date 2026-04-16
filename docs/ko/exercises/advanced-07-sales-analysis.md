@@ -1,31 +1,15 @@
 # 매출 분석
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `payments` — 결제 (방법, 금액, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `categories` — 카테고리<br>
-    `customers` — 고객<br>
-    `payments` — 결제
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    CTE<br>
-    윈도우 함수<br>
-    다중 JOIN<br>
-    집계 함수 종합 — 월별/분기별/카테고리별 매출<br>
-    성장률<br>
-    누적 매출<br>
-    코호트
-
-</div>
+!!! abstract "학습 범위"
+    CTE, 윈도우 함수, 다중 JOIN, 집계 함수 종합 — 월별/분기별/카테고리별 매출, 성장률, 누적 매출, 코호트
 
 CTE, 윈도우 함수, 다중 JOIN, 집계 함수를 종합 활용하는 비즈니스 매출 분석 문제입니다.
 취소(`cancelled`), 반품(`returned`, `return_requested`) 주문은 특별히 명시하지 않는 한 제외합니다.

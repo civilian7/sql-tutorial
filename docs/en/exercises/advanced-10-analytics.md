@@ -2,7 +2,32 @@
 
 !!! info "Tables"
 
-    `point_transactions` — Points (earn, use, expire)  ·  `customer_grade_history` — Grade history (before/after)  ·  `product_views` — View log (customer, product, date)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `carts` — Carts (status)  ·  `cart_items` — Cart items (quantity)  ·  `promotions` — Promotions (period, discount)  ·  `promotion_products` — Promotion products  ·  `staff` — Staff (dept, role, manager)  ·  `product_qna` — Product Q&A (question-answer)  ·  `products` — Products (name, price, stock, brand)  ·  `customers` — Customers (grade, points, channel)
+    `point_transactions` — Points (earn, use, expire)  
+
+    `customer_grade_history` — Grade history (before/after)  
+
+    `product_views` — View log (customer, product, date)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `carts` — Carts (status)  
+
+    `cart_items` — Cart items (quantity)  
+
+    `promotions` — Promotions (period, discount)  
+
+    `promotion_products` — Promotion products  
+
+    `staff` — Staff (dept, role, manager)  
+
+    `product_qna` — Product Q&A (question-answer)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `customers` — Customers (grade, points, channel)  
+
 
 
 !!! abstract "Concepts"

@@ -1,28 +1,15 @@
 # Grouping and Filtering
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `reviews` — Reviews (rating, content)  
+    `payments` — Payments (method, amount, status)  
+    `complaints` — Complaints (type, priority)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — products (name, price, stock, brand)<br>
-    `customers` — customers (tier, points, signup channel)<br>
-    `orders` — orders (status, amount, date/time)<br>
-    `reviews` — reviews (rating, content)<br>
-    `payments` — payments (method, amount, status)<br>
-    `complaints` — complaints (category, priority)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `GROUP BY`<br>
-    `HAVING`<br>
-    Aggregate functions + `GROUP BY`<br>
-    Multi-column grouping
-
-</div>
+!!! abstract "Concepts"
+    `GROUP BY`, `HAVING`, Aggregate functions + `GROUP BY`, Multi-column grouping
 
 !!! info "Before You Begin"
     This exercise uses concepts from **Beginner Lessons 1-5**.

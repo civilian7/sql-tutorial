@@ -2,7 +2,28 @@
 
 !!! info "Tables"
 
-    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `shipping` — Shipping (carrier, tracking, status)  ·  `staff` — Staff (dept, role, manager)  ·  `suppliers` — Suppliers (company, contact)  ·  `tags` — Tags (name, category)  ·  `product_tags` — Product-tag mapping
+    `categories` — Categories (parent-child hierarchy)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `shipping` — Shipping (carrier, tracking, status)  
+
+    `staff` — Staff (dept, role, manager)  
+
+    `suppliers` — Suppliers (company, contact)  
+
+    `tags` — Tags (name, category)  
+
+    `product_tags` — Product-tag mapping  
+
 
 
 !!! abstract "Concepts"

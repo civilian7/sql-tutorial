@@ -2,7 +2,18 @@
 
 !!! info "Tables"
 
-    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `shipping` — Shipping (carrier, tracking, status)
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `payments` — Payments (method, amount, status)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `shipping` — Shipping (carrier, tracking, status)  
+
 
 
 !!! abstract "Concepts"

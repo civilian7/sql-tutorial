@@ -1,28 +1,11 @@
 # DDL/Constraints
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    Hands-on practice creating/modifying/dropping tables (no existing tables referenced)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `CREATE TABLE`<br>
-    `ALTER TABLE`<br>
-    `DROP TABLE`<br>
-    Constraints (`PRIMARY KEY`<br>
-    `NOT NULL`<br>
-    `UNIQUE`<br>
-    `CHECK`<br>
-    `DEFAULT`<br>
-    `FOREIGN KEY`)
-
-</div>
+!!! abstract "Concepts"
+    `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`, Constraints (`PRIMARY KEY`, `NOT NULL`, `UNIQUE`, `CHECK`, `DEFAULT`, `FOREIGN KEY`)
 
 ---
 

@@ -2,7 +2,18 @@
 
 !!! info "Tables"
 
-    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `point_transactions` — Points (earn, use, expire)  ·  `product_views` — View log (customer, product, date)
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `point_transactions` — Points (earn, use, expire)  
+
+    `product_views` — View log (customer, product, date)  
+
 
 
 !!! abstract "Concepts"

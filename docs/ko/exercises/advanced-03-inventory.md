@@ -2,7 +2,18 @@
 
 !!! info "사용 테이블"
 
-    `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `categories` — 카테고리 (부모-자식 계층)  ·  `suppliers` — 공급업체 (업체명, 연락처)  ·  `inventory_transactions` — 재고 입출고 (유형, 수량)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `orders` — 주문 (상태, 금액, 일시)
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `categories` — 카테고리 (부모-자식 계층)  
+
+    `suppliers` — 공급업체 (업체명, 연락처)  
+
+    `inventory_transactions` — 재고 입출고 (유형, 수량)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `orders` — 주문 (상태, 금액, 일시)  
+
 
 
 !!! abstract "학습 범위"

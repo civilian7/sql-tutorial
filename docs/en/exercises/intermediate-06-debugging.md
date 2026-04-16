@@ -2,7 +2,22 @@
 
 !!! info "Tables"
 
-    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `returns` — Returns (reason, status)  ·  `suppliers` — Suppliers (company, contact)
+    `categories` — Categories (parent-child hierarchy)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `returns` — Returns (reason, status)  
+
+    `suppliers` — Suppliers (company, contact)  
+
 
 
 !!! abstract "Concepts"

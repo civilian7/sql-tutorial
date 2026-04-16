@@ -1,33 +1,18 @@
 # SQL 디버깅 — 중급
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `suppliers` — 공급업체 (업체명, 연락처)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `shipping` — 배송 (택배사, 추적번호, 상태)  
+    `payments` — 결제 (방법, 금액, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `customers` — 고객<br>
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `categories` — 카테고리<br>
-    `suppliers` — 공급업체<br>
-    `reviews` — 리뷰<br>
-    `shipping` — 배송<br>
-    `payments` — 결제
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    JOIN<br>
-    서브쿼리<br>
-    날짜 함수<br>
-    집계<br>
-    UNION<br>
-    DML 등 중급 문법(08~17강)에서 발생하는 오류 진단 및 수정
-
-</div>
+!!! abstract "학습 범위"
+    JOIN, 서브쿼리, 날짜 함수, 집계, UNION, DML 등 중급 문법(08~17강)에서 발생하는 오류 진단 및 수정
 
 !!! info "시작하기 전에"
     실무에서 SQL을 작성하다 보면 문법 에러보다 **논리적 오류**가 더 흔합니다.

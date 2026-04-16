@@ -1,36 +1,18 @@
 # SQL interview preparation
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `categories` — Categories (parent-child hierarchy)  
+    `customers` — Customers (grade, points, channel)  
+    `reviews` — Reviews (rating, content)  
+    `product_views` — View log (customer, product, date)  
+    `calendar` — Calendar (weekday, holiday)  
+    `staff` — Staff (dept, role, manager)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — Order<br>
-    `order_items` — Order Details<br>
-    `products` — Product<br>
-    `categories` — Category<br>
-    `customers` — Customer<br>
-    `reviews` — Review<br>
-    `product_views` — Product inquiry history<br>
-    `calendar` — Date reference<br>
-    `staff` — Employee
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    DENSE_RANK<br>
-    N days in a row<br>
-    Median<br>
-    Session Analysis<br>
-    Rating by category<br>
-    MoM growth rate<br>
-    Percentile<br>
-    Calculate working days<br>
-    Organization Chart Recursion
-
-</div>
+!!! abstract "Concepts"
+    DENSE_RANK, N days in a row, Median, Session Analysis, Rating by category, MoM growth rate, Percentile, Calculate working days, Organization Chart Recursion
 
 This is a SQL pattern frequently asked in interviews at FAANG (Amazon, Google, Meta) and domestic IT companies (Kakao, Coupang, Naver).
 Each question has a **Question Frequency** tag, and we recommend that you practice solving them within the time limit.

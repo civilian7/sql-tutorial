@@ -2,7 +2,18 @@
 
 !!! info "Tables"
 
-    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `shipping` — Shipping (carrier, tracking, status)
+    `categories` — Categories (parent-child hierarchy)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `payments` — Payments (method, amount, status)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `shipping` — Shipping (carrier, tracking, status)  
+
 
 
 !!! abstract "Concepts"

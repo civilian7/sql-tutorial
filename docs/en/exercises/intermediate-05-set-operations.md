@@ -1,32 +1,18 @@
 # Set Operations
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `reviews` — Reviews (rating, content)  
+    `complaints` — Complaints (type, priority)  
+    `wishlists` — Wishlists (customer-product)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `payments` — Payments (method, amount, status)  
+    `returns` — Returns (reason, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `customers` — Customers<br>
-    `orders` — Orders<br>
-    `reviews` — Reviews<br>
-    `complaints` — Complaints<br>
-    `wishlists` — Wishlists<br>
-    `order_items` — Order details<br>
-    `products` — Products<br>
-    `payments` — Payments<br>
-    `returns` — Returns/Exchanges
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `UNION`<br>
-    `UNION ALL`<br>
-    `INTERSECT`<br>
-    `EXCEPT`<br>
-    Set operations + `JOIN`/`GROUP BY`
-
-</div>
+!!! abstract "Concepts"
+    `UNION`, `UNION ALL`, `INTERSECT`, `EXCEPT`, Set operations + `JOIN`/`GROUP BY`
 
 ---
 

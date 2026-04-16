@@ -1,24 +1,14 @@
 # SQL 오류 찾기 -- 초급
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `payments` — 결제 (방법, 금액, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-    `customers` — 고객 (등급, 포인트, 가입채널)<br>
-    `orders` — 주문 (상태, 금액, 일시)<br>
-    `reviews` — 리뷰 (평점, 내용)<br>
-    `payments` — 결제 (방법, 금액, 상태)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
+!!! abstract "학습 범위"
     입문 1~7강의 문법/논리 오류 찾기 및 수정
-
-</div>
 
 !!! info "시작하기 전에"
     각 문제에는 **오류가 있는 SQL**이 주어집니다.

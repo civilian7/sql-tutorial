@@ -2,7 +2,30 @@
 
 !!! info "사용 테이블"
 
-    `categories` — 카테고리 (부모-자식 계층)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `shipping` — 배송 (택배사, 추적번호, 상태)  ·  `point_transactions` — 포인트 (적립, 사용, 소멸)  ·  `product_views` — 조회 로그 (고객, 상품, 일시)  ·  `inventory_transactions` — 재고 입출고 (유형, 수량)  ·  `wishlists` — 위시리스트 (고객-상품)  ·  `calendar` — 날짜 차원 (요일, 공휴일)
+    `categories` — 카테고리 (부모-자식 계층)  
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `reviews` — 리뷰 (평점, 내용)  
+
+    `shipping` — 배송 (택배사, 추적번호, 상태)  
+
+    `point_transactions` — 포인트 (적립, 사용, 소멸)  
+
+    `product_views` — 조회 로그 (고객, 상품, 일시)  
+
+    `inventory_transactions` — 재고 입출고 (유형, 수량)  
+
+    `wishlists` — 위시리스트 (고객-상품)  
+
+    `calendar` — 날짜 차원 (요일, 공휴일)  
+
 
 
 !!! abstract "학습 범위"

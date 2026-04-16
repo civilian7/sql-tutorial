@@ -2,7 +2,14 @@
 
 !!! info "사용 테이블"
 
-    `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `reviews` — 리뷰 (평점, 내용)  
+
 
 
 !!! abstract "학습 범위"

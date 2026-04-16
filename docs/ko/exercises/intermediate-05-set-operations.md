@@ -1,32 +1,18 @@
 # 집합 연산
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `complaints` — 고객 불만 (유형, 우선순위)  
+    `wishlists` — 위시리스트 (고객-상품)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `payments` — 결제 (방법, 금액, 상태)  
+    `returns` — 반품/교환 (사유, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `customers` — 고객<br>
-    `orders` — 주문<br>
-    `reviews` — 리뷰<br>
-    `complaints` — 불만 접수<br>
-    `wishlists` — 위시리스트<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `payments` — 결제<br>
-    `returns` — 반품/교환
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `UNION`<br>
-    `UNION ALL`<br>
-    `INTERSECT`<br>
-    `EXCEPT`<br>
-    집합 연산 + `JOIN`/`GROUP BY`
-
-</div>
+!!! abstract "학습 범위"
+    `UNION`, `UNION ALL`, `INTERSECT`, `EXCEPT`, 집합 연산 + `JOIN`/`GROUP BY`
 
 ---
 

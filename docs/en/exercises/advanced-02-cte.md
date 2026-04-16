@@ -1,29 +1,16 @@
 # CTE Applications
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `categories` — Categories (parent-child hierarchy)  
+    `staff` — Staff (dept, role, manager)  
+    `orders` — Orders (status, amount, date)  
+    `customers` — Customers (grade, points, channel)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `calendar` — Calendar (weekday, holiday)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `categories` — Category (parent-child hierarchy)<br>
-    `staff` — Employee (Manager Hierarchy)<br>
-    `orders` — orders (status, amount, date/time)<br>
-    `customers` — customers (tier, points, signup channel)<br>
-    `order_items` — Order details (quantity, unit price)<br>
-    `products` — products (name, price, stock, brand)<br>
-    `calendar` — Date reference (holidays, weekends)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `WITH`<br>
-    Recursive CTE(`WITH RECURSIVE`)<br>
-    Multiple CTE Chaining<br>
-    CTE + Aggregate/JOIN/Window Function
-
-</div>
+!!! abstract "Concepts"
+    `WITH`, Recursive CTE(`WITH RECURSIVE`), Multiple CTE Chaining, CTE + Aggregate/JOIN/Window Function
 
 !!! info "Before You Begin"
     This exercise puts into practice what you learned in **Advanced Lesson 19** (CTE).

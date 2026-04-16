@@ -112,9 +112,9 @@ def _link_table_names(markdown: str, page, config=None) -> str:
     def _save_block(m):
         _protected.append(m.group(0))
         return f"__PROTECTED_{len(_protected) - 1}__"
-    # Match: !!! info "사용 테이블" / !!! info "Tables" block (indented content)
+    # Match: !!! info "사용 테이블" / !!! info "Tables" block (all indented lines)
     markdown = re.sub(
-        r'!!! info "(?:사용 테이블|Tables)"\n    .+',
+        r'!!! info "(?:사용 테이블|Tables)"\n(?:    .+\n)+',
         _save_block, markdown,
     )
 

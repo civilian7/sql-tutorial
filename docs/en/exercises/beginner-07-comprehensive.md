@@ -1,35 +1,16 @@
 # Comprehensive Exercises
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `reviews` — Reviews (rating, content)  
+    `payments` — Payments (method, amount, status)  
+    `categories` — Categories (parent-child hierarchy)  
+    `suppliers` — Suppliers (company, contact)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — products (name, price, stock, brand)<br>
-    `customers` — customers (tier, points, signup channel)<br>
-    `orders` — orders (status, amount, date/time)<br>
-    `reviews` — reviews (rating, content)<br>
-    `payments` — payments (method, amount, status)<br>
-    `categories` — categories (parent-child hierarchy)<br>
-    `suppliers` — suppliers (company name, contact)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    All Beginner topics: `SELECT`<br>
-    `WHERE`<br>
-    `ORDER BY`<br>
-    `LIMIT`<br>
-    Aggregate functions<br>
-    `GROUP BY`<br>
-    `HAVING`<br>
-    `IS NULL`<br>
-    `COALESCE`<br>
-    `CASE`
-
-</div>
+!!! abstract "Concepts"
+    All Beginner topics: `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, Aggregate functions, `GROUP BY`, `HAVING`, `IS NULL`, `COALESCE`, `CASE`
 
 !!! info "Before You Begin"
     This exercise combines **all concepts from Beginner Lessons 1-7**. Each problem requires using 2-5 concepts simultaneously.

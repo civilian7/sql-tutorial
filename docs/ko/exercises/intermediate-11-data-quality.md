@@ -1,35 +1,21 @@
 # 데이터 품질 점검
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `payments` — 결제 (방법, 금액, 상태)  
+    `shipping` — 배송 (택배사, 추적번호, 상태)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `returns` — 반품/교환 (사유, 상태)  
+    `customer_addresses` — 배송지 (주소, 기본 여부)  
+    `coupons` — 쿠폰 (할인율, 유효기간)  
+    `coupon_usage` — 쿠폰 사용 내역  
+    `product_prices` — 가격 이력 (변경 사유)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `customers` — 고객<br>
-    `products` — 상품<br>
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `payments` — 결제<br>
-    `shipping` — 배송<br>
-    `reviews` — 리뷰<br>
-    `returns` — 반품/교환<br>
-    `customer_addresses` — 배송 주소<br>
-    `coupons` — 쿠폰<br>
-    `coupon_usage` — 쿠폰 사용<br>
-    `product_prices` — 가격 변경 이력
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    NULL/중복/범위 점검<br>
-    참조 무결성 검증<br>
-    날짜 역전 탐지<br>
-    이상치 발견<br>
-    종합 품질 대시보드
-
-</div>
+!!! abstract "학습 범위"
+    NULL/중복/범위 점검, 참조 무결성 검증, 날짜 역전 탐지, 이상치 발견, 종합 품질 대시보드
 
 !!! info "시작하기 전에"
     데이터는 완벽하지 않습니다. NULL, 중복, 참조 무결성 위반, 날짜 역전, 이상치 등

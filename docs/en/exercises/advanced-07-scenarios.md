@@ -2,7 +2,30 @@
 
 !!! info "Tables"
 
-    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `complaints` — Complaints (type, priority)  ·  `returns` — Returns (reason, status)  ·  `shipping` — Shipping (carrier, tracking, status)  ·  `reviews` — Reviews (rating, content)  ·  `payments` — Payments (method, amount, status)  ·  `suppliers` — Suppliers (company, contact)  ·  `staff` — Staff (dept, role, manager)
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `categories` — Categories (parent-child hierarchy)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `complaints` — Complaints (type, priority)  
+
+    `returns` — Returns (reason, status)  
+
+    `shipping` — Shipping (carrier, tracking, status)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `payments` — Payments (method, amount, status)  
+
+    `suppliers` — Suppliers (company, contact)  
+
+    `staff` — Staff (dept, role, manager)  
+
 
 
 !!! abstract "Concepts"

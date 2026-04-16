@@ -1,26 +1,11 @@
 # JSON 활용
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `categories` — 카테고리 (부모-자식 계층)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-    `categories` — 카테고리 (부모-자식 계층)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `JSON_EXTRACT`<br>
-    `JSON_EACH`<br>
-    `JSON_GROUP_ARRAY`<br>
-    `JSON_GROUP_OBJECT`<br>
-    JSON 경로 표현식<br>
-    specs 칼럼 활용
-
-</div>
+!!! abstract "학습 범위"
+    `JSON_EXTRACT`, `JSON_EACH`, `JSON_GROUP_ARRAY`, `JSON_GROUP_OBJECT`, JSON 경로 표현식, specs 칼럼 활용
 
 25강 JSON 함수에서 배운 내용을 실습합니다.
 products 테이블의 `specs` 칼럼에는 카테고리별 사양 정보가 JSON 문자열로 저장되어 있습니다.

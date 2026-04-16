@@ -2,7 +2,14 @@
 
 !!! info "Tables"
 
-    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `reviews` — Reviews (rating, content)  
+
 
 
 !!! abstract "Concepts"

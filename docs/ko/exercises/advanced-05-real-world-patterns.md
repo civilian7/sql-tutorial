@@ -2,7 +2,24 @@
 
 !!! info "사용 테이블"
 
-    `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `categories` — 카테고리 (부모-자식 계층)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `carts` — 장바구니 (상태)  ·  `cart_items` — 장바구니 상품 (수량)  ·  `coupons` — 쿠폰 (할인율, 유효기간)  ·  `coupon_usage` — 쿠폰 사용 내역
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `categories` — 카테고리 (부모-자식 계층)  
+
+    `reviews` — 리뷰 (평점, 내용)  
+
+    `carts` — 장바구니 (상태)  
+
+    `cart_items` — 장바구니 상품 (수량)  
+
+    `coupons` — 쿠폰 (할인율, 유효기간)  
+
+    `coupon_usage` — 쿠폰 사용 내역  
+
 
 
 !!! abstract "학습 범위"

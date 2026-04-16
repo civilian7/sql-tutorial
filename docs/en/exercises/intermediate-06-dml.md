@@ -1,27 +1,13 @@
 # DML Practice (INSERT, UPDATE, DELETE)
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — Products<br>
-    `customers` — Customers<br>
-    `orders` — Orders<br>
-    `order_items` — Order details (copied to temp tables for practice)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `INSERT INTO`<br>
-    `UPDATE SET`<br>
-    `DELETE FROM`<br>
-    `INSERT INTO ... SELECT`<br>
-    Subquery-based DML
-
-</div>
+!!! abstract "Concepts"
+    `INSERT INTO`, `UPDATE SET`, `DELETE FROM`, `INSERT INTO ... SELECT`, Subquery-based DML
 
 !!! warning "Caution"
     DML statements modify data. In these exercises, create **temporary tables** for practice and drop them when done.

@@ -2,7 +2,24 @@
 
 !!! info "Tables"
 
-    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `reviews` — Reviews (rating, content)  ·  `carts` — Carts (status)  ·  `cart_items` — Cart items (quantity)  ·  `coupons` — Coupons (discount, validity)  ·  `coupon_usage` — Coupon usage records
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `categories` — Categories (parent-child hierarchy)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `carts` — Carts (status)  
+
+    `cart_items` — Cart items (quantity)  
+
+    `coupons` — Coupons (discount, validity)  
+
+    `coupon_usage` — Coupon usage records  
+
 
 
 !!! abstract "Concepts"

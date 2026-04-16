@@ -2,7 +2,14 @@
 
 !!! info "Tables"
 
-    `customers` — Customers (grade, points, channel)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `wishlists` — Wishlists (customer-product)
+    `customers` — Customers (grade, points, channel)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `wishlists` — Wishlists (customer-product)  
+
 
 
 !!! abstract "Concepts"

@@ -1,31 +1,15 @@
 # Sales Analysis
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `categories` — Categories (parent-child hierarchy)  
+    `customers` — Customers (grade, points, channel)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — Order<br>
-    `order_items` — Order Details<br>
-    `products` — Product<br>
-    `categories` — Category<br>
-    `customers` — Customer<br>
-    `payments` — Payment
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    CTE<br>
-    Window functions<br>
-    Multiple JOIN<br>
-    Aggregation Functions Comprehensive — Sales by Month/Quarter/Category<br>
-    Growth rate<br>
-    Cumulative sales<br>
-    cohort
-
-</div>
+!!! abstract "Concepts"
+    CTE, Window functions, Multiple JOIN, Aggregation Functions Comprehensive — Sales by Month/Quarter/Category, Growth rate, Cumulative sales, cohort
 
 This is a business sales analysis problem that comprehensively utilizes CTE, window functions, multiple JOINs, and aggregate functions.
 Cancellation (`cancelled`) and return (`returned`, `return_requested`) orders are excluded unless specifically specified.

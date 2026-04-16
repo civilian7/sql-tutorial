@@ -2,7 +2,24 @@
 
 !!! info "사용 테이블"
 
-    `categories` — 카테고리 (부모-자식 계층)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `payments` — 결제 (방법, 금액, 상태)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `returns` — 반품/교환 (사유, 상태)  ·  `wishlists` — 위시리스트 (고객-상품)
+    `categories` — 카테고리 (부모-자식 계층)  
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `payments` — 결제 (방법, 금액, 상태)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `reviews` — 리뷰 (평점, 내용)  
+
+    `returns` — 반품/교환 (사유, 상태)  
+
+    `wishlists` — 위시리스트 (고객-상품)  
+
 
 
 !!! abstract "학습 범위"

@@ -2,7 +2,14 @@
 
 !!! info "사용 테이블"
 
-    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `wishlists` — 위시리스트 (고객-상품)
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `reviews` — 리뷰 (평점, 내용)  
+
+    `wishlists` — 위시리스트 (고객-상품)  
+
 
 
 !!! abstract "학습 범위"

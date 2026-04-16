@@ -2,7 +2,24 @@
 
 !!! info "Tables"
 
-    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `returns` — Returns (reason, status)  ·  `wishlists` — Wishlists (customer-product)
+    `categories` — Categories (parent-child hierarchy)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `payments` — Payments (method, amount, status)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `returns` — Returns (reason, status)  
+
+    `wishlists` — Wishlists (customer-product)  
+
 
 
 !!! abstract "Concepts"

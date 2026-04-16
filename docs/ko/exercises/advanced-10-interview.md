@@ -1,36 +1,18 @@
 # SQL 면접 대비
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `product_views` — 조회 로그 (고객, 상품, 일시)  
+    `calendar` — 날짜 차원 (요일, 공휴일)  
+    `staff` — 직원 (부서, 역할, 관리자)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `categories` — 카테고리<br>
-    `customers` — 고객<br>
-    `reviews` — 리뷰<br>
-    `product_views` — 상품 조회 이력<br>
-    `calendar` — 날짜 참조<br>
-    `staff` — 직원
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    DENSE_RANK<br>
-    연속 N일<br>
-    중앙값<br>
-    세션 분석<br>
-    카테고리별 평점<br>
-    MoM 성장률<br>
-    백분위<br>
-    근무일 계산<br>
-    조직도 재귀
-
-</div>
+!!! abstract "학습 범위"
+    DENSE_RANK, 연속 N일, 중앙값, 세션 분석, 카테고리별 평점, MoM 성장률, 백분위, 근무일 계산, 조직도 재귀
 
 FAANG(Amazon, Google, Meta)과 국내 IT 기업(카카오, 쿠팡, 네이버) 면접에서 자주 출제되는 SQL 패턴입니다.
 각 문제에 **출제 빈도** 태그가 있으며, 제한 시간 내에 풀어보는 연습을 권장합니다.

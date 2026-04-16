@@ -2,7 +2,16 @@
 
 !!! info "Tables"
 
-    `complaints` — Complaints (type, priority)  ·  `staff` — Staff (dept, role, manager)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `returns` — Returns (reason, status)
+    `complaints` — Complaints (type, priority)  
+
+    `staff` — Staff (dept, role, manager)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `returns` — Returns (reason, status)  
+
 
 
 !!! abstract "Concepts"

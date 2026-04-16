@@ -1,33 +1,18 @@
 # SQL Debugging -- Intermediate
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `categories` — Categories (parent-child hierarchy)  
+    `suppliers` — Suppliers (company, contact)  
+    `reviews` — Reviews (rating, content)  
+    `shipping` — Shipping (carrier, tracking, status)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `customers` — Customers<br>
-    `orders` — Orders<br>
-    `order_items` — Order details<br>
-    `products` — Products<br>
-    `categories` — Categories<br>
-    `suppliers` — Suppliers<br>
-    `reviews` — Reviews<br>
-    `shipping` — Shipping<br>
-    `payments` — Payments
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    JOIN<br>
-    Subqueries<br>
-    Date functions<br>
-    Aggregation<br>
-    UNION<br>
-    Diagnosing and fixing errors from intermediate syntax (Lessons 08~17) including DML
-
-</div>
+!!! abstract "Concepts"
+    JOIN, Subqueries, Date functions, Aggregation, UNION, Diagnosing and fixing errors from intermediate syntax (Lessons 08~17) including DML
 
 !!! info "Before You Begin"
     In practice, **logical errors** are more common than syntax errors when writing SQL.

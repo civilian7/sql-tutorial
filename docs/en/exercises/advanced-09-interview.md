@@ -2,7 +2,18 @@
 
 !!! info "Tables"
 
-    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `reviews` — Reviews (rating, content)  ·  `customers` — Customers (grade, points, channel)
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `categories` — Categories (parent-child hierarchy)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `customers` — Customers (grade, points, channel)  
+
 
 
 !!! abstract "Concepts"

@@ -1,36 +1,19 @@
 # 중급 종합 문제
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `orders` — 주문 (상태, 금액, 일시)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `payments` — 결제 (방법, 금액, 상태)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `shipping` — 배송 (택배사, 추적번호, 상태)  
+    `complaints` — 고객 불만 (유형, 우선순위)  
+    `wishlists` — 위시리스트 (고객-상품)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `orders` — 주문<br>
-    `customers` — 고객<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `categories` — 카테고리<br>
-    `payments` — 결제<br>
-    `reviews` — 리뷰<br>
-    `shipping` — 배송<br>
-    `complaints` — 불만 접수<br>
-    `wishlists` — 위시리스트
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    중급 전체: `JOIN`<br>
-    서브쿼리<br>
-    날짜 함수<br>
-    문자열 함수<br>
-    `CASE`<br>
-    `UNION`<br>
-    `GROUP BY`/`HAVING`<br>
-    집계 함수
-
-</div>
+!!! abstract "학습 범위"
+    중급 전체: `JOIN`, 서브쿼리, 날짜 함수, 문자열 함수, `CASE`, `UNION`, `GROUP BY`/`HAVING`, 집계 함수
 
 !!! info "시작하기 전에"
     이 연습은 **중급 과정(8~17강)에서 배운 모든 개념**을 조합합니다.

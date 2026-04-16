@@ -1,31 +1,17 @@
 # 서브쿼리 완전 정복
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `wishlists` — 위시리스트 (고객-상품)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `payments` — 결제 (방법, 금액, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `products` — 상품<br>
-    `customers` — 고객<br>
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `reviews` — 리뷰<br>
-    `wishlists` — 위시리스트<br>
-    `categories` — 카테고리<br>
-    `payments` — 결제
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    스칼라 서브쿼리<br>
-    `IN`/`NOT IN`<br>
-    `EXISTS`/`NOT EXISTS`<br>
-    FROM 절 서브쿼리(인라인 뷰)<br>
-    상관 서브쿼리
-
-</div>
+!!! abstract "학습 범위"
+    스칼라 서브쿼리, `IN`/`NOT IN`, `EXISTS`/`NOT EXISTS`, FROM 절 서브쿼리(인라인 뷰), 상관 서브쿼리
 
 ---
 

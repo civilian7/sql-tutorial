@@ -2,7 +2,28 @@
 
 !!! info "사용 테이블"
 
-    `categories` — 카테고리 (부모-자식 계층)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `shipping` — 배송 (택배사, 추적번호, 상태)  ·  `staff` — 직원 (부서, 역할, 관리자)  ·  `suppliers` — 공급업체 (업체명, 연락처)  ·  `tags` — 태그 (이름, 카테고리)  ·  `product_tags` — 상품-태그 연결
+    `categories` — 카테고리 (부모-자식 계층)  
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `reviews` — 리뷰 (평점, 내용)  
+
+    `shipping` — 배송 (택배사, 추적번호, 상태)  
+
+    `staff` — 직원 (부서, 역할, 관리자)  
+
+    `suppliers` — 공급업체 (업체명, 연락처)  
+
+    `tags` — 태그 (이름, 카테고리)  
+
+    `product_tags` — 상품-태그 연결  
+
 
 
 !!! abstract "학습 범위"

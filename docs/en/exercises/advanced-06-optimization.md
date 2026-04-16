@@ -1,28 +1,13 @@
 # Index and execution plan
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `payments` — Payments (method, amount, status)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — Order<br>
-    `order_items` — Order Details<br>
-    `products` — Product<br>
-    `payments` — Payment
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `EXPLAIN QUERY PLAN`<br>
-    `CREATE INDEX`<br>
-    Composite index<br>
-    Covering index<br>
-    SCAN vs SEARCH<br>
-    Index unusable pattern
-
-</div>
+!!! abstract "Concepts"
+    `EXPLAIN QUERY PLAN`, `CREATE INDEX`, Composite index, Covering index, SCAN vs SEARCH, Index unusable pattern
 
 Practice what you learned in Lecture 23 index and action plan.
 Use SQLite's `EXPLAIN QUERY PLAN` to analyze how queries are executed and create indexes to improve performance.

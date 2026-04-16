@@ -1,35 +1,19 @@
 # 실무 SQL 패턴
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `payments` — 결제 (방법, 금액, 상태)  
+    `calendar` — 날짜 차원 (요일, 공휴일)  
+    `product_views` — 조회 로그 (고객, 상품, 일시)  
+    `carts` — 장바구니 (상태)  
+    `cart_items` — 장바구니 상품 (수량)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `categories` — 카테고리<br>
-    `customers` — 고객<br>
-    `payments` — 결제<br>
-    `calendar` — 날짜 참조<br>
-    `product_views` — 상품 조회 이력<br>
-    `carts` — 장바구니<br>
-    `cart_items` — 장바구니 상세
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    Top-N per group<br>
-    갭 분석<br>
-    피벗<br>
-    세션 분석<br>
-    파레토(80/20)<br>
-    퍼널<br>
-    연속 기간 탐지
-
-</div>
+!!! abstract "학습 범위"
+    Top-N per group, 갭 분석, 피벗, 세션 분석, 파레토(80/20), 퍼널, 연속 기간 탐지
 
 실무에서 반복적으로 등장하는 SQL 패턴을 익힙니다.
 Top-N, 갭 분석, 피벗, 세션 분석, 퍼널 등 다양한 테이블을 넘나드는 실전 기법을 다룹니다.

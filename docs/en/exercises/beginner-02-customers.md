@@ -2,7 +2,18 @@
 
 !!! info "Tables"
 
-    `customers` — Customers (grade, points, channel)  ·  `customer_addresses` — Addresses (address, default flag)  ·  `orders` — Orders (status, amount, date)  ·  `products` — Products (name, price, stock, brand)  ·  `tags` — Tags (name, category)  ·  `product_tags` — Product-tag mapping
+    `customers` — Customers (grade, points, channel)  
+
+    `customer_addresses` — Addresses (address, default flag)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `tags` — Tags (name, category)  
+
+    `product_tags` — Product-tag mapping  
+
 
 
 !!! abstract "Concepts"

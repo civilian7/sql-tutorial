@@ -1,32 +1,18 @@
 # EXISTS와 안티 패턴
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `reviews` — 리뷰 (평점, 내용)  
+    `wishlists` — 위시리스트 (고객-상품)  
+    `complaints` — 고객 불만 (유형, 우선순위)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `payments` — 결제 (방법, 금액, 상태)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `customers` — 고객<br>
-    `orders` — 주문<br>
-    `order_items` — 주문 상세<br>
-    `products` — 상품<br>
-    `reviews` — 리뷰<br>
-    `wishlists` — 위시리스트<br>
-    `complaints` — 불만 접수<br>
-    `categories` — 카테고리<br>
-    `payments` — 결제
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `EXISTS`<br>
-    `NOT EXISTS`<br>
-    상관 서브쿼리<br>
-    안티 조인 패턴<br>
-    전칭 한정(Universal Quantification)
-
-</div>
+!!! abstract "학습 범위"
+    `EXISTS`, `NOT EXISTS`, 상관 서브쿼리, 안티 조인 패턴, 전칭 한정(Universal Quantification)
 
 !!! info "시작하기 전에"
     이 연습은 **고급 20강**(EXISTS)에서 배운 내용을 실전에 적용합니다.

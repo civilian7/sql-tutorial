@@ -2,7 +2,18 @@
 
 !!! info "사용 테이블"
 
-    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `payments` — 결제 (방법, 금액, 상태)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `shipping` — 배송 (택배사, 추적번호, 상태)
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+
+    `orders` — 주문 (상태, 금액, 일시)  
+
+    `order_items` — 주문 상세 (수량, 단가)  
+
+    `payments` — 결제 (방법, 금액, 상태)  
+
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
+    `shipping` — 배송 (택배사, 추적번호, 상태)  
+
 
 
 !!! abstract "학습 범위"

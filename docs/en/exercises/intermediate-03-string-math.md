@@ -1,38 +1,15 @@
 # String and Math Functions
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `categories` — Categories (parent-child hierarchy)  
+    `suppliers` — Suppliers (company, contact)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — Products (name, price, stock, brand)<br>
-    `customers` — Customers (tier, points, signup channel)<br>
-    `orders` — Orders (status, amount, date/time)<br>
-    `order_items` — Order details (quantity, unit price)<br>
-    `categories` — Categories (parent-child hierarchy)<br>
-    `suppliers` — Suppliers (company name, contact)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `SUBSTR`<br>
-    `LENGTH`<br>
-    `UPPER`/`LOWER`<br>
-    `REPLACE`<br>
-    `TRIM`<br>
-    `INSTR`<br>
-    `GROUP_CONCAT`<br>
-    `COALESCE`<br>
-    `ROUND`<br>
-    `ABS`<br>
-    `CAST`<br>
-    `NULLIF`<br>
-    `IIF`/`CASE`<br>
-    `printf`
-
-</div>
+!!! abstract "Concepts"
+    `SUBSTR`, `LENGTH`, `UPPER`/`LOWER`, `REPLACE`, `TRIM`, `INSTR`, `GROUP_CONCAT`, `COALESCE`, `ROUND`, `ABS`, `CAST`, `NULLIF`, `IIF`/`CASE`, `printf`
 
 !!! info "Before You Begin"
     This exercise applies what you learned in **Intermediate Lessons 12~13** (string functions, math/utility functions) to practical scenarios.

@@ -1,35 +1,19 @@
 # Practical SQL Patterns
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `categories` — Categories (parent-child hierarchy)  
+    `customers` — Customers (grade, points, channel)  
+    `payments` — Payments (method, amount, status)  
+    `calendar` — Calendar (weekday, holiday)  
+    `product_views` — View log (customer, product, date)  
+    `carts` — Carts (status)  
+    `cart_items` — Cart items (quantity)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `orders` — Order<br>
-    `order_items` — Order Details<br>
-    `products` — Product<br>
-    `categories` — Category<br>
-    `customers` — Customer<br>
-    `payments` — Payment<br>
-    `calendar` — Date reference<br>
-    `product_views` — Product inquiry history<br>
-    `carts` — Shopping Cart<br>
-    `cart_items` — Shopping cart details
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    Top-N per group<br>
-    Gap analysis<br>
-    Pivot<br>
-    Session Analysis<br>
-    Pareto (80/20)<br>
-    Funnel<br>
-    Continuous period detection
-
-</div>
+!!! abstract "Concepts"
+    Top-N per group, Gap analysis, Pivot, Session Analysis, Pareto (80/20), Funnel, Continuous period detection
 
 Learn SQL patterns that appear repeatedly in practice.
 We cover practical techniques across various tables, such as Top-N, gap analysis, pivot, session analysis, and funnel.

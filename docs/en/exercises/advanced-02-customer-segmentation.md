@@ -2,7 +2,12 @@
 
 !!! info "Tables"
 
-    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `reviews` — Reviews (rating, content)
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `reviews` — Reviews (rating, content)  
+
 
 
 !!! abstract "Concepts"

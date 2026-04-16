@@ -2,7 +2,10 @@
 
 !!! info "Tables"
 
-    `orders` — Orders (status, amount, date)  ·  `payments` — Payments (method, amount, status)
+    `orders` — Orders (status, amount, date)  
+
+    `payments` — Payments (method, amount, status)  
+
 
 
 !!! abstract "Concepts"

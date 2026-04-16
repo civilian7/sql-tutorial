@@ -2,7 +2,18 @@
 
 !!! info "Tables"
 
-    `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `suppliers` — Suppliers (company, contact)  ·  `inventory_transactions` — Inventory (type, quantity)  ·  `order_items` — Order items (qty, unit price)  ·  `orders` — Orders (status, amount, date)
+    `products` — Products (name, price, stock, brand)  
+
+    `categories` — Categories (parent-child hierarchy)  
+
+    `suppliers` — Suppliers (company, contact)  
+
+    `inventory_transactions` — Inventory (type, quantity)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `orders` — Orders (status, amount, date)  
+
 
 
 !!! abstract "Concepts"

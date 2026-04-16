@@ -233,12 +233,11 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
             if tables:
                 title = "사용 테이블" if lang == "ko" else "Tables"
                 lines.append(f'!!! info "{title}"\n')
-                table_parts = []
                 for t in tables:
                     desc_ko_t, desc_en_t = _TABLE_DESC.get(t, (t, t))
                     desc = desc_ko_t if lang == "ko" else desc_en_t
-                    table_parts.append(f"`{t}` — {desc}")
-                lines.append(f'    {"  ·  ".join(table_parts)}\n\n')
+                    lines.append(f'    `{t}` — {desc}  \n')
+                lines.append('\n')
 
             # Concepts admonition
             if concepts:

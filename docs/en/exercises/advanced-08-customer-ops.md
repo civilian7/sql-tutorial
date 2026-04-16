@@ -1,33 +1,18 @@
 # Customer/Operations Analysis
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `customers` — Customers (grade, points, channel)  
+    `orders` — Orders (status, amount, date)  
+    `order_items` — Order items (qty, unit price)  
+    `products` — Products (name, price, stock, brand)  
+    `categories` — Categories (parent-child hierarchy)  
+    `inventory_transactions` — Inventory (type, quantity)  
+    `customer_grade_history` — Grade history (before/after)  
+    `complaints` — Complaints (type, priority)  
+    `staff` — Staff (dept, role, manager)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `customers` — Customer<br>
-    `orders` — Order<br>
-    `order_items` — Order Details<br>
-    `products` — Product<br>
-    `categories` — Category<br>
-    `inventory_transactions` — Incoming/outgoing history<br>
-    `customer_grade_history` — Grade change history<br>
-    `complaints` — File a complaint<br>
-    `staff` — Employee
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    RFM Analysis<br>
-    Cohort<br>
-    LTV<br>
-    Inventory ABC Analysis<br>
-    Safety stock<br>
-    CS Performance — CTE + Window Function + Multiple JOIN
-
-</div>
+!!! abstract "Concepts"
+    RFM Analysis, Cohort, LTV, Inventory ABC Analysis, Safety stock, CS Performance — CTE + Window Function + Multiple JOIN
 
 This is a customer analysis and operational analysis problem that comprehensively utilizes CTE, window functions, multiple JOINs, and aggregate functions.
 It covers analysis scenarios frequently encountered in practice, including customer segmentation, inventory management, CS performance, and comprehensive dashboards.

@@ -1,26 +1,11 @@
 # JSON Applications
 
-<div class="grid cards" markdown>
+!!! info "Tables"
+    `products` — Products (name, price, stock, brand)  
+    `categories` — Categories (parent-child hierarchy)  
 
--   :fontawesome-solid-database:{ .lg .middle } __Tables Used__
-
-    ---
-
-    `products` — products (name, price, stock, brand)<br>
-    `categories` — Category (parent-child hierarchy)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __Concepts Covered__
-
-    ---
-
-    `JSON_EXTRACT`<br>
-    `JSON_EACH`<br>
-    `JSON_GROUP_ARRAY`<br>
-    `JSON_GROUP_OBJECT`<br>
-    JSON path expression<br>
-    Using the specs column
-
-</div>
+!!! abstract "Concepts"
+    `JSON_EXTRACT`, `JSON_EACH`, `JSON_GROUP_ARRAY`, `JSON_GROUP_OBJECT`, JSON path expression, Using the specs column
 
 Practice what you learned in Lecture 25, JSON Function.
 The `specs` column of the products table stores specification information for each category as a JSON string.

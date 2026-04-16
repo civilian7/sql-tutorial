@@ -2,7 +2,20 @@
 
 !!! info "Tables"
 
-    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `customers` — Customers (grade, points, channel)  ·  `categories` — Categories (parent-child hierarchy)  ·  `wishlists` — Wishlists (customer-product)  ·  `customer_addresses` — Addresses (address, default flag)
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `categories` — Categories (parent-child hierarchy)  
+
+    `wishlists` — Wishlists (customer-product)  
+
+    `customer_addresses` — Addresses (address, default flag)  
+
 
 
 !!! abstract "Concepts"

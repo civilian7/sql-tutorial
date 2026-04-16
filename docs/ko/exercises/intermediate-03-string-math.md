@@ -1,38 +1,15 @@
 # 문자열과 숫자 함수
 
-<div class="grid cards" markdown>
+!!! info "사용 테이블"
+    `products` — 상품 (이름, 가격, 재고, 브랜드)  
+    `customers` — 고객 (등급, 포인트, 가입채널)  
+    `orders` — 주문 (상태, 금액, 일시)  
+    `order_items` — 주문 상세 (수량, 단가)  
+    `categories` — 카테고리 (부모-자식 계층)  
+    `suppliers` — 공급업체 (업체명, 연락처)  
 
--   :fontawesome-solid-database:{ .lg .middle } __사용 테이블__
-
-    ---
-
-    `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-    `customers` — 고객 (등급, 포인트, 가입채널)<br>
-    `orders` — 주문 (상태, 금액, 일시)<br>
-    `order_items` — 주문 상세 (수량, 단가)<br>
-    `categories` — 카테고리 (부모-자식 계층)<br>
-    `suppliers` — 공급업체 (회사명, 연락처)
-
--   :fontawesome-solid-graduation-cap:{ .lg .middle } __학습 범위__
-
-    ---
-
-    `SUBSTR`<br>
-    `LENGTH`<br>
-    `UPPER`/`LOWER`<br>
-    `REPLACE`<br>
-    `TRIM`<br>
-    `INSTR`<br>
-    `GROUP_CONCAT`<br>
-    `COALESCE`<br>
-    `ROUND`<br>
-    `ABS`<br>
-    `CAST`<br>
-    `NULLIF`<br>
-    `IIF`/`CASE`<br>
-    `printf`
-
-</div>
+!!! abstract "학습 범위"
+    `SUBSTR`, `LENGTH`, `UPPER`/`LOWER`, `REPLACE`, `TRIM`, `INSTR`, `GROUP_CONCAT`, `COALESCE`, `ROUND`, `ABS`, `CAST`, `NULLIF`, `IIF`/`CASE`, `printf`
 
 !!! info "시작하기 전에"
     이 연습은 **중급 12~13강**(문자열 함수, 수학/유틸리티 함수)에서 배운 내용을 실전에 적용합니다.

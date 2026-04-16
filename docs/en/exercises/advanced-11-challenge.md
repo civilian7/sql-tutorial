@@ -2,7 +2,30 @@
 
 !!! info "Tables"
 
-    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `shipping` — Shipping (carrier, tracking, status)  ·  `point_transactions` — Points (earn, use, expire)  ·  `product_views` — View log (customer, product, date)  ·  `inventory_transactions` — Inventory (type, quantity)  ·  `wishlists` — Wishlists (customer-product)  ·  `calendar` — Calendar (weekday, holiday)
+    `categories` — Categories (parent-child hierarchy)  
+
+    `customers` — Customers (grade, points, channel)  
+
+    `orders` — Orders (status, amount, date)  
+
+    `order_items` — Order items (qty, unit price)  
+
+    `products` — Products (name, price, stock, brand)  
+
+    `reviews` — Reviews (rating, content)  
+
+    `shipping` — Shipping (carrier, tracking, status)  
+
+    `point_transactions` — Points (earn, use, expire)  
+
+    `product_views` — View log (customer, product, date)  
+
+    `inventory_transactions` — Inventory (type, quantity)  
+
+    `wishlists` — Wishlists (customer-product)  
+
+    `calendar` — Calendar (weekday, holiday)  
+
 
 
 !!! abstract "Concepts"
