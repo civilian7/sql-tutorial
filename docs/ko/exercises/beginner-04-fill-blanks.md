@@ -213,13 +213,13 @@ LIMIT 10;
 
     | name | category |
     |---|---|
-    | LG 일체형PC 27V70Q 실버 | 완제품 |
-    | HP Slim Desktop S01 화이트 | 완제품 |
-    | Dell XPS Desktop 8960 실버 | 완제품 |
-    | HP Z2 Mini G1a 블랙 | 완제품 |
-    | 삼성 DM500TDA 실버 | 완제품 |
-    | 한성 보스몬스터 DX9900 실버 | 조립PC |
-    | ASUS ROG Strix G16CH 화이트 | 조립PC |
+    | Razer Blade 18 블랙 | 게이밍 노트북 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | NVIDIA |
+    | 삼성 DDR4 32GB PC4-25600 | DDR4 |
+    | Dell U2724D | 일반 모니터 |
+    | G.SKILL Trident Z5 DDR5 64GB 6000MHz 화이트 | DDR5 |
+    | MSI Radeon RX 9070 VENTUS 3X 화이트 | AMD |
+    | 삼성 DDR5 32GB PC5-38400 | DDR5 |
 
 
 ---

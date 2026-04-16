@@ -207,9 +207,9 @@ WHERE o.ordered_at LIKE '2024-12%'
 
     | id | parent | notused | detail |
     |---|---|---|---|
-    | 6 | 0 | 143 | SEARCH o USING INDEX idx_orders_statu... |
-    | 14 | 0 | 50 | SEARCH oi USING INDEX idx_order_items... |
-    | 19 | 0 | 35 | SEARCH p USING INTEGER PRIMARY KEY (r... |
+    | 6 | 0 | 61 | SEARCH o USING INDEX idx_orders_statu... |
+    | 14 | 0 | 61 | SEARCH oi USING INDEX idx_order_items... |
+    | 19 | 0 | 45 | SEARCH p USING INTEGER PRIMARY KEY (r... |
 
 
 ---

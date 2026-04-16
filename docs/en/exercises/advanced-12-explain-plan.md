@@ -39,35 +39,35 @@ SELECT * FROM orders WHERE total_amount > 1000000;
     === "SQLite"
         ```sql
         EXPLAIN QUERY PLAN
-    SELECT * FROM orders WHERE total_amount > 1000000;
+        SELECT * FROM orders WHERE total_amount > 1000000;
         ```
 
     === "MySQL"
         ```sql
         EXPLAIN
-    SELECT * FROM orders WHERE total_amount > 1000000;
+        SELECT * FROM orders WHERE total_amount > 1000000;
         ```
 
     === "PostgreSQL"
         ```sql
         EXPLAIN ANALYZE
-    SELECT * FROM orders WHERE total_amount > 1000000;
+        SELECT * FROM orders WHERE total_amount > 1000000;
         ```
 
     === "Oracle"
         ```sql
         EXPLAIN PLAN FOR
-    SELECT * FROM orders WHERE total_amount > 1000000;
-    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        SELECT * FROM orders WHERE total_amount > 1000000;
+        SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
         ```
 
     === "SQL Server"
         ```sql
         SET SHOWPLAN_ALL ON;
-    GO
-    SELECT * FROM orders WHERE total_amount > 1000000;
-    GO
-    SET SHOWPLAN_ALL OFF;
+        GO
+        SELECT * FROM orders WHERE total_amount > 1000000;
+        GO
+        SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -96,35 +96,35 @@ Which is more efficient?
     === "SQLite"
         ```sql
         EXPLAIN QUERY PLAN
-    SELECT * FROM orders WHERE customer_id = 42;
+        SELECT * FROM orders WHERE customer_id = 42;
         ```
 
     === "MySQL"
         ```sql
         EXPLAIN
-    SELECT * FROM orders WHERE customer_id = 42;
+        SELECT * FROM orders WHERE customer_id = 42;
         ```
 
     === "PostgreSQL"
         ```sql
         EXPLAIN ANALYZE
-    SELECT * FROM orders WHERE customer_id = 42;
+        SELECT * FROM orders WHERE customer_id = 42;
         ```
 
     === "Oracle"
         ```sql
         EXPLAIN PLAN FOR
-    SELECT * FROM orders WHERE customer_id = 42;
-    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        SELECT * FROM orders WHERE customer_id = 42;
+        SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
         ```
 
     === "SQL Server"
         ```sql
         SET SHOWPLAN_ALL ON;
-    GO
-    SELECT * FROM orders WHERE customer_id = 42;
-    GO
-    SET SHOWPLAN_ALL OFF;
+        GO
+        SELECT * FROM orders WHERE customer_id = 42;
+        GO
+        SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -155,35 +155,35 @@ Which of these queries uses this index?
     === "SQLite"
         ```sql
         EXPLAIN QUERY PLAN
-    SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
         ```
 
     === "MySQL"
         ```sql
         EXPLAIN
-    SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
         ```
 
     === "PostgreSQL"
         ```sql
         EXPLAIN ANALYZE
-    SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
         ```
 
     === "Oracle"
         ```sql
         EXPLAIN PLAN FOR
-    SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
-    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+        SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
         ```
 
     === "SQL Server"
         ```sql
         SET SHOWPLAN_ALL ON;
-    GO
-    SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
-    GO
-    SET SHOWPLAN_ALL OFF;
+        GO
+        SELECT * FROM orders WHERE customer_id = 42 AND status = 'confirmed';
+        GO
+        SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -214,45 +214,45 @@ Which is more efficient?
     === "SQLite"
         ```sql
         EXPLAIN QUERY PLAN
-    SELECT p.* FROM products p
-    JOIN order_items oi ON p.id = oi.product_id
-    WHERE oi.order_id = 100;
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
         ```
 
     === "MySQL"
         ```sql
         EXPLAIN
-    SELECT p.* FROM products p
-    JOIN order_items oi ON p.id = oi.product_id
-    WHERE oi.order_id = 100;
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
         ```
 
     === "PostgreSQL"
         ```sql
         EXPLAIN ANALYZE
-    SELECT p.* FROM products p
-    JOIN order_items oi ON p.id = oi.product_id
-    WHERE oi.order_id = 100;
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
         ```
 
     === "Oracle"
         ```sql
         EXPLAIN PLAN FOR
-    SELECT p.* FROM products p
-    JOIN order_items oi ON p.id = oi.product_id
-    WHERE oi.order_id = 100;
-    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
+        SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
         ```
 
     === "SQL Server"
         ```sql
         SET SHOWPLAN_ALL ON;
-    GO
-    SELECT p.* FROM products p
-    JOIN order_items oi ON p.id = oi.product_id
-    WHERE oi.order_id = 100;
-    GO
-    SET SHOWPLAN_ALL OFF;
+        GO
+        SELECT p.* FROM products p
+        JOIN order_items oi ON p.id = oi.product_id
+        WHERE oi.order_id = 100;
+        GO
+        SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -283,35 +283,35 @@ Compare with the idx_products_name index.
     === "SQLite"
         ```sql
         EXPLAIN QUERY PLAN
-    SELECT brand, price FROM products WHERE brand = 'Samsung';
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
         ```
 
     === "MySQL"
         ```sql
         EXPLAIN
-    SELECT brand, price FROM products WHERE brand = 'Samsung';
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
         ```
 
     === "PostgreSQL"
         ```sql
         EXPLAIN ANALYZE
-    SELECT brand, price FROM products WHERE brand = 'Samsung';
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
         ```
 
     === "Oracle"
         ```sql
         EXPLAIN PLAN FOR
-    SELECT brand, price FROM products WHERE brand = 'Samsung';
-    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
+        SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
         ```
 
     === "SQL Server"
         ```sql
         SET SHOWPLAN_ALL ON;
-    GO
-    SELECT brand, price FROM products WHERE brand = 'Samsung';
-    GO
-    SET SHOWPLAN_ALL OFF;
+        GO
+        SELECT brand, price FROM products WHERE brand = 'Samsung';
+        GO
+        SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -340,50 +340,50 @@ browsing history in product_views (~300K rows). Check if indexes are used.
     === "SQLite"
         ```sql
         EXPLAIN QUERY PLAN
-    SELECT product_id, viewed_at, duration_seconds
-    FROM product_views
-    WHERE customer_id = 42
-    ORDER BY viewed_at DESC;
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
         ```
 
     === "MySQL"
         ```sql
         EXPLAIN
-    SELECT product_id, viewed_at, duration_seconds
-    FROM product_views
-    WHERE customer_id = 42
-    ORDER BY viewed_at DESC;
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
         ```
 
     === "PostgreSQL"
         ```sql
         EXPLAIN ANALYZE
-    SELECT product_id, viewed_at, duration_seconds
-    FROM product_views
-    WHERE customer_id = 42
-    ORDER BY viewed_at DESC;
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
         ```
 
     === "Oracle"
         ```sql
         EXPLAIN PLAN FOR
-    SELECT product_id, viewed_at, duration_seconds
-    FROM product_views
-    WHERE customer_id = 42
-    ORDER BY viewed_at DESC;
-    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
+        SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
         ```
 
     === "SQL Server"
         ```sql
         SET SHOWPLAN_ALL ON;
-    GO
-    SELECT product_id, viewed_at, duration_seconds
-    FROM product_views
-    WHERE customer_id = 42
-    ORDER BY viewed_at DESC;
-    GO
-    SET SHOWPLAN_ALL OFF;
+        GO
+        SELECT product_id, viewed_at, duration_seconds
+        FROM product_views
+        WHERE customer_id = 42
+        ORDER BY viewed_at DESC;
+        GO
+        SET SHOWPLAN_ALL OFF;
         ```
 
 
@@ -413,50 +413,50 @@ on point_transactions (~130K rows). Check for temp tables or sort operations.
     === "SQLite"
         ```sql
         EXPLAIN QUERY PLAN
-    SELECT customer_id, created_at, amount,
-           SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
-    FROM point_transactions
-    WHERE customer_id = 42;
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
         ```
 
     === "MySQL"
         ```sql
         EXPLAIN
-    SELECT customer_id, created_at, amount,
-           SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
-    FROM point_transactions
-    WHERE customer_id = 42;
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
         ```
 
     === "PostgreSQL"
         ```sql
         EXPLAIN ANALYZE
-    SELECT customer_id, created_at, amount,
-           SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
-    FROM point_transactions
-    WHERE customer_id = 42;
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
         ```
 
     === "Oracle"
         ```sql
         EXPLAIN PLAN FOR
-    SELECT customer_id, created_at, amount,
-           SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
-    FROM point_transactions
-    WHERE customer_id = 42;
-    SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
+        SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
         ```
 
     === "SQL Server"
         ```sql
         SET SHOWPLAN_ALL ON;
-    GO
-    SELECT customer_id, created_at, amount,
-           SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
-    FROM point_transactions
-    WHERE customer_id = 42;
-    GO
-    SET SHOWPLAN_ALL OFF;
+        GO
+        SELECT customer_id, created_at, amount,
+               SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_balance
+        FROM point_transactions
+        WHERE customer_id = 42;
+        GO
+        SET SHOWPLAN_ALL OFF;
         ```
 
 

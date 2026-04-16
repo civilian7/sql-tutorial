@@ -174,6 +174,17 @@ LIMIT 10 OFFSET 20;
 
 > **공식:** `OFFSET = (페이지 번호 - 1) × 페이지 크기`
 
+```mermaid
+graph LR
+    subgraph "전체 결과 (100행)"
+        P1["1페이지\nOFFSET 0\nLIMIT 10\n행 1~10"]
+        P2["2페이지\nOFFSET 10\nLIMIT 10\n행 11~20"]
+        P3["3페이지\nOFFSET 20\nLIMIT 10\n행 21~30"]
+        P4["...\n\n\n"]
+    end
+    P1 --> P2 --> P3 --> P4
+```
+
 ## NULL 값의 정렬 순서
 
 SQLite에서는 `ASC` 정렬 시 NULL이 다른 값보다 앞에 오고, `DESC` 정렬 시 뒤에 옵니다.

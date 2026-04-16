@@ -153,6 +153,24 @@ LIMIT 10;
 
 `CASE`를 그룹화 표현식으로 사용하거나 집계 함수 내에서 활용할 수 있습니다.
 
+```mermaid
+graph LR
+    subgraph "원본 (세로 형태)"
+        A["1월 | confirmed | 100"]
+        B["1월 | cancelled | 20"]
+        C["2월 | confirmed | 150"]
+        D["2월 | cancelled | 10"]
+    end
+    subgraph "피벗 (가로 형태)"
+        E["1월 | 확정=100 | 취소=20"]
+        F["2월 | 확정=150 | 취소=10"]
+    end
+    A & B --> E
+    C & D --> F
+```
+
+> SUM(CASE WHEN status = 'confirmed' THEN 1 END) 패턴으로 세로 데이터를 가로로 변환합니다.
+
 ```sql
 -- 가격대별 상품 수
 SELECT

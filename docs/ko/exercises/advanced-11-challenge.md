@@ -763,123 +763,123 @@ ROW_NUMBER를 사용하여 각 카테고리에서 매출 상위 3개 상품을 �
     === "SQLite"
         ```sql
         WITH cohort AS (
+            SELECT
+                id AS customer_id,
+                SUBSTR(created_at, 1, 7) AS signup_month,
+                created_at
+            FROM customers
+            WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
+        ),
+        cohort_orders AS (
+            SELECT
+                co.signup_month,
+                co.customer_id,
+                CAST(
+                    (CAST(SUBSTR(o.ordered_at, 1, 4) AS INTEGER) * 12
+                     + CAST(SUBSTR(o.ordered_at, 6, 2) AS INTEGER))
+                  - (CAST(SUBSTR(co.created_at, 1, 4) AS INTEGER) * 12
+                     + CAST(SUBSTR(co.created_at, 6, 2) AS INTEGER))
+                AS INTEGER) AS months_since_signup
+            FROM cohort AS co
+            INNER JOIN orders AS o
+                ON co.customer_id = o.customer_id
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            id AS customer_id,
-            SUBSTR(created_at, 1, 7) AS signup_month,
-            created_at
-        FROM customers
-        WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
-    ),
-    cohort_orders AS (
-        SELECT
-            co.signup_month,
-            co.customer_id,
-            CAST(
-                (CAST(SUBSTR(o.ordered_at, 1, 4) AS INTEGER) * 12
-                 + CAST(SUBSTR(o.ordered_at, 6, 2) AS INTEGER))
-              - (CAST(SUBSTR(co.created_at, 1, 4) AS INTEGER) * 12
-                 + CAST(SUBSTR(co.created_at, 6, 2) AS INTEGER))
-            AS INTEGER) AS months_since_signup
-        FROM cohort AS co
-        INNER JOIN orders AS o
-            ON co.customer_id = o.customer_id
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        signup_month,
-        COUNT(DISTINCT customer_id) AS cohort_size,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END) AS m1,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m1_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END) AS m2,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m2_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END) AS m3,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m3_pct
-    FROM cohort_orders
-    GROUP BY signup_month
-    ORDER BY signup_month;
+            signup_month,
+            COUNT(DISTINCT customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END) AS m1,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m1_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END) AS m2,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m2_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END) AS m3,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m3_pct
+        FROM cohort_orders
+        GROUP BY signup_month
+        ORDER BY signup_month;
         ```
 
     === "Oracle"
         ```sql
         WITH cohort AS (
+            SELECT
+                id AS customer_id,
+                SUBSTR(created_at, 1, 7) AS signup_month,
+                created_at
+            FROM customers
+            WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
+        ),
+        cohort_orders AS (
+            SELECT
+                co.signup_month,
+                co.customer_id,
+                (CAST(SUBSTR(o.ordered_at, 1, 4) AS NUMBER) * 12
+                 + CAST(SUBSTR(o.ordered_at, 6, 2) AS NUMBER))
+              - (CAST(SUBSTR(co.created_at, 1, 4) AS NUMBER) * 12
+                 + CAST(SUBSTR(co.created_at, 6, 2) AS NUMBER)) AS months_since_signup
+            FROM cohort co
+            INNER JOIN orders o
+                ON co.customer_id = o.customer_id
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            id AS customer_id,
-            SUBSTR(created_at, 1, 7) AS signup_month,
-            created_at
-        FROM customers
-        WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
-    ),
-    cohort_orders AS (
-        SELECT
-            co.signup_month,
-            co.customer_id,
-            (CAST(SUBSTR(o.ordered_at, 1, 4) AS NUMBER) * 12
-             + CAST(SUBSTR(o.ordered_at, 6, 2) AS NUMBER))
-          - (CAST(SUBSTR(co.created_at, 1, 4) AS NUMBER) * 12
-             + CAST(SUBSTR(co.created_at, 6, 2) AS NUMBER)) AS months_since_signup
-        FROM cohort co
-        INNER JOIN orders o
-            ON co.customer_id = o.customer_id
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        signup_month,
-        COUNT(DISTINCT customer_id) AS cohort_size,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END) AS m1,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m1_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END) AS m2,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m2_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END) AS m3,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m3_pct
-    FROM cohort_orders
-    GROUP BY signup_month
-    ORDER BY signup_month;
+            signup_month,
+            COUNT(DISTINCT customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END) AS m1,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m1_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END) AS m2,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m2_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END) AS m3,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m3_pct
+        FROM cohort_orders
+        GROUP BY signup_month
+        ORDER BY signup_month;
         ```
 
     === "SQL Server"
         ```sql
         WITH cohort AS (
+            SELECT
+                id AS customer_id,
+                SUBSTRING(created_at, 1, 7) AS signup_month,
+                created_at
+            FROM customers
+            WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
+        ),
+        cohort_orders AS (
+            SELECT
+                co.signup_month,
+                co.customer_id,
+                (CAST(SUBSTRING(o.ordered_at, 1, 4) AS INT) * 12
+                 + CAST(SUBSTRING(o.ordered_at, 6, 2) AS INT))
+              - (CAST(SUBSTRING(co.created_at, 1, 4) AS INT) * 12
+                 + CAST(SUBSTRING(co.created_at, 6, 2) AS INT)) AS months_since_signup
+            FROM cohort AS co
+            INNER JOIN orders AS o
+                ON co.customer_id = o.customer_id
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            id AS customer_id,
-            SUBSTRING(created_at, 1, 7) AS signup_month,
-            created_at
-        FROM customers
-        WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
-    ),
-    cohort_orders AS (
-        SELECT
-            co.signup_month,
-            co.customer_id,
-            (CAST(SUBSTRING(o.ordered_at, 1, 4) AS INT) * 12
-             + CAST(SUBSTRING(o.ordered_at, 6, 2) AS INT))
-          - (CAST(SUBSTRING(co.created_at, 1, 4) AS INT) * 12
-             + CAST(SUBSTRING(co.created_at, 6, 2) AS INT)) AS months_since_signup
-        FROM cohort AS co
-        INNER JOIN orders AS o
-            ON co.customer_id = o.customer_id
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        signup_month,
-        COUNT(DISTINCT customer_id) AS cohort_size,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END) AS m1,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m1_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END) AS m2,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m2_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END) AS m3,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS m3_pct
-    FROM cohort_orders
-    GROUP BY signup_month
-    ORDER BY signup_month;
+            signup_month,
+            COUNT(DISTINCT customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END) AS m1,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 1 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m1_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END) AS m2,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 2 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m2_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END) AS m3,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup = 3 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS m3_pct
+        FROM cohort_orders
+        GROUP BY signup_month
+        ORDER BY signup_month;
         ```
 
 
@@ -915,123 +915,123 @@ ROW_NUMBER를 사용하여 각 카테고리에서 매출 상위 3개 상품을 �
     === "SQLite"
         ```sql
         WITH cohort AS (
+            SELECT
+                id AS customer_id,
+                SUBSTR(created_at, 1, 7) AS signup_month,
+                created_at
+            FROM customers
+            WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
+        ),
+        cohort_orders AS (
+            SELECT
+                co.signup_month,
+                co.customer_id,
+                CAST(
+                    (CAST(SUBSTR(o.ordered_at, 1, 4) AS INTEGER) * 12
+                     + CAST(SUBSTR(o.ordered_at, 6, 2) AS INTEGER))
+                  - (CAST(SUBSTR(co.created_at, 1, 4) AS INTEGER) * 12
+                     + CAST(SUBSTR(co.created_at, 6, 2) AS INTEGER))
+                AS INTEGER) AS months_since_signup
+            FROM cohort AS co
+            INNER JOIN orders AS o
+                ON co.customer_id = o.customer_id
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            id AS customer_id,
-            SUBSTR(created_at, 1, 7) AS signup_month,
-            created_at
-        FROM customers
-        WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
-    ),
-    cohort_orders AS (
-        SELECT
-            co.signup_month,
-            co.customer_id,
-            CAST(
-                (CAST(SUBSTR(o.ordered_at, 1, 4) AS INTEGER) * 12
-                 + CAST(SUBSTR(o.ordered_at, 6, 2) AS INTEGER))
-              - (CAST(SUBSTR(co.created_at, 1, 4) AS INTEGER) * 12
-                 + CAST(SUBSTR(co.created_at, 6, 2) AS INTEGER))
-            AS INTEGER) AS months_since_signup
-        FROM cohort AS co
-        INNER JOIN orders AS o
-            ON co.customer_id = o.customer_id
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        signup_month,
-        COUNT(DISTINCT customer_id) AS cohort_size,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END) AS rolling_m1,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m1_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END) AS rolling_m2,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m2_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END) AS rolling_m3,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m3_pct
-    FROM cohort_orders
-    GROUP BY signup_month
-    ORDER BY signup_month;
+            signup_month,
+            COUNT(DISTINCT customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END) AS rolling_m1,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m1_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END) AS rolling_m2,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m2_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END) AS rolling_m3,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m3_pct
+        FROM cohort_orders
+        GROUP BY signup_month
+        ORDER BY signup_month;
         ```
 
     === "Oracle"
         ```sql
         WITH cohort AS (
+            SELECT
+                id AS customer_id,
+                SUBSTR(created_at, 1, 7) AS signup_month,
+                created_at
+            FROM customers
+            WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
+        ),
+        cohort_orders AS (
+            SELECT
+                co.signup_month,
+                co.customer_id,
+                (CAST(SUBSTR(o.ordered_at, 1, 4) AS NUMBER) * 12
+                 + CAST(SUBSTR(o.ordered_at, 6, 2) AS NUMBER))
+              - (CAST(SUBSTR(co.created_at, 1, 4) AS NUMBER) * 12
+                 + CAST(SUBSTR(co.created_at, 6, 2) AS NUMBER)) AS months_since_signup
+            FROM cohort co
+            INNER JOIN orders o
+                ON co.customer_id = o.customer_id
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            id AS customer_id,
-            SUBSTR(created_at, 1, 7) AS signup_month,
-            created_at
-        FROM customers
-        WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
-    ),
-    cohort_orders AS (
-        SELECT
-            co.signup_month,
-            co.customer_id,
-            (CAST(SUBSTR(o.ordered_at, 1, 4) AS NUMBER) * 12
-             + CAST(SUBSTR(o.ordered_at, 6, 2) AS NUMBER))
-          - (CAST(SUBSTR(co.created_at, 1, 4) AS NUMBER) * 12
-             + CAST(SUBSTR(co.created_at, 6, 2) AS NUMBER)) AS months_since_signup
-        FROM cohort co
-        INNER JOIN orders o
-            ON co.customer_id = o.customer_id
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        signup_month,
-        COUNT(DISTINCT customer_id) AS cohort_size,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END) AS rolling_m1,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m1_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END) AS rolling_m2,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m2_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END) AS rolling_m3,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m3_pct
-    FROM cohort_orders
-    GROUP BY signup_month
-    ORDER BY signup_month;
+            signup_month,
+            COUNT(DISTINCT customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END) AS rolling_m1,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m1_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END) AS rolling_m2,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m2_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END) AS rolling_m3,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m3_pct
+        FROM cohort_orders
+        GROUP BY signup_month
+        ORDER BY signup_month;
         ```
 
     === "SQL Server"
         ```sql
         WITH cohort AS (
+            SELECT
+                id AS customer_id,
+                SUBSTRING(created_at, 1, 7) AS signup_month,
+                created_at
+            FROM customers
+            WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
+        ),
+        cohort_orders AS (
+            SELECT
+                co.signup_month,
+                co.customer_id,
+                (CAST(SUBSTRING(o.ordered_at, 1, 4) AS INT) * 12
+                 + CAST(SUBSTRING(o.ordered_at, 6, 2) AS INT))
+              - (CAST(SUBSTRING(co.created_at, 1, 4) AS INT) * 12
+                 + CAST(SUBSTRING(co.created_at, 6, 2) AS INT)) AS months_since_signup
+            FROM cohort AS co
+            INNER JOIN orders AS o
+                ON co.customer_id = o.customer_id
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            id AS customer_id,
-            SUBSTRING(created_at, 1, 7) AS signup_month,
-            created_at
-        FROM customers
-        WHERE created_at >= '2024-01-01' AND created_at < '2024-07-01'
-    ),
-    cohort_orders AS (
-        SELECT
-            co.signup_month,
-            co.customer_id,
-            (CAST(SUBSTRING(o.ordered_at, 1, 4) AS INT) * 12
-             + CAST(SUBSTRING(o.ordered_at, 6, 2) AS INT))
-          - (CAST(SUBSTRING(co.created_at, 1, 4) AS INT) * 12
-             + CAST(SUBSTRING(co.created_at, 6, 2) AS INT)) AS months_since_signup
-        FROM cohort AS co
-        INNER JOIN orders AS o
-            ON co.customer_id = o.customer_id
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        signup_month,
-        COUNT(DISTINCT customer_id) AS cohort_size,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END) AS rolling_m1,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m1_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END) AS rolling_m2,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m2_pct,
-        COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END) AS rolling_m3,
-        ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END)
-            / COUNT(DISTINCT customer_id), 1) AS rolling_m3_pct
-    FROM cohort_orders
-    GROUP BY signup_month
-    ORDER BY signup_month;
+            signup_month,
+            COUNT(DISTINCT customer_id) AS cohort_size,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END) AS rolling_m1,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 1 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m1_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END) AS rolling_m2,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 2 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m2_pct,
+            COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END) AS rolling_m3,
+            ROUND(100.0 * COUNT(DISTINCT CASE WHEN months_since_signup >= 3 THEN customer_id END)
+                / COUNT(DISTINCT customer_id), 1) AS rolling_m3_pct
+        FROM cohort_orders
+        GROUP BY signup_month
+        ORDER BY signup_month;
         ```
 
 
@@ -1333,84 +1333,84 @@ LAG로 이전 주문일을 가져와 JULIANDAY 차이를 구합니다.
     === "SQLite"
         ```sql
         WITH order_gaps AS (
+            SELECT
+                customer_id,
+                ordered_at,
+                LAG(ordered_at) OVER (
+                    PARTITION BY customer_id ORDER BY ordered_at
+                ) AS prev_ordered_at
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            customer_id,
-            ordered_at,
-            LAG(ordered_at) OVER (
-                PARTITION BY customer_id ORDER BY ordered_at
-            ) AS prev_ordered_at
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        c.name AS customer_name,
-        c.grade,
-        COUNT(*) AS gap_count,
-        ROUND(AVG(JULIANDAY(og.ordered_at) - JULIANDAY(og.prev_ordered_at)), 1) AS avg_cycle_days,
-        MIN(CAST(JULIANDAY(og.ordered_at) - JULIANDAY(og.prev_ordered_at) AS INTEGER)) AS min_days,
-        MAX(CAST(JULIANDAY(og.ordered_at) - JULIANDAY(og.prev_ordered_at) AS INTEGER)) AS max_days
-    FROM order_gaps AS og
-    INNER JOIN customers AS c ON og.customer_id = c.id
-    WHERE og.prev_ordered_at IS NOT NULL
-    GROUP BY og.customer_id, c.name, c.grade
-    HAVING COUNT(*) >= 3
-    ORDER BY avg_cycle_days ASC
-    LIMIT 20;
+            c.name AS customer_name,
+            c.grade,
+            COUNT(*) AS gap_count,
+            ROUND(AVG(JULIANDAY(og.ordered_at) - JULIANDAY(og.prev_ordered_at)), 1) AS avg_cycle_days,
+            MIN(CAST(JULIANDAY(og.ordered_at) - JULIANDAY(og.prev_ordered_at) AS INTEGER)) AS min_days,
+            MAX(CAST(JULIANDAY(og.ordered_at) - JULIANDAY(og.prev_ordered_at) AS INTEGER)) AS max_days
+        FROM order_gaps AS og
+        INNER JOIN customers AS c ON og.customer_id = c.id
+        WHERE og.prev_ordered_at IS NOT NULL
+        GROUP BY og.customer_id, c.name, c.grade
+        HAVING COUNT(*) >= 3
+        ORDER BY avg_cycle_days ASC
+        LIMIT 20;
         ```
 
     === "Oracle"
         ```sql
         WITH order_gaps AS (
+            SELECT
+                customer_id,
+                ordered_at,
+                LAG(ordered_at) OVER (
+                    PARTITION BY customer_id ORDER BY ordered_at
+                ) AS prev_ordered_at
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            customer_id,
-            ordered_at,
-            LAG(ordered_at) OVER (
-                PARTITION BY customer_id ORDER BY ordered_at
-            ) AS prev_ordered_at
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        c.name AS customer_name,
-        c.grade,
-        COUNT(*) AS gap_count,
-        ROUND(AVG(CAST(og.ordered_at AS DATE) - CAST(og.prev_ordered_at AS DATE)), 1) AS avg_cycle_days,
-        MIN(CAST(og.ordered_at AS DATE) - CAST(og.prev_ordered_at AS DATE)) AS min_days,
-        MAX(CAST(og.ordered_at AS DATE) - CAST(og.prev_ordered_at AS DATE)) AS max_days
-    FROM order_gaps og
-    INNER JOIN customers c ON og.customer_id = c.id
-    WHERE og.prev_ordered_at IS NOT NULL
-    GROUP BY og.customer_id, c.name, c.grade
-    HAVING COUNT(*) >= 3
-    ORDER BY avg_cycle_days ASC
-    FETCH FIRST 20 ROWS ONLY;
+            c.name AS customer_name,
+            c.grade,
+            COUNT(*) AS gap_count,
+            ROUND(AVG(CAST(og.ordered_at AS DATE) - CAST(og.prev_ordered_at AS DATE)), 1) AS avg_cycle_days,
+            MIN(CAST(og.ordered_at AS DATE) - CAST(og.prev_ordered_at AS DATE)) AS min_days,
+            MAX(CAST(og.ordered_at AS DATE) - CAST(og.prev_ordered_at AS DATE)) AS max_days
+        FROM order_gaps og
+        INNER JOIN customers c ON og.customer_id = c.id
+        WHERE og.prev_ordered_at IS NOT NULL
+        GROUP BY og.customer_id, c.name, c.grade
+        HAVING COUNT(*) >= 3
+        ORDER BY avg_cycle_days ASC
+        FETCH FIRST 20 ROWS ONLY;
         ```
 
     === "SQL Server"
         ```sql
         WITH order_gaps AS (
-        SELECT
-            customer_id,
-            ordered_at,
-            LAG(ordered_at) OVER (
-                PARTITION BY customer_id ORDER BY ordered_at
-            ) AS prev_ordered_at
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT TOP 20
-        c.name AS customer_name,
-        c.grade,
-        COUNT(*) AS gap_count,
-        ROUND(AVG(CAST(DATEDIFF(DAY, og.prev_ordered_at, og.ordered_at) AS FLOAT)), 1) AS avg_cycle_days,
-        MIN(DATEDIFF(DAY, og.prev_ordered_at, og.ordered_at)) AS min_days,
-        MAX(DATEDIFF(DAY, og.prev_ordered_at, og.ordered_at)) AS max_days
-    FROM order_gaps AS og
-    INNER JOIN customers AS c ON og.customer_id = c.id
-    WHERE og.prev_ordered_at IS NOT NULL
-    GROUP BY og.customer_id, c.name, c.grade
-    HAVING COUNT(*) >= 3
-    ORDER BY avg_cycle_days ASC;
+            SELECT
+                customer_id,
+                ordered_at,
+                LAG(ordered_at) OVER (
+                    PARTITION BY customer_id ORDER BY ordered_at
+                ) AS prev_ordered_at
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
+        SELECT TOP 20
+            c.name AS customer_name,
+            c.grade,
+            COUNT(*) AS gap_count,
+            ROUND(AVG(CAST(DATEDIFF(DAY, og.prev_ordered_at, og.ordered_at) AS FLOAT)), 1) AS avg_cycle_days,
+            MIN(DATEDIFF(DAY, og.prev_ordered_at, og.ordered_at)) AS min_days,
+            MAX(DATEDIFF(DAY, og.prev_ordered_at, og.ordered_at)) AS max_days
+        FROM order_gaps AS og
+        INNER JOIN customers AS c ON og.customer_id = c.id
+        WHERE og.prev_ordered_at IS NOT NULL
+        GROUP BY og.customer_id, c.name, c.grade
+        HAVING COUNT(*) >= 3
+        ORDER BY avg_cycle_days ASC;
         ```
 
 
@@ -1446,157 +1446,157 @@ LAG로 이전 주문일을 가져와 JULIANDAY 차이를 구합니다.
     === "SQLite"
         ```sql
         WITH first_order AS (
+            SELECT
+                customer_id,
+                MIN(ordered_at) AS first_ordered_at
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+            GROUP BY customer_id
+        ),
+        repeat_order AS (
+            SELECT
+                fo.customer_id,
+                fo.first_ordered_at,
+                MIN(o.ordered_at) AS second_ordered_at
+            FROM first_order AS fo
+            INNER JOIN orders AS o
+                ON fo.customer_id = o.customer_id
+               AND o.ordered_at > fo.first_ordered_at
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+            GROUP BY fo.customer_id, fo.first_ordered_at
+        )
         SELECT
-            customer_id,
-            MIN(ordered_at) AS first_ordered_at
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-        GROUP BY customer_id
-    ),
-    repeat_order AS (
-        SELECT
-            fo.customer_id,
-            fo.first_ordered_at,
-            MIN(o.ordered_at) AS second_ordered_at
+            COUNT(DISTINCT fo.customer_id) AS total_customers,
+            COUNT(DISTINCT CASE
+                WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 30
+                THEN fo.customer_id
+            END) AS repurchase_30d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 30
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_30d_pct,
+            COUNT(DISTINCT CASE
+                WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 60
+                THEN fo.customer_id
+            END) AS repurchase_60d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 60
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_60d_pct,
+            COUNT(DISTINCT CASE
+                WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 90
+                THEN fo.customer_id
+            END) AS repurchase_90d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 90
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_90d_pct
         FROM first_order AS fo
-        INNER JOIN orders AS o
-            ON fo.customer_id = o.customer_id
-           AND o.ordered_at > fo.first_ordered_at
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-        GROUP BY fo.customer_id, fo.first_ordered_at
-    )
-    SELECT
-        COUNT(DISTINCT fo.customer_id) AS total_customers,
-        COUNT(DISTINCT CASE
-            WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 30
-            THEN fo.customer_id
-        END) AS repurchase_30d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 30
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_30d_pct,
-        COUNT(DISTINCT CASE
-            WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 60
-            THEN fo.customer_id
-        END) AS repurchase_60d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 60
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_60d_pct,
-        COUNT(DISTINCT CASE
-            WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 90
-            THEN fo.customer_id
-        END) AS repurchase_90d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN JULIANDAY(ro.second_ordered_at) - JULIANDAY(fo.first_ordered_at) <= 90
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_90d_pct
-    FROM first_order AS fo
-    LEFT JOIN repeat_order AS ro ON fo.customer_id = ro.customer_id;
+        LEFT JOIN repeat_order AS ro ON fo.customer_id = ro.customer_id;
         ```
 
     === "Oracle"
         ```sql
         WITH first_order AS (
+            SELECT
+                customer_id,
+                MIN(ordered_at) AS first_ordered_at
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+            GROUP BY customer_id
+        ),
+        repeat_order AS (
+            SELECT
+                fo.customer_id,
+                fo.first_ordered_at,
+                MIN(o.ordered_at) AS second_ordered_at
+            FROM first_order fo
+            INNER JOIN orders o
+                ON fo.customer_id = o.customer_id
+               AND o.ordered_at > fo.first_ordered_at
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+            GROUP BY fo.customer_id, fo.first_ordered_at
+        )
         SELECT
-            customer_id,
-            MIN(ordered_at) AS first_ordered_at
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-        GROUP BY customer_id
-    ),
-    repeat_order AS (
-        SELECT
-            fo.customer_id,
-            fo.first_ordered_at,
-            MIN(o.ordered_at) AS second_ordered_at
+            COUNT(DISTINCT fo.customer_id) AS total_customers,
+            COUNT(DISTINCT CASE
+                WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 30
+                THEN fo.customer_id
+            END) AS repurchase_30d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 30
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_30d_pct,
+            COUNT(DISTINCT CASE
+                WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 60
+                THEN fo.customer_id
+            END) AS repurchase_60d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 60
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_60d_pct,
+            COUNT(DISTINCT CASE
+                WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 90
+                THEN fo.customer_id
+            END) AS repurchase_90d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 90
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_90d_pct
         FROM first_order fo
-        INNER JOIN orders o
-            ON fo.customer_id = o.customer_id
-           AND o.ordered_at > fo.first_ordered_at
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-        GROUP BY fo.customer_id, fo.first_ordered_at
-    )
-    SELECT
-        COUNT(DISTINCT fo.customer_id) AS total_customers,
-        COUNT(DISTINCT CASE
-            WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 30
-            THEN fo.customer_id
-        END) AS repurchase_30d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 30
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_30d_pct,
-        COUNT(DISTINCT CASE
-            WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 60
-            THEN fo.customer_id
-        END) AS repurchase_60d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 60
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_60d_pct,
-        COUNT(DISTINCT CASE
-            WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 90
-            THEN fo.customer_id
-        END) AS repurchase_90d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN CAST(ro.second_ordered_at AS DATE) - CAST(fo.first_ordered_at AS DATE) <= 90
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_90d_pct
-    FROM first_order fo
-    LEFT JOIN repeat_order ro ON fo.customer_id = ro.customer_id;
+        LEFT JOIN repeat_order ro ON fo.customer_id = ro.customer_id;
         ```
 
     === "SQL Server"
         ```sql
         WITH first_order AS (
+            SELECT
+                customer_id,
+                MIN(ordered_at) AS first_ordered_at
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+            GROUP BY customer_id
+        ),
+        repeat_order AS (
+            SELECT
+                fo.customer_id,
+                fo.first_ordered_at,
+                MIN(o.ordered_at) AS second_ordered_at
+            FROM first_order AS fo
+            INNER JOIN orders AS o
+                ON fo.customer_id = o.customer_id
+               AND o.ordered_at > fo.first_ordered_at
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+            GROUP BY fo.customer_id, fo.first_ordered_at
+        )
         SELECT
-            customer_id,
-            MIN(ordered_at) AS first_ordered_at
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-        GROUP BY customer_id
-    ),
-    repeat_order AS (
-        SELECT
-            fo.customer_id,
-            fo.first_ordered_at,
-            MIN(o.ordered_at) AS second_ordered_at
+            COUNT(DISTINCT fo.customer_id) AS total_customers,
+            COUNT(DISTINCT CASE
+                WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 30
+                THEN fo.customer_id
+            END) AS repurchase_30d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 30
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_30d_pct,
+            COUNT(DISTINCT CASE
+                WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 60
+                THEN fo.customer_id
+            END) AS repurchase_60d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 60
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_60d_pct,
+            COUNT(DISTINCT CASE
+                WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 90
+                THEN fo.customer_id
+            END) AS repurchase_90d,
+            ROUND(100.0 * COUNT(DISTINCT CASE
+                WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 90
+                THEN fo.customer_id
+            END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_90d_pct
         FROM first_order AS fo
-        INNER JOIN orders AS o
-            ON fo.customer_id = o.customer_id
-           AND o.ordered_at > fo.first_ordered_at
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-        GROUP BY fo.customer_id, fo.first_ordered_at
-    )
-    SELECT
-        COUNT(DISTINCT fo.customer_id) AS total_customers,
-        COUNT(DISTINCT CASE
-            WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 30
-            THEN fo.customer_id
-        END) AS repurchase_30d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 30
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_30d_pct,
-        COUNT(DISTINCT CASE
-            WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 60
-            THEN fo.customer_id
-        END) AS repurchase_60d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 60
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_60d_pct,
-        COUNT(DISTINCT CASE
-            WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 90
-            THEN fo.customer_id
-        END) AS repurchase_90d,
-        ROUND(100.0 * COUNT(DISTINCT CASE
-            WHEN DATEDIFF(DAY, fo.first_ordered_at, ro.second_ordered_at) <= 90
-            THEN fo.customer_id
-        END) / COUNT(DISTINCT fo.customer_id), 1) AS repurchase_90d_pct
-    FROM first_order AS fo
-    LEFT JOIN repeat_order AS ro ON fo.customer_id = ro.customer_id;
+        LEFT JOIN repeat_order AS ro ON fo.customer_id = ro.customer_id;
         ```
 
 
@@ -1678,108 +1678,108 @@ point_transactions의 SUM(amount)과 customers.point_balance가
     === "SQLite"
         ```sql
         WITH promo_daily AS (
+            SELECT
+                pr.id AS promo_id,
+                pr.name AS promo_name,
+                ROUND(SUM(o.total_amount), 0) AS promo_revenue,
+                CAST(JULIANDAY(pr.ended_at) - JULIANDAY(pr.started_at) + 1 AS INTEGER) AS promo_days
+            FROM promotions AS pr
+            INNER JOIN orders AS o
+                ON o.ordered_at BETWEEN pr.started_at AND pr.ended_at
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+            WHERE pr.started_at >= '2024-01-01'
+            GROUP BY pr.id, pr.name, pr.started_at, pr.ended_at
+        ),
+        overall_daily AS (
+            SELECT
+                ROUND(SUM(total_amount) / 365.0, 0) AS avg_daily_revenue
+            FROM orders
+            WHERE ordered_at LIKE '2024%'
+              AND status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            pr.id AS promo_id,
-            pr.name AS promo_name,
-            ROUND(SUM(o.total_amount), 0) AS promo_revenue,
-            CAST(JULIANDAY(pr.ended_at) - JULIANDAY(pr.started_at) + 1 AS INTEGER) AS promo_days
-        FROM promotions AS pr
-        INNER JOIN orders AS o
-            ON o.ordered_at BETWEEN pr.started_at AND pr.ended_at
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-        WHERE pr.started_at >= '2024-01-01'
-        GROUP BY pr.id, pr.name, pr.started_at, pr.ended_at
-    ),
-    overall_daily AS (
-        SELECT
-            ROUND(SUM(total_amount) / 365.0, 0) AS avg_daily_revenue
-        FROM orders
-        WHERE ordered_at LIKE '2024%'
-          AND status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        pd.promo_name,
-        pd.promo_revenue,
-        pd.promo_days,
-        ROUND(1.0 * pd.promo_revenue / pd.promo_days, 0) AS promo_avg_daily,
-        od.avg_daily_revenue AS baseline_avg_daily,
-        ROUND(100.0 * ((1.0 * pd.promo_revenue / pd.promo_days) - od.avg_daily_revenue)
-            / od.avg_daily_revenue, 1) AS lift_pct
-    FROM promo_daily AS pd
-    CROSS JOIN overall_daily AS od
-    ORDER BY lift_pct DESC
-    LIMIT 15;
+            pd.promo_name,
+            pd.promo_revenue,
+            pd.promo_days,
+            ROUND(1.0 * pd.promo_revenue / pd.promo_days, 0) AS promo_avg_daily,
+            od.avg_daily_revenue AS baseline_avg_daily,
+            ROUND(100.0 * ((1.0 * pd.promo_revenue / pd.promo_days) - od.avg_daily_revenue)
+                / od.avg_daily_revenue, 1) AS lift_pct
+        FROM promo_daily AS pd
+        CROSS JOIN overall_daily AS od
+        ORDER BY lift_pct DESC
+        LIMIT 15;
         ```
 
     === "Oracle"
         ```sql
         WITH promo_daily AS (
+            SELECT
+                pr.id AS promo_id,
+                pr.name AS promo_name,
+                ROUND(SUM(o.total_amount), 0) AS promo_revenue,
+                CAST(pr.ended_at AS DATE) - CAST(pr.started_at AS DATE) + 1 AS promo_days
+            FROM promotions pr
+            INNER JOIN orders o
+                ON o.ordered_at BETWEEN pr.started_at AND pr.ended_at
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+            WHERE pr.started_at >= '2024-01-01'
+            GROUP BY pr.id, pr.name, pr.started_at, pr.ended_at
+        ),
+        overall_daily AS (
+            SELECT
+                ROUND(SUM(total_amount) / 365.0, 0) AS avg_daily_revenue
+            FROM orders
+            WHERE ordered_at LIKE '2024%'
+              AND status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
         SELECT
-            pr.id AS promo_id,
-            pr.name AS promo_name,
-            ROUND(SUM(o.total_amount), 0) AS promo_revenue,
-            CAST(pr.ended_at AS DATE) - CAST(pr.started_at AS DATE) + 1 AS promo_days
-        FROM promotions pr
-        INNER JOIN orders o
-            ON o.ordered_at BETWEEN pr.started_at AND pr.ended_at
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-        WHERE pr.started_at >= '2024-01-01'
-        GROUP BY pr.id, pr.name, pr.started_at, pr.ended_at
-    ),
-    overall_daily AS (
-        SELECT
-            ROUND(SUM(total_amount) / 365.0, 0) AS avg_daily_revenue
-        FROM orders
-        WHERE ordered_at LIKE '2024%'
-          AND status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT
-        pd.promo_name,
-        pd.promo_revenue,
-        pd.promo_days,
-        ROUND(1.0 * pd.promo_revenue / pd.promo_days, 0) AS promo_avg_daily,
-        od.avg_daily_revenue AS baseline_avg_daily,
-        ROUND(100.0 * ((1.0 * pd.promo_revenue / pd.promo_days) - od.avg_daily_revenue)
-            / od.avg_daily_revenue, 1) AS lift_pct
-    FROM promo_daily pd
-    CROSS JOIN overall_daily od
-    ORDER BY lift_pct DESC
-    FETCH FIRST 15 ROWS ONLY;
+            pd.promo_name,
+            pd.promo_revenue,
+            pd.promo_days,
+            ROUND(1.0 * pd.promo_revenue / pd.promo_days, 0) AS promo_avg_daily,
+            od.avg_daily_revenue AS baseline_avg_daily,
+            ROUND(100.0 * ((1.0 * pd.promo_revenue / pd.promo_days) - od.avg_daily_revenue)
+                / od.avg_daily_revenue, 1) AS lift_pct
+        FROM promo_daily pd
+        CROSS JOIN overall_daily od
+        ORDER BY lift_pct DESC
+        FETCH FIRST 15 ROWS ONLY;
         ```
 
     === "SQL Server"
         ```sql
         WITH promo_daily AS (
-        SELECT
-            pr.id AS promo_id,
-            pr.name AS promo_name,
-            ROUND(SUM(o.total_amount), 0) AS promo_revenue,
-            DATEDIFF(DAY, pr.started_at, pr.ended_at) + 1 AS promo_days
-        FROM promotions AS pr
-        INNER JOIN orders AS o
-            ON o.ordered_at BETWEEN pr.started_at AND pr.ended_at
-           AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
-        WHERE pr.started_at >= '2024-01-01'
-        GROUP BY pr.id, pr.name, pr.started_at, pr.ended_at
-    ),
-    overall_daily AS (
-        SELECT
-            ROUND(SUM(total_amount) / 365.0, 0) AS avg_daily_revenue
-        FROM orders
-        WHERE ordered_at LIKE '2024%'
-          AND status NOT IN ('cancelled', 'returned', 'return_requested')
-    )
-    SELECT TOP 15
-        pd.promo_name,
-        pd.promo_revenue,
-        pd.promo_days,
-        ROUND(1.0 * pd.promo_revenue / pd.promo_days, 0) AS promo_avg_daily,
-        od.avg_daily_revenue AS baseline_avg_daily,
-        ROUND(100.0 * ((1.0 * pd.promo_revenue / pd.promo_days) - od.avg_daily_revenue)
-            / od.avg_daily_revenue, 1) AS lift_pct
-    FROM promo_daily AS pd
-    CROSS JOIN overall_daily AS od
-    ORDER BY lift_pct DESC;
+            SELECT
+                pr.id AS promo_id,
+                pr.name AS promo_name,
+                ROUND(SUM(o.total_amount), 0) AS promo_revenue,
+                DATEDIFF(DAY, pr.started_at, pr.ended_at) + 1 AS promo_days
+            FROM promotions AS pr
+            INNER JOIN orders AS o
+                ON o.ordered_at BETWEEN pr.started_at AND pr.ended_at
+               AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
+            WHERE pr.started_at >= '2024-01-01'
+            GROUP BY pr.id, pr.name, pr.started_at, pr.ended_at
+        ),
+        overall_daily AS (
+            SELECT
+                ROUND(SUM(total_amount) / 365.0, 0) AS avg_daily_revenue
+            FROM orders
+            WHERE ordered_at LIKE '2024%'
+              AND status NOT IN ('cancelled', 'returned', 'return_requested')
+        )
+        SELECT TOP 15
+            pd.promo_name,
+            pd.promo_revenue,
+            pd.promo_days,
+            ROUND(1.0 * pd.promo_revenue / pd.promo_days, 0) AS promo_avg_daily,
+            od.avg_daily_revenue AS baseline_avg_daily,
+            ROUND(100.0 * ((1.0 * pd.promo_revenue / pd.promo_days) - od.avg_daily_revenue)
+                / od.avg_daily_revenue, 1) AS lift_pct
+        FROM promo_daily AS pd
+        CROSS JOIN overall_daily AS od
+        ORDER BY lift_pct DESC;
         ```
 
 
@@ -1929,76 +1929,76 @@ customer_grade_history에서 연속 하락(downgrade)이 2회 이상인 고객�
     === "SQLite"
         ```sql
         WITH monthly_carrier AS (
+            SELECT
+                carrier,
+                SUBSTR(shipped_at, 1, 7) AS ship_month,
+                COUNT(*) AS delivery_count,
+                ROUND(AVG(JULIANDAY(delivered_at) - JULIANDAY(shipped_at)), 2) AS avg_days
+            FROM shipping
+            WHERE delivered_at IS NOT NULL
+              AND shipped_at IS NOT NULL
+              AND shipped_at >= '2024-01-01'
+            GROUP BY carrier, SUBSTR(shipped_at, 1, 7)
+        )
         SELECT
             carrier,
-            SUBSTR(shipped_at, 1, 7) AS ship_month,
-            COUNT(*) AS delivery_count,
-            ROUND(AVG(JULIANDAY(delivered_at) - JULIANDAY(shipped_at)), 2) AS avg_days
-        FROM shipping
-        WHERE delivered_at IS NOT NULL
-          AND shipped_at IS NOT NULL
-          AND shipped_at >= '2024-01-01'
-        GROUP BY carrier, SUBSTR(shipped_at, 1, 7)
-    )
-    SELECT
-        carrier,
-        ship_month,
-        delivery_count,
-        avg_days,
-        LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month) AS prev_month_days,
-        ROUND(avg_days - LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month), 2) AS mom_change
-    FROM monthly_carrier
-    ORDER BY carrier, ship_month;
+            ship_month,
+            delivery_count,
+            avg_days,
+            LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month) AS prev_month_days,
+            ROUND(avg_days - LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month), 2) AS mom_change
+        FROM monthly_carrier
+        ORDER BY carrier, ship_month;
         ```
 
     === "Oracle"
         ```sql
         WITH monthly_carrier AS (
+            SELECT
+                carrier,
+                SUBSTR(shipped_at, 1, 7) AS ship_month,
+                COUNT(*) AS delivery_count,
+                ROUND(AVG(CAST(delivered_at AS DATE) - CAST(shipped_at AS DATE)), 2) AS avg_days
+            FROM shipping
+            WHERE delivered_at IS NOT NULL
+              AND shipped_at IS NOT NULL
+              AND shipped_at >= '2024-01-01'
+            GROUP BY carrier, SUBSTR(shipped_at, 1, 7)
+        )
         SELECT
             carrier,
-            SUBSTR(shipped_at, 1, 7) AS ship_month,
-            COUNT(*) AS delivery_count,
-            ROUND(AVG(CAST(delivered_at AS DATE) - CAST(shipped_at AS DATE)), 2) AS avg_days
-        FROM shipping
-        WHERE delivered_at IS NOT NULL
-          AND shipped_at IS NOT NULL
-          AND shipped_at >= '2024-01-01'
-        GROUP BY carrier, SUBSTR(shipped_at, 1, 7)
-    )
-    SELECT
-        carrier,
-        ship_month,
-        delivery_count,
-        avg_days,
-        LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month) AS prev_month_days,
-        ROUND(avg_days - LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month), 2) AS mom_change
-    FROM monthly_carrier
-    ORDER BY carrier, ship_month;
+            ship_month,
+            delivery_count,
+            avg_days,
+            LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month) AS prev_month_days,
+            ROUND(avg_days - LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month), 2) AS mom_change
+        FROM monthly_carrier
+        ORDER BY carrier, ship_month;
         ```
 
     === "SQL Server"
         ```sql
         WITH monthly_carrier AS (
+            SELECT
+                carrier,
+                SUBSTRING(shipped_at, 1, 7) AS ship_month,
+                COUNT(*) AS delivery_count,
+                ROUND(AVG(CAST(DATEDIFF(DAY, shipped_at, delivered_at) AS FLOAT)), 2) AS avg_days
+            FROM shipping
+            WHERE delivered_at IS NOT NULL
+              AND shipped_at IS NOT NULL
+              AND shipped_at >= '2024-01-01'
+            GROUP BY carrier, SUBSTRING(shipped_at, 1, 7)
+        )
         SELECT
             carrier,
-            SUBSTRING(shipped_at, 1, 7) AS ship_month,
-            COUNT(*) AS delivery_count,
-            ROUND(AVG(CAST(DATEDIFF(DAY, shipped_at, delivered_at) AS FLOAT)), 2) AS avg_days
-        FROM shipping
-        WHERE delivered_at IS NOT NULL
-          AND shipped_at IS NOT NULL
-          AND shipped_at >= '2024-01-01'
-        GROUP BY carrier, SUBSTRING(shipped_at, 1, 7)
-    )
-    SELECT
-        carrier,
-        ship_month,
-        delivery_count,
-        avg_days,
-        LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month) AS prev_month_days,
-        ROUND(avg_days - LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month), 2) AS mom_change
-    FROM monthly_carrier
-    ORDER BY carrier, ship_month;
+            ship_month,
+            delivery_count,
+            avg_days,
+            LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month) AS prev_month_days,
+            ROUND(avg_days - LAG(avg_days) OVER (PARTITION BY carrier ORDER BY ship_month), 2) AS mom_change
+        FROM monthly_carrier
+        ORDER BY carrier, ship_month;
         ```
 
 
@@ -2036,133 +2036,133 @@ customer_grade_history에서 연속 하락(downgrade)이 2회 이상인 고객�
     === "SQLite"
         ```sql
         WITH daily AS (
+            SELECT
+                SUBSTR(ordered_at, 1, 10) AS order_date,
+                ROUND(SUM(total_amount), 2) AS revenue
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+              AND ordered_at >= '2024-01-01'
+            GROUP BY SUBSTR(ordered_at, 1, 10)
+        ),
+        with_flag AS (
+            SELECT
+                order_date,
+                revenue,
+                LAG(revenue) OVER (ORDER BY order_date) AS prev_revenue,
+                CASE
+                    WHEN revenue > LAG(revenue) OVER (ORDER BY order_date) THEN 1
+                    ELSE 0
+                END AS is_increase
+            FROM daily
+        ),
+        with_group AS (
+            SELECT
+                order_date,
+                revenue,
+                is_increase,
+                SUM(CASE WHEN is_increase = 0 THEN 1 ELSE 0 END) OVER (
+                    ORDER BY order_date
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS grp
+            FROM with_flag
+        )
         SELECT
-            SUBSTR(ordered_at, 1, 10) AS order_date,
-            ROUND(SUM(total_amount), 2) AS revenue
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-          AND ordered_at >= '2024-01-01'
-        GROUP BY SUBSTR(ordered_at, 1, 10)
-    ),
-    with_flag AS (
-        SELECT
-            order_date,
-            revenue,
-            LAG(revenue) OVER (ORDER BY order_date) AS prev_revenue,
-            CASE
-                WHEN revenue > LAG(revenue) OVER (ORDER BY order_date) THEN 1
-                ELSE 0
-            END AS is_increase
-        FROM daily
-    ),
-    with_group AS (
-        SELECT
-            order_date,
-            revenue,
-            is_increase,
-            SUM(CASE WHEN is_increase = 0 THEN 1 ELSE 0 END) OVER (
-                ORDER BY order_date
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS grp
-        FROM with_flag
-    )
-    SELECT
-        MIN(order_date) AS start_date,
-        MAX(order_date) AS end_date,
-        COUNT(*) AS streak_days
-    FROM with_group
-    WHERE is_increase = 1
-    GROUP BY grp
-    HAVING COUNT(*) >= 3
-    ORDER BY start_date;
+            MIN(order_date) AS start_date,
+            MAX(order_date) AS end_date,
+            COUNT(*) AS streak_days
+        FROM with_group
+        WHERE is_increase = 1
+        GROUP BY grp
+        HAVING COUNT(*) >= 3
+        ORDER BY start_date;
         ```
 
     === "Oracle"
         ```sql
         WITH daily AS (
+            SELECT
+                SUBSTR(ordered_at, 1, 10) AS order_date,
+                ROUND(SUM(total_amount), 2) AS revenue
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+              AND ordered_at >= '2024-01-01'
+            GROUP BY SUBSTR(ordered_at, 1, 10)
+        ),
+        with_flag AS (
+            SELECT
+                order_date,
+                revenue,
+                LAG(revenue) OVER (ORDER BY order_date) AS prev_revenue,
+                CASE
+                    WHEN revenue > LAG(revenue) OVER (ORDER BY order_date) THEN 1
+                    ELSE 0
+                END AS is_increase
+            FROM daily
+        ),
+        with_group AS (
+            SELECT
+                order_date,
+                revenue,
+                is_increase,
+                SUM(CASE WHEN is_increase = 0 THEN 1 ELSE 0 END) OVER (
+                    ORDER BY order_date
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS grp
+            FROM with_flag
+        )
         SELECT
-            SUBSTR(ordered_at, 1, 10) AS order_date,
-            ROUND(SUM(total_amount), 2) AS revenue
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-          AND ordered_at >= '2024-01-01'
-        GROUP BY SUBSTR(ordered_at, 1, 10)
-    ),
-    with_flag AS (
-        SELECT
-            order_date,
-            revenue,
-            LAG(revenue) OVER (ORDER BY order_date) AS prev_revenue,
-            CASE
-                WHEN revenue > LAG(revenue) OVER (ORDER BY order_date) THEN 1
-                ELSE 0
-            END AS is_increase
-        FROM daily
-    ),
-    with_group AS (
-        SELECT
-            order_date,
-            revenue,
-            is_increase,
-            SUM(CASE WHEN is_increase = 0 THEN 1 ELSE 0 END) OVER (
-                ORDER BY order_date
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS grp
-        FROM with_flag
-    )
-    SELECT
-        MIN(order_date) AS start_date,
-        MAX(order_date) AS end_date,
-        COUNT(*) AS streak_days
-    FROM with_group
-    WHERE is_increase = 1
-    GROUP BY grp
-    HAVING COUNT(*) >= 3
-    ORDER BY start_date;
+            MIN(order_date) AS start_date,
+            MAX(order_date) AS end_date,
+            COUNT(*) AS streak_days
+        FROM with_group
+        WHERE is_increase = 1
+        GROUP BY grp
+        HAVING COUNT(*) >= 3
+        ORDER BY start_date;
         ```
 
     === "SQL Server"
         ```sql
         WITH daily AS (
+            SELECT
+                SUBSTRING(ordered_at, 1, 10) AS order_date,
+                ROUND(SUM(total_amount), 2) AS revenue
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+              AND ordered_at >= '2024-01-01'
+            GROUP BY SUBSTRING(ordered_at, 1, 10)
+        ),
+        with_flag AS (
+            SELECT
+                order_date,
+                revenue,
+                LAG(revenue) OVER (ORDER BY order_date) AS prev_revenue,
+                CASE
+                    WHEN revenue > LAG(revenue) OVER (ORDER BY order_date) THEN 1
+                    ELSE 0
+                END AS is_increase
+            FROM daily
+        ),
+        with_group AS (
+            SELECT
+                order_date,
+                revenue,
+                is_increase,
+                SUM(CASE WHEN is_increase = 0 THEN 1 ELSE 0 END) OVER (
+                    ORDER BY order_date
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS grp
+            FROM with_flag
+        )
         SELECT
-            SUBSTRING(ordered_at, 1, 10) AS order_date,
-            ROUND(SUM(total_amount), 2) AS revenue
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-          AND ordered_at >= '2024-01-01'
-        GROUP BY SUBSTRING(ordered_at, 1, 10)
-    ),
-    with_flag AS (
-        SELECT
-            order_date,
-            revenue,
-            LAG(revenue) OVER (ORDER BY order_date) AS prev_revenue,
-            CASE
-                WHEN revenue > LAG(revenue) OVER (ORDER BY order_date) THEN 1
-                ELSE 0
-            END AS is_increase
-        FROM daily
-    ),
-    with_group AS (
-        SELECT
-            order_date,
-            revenue,
-            is_increase,
-            SUM(CASE WHEN is_increase = 0 THEN 1 ELSE 0 END) OVER (
-                ORDER BY order_date
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS grp
-        FROM with_flag
-    )
-    SELECT
-        MIN(order_date) AS start_date,
-        MAX(order_date) AS end_date,
-        COUNT(*) AS streak_days
-    FROM with_group
-    WHERE is_increase = 1
-    GROUP BY grp
-    HAVING COUNT(*) >= 3
-    ORDER BY start_date;
+            MIN(order_date) AS start_date,
+            MAX(order_date) AS end_date,
+            COUNT(*) AS streak_days
+        FROM with_group
+        WHERE is_increase = 1
+        GROUP BY grp
+        HAVING COUNT(*) >= 3
+        ORDER BY start_date;
         ```
 
 
@@ -2200,129 +2200,129 @@ customer_grade_history에서 연속 하락(downgrade)이 2회 이상인 고객�
     === "SQLite"
         ```sql
         WITH customer_months AS (
-        SELECT DISTINCT
-            customer_id,
-            SUBSTR(ordered_at, 1, 7) AS order_month,
-            CAST(SUBSTR(ordered_at, 1, 4) AS INTEGER) * 12
-                + CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) AS month_num
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-    ),
-    with_rn AS (
+            SELECT DISTINCT
+                customer_id,
+                SUBSTR(ordered_at, 1, 7) AS order_month,
+                CAST(SUBSTR(ordered_at, 1, 4) AS INTEGER) * 12
+                    + CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) AS month_num
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+        ),
+        with_rn AS (
+            SELECT
+                customer_id,
+                order_month,
+                month_num,
+                month_num - ROW_NUMBER() OVER (
+                    PARTITION BY customer_id ORDER BY month_num
+                ) AS grp
+            FROM customer_months
+        ),
+        streaks AS (
+            SELECT
+                customer_id,
+                MIN(order_month) AS start_month,
+                MAX(order_month) AS end_month,
+                COUNT(*) AS consecutive_months
+            FROM with_rn
+            GROUP BY customer_id, grp
+            HAVING COUNT(*) >= 5
+        )
         SELECT
-            customer_id,
-            order_month,
-            month_num,
-            month_num - ROW_NUMBER() OVER (
-                PARTITION BY customer_id ORDER BY month_num
-            ) AS grp
-        FROM customer_months
-    ),
-    streaks AS (
-        SELECT
-            customer_id,
-            MIN(order_month) AS start_month,
-            MAX(order_month) AS end_month,
-            COUNT(*) AS consecutive_months
-        FROM with_rn
-        GROUP BY customer_id, grp
-        HAVING COUNT(*) >= 5
-    )
-    SELECT
-        c.name AS customer_name,
-        c.grade,
-        s.start_month,
-        s.end_month,
-        s.consecutive_months
-    FROM streaks AS s
-    INNER JOIN customers AS c ON s.customer_id = c.id
-    ORDER BY s.consecutive_months DESC, c.name
-    LIMIT 20;
+            c.name AS customer_name,
+            c.grade,
+            s.start_month,
+            s.end_month,
+            s.consecutive_months
+        FROM streaks AS s
+        INNER JOIN customers AS c ON s.customer_id = c.id
+        ORDER BY s.consecutive_months DESC, c.name
+        LIMIT 20;
         ```
 
     === "Oracle"
         ```sql
         WITH customer_months AS (
-        SELECT DISTINCT
-            customer_id,
-            SUBSTR(ordered_at, 1, 7) AS order_month,
-            CAST(SUBSTR(ordered_at, 1, 4) AS NUMBER) * 12
-                + CAST(SUBSTR(ordered_at, 6, 2) AS NUMBER) AS month_num
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-    ),
-    with_rn AS (
+            SELECT DISTINCT
+                customer_id,
+                SUBSTR(ordered_at, 1, 7) AS order_month,
+                CAST(SUBSTR(ordered_at, 1, 4) AS NUMBER) * 12
+                    + CAST(SUBSTR(ordered_at, 6, 2) AS NUMBER) AS month_num
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+        ),
+        with_rn AS (
+            SELECT
+                customer_id,
+                order_month,
+                month_num,
+                month_num - ROW_NUMBER() OVER (
+                    PARTITION BY customer_id ORDER BY month_num
+                ) AS grp
+            FROM customer_months
+        ),
+        streaks AS (
+            SELECT
+                customer_id,
+                MIN(order_month) AS start_month,
+                MAX(order_month) AS end_month,
+                COUNT(*) AS consecutive_months
+            FROM with_rn
+            GROUP BY customer_id, grp
+            HAVING COUNT(*) >= 5
+        )
         SELECT
-            customer_id,
-            order_month,
-            month_num,
-            month_num - ROW_NUMBER() OVER (
-                PARTITION BY customer_id ORDER BY month_num
-            ) AS grp
-        FROM customer_months
-    ),
-    streaks AS (
-        SELECT
-            customer_id,
-            MIN(order_month) AS start_month,
-            MAX(order_month) AS end_month,
-            COUNT(*) AS consecutive_months
-        FROM with_rn
-        GROUP BY customer_id, grp
-        HAVING COUNT(*) >= 5
-    )
-    SELECT
-        c.name AS customer_name,
-        c.grade,
-        s.start_month,
-        s.end_month,
-        s.consecutive_months
-    FROM streaks s
-    INNER JOIN customers c ON s.customer_id = c.id
-    ORDER BY s.consecutive_months DESC, c.name
-    FETCH FIRST 20 ROWS ONLY;
+            c.name AS customer_name,
+            c.grade,
+            s.start_month,
+            s.end_month,
+            s.consecutive_months
+        FROM streaks s
+        INNER JOIN customers c ON s.customer_id = c.id
+        ORDER BY s.consecutive_months DESC, c.name
+        FETCH FIRST 20 ROWS ONLY;
         ```
 
     === "SQL Server"
         ```sql
         WITH customer_months AS (
-        SELECT DISTINCT
-            customer_id,
-            SUBSTRING(ordered_at, 1, 7) AS order_month,
-            CAST(SUBSTRING(ordered_at, 1, 4) AS INT) * 12
-                + CAST(SUBSTRING(ordered_at, 6, 2) AS INT) AS month_num
-        FROM orders
-        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
-    ),
-    with_rn AS (
-        SELECT
-            customer_id,
-            order_month,
-            month_num,
-            month_num - ROW_NUMBER() OVER (
-                PARTITION BY customer_id ORDER BY month_num
-            ) AS grp
-        FROM customer_months
-    ),
-    streaks AS (
-        SELECT
-            customer_id,
-            MIN(order_month) AS start_month,
-            MAX(order_month) AS end_month,
-            COUNT(*) AS consecutive_months
-        FROM with_rn
-        GROUP BY customer_id, grp
-        HAVING COUNT(*) >= 5
-    )
-    SELECT TOP 20
-        c.name AS customer_name,
-        c.grade,
-        s.start_month,
-        s.end_month,
-        s.consecutive_months
-    FROM streaks AS s
-    INNER JOIN customers AS c ON s.customer_id = c.id
-    ORDER BY s.consecutive_months DESC, c.name;
+            SELECT DISTINCT
+                customer_id,
+                SUBSTRING(ordered_at, 1, 7) AS order_month,
+                CAST(SUBSTRING(ordered_at, 1, 4) AS INT) * 12
+                    + CAST(SUBSTRING(ordered_at, 6, 2) AS INT) AS month_num
+            FROM orders
+            WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+        ),
+        with_rn AS (
+            SELECT
+                customer_id,
+                order_month,
+                month_num,
+                month_num - ROW_NUMBER() OVER (
+                    PARTITION BY customer_id ORDER BY month_num
+                ) AS grp
+            FROM customer_months
+        ),
+        streaks AS (
+            SELECT
+                customer_id,
+                MIN(order_month) AS start_month,
+                MAX(order_month) AS end_month,
+                COUNT(*) AS consecutive_months
+            FROM with_rn
+            GROUP BY customer_id, grp
+            HAVING COUNT(*) >= 5
+        )
+        SELECT TOP 20
+            c.name AS customer_name,
+            c.grade,
+            s.start_month,
+            s.end_month,
+            s.consecutive_months
+        FROM streaks AS s
+        INNER JOIN customers AS c ON s.customer_id = c.id
+        ORDER BY s.consecutive_months DESC, c.name;
         ```
 
 
@@ -2360,133 +2360,133 @@ product_views를 세션으로 그룹화하세요 (같은 고객의 조회 간 30
     === "SQLite"
         ```sql
         WITH view_gaps AS (
-        SELECT
-            customer_id,
-            viewed_at,
-            CASE
-                WHEN LAG(viewed_at) OVER (
+            SELECT
+                customer_id,
+                viewed_at,
+                CASE
+                    WHEN LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) IS NULL THEN 1
+                    WHEN (JULIANDAY(viewed_at) - JULIANDAY(LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ))) * 24 * 60 > 30 THEN 1
+                    ELSE 0
+                END AS is_new_session
+            FROM product_views
+            WHERE customer_id <= 500
+        ),
+        with_session AS (
+            SELECT
+                customer_id,
+                viewed_at,
+                SUM(is_new_session) OVER (
                     PARTITION BY customer_id ORDER BY viewed_at
-                ) IS NULL THEN 1
-                WHEN (JULIANDAY(viewed_at) - JULIANDAY(LAG(viewed_at) OVER (
-                    PARTITION BY customer_id ORDER BY viewed_at
-                ))) * 24 * 60 > 30 THEN 1
-                ELSE 0
-            END AS is_new_session
-        FROM product_views
-        WHERE customer_id <= 500
-    ),
-    with_session AS (
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS session_id
+            FROM view_gaps
+        ),
+        session_stats AS (
+            SELECT
+                customer_id,
+                session_id,
+                COUNT(*) AS views_in_session
+            FROM with_session
+            GROUP BY customer_id, session_id
+        )
         SELECT
-            customer_id,
-            viewed_at,
-            SUM(is_new_session) OVER (
-                PARTITION BY customer_id ORDER BY viewed_at
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS session_id
-        FROM view_gaps
-    ),
-    session_stats AS (
-        SELECT
-            customer_id,
-            session_id,
-            COUNT(*) AS views_in_session
-        FROM with_session
-        GROUP BY customer_id, session_id
-    )
-    SELECT
-        COUNT(DISTINCT customer_id) AS total_customers,
-        COUNT(*) AS total_sessions,
-        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
-        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
-    FROM session_stats;
+            COUNT(DISTINCT customer_id) AS total_customers,
+            COUNT(*) AS total_sessions,
+            ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+            ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+        FROM session_stats;
         ```
 
     === "Oracle"
         ```sql
         WITH view_gaps AS (
-        SELECT
-            customer_id,
-            viewed_at,
-            CASE
-                WHEN LAG(viewed_at) OVER (
+            SELECT
+                customer_id,
+                viewed_at,
+                CASE
+                    WHEN LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) IS NULL THEN 1
+                    WHEN (CAST(viewed_at AS DATE) - CAST(LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) AS DATE)) * 24 * 60 > 30 THEN 1
+                    ELSE 0
+                END AS is_new_session
+            FROM product_views
+            WHERE customer_id <= 500
+        ),
+        with_session AS (
+            SELECT
+                customer_id,
+                viewed_at,
+                SUM(is_new_session) OVER (
                     PARTITION BY customer_id ORDER BY viewed_at
-                ) IS NULL THEN 1
-                WHEN (CAST(viewed_at AS DATE) - CAST(LAG(viewed_at) OVER (
-                    PARTITION BY customer_id ORDER BY viewed_at
-                ) AS DATE)) * 24 * 60 > 30 THEN 1
-                ELSE 0
-            END AS is_new_session
-        FROM product_views
-        WHERE customer_id <= 500
-    ),
-    with_session AS (
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS session_id
+            FROM view_gaps
+        ),
+        session_stats AS (
+            SELECT
+                customer_id,
+                session_id,
+                COUNT(*) AS views_in_session
+            FROM with_session
+            GROUP BY customer_id, session_id
+        )
         SELECT
-            customer_id,
-            viewed_at,
-            SUM(is_new_session) OVER (
-                PARTITION BY customer_id ORDER BY viewed_at
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS session_id
-        FROM view_gaps
-    ),
-    session_stats AS (
-        SELECT
-            customer_id,
-            session_id,
-            COUNT(*) AS views_in_session
-        FROM with_session
-        GROUP BY customer_id, session_id
-    )
-    SELECT
-        COUNT(DISTINCT customer_id) AS total_customers,
-        COUNT(*) AS total_sessions,
-        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
-        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
-    FROM session_stats;
+            COUNT(DISTINCT customer_id) AS total_customers,
+            COUNT(*) AS total_sessions,
+            ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+            ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+        FROM session_stats;
         ```
 
     === "SQL Server"
         ```sql
         WITH view_gaps AS (
-        SELECT
-            customer_id,
-            viewed_at,
-            CASE
-                WHEN LAG(viewed_at) OVER (
+            SELECT
+                customer_id,
+                viewed_at,
+                CASE
+                    WHEN LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) IS NULL THEN 1
+                    WHEN DATEDIFF(MINUTE, LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ), viewed_at) > 30 THEN 1
+                    ELSE 0
+                END AS is_new_session
+            FROM product_views
+            WHERE customer_id <= 500
+        ),
+        with_session AS (
+            SELECT
+                customer_id,
+                viewed_at,
+                SUM(is_new_session) OVER (
                     PARTITION BY customer_id ORDER BY viewed_at
-                ) IS NULL THEN 1
-                WHEN DATEDIFF(MINUTE, LAG(viewed_at) OVER (
-                    PARTITION BY customer_id ORDER BY viewed_at
-                ), viewed_at) > 30 THEN 1
-                ELSE 0
-            END AS is_new_session
-        FROM product_views
-        WHERE customer_id <= 500
-    ),
-    with_session AS (
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS session_id
+            FROM view_gaps
+        ),
+        session_stats AS (
+            SELECT
+                customer_id,
+                session_id,
+                COUNT(*) AS views_in_session
+            FROM with_session
+            GROUP BY customer_id, session_id
+        )
         SELECT
-            customer_id,
-            viewed_at,
-            SUM(is_new_session) OVER (
-                PARTITION BY customer_id ORDER BY viewed_at
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS session_id
-        FROM view_gaps
-    ),
-    session_stats AS (
-        SELECT
-            customer_id,
-            session_id,
-            COUNT(*) AS views_in_session
-        FROM with_session
-        GROUP BY customer_id, session_id
-    )
-    SELECT
-        COUNT(DISTINCT customer_id) AS total_customers,
-        COUNT(*) AS total_sessions,
-        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
-        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
-    FROM session_stats;
+            COUNT(DISTINCT customer_id) AS total_customers,
+            COUNT(*) AS total_sessions,
+            ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+            ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+        FROM session_stats;
         ```
 
 
@@ -2517,133 +2517,133 @@ c11-32와 동일하되 세션 갭을 10분으로 변경하세요.
     === "SQLite"
         ```sql
         WITH view_gaps AS (
-        SELECT
-            customer_id,
-            viewed_at,
-            CASE
-                WHEN LAG(viewed_at) OVER (
+            SELECT
+                customer_id,
+                viewed_at,
+                CASE
+                    WHEN LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) IS NULL THEN 1
+                    WHEN (JULIANDAY(viewed_at) - JULIANDAY(LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ))) * 24 * 60 > 10 THEN 1
+                    ELSE 0
+                END AS is_new_session
+            FROM product_views
+            WHERE customer_id <= 500
+        ),
+        with_session AS (
+            SELECT
+                customer_id,
+                viewed_at,
+                SUM(is_new_session) OVER (
                     PARTITION BY customer_id ORDER BY viewed_at
-                ) IS NULL THEN 1
-                WHEN (JULIANDAY(viewed_at) - JULIANDAY(LAG(viewed_at) OVER (
-                    PARTITION BY customer_id ORDER BY viewed_at
-                ))) * 24 * 60 > 10 THEN 1
-                ELSE 0
-            END AS is_new_session
-        FROM product_views
-        WHERE customer_id <= 500
-    ),
-    with_session AS (
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS session_id
+            FROM view_gaps
+        ),
+        session_stats AS (
+            SELECT
+                customer_id,
+                session_id,
+                COUNT(*) AS views_in_session
+            FROM with_session
+            GROUP BY customer_id, session_id
+        )
         SELECT
-            customer_id,
-            viewed_at,
-            SUM(is_new_session) OVER (
-                PARTITION BY customer_id ORDER BY viewed_at
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS session_id
-        FROM view_gaps
-    ),
-    session_stats AS (
-        SELECT
-            customer_id,
-            session_id,
-            COUNT(*) AS views_in_session
-        FROM with_session
-        GROUP BY customer_id, session_id
-    )
-    SELECT
-        COUNT(DISTINCT customer_id) AS total_customers,
-        COUNT(*) AS total_sessions,
-        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
-        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
-    FROM session_stats;
+            COUNT(DISTINCT customer_id) AS total_customers,
+            COUNT(*) AS total_sessions,
+            ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+            ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+        FROM session_stats;
         ```
 
     === "Oracle"
         ```sql
         WITH view_gaps AS (
-        SELECT
-            customer_id,
-            viewed_at,
-            CASE
-                WHEN LAG(viewed_at) OVER (
+            SELECT
+                customer_id,
+                viewed_at,
+                CASE
+                    WHEN LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) IS NULL THEN 1
+                    WHEN (CAST(viewed_at AS DATE) - CAST(LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) AS DATE)) * 24 * 60 > 10 THEN 1
+                    ELSE 0
+                END AS is_new_session
+            FROM product_views
+            WHERE customer_id <= 500
+        ),
+        with_session AS (
+            SELECT
+                customer_id,
+                viewed_at,
+                SUM(is_new_session) OVER (
                     PARTITION BY customer_id ORDER BY viewed_at
-                ) IS NULL THEN 1
-                WHEN (CAST(viewed_at AS DATE) - CAST(LAG(viewed_at) OVER (
-                    PARTITION BY customer_id ORDER BY viewed_at
-                ) AS DATE)) * 24 * 60 > 10 THEN 1
-                ELSE 0
-            END AS is_new_session
-        FROM product_views
-        WHERE customer_id <= 500
-    ),
-    with_session AS (
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS session_id
+            FROM view_gaps
+        ),
+        session_stats AS (
+            SELECT
+                customer_id,
+                session_id,
+                COUNT(*) AS views_in_session
+            FROM with_session
+            GROUP BY customer_id, session_id
+        )
         SELECT
-            customer_id,
-            viewed_at,
-            SUM(is_new_session) OVER (
-                PARTITION BY customer_id ORDER BY viewed_at
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS session_id
-        FROM view_gaps
-    ),
-    session_stats AS (
-        SELECT
-            customer_id,
-            session_id,
-            COUNT(*) AS views_in_session
-        FROM with_session
-        GROUP BY customer_id, session_id
-    )
-    SELECT
-        COUNT(DISTINCT customer_id) AS total_customers,
-        COUNT(*) AS total_sessions,
-        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
-        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
-    FROM session_stats;
+            COUNT(DISTINCT customer_id) AS total_customers,
+            COUNT(*) AS total_sessions,
+            ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+            ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+        FROM session_stats;
         ```
 
     === "SQL Server"
         ```sql
         WITH view_gaps AS (
-        SELECT
-            customer_id,
-            viewed_at,
-            CASE
-                WHEN LAG(viewed_at) OVER (
+            SELECT
+                customer_id,
+                viewed_at,
+                CASE
+                    WHEN LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ) IS NULL THEN 1
+                    WHEN DATEDIFF(MINUTE, LAG(viewed_at) OVER (
+                        PARTITION BY customer_id ORDER BY viewed_at
+                    ), viewed_at) > 10 THEN 1
+                    ELSE 0
+                END AS is_new_session
+            FROM product_views
+            WHERE customer_id <= 500
+        ),
+        with_session AS (
+            SELECT
+                customer_id,
+                viewed_at,
+                SUM(is_new_session) OVER (
                     PARTITION BY customer_id ORDER BY viewed_at
-                ) IS NULL THEN 1
-                WHEN DATEDIFF(MINUTE, LAG(viewed_at) OVER (
-                    PARTITION BY customer_id ORDER BY viewed_at
-                ), viewed_at) > 10 THEN 1
-                ELSE 0
-            END AS is_new_session
-        FROM product_views
-        WHERE customer_id <= 500
-    ),
-    with_session AS (
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                ) AS session_id
+            FROM view_gaps
+        ),
+        session_stats AS (
+            SELECT
+                customer_id,
+                session_id,
+                COUNT(*) AS views_in_session
+            FROM with_session
+            GROUP BY customer_id, session_id
+        )
         SELECT
-            customer_id,
-            viewed_at,
-            SUM(is_new_session) OVER (
-                PARTITION BY customer_id ORDER BY viewed_at
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            ) AS session_id
-        FROM view_gaps
-    ),
-    session_stats AS (
-        SELECT
-            customer_id,
-            session_id,
-            COUNT(*) AS views_in_session
-        FROM with_session
-        GROUP BY customer_id, session_id
-    )
-    SELECT
-        COUNT(DISTINCT customer_id) AS total_customers,
-        COUNT(*) AS total_sessions,
-        ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
-        ROUND(AVG(views_in_session), 1) AS avg_views_per_session
-    FROM session_stats;
+            COUNT(DISTINCT customer_id) AS total_customers,
+            COUNT(*) AS total_sessions,
+            ROUND(1.0 * COUNT(*) / COUNT(DISTINCT customer_id), 1) AS avg_sessions_per_customer,
+            ROUND(AVG(views_in_session), 1) AS avg_views_per_session
+        FROM session_stats;
         ```
 
 
@@ -2725,64 +2725,64 @@ SQLite에는 MEDIAN 함수가 없으므로 NTILE 또는 ROW_NUMBER로 구현합�
     === "SQLite"
         ```sql
         WITH delivery_days AS (
+            SELECT
+                carrier,
+                ROUND(JULIANDAY(delivered_at) - JULIANDAY(shipped_at), 1) AS days,
+                ROW_NUMBER() OVER (PARTITION BY carrier ORDER BY JULIANDAY(delivered_at) - JULIANDAY(shipped_at)) AS rn,
+                COUNT(*) OVER (PARTITION BY carrier) AS cnt
+            FROM shipping
+            WHERE delivered_at IS NOT NULL
+              AND shipped_at IS NOT NULL
+        )
         SELECT
             carrier,
-            ROUND(JULIANDAY(delivered_at) - JULIANDAY(shipped_at), 1) AS days,
-            ROW_NUMBER() OVER (PARTITION BY carrier ORDER BY JULIANDAY(delivered_at) - JULIANDAY(shipped_at)) AS rn,
-            COUNT(*) OVER (PARTITION BY carrier) AS cnt
-        FROM shipping
-        WHERE delivered_at IS NOT NULL
-          AND shipped_at IS NOT NULL
-    )
-    SELECT
-        carrier,
-        ROUND(AVG(days), 2) AS median_days
-    FROM delivery_days
-    WHERE rn IN (cnt / 2, cnt / 2 + 1)
-    GROUP BY carrier
-    ORDER BY median_days;
+            ROUND(AVG(days), 2) AS median_days
+        FROM delivery_days
+        WHERE rn IN (cnt / 2, cnt / 2 + 1)
+        GROUP BY carrier
+        ORDER BY median_days;
         ```
 
     === "Oracle"
         ```sql
         WITH delivery_days AS (
+            SELECT
+                carrier,
+                ROUND(CAST(delivered_at AS DATE) - CAST(shipped_at AS DATE), 1) AS days,
+                ROW_NUMBER() OVER (PARTITION BY carrier ORDER BY CAST(delivered_at AS DATE) - CAST(shipped_at AS DATE)) AS rn,
+                COUNT(*) OVER (PARTITION BY carrier) AS cnt
+            FROM shipping
+            WHERE delivered_at IS NOT NULL
+              AND shipped_at IS NOT NULL
+        )
         SELECT
             carrier,
-            ROUND(CAST(delivered_at AS DATE) - CAST(shipped_at AS DATE), 1) AS days,
-            ROW_NUMBER() OVER (PARTITION BY carrier ORDER BY CAST(delivered_at AS DATE) - CAST(shipped_at AS DATE)) AS rn,
-            COUNT(*) OVER (PARTITION BY carrier) AS cnt
-        FROM shipping
-        WHERE delivered_at IS NOT NULL
-          AND shipped_at IS NOT NULL
-    )
-    SELECT
-        carrier,
-        ROUND(AVG(days), 2) AS median_days
-    FROM delivery_days
-    WHERE rn IN (TRUNC(cnt / 2), TRUNC(cnt / 2) + 1)
-    GROUP BY carrier
-    ORDER BY median_days;
+            ROUND(AVG(days), 2) AS median_days
+        FROM delivery_days
+        WHERE rn IN (TRUNC(cnt / 2), TRUNC(cnt / 2) + 1)
+        GROUP BY carrier
+        ORDER BY median_days;
         ```
 
     === "SQL Server"
         ```sql
         WITH delivery_days AS (
+            SELECT
+                carrier,
+                ROUND(CAST(DATEDIFF(DAY, shipped_at, delivered_at) AS FLOAT), 1) AS days,
+                ROW_NUMBER() OVER (PARTITION BY carrier ORDER BY DATEDIFF(DAY, shipped_at, delivered_at)) AS rn,
+                COUNT(*) OVER (PARTITION BY carrier) AS cnt
+            FROM shipping
+            WHERE delivered_at IS NOT NULL
+              AND shipped_at IS NOT NULL
+        )
         SELECT
             carrier,
-            ROUND(CAST(DATEDIFF(DAY, shipped_at, delivered_at) AS FLOAT), 1) AS days,
-            ROW_NUMBER() OVER (PARTITION BY carrier ORDER BY DATEDIFF(DAY, shipped_at, delivered_at)) AS rn,
-            COUNT(*) OVER (PARTITION BY carrier) AS cnt
-        FROM shipping
-        WHERE delivered_at IS NOT NULL
-          AND shipped_at IS NOT NULL
-    )
-    SELECT
-        carrier,
-        ROUND(AVG(days), 2) AS median_days
-    FROM delivery_days
-    WHERE rn IN (cnt / 2, cnt / 2 + 1)
-    GROUP BY carrier
-    ORDER BY median_days;
+            ROUND(AVG(days), 2) AS median_days
+        FROM delivery_days
+        WHERE rn IN (cnt / 2, cnt / 2 + 1)
+        GROUP BY carrier
+        ORDER BY median_days;
         ```
 
 
@@ -2954,117 +2954,117 @@ product_views의 referrer_source별로 조회수와 최종 구매 전환 수를 
     === "SQLite"
         ```sql
         WITH active_days AS (
-        SELECT DISTINCT
-            customer_id,
-            SUBSTR(viewed_at, 1, 10) AS view_date
-        FROM product_views
-        WHERE customer_id <= 200
-    ),
-    with_rn AS (
+            SELECT DISTINCT
+                customer_id,
+                SUBSTR(viewed_at, 1, 10) AS view_date
+            FROM product_views
+            WHERE customer_id <= 200
+        ),
+        with_rn AS (
+            SELECT
+                customer_id,
+                view_date,
+                JULIANDAY(view_date) - ROW_NUMBER() OVER (
+                    PARTITION BY customer_id ORDER BY view_date
+                ) AS grp
+            FROM active_days
+        ),
+        islands AS (
+            SELECT
+                customer_id,
+                MIN(view_date) AS island_start,
+                MAX(view_date) AS island_end,
+                COUNT(*) AS island_days
+            FROM with_rn
+            GROUP BY customer_id, grp
+            HAVING COUNT(*) >= 3
+        )
         SELECT
-            customer_id,
-            view_date,
-            JULIANDAY(view_date) - ROW_NUMBER() OVER (
-                PARTITION BY customer_id ORDER BY view_date
-            ) AS grp
-        FROM active_days
-    ),
-    islands AS (
-        SELECT
-            customer_id,
-            MIN(view_date) AS island_start,
-            MAX(view_date) AS island_end,
-            COUNT(*) AS island_days
-        FROM with_rn
-        GROUP BY customer_id, grp
-        HAVING COUNT(*) >= 3
-    )
-    SELECT
-        c.name AS customer_name,
-        i.island_start,
-        i.island_end,
-        i.island_days
-    FROM islands AS i
-    INNER JOIN customers AS c ON i.customer_id = c.id
-    ORDER BY i.island_days DESC, c.name
-    LIMIT 20;
+            c.name AS customer_name,
+            i.island_start,
+            i.island_end,
+            i.island_days
+        FROM islands AS i
+        INNER JOIN customers AS c ON i.customer_id = c.id
+        ORDER BY i.island_days DESC, c.name
+        LIMIT 20;
         ```
 
     === "Oracle"
         ```sql
         WITH active_days AS (
-        SELECT DISTINCT
-            customer_id,
-            SUBSTR(viewed_at, 1, 10) AS view_date
-        FROM product_views
-        WHERE customer_id <= 200
-    ),
-    with_rn AS (
+            SELECT DISTINCT
+                customer_id,
+                SUBSTR(viewed_at, 1, 10) AS view_date
+            FROM product_views
+            WHERE customer_id <= 200
+        ),
+        with_rn AS (
+            SELECT
+                customer_id,
+                view_date,
+                CAST(view_date AS DATE) - ROW_NUMBER() OVER (
+                    PARTITION BY customer_id ORDER BY view_date
+                ) AS grp
+            FROM active_days
+        ),
+        islands AS (
+            SELECT
+                customer_id,
+                MIN(view_date) AS island_start,
+                MAX(view_date) AS island_end,
+                COUNT(*) AS island_days
+            FROM with_rn
+            GROUP BY customer_id, grp
+            HAVING COUNT(*) >= 3
+        )
         SELECT
-            customer_id,
-            view_date,
-            CAST(view_date AS DATE) - ROW_NUMBER() OVER (
-                PARTITION BY customer_id ORDER BY view_date
-            ) AS grp
-        FROM active_days
-    ),
-    islands AS (
-        SELECT
-            customer_id,
-            MIN(view_date) AS island_start,
-            MAX(view_date) AS island_end,
-            COUNT(*) AS island_days
-        FROM with_rn
-        GROUP BY customer_id, grp
-        HAVING COUNT(*) >= 3
-    )
-    SELECT
-        c.name AS customer_name,
-        i.island_start,
-        i.island_end,
-        i.island_days
-    FROM islands i
-    INNER JOIN customers c ON i.customer_id = c.id
-    ORDER BY i.island_days DESC, c.name
-    FETCH FIRST 20 ROWS ONLY;
+            c.name AS customer_name,
+            i.island_start,
+            i.island_end,
+            i.island_days
+        FROM islands i
+        INNER JOIN customers c ON i.customer_id = c.id
+        ORDER BY i.island_days DESC, c.name
+        FETCH FIRST 20 ROWS ONLY;
         ```
 
     === "SQL Server"
         ```sql
         WITH active_days AS (
-        SELECT DISTINCT
-            customer_id,
-            SUBSTRING(viewed_at, 1, 10) AS view_date
-        FROM product_views
-        WHERE customer_id <= 200
-    ),
-    with_rn AS (
-        SELECT
-            customer_id,
-            view_date,
-            DATEADD(DAY, -ROW_NUMBER() OVER (
-                PARTITION BY customer_id ORDER BY view_date
-            ), CAST(view_date AS DATE)) AS grp
-        FROM active_days
-    ),
-    islands AS (
-        SELECT
-            customer_id,
-            MIN(view_date) AS island_start,
-            MAX(view_date) AS island_end,
-            COUNT(*) AS island_days
-        FROM with_rn
-        GROUP BY customer_id, grp
-        HAVING COUNT(*) >= 3
-    )
-    SELECT TOP 20
-        c.name AS customer_name,
-        i.island_start,
-        i.island_end,
-        i.island_days
-    FROM islands AS i
-    INNER JOIN customers AS c ON i.customer_id = c.id
-    ORDER BY i.island_days DESC, c.name;
+            SELECT DISTINCT
+                customer_id,
+                SUBSTRING(viewed_at, 1, 10) AS view_date
+            FROM product_views
+            WHERE customer_id <= 200
+        ),
+        with_rn AS (
+            SELECT
+                customer_id,
+                view_date,
+                DATEADD(DAY, -ROW_NUMBER() OVER (
+                    PARTITION BY customer_id ORDER BY view_date
+                ), CAST(view_date AS DATE)) AS grp
+            FROM active_days
+        ),
+        islands AS (
+            SELECT
+                customer_id,
+                MIN(view_date) AS island_start,
+                MAX(view_date) AS island_end,
+                COUNT(*) AS island_days
+            FROM with_rn
+            GROUP BY customer_id, grp
+            HAVING COUNT(*) >= 3
+        )
+        SELECT TOP 20
+            c.name AS customer_name,
+            i.island_start,
+            i.island_end,
+            i.island_days
+        FROM islands AS i
+        INNER JOIN customers AS c ON i.customer_id = c.id
+        ORDER BY i.island_days DESC, c.name;
         ```
 
 
@@ -3201,80 +3201,80 @@ specs가 NULL이 아닌 상품의 이름과 CPU 정보를 표시합니다.
     === "SQLite"
         ```sql
         SELECT
-        name,
-        brand,
-        price,
-        JSON_EXTRACT(specs, '$.cpu') AS cpu,
-        JSON_EXTRACT(specs, '$.ram') AS ram,
-        JSON_EXTRACT(specs, '$.storage') AS storage
-    FROM products
-    WHERE specs IS NOT NULL
-      AND JSON_EXTRACT(specs, '$.cpu') IS NOT NULL
-    ORDER BY price DESC
-    LIMIT 20;
+            name,
+            brand,
+            price,
+            JSON_EXTRACT(specs, '$.cpu') AS cpu,
+            JSON_EXTRACT(specs, '$.ram') AS ram,
+            JSON_EXTRACT(specs, '$.storage') AS storage
+        FROM products
+        WHERE specs IS NOT NULL
+          AND JSON_EXTRACT(specs, '$.cpu') IS NOT NULL
+        ORDER BY price DESC
+        LIMIT 20;
         ```
 
     === "MySQL"
         ```sql
         SELECT
-        name,
-        brand,
-        price,
-        JSON_EXTRACT(specs, '$.cpu') AS cpu,
-        JSON_EXTRACT(specs, '$.ram') AS ram,
-        JSON_EXTRACT(specs, '$.storage') AS storage
-    FROM products
-    WHERE specs IS NOT NULL
-      AND JSON_EXTRACT(specs, '$.cpu') IS NOT NULL
-    ORDER BY price DESC
-    LIMIT 20;
+            name,
+            brand,
+            price,
+            JSON_EXTRACT(specs, '$.cpu') AS cpu,
+            JSON_EXTRACT(specs, '$.ram') AS ram,
+            JSON_EXTRACT(specs, '$.storage') AS storage
+        FROM products
+        WHERE specs IS NOT NULL
+          AND JSON_EXTRACT(specs, '$.cpu') IS NOT NULL
+        ORDER BY price DESC
+        LIMIT 20;
         ```
 
     === "PostgreSQL"
         ```sql
         SELECT
-        name,
-        brand,
-        price,
-        specs->>'cpu' AS cpu,
-        specs->>'ram' AS ram,
-        specs->>'storage' AS storage
-    FROM products
-    WHERE specs IS NOT NULL
-      AND specs->>'cpu' IS NOT NULL
-    ORDER BY price DESC
-    LIMIT 20;
+            name,
+            brand,
+            price,
+            specs->>'cpu' AS cpu,
+            specs->>'ram' AS ram,
+            specs->>'storage' AS storage
+        FROM products
+        WHERE specs IS NOT NULL
+          AND specs->>'cpu' IS NOT NULL
+        ORDER BY price DESC
+        LIMIT 20;
         ```
 
     === "Oracle"
         ```sql
         SELECT
-        name,
-        brand,
-        price,
-        JSON_VALUE(specs, '$.cpu') AS cpu,
-        JSON_VALUE(specs, '$.ram') AS ram,
-        JSON_VALUE(specs, '$.storage') AS storage
-    FROM products
-    WHERE specs IS NOT NULL
-      AND JSON_VALUE(specs, '$.cpu') IS NOT NULL
-    ORDER BY price DESC
-    FETCH FIRST 20 ROWS ONLY;
+            name,
+            brand,
+            price,
+            JSON_VALUE(specs, '$.cpu') AS cpu,
+            JSON_VALUE(specs, '$.ram') AS ram,
+            JSON_VALUE(specs, '$.storage') AS storage
+        FROM products
+        WHERE specs IS NOT NULL
+          AND JSON_VALUE(specs, '$.cpu') IS NOT NULL
+        ORDER BY price DESC
+        FETCH FIRST 20 ROWS ONLY;
         ```
 
     === "SQL Server"
         ```sql
         SELECT TOP 20
-        name,
-        brand,
-        price,
-        JSON_VALUE(specs, '$.cpu') AS cpu,
-        JSON_VALUE(specs, '$.ram') AS ram,
-        JSON_VALUE(specs, '$.storage') AS storage
-    FROM products
-    WHERE specs IS NOT NULL
-      AND JSON_VALUE(specs, '$.cpu') IS NOT NULL
-    ORDER BY price DESC;
+            name,
+            brand,
+            price,
+            JSON_VALUE(specs, '$.cpu') AS cpu,
+            JSON_VALUE(specs, '$.ram') AS ram,
+            JSON_VALUE(specs, '$.storage') AS storage
+        FROM products
+        WHERE specs IS NOT NULL
+          AND JSON_VALUE(specs, '$.cpu') IS NOT NULL
+        ORDER BY price DESC;
         ```
 
 

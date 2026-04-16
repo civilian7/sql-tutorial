@@ -110,6 +110,22 @@ WHERE grade = 'VIP'
 > **팁:** `AND`와 `OR`를 함께 사용할 때는 괄호로 우선순위를 명확히 하세요.
 > `WHERE (grade = 'VIP' OR grade = 'GOLD') AND is_active = 1`
 
+```mermaid
+graph TD
+    subgraph "AND (모두 참이어야 참)"
+        A1["grade = 'VIP'"] --> R1{"AND"}
+        A2["point_balance > 5000"] --> R1
+        R1 -->|"둘 다 참"| T1["통과"]
+        R1 -->|"하나라도 거짓"| F1["제외"]
+    end
+    subgraph "OR (하나만 참이면 참)"
+        B1["grade = 'VIP'"] --> R2{"OR"}
+        B2["grade = 'GOLD'"] --> R2
+        R2 -->|"하나라도 참"| T2["통과"]
+        R2 -->|"모두 거짓"| F2["제외"]
+    end
+```
+
 ## IN
 
 `IN`은 같은 칼럼에 대한 여러 `OR` 조건을 간결하게 표현합니다.

@@ -542,80 +542,80 @@ last_login_at이 NULL인 고객 수와 전체 대비 비율을 구하세요.
     === "SQLite"
         ```sql
         SELECT
-        p.name AS product_name,
-        p.brand,
-        COUNT(pt.tag_id) AS tag_count,
-        GROUP_CONCAT(t.name, ', ') AS tags
-    FROM product_tags AS pt
-    INNER JOIN products AS p ON pt.product_id = p.id
-    INNER JOIN tags     AS t ON pt.tag_id     = t.id
-    GROUP BY p.id, p.name, p.brand
-    HAVING COUNT(pt.tag_id) >= 3
-    ORDER BY tag_count DESC
-    LIMIT 20;
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            GROUP_CONCAT(t.name, ', ') AS tags
+        FROM product_tags AS pt
+        INNER JOIN products AS p ON pt.product_id = p.id
+        INNER JOIN tags     AS t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC
+        LIMIT 20;
         ```
 
     === "MySQL"
         ```sql
         SELECT
-        p.name AS product_name,
-        p.brand,
-        COUNT(pt.tag_id) AS tag_count,
-        GROUP_CONCAT(t.name SEPARATOR ', ') AS tags
-    FROM product_tags AS pt
-    INNER JOIN products AS p ON pt.product_id = p.id
-    INNER JOIN tags     AS t ON pt.tag_id     = t.id
-    GROUP BY p.id, p.name, p.brand
-    HAVING COUNT(pt.tag_id) >= 3
-    ORDER BY tag_count DESC
-    LIMIT 20;
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            GROUP_CONCAT(t.name SEPARATOR ', ') AS tags
+        FROM product_tags AS pt
+        INNER JOIN products AS p ON pt.product_id = p.id
+        INNER JOIN tags     AS t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC
+        LIMIT 20;
         ```
 
     === "PostgreSQL"
         ```sql
         SELECT
-        p.name AS product_name,
-        p.brand,
-        COUNT(pt.tag_id) AS tag_count,
-        STRING_AGG(t.name, ', ') AS tags
-    FROM product_tags AS pt
-    INNER JOIN products AS p ON pt.product_id = p.id
-    INNER JOIN tags     AS t ON pt.tag_id     = t.id
-    GROUP BY p.id, p.name, p.brand
-    HAVING COUNT(pt.tag_id) >= 3
-    ORDER BY tag_count DESC
-    LIMIT 20;
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            STRING_AGG(t.name, ', ') AS tags
+        FROM product_tags AS pt
+        INNER JOIN products AS p ON pt.product_id = p.id
+        INNER JOIN tags     AS t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC
+        LIMIT 20;
         ```
 
     === "Oracle"
         ```sql
         SELECT
-        p.name AS product_name,
-        p.brand,
-        COUNT(pt.tag_id) AS tag_count,
-        LISTAGG(t.name, ', ') WITHIN GROUP (ORDER BY t.name) AS tags
-    FROM product_tags pt
-    INNER JOIN products p ON pt.product_id = p.id
-    INNER JOIN tags     t ON pt.tag_id     = t.id
-    GROUP BY p.id, p.name, p.brand
-    HAVING COUNT(pt.tag_id) >= 3
-    ORDER BY tag_count DESC
-    FETCH FIRST 20 ROWS ONLY;
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            LISTAGG(t.name, ', ') WITHIN GROUP (ORDER BY t.name) AS tags
+        FROM product_tags pt
+        INNER JOIN products p ON pt.product_id = p.id
+        INNER JOIN tags     t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC
+        FETCH FIRST 20 ROWS ONLY;
         ```
 
     === "SQL Server"
         ```sql
         SELECT TOP 20
-        p.name AS product_name,
-        p.brand,
-        COUNT(pt.tag_id) AS tag_count,
-        STRING_AGG(t.name, ', ') AS tags
-    FROM product_tags AS pt
-    INNER JOIN products AS p ON pt.product_id = p.id
-    INNER JOIN tags     AS t ON pt.tag_id     = t.id
-    GROUP BY p.id, p.name, p.brand
-    HAVING COUNT(pt.tag_id) >= 3
-    ORDER BY tag_count DESC;
+            p.name AS product_name,
+            p.brand,
+            COUNT(pt.tag_id) AS tag_count,
+            STRING_AGG(t.name, ', ') AS tags
+        FROM product_tags AS pt
+        INNER JOIN products AS p ON pt.product_id = p.id
+        INNER JOIN tags     AS t ON pt.tag_id     = t.id
+        GROUP BY p.id, p.name, p.brand
+        HAVING COUNT(pt.tag_id) >= 3
+        ORDER BY tag_count DESC;
         ```
 
 
@@ -625,11 +625,11 @@ last_login_at이 NULL인 고객 수와 전체 대비 비율을 구하세요.
     |---|---|---|---|
     | Razer Blade 16 실버 | Razer | 8 | 방수/방진, 에르고노믹, 게이밍, 그래픽디자인, 서버/NAS, 휴대... |
     | Razer Blade 18 블랙 | Razer | 8 | USB-C, 터치스크린, 게이밍, 학생용, 서버/NAS, 휴대용, ... |
-    | ASUS Dual RTX 5070 Ti [특별 한정판 에디션] 저소... | ASUS | 7 | 저소음, QHD, FHD, DDR5, 휴대용, 하이엔드, 한정판 |
-    | ASUS Dual RX 9070 실버 | ASUS | 7 | 블루투스, DDR5, 에르고노믹, 게이밍, 프리미엄, 오버클럭, 듀얼채널 |
-    | ASUS ExpertBook B5 화이트 | ASUS | 7 | 모듈러, PCIe 5.0, 영상편집, 휴대용, 전문가용, 하이엔드,... |
-    | ASUS ROG Swift OLED PG27AQDM 실버 | ASUS | 7 | 유선, 게이밍, 프로그래밍, 그래픽디자인, 입문자용, 하이엔드, 멀티코어 |
-    | ASUS ROG Swift PG32UCDM 실버 | ASUS | 7 | USB-C, 4K, 핫스왑, 게이밍, 스트리밍, 전문가용, 프리미엄 |
+    | MSI GeForce RTX 4070 Ti Super GAMING X | MSI | 7 | 저소음, Wi-Fi 7, 터치스크린, 재택근무, 입문자용, 프리미엄... |
+    | Razer Blade 18 화이트 | Razer | 7 | QHD, Wi-Fi 6E, 게이밍, 휴대용, 하이엔드, 신제품, 듀얼채널 |
+    | 로지텍 K580 | 로지텍 | 7 | FHD, 영상편집, 그래픽디자인, 입문자용, 가성비, 프리미엄, 베... |
+    | SteelSeries Prime Wireless 블랙 | SteelSeries | 7 | RGB 라이팅, USB-C, PCIe 4.0, 게이밍, 입문자용, ... |
+    | SteelSeries Aerox 5 Wireless 실버 | SteelSeries | 7 | OLED, 고주사율, DDR5, 게이밍, 가성비, 프리미엄, 한정판 |
 
 
 ---

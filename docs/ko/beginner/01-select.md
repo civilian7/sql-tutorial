@@ -235,6 +235,26 @@ FROM customers;
 
 4가지 등급이 있다는 것을 알 수 있습니다. DISTINCT가 없으면 5,230행이 모두 출력됩니다.
 
+```mermaid
+graph TD
+    subgraph "원본 데이터"
+        A["BRONZE"]
+        B["GOLD"]
+        C["BRONZE"]
+        D["VIP"]
+        E["GOLD"]
+        F["BRONZE"]
+    end
+    subgraph "DISTINCT 적용 후"
+        G["BRONZE"]
+        H["GOLD"]
+        I["VIP"]
+    end
+    A --> G
+    B --> H
+    D --> I
+```
+
 ### NULL도 하나의 값으로 취급
 
 ```sql

@@ -16,6 +16,20 @@ flowchart LR
 
 `COUNT(*)`는 결과의 전체 행 수를 셉니다. `COUNT(칼럼명)`은 해당 칼럼에서 NULL이 아닌 값의 수를 셉니다.
 
+```mermaid
+graph TD
+    subgraph "customers 5행"
+        R1["김민수 | M"]
+        R2["이영희 | F"]
+        R3["박지훈 | NULL"]
+        R4["최수진 | F"]
+        R5["정태영 | NULL"]
+    end
+    R1 & R2 & R3 & R4 & R5 --> C1["COUNT(*) = 5\n모든 행"]
+    R1 & R2 & R4 --> C2["COUNT(gender) = 3\nNULL 제외"]
+    R1 --> C3["COUNT(DISTINCT gender) = 2\nM, F만"]
+```
+
 ```sql
 -- 전체 고객 수
 SELECT COUNT(*) AS total_customers

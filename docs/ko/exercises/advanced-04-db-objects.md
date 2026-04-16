@@ -701,7 +701,7 @@ SQLite는 네이티브 MATERIALIZED VIEW를 지원하지 않으므로 이 패턴
 
     | type | object_count |
     |---|---|
-    | table | 33 |
+    | table | 32 |
     | view | 18 |
     | index | 73 |
     | trigger | 5 |

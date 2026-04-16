@@ -701,9 +701,9 @@ You can know the number of each type with `GROUP BY type`.
 
     | type | object_count |
     |---|---|
-    | table | 31 |
+    | table | 32 |
     | view | 18 |
-    | index | 72 |
+    | index | 73 |
     | trigger | 5 |
 
 

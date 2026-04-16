@@ -12,6 +12,23 @@ flowchart LR
 
 > **개념:** GROUP BY는 행을 그룹으로 묶고, 각 그룹에 집계 함수를 적용합니다.
 
+```mermaid
+graph TD
+    subgraph "원본 데이터"
+        A["김민수 BRONZE"]
+        B["이영희 GOLD"]
+        C["박지훈 BRONZE"]
+        D["최수진 VIP"]
+        E["정태영 BRONZE"]
+    end
+    A & C & E --> G1["BRONZE 그룹\n3명"]
+    B --> G2["GOLD 그룹\n1명"]
+    D --> G3["VIP 그룹\n1명"]
+    G1 --> R["결과: BRONZE=3, GOLD=1, VIP=1"]
+    G2 --> R
+    G3 --> R
+```
+
 ## GROUP BY — 단일 칼럼
 
 ```sql
@@ -144,6 +161,18 @@ ORDER BY grade, gender;
 | ... | | |
 
 ## HAVING
+
+```mermaid
+graph LR
+    A["전체 행"] --> B["WHERE\n행 필터링"]
+    B --> C["GROUP BY\n그룹화"]
+    C --> D["집계 함수\nCOUNT, SUM..."]
+    D --> E["HAVING\n그룹 필터링"]
+    E --> F["SELECT\n칼럼 선택"]
+    F --> G["ORDER BY\n정렬"]
+```
+
+> WHERE는 그룹화 전, HAVING은 그룹화 후에 동작합니다.
 
 `HAVING`은 그룹화 이후에 필터링하며, 집계 값을 조건으로 사용합니다. 그룹에 대한 `WHERE`라고 생각하면 됩니다.
 

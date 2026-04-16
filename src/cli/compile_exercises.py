@@ -281,11 +281,13 @@ def compile_yaml_file(yaml_path: Path, conn_tutorial, sort_base: int, conn_tutor
             md_en_lines.append('\n??? success "Answer"\n')
             for db_name, db_sql in db_tabs:
                 if db_sql:
-                    md_ko_lines.append(f'    === "{db_name}"\n        ```sql\n        {_indent(db_sql)}\n        ```\n')
-                    md_en_lines.append(f'    === "{db_name}"\n        ```sql\n        {_indent(db_sql)}\n        ```\n')
+                    indented = _indent(db_sql, "        ")
+                    md_ko_lines.append(f'    === "{db_name}"\n        ```sql\n        {indented}\n        ```\n')
+                    md_en_lines.append(f'    === "{db_name}"\n        ```sql\n        {indented}\n        ```\n')
         else:
-            md_ko_lines.append(f'\n??? success "정답"\n    ```sql\n    {_indent(answer_sql)}\n    ```\n')
-            md_en_lines.append(f'\n??? success "Answer"\n    ```sql\n    {_indent(answer_sql)}\n    ```\n')
+            indented = _indent(answer_sql, "    ")
+            md_ko_lines.append(f'\n??? success "정답"\n    ```sql\n    {indented}\n    ```\n')
+            md_en_lines.append(f'\n??? success "Answer"\n    ```sql\n    {indented}\n    ```\n')
 
         # Insert execution result table
         exec_sql_for_result = ref_sqlite or ref_common or answer_sql
@@ -318,7 +320,8 @@ def _to_str(val) -> str:
 
 
 def _indent(sql: str, prefix: str = "    ") -> str:
-    """Indent multi-line SQL for markdown code blocks."""
+    """Indent multi-line SQL for markdown code blocks.
+    First line is NOT prefixed (caller handles it), remaining lines get prefix."""
     lines = sql.strip().split("\n")
     return f"\n{prefix}".join(lines)
 

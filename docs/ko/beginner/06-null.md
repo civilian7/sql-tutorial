@@ -15,6 +15,22 @@ flowchart TD
 
 > **개념:** NULL은 '값이 없음'입니다. = NULL은 항상 UNKNOWN이므로 IS NULL을 사용해야 합니다.
 
+```mermaid
+graph TD
+    subgraph "비교 연산과 NULL"
+        A["'VIP' = 'VIP'"] -->|"TRUE"| T["통과"]
+        B["'VIP' = 'GOLD'"] -->|"FALSE"| F["제외"]
+        C["NULL = NULL"] -->|"UNKNOWN"| F
+        D["NULL = 'VIP'"] -->|"UNKNOWN"| F
+    end
+    subgraph "IS NULL 연산"
+        E["NULL IS NULL"] -->|"TRUE"| T2["통과"]
+        G["'VIP' IS NULL"] -->|"FALSE"| F2["제외"]
+    end
+```
+
+> = 연산자로는 NULL을 찾을 수 없습니다. 반드시 IS NULL을 사용하세요.
+
 ## NULL은 어떤 값과도 같지 않습니다
 
 NULL을 `=`나 `<>`로 비교할 수 없습니다. 이런 비교는 항상 `NULL`(알 수 없음)을 반환하며, 절대 `TRUE`가 되지 않습니다.
@@ -152,6 +168,20 @@ GROUP BY grade;
 | VIP | 3886 | 0 | 0.0 |
 
 ## 집계 함수와 NULL
+
+```mermaid
+graph TD
+    subgraph "데이터 5행 (birth_date 2개 NULL)"
+        R1["1990-05-15"]
+        R2["NULL"]
+        R3["1985-12-03"]
+        R4["NULL"]
+        R5["1992-08-21"]
+    end
+    R1 & R2 & R3 & R4 & R5 --> C1["COUNT(*) = 5"]
+    R1 & R3 & R5 --> C2["COUNT(birth_date) = 3"]
+    R1 & R3 & R5 --> C3["AVG, SUM, MIN, MAX\nNULL 행 제외하고 계산"]
+```
 
 집계 함수(`SUM`, `AVG`, `COUNT(칼럼명)`, `MIN`, `MAX`)는 NULL 값을 조용히 무시합니다. 예상치 못한 결과가 나올 수 있으므로 주의하세요.
 
