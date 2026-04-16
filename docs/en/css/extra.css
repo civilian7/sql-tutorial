@@ -105,16 +105,13 @@
   min-width: 12em;
 }
 
-/* Schema table — icon column fixed width */
-.md-typeset table:not([class]) th:first-child:empty,
-.md-typeset table:not([class]) td:first-child:empty,
-.md-typeset table:not([class]) th[align="center"]:first-child,
-.md-typeset table:not([class]) td[align="center"]:first-child {
-  width: 1.5em;
-  min-width: 1.5em;
-  max-width: 1.5em;
-  padding: 0.35em 0.2em;
-  text-align: center;
+/* Schema table — icon column (PK/FK) fixed narrow width */
+.md-typeset table:not([class]) th:first-child[style*="text-align: center"],
+.md-typeset table:not([class]) td:first-child[style*="text-align: center"] {
+  width: 1.2em !important;
+  min-width: 1.2em !important;
+  max-width: 2em !important;
+  padding: 0.35em 0 !important;
 }
 
 /* Code in table cells — tighter */
