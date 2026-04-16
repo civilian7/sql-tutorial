@@ -1,6 +1,19 @@
 # SQL Playground
 
-Run SQL queries directly in your browser. No server connection needed.
+Practice SQL **directly in your browser** with no installation required. The tutorial database is loaded into browser memory, so you can write queries and see results instantly.
+
+## How to Use
+
+1. **Table List** — Expand "Tables" at the top to see available tables and row counts. Click a table to auto-fill a SELECT query.
+2. **Write SQL** — Type your SQL in the editor. SQL keywords are automatically syntax-highlighted.
+3. **Run** — Click `Run` or press ++ctrl+enter++ to execute.
+4. **View Results** — Results appear in the table below the editor.
+5. **Reset** — Click `Reset` to restore the editor and results to their default state.
+
+!!! tip "Good to Know"
+    - This playground uses the **SQLite** engine. Write queries in SQLite syntax.
+    - INSERT, UPDATE, DELETE are supported, but refreshing the page restores the original data.
+    - All processing happens in your browser. No data is sent to any server.
 
 !!! info "Data"
     This playground uses a compact version of the tutorial database (~200 rows per table).

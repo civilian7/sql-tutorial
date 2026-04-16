@@ -1,6 +1,6 @@
 **[한국어](README.ko.md)** | English
 
-# SQL Tutorial — E-Commerce Database <small>v4.0</small>
+# SQL Tutorial — E-Commerce Database <small>v4.1</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -34,6 +34,7 @@ Open `output/ecommerce-en.db` in any SQL tool and start learning.
 | **Dirty Data Mode** | `--dirty-data` for data cleaning practice |
 | **Visual Diagrams** | Mermaid diagrams in every lesson |
 | **DB-specific SQL** | SQLite / MySQL / PostgreSQL / Oracle / SQL Server tabs where syntax differs |
+| **SQL Playground** | Run SQL in your browser ([Try it](https://civilian7.github.io/sql-tutorial/en/playground/)) |
 
 ## Command Line Options
 
@@ -273,6 +274,10 @@ Free for personal learning and non-commercial education. For commercial use: civ
 | [@shinnyeonki](https://github.com/shinnyeonki) | Fix partition table UNIQUE constraints for PostgreSQL/MySQL, report products FK violation ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## Changelog
+
+### v4.1.0 (2026-04-16)
+
+**SQL Playground**: Browser-based SQL execution with sql.js + CodeMirror. SQL syntax highlighting, collapsible table list, Ctrl+Enter execution. Includes usage guide
 
 ### v4.0.0 (2026-04-16)
 

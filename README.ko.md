@@ -1,6 +1,6 @@
 한국어 | **[English](README.md)**
 
-# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v4.0</small>
+# SQL 튜토리얼 — 전자상거래 데이터베이스 <small>v4.1</small>
 
 [![Verify Tutorial](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml/badge.svg)](https://github.com/civilian7/sql-tutorial/actions/workflows/verify.yml)
 
@@ -34,6 +34,7 @@ python -m src.cli.generate --size small
 | **더티 데이터** | `--dirty-data` 데이터 정제 연습 |
 | **시각화 도표** | 모든 레슨에 Mermaid 다이어그램 |
 | **DB별 SQL** | SQLite / MySQL / PostgreSQL / Oracle / SQL Server 탭 |
+| **SQL 플레이그라운드** | 브라우저에서 바로 SQL 실행 ([사용해보기](https://civilian7.github.io/sql-tutorial/ko/playground/)) |
 
 ## 명령행 옵션
 
@@ -273,6 +274,10 @@ pdf.bat en       # 영어만
 | [@shinnyeonki](https://github.com/shinnyeonki) | PostgreSQL/MySQL 파티션 테이블 UNIQUE 제약조건 수정, products FK 위반 이슈 리포트 ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
 
 ## 변경 이력
+
+### v4.1.0 (2026-04-16)
+
+**SQL 플레이그라운드**: sql.js + CodeMirror 기반 브라우저 SQL 실행 환경. SQL 문법 강조, 접기/펼치기 테이블 목록, Ctrl+Enter 실행. 사용 가이드 포함
 
 ### v4.0.0 (2026-04-16)
 

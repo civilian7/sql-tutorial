@@ -343,7 +343,8 @@ Adjust to your own pace. Based on 1-2 hours per day.
 
 | Version | Date | Key Changes |
 |:-------:|:----:|-------------|
-| v4.0 | 2026-04-16 | 1,065 exercises YAML consolidation, DB comment system, SQL playground, tutorial quality overhaul |
+| v4.1 | 2026-04-16 | SQL Playground (CodeMirror + sql.js, usage guide) |
+| v4.0 | 2026-04-16 | 1,065 exercises YAML consolidation, DB comment system, tutorial quality overhaul |
 | v3.6 | 2026-04-16 | Docker-based DB installation guide, Oracle --apply, interactive wizard |
 | v3.5 | 2026-04-16 | Project restructure (src/ consolidation), Oracle/SQL Server SQL answers for 30 problems, SQLite script output, bug fixes |
 | v3.4 | 2026-04-15 | Oracle / SQL Server data generation exporters, full 5 DB support |
