@@ -272,6 +272,7 @@ Free for personal learning and non-commercial education. For commercial use: civ
 | Contributor | Contributions |
 |-------------|--------------|
 | [@shinnyeonki](https://github.com/shinnyeonki) | Fix partition table UNIQUE constraints for PostgreSQL/MySQL, report products FK violation ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
+| [@AshtonYoon](https://github.com/AshtonYoon) | Report 14강 UNION query errors: missing column, ORDER BY compatibility ([#3](https://github.com/civilian7/sql-tutorial/issues/3)) |
 
 ## Changelog
 

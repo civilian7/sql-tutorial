@@ -272,6 +272,7 @@ pdf.bat en       # 영어만
 | 기여자 | 기여 내용 |
 |--------|----------|
 | [@shinnyeonki](https://github.com/shinnyeonki) | PostgreSQL/MySQL 파티션 테이블 UNIQUE 제약조건 수정, products FK 위반 이슈 리포트 ([#1](https://github.com/civilian7/sql-tutorial/pull/1), [#2](https://github.com/civilian7/sql-tutorial/issues/2)) |
+| [@AshtonYoon](https://github.com/AshtonYoon) | 14강 UNION 쿼리 오류 리포트: 존재하지 않는 컬럼, ORDER BY 호환성 ([#3](https://github.com/civilian7/sql-tutorial/issues/3)) |
 
 ## 변경 이력
 
