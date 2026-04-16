@@ -20,15 +20,6 @@ document.addEventListener("DOMContentLoaded", function() {
 _version_cache = {}
 
 
-def _bump_minor(version_str):
-    """Increment minor version: '3.0' -> '3.1', '3.9' -> '3.10'."""
-    parts = version_str.split(".")
-    if len(parts) == 2:
-        major, minor = parts[0], parts[1]
-        return f"{major}.{int(minor) + 1}"
-    return version_str
-
-
 def _load_version(config):
     if _version_cache:
         return _version_cache
@@ -37,7 +28,7 @@ def _load_version(config):
     docs_dir = os.path.dirname(hook_dir)
     version_file = os.path.join(docs_dir, "version.json")
 
-    version = "3.0"  # fallback default — keep in sync with version.json
+    version = "3.6"
     date = ""
 
     if os.path.exists(version_file):
@@ -45,18 +36,6 @@ def _load_version(config):
             data = json.load(f)
         version = data.get("version", version)
         date = data.get("date", "")
-
-    # Auto-bump minor version and set today's date on each build
-    from datetime import date as dt_date
-    today = dt_date.today().isoformat()
-
-    if date != today:
-        version = _bump_minor(version)
-        date = today
-        # Write updated version back
-        with open(version_file, "w", encoding="utf-8") as f:
-            json.dump({"version": version, "date": date}, f, indent=4)
-            f.write("\n")
 
     _version_cache["version"] = version
     _version_cache["date"] = date
