@@ -1,9 +1,7 @@
 # 고객 분석
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `customers` — 고객 (등급, 포인트, 가입채널)<br>
 
@@ -17,42 +15,10 @@
 
 `product_tags` — 상품-태그 연결<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`SELECT`
+**:material-book-open-variant: 학습 범위:** `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `AVG`, `MAX`, `COALESCE`, `SUBSTR`, `INSTR`, `JOIN`, `HAVING`, `LIKE`, `IN`, `CASE WHEN`
 
-`WHERE`
-
-`GROUP BY`
-
-`COUNT`
-
-`AVG`
-
-`MAX`
-
-`COALESCE`
-
-`SUBSTR`
-
-`INSTR`
-
-`JOIN`
-
-`HAVING`
-
-`LIKE`
-
-`IN`
-
-`CASE WHEN`
-
-</div>
-
-</div>
 
 ---
 

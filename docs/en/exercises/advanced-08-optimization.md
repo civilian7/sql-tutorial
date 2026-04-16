@@ -1,9 +1,7 @@
 # Query Optimization
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `orders` — Orders (status, amount, date)<br>
 
@@ -13,24 +11,10 @@
 
 `reviews` — Reviews (rating, content)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`EXPLAIN`
+**:material-book-open-variant: Concepts:** `EXPLAIN`, `Index`, `Covering Index`, `Correlated Subquery`, `IN vs EXISTS`
 
-`Index`
-
-`Covering Index`
-
-`Correlated Subquery`
-
-`IN vs EXISTS`
-
-</div>
-
-</div>
 
 ---
 

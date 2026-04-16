@@ -1,9 +1,7 @@
 # 고급 분석
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `point_transactions` — 포인트 (적립, 사용, 소멸)<br>
 
@@ -31,28 +29,10 @@
 
 `customers` — 고객 (등급, 포인트, 가입채널)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`Window Functions`
+**:material-book-open-variant: 학습 범위:** `Window Functions`, `CTE`, `Funnel`, `Session`, `Cohort`, `Recursive CTE`, `RFM`
 
-`CTE`
-
-`Funnel`
-
-`Session`
-
-`Cohort`
-
-`Recursive CTE`
-
-`RFM`
-
-</div>
-
-</div>
 
 ---
 

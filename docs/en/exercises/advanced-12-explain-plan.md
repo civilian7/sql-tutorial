@@ -1,9 +1,7 @@
 # EXPLAIN / Query Plan Analysis
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `customers` — Customers (grade, points, channel)<br>
 
@@ -17,24 +15,10 @@
 
 `product_views` — View log (customer, product, date)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`EXPLAIN`
+**:material-book-open-variant: Concepts:** `EXPLAIN`, `QUERY PLAN`, `index`, `performance`, `optimization`
 
-`QUERY PLAN`
-
-`index`
-
-`performance`
-
-`optimization`
-
-</div>
-
-</div>
 
 ---
 

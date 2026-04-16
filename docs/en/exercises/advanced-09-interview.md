@@ -1,9 +1,7 @@
 # SQL Interview Preparation
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `orders` — Orders (status, amount, date)<br>
 
@@ -17,28 +15,10 @@
 
 `customers` — Customers (grade, points, channel)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`ROW_NUMBER`
+**:material-book-open-variant: Concepts:** `ROW_NUMBER`, `LAG`, `Running Total`, `Moving Average`, `Recursive CTE`, `NTILE`, `Funnel`
 
-`LAG`
-
-`Running Total`
-
-`Moving Average`
-
-`Recursive CTE`
-
-`NTILE`
-
-`Funnel`
-
-</div>
-
-</div>
 
 ---
 

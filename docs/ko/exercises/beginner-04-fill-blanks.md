@@ -1,9 +1,7 @@
 # 빈칸 채우기
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `categories` — 카테고리 (부모-자식 계층)<br>
 
@@ -17,44 +15,10 @@
 
 `shipping` — 배송 (택배사, 추적번호, 상태)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`WHERE`
+**:material-book-open-variant: 학습 범위:** `WHERE`, `ORDER BY`, `COUNT`, `HAVING`, `JOIN`, `LEFT JOIN`, `IS NULL`, `BETWEEN`, `CASE WHEN`, `COALESCE`, `subquery`, `GROUP BY`, `LIKE`, `SUBSTR`, `IN`
 
-`ORDER BY`
-
-`COUNT`
-
-`HAVING`
-
-`JOIN`
-
-`LEFT JOIN`
-
-`IS NULL`
-
-`BETWEEN`
-
-`CASE WHEN`
-
-`COALESCE`
-
-`subquery`
-
-`GROUP BY`
-
-`LIKE`
-
-`SUBSTR`
-
-`IN`
-
-</div>
-
-</div>
 
 ---
 

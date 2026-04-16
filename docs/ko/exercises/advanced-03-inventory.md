@@ -1,9 +1,7 @@
 # 재고 관리
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `products` — 상품 (이름, 가격, 재고, 브랜드)<br>
 
@@ -17,24 +15,10 @@
 
 `orders` — 주문 (상태, 금액, 일시)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`Conditional Aggregation`
+**:material-book-open-variant: 학습 범위:** `Conditional Aggregation`, `Window Functions`, `ABC Analysis`, `Pareto`, `CTE`
 
-`Window Functions`
-
-`ABC Analysis`
-
-`Pareto`
-
-`CTE`
-
-</div>
-
-</div>
 
 ---
 

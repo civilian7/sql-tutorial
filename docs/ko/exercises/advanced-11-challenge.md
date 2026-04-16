@@ -1,9 +1,7 @@
 # 도전 문제
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `categories` — 카테고리 (부모-자식 계층)<br>
 
@@ -29,26 +27,10 @@
 
 `calendar` — 날짜 차원 (요일, 공휴일)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`Window`
+**:material-book-open-variant: 학습 범위:** `Window`, `Analytics`, `CTE`, `consecutive`, `median`, `retention`
 
-`Analytics`
-
-`CTE`
-
-`consecutive`
-
-`median`
-
-`retention`
-
-</div>
-
-</div>
 
 ---
 

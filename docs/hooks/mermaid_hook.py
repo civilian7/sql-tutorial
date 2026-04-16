@@ -107,14 +107,15 @@ def _link_table_names(markdown: str, page, config=None) -> str:
 
         return f'{pre_char}[`{table}`]({schema_path}#{table} "{tip}")'
 
-    # Protect grid blocks (exercise header) — already has table descriptions
-    _grid_blocks = []
-    def _save_grid(m):
-        _grid_blocks.append(m.group(0))
-        return f"__GRID_BLOCK_{len(_grid_blocks) - 1}__"
+    # Protect exercise header blocks (table list + concepts) — already has descriptions
+    _protected = []
+    def _save_block(m):
+        _protected.append(m.group(0))
+        return f"__PROTECTED_{len(_protected) - 1}__"
+    # Match: #### :material-database: ... through next ---
     markdown = re.sub(
-        r'<div class="grid".*?</div>\s*</div>',
-        _save_grid, markdown, flags=re.DOTALL,
+        r'#{4}\s+:material-database:.*?(?=\n---)',
+        _save_block, markdown, flags=re.DOTALL,
     )
 
     # Match `table_name` — backtick-wrapped words
@@ -125,9 +126,9 @@ def _link_table_names(markdown: str, page, config=None) -> str:
         flags=re.MULTILINE,
     )
 
-    # Restore grid blocks
-    for i, block in enumerate(_grid_blocks):
-        result = result.replace(f"__GRID_BLOCK_{i}__", block)
+    # Restore protected blocks
+    for i, block in enumerate(_protected):
+        result = result.replace(f"__PROTECTED_{i}__", block)
 
     return result
 

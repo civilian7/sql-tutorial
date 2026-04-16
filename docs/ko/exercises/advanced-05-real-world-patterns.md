@@ -1,9 +1,7 @@
 # 실무 SQL 패턴
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `orders` — 주문 (상태, 금액, 일시)<br>
 
@@ -23,24 +21,10 @@
 
 `coupon_usage` — 쿠폰 사용 내역<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`LAG`
+**:material-book-open-variant: 학습 범위:** `LAG`, `ROW_NUMBER`, `Cart Abandonment`, `Coupon ROI`, `Time Pattern`
 
-`ROW_NUMBER`
-
-`Cart Abandonment`
-
-`Coupon ROI`
-
-`Time Pattern`
-
-</div>
-
-</div>
 
 ---
 

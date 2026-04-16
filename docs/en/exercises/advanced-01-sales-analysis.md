@@ -1,9 +1,7 @@
 # Sales Analysis
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `orders` — Orders (status, amount, date)<br>
 
@@ -15,26 +13,10 @@
 
 `payments` — Payments (method, amount, status)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`Aggregation`
+**:material-book-open-variant: Concepts:** `Aggregation`, `GROUP BY`, `Window Functions`, `CTE`, `YoY Growth`, `Pivot`
 
-`GROUP BY`
-
-`Window Functions`
-
-`CTE`
-
-`YoY Growth`
-
-`Pivot`
-
-</div>
-
-</div>
 
 ---
 

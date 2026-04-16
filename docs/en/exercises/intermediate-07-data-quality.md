@@ -1,9 +1,7 @@
 # Data Quality Checks
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `customers` — Customers (grade, points, channel)<br>
 
@@ -17,30 +15,10 @@
 
 `shipping` — Shipping (carrier, tracking, status)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`data validation`
+**:material-book-open-variant: Concepts:** `data validation`, `orphan records`, `NULL analysis`, `status consistency`, `date validation`, `duplicates`, `outliers`, `cross-table consistency`
 
-`orphan records`
-
-`NULL analysis`
-
-`status consistency`
-
-`date validation`
-
-`duplicates`
-
-`outliers`
-
-`cross-table consistency`
-
-</div>
-
-</div>
 
 ---
 

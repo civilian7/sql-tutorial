@@ -1,9 +1,7 @@
 # CS 성과 분석
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `complaints` — 고객 불만 (유형, 우선순위)<br>
 
@@ -15,24 +13,10 @@
 
 `returns` — 반품/교환 (사유, 상태)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`JULIANDAY`
+**:material-book-open-variant: 학습 범위:** `JULIANDAY`, `CASE`, `Window Functions`, `CTE`, `Pivot`
 
-`CASE`
-
-`Window Functions`
-
-`CTE`
-
-`Pivot`
-
-</div>
-
-</div>
 
 ---
 

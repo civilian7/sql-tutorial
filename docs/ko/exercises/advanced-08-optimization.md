@@ -1,9 +1,7 @@
 # 쿼리 최적화
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `orders` — 주문 (상태, 금액, 일시)<br>
 
@@ -13,24 +11,10 @@
 
 `reviews` — 리뷰 (평점, 내용)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`EXPLAIN`
+**:material-book-open-variant: 학습 범위:** `EXPLAIN`, `Index`, `Covering Index`, `Correlated Subquery`, `IN vs EXISTS`
 
-`Index`
-
-`Covering Index`
-
-`Correlated Subquery`
-
-`IN vs EXISTS`
-
-</div>
-
-</div>
 
 ---
 

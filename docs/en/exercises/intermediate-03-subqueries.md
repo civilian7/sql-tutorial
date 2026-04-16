@@ -1,9 +1,7 @@
 # Subqueries and Data Transformation
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `categories` — Categories (parent-child hierarchy)<br>
 
@@ -23,28 +21,10 @@
 
 `wishlists` — Wishlists (customer-product)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`scalar subquery`
+**:material-book-open-variant: Concepts:** `scalar subquery`, `correlated subquery`, `CTE`, `CASE WHEN`, `NOT EXISTS`, `UNION ALL`, `window functions`
 
-`correlated subquery`
-
-`CTE`
-
-`CASE WHEN`
-
-`NOT EXISTS`
-
-`UNION ALL`
-
-`window functions`
-
-</div>
-
-</div>
 
 ---
 

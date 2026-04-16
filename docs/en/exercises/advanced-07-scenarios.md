@@ -1,9 +1,7 @@
 # Business Scenarios
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `orders` — Orders (status, amount, date)<br>
 
@@ -29,24 +27,10 @@
 
 `staff` — Staff (dept, role, manager)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`CTE`
+**:material-book-open-variant: Concepts:** `CTE`, `Scalar Subquery`, `CASE`, `JULIANDAY`, `Business Reporting`
 
-`Scalar Subquery`
-
-`CASE`
-
-`JULIANDAY`
-
-`Business Reporting`
-
-</div>
-
-</div>
 
 ---
 

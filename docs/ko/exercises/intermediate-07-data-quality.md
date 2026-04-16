@@ -1,9 +1,7 @@
 # 데이터 품질 점검
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `customers` — 고객 (등급, 포인트, 가입채널)<br>
 
@@ -17,30 +15,10 @@
 
 `shipping` — 배송 (택배사, 추적번호, 상태)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`data validation`
+**:material-book-open-variant: 학습 범위:** `data validation`, `orphan records`, `NULL analysis`, `status consistency`, `date validation`, `duplicates`, `outliers`, `cross-table consistency`
 
-`orphan records`
-
-`NULL analysis`
-
-`status consistency`
-
-`date validation`
-
-`duplicates`
-
-`outliers`
-
-`cross-table consistency`
-
-</div>
-
-</div>
 
 ---
 

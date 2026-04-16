@@ -1,9 +1,7 @@
 # Inventory Management
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `products` — Products (name, price, stock, brand)<br>
 
@@ -17,24 +15,10 @@
 
 `orders` — Orders (status, amount, date)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`Conditional Aggregation`
+**:material-book-open-variant: Concepts:** `Conditional Aggregation`, `Window Functions`, `ABC Analysis`, `Pareto`, `CTE`
 
-`Window Functions`
-
-`ABC Analysis`
-
-`Pareto`
-
-`CTE`
-
-</div>
-
-</div>
 
 ---
 

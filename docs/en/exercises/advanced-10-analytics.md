@@ -1,9 +1,7 @@
 # Advanced Analytics
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `point_transactions` — Points (earn, use, expire)<br>
 
@@ -31,28 +29,10 @@
 
 `customers` — Customers (grade, points, channel)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`Window Functions`
+**:material-book-open-variant: Concepts:** `Window Functions`, `CTE`, `Funnel`, `Session`, `Cohort`, `Recursive CTE`, `RFM`
 
-`CTE`
-
-`Funnel`
-
-`Session`
-
-`Cohort`
-
-`Recursive CTE`
-
-`RFM`
-
-</div>
-
-</div>
 
 ---
 

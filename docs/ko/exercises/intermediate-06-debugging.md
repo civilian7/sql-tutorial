@@ -1,9 +1,7 @@
 # SQL 디버깅
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `categories` — 카테고리 (부모-자식 계층)<br>
 
@@ -21,34 +19,10 @@
 
 `suppliers` — 공급업체 (업체명, 연락처)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`cardinality explosion`
+**:material-book-open-variant: 학습 범위:** `cardinality explosion`, `NULL comparison`, `LEFT JOIN pitfall`, `GROUP BY`, `HAVING vs WHERE`, `DISTINCT`, `correlated subquery`, `date range`, `NULLIF`, `UNION`
 
-`NULL comparison`
-
-`LEFT JOIN pitfall`
-
-`GROUP BY`
-
-`HAVING vs WHERE`
-
-`DISTINCT`
-
-`correlated subquery`
-
-`date range`
-
-`NULLIF`
-
-`UNION`
-
-</div>
-
-</div>
 
 ---
 

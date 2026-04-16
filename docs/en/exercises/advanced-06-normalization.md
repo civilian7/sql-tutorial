@@ -1,9 +1,7 @@
 # Understanding Normalization
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `orders` — Orders (status, amount, date)<br>
 
@@ -19,28 +17,10 @@
 
 `customer_addresses` — Addresses (address, default flag)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`1NF`
+**:material-book-open-variant: Concepts:** `1NF`, `2NF`, `3NF`, `Denormalization`, `Self-Reference`, `M:N`, `Recursive CTE`
 
-`2NF`
-
-`3NF`
-
-`Denormalization`
-
-`Self-Reference`
-
-`M:N`
-
-`Recursive CTE`
-
-</div>
-
-</div>
 
 ---
 

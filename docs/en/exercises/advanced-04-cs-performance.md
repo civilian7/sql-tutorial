@@ -1,9 +1,7 @@
 # CS Performance Analysis
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `complaints` — Complaints (type, priority)<br>
 
@@ -15,24 +13,10 @@
 
 `returns` — Returns (reason, status)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`JULIANDAY`
+**:material-book-open-variant: Concepts:** `JULIANDAY`, `CASE`, `Window Functions`, `CTE`, `Pivot`
 
-`CASE`
-
-`Window Functions`
-
-`CTE`
-
-`Pivot`
-
-</div>
-
-</div>
 
 ---
 

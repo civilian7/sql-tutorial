@@ -1,9 +1,7 @@
 # JOIN Master
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `categories` — Categories (parent-child hierarchy)<br>
 
@@ -27,24 +25,10 @@
 
 `product_tags` — Product-tag mapping<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`INNER JOIN`
+**:material-book-open-variant: Concepts:** `INNER JOIN`, `LEFT JOIN`, `multi-table JOIN`, `GROUP BY`, `aggregate functions`
 
-`LEFT JOIN`
-
-`multi-table JOIN`
-
-`GROUP BY`
-
-`aggregate functions`
-
-</div>
-
-</div>
 
 ---
 

@@ -1,9 +1,7 @@
 # Exploring Constraints
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `customers` — Customers (grade, points, channel)<br>
 
@@ -13,28 +11,10 @@
 
 `wishlists` — Wishlists (customer-product)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`PRIMARY KEY`
+**:material-book-open-variant: Concepts:** `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY`, `CHECK`, `NOT NULL`, `ON CONFLICT`, `UPSERT`
 
-`UNIQUE`
-
-`FOREIGN KEY`
-
-`CHECK`
-
-`NOT NULL`
-
-`ON CONFLICT`
-
-`UPSERT`
-
-</div>
-
-</div>
 
 ---
 

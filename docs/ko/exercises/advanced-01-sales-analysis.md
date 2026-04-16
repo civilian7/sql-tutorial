@@ -1,9 +1,7 @@
 # 매출 분석
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `orders` — 주문 (상태, 금액, 일시)<br>
 
@@ -15,26 +13,10 @@
 
 `payments` — 결제 (방법, 금액, 상태)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`Aggregation`
+**:material-book-open-variant: 학습 범위:** `Aggregation`, `GROUP BY`, `Window Functions`, `CTE`, `YoY Growth`, `Pivot`
 
-`GROUP BY`
-
-`Window Functions`
-
-`CTE`
-
-`YoY Growth`
-
-`Pivot`
-
-</div>
-
-</div>
 
 ---
 

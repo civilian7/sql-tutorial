@@ -1,9 +1,7 @@
 # JOIN 마스터
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `categories` — 카테고리 (부모-자식 계층)<br>
 
@@ -27,24 +25,10 @@
 
 `product_tags` — 상품-태그 연결<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`INNER JOIN`
+**:material-book-open-variant: 학습 범위:** `INNER JOIN`, `LEFT JOIN`, `multi-table JOIN`, `GROUP BY`, `aggregate functions`
 
-`LEFT JOIN`
-
-`multi-table JOIN`
-
-`GROUP BY`
-
-`aggregate functions`
-
-</div>
-
-</div>
 
 ---
 

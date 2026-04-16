@@ -1,9 +1,7 @@
 # SQL Debugging
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `categories` — Categories (parent-child hierarchy)<br>
 
@@ -21,34 +19,10 @@
 
 `suppliers` — Suppliers (company, contact)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`cardinality explosion`
+**:material-book-open-variant: Concepts:** `cardinality explosion`, `NULL comparison`, `LEFT JOIN pitfall`, `GROUP BY`, `HAVING vs WHERE`, `DISTINCT`, `correlated subquery`, `date range`, `NULLIF`, `UNION`
 
-`NULL comparison`
-
-`LEFT JOIN pitfall`
-
-`GROUP BY`
-
-`HAVING vs WHERE`
-
-`DISTINCT`
-
-`correlated subquery`
-
-`date range`
-
-`NULLIF`
-
-`UNION`
-
-</div>
-
-</div>
 
 ---
 

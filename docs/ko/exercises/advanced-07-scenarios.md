@@ -1,9 +1,7 @@
 # 비즈니스 시나리오
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `orders` — 주문 (상태, 금액, 일시)<br>
 
@@ -29,24 +27,10 @@
 
 `staff` — 직원 (부서, 역할, 관리자)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`CTE`
+**:material-book-open-variant: 학습 범위:** `CTE`, `Scalar Subquery`, `CASE`, `JULIANDAY`, `Business Reporting`
 
-`Scalar Subquery`
-
-`CASE`
-
-`JULIANDAY`
-
-`Business Reporting`
-
-</div>
-
-</div>
 
 ---
 

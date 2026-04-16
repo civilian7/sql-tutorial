@@ -1,9 +1,7 @@
 # Challenge Problems
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `categories` — Categories (parent-child hierarchy)<br>
 
@@ -29,26 +27,10 @@
 
 `calendar` — Calendar (weekday, holiday)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`Window`
+**:material-book-open-variant: Concepts:** `Window`, `Analytics`, `CTE`, `consecutive`, `median`, `retention`
 
-`Analytics`
-
-`CTE`
-
-`consecutive`
-
-`median`
-
-`retention`
-
-</div>
-
-</div>
 
 ---
 

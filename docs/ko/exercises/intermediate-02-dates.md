@@ -1,9 +1,7 @@
 # 날짜와 시간 분석
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `calendar` — 날짜 차원 (요일, 공휴일)<br>
 
@@ -19,28 +17,10 @@
 
 `shipping` — 배송 (택배사, 추적번호, 상태)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`SUBSTR`
+**:material-book-open-variant: 학습 범위:** `SUBSTR`, `JULIANDAY`, `STRFTIME`, `date arithmetic`, `LAG`, `CTE`, `window functions`
 
-`JULIANDAY`
-
-`STRFTIME`
-
-`date arithmetic`
-
-`LAG`
-
-`CTE`
-
-`window functions`
-
-</div>
-
-</div>
 
 ---
 

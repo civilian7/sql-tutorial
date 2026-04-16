@@ -1,9 +1,7 @@
 # Transactions
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `customers` — Customers (grade, points, channel)<br>
 
@@ -15,28 +13,10 @@
 
 `inventory_transactions` — Inventory (type, quantity)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`BEGIN`
+**:material-book-open-variant: Concepts:** `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ACID`, `atomicity`, `bulk insert`
 
-`COMMIT`
-
-`ROLLBACK`
-
-`SAVEPOINT`
-
-`ACID`
-
-`atomicity`
-
-`bulk insert`
-
-</div>
-
-</div>
 
 ---
 

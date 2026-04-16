@@ -1,9 +1,7 @@
 # 정규화 이해
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `orders` — 주문 (상태, 금액, 일시)<br>
 
@@ -19,28 +17,10 @@
 
 `customer_addresses` — 배송지 (주소, 기본 여부)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`1NF`
+**:material-book-open-variant: 학습 범위:** `1NF`, `2NF`, `3NF`, `Denormalization`, `Self-Reference`, `M:N`, `Recursive CTE`
 
-`2NF`
-
-`3NF`
-
-`Denormalization`
-
-`Self-Reference`
-
-`M:N`
-
-`Recursive CTE`
-
-</div>
-
-</div>
 
 ---
 

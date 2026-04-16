@@ -1,9 +1,7 @@
 # Fill in the Blanks
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `categories` — Categories (parent-child hierarchy)<br>
 
@@ -17,44 +15,10 @@
 
 `shipping` — Shipping (carrier, tracking, status)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`WHERE`
+**:material-book-open-variant: Concepts:** `WHERE`, `ORDER BY`, `COUNT`, `HAVING`, `JOIN`, `LEFT JOIN`, `IS NULL`, `BETWEEN`, `CASE WHEN`, `COALESCE`, `subquery`, `GROUP BY`, `LIKE`, `SUBSTR`, `IN`
 
-`ORDER BY`
-
-`COUNT`
-
-`HAVING`
-
-`JOIN`
-
-`LEFT JOIN`
-
-`IS NULL`
-
-`BETWEEN`
-
-`CASE WHEN`
-
-`COALESCE`
-
-`subquery`
-
-`GROUP BY`
-
-`LIKE`
-
-`SUBSTR`
-
-`IN`
-
-</div>
-
-</div>
 
 ---
 

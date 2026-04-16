@@ -1,9 +1,7 @@
 # Date and Time Analysis
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `calendar` — Calendar (weekday, holiday)<br>
 
@@ -19,28 +17,10 @@
 
 `shipping` — Shipping (carrier, tracking, status)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`SUBSTR`
+**:material-book-open-variant: Concepts:** `SUBSTR`, `JULIANDAY`, `STRFTIME`, `date arithmetic`, `LAG`, `CTE`, `window functions`
 
-`JULIANDAY`
-
-`STRFTIME`
-
-`date arithmetic`
-
-`LAG`
-
-`CTE`
-
-`window functions`
-
-</div>
-
-</div>
 
 ---
 

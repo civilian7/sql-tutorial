@@ -1,9 +1,7 @@
 # 서브쿼리와 데이터 변환
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `categories` — 카테고리 (부모-자식 계층)<br>
 
@@ -23,28 +21,10 @@
 
 `wishlists` — 위시리스트 (고객-상품)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`scalar subquery`
+**:material-book-open-variant: 학습 범위:** `scalar subquery`, `correlated subquery`, `CTE`, `CASE WHEN`, `NOT EXISTS`, `UNION ALL`, `window functions`
 
-`correlated subquery`
-
-`CTE`
-
-`CASE WHEN`
-
-`NOT EXISTS`
-
-`UNION ALL`
-
-`window functions`
-
-</div>
-
-</div>
 
 ---
 

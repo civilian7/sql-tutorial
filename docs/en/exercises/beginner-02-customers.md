@@ -1,9 +1,7 @@
 # Customer Analysis
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `customers` — Customers (grade, points, channel)<br>
 
@@ -17,42 +15,10 @@
 
 `product_tags` — Product-tag mapping<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`SELECT`
+**:material-book-open-variant: Concepts:** `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `AVG`, `MAX`, `COALESCE`, `SUBSTR`, `INSTR`, `JOIN`, `HAVING`, `LIKE`, `IN`, `CASE WHEN`
 
-`WHERE`
-
-`GROUP BY`
-
-`COUNT`
-
-`AVG`
-
-`MAX`
-
-`COALESCE`
-
-`SUBSTR`
-
-`INSTR`
-
-`JOIN`
-
-`HAVING`
-
-`LIKE`
-
-`IN`
-
-`CASE WHEN`
-
-</div>
-
-</div>
 
 ---
 

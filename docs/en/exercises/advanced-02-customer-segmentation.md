@@ -1,9 +1,7 @@
 # Customer Segmentation
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `customers` — Customers (grade, points, channel)<br>
 
@@ -11,26 +9,10 @@
 
 `reviews` — Reviews (rating, content)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`RFM`
+**:material-book-open-variant: Concepts:** `RFM`, `NTILE`, `Window Functions`, `CTE`, `Cohort Analysis`, `JULIANDAY`
 
-`NTILE`
-
-`Window Functions`
-
-`CTE`
-
-`Cohort Analysis`
-
-`JULIANDAY`
-
-</div>
-
-</div>
 
 ---
 

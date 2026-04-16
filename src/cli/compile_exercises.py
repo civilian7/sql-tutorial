@@ -223,35 +223,33 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
     md_ko_lines = [f"# {meta.get('title', exercise_id)}\n"]
     md_en_lines = [f"# {meta.get('title_en', exercise_id)}\n"]
 
-    # Standard info block: 2-column grid (tables + concepts)
+    # Standard info block: tables + concepts (single column)
     tables = meta.get("tables", [])
     concepts = meta.get("concepts", [])
 
     if tables or concepts:
         for lines, lang in [(md_ko_lines, "ko"), (md_en_lines, "en")]:
-            lines.append('<div class="grid" markdown>\n')
+            # Tables
+            if tables:
+                if lang == "ko":
+                    lines.append('#### :material-database: 사용 테이블\n\n')
+                else:
+                    lines.append('#### :material-database: Tables\n\n')
+                for t in tables:
+                    desc_ko_t, desc_en_t = _TABLE_DESC.get(t, (t, t))
+                    desc = desc_ko_t if lang == "ko" else desc_en_t
+                    lines.append(f'`{t}` — {desc}<br>\n')
+                lines.append('\n')
 
-            # Left column: tables
-            if lang == "ko":
-                lines.append('<div markdown>\n#### :material-database: 사용 테이블\n')
-            else:
-                lines.append('<div markdown>\n#### :material-database: Tables\n')
-            for t in tables:
-                desc_ko_t, desc_en_t = _TABLE_DESC.get(t, (t, t))
-                desc = desc_ko_t if lang == "ko" else desc_en_t
-                lines.append(f'`{t}` — {desc}<br>\n')
-            lines.append('</div>\n')
+            # Concepts (inline, comma-separated)
+            if concepts:
+                concepts_str = ", ".join(f"`{c}`" for c in concepts)
+                if lang == "ko":
+                    lines.append(f'**:material-book-open-variant: 학습 범위:** {concepts_str}\n')
+                else:
+                    lines.append(f'**:material-book-open-variant: Concepts:** {concepts_str}\n')
 
-            # Right column: concepts
-            if lang == "ko":
-                lines.append('<div markdown>\n#### :material-book-open-variant: 학습 범위\n')
-            else:
-                lines.append('<div markdown>\n#### :material-book-open-variant: Concepts\n')
-            for c in concepts:
-                lines.append(f'`{c}`\n')
-            lines.append('</div>\n')
-
-            lines.append('</div>\n\n---\n')
+            lines.append('\n---\n')
 
     problems = data.get("problems", [])
     for i, prob in enumerate(problems):

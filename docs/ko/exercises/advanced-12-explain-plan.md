@@ -1,9 +1,7 @@
 # 실행 계획 분석
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `customers` — 고객 (등급, 포인트, 가입채널)<br>
 
@@ -17,24 +15,10 @@
 
 `product_views` — 조회 로그 (고객, 상품, 일시)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`EXPLAIN`
+**:material-book-open-variant: 학습 범위:** `EXPLAIN`, `QUERY PLAN`, `index`, `performance`, `optimization`
 
-`QUERY PLAN`
-
-`index`
-
-`performance`
-
-`optimization`
-
-</div>
-
-</div>
 
 ---
 

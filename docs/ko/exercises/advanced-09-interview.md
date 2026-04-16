@@ -1,9 +1,7 @@
 # SQL 면접 대비
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: 사용 테이블
+
 
 `orders` — 주문 (상태, 금액, 일시)<br>
 
@@ -17,28 +15,10 @@
 
 `customers` — 고객 (등급, 포인트, 가입채널)<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: 학습 범위
 
-`ROW_NUMBER`
+**:material-book-open-variant: 학습 범위:** `ROW_NUMBER`, `LAG`, `Running Total`, `Moving Average`, `Recursive CTE`, `NTILE`, `Funnel`
 
-`LAG`
-
-`Running Total`
-
-`Moving Average`
-
-`Recursive CTE`
-
-`NTILE`
-
-`Funnel`
-
-</div>
-
-</div>
 
 ---
 

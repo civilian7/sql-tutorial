@@ -1,9 +1,7 @@
 # Real-World SQL Patterns
 
-<div class="grid" markdown>
-
-<div markdown>
 #### :material-database: Tables
+
 
 `orders` — Orders (status, amount, date)<br>
 
@@ -23,24 +21,10 @@
 
 `coupon_usage` — Coupon usage records<br>
 
-</div>
 
-<div markdown>
-#### :material-book-open-variant: Concepts
 
-`LAG`
+**:material-book-open-variant: Concepts:** `LAG`, `ROW_NUMBER`, `Cart Abandonment`, `Coupon ROI`, `Time Pattern`
 
-`ROW_NUMBER`
-
-`Cart Abandonment`
-
-`Coupon ROI`
-
-`Time Pattern`
-
-</div>
-
-</div>
 
 ---
 
