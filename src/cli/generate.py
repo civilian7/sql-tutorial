@@ -62,7 +62,7 @@ def _merge_defaults(target: dict, defaults: dict):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="E-commerce test DB generator")
-    parser.add_argument("--size", choices=["small", "medium", "large"], help="Data scale")
+    parser.add_argument("--size", choices=["tiny", "small", "medium", "large"], help="Data scale")
     parser.add_argument("--seed", type=int, help="Random seed (default: 42)")
     parser.add_argument("--target", choices=["sqlite", "mysql", "postgresql", "sqlserver", "oracle", "all"],
                         help="Target DB")
@@ -154,6 +154,7 @@ def _interactive_mode() -> argparse.Namespace:
 
     # 1. Size
     size = _pick("1. 데이터 규모를 선택하세요:", [
+        ("tiny",   "Tiny   - ~1만 건, ~1MB (웹 플레이그라운드용)"),
         ("small",  "Small  - ~75만 건, ~80MB, ~20초 (학습용, 추천)"),
         ("medium", "Medium - ~700만 건, ~800MB, ~3분 (개발용)"),
         ("large",  "Large  - ~3500만 건, ~4GB, ~15분 (성능 테스트)"),

@@ -16,6 +16,9 @@ end_date: "2025-12-31"
 size: small
 
 profiles:
+  tiny:
+    scale: 0.01    # medium 대비 1% — 브라우저 플레이그라운드용
+    description: "웹 플레이그라운드용 (~1만 건, ~1MB)"
   small:
     scale: 0.1     # medium 대비 10%
     description: "빠른 기능 테스트, CI용 (~20만 건)"

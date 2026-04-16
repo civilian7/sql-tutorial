@@ -96,6 +96,7 @@ nav:
       - "24. 트리거": advanced/24-triggers.md
       - "25. JSON 데이터 쿼리": advanced/25-json.md
       - "26. 저장 프로시저": advanced/26-stored-procedures.md
+  - SQL 플레이그라운드: playground.md
   - 참고:
     - "데이터베이스별 SQL 차이": dialect-comparison.md
     - "용어사전": appendix/glossary.md

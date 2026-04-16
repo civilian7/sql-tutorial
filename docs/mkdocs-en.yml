@@ -95,6 +95,7 @@ nav:
       - "24. Triggers": advanced/24-triggers.md
       - "25. JSON Data Queries": advanced/25-json.md
       - "26. Stored Procedures & Functions": advanced/26-stored-procedures.md
+  - SQL Playground: playground.md
   - Reference:
     - "SQL Across Databases": dialect-comparison.md
     - "Glossary": appendix/glossary.md
