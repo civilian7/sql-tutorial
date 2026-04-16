@@ -19,17 +19,17 @@ Detailed learning about table design is covered in [Lesson 16. DDL — Creating 
 
 3-level hierarchy (top → mid → sub category). If `parent_id` is NULL, it's the top level.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 parent_id | INTEGER | O | -> categories(id), NULL=root (self-reference) |
-| name | TEXT | - | Category name |
-| slug | TEXT | - | UNIQUE -- URL-safe identifier |
-| depth | INTEGER | - | 0=top, 1=mid, 2=sub |
-| sort_order | INTEGER | - | Sort order |
-| is_active | INTEGER | - | Active flag (0/1) |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | - | Updated datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | parent_id | INTEGER | O | -> categories(id), NULL=root (self-reference) |
+| | name | TEXT | - | Category name |
+| | slug | TEXT | - | UNIQUE -- URL-safe identifier |
+| | depth | INTEGER | - | 0=top, 1=mid, 2=sub |
+| | sort_order | INTEGER | - | Sort order |
+| | is_active | INTEGER | - | Active flag (0/1) |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | - | Updated datetime |
 
 === "SQLite"
 
@@ -559,18 +559,18 @@ Detailed learning about table design is covered in [Lesson 16. DDL — Creating 
 
 60 supplier companies. Each product belongs to one supplier.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| company_name | TEXT | - | Company name |
-| business_number | TEXT | - | Business registration number (fictional) |
-| contact_name | TEXT | - | Contact person |
-| phone | TEXT | - | 020-XXXX-XXXX (fictional number) |
-| email | TEXT | - | contact@xxx.test.kr |
-| address | TEXT | - | Business address |
-| is_active | INTEGER | - | Active flag |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | - | Updated datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| | company_name | TEXT | - | Company name |
+| | business_number | TEXT | - | Business registration number (fictional) |
+| | contact_name | TEXT | - | Contact person |
+| | phone | TEXT | - | 020-XXXX-XXXX (fictional number) |
+| | email | TEXT | - | contact@xxx.test.kr |
+| | address | TEXT | - | Business address |
+| | is_active | INTEGER | - | Active flag |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | - | Updated datetime |
 
 === "SQLite"
 
@@ -663,26 +663,26 @@ Detailed learning about table design is covered in [Lesson 16. DDL — Creating 
 2,800 electronics products for sale (medium). Uniquely identified by SKU code. Includes price, cost, stock, and discontinuation status.
 `successor_id` references the successor model for discontinued products, and `specs` stores detailed specifications in JSON format.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 category_id | INTEGER | - | → categories(id) |
-| 🔗 supplier_id | INTEGER | - | → suppliers(id) |
-| 🔗 successor_id | INTEGER | O | -> products(id), successor model (self-reference, NULL=current) |
-| name | TEXT | - | Product name |
-| sku | TEXT | - | UNIQUE -- SKU code (e.g., LA-GEN-Samsung-00001) |
-| brand | TEXT | - | Brand name |
-| model_number | TEXT | - | Model number |
-| description | TEXT | O | Product description |
-| specs | TEXT | O | JSON product specifications (nullable) |
-| price | REAL | - | Current selling price (KRW), CHECK >= 0 |
-| cost_price | REAL | - | Cost price (KRW), CHECK >= 0 |
-| stock_qty | INTEGER | - | Current stock quantity |
-| weight_grams | INTEGER | O | Shipping weight (g) |
-| is_active | INTEGER | - | On sale flag |
-| discontinued_at | TEXT | O | Discontinued date (NULL=active) |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | - | Updated datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | category_id | INTEGER | - | → categories(id) |
+| 🔗 | supplier_id | INTEGER | - | → suppliers(id) |
+| 🔗 | successor_id | INTEGER | O | -> products(id), successor model (self-reference, NULL=current) |
+| | name | TEXT | - | Product name |
+| | sku | TEXT | - | UNIQUE -- SKU code (e.g., LA-GEN-Samsung-00001) |
+| | brand | TEXT | - | Brand name |
+| | model_number | TEXT | - | Model number |
+| | description | TEXT | O | Product description |
+| | specs | TEXT | O | JSON product specifications (nullable) |
+| | price | REAL | - | Current selling price (KRW), CHECK >= 0 |
+| | cost_price | REAL | - | Cost price (KRW), CHECK >= 0 |
+| | stock_qty | INTEGER | - | Current stock quantity |
+| | weight_grams | INTEGER | O | Shipping weight (g) |
+| | is_active | INTEGER | - | On sale flag |
+| | discontinued_at | TEXT | O | Discontinued date (NULL=active) |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | - | Updated datetime |
 
 === "SQLite"
 
@@ -818,20 +818,20 @@ Detailed learning about table design is covered in [Lesson 16. DDL — Creating 
 
 Multi-angle images per product. `is_primary` identifies the main image.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| image_url | TEXT | - | Image path/URL |
-| file_name | TEXT | - | Filename (e.g., 42_1.jpg) |
-| image_type | TEXT | - | main/angle/side/back/detail/package/lifestyle, etc. |
-| alt_text | TEXT | O | Alt text |
-| width | INTEGER | - | Image width (px) |
-| height | INTEGER | - | Image height (px) |
-| file_size | INTEGER | - | File size (bytes) |
-| sort_order | INTEGER | - | Display order |
-| is_primary | INTEGER | - | Primary image flag |
-| created_at | TEXT | - | Created datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| | image_url | TEXT | - | Image path/URL |
+| | file_name | TEXT | - | Filename (e.g., 42_1.jpg) |
+| | image_type | TEXT | - | main/angle/side/back/detail/package/lifestyle, etc. |
+| | alt_text | TEXT | O | Alt text |
+| | width | INTEGER | - | Image width (px) |
+| | height | INTEGER | - | Image height (px) |
+| | file_size | INTEGER | - | File size (bytes) |
+| | sort_order | INTEGER | - | Display order |
+| | is_primary | INTEGER | - | Primary image flag |
+| | created_at | TEXT | - | Created datetime |
 
 === "SQLite"
 
@@ -949,14 +949,14 @@ Multi-angle images per product. `is_primary` identifies the main image.
 
 Records product price changes. If `ended_at` is NULL, it is the currently active price.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| price | REAL | - | Selling price for this period |
-| started_at | TEXT | - | Effective start date |
-| ended_at | TEXT | O | Effective end date (NULL=current price) |
-| change_reason | TEXT | - | regular/promotion/price_drop/cost_increase |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| | price | REAL | - | Selling price for this period |
+| | started_at | TEXT | - | Effective start date |
+| | ended_at | TEXT | O | Effective end date (NULL=current price) |
+| | change_reason | TEXT | - | regular/promotion/price_drop/cost_increase |
 
 === "SQLite"
 
@@ -1030,22 +1030,22 @@ Records product price changes. If `ended_at` is NULL, it is the currently active
 52,300 shop members (medium). Manages grade system (BRONZE~VIP), points, and active/deactivated status.
 `acquisition_channel` tracks the signup source.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| email | TEXT | - | UNIQUE — `user123@testmail.kr` |
-| password_hash | TEXT | - | SHA-256 (fictional) |
-| name | TEXT | - | Customer name |
-| phone | TEXT | - | `020-XXXX-XXXX` (fictional number) |
-| birth_date | TEXT | O | Birth date (~15% NULL) |
-| gender | TEXT | O | M/F (NULL ~10%, M:65%) |
-| grade | TEXT | - | CHECK: BRONZE/SILVER/GOLD/VIP |
-| point_balance | INTEGER | - | Point balance, CHECK >= 0 |
-| acquisition_channel | TEXT | O | organic/search_ad/social/referral/direct (nullable) |
-| is_active | INTEGER | - | 0=deactivated, 1=active |
-| last_login_at | TEXT | O | NULL = never logged in |
-| created_at | TEXT | - | Signup date |
-| updated_at | TEXT | - | Updated date |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| | email | TEXT | - | UNIQUE — `user123@testmail.kr` |
+| | password_hash | TEXT | - | SHA-256 (fictional) |
+| | name | TEXT | - | Customer name |
+| | phone | TEXT | - | `020-XXXX-XXXX` (fictional number) |
+| | birth_date | TEXT | O | Birth date (~15% NULL) |
+| | gender | TEXT | O | M/F (NULL ~10%, M:65%) |
+| | grade | TEXT | - | CHECK: BRONZE/SILVER/GOLD/VIP |
+| | point_balance | INTEGER | - | Point balance, CHECK >= 0 |
+| | acquisition_channel | TEXT | O | organic/search_ad/social/referral/direct (nullable) |
+| | is_active | INTEGER | - | 0=deactivated, 1=active |
+| | last_login_at | TEXT | O | NULL = never logged in |
+| | created_at | TEXT | - | Signup date |
+| | updated_at | TEXT | - | Updated date |
 
 === "SQLite"
 
@@ -1159,19 +1159,19 @@ Records product price changes. If `ended_at` is NULL, it is the currently active
 Multiple shipping addresses per customer. `is_default` identifies the default address.
 `updated_at` tracks address change history.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| label | TEXT | - | Home/Office/Other |
-| recipient_name | TEXT | - | Recipient |
-| phone | TEXT | - | Recipient phone |
-| zip_code | TEXT | - | Postal code |
-| address1 | TEXT | - | Base address |
-| address2 | TEXT | O | Detailed address |
-| is_default | INTEGER | - | Default address flag |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | O | Address change date (nullable) |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| | label | TEXT | - | Home/Office/Other |
+| | recipient_name | TEXT | - | Recipient |
+| | phone | TEXT | - | Recipient phone |
+| | zip_code | TEXT | - | Postal code |
+| | address1 | TEXT | - | Base address |
+| | address2 | TEXT | O | Detailed address |
+| | is_default | INTEGER | - | Default address flag |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | O | Address change date (nullable) |
 
 === "SQLite"
 
@@ -1270,18 +1270,18 @@ Multiple shipping addresses per customer. `is_default` identifies the default ad
 50 shop staff members (medium). Used for CS agent assignment and inquiry handling.
 `manager_id` creates a self-referencing structure pointing to the supervisor.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 manager_id | INTEGER | O | -> staff(id), supervisor (self-reference, NULL=top-level) |
-| email | TEXT | - | UNIQUE — staffN@techshop-staff.kr |
-| name | TEXT | - | Staff name |
-| phone | TEXT | - | Phone number |
-| department | TEXT | - | sales/logistics/CS/marketing/dev/management |
-| role | TEXT | - | admin/manager/staff |
-| is_active | INTEGER | - | Active flag |
-| hired_at | TEXT | - | Hire date |
-| created_at | TEXT | - | Created datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | manager_id | INTEGER | O | -> staff(id), supervisor (self-reference, NULL=top-level) |
+| | email | TEXT | - | UNIQUE — staffN@techshop-staff.kr |
+| | name | TEXT | - | Staff name |
+| | phone | TEXT | - | Phone number |
+| | department | TEXT | - | sales/logistics/CS/marketing/dev/management |
+| | role | TEXT | - | admin/manager/staff |
+| | is_active | INTEGER | - | Active flag |
+| | hired_at | TEXT | - | Hire date |
+| | created_at | TEXT | - | Created datetime |
 
 === "SQLite"
 
@@ -1374,25 +1374,25 @@ Multiple shipping addresses per customer. `is_default` identifies the default ad
 
 Core transaction table (medium: 378,368 rows). Based on order number `ORD-YYYYMMDD-NNNNN`, 9-step status management.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| order_number | TEXT | - | UNIQUE — `ORD-20240315-00001` |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 address_id | INTEGER | - | → customer_addresses(id) |
-| 🔗 staff_id | INTEGER | O | -> staff(id), NULL if no CS agent |
-| status | TEXT | - | See status flow below |
-| total_amount | REAL | - | Final payment amount |
-| discount_amount | REAL | - | Total discount amount |
-| shipping_fee | REAL | - | Shipping fee (free over 50,000 KRW) |
-| point_used | INTEGER | - | Points used |
-| point_earned | INTEGER | - | Points to be earned |
-| notes | TEXT | O | Delivery memo (~35%) |
-| ordered_at | TEXT | - | Order datetime |
-| completed_at | TEXT | O | Purchase confirmation date |
-| cancelled_at | TEXT | O | Cancellation date |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | - | Updated datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| | order_number | TEXT | - | UNIQUE — `ORD-20240315-00001` |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | address_id | INTEGER | - | → customer_addresses(id) |
+| 🔗 | staff_id | INTEGER | O | -> staff(id), NULL if no CS agent |
+| | status | TEXT | - | See status flow below |
+| | total_amount | REAL | - | Final payment amount |
+| | discount_amount | REAL | - | Total discount amount |
+| | shipping_fee | REAL | - | Shipping fee (free over 50,000 KRW) |
+| | point_used | INTEGER | - | Points used |
+| | point_earned | INTEGER | - | Points to be earned |
+| | notes | TEXT | O | Delivery memo (~35%) |
+| | ordered_at | TEXT | - | Order datetime |
+| | completed_at | TEXT | O | Purchase confirmation date |
+| | cancelled_at | TEXT | O | Cancellation date |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | - | Updated datetime |
 
 === "SQLite"
 
@@ -1541,15 +1541,15 @@ Core transaction table (medium: 378,368 rows). Based on order number `ORD-YYYYMM
 
 Product list per order. Records unit price and discount at order time, independent of price changes.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 order_id | INTEGER | - | → orders(id) |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| quantity | INTEGER | - | Quantity, CHECK > 0 |
-| unit_price | REAL | - | Unit price at order time |
-| discount_amount | REAL | - | Item discount |
-| subtotal | REAL | - | (unit_price x quantity) - discount |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | order_id | INTEGER | - | → orders(id) |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| | quantity | INTEGER | - | Quantity, CHECK > 0 |
+| | unit_price | REAL | - | Unit price at order time |
+| | discount_amount | REAL | - | Item discount |
+| | subtotal | REAL | - | (unit_price x quantity) - discount |
 
 === "SQLite"
 
@@ -2425,26 +2425,26 @@ Product list per order. Records unit price and discount at order time, independe
 
 One payment per order. Supports various methods including card, bank transfer, and easy pay.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 order_id | INTEGER | - | → orders(id) |
-| method | TEXT | - | card/bank_transfer/virtual_account/kakao_pay/naver_pay/point |
-| amount | REAL | - | Payment amount, CHECK >= 0 |
-| status | TEXT | - | CHECK: pending/completed/failed/refunded |
-| pg_transaction_id | TEXT | O | PG transaction ID (fictional) |
-| card_issuer | TEXT | O | Shinhan/Samsung/KB/Hyundai/Lotte/Hana/Woori/NH/BC |
-| card_approval_no | TEXT | O | Card approval number (8 digits) |
-| installment_months | INTEGER | O | Installment months (0=lump sum) |
-| bank_name | TEXT | O | Bank name (bank transfer/virtual account) |
-| account_no | TEXT | O | Virtual account number |
-| depositor_name | TEXT | O | Depositor name |
-| easy_pay_method | TEXT | O | Easy pay sub-method |
-| receipt_type | TEXT | O | Income deduction/expense proof |
-| receipt_no | TEXT | O | Cash receipt number |
-| paid_at | TEXT | O | Payment completion time |
-| refunded_at | TEXT | O | Refund time |
-| created_at | TEXT | - | Created datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | order_id | INTEGER | - | → orders(id) |
+| | method | TEXT | - | card/bank_transfer/virtual_account/kakao_pay/naver_pay/point |
+| | amount | REAL | - | Payment amount, CHECK >= 0 |
+| | status | TEXT | - | CHECK: pending/completed/failed/refunded |
+| | pg_transaction_id | TEXT | O | PG transaction ID (fictional) |
+| | card_issuer | TEXT | O | Shinhan/Samsung/KB/Hyundai/Lotte/Hana/Woori/NH/BC |
+| | card_approval_no | TEXT | O | Card approval number (8 digits) |
+| | installment_months | INTEGER | O | Installment months (0=lump sum) |
+| | bank_name | TEXT | O | Bank name (bank transfer/virtual account) |
+| | account_no | TEXT | O | Virtual account number |
+| | depositor_name | TEXT | O | Depositor name |
+| | easy_pay_method | TEXT | O | Easy pay sub-method |
+| | receipt_type | TEXT | O | Income deduction/expense proof |
+| | receipt_no | TEXT | O | Cash receipt number |
+| | paid_at | TEXT | O | Payment completion time |
+| | refunded_at | TEXT | O | Refund time |
+| | created_at | TEXT | - | Created datetime |
 
 === "SQLite"
 
@@ -2577,17 +2577,17 @@ One payment per order. Supports various methods including card, bank transfer, a
 
 Shipping tracking per order. Manages tracking numbers and status by carrier.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 order_id | INTEGER | - | → orders(id) |
-| carrier | TEXT | - | CJ Logistics/Hanjin/Logen/Korea Post |
-| tracking_number | TEXT | - | Tracking number |
-| status | TEXT | - | preparing/shipped/in_transit/delivered/returned |
-| shipped_at | TEXT | O | Ship date |
-| delivered_at | TEXT | O | Delivery date |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | - | Updated datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | order_id | INTEGER | - | → orders(id) |
+| | carrier | TEXT | - | CJ Logistics/Hanjin/Logen/Korea Post |
+| | tracking_number | TEXT | - | Tracking number |
+| | status | TEXT | - | preparing/shipped/in_transit/delivered/returned |
+| | shipped_at | TEXT | O | Ship date |
+| | delivered_at | TEXT | O | Delivery date |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | - | Updated datetime |
 
 === "SQLite"
 
@@ -2675,18 +2675,18 @@ Shipping tracking per order. Manages tracking numbers and status by carrier.
 
 86,806 verified purchase reviews (medium). 1-5 star ratings (5-star 40%, 4-star 30%, 3-star 15%, 2-star 10%, 1-star 5%).
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 order_id | INTEGER | - | → orders(id) |
-| rating | INTEGER | - | 1-5 stars, CHECK BETWEEN 1 AND 5 |
-| title | TEXT | O | Review title (~80%) |
-| content | TEXT | - | Review body |
-| is_verified | INTEGER | - | Verified purchase flag |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | - | Updated datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | order_id | INTEGER | - | → orders(id) |
+| | rating | INTEGER | - | 1-5 stars, CHECK BETWEEN 1 AND 5 |
+| | title | TEXT | O | Review title (~80%) |
+| | content | TEXT | - | Review body |
+| | is_verified | INTEGER | - | Verified purchase flag |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | - | Updated datetime |
 
 === "SQLite"
 
@@ -2784,14 +2784,14 @@ Shipping tracking per order. Manages tracking numbers and status by carrier.
 Customer wishlist entries. Same customer-product combination is UNIQUE.
 `is_purchased` tracks whether wishlisted products were purchased.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| is_purchased | INTEGER | - | Purchase conversion flag (0/1) |
-| notify_on_sale | INTEGER | - | Price drop notification (0/1) |
-| created_at | TEXT | - | Registration datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| | is_purchased | INTEGER | - | Purchase conversion flag (0/1) |
+| | notify_on_sale | INTEGER | - | Price drop notification (0/1) |
+| | created_at | TEXT | - | Registration datetime |
 
 === "SQLite"
 
@@ -2871,28 +2871,28 @@ Customer wishlist entries. Same customer-product combination is UNIQUE.
 37,953 CS inquiry submissions and processing (medium). 7 categories, 5 channels, 4 priority levels.
 Columns `type` (inquiry/claim/report), `sub_category`, `compensation_type`, `compensation_amount`, `escalated`, `response_count` enable detailed CS analysis.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 order_id | INTEGER | O | -> orders(id), NULL=general inquiry |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 staff_id | INTEGER | - | -> staff(id), assigned CS agent |
-| category | TEXT | - | product_defect/delivery_issue/wrong_item/refund_request/exchange_request/general_inquiry/price_inquiry |
-| channel | TEXT | - | website/phone/email/chat/kakao |
-| priority | TEXT | - | low/medium/high/urgent |
-| status | TEXT | - | open/resolved/closed |
-| title | TEXT | - | Inquiry title |
-| content | TEXT | - | Inquiry content |
-| resolution | TEXT | O | Resolution detail (when resolved) |
-| type | TEXT | - | inquiry/claim/report (inquiry type) |
-| sub_category | TEXT | O | Detailed category (e.g., initial_defect/in_use_damage/misdelivery) |
-| compensation_type | TEXT | O | refund/exchange/partial_refund/point_compensation/none |
-| compensation_amount | REAL | O | Compensation amount |
-| escalated | INTEGER | - | Escalated to supervisor (0/1) |
-| response_count | INTEGER | - | Response count |
-| created_at | TEXT | - | Submitted date |
-| resolved_at | TEXT | O | Resolved date |
-| closed_at | TEXT | O | Closed date |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | order_id | INTEGER | O | -> orders(id), NULL=general inquiry |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | staff_id | INTEGER | - | -> staff(id), assigned CS agent |
+| | category | TEXT | - | product_defect/delivery_issue/wrong_item/refund_request/exchange_request/general_inquiry/price_inquiry |
+| | channel | TEXT | - | website/phone/email/chat/kakao |
+| | priority | TEXT | - | low/medium/high/urgent |
+| | status | TEXT | - | open/resolved/closed |
+| | title | TEXT | - | Inquiry title |
+| | content | TEXT | - | Inquiry content |
+| | resolution | TEXT | O | Resolution detail (when resolved) |
+| | type | TEXT | - | inquiry/claim/report (inquiry type) |
+| | sub_category | TEXT | O | Detailed category (e.g., initial_defect/in_use_damage/misdelivery) |
+| | compensation_type | TEXT | O | refund/exchange/partial_refund/point_compensation/none |
+| | compensation_amount | REAL | O | Compensation amount |
+| | escalated | INTEGER | - | Escalated to supervisor (0/1) |
+| | response_count | INTEGER | - | Response count |
+| | created_at | TEXT | - | Submitted date |
+| | resolved_at | TEXT | O | Resolved date |
+| | closed_at | TEXT | O | Closed date |
 
 === "SQLite"
 
@@ -3039,30 +3039,30 @@ Columns `type` (inquiry/claim/report), `sub_category`, `compensation_type`, `com
 11,413 return or exchange requests (medium). Tracks the full process: reason, pickup, inspection, and refund.
 Includes `claim_id` (return linked to CS complaint), `exchange_product_id` (replacement product), and `restocking_fee` (change-of-mind restocking fee).
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 order_id | INTEGER | - | → orders(id) |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 claim_id | INTEGER | O | -> complaints(id), when return originated from CS complaint |
-| 🔗 exchange_product_id | INTEGER | O | -> products(id), replacement product for exchange |
-| return_type | TEXT | - | refund/exchange |
-| reason | TEXT | - | defective/wrong_item/change_of_mind/damaged_in_transit/not_as_described/late_delivery |
-| reason_detail | TEXT | O | Detailed reason description |
-| status | TEXT | - | requested/pickup_scheduled/in_transit/completed |
-| is_partial | INTEGER | - | Partial return flag (~17%) |
-| refund_amount | REAL | - | Refund amount |
-| refund_status | TEXT | - | pending/refunded/exchanged/partial_refund |
-| restocking_fee | REAL | - | Change-of-mind restocking fee (default 0) |
-| carrier | TEXT | O | Pickup carrier |
-| tracking_number | TEXT | O | Pickup tracking number |
-| requested_at | TEXT | - | Return request date |
-| pickup_at | TEXT | O | Pickup scheduled/completed date |
-| received_at | TEXT | O | Warehouse receipt date |
-| inspected_at | TEXT | O | Inspection completion date |
-| inspection_result | TEXT | O | good/opened_good/defective/unsellable |
-| completed_at | TEXT | O | Processing completion date |
-| created_at | TEXT | - | Created datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | order_id | INTEGER | - | → orders(id) |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | claim_id | INTEGER | O | -> complaints(id), when return originated from CS complaint |
+| 🔗 | exchange_product_id | INTEGER | O | -> products(id), replacement product for exchange |
+| | return_type | TEXT | - | refund/exchange |
+| | reason | TEXT | - | defective/wrong_item/change_of_mind/damaged_in_transit/not_as_described/late_delivery |
+| | reason_detail | TEXT | O | Detailed reason description |
+| | status | TEXT | - | requested/pickup_scheduled/in_transit/completed |
+| | is_partial | INTEGER | - | Partial return flag (~17%) |
+| | refund_amount | REAL | - | Refund amount |
+| | refund_status | TEXT | - | pending/refunded/exchanged/partial_refund |
+| | restocking_fee | REAL | - | Change-of-mind restocking fee (default 0) |
+| | carrier | TEXT | O | Pickup carrier |
+| | tracking_number | TEXT | O | Pickup tracking number |
+| | requested_at | TEXT | - | Return request date |
+| | pickup_at | TEXT | O | Pickup scheduled/completed date |
+| | received_at | TEXT | O | Warehouse receipt date |
+| | inspected_at | TEXT | O | Inspection completion date |
+| | inspection_result | TEXT | O | good/opened_good/defective/unsellable |
+| | completed_at | TEXT | O | Processing completion date |
+| | created_at | TEXT | - | Created datetime |
 
 === "SQLite"
 
@@ -3219,21 +3219,21 @@ Includes `claim_id` (return linked to CS complaint), `exchange_product_id` (repl
 
 200 discount coupon types (medium). Manages percent or fixed discount, usage limits, and validity period.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| code | TEXT | - | UNIQUE -- Coupon code (CP2401001) |
-| name | TEXT | - | Coupon name |
-| type | TEXT | - | percent/fixed |
-| discount_value | REAL | - | Discount rate (%) or amount (KRW), CHECK > 0 |
-| min_order_amount | REAL | O | Minimum order amount |
-| max_discount | REAL | O | Maximum discount amount (percent type) |
-| usage_limit | INTEGER | O | Total usage limit |
-| per_user_limit | INTEGER | O | Per-user usage limit |
-| is_active | INTEGER | - | Active flag |
-| started_at | TEXT | - | Validity start |
-| expired_at | TEXT | - | Validity end |
-| created_at | TEXT | - | Created datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| | code | TEXT | - | UNIQUE -- Coupon code (CP2401001) |
+| | name | TEXT | - | Coupon name |
+| | type | TEXT | - | percent/fixed |
+| | discount_value | REAL | - | Discount rate (%) or amount (KRW), CHECK > 0 |
+| | min_order_amount | REAL | O | Minimum order amount |
+| | max_discount | REAL | O | Maximum discount amount (percent type) |
+| | usage_limit | INTEGER | O | Total usage limit |
+| | per_user_limit | INTEGER | O | Per-user usage limit |
+| | is_active | INTEGER | - | Active flag |
+| | started_at | TEXT | - | Validity start |
+| | expired_at | TEXT | - | Validity end |
+| | created_at | TEXT | - | Created datetime |
 
 === "SQLite"
 
@@ -3340,14 +3340,14 @@ Includes `claim_id` (return linked to CS complaint), `exchange_product_id` (repl
 
 Records of actual coupon usage. Tracks which customer got how much discount on which order.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 coupon_id | INTEGER | - | → coupons(id) |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 order_id | INTEGER | - | → orders(id) |
-| discount_amount | REAL | - | Actual discount amount |
-| used_at | TEXT | - | Usage datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | coupon_id | INTEGER | - | → coupons(id) |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | order_id | INTEGER | - | → orders(id) |
+| | discount_amount | REAL | - | Actual discount amount |
+| | used_at | TEXT | - | Usage datetime |
 
 === "SQLite"
 
@@ -3421,15 +3421,15 @@ Records of actual coupon usage. Tracks which customer got how much discount on w
 
 Product inventory change history. Records inbound (positive), outbound (negative), returns, and adjustments.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| type | TEXT | - | inbound/outbound/return/adjustment |
-| quantity | INTEGER | - | Positive=inbound, negative=outbound |
-| reference_id | INTEGER | O | Related order ID |
-| notes | TEXT | O | initial_stock/regular_inbound/return_inbound, etc. |
-| created_at | TEXT | - | Occurrence datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| | type | TEXT | - | inbound/outbound/return/adjustment |
+| | quantity | INTEGER | - | Positive=inbound, negative=outbound |
+| | reference_id | INTEGER | O | Related order ID |
+| | notes | TEXT | O | initial_stock/regular_inbound/return_inbound, etc. |
+| | created_at | TEXT | - | Occurrence datetime |
 
 === "SQLite"
 
@@ -3507,13 +3507,13 @@ Product inventory change history. Records inbound (positive), outbound (negative
 
 Cart per customer. Tracks order conversion (converted) and abandonment (abandoned) status.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| status | TEXT | - | active/converted/abandoned |
-| created_at | TEXT | - | Created datetime |
-| updated_at | TEXT | - | Updated datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| | status | TEXT | - | active/converted/abandoned |
+| | created_at | TEXT | - | Created datetime |
+| | updated_at | TEXT | - | Updated datetime |
 
 === "SQLite"
 
@@ -3581,13 +3581,13 @@ Cart per customer. Tracks order conversion (converted) and abandonment (abandone
 
 Individual products and quantities in the cart.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 cart_id | INTEGER | - | → carts(id) |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| quantity | INTEGER | - | Quantity |
-| added_at | TEXT | - | Added datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | cart_id | INTEGER | - | → carts(id) |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| | quantity | INTEGER | - | Quantity |
+| | added_at | TEXT | - | Added datetime |
 
 === "SQLite"
 
@@ -3656,18 +3656,18 @@ Individual products and quantities in the cart.
 
 Dimension table containing all dates from 2016-2025. Used for CROSS JOIN and date gap analysis.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 date_key | TEXT | - | YYYY-MM-DD (PK) |
-| year | INTEGER | - | Year |
-| month | INTEGER | - | Month |
-| day | INTEGER | - | Day |
-| quarter | INTEGER | - | Quarter (1-4) |
-| day_of_week | INTEGER | - | 0=Mon ~ 6=Sun |
-| day_name | TEXT | - | Monday~Sunday |
-| is_weekend | INTEGER | - | Weekend flag (0/1) |
-| is_holiday | INTEGER | - | Holiday flag (0/1) |
-| holiday_name | TEXT | O | Holiday name |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | date_key | TEXT | - | YYYY-MM-DD (PK) |
+| | year | INTEGER | - | Year |
+| | month | INTEGER | - | Month |
+| | day | INTEGER | - | Day |
+| | quarter | INTEGER | - | Quarter (1-4) |
+| | day_of_week | INTEGER | - | 0=Mon ~ 6=Sun |
+| | day_name | TEXT | - | Monday~Sunday |
+| | is_weekend | INTEGER | - | Weekend flag (0/1) |
+| | is_holiday | INTEGER | - | Holiday flag (0/1) |
+| | holiday_name | TEXT | O | Holiday name |
 
 === "SQLite"
 
@@ -3760,14 +3760,14 @@ Dimension table containing all dates from 2016-2025. Used for CROSS JOIN and dat
 
 Records customer grade changes. Used for learning the SCD (Slowly Changing Dimension) Type 2 pattern.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| old_grade | TEXT | O | Previous grade (NULL=initial signup) |
-| new_grade | TEXT | - | New grade |
-| changed_at | TEXT | - | Changed datetime |
-| reason | TEXT | - | signup/upgrade/downgrade/yearly_review |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| | old_grade | TEXT | O | Previous grade (NULL=initial signup) |
+| | new_grade | TEXT | - | New grade |
+| | changed_at | TEXT | - | Changed datetime |
+| | reason | TEXT | - | signup/upgrade/downgrade/yearly_review |
 
 === "SQLite"
 
@@ -3843,11 +3843,11 @@ Records customer grade changes. Used for learning the SCD (Slowly Changing Dimen
 
 **tags:**
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| name | TEXT | - | UNIQUE -- Tag name |
-| category | TEXT | - | feature/use_case/target/spec |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| | name | TEXT | - | UNIQUE -- Tag name |
+| | category | TEXT | - | feature/use_case/target/spec |
 
 === "SQLite"
 
@@ -3902,24 +3902,24 @@ Records customer grade changes. Used for learning the SCD (Slowly Changing Dimen
 
 **product_tags:**
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔗 product_id | INTEGER | - | -> products(id), composite PK |
-| 🔗 tag_id | INTEGER | - | -> tags(id), composite PK |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔗 | product_id | INTEGER | - | -> products(id), composite PK |
+| 🔗 | tag_id | INTEGER | - | -> tags(id), composite PK |
 
 ### product_views — Product View Log
 
 Product page view records. Includes referrer source, device type, and time spent.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| referrer_source | TEXT | - | direct/search/ad/recommendation/social/email |
-| device_type | TEXT | - | desktop/mobile/tablet |
-| duration_seconds | INTEGER | O | Page duration (seconds) |
-| viewed_at | TEXT | - | Viewed datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| | referrer_source | TEXT | - | direct/search/ad/recommendation/social/email |
+| | device_type | TEXT | - | desktop/mobile/tablet |
+| | duration_seconds | INTEGER | O | Page duration (seconds) |
+| | viewed_at | TEXT | - | Viewed datetime |
 
 === "SQLite"
 
@@ -4017,17 +4017,17 @@ Product page view records. Includes referrer source, device type, and time spent
 
 Point earn/redeem/expiry records. `balance_after` tracks the balance trend.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 customer_id | INTEGER | - | → customers(id) |
-| 🔗 order_id | INTEGER | O | -> orders(id), nullable |
-| type | TEXT | - | earn/use/expire |
-| reason | TEXT | - | purchase/confirm/review/signup/use/expiry |
-| amount | INTEGER | - | +earn, -redeem/expiry |
-| balance_after | INTEGER | - | Balance after transaction |
-| expires_at | TEXT | O | Expiry date (earn transactions) |
-| created_at | TEXT | - | Transaction datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | customer_id | INTEGER | - | → customers(id) |
+| 🔗 | order_id | INTEGER | O | -> orders(id), nullable |
+| | type | TEXT | - | earn/use/expire |
+| | reason | TEXT | - | purchase/confirm/review/signup/use/expiry |
+| | amount | INTEGER | - | +earn, -redeem/expiry |
+| | balance_after | INTEGER | - | Balance after transaction |
+| | expires_at | TEXT | O | Expiry date (earn transactions) |
+| | created_at | TEXT | - | Transaction datetime |
 
 === "SQLite"
 
@@ -4119,25 +4119,25 @@ Manages seasonal/flash/category promotions and target products.
 
 **promotions:**
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| name | TEXT | - | Promotion name |
-| type | TEXT | - | seasonal/flash/category |
-| discount_type | TEXT | - | percent/fixed |
-| discount_value | REAL | - | Discount rate/amount |
-| min_order_amount | REAL | O | Minimum order amount |
-| started_at | TEXT | - | Start date |
-| ended_at | TEXT | - | Closed date |
-| is_active | INTEGER | - | Active flag |
-| created_at | TEXT | - | Created datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| | name | TEXT | - | Promotion name |
+| | type | TEXT | - | seasonal/flash/category |
+| | discount_type | TEXT | - | percent/fixed |
+| | discount_value | REAL | - | Discount rate/amount |
+| | min_order_amount | REAL | O | Minimum order amount |
+| | started_at | TEXT | - | Start date |
+| | ended_at | TEXT | - | Closed date |
+| | is_active | INTEGER | - | Active flag |
+| | created_at | TEXT | - | Created datetime |
 
 **promotion_products:**
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔗 promotion_id | INTEGER | - | -> promotions(id), composite PK |
-| 🔗 product_id | INTEGER | - | -> products(id), composite PK |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔗 | promotion_id | INTEGER | - | -> promotions(id), composite PK |
+| 🔗 | product_id | INTEGER | - | -> products(id), composite PK |
 
 === "SQLite"
 
@@ -4287,16 +4287,16 @@ Manages seasonal/flash/category promotions and target products.
 
 Product questions and answers. `parent_id` links Q&A pairs via self-reference.
 
-| Column | Type | NULL | Description |
-|--------|------|:----:|-------------|
-| 🔑 id | INTEGER | - | Auto-increment |
-| 🔗 product_id | INTEGER | - | → products(id) |
-| 🔗 customer_id | INTEGER | O | -> customers(id), customer question (NULL for answers) |
-| 🔗 staff_id | INTEGER | O | -> staff(id), staff answer (NULL for questions) |
-| 🔗 parent_id | INTEGER | O | -> product_qna(id), answer->question (self-reference) |
-| content | TEXT | - | Question/answer content |
-| is_answered | INTEGER | - | Answered flag |
-| created_at | TEXT | - | Created datetime |
+| | Column | Type | NULL | Description |
+|:-:|--------|------|:----:|-------------|
+| 🔑 | id | INTEGER | - | Auto-increment |
+| 🔗 | product_id | INTEGER | - | → products(id) |
+| 🔗 | customer_id | INTEGER | O | -> customers(id), customer question (NULL for answers) |
+| 🔗 | staff_id | INTEGER | O | -> staff(id), staff answer (NULL for questions) |
+| 🔗 | parent_id | INTEGER | O | -> product_qna(id), answer->question (self-reference) |
+| | content | TEXT | - | Question/answer content |
+| | is_answered | INTEGER | - | Answered flag |
+| | created_at | TEXT | - | Created datetime |
 
 === "SQLite"
 
