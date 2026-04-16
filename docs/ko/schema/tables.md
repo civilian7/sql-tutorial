@@ -227,6 +227,332 @@
     ) PARTITION BY RANGE (ordered_at);
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE categories (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        parent_id       NUMBER(10) NULL REFERENCES categories(id),
+        name            VARCHAR2(100) NOT NULL,
+        slug            VARCHAR2(100) NOT NULL UNIQUE,
+        depth           NUMBER(10) NOT NULL DEFAULT 0,
+        sort_order      NUMBER(10) NOT NULL DEFAULT 0,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Suppliers
+    -- =============================================
+    CREATE TABLE suppliers (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        company_name    VARCHAR2(200) NOT NULL,
+        business_number VARCHAR2(20) NOT NULL,
+        contact_name    VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        email           VARCHAR2(200) NOT NULL,
+        address         VARCHAR2(500) NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Products
+    -- =============================================
+    CREATE TABLE products (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        category_id     NUMBER(10) NOT NULL REFERENCES categories(id),
+        supplier_id     NUMBER(10) NOT NULL REFERENCES suppliers(id),
+        successor_id    NUMBER(10) NULL REFERENCES products(id),
+        name            VARCHAR2(500) NOT NULL,
+        sku             VARCHAR2(50) NOT NULL UNIQUE,
+        brand           VARCHAR2(100) NOT NULL,
+        model_number    VARCHAR2(50) NULL,
+        description     CLOB NULL,
+        specs           CLOB NULL CHECK (specs IS JSON),
+        price           NUMBER(12,2) NOT NULL CHECK (price >= 0),
+        cost_price      NUMBER(12,2) NOT NULL CHECK (cost_price >= 0),
+        stock_qty       NUMBER(10) NOT NULL DEFAULT 0,
+        weight_grams    NUMBER(10) NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        discontinued_at TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Product images
+    -- =============================================
+    CREATE TABLE product_images (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        image_url       VARCHAR2(500) NOT NULL,
+        file_name       VARCHAR2(200) NOT NULL,
+        image_type      VARCHAR2(30) NOT NULL,
+        alt_text        VARCHAR2(500) NULL,
+        width           NUMBER(10) NULL,
+        height          NUMBER(10) NULL,
+        file_size       NUMBER(10) NULL,
+        sort_order      NUMBER(10) NOT NULL DEFAULT 1,
+        is_primary      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_primary IN (0,1)),
+        created_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Product price history
+    -- =============================================
+    CREATE TABLE product_prices (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        price           NUMBER(12,2) NOT NULL,
+        started_at      TIMESTAMP NOT NULL,
+        ended_at        TIMESTAMP NULL,
+        change_reason   VARCHAR2(20) NULL
+    );
+    
+    -- =============================================
+    -- Customers
+    -- =============================================
+    CREATE TABLE customers (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        email           VARCHAR2(200) NOT NULL UNIQUE,
+        password_hash   VARCHAR2(64) NOT NULL,
+        name            VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        birth_date      DATE NULL,
+        gender          VARCHAR2(1) NULL,
+        grade           VARCHAR2(10) NOT NULL DEFAULT 'BRONZE',
+        point_balance   NUMBER(10) NOT NULL DEFAULT 0 CHECK (point_balance >= 0),
+        acquisition_channel VARCHAR2(20) NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        last_login_at   TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Customer addresses
+    -- =============================================
+    CREATE TABLE customer_addresses (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        label           VARCHAR2(50) NOT NULL,
+        recipient_name  VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        zip_code        VARCHAR2(10) NOT NULL,
+        address1        VARCHAR2(300) NOT NULL,
+        address2        VARCHAR2(300) NULL,
+        is_default      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_default IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NULL
+    );
+    
+    -- =============================================
+    -- Staff
+    -- =============================================
+    CREATE TABLE staff (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        manager_id      NUMBER(10) NULL REFERENCES staff(id),
+        email           VARCHAR2(200) NOT NULL UNIQUE,
+        name            VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        department      VARCHAR2(50) NOT NULL,
+        role            VARCHAR2(20) NOT NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        hired_at        TIMESTAMP NOT NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Orders (partitioned by year on ordered_at)
+    -- =============================================
+    CREATE TABLE orders (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY,
+        order_number    VARCHAR2(30) NOT NULL UNIQUE,
+        customer_id     NUMBER(10) NOT NULL,
+        address_id      NUMBER(10) NOT NULL,
+        staff_id        NUMBER(10) NULL,
+        status          VARCHAR2(20) NOT NULL,
+        total_amount    NUMBER(12,2) NOT NULL,
+        discount_amount NUMBER(12,2) NOT NULL DEFAULT 0,
+        shipping_fee    NUMBER(12,2) NOT NULL DEFAULT 0,
+        point_used      NUMBER(10) NOT NULL DEFAULT 0,
+        point_earned    NUMBER(10) NOT NULL DEFAULT 0,
+        notes           CLOB NULL,
+        ordered_at      TIMESTAMP NOT NULL,
+        completed_at    TIMESTAMP NULL,
+        cancelled_at    TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL,
+        PRIMARY KEY (id, ordered_at)
+    ) PARTITION BY RANGE (ordered_at);
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE categories (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        parent_id       INT NULL REFERENCES categories(id),
+        name            NVARCHAR(100) NOT NULL,
+        slug            NVARCHAR(100) NOT NULL UNIQUE,
+        depth           INT NOT NULL DEFAULT 0,
+        sort_order      INT NOT NULL DEFAULT 0,
+        is_active       BIT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Suppliers
+    -- =============================================
+    CREATE TABLE suppliers (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        company_name    NVARCHAR(200) NOT NULL,
+        business_number NVARCHAR(20) NOT NULL,
+        contact_name    NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        email           NVARCHAR(200) NOT NULL,
+        address         NVARCHAR(500) NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Products
+    -- =============================================
+    CREATE TABLE products (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        category_id     INT NOT NULL REFERENCES categories(id),
+        supplier_id     INT NOT NULL REFERENCES suppliers(id),
+        successor_id    INT NULL REFERENCES products(id),
+        name            NVARCHAR(500) NOT NULL,
+        sku             NVARCHAR(50) NOT NULL UNIQUE,
+        brand           NVARCHAR(100) NOT NULL,
+        model_number    NVARCHAR(50) NULL,
+        description     NVARCHAR(MAX) NULL,
+        specs           NVARCHAR(MAX) NULL CHECK (ISJSON(specs) = 1),
+        price           DECIMAL(12,2) NOT NULL CHECK (price >= 0),
+        cost_price      DECIMAL(12,2) NOT NULL CHECK (cost_price >= 0),
+        stock_qty       INT NOT NULL DEFAULT 0,
+        weight_grams    INT NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        discontinued_at DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Product images
+    -- =============================================
+    CREATE TABLE product_images (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        image_url       NVARCHAR(500) NOT NULL,
+        file_name       NVARCHAR(200) NOT NULL,
+        image_type      NVARCHAR(30) NOT NULL,
+        alt_text        NVARCHAR(500) NULL,
+        width           INT NULL,
+        height          INT NULL,
+        file_size       INT NULL,
+        sort_order      INT NOT NULL DEFAULT 1,
+        is_primary      BIT NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Product price history
+    -- =============================================
+    CREATE TABLE product_prices (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        price           DECIMAL(12,2) NOT NULL,
+        started_at      DATETIME2 NOT NULL,
+        ended_at        DATETIME2 NULL,
+        change_reason   NVARCHAR(20) NULL
+    );
+    
+    -- =============================================
+    -- Customers
+    -- =============================================
+    CREATE TABLE customers (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        email           NVARCHAR(200) NOT NULL UNIQUE,
+        password_hash   NVARCHAR(64) NOT NULL,
+        name            NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        birth_date      DATE NULL,
+        gender          NVARCHAR(1) NULL,
+        grade           NVARCHAR(10) NOT NULL DEFAULT 'BRONZE',
+        point_balance   INT NOT NULL DEFAULT 0 CHECK (point_balance >= 0),
+        acquisition_channel NVARCHAR(20) NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        last_login_at   DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Customer addresses
+    -- =============================================
+    CREATE TABLE customer_addresses (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        label           NVARCHAR(50) NOT NULL,
+        recipient_name  NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        zip_code        NVARCHAR(10) NOT NULL,
+        address1        NVARCHAR(300) NOT NULL,
+        address2        NVARCHAR(300) NULL,
+        is_default      BIT NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NULL
+    );
+    
+    -- =============================================
+    -- Staff
+    -- =============================================
+    CREATE TABLE staff (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        manager_id      INT NULL REFERENCES staff(id),
+        email           NVARCHAR(200) NOT NULL UNIQUE,
+        name            NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        department      NVARCHAR(50) NOT NULL,
+        role            NVARCHAR(20) NOT NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        hired_at        DATETIME2 NOT NULL,
+        created_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Orders (partitioned by year on ordered_at)
+    -- =============================================
+    CREATE TABLE orders (
+        id              INT IDENTITY(1,1),
+        order_number    NVARCHAR(30) NOT NULL UNIQUE,
+        customer_id     INT NOT NULL,
+        address_id      INT NOT NULL,
+        staff_id        INT NULL,
+        status          NVARCHAR(20) NOT NULL,
+        total_amount    DECIMAL(12,2) NOT NULL,
+        discount_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+        shipping_fee    DECIMAL(12,2) NOT NULL DEFAULT 0,
+        point_used      INT NOT NULL DEFAULT 0,
+        point_earned    INT NOT NULL DEFAULT 0,
+        notes           NVARCHAR(MAX) NULL,
+        ordered_at      DATETIME2 NOT NULL,
+        completed_at    DATETIME2 NULL,
+        cancelled_at    DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL,
+        PRIMARY KEY (id, ordered_at)
+    ); -- Partitioned by ordered_at (use partition function/scheme in production);
+    ```
+
 
 
 ### suppliers — 공급업체
@@ -294,6 +620,40 @@
         is_active       BOOLEAN NOT NULL DEFAULT TRUE,
         created_at      TIMESTAMP NOT NULL,
         updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE suppliers (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        company_name    VARCHAR2(200) NOT NULL,
+        business_number VARCHAR2(20) NOT NULL,
+        contact_name    VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        email           VARCHAR2(200) NOT NULL,
+        address         VARCHAR2(500) NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE suppliers (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        company_name    NVARCHAR(200) NOT NULL,
+        business_number NVARCHAR(20) NOT NULL,
+        contact_name    NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        email           NVARCHAR(200) NOT NULL,
+        address         NVARCHAR(500) NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
     );
     ```
 
@@ -402,6 +762,56 @@
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE products (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        category_id     NUMBER(10) NOT NULL REFERENCES categories(id),
+        supplier_id     NUMBER(10) NOT NULL REFERENCES suppliers(id),
+        successor_id    NUMBER(10) NULL REFERENCES products(id),
+        name            VARCHAR2(500) NOT NULL,
+        sku             VARCHAR2(50) NOT NULL UNIQUE,
+        brand           VARCHAR2(100) NOT NULL,
+        model_number    VARCHAR2(50) NULL,
+        description     CLOB NULL,
+        specs           CLOB NULL CHECK (specs IS JSON),
+        price           NUMBER(12,2) NOT NULL CHECK (price >= 0),
+        cost_price      NUMBER(12,2) NOT NULL CHECK (cost_price >= 0),
+        stock_qty       NUMBER(10) NOT NULL DEFAULT 0,
+        weight_grams    NUMBER(10) NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        discontinued_at TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE products (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        category_id     INT NOT NULL REFERENCES categories(id),
+        supplier_id     INT NOT NULL REFERENCES suppliers(id),
+        successor_id    INT NULL REFERENCES products(id),
+        name            NVARCHAR(500) NOT NULL,
+        sku             NVARCHAR(50) NOT NULL UNIQUE,
+        brand           NVARCHAR(100) NOT NULL,
+        model_number    NVARCHAR(50) NULL,
+        description     NVARCHAR(MAX) NULL,
+        specs           NVARCHAR(MAX) NULL CHECK (ISJSON(specs) = 1),
+        price           DECIMAL(12,2) NOT NULL CHECK (price >= 0),
+        cost_price      DECIMAL(12,2) NOT NULL CHECK (cost_price >= 0),
+        stock_qty       INT NOT NULL DEFAULT 0,
+        weight_grams    INT NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        discontinued_at DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    ```
+
 
 
 ### product_images — 상품 이미지
@@ -481,6 +891,44 @@
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE product_images (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        image_url       VARCHAR2(500) NOT NULL,
+        file_name       VARCHAR2(200) NOT NULL,
+        image_type      VARCHAR2(30) NOT NULL,
+        alt_text        VARCHAR2(500) NULL,
+        width           NUMBER(10) NULL,
+        height          NUMBER(10) NULL,
+        file_size       NUMBER(10) NULL,
+        sort_order      NUMBER(10) NOT NULL DEFAULT 1,
+        is_primary      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_primary IN (0,1)),
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE product_images (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        image_url       NVARCHAR(500) NOT NULL,
+        file_name       NVARCHAR(200) NOT NULL,
+        image_type      NVARCHAR(30) NOT NULL,
+        alt_text        NVARCHAR(500) NULL,
+        width           INT NULL,
+        height          INT NULL,
+        file_size       INT NULL,
+        sort_order      INT NOT NULL DEFAULT 1,
+        is_primary      BIT NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL
+    );
+    ```
+
 !!! tip "실제 상품 이미지 다운로드"
     기본 생성 시 `image_url`은 [placehold.co](https://placehold.co) 플레이스홀더 URL입니다.
     SQL 학습에는 이 상태로 충분하지만, 실제 이미지가 필요하다면 **Pexels API**를 통해 카테고리별 실사 이미지를 다운로드할 수 있습니다.
@@ -547,6 +995,32 @@
         started_at      TIMESTAMP NOT NULL,
         ended_at        TIMESTAMP NULL,
         change_reason   change_reason_type NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE product_prices (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        price           NUMBER(12,2) NOT NULL,
+        started_at      TIMESTAMP NOT NULL,
+        ended_at        TIMESTAMP NULL,
+        change_reason   VARCHAR2(20) NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE product_prices (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        price           DECIMAL(12,2) NOT NULL,
+        started_at      DATETIME2 NOT NULL,
+        ended_at        DATETIME2 NULL,
+        change_reason   NVARCHAR(20) NULL
     );
     ```
 
@@ -636,6 +1110,48 @@
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE customers (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        email           VARCHAR2(200) NOT NULL UNIQUE,
+        password_hash   VARCHAR2(64) NOT NULL,
+        name            VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        birth_date      DATE NULL,
+        gender          VARCHAR2(1) NULL,
+        grade           VARCHAR2(10) NOT NULL DEFAULT 'BRONZE',
+        point_balance   NUMBER(10) NOT NULL DEFAULT 0 CHECK (point_balance >= 0),
+        acquisition_channel VARCHAR2(20) NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        last_login_at   TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE customers (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        email           NVARCHAR(200) NOT NULL UNIQUE,
+        password_hash   NVARCHAR(64) NOT NULL,
+        name            NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        birth_date      DATE NULL,
+        gender          NVARCHAR(1) NULL,
+        grade           NVARCHAR(10) NOT NULL DEFAULT 'BRONZE',
+        point_balance   INT NOT NULL DEFAULT 0 CHECK (point_balance >= 0),
+        acquisition_channel NVARCHAR(20) NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        last_login_at   DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    ```
+
 
 
 ### customer_addresses — 고객 배송지
@@ -712,6 +1228,42 @@
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE customer_addresses (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        label           VARCHAR2(50) NOT NULL,
+        recipient_name  VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        zip_code        VARCHAR2(10) NOT NULL,
+        address1        VARCHAR2(300) NOT NULL,
+        address2        VARCHAR2(300) NULL,
+        is_default      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_default IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE customer_addresses (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        label           NVARCHAR(50) NOT NULL,
+        recipient_name  NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        zip_code        NVARCHAR(10) NOT NULL,
+        address1        NVARCHAR(300) NOT NULL,
+        address2        NVARCHAR(300) NULL,
+        is_default      BIT NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NULL
+    );
+    ```
+
 
 ### staff — 직원
 
@@ -780,6 +1332,40 @@
         is_active       BOOLEAN NOT NULL DEFAULT TRUE,
         hired_at        TIMESTAMP NOT NULL,
         created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE staff (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        manager_id      NUMBER(10) NULL REFERENCES staff(id),
+        email           VARCHAR2(200) NOT NULL UNIQUE,
+        name            VARCHAR2(100) NOT NULL,
+        phone           VARCHAR2(20) NOT NULL,
+        department      VARCHAR2(50) NOT NULL,
+        role            VARCHAR2(20) NOT NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        hired_at        TIMESTAMP NOT NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE staff (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        manager_id      INT NULL REFERENCES staff(id),
+        email           NVARCHAR(200) NOT NULL UNIQUE,
+        name            NVARCHAR(100) NOT NULL,
+        phone           NVARCHAR(20) NOT NULL,
+        department      NVARCHAR(50) NOT NULL,
+        role            NVARCHAR(20) NOT NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        hired_at        DATETIME2 NOT NULL,
+        created_at      DATETIME2 NOT NULL
     );
     ```
 
@@ -897,6 +1483,56 @@
         updated_at      TIMESTAMP NOT NULL,
         PRIMARY KEY (id, ordered_at)
     ) PARTITION BY RANGE (ordered_at);
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE orders (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY,
+        order_number    VARCHAR2(30) NOT NULL UNIQUE,
+        customer_id     NUMBER(10) NOT NULL,
+        address_id      NUMBER(10) NOT NULL,
+        staff_id        NUMBER(10) NULL,
+        status          VARCHAR2(20) NOT NULL,
+        total_amount    NUMBER(12,2) NOT NULL,
+        discount_amount NUMBER(12,2) NOT NULL DEFAULT 0,
+        shipping_fee    NUMBER(12,2) NOT NULL DEFAULT 0,
+        point_used      NUMBER(10) NOT NULL DEFAULT 0,
+        point_earned    NUMBER(10) NOT NULL DEFAULT 0,
+        notes           CLOB NULL,
+        ordered_at      TIMESTAMP NOT NULL,
+        completed_at    TIMESTAMP NULL,
+        cancelled_at    TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL,
+        PRIMARY KEY (id, ordered_at)
+    ) PARTITION BY RANGE (ordered_at);
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE orders (
+        id              INT IDENTITY(1,1),
+        order_number    NVARCHAR(30) NOT NULL UNIQUE,
+        customer_id     INT NOT NULL,
+        address_id      INT NOT NULL,
+        staff_id        INT NULL,
+        status          NVARCHAR(20) NOT NULL,
+        total_amount    DECIMAL(12,2) NOT NULL,
+        discount_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+        shipping_fee    DECIMAL(12,2) NOT NULL DEFAULT 0,
+        point_used      INT NOT NULL DEFAULT 0,
+        point_earned    INT NOT NULL DEFAULT 0,
+        notes           NVARCHAR(MAX) NULL,
+        ordered_at      DATETIME2 NOT NULL,
+        completed_at    DATETIME2 NULL,
+        cancelled_at    DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL,
+        PRIMARY KEY (id, ordered_at)
+    ); -- Partitioned by ordered_at (use partition function/scheme in production);
     ```
 
 
@@ -1225,6 +1861,564 @@
     ) PARTITION BY RANGE (viewed_at);
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE order_items (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NOT NULL,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        quantity        NUMBER(10) NOT NULL CHECK (quantity > 0),
+        unit_price      NUMBER(12,2) NOT NULL CHECK (unit_price >= 0),
+        discount_amount NUMBER(12,2) NOT NULL DEFAULT 0,
+        subtotal        NUMBER(12,2) NOT NULL
+    );
+    
+    CREATE INDEX idx_order_items_order ON order_items (order_id);
+    CREATE INDEX idx_order_items_product ON order_items (product_id);
+    
+    -- =============================================
+    -- Payments
+    -- =============================================
+    CREATE TABLE payments (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NOT NULL,
+        method          VARCHAR2(30) NOT NULL,
+        amount          NUMBER(12,2) NOT NULL CHECK (amount >= 0),
+        status          VARCHAR2(20) NOT NULL,
+        pg_transaction_id VARCHAR2(100) NULL,
+        card_issuer     VARCHAR2(50) NULL,
+        card_approval_no VARCHAR2(20) NULL,
+        installment_months NUMBER(10) NULL,
+        bank_name       VARCHAR2(50) NULL,
+        account_no      VARCHAR2(50) NULL,
+        depositor_name  VARCHAR2(100) NULL,
+        easy_pay_method VARCHAR2(50) NULL,
+        receipt_type    VARCHAR2(20) NULL,
+        receipt_no      VARCHAR2(50) NULL,
+        paid_at         TIMESTAMP NULL,
+        refunded_at     TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    
+    CREATE INDEX idx_payments_order ON payments (order_id);
+    
+    -- =============================================
+    -- Shipping
+    -- =============================================
+    CREATE TABLE shipping (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NOT NULL,
+        carrier         VARCHAR2(50) NOT NULL,
+        tracking_number VARCHAR2(50) NULL,
+        status          VARCHAR2(20) NOT NULL,
+        shipped_at      TIMESTAMP NULL,
+        delivered_at    TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    
+    CREATE INDEX idx_shipping_order ON shipping (order_id);
+    
+    -- =============================================
+    -- Reviews
+    -- =============================================
+    CREATE TABLE reviews (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        order_id        NUMBER(10) NOT NULL,
+        rating          NUMBER(5) NOT NULL CHECK (rating BETWEEN 1 AND 5),
+        title           VARCHAR2(200) NULL,
+        content         CLOB NULL,
+        is_verified     NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_verified IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    
+    CREATE INDEX idx_reviews_product ON reviews (product_id);
+    CREATE INDEX idx_reviews_customer ON reviews (customer_id);
+    
+    -- =============================================
+    -- Inventory transactions
+    -- =============================================
+    CREATE TABLE inventory_transactions (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        type            VARCHAR2(20) NOT NULL,
+        quantity        NUMBER(10) NOT NULL,
+        reference_id    NUMBER(10) NULL,
+        notes           VARCHAR2(500) NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Carts
+    -- =============================================
+    CREATE TABLE carts (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        status          VARCHAR2(20) NOT NULL DEFAULT 'active',
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Cart items
+    -- =============================================
+    CREATE TABLE cart_items (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        cart_id         NUMBER(10) NOT NULL REFERENCES carts(id),
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        quantity        NUMBER(10) NOT NULL DEFAULT 1,
+        added_at        TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Coupons
+    -- =============================================
+    CREATE TABLE coupons (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        code            VARCHAR2(30) NOT NULL UNIQUE,
+        name            VARCHAR2(200) NOT NULL,
+        type            VARCHAR2(20) NOT NULL,
+        discount_value  NUMBER(12,2) NOT NULL CHECK (discount_value > 0),
+        min_order_amount NUMBER(12,2) NULL,
+        max_discount    NUMBER(12,2) NULL,
+        usage_limit     NUMBER(10) NULL,
+        per_user_limit  NUMBER(10) NOT NULL DEFAULT 1,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        started_at      TIMESTAMP NOT NULL,
+        expired_at      TIMESTAMP NOT NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Coupon usage
+    -- =============================================
+    CREATE TABLE coupon_usage (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        coupon_id       NUMBER(10) NOT NULL REFERENCES coupons(id),
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        order_id        NUMBER(10) NOT NULL,
+        discount_amount NUMBER(12,2) NOT NULL,
+        used_at         TIMESTAMP NOT NULL
+    );
+    
+    -- =============================================
+    -- Complaints
+    -- =============================================
+    CREATE TABLE complaints (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NULL,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        staff_id        NUMBER(10) NULL REFERENCES staff(id),
+        category        VARCHAR2(30) NOT NULL,
+        channel         VARCHAR2(20) NOT NULL,
+        priority        VARCHAR2(10) NOT NULL,
+        status          VARCHAR2(20) NOT NULL,
+        title           VARCHAR2(300) NOT NULL,
+        content         CLOB NOT NULL,
+        resolution      CLOB NULL,
+        type            VARCHAR2(20) NOT NULL DEFAULT 'inquiry',
+        sub_category    VARCHAR2(100) NULL,
+        compensation_type VARCHAR2(30) NULL,
+        compensation_amount NUMBER(12,2) NULL DEFAULT 0,
+        escalated       NUMBER(1) DEFAULT 0 NOT NULL CHECK (escalated IN (0,1)),
+        response_count  NUMBER(10) NOT NULL DEFAULT 1,
+        created_at      TIMESTAMP NOT NULL,
+        resolved_at     TIMESTAMP NULL,
+        closed_at       TIMESTAMP NULL
+    );
+    
+    CREATE INDEX idx_complaints_customer ON complaints (customer_id);
+    CREATE INDEX idx_complaints_status ON complaints (status);
+    
+    -- =============================================
+    -- Returns/exchanges
+    -- =============================================
+    CREATE TABLE returns (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NOT NULL,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        return_type     VARCHAR2(20) NOT NULL,
+        reason          VARCHAR2(30) NOT NULL,
+        reason_detail   CLOB NOT NULL,
+        status          VARCHAR2(30) NOT NULL,
+        is_partial      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_partial IN (0,1)),
+        refund_amount   NUMBER(12,2) NOT NULL,
+        refund_status   VARCHAR2(20) NOT NULL,
+        carrier         VARCHAR2(50) NOT NULL,
+        tracking_number VARCHAR2(50) NOT NULL,
+        requested_at    TIMESTAMP NOT NULL,
+        pickup_at       TIMESTAMP NOT NULL,
+        received_at     TIMESTAMP NULL,
+        inspected_at    TIMESTAMP NULL,
+        inspection_result VARCHAR2(20) NULL,
+        completed_at    TIMESTAMP NULL,
+        claim_id        NUMBER(10) NULL REFERENCES complaints(id),
+        exchange_product_id NUMBER(10) NULL REFERENCES products(id),
+        restocking_fee  NUMBER(12,2) NOT NULL DEFAULT 0,
+        created_at      TIMESTAMP NOT NULL
+    );
+    
+    CREATE INDEX idx_returns_order ON returns (order_id);
+    CREATE INDEX idx_returns_customer ON returns (customer_id);
+    
+    -- =============================================
+    -- Wishlists
+    -- =============================================
+    CREATE TABLE wishlists (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        is_purchased    NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_purchased IN (0,1)),
+        notify_on_sale  NUMBER(1) DEFAULT 0 NOT NULL CHECK (notify_on_sale IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        UNIQUE (customer_id, product_id)
+    );
+    
+    -- =============================================
+    -- Calendar dimension
+    -- =============================================
+    CREATE TABLE calendar (
+        date_key        DATE NOT NULL PRIMARY KEY,
+        year            NUMBER(10) NOT NULL,
+        month           NUMBER(10) NOT NULL,
+        day             NUMBER(10) NOT NULL,
+        quarter         NUMBER(10) NOT NULL,
+        day_of_week     NUMBER(10) NOT NULL,
+        day_name        VARCHAR2(20) NOT NULL,
+        is_weekend      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_weekend IN (0,1)),
+        is_holiday      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_holiday IN (0,1)),
+        holiday_name    VARCHAR2(100) NULL
+    );
+    
+    CREATE INDEX idx_calendar_year_month ON calendar (year, month);
+    
+    -- =============================================
+    -- Customer grade history
+    -- =============================================
+    CREATE TABLE customer_grade_history (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        old_grade       VARCHAR2(10) NULL,
+        new_grade       VARCHAR2(10) NOT NULL,
+        changed_at      TIMESTAMP NOT NULL,
+        reason          VARCHAR2(20) NOT NULL
+    );
+    
+    CREATE INDEX idx_grade_history_customer ON customer_grade_history (customer_id);
+    
+    -- =============================================
+    -- Tags
+    -- =============================================
+    CREATE TABLE tags (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        name            VARCHAR2(100) NOT NULL UNIQUE,
+        category        VARCHAR2(20) NOT NULL
+    );
+    
+    CREATE TABLE product_tags (
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        tag_id          NUMBER(10) NOT NULL REFERENCES tags(id),
+        PRIMARY KEY (product_id, tag_id)
+    );
+    
+    -- =============================================
+    -- Product views (partitioned by year)
+    -- =============================================
+    CREATE TABLE product_views (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY,
+        customer_id     NUMBER(10) NOT NULL,
+        product_id      NUMBER(10) NOT NULL,
+        referrer_source VARCHAR2(20) NOT NULL,
+        device_type     VARCHAR2(20) NOT NULL,
+        duration_seconds NUMBER(10) NOT NULL,
+        viewed_at       TIMESTAMP NOT NULL,
+        PRIMARY KEY (id, viewed_at)
+    ) PARTITION BY RANGE (viewed_at);
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE order_items (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NOT NULL,
+        product_id      INT NOT NULL REFERENCES products(id),
+        quantity        INT NOT NULL CHECK (quantity > 0),
+        unit_price      DECIMAL(12,2) NOT NULL CHECK (unit_price >= 0),
+        discount_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+        subtotal        DECIMAL(12,2) NOT NULL
+    );
+    
+    CREATE INDEX idx_order_items_order ON order_items (order_id);
+    CREATE INDEX idx_order_items_product ON order_items (product_id);
+    
+    -- =============================================
+    -- Payments
+    -- =============================================
+    CREATE TABLE payments (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NOT NULL,
+        method          NVARCHAR(30) NOT NULL,
+        amount          DECIMAL(12,2) NOT NULL CHECK (amount >= 0),
+        status          NVARCHAR(20) NOT NULL,
+        pg_transaction_id NVARCHAR(100) NULL,
+        card_issuer     NVARCHAR(50) NULL,
+        card_approval_no NVARCHAR(20) NULL,
+        installment_months INT NULL,
+        bank_name       NVARCHAR(50) NULL,
+        account_no      NVARCHAR(50) NULL,
+        depositor_name  NVARCHAR(100) NULL,
+        easy_pay_method NVARCHAR(50) NULL,
+        receipt_type    NVARCHAR(20) NULL,
+        receipt_no      NVARCHAR(50) NULL,
+        paid_at         DATETIME2 NULL,
+        refunded_at     DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL
+    );
+    
+    CREATE INDEX idx_payments_order ON payments (order_id);
+    
+    -- =============================================
+    -- Shipping
+    -- =============================================
+    CREATE TABLE shipping (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NOT NULL,
+        carrier         NVARCHAR(50) NOT NULL,
+        tracking_number NVARCHAR(50) NULL,
+        status          NVARCHAR(20) NOT NULL,
+        shipped_at      DATETIME2 NULL,
+        delivered_at    DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    
+    CREATE INDEX idx_shipping_order ON shipping (order_id);
+    
+    -- =============================================
+    -- Reviews
+    -- =============================================
+    CREATE TABLE reviews (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        order_id        INT NOT NULL,
+        rating          SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+        title           NVARCHAR(200) NULL,
+        content         NVARCHAR(MAX) NULL,
+        is_verified     BIT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    
+    CREATE INDEX idx_reviews_product ON reviews (product_id);
+    CREATE INDEX idx_reviews_customer ON reviews (customer_id);
+    
+    -- =============================================
+    -- Inventory transactions
+    -- =============================================
+    CREATE TABLE inventory_transactions (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        type            NVARCHAR(20) NOT NULL,
+        quantity        INT NOT NULL,
+        reference_id    INT NULL,
+        notes           NVARCHAR(500) NULL,
+        created_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Carts
+    -- =============================================
+    CREATE TABLE carts (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        status          NVARCHAR(20) NOT NULL DEFAULT 'active',
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Cart items
+    -- =============================================
+    CREATE TABLE cart_items (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        cart_id         INT NOT NULL REFERENCES carts(id),
+        product_id      INT NOT NULL REFERENCES products(id),
+        quantity        INT NOT NULL DEFAULT 1,
+        added_at        DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Coupons
+    -- =============================================
+    CREATE TABLE coupons (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        code            NVARCHAR(30) NOT NULL UNIQUE,
+        name            NVARCHAR(200) NOT NULL,
+        type            NVARCHAR(20) NOT NULL,
+        discount_value  DECIMAL(12,2) NOT NULL CHECK (discount_value > 0),
+        min_order_amount DECIMAL(12,2) NULL,
+        max_discount    DECIMAL(12,2) NULL,
+        usage_limit     INT NULL,
+        per_user_limit  INT NOT NULL DEFAULT 1,
+        is_active       BIT NOT NULL DEFAULT 1,
+        started_at      DATETIME2 NOT NULL,
+        expired_at      DATETIME2 NOT NULL,
+        created_at      DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Coupon usage
+    -- =============================================
+    CREATE TABLE coupon_usage (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        coupon_id       INT NOT NULL REFERENCES coupons(id),
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        order_id        INT NOT NULL,
+        discount_amount DECIMAL(12,2) NOT NULL,
+        used_at         DATETIME2 NOT NULL
+    );
+    
+    -- =============================================
+    -- Complaints
+    -- =============================================
+    CREATE TABLE complaints (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NULL,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        staff_id        INT NULL REFERENCES staff(id),
+        category        NVARCHAR(30) NOT NULL,
+        channel         NVARCHAR(20) NOT NULL,
+        priority        NVARCHAR(10) NOT NULL,
+        status          NVARCHAR(20) NOT NULL,
+        title           NVARCHAR(300) NOT NULL,
+        content         NVARCHAR(MAX) NOT NULL,
+        resolution      NVARCHAR(MAX) NULL,
+        type            NVARCHAR(20) NOT NULL DEFAULT 'inquiry',
+        sub_category    NVARCHAR(100) NULL,
+        compensation_type NVARCHAR(30) NULL,
+        compensation_amount DECIMAL(12,2) NULL DEFAULT 0,
+        escalated       BIT NOT NULL DEFAULT 0,
+        response_count  INT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL,
+        resolved_at     DATETIME2 NULL,
+        closed_at       DATETIME2 NULL
+    );
+    
+    CREATE INDEX idx_complaints_customer ON complaints (customer_id);
+    CREATE INDEX idx_complaints_status ON complaints (status);
+    
+    -- =============================================
+    -- Returns/exchanges
+    -- =============================================
+    CREATE TABLE returns (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NOT NULL,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        return_type     NVARCHAR(20) NOT NULL,
+        reason          NVARCHAR(30) NOT NULL,
+        reason_detail   NVARCHAR(MAX) NOT NULL,
+        status          NVARCHAR(30) NOT NULL,
+        is_partial      BIT NOT NULL DEFAULT 0,
+        refund_amount   DECIMAL(12,2) NOT NULL,
+        refund_status   NVARCHAR(20) NOT NULL,
+        carrier         NVARCHAR(50) NOT NULL,
+        tracking_number NVARCHAR(50) NOT NULL,
+        requested_at    DATETIME2 NOT NULL,
+        pickup_at       DATETIME2 NOT NULL,
+        received_at     DATETIME2 NULL,
+        inspected_at    DATETIME2 NULL,
+        inspection_result NVARCHAR(20) NULL,
+        completed_at    DATETIME2 NULL,
+        claim_id        INT NULL REFERENCES complaints(id),
+        exchange_product_id INT NULL REFERENCES products(id),
+        restocking_fee  DECIMAL(12,2) NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL
+    );
+    
+    CREATE INDEX idx_returns_order ON returns (order_id);
+    CREATE INDEX idx_returns_customer ON returns (customer_id);
+    
+    -- =============================================
+    -- Wishlists
+    -- =============================================
+    CREATE TABLE wishlists (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        product_id      INT NOT NULL REFERENCES products(id),
+        is_purchased    BIT NOT NULL DEFAULT 0,
+        notify_on_sale  BIT NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL,
+        UNIQUE (customer_id, product_id)
+    );
+    
+    -- =============================================
+    -- Calendar dimension
+    -- =============================================
+    CREATE TABLE calendar (
+        date_key        DATE NOT NULL PRIMARY KEY,
+        year            INT NOT NULL,
+        month           INT NOT NULL,
+        day             INT NOT NULL,
+        quarter         INT NOT NULL,
+        day_of_week     INT NOT NULL,
+        day_name        NVARCHAR(20) NOT NULL,
+        is_weekend      BIT NOT NULL DEFAULT 0,
+        is_holiday      BIT NOT NULL DEFAULT 0,
+        holiday_name    NVARCHAR(100) NULL
+    );
+    
+    CREATE INDEX idx_calendar_year_month ON calendar (year, month);
+    
+    -- =============================================
+    -- Customer grade history
+    -- =============================================
+    CREATE TABLE customer_grade_history (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        old_grade       NVARCHAR(10) NULL,
+        new_grade       NVARCHAR(10) NOT NULL,
+        changed_at      DATETIME2 NOT NULL,
+        reason          NVARCHAR(20) NOT NULL
+    );
+    
+    CREATE INDEX idx_grade_history_customer ON customer_grade_history (customer_id);
+    
+    -- =============================================
+    -- Tags
+    -- =============================================
+    CREATE TABLE tags (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        name            NVARCHAR(100) NOT NULL UNIQUE,
+        category        NVARCHAR(20) NOT NULL
+    );
+    
+    CREATE TABLE product_tags (
+        product_id      INT NOT NULL REFERENCES products(id),
+        tag_id          INT NOT NULL REFERENCES tags(id),
+        PRIMARY KEY (product_id, tag_id)
+    );
+    
+    -- =============================================
+    -- Product views (partitioned by year)
+    -- =============================================
+    CREATE TABLE product_views (
+        id              INT IDENTITY(1,1),
+        customer_id     INT NOT NULL,
+        product_id      INT NOT NULL,
+        referrer_source NVARCHAR(20) NOT NULL,
+        device_type     NVARCHAR(20) NOT NULL,
+        duration_seconds INT NOT NULL,
+        viewed_at       DATETIME2 NOT NULL,
+        PRIMARY KEY (id, viewed_at)
+    ); -- Partitioned by viewed_at (use partition function/scheme in production);
+    ```
+
 
 
 ### payments — 결제
@@ -1328,6 +2522,56 @@
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE payments (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NOT NULL,
+        method          VARCHAR2(30) NOT NULL,
+        amount          NUMBER(12,2) NOT NULL CHECK (amount >= 0),
+        status          VARCHAR2(20) NOT NULL,
+        pg_transaction_id VARCHAR2(100) NULL,
+        card_issuer     VARCHAR2(50) NULL,
+        card_approval_no VARCHAR2(20) NULL,
+        installment_months NUMBER(10) NULL,
+        bank_name       VARCHAR2(50) NULL,
+        account_no      VARCHAR2(50) NULL,
+        depositor_name  VARCHAR2(100) NULL,
+        easy_pay_method VARCHAR2(50) NULL,
+        receipt_type    VARCHAR2(20) NULL,
+        receipt_no      VARCHAR2(50) NULL,
+        paid_at         TIMESTAMP NULL,
+        refunded_at     TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE payments (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NOT NULL,
+        method          NVARCHAR(30) NOT NULL,
+        amount          DECIMAL(12,2) NOT NULL CHECK (amount >= 0),
+        status          NVARCHAR(20) NOT NULL,
+        pg_transaction_id NVARCHAR(100) NULL,
+        card_issuer     NVARCHAR(50) NULL,
+        card_approval_no NVARCHAR(20) NULL,
+        installment_months INT NULL,
+        bank_name       NVARCHAR(50) NULL,
+        account_no      NVARCHAR(50) NULL,
+        depositor_name  NVARCHAR(100) NULL,
+        easy_pay_method NVARCHAR(50) NULL,
+        receipt_type    NVARCHAR(20) NULL,
+        receipt_no      NVARCHAR(50) NULL,
+        paid_at         DATETIME2 NULL,
+        refunded_at     DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL
+    );
+    ```
+
 
 ### shipping — 배송
 
@@ -1391,6 +2635,38 @@
         delivered_at    TIMESTAMP NULL,
         created_at      TIMESTAMP NOT NULL,
         updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE shipping (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NOT NULL,
+        carrier         VARCHAR2(50) NOT NULL,
+        tracking_number VARCHAR2(50) NULL,
+        status          VARCHAR2(20) NOT NULL,
+        shipped_at      TIMESTAMP NULL,
+        delivered_at    TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE shipping (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NOT NULL,
+        carrier         NVARCHAR(50) NOT NULL,
+        tracking_number NVARCHAR(50) NULL,
+        status          NVARCHAR(20) NOT NULL,
+        shipped_at      DATETIME2 NULL,
+        delivered_at    DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
     );
     ```
 
@@ -1467,6 +2743,40 @@
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE reviews (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        order_id        NUMBER(10) NOT NULL,
+        rating          NUMBER(5) NOT NULL CHECK (rating BETWEEN 1 AND 5),
+        title           VARCHAR2(200) NULL,
+        content         CLOB NULL,
+        is_verified     NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_verified IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE reviews (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        order_id        INT NOT NULL,
+        rating          SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+        title           NVARCHAR(200) NULL,
+        content         NVARCHAR(MAX) NULL,
+        is_verified     BIT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
+    );
+    ```
+
 
 
 ### wishlists — 위시리스트
@@ -1523,6 +2833,34 @@
         is_purchased    BOOLEAN NOT NULL DEFAULT FALSE,
         notify_on_sale  BOOLEAN NOT NULL DEFAULT FALSE,
         created_at      TIMESTAMP NOT NULL,
+        UNIQUE (customer_id, product_id)
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE wishlists (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        is_purchased    NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_purchased IN (0,1)),
+        notify_on_sale  NUMBER(1) DEFAULT 0 NOT NULL CHECK (notify_on_sale IN (0,1)),
+        created_at      TIMESTAMP NOT NULL,
+        UNIQUE (customer_id, product_id)
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE wishlists (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        product_id      INT NOT NULL REFERENCES products(id),
+        is_purchased    BIT NOT NULL DEFAULT 0,
+        notify_on_sale  BIT NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL,
         UNIQUE (customer_id, product_id)
     );
     ```
@@ -1638,6 +2976,60 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         created_at      TIMESTAMP NOT NULL,
         resolved_at     TIMESTAMP NULL,
         closed_at       TIMESTAMP NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE complaints (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NULL,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        staff_id        NUMBER(10) NULL REFERENCES staff(id),
+        category        VARCHAR2(30) NOT NULL,
+        channel         VARCHAR2(20) NOT NULL,
+        priority        VARCHAR2(10) NOT NULL,
+        status          VARCHAR2(20) NOT NULL,
+        title           VARCHAR2(300) NOT NULL,
+        content         CLOB NOT NULL,
+        resolution      CLOB NULL,
+        type            VARCHAR2(20) NOT NULL DEFAULT 'inquiry',
+        sub_category    VARCHAR2(100) NULL,
+        compensation_type VARCHAR2(30) NULL,
+        compensation_amount NUMBER(12,2) NULL DEFAULT 0,
+        escalated       NUMBER(1) DEFAULT 0 NOT NULL CHECK (escalated IN (0,1)),
+        response_count  NUMBER(10) NOT NULL DEFAULT 1,
+        created_at      TIMESTAMP NOT NULL,
+        resolved_at     TIMESTAMP NULL,
+        closed_at       TIMESTAMP NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE complaints (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NULL,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        staff_id        INT NULL REFERENCES staff(id),
+        category        NVARCHAR(30) NOT NULL,
+        channel         NVARCHAR(20) NOT NULL,
+        priority        NVARCHAR(10) NOT NULL,
+        status          NVARCHAR(20) NOT NULL,
+        title           NVARCHAR(300) NOT NULL,
+        content         NVARCHAR(MAX) NOT NULL,
+        resolution      NVARCHAR(MAX) NULL,
+        type            NVARCHAR(20) NOT NULL DEFAULT 'inquiry',
+        sub_category    NVARCHAR(100) NULL,
+        compensation_type NVARCHAR(30) NULL,
+        compensation_amount DECIMAL(12,2) NULL DEFAULT 0,
+        escalated       BIT NOT NULL DEFAULT 0,
+        response_count  INT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL,
+        resolved_at     DATETIME2 NULL,
+        closed_at       DATETIME2 NULL
     );
     ```
 
@@ -1764,6 +3156,64 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE returns (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        order_id        NUMBER(10) NOT NULL,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        return_type     VARCHAR2(20) NOT NULL,
+        reason          VARCHAR2(30) NOT NULL,
+        reason_detail   CLOB NOT NULL,
+        status          VARCHAR2(30) NOT NULL,
+        is_partial      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_partial IN (0,1)),
+        refund_amount   NUMBER(12,2) NOT NULL,
+        refund_status   VARCHAR2(20) NOT NULL,
+        carrier         VARCHAR2(50) NOT NULL,
+        tracking_number VARCHAR2(50) NOT NULL,
+        requested_at    TIMESTAMP NOT NULL,
+        pickup_at       TIMESTAMP NOT NULL,
+        received_at     TIMESTAMP NULL,
+        inspected_at    TIMESTAMP NULL,
+        inspection_result VARCHAR2(20) NULL,
+        completed_at    TIMESTAMP NULL,
+        claim_id        NUMBER(10) NULL REFERENCES complaints(id),
+        exchange_product_id NUMBER(10) NULL REFERENCES products(id),
+        restocking_fee  NUMBER(12,2) NOT NULL DEFAULT 0,
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE returns (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        order_id        INT NOT NULL,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        return_type     NVARCHAR(20) NOT NULL,
+        reason          NVARCHAR(30) NOT NULL,
+        reason_detail   NVARCHAR(MAX) NOT NULL,
+        status          NVARCHAR(30) NOT NULL,
+        is_partial      BIT NOT NULL DEFAULT 0,
+        refund_amount   DECIMAL(12,2) NOT NULL,
+        refund_status   NVARCHAR(20) NOT NULL,
+        carrier         NVARCHAR(50) NOT NULL,
+        tracking_number NVARCHAR(50) NOT NULL,
+        requested_at    DATETIME2 NOT NULL,
+        pickup_at       DATETIME2 NOT NULL,
+        received_at     DATETIME2 NULL,
+        inspected_at    DATETIME2 NULL,
+        inspection_result NVARCHAR(20) NULL,
+        completed_at    DATETIME2 NULL,
+        claim_id        INT NULL REFERENCES complaints(id),
+        exchange_product_id INT NULL REFERENCES products(id),
+        restocking_fee  DECIMAL(12,2) NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL
+    );
+    ```
+
 
 ### coupons — 쿠폰
 
@@ -1845,6 +3295,46 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE coupons (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        code            VARCHAR2(30) NOT NULL UNIQUE,
+        name            VARCHAR2(200) NOT NULL,
+        type            VARCHAR2(20) NOT NULL,
+        discount_value  NUMBER(12,2) NOT NULL CHECK (discount_value > 0),
+        min_order_amount NUMBER(12,2) NULL,
+        max_discount    NUMBER(12,2) NULL,
+        usage_limit     NUMBER(10) NULL,
+        per_user_limit  NUMBER(10) NOT NULL DEFAULT 1,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        started_at      TIMESTAMP NOT NULL,
+        expired_at      TIMESTAMP NOT NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE coupons (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        code            NVARCHAR(30) NOT NULL UNIQUE,
+        name            NVARCHAR(200) NOT NULL,
+        type            NVARCHAR(20) NOT NULL,
+        discount_value  DECIMAL(12,2) NOT NULL CHECK (discount_value > 0),
+        min_order_amount DECIMAL(12,2) NULL,
+        max_discount    DECIMAL(12,2) NULL,
+        usage_limit     INT NULL,
+        per_user_limit  INT NOT NULL DEFAULT 1,
+        is_active       BIT NOT NULL DEFAULT 1,
+        started_at      DATETIME2 NOT NULL,
+        expired_at      DATETIME2 NOT NULL,
+        created_at      DATETIME2 NOT NULL
+    );
+    ```
+
 
 ### coupon_usage — 쿠폰 사용 내역
 
@@ -1897,6 +3387,32 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         order_id        INT NOT NULL,
         discount_amount NUMERIC(12,2) NOT NULL,
         used_at         TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE coupon_usage (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        coupon_id       NUMBER(10) NOT NULL REFERENCES coupons(id),
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        order_id        NUMBER(10) NOT NULL,
+        discount_amount NUMBER(12,2) NOT NULL,
+        used_at         TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE coupon_usage (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        coupon_id       INT NOT NULL REFERENCES coupons(id),
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        order_id        INT NOT NULL,
+        discount_amount DECIMAL(12,2) NOT NULL,
+        used_at         DATETIME2 NOT NULL
     );
     ```
 
@@ -1958,6 +3474,34 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE inventory_transactions (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        type            VARCHAR2(20) NOT NULL,
+        quantity        NUMBER(10) NOT NULL,
+        reference_id    NUMBER(10) NULL,
+        notes           VARCHAR2(500) NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE inventory_transactions (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        type            NVARCHAR(20) NOT NULL,
+        quantity        INT NOT NULL,
+        reference_id    INT NULL,
+        notes           NVARCHAR(500) NULL,
+        created_at      DATETIME2 NOT NULL
+    );
+    ```
+
 
 ### carts — 장바구니
 
@@ -2005,6 +3549,30 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         status          cart_status NOT NULL DEFAULT 'active',
         created_at      TIMESTAMP NOT NULL,
         updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE carts (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        status          VARCHAR2(20) NOT NULL DEFAULT 'active',
+        created_at      TIMESTAMP NOT NULL,
+        updated_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE carts (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        status          NVARCHAR(20) NOT NULL DEFAULT 'active',
+        created_at      DATETIME2 NOT NULL,
+        updated_at      DATETIME2 NOT NULL
     );
     ```
 
@@ -2056,6 +3624,30 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         product_id      INT NOT NULL REFERENCES products(id),
         quantity        INT NOT NULL DEFAULT 1,
         added_at        TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE cart_items (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        cart_id         NUMBER(10) NOT NULL REFERENCES carts(id),
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        quantity        NUMBER(10) NOT NULL DEFAULT 1,
+        added_at        TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE cart_items (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        cart_id         INT NOT NULL REFERENCES carts(id),
+        product_id      INT NOT NULL REFERENCES products(id),
+        quantity        INT NOT NULL DEFAULT 1,
+        added_at        DATETIME2 NOT NULL
     );
     ```
 
@@ -2129,6 +3721,40 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE calendar (
+        date_key        DATE NOT NULL PRIMARY KEY,
+        year            NUMBER(10) NOT NULL,
+        month           NUMBER(10) NOT NULL,
+        day             NUMBER(10) NOT NULL,
+        quarter         NUMBER(10) NOT NULL,
+        day_of_week     NUMBER(10) NOT NULL,
+        day_name        VARCHAR2(20) NOT NULL,
+        is_weekend      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_weekend IN (0,1)),
+        is_holiday      NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_holiday IN (0,1)),
+        holiday_name    VARCHAR2(100) NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE calendar (
+        date_key        DATE NOT NULL PRIMARY KEY,
+        year            INT NOT NULL,
+        month           INT NOT NULL,
+        day             INT NOT NULL,
+        quarter         INT NOT NULL,
+        day_of_week     INT NOT NULL,
+        day_name        NVARCHAR(20) NOT NULL,
+        is_weekend      BIT NOT NULL DEFAULT 0,
+        is_holiday      BIT NOT NULL DEFAULT 0,
+        holiday_name    NVARCHAR(100) NULL
+    );
+    ```
+
 
 ### customer_grade_history — 등급 변경 이력
 
@@ -2184,6 +3810,32 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE customer_grade_history (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        old_grade       VARCHAR2(10) NULL,
+        new_grade       VARCHAR2(10) NOT NULL,
+        changed_at      TIMESTAMP NOT NULL,
+        reason          VARCHAR2(20) NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE customer_grade_history (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        old_grade       NVARCHAR(10) NULL,
+        new_grade       NVARCHAR(10) NOT NULL,
+        changed_at      DATETIME2 NOT NULL,
+        reason          NVARCHAR(20) NOT NULL
+    );
+    ```
+
 
 ### tags / product_tags — 상품 태그
 
@@ -2224,6 +3876,26 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         id              INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         name            VARCHAR(100) NOT NULL UNIQUE,
         category        tag_category NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE tags (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        name            VARCHAR2(100) NOT NULL UNIQUE,
+        category        VARCHAR2(20) NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE tags (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        name            NVARCHAR(100) NOT NULL UNIQUE,
+        category        NVARCHAR(20) NOT NULL
     );
     ```
 
@@ -2310,6 +3982,36 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
     ) PARTITION BY RANGE (viewed_at);
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE product_views (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY,
+        customer_id     NUMBER(10) NOT NULL,
+        product_id      NUMBER(10) NOT NULL,
+        referrer_source VARCHAR2(20) NOT NULL,
+        device_type     VARCHAR2(20) NOT NULL,
+        duration_seconds NUMBER(10) NOT NULL,
+        viewed_at       TIMESTAMP NOT NULL,
+        PRIMARY KEY (id, viewed_at)
+    ) PARTITION BY RANGE (viewed_at);
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE product_views (
+        id              INT IDENTITY(1,1),
+        customer_id     INT NOT NULL,
+        product_id      INT NOT NULL,
+        referrer_source NVARCHAR(20) NOT NULL,
+        device_type     NVARCHAR(20) NOT NULL,
+        duration_seconds INT NOT NULL,
+        viewed_at       DATETIME2 NOT NULL,
+        PRIMARY KEY (id, viewed_at)
+    ); -- Partitioned by viewed_at (use partition function/scheme in production);
+    ```
+
 
 ### point_transactions — 포인트 거래
 
@@ -2375,6 +4077,38 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         balance_after   INT NOT NULL,
         expires_at      TIMESTAMP NULL,
         created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE point_transactions (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        customer_id     NUMBER(10) NOT NULL REFERENCES customers(id),
+        order_id        NUMBER(10) NULL,
+        type            VARCHAR2(10) NOT NULL CHECK (type IN ('earn','use','expire')),
+        reason          VARCHAR2(20) NOT NULL CHECK (reason IN ('purchase','confirm','review','signup','use','expiry')),
+        amount          NUMBER(10) NOT NULL,
+        balance_after   NUMBER(10) NOT NULL,
+        expires_at      TIMESTAMP NULL,
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE point_transactions (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        customer_id     INT NOT NULL REFERENCES customers(id),
+        order_id        INT NULL,
+        type            NVARCHAR(10) NOT NULL CHECK (type IN ('earn','use','expire')),
+        reason          NVARCHAR(20) NOT NULL CHECK (reason IN ('purchase','confirm','review','signup','use','expiry')),
+        amount          INT NOT NULL,
+        balance_after   INT NOT NULL,
+        expires_at      DATETIME2 NULL,
+        created_at      DATETIME2 NOT NULL
     );
     ```
 
@@ -2456,6 +4190,40 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
     );
     ```
 
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE promotions (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        name            VARCHAR2(200) NOT NULL,
+        type            VARCHAR2(20) NOT NULL,
+        discount_type   VARCHAR2(20) NOT NULL,
+        discount_value  NUMBER(12,2) NOT NULL,
+        min_order_amount NUMBER(12,2) NULL,
+        started_at      TIMESTAMP NOT NULL,
+        ended_at        TIMESTAMP NOT NULL,
+        is_active       NUMBER(1) DEFAULT 1 NOT NULL CHECK (is_active IN (0,1)),
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE promotions (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        name            NVARCHAR(200) NOT NULL,
+        type            NVARCHAR(20) NOT NULL,
+        discount_type   NVARCHAR(20) NOT NULL,
+        discount_value  DECIMAL(12,2) NOT NULL,
+        min_order_amount DECIMAL(12,2) NULL,
+        started_at      DATETIME2 NOT NULL,
+        ended_at        DATETIME2 NOT NULL,
+        is_active       BIT NOT NULL DEFAULT 1,
+        created_at      DATETIME2 NOT NULL
+    );
+    ```
+
 | override_price | REAL | O | 플래시 세일 특가 (NULL=프로모션 할인 적용) |
 
 === "SQLite"
@@ -2489,6 +4257,28 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         promotion_id    INT NOT NULL REFERENCES promotions(id),
         product_id      INT NOT NULL REFERENCES products(id),
         override_price  NUMERIC(12,2) NULL,
+        PRIMARY KEY (promotion_id, product_id)
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE promotion_products (
+        promotion_id    NUMBER(10) NOT NULL REFERENCES promotions(id),
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        override_price  NUMBER(12,2) NULL,
+        PRIMARY KEY (promotion_id, product_id)
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE promotion_products (
+        promotion_id    INT NOT NULL REFERENCES promotions(id),
+        product_id      INT NOT NULL REFERENCES products(id),
+        override_price  DECIMAL(12,2) NULL,
         PRIMARY KEY (promotion_id, product_id)
     );
     ```
@@ -2555,6 +4345,36 @@ CS 문의 접수 및 처리 37,953건 (medium). 7개 카테고리, 5개 채널, 
         content         TEXT NOT NULL,
         is_answered     BOOLEAN NOT NULL DEFAULT FALSE,
         created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "Oracle"
+
+    ```sql
+    CREATE TABLE product_qna (
+        id              NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        product_id      NUMBER(10) NOT NULL REFERENCES products(id),
+        customer_id     NUMBER(10) NULL REFERENCES customers(id),
+        staff_id        NUMBER(10) NULL REFERENCES staff(id),
+        parent_id       NUMBER(10) NULL REFERENCES product_qna(id),
+        content         CLOB NOT NULL,
+        is_answered     NUMBER(1) DEFAULT 0 NOT NULL CHECK (is_answered IN (0,1)),
+        created_at      TIMESTAMP NOT NULL
+    );
+    ```
+
+=== "SQL Server"
+
+    ```sql
+    CREATE TABLE product_qna (
+        id              INT IDENTITY(1,1) PRIMARY KEY,
+        product_id      INT NOT NULL REFERENCES products(id),
+        customer_id     INT NULL REFERENCES customers(id),
+        staff_id        INT NULL REFERENCES staff(id),
+        parent_id       INT NULL REFERENCES product_qna(id),
+        content         NVARCHAR(MAX) NOT NULL,
+        is_answered     BIT NOT NULL DEFAULT 0,
+        created_at      DATETIME2 NOT NULL
     );
     ```
 
