@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compile exercise YAML files into mkdocs markdown and exercise.db.
+"""Compile exercise YAML files into mkdocs markdown.
 
 Usage:
     # Compile all exercises
@@ -65,7 +65,6 @@ LECTURES_DIR = Path("exercises/lectures")
 DOCS_KO_DIR = Path("docs/ko/exercises")
 DOCS_EN_DIR = Path("docs/en/exercises")
 DOCS_KO_LESSONS = Path("docs/ko")
-OUTPUT_DB = Path("output/exercise.db")
 
 # 강의 MD 플레이스홀더
 LESSON_BEGIN = "<!-- BEGIN_LESSON_EXERCISES -->"
@@ -77,105 +76,6 @@ def load_yaml(path: Path) -> dict:
         return yaml.safe_load(f)
 
 
-def create_exercise_db(db_path: Path):
-    """Create exercise.db schema."""
-    os.makedirs(db_path.parent, exist_ok=True)
-    if db_path.exists():
-        db_path.unlink()
-
-    conn = sqlite3.connect(str(db_path))
-    conn.executescript("""
-        CREATE TABLE exercise_sets (
-            id              TEXT PRIMARY KEY,
-            title           TEXT NOT NULL,
-            title_en        TEXT,
-            difficulty      TEXT NOT NULL,
-            concepts        TEXT NOT NULL,
-            prerequisites   TEXT,
-            estimated_minutes INTEGER,
-            sort_order      INTEGER NOT NULL,
-            created_at      TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-
-        CREATE TABLE problems (
-            id              TEXT PRIMARY KEY,
-            exercise_id     TEXT NOT NULL REFERENCES exercise_sets(id),
-            question        TEXT NOT NULL,
-            question_en     TEXT,
-            level           INTEGER DEFAULT 3,
-            type            TEXT DEFAULT 'SELECT',
-            reference_sql_common TEXT,
-            reference_sql_sqlite TEXT,
-            reference_sql_mysql TEXT,
-            reference_sql_postgresql TEXT,
-            reference_sql_oracle TEXT,
-            reference_sql_sqlserver TEXT,
-            supported_db    TEXT NOT NULL DEFAULT '["sqlite","mysql","postgresql","oracle","sqlserver"]',
-            validation_json TEXT NOT NULL,
-            hints_json      TEXT,
-            rubric          TEXT,
-            rubric_en       TEXT,
-            max_score       INTEGER DEFAULT 10,
-            tags_json       TEXT,
-            sort_order      INTEGER NOT NULL,
-            expected_columns TEXT,
-            expected_row_count INTEGER,
-            expected_hash   TEXT
-        );
-
-        CREATE TABLE exercise_tags (
-            tag             TEXT PRIMARY KEY,
-            category        TEXT NOT NULL
-        );
-
-        CREATE TABLE problem_tags (
-            problem_id      TEXT NOT NULL REFERENCES problems(id),
-            tag             TEXT NOT NULL,
-            PRIMARY KEY (problem_id, tag)
-        );
-
-        CREATE TABLE attempts (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-            problem_id      TEXT NOT NULL REFERENCES problems(id),
-            user_sql        TEXT NOT NULL,
-            syntax_valid    INTEGER NOT NULL,
-            columns_match   INTEGER NOT NULL,
-            row_count_match INTEGER NOT NULL,
-            data_match      INTEGER NOT NULL,
-            result_hash     TEXT,
-            det_score       INTEGER NOT NULL,
-            ai_score        INTEGER,
-            ai_feedback     TEXT,
-            total_score     INTEGER NOT NULL,
-            execution_ms    INTEGER,
-            row_count       INTEGER,
-            attempted_at    TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-
-        CREATE TABLE progress (
-            problem_id      TEXT PRIMARY KEY REFERENCES problems(id),
-            best_score      INTEGER NOT NULL DEFAULT 0,
-            attempt_count   INTEGER NOT NULL DEFAULT 0,
-            completed       INTEGER NOT NULL DEFAULT 0,
-            first_solved_at TEXT,
-            last_attempt_at TEXT NOT NULL DEFAULT (datetime('now'))
-        );
-
-        CREATE TABLE badges (
-            id              TEXT PRIMARY KEY,
-            name            TEXT NOT NULL,
-            name_en         TEXT,
-            description     TEXT NOT NULL,
-            description_en  TEXT,
-            icon            TEXT,
-            condition_sql   TEXT NOT NULL,
-            earned_at       TEXT
-        );
-
-        CREATE INDEX idx_problems_exercise_id ON problems(exercise_id);
-        CREATE INDEX idx_attempts_problem_id ON attempts(problem_id);
-    """)
-    return conn
 
 
 def compute_expected(conn_tutorial, sql: str) -> tuple:
@@ -257,28 +157,14 @@ def _execute_and_format(conn, sql: str, lang: str = "ko") -> str:
         return ""
 
 
-def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int, conn_tutorial_en=None) -> dict:
-    """Compile a single YAML file into exercise.db + mkdocs markdown."""
+def compile_yaml_file(yaml_path: Path, conn_tutorial, sort_base: int, conn_tutorial_en=None) -> dict:
+    """Compile a single YAML file into mkdocs markdown."""
     data = load_yaml(yaml_path)
     meta = data.get("metadata", {})
 
     exercise_id = meta["id"]
     print(f"  [{exercise_id}] {meta.get('title', '')} ({len(data.get('problems', []))} problems)")
 
-    # Insert exercise set
-    conn_db.execute(
-        "INSERT INTO exercise_sets (id, title, title_en, difficulty, concepts, prerequisites, estimated_minutes, sort_order) VALUES (?,?,?,?,?,?,?,?)",
-        (
-            exercise_id,
-            meta.get("title", ""),
-            meta.get("title_en", ""),
-            meta.get("difficulty", "beginner"),
-            json.dumps(meta.get("concepts", []), ensure_ascii=False),
-            json.dumps(meta.get("prerequisites", []), ensure_ascii=False),
-            meta.get("estimated_minutes"),
-            sort_base,
-        ),
-    )
 
     # Build mkdocs markdown (ko + en)
     md_ko_lines = [f"# {meta.get('title', exercise_id)}\n"]
@@ -350,39 +236,7 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int, c
         prob_type = prob.get("type", meta.get("type", "SELECT"))
         prob_tags = prob.get("tags", [])
 
-        # Insert problem
-        conn_db.execute(
-            """INSERT INTO problems (id, exercise_id, question, question_en,
-               level, type,
-               reference_sql_common, reference_sql_sqlite, reference_sql_mysql, reference_sql_postgresql,
-               reference_sql_oracle, reference_sql_sqlserver,
-               supported_db, validation_json, hints_json, rubric, rubric_en,
-               max_score, tags_json, sort_order, expected_columns, expected_row_count, expected_hash)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (
-                pid, exercise_id,
-                prob.get("question", "") or prob.get("body", ""),
-                prob.get("question_en", "") or prob.get("body_en", ""),
-                prob_level, prob_type,
-                ref_common, ref_sqlite, ref_mysql, ref_pg, ref_oracle, ref_sqlserver,
-                json.dumps(supported),
-                json.dumps(validation, ensure_ascii=False),
-                hints_json,
-                _to_str(prob.get("rubric", "")),
-                _to_str(prob.get("rubric_en", "")),
-                prob.get("max_score", 10),
-                json.dumps(prob_tags, ensure_ascii=False),
-                sort_order,
-                exp_cols, exp_rows, exp_hash,
-            ),
-        )
 
-        # Insert problem-tag mappings
-        for tag in prob_tags:
-            conn_db.execute(
-                "INSERT OR IGNORE INTO problem_tags (problem_id, tag) VALUES (?,?)",
-                (pid, tag),
-            )
 
         # Generate markdown
         num = i + 1
@@ -469,7 +323,7 @@ def _indent(sql: str, prefix: str = "    ") -> str:
     return f"\n{prefix}".join(lines)
 
 
-def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -> dict:
+def compile_lesson_yaml(yaml_path: Path, conn_tutorial, sort_base: int) -> dict:
     """Compile a lesson YAML and inject exercises into the lesson MD file."""
     data = load_yaml(yaml_path)
     meta = data.get("metadata", {})
@@ -479,20 +333,6 @@ def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int)
     title_safe = meta.get('title', '').encode('ascii', 'replace').decode('ascii')
     print(f"  [{exercise_id}] {title_safe} -> {lesson_path}")
 
-    # Insert into exercise.db (same as regular exercises)
-    conn_db.execute(
-        "INSERT INTO exercise_sets (id, title, title_en, difficulty, concepts, prerequisites, estimated_minutes, sort_order) VALUES (?,?,?,?,?,?,?,?)",
-        (
-            exercise_id,
-            meta.get("title", ""),
-            meta.get("title_en", ""),
-            meta.get("difficulty", "beginner"),
-            json.dumps(meta.get("concepts", []), ensure_ascii=False),
-            json.dumps(meta.get("prerequisites", []), ensure_ascii=False),
-            meta.get("estimated_minutes"),
-            sort_base,
-        ),
-    )
 
     problems = data.get("problems", [])
 
@@ -535,37 +375,6 @@ def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int)
         prob_type = prob.get("type", meta.get("default_type", "SELECT"))
         prob_tags = prob.get("tags", [])
 
-        conn_db.execute(
-            """INSERT INTO problems (id, exercise_id, question, question_en,
-               level, type,
-               reference_sql_common, reference_sql_sqlite, reference_sql_mysql, reference_sql_postgresql,
-               reference_sql_oracle, reference_sql_sqlserver,
-               supported_db, validation_json, hints_json, rubric, rubric_en,
-               max_score, tags_json, sort_order, expected_columns, expected_row_count, expected_hash)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (
-                pid, exercise_id,
-                prob.get("question", ""),
-                prob.get("question_en", ""),
-                prob_level, prob_type,
-                ref_common, ref_sqlite, ref_mysql, ref_pg, ref_oracle, ref_sqlserver,
-                json.dumps(supported),
-                json.dumps(validation, ensure_ascii=False),
-                hints_json,
-                _to_str(prob.get("rubric", "")),
-                _to_str(prob.get("rubric_en", "")),
-                prob.get("max_score", 10),
-                json.dumps(prob_tags, ensure_ascii=False),
-                sort_order,
-                exp_cols, exp_rows, exp_hash,
-            ),
-        )
-
-        for tag in prob_tags:
-            conn_db.execute(
-                "INSERT OR IGNORE INTO problem_tags (problem_id, tag) VALUES (?,?)",
-                (pid, tag),
-            )
 
         # Markdown block
         num = i + 1
@@ -655,11 +464,9 @@ def compile_lesson_yaml(yaml_path: Path, conn_db, conn_tutorial, sort_base: int)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compile exercise YAML to mkdocs + exercise.db")
+    parser = argparse.ArgumentParser(description="Compile exercise YAML to mkdocs markdown")
     parser.add_argument("--tutorial-db", type=str, default="output/ecommerce-ko.db",
-                        help="Tutorial DB for computing expected results")
-    parser.add_argument("--output-db", type=str, default=str(OUTPUT_DB),
-                        help="Output exercise.db path")
+                        help="Tutorial DB for computing expected results and result tables")
     parser.add_argument("--validate-only", action="store_true", help="Validate only, no output")
     parser.add_argument("--file", type=str, help="Compile a single YAML file")
     args = parser.parse_args()
@@ -705,15 +512,13 @@ def main():
                 print(f"  ERR {yf} -{e}")
         return
 
-    # Create exercise.db
-    conn_db = create_exercise_db(Path(args.output_db))
     os.makedirs(DOCS_KO_DIR, exist_ok=True)
     os.makedirs(DOCS_EN_DIR, exist_ok=True)
 
     total_problems = 0
     for i, yf in enumerate(yaml_files):
         try:
-            result = compile_yaml_file(yf, conn_db, conn_tutorial, sort_base=i + 1, conn_tutorial_en=conn_tutorial_en)
+            result = compile_yaml_file(yf, conn_tutorial, sort_base=i + 1, conn_tutorial_en=conn_tutorial_en)
             total_problems += result["problem_count"]
 
             # Write mkdocs markdown
@@ -721,8 +526,6 @@ def main():
             ko_path = DOCS_KO_DIR / md_filename
             en_path = DOCS_EN_DIR / md_filename
 
-            # Only write if file doesn't exist OR is auto-generated
-            # (preserve hand-written files)
             ko_path.write_text(result["md_ko"], encoding="utf-8")
             en_path.write_text(result["md_en"], encoding="utf-8")
 
@@ -737,7 +540,7 @@ def main():
         print(f"\n=== Lesson exercises ({len(lecture_files)} files) ===")
         for j, lf in enumerate(lecture_files):
             try:
-                result = compile_lesson_yaml(lf, conn_db, conn_tutorial,
+                result = compile_lesson_yaml(lf, conn_tutorial,
                                               sort_base=len(yaml_files) + j + 1)
                 lesson_problems += result["problem_count"]
             except Exception as e:
@@ -745,8 +548,6 @@ def main():
                 import traceback
                 traceback.print_exc()
 
-    conn_db.commit()
-    conn_db.close()
     if conn_tutorial:
         conn_tutorial.close()
     if conn_tutorial_en:
@@ -755,7 +556,6 @@ def main():
     print(f"\nCompiled {len(yaml_files)} exercise files, {total_problems} problems")
     if lecture_files:
         print(f"  + {len(lecture_files)} lesson files, {lesson_problems} problems")
-    print(f"  exercise.db: {args.output_db}")
     print(f"  mkdocs (ko): {DOCS_KO_DIR}/")
     print(f"  mkdocs (en): {DOCS_EN_DIR}/")
 
