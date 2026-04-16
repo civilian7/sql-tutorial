@@ -4,6 +4,7 @@ metadata:
   title_en: "Data Quality Checks"
   difficulty: intermediate
   concepts: [data validation, orphan records, NULL analysis, status consistency, date validation, duplicates, outliers, cross-table consistency]
+  tables: [customers, orders, order_items, payments, products, shipping]
   prerequisites: [intermediate-05-joins, intermediate-07-subqueries]
   estimated_minutes: 35
   default_level: 2

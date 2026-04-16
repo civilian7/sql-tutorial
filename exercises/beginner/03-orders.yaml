@@ -4,6 +4,7 @@ metadata:
   title_en: "Order Basics"
   difficulty: beginner
   concepts: [SELECT, WHERE, GROUP BY, COUNT, SUM, AVG, MAX, ROUND, SUBSTR, STRFTIME, CASE WHEN, LIKE, subquery]
+  tables: [orders, payments]
   prerequisites: []
   estimated_minutes: 20
   default_level: 1

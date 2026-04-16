@@ -1,6 +1,9 @@
 # 실행 계획 분석
 
-EXPLAIN으로 쿼리 실행 계획을 분석하고 성능을 최적화하는 문제입니다.
+**사용 테이블:** `customers`, `orders`, `order_items`, `products`, `point_transactions`, `product_views`
+
+**학습 범위:** EXPLAIN, QUERY PLAN, index, performance, optimization
+
 
 ---
 

@@ -1,5 +1,12 @@
 # Query Optimization
 
+**Tables:** `orders`, `order_items`, `products`, `reviews`
+
+**Concepts:** EXPLAIN, Index, Covering Index, Correlated Subquery, IN vs EXISTS
+
+
+---
+
 
 ### 1. Reading EXPLAIN
 

@@ -1,5 +1,12 @@
 # SQL 디버깅
 
+**사용 테이블:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `returns`, `suppliers`
+
+**학습 범위:** cardinality explosion, NULL comparison, LEFT JOIN pitfall, GROUP BY, HAVING vs WHERE, DISTINCT, correlated subquery, date range, NULLIF, UNION
+
+
+---
+
 
 ### 1. 아래 쿼리는 2024년 상품별 매출을 구합니다. 그런데 실제보다 매출이 훨씬 크게 나옵니다. 왜일까요?
 

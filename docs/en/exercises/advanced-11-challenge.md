@@ -1,6 +1,9 @@
 # Challenge Problems
 
-High-difficulty problems inspired by solvesql/LeetCode patterns.
+**Tables:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `shipping`, `point_transactions`, `product_views`, `inventory_transactions`, `wishlists`, `calendar`
+
+**Concepts:** Window, Analytics, CTE, consecutive, median, retention
+
 
 ---
 

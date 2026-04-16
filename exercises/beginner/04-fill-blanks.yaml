@@ -4,6 +4,7 @@ metadata:
   title_en: "Fill in the Blanks"
   difficulty: beginner
   concepts: [WHERE, ORDER BY, COUNT, HAVING, JOIN, LEFT JOIN, IS NULL, BETWEEN, CASE WHEN, COALESCE, subquery, GROUP BY, LIKE, SUBSTR, IN]
+  tables: [categories, customers, orders, payments, products, shipping]
   prerequisites: []
   estimated_minutes: 20
   default_level: 1

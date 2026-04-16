@@ -4,6 +4,7 @@ metadata:
   title_en: "Date and Time Analysis"
   difficulty: intermediate
   concepts: [SUBSTR, JULIANDAY, STRFTIME, date arithmetic, LAG, CTE, window functions]
+  tables: [calendar, customers, orders, products, promotions, returns, shipping]
   prerequisites: [intermediate-05-joins]
   estimated_minutes: 35
   default_level: 2

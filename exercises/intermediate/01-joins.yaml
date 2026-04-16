@@ -4,6 +4,7 @@ metadata:
   title_en: "JOIN Master"
   difficulty: intermediate
   concepts: [INNER JOIN, LEFT JOIN, multi-table JOIN, GROUP BY, aggregate functions]
+  tables: [categories, customers, orders, order_items, products, reviews, shipping, staff, suppliers, tags, product_tags]
   prerequisites: [beginner-01-products]
   estimated_minutes: 30
   default_level: 2

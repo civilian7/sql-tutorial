@@ -1,5 +1,12 @@
 # Inventory Management
 
+**Tables:** `products`, `categories`, `suppliers`, `inventory_transactions`, `order_items`, `orders`
+
+**Concepts:** Conditional Aggregation, Window Functions, ABC Analysis, Pareto, CTE
+
+
+---
+
 
 ### 1. Current Inventory Status and Low-Stock Products
 

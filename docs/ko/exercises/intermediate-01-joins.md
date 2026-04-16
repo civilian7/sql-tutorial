@@ -1,5 +1,12 @@
 # JOIN 마스터
 
+**사용 테이블:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `shipping`, `staff`, `suppliers`, `tags`, `product_tags`
+
+**학습 범위:** INNER JOIN, LEFT JOIN, multi-table JOIN, GROUP BY, aggregate functions
+
+
+---
+
 
 ### 1. 각 상품의 이름, 가격, 카테고리명을 조회하세요. 가격 내림차순으로 10개만.
 

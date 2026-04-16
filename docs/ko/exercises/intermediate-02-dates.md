@@ -1,5 +1,12 @@
 # 날짜와 시간 분석
 
+**사용 테이블:** `calendar`, `customers`, `orders`, `products`, `promotions`, `returns`, `shipping`
+
+**학습 범위:** SUBSTR, JULIANDAY, STRFTIME, date arithmetic, LAG, CTE, window functions
+
+
+---
+
 
 ### 1. 2025년 월별 주문 수와 매출을 구하세요. 취소 제외.
 

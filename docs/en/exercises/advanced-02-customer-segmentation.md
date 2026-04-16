@@ -1,5 +1,12 @@
 # Customer Segmentation
 
+**Tables:** `customers`, `orders`, `reviews`
+
+**Concepts:** RFM, NTILE, Window Functions, CTE, Cohort Analysis, JULIANDAY
+
+
+---
+
 
 ### 1. RFM Basics: Customer Key Metrics
 

@@ -1,5 +1,12 @@
 # Subqueries and Data Transformation
 
+**Tables:** `categories`, `customers`, `orders`, `order_items`, `payments`, `products`, `reviews`, `returns`, `wishlists`
+
+**Concepts:** scalar subquery, correlated subquery, CTE, CASE WHEN, NOT EXISTS, UNION ALL, window functions
+
+
+---
+
 
 ### 1. Retrieve the name and price of products that are more expens
 

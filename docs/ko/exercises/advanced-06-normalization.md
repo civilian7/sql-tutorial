@@ -1,5 +1,12 @@
 # 정규화 이해
 
+**사용 테이블:** `orders`, `order_items`, `products`, `customers`, `categories`, `wishlists`, `customer_addresses`
+
+**학습 범위:** 1NF, 2NF, 3NF, Denormalization, Self-Reference, M:N, Recursive CTE
+
+
+---
+
 
 ### 1. 비정규화의 문제 - 중복 데이터
 

@@ -1,5 +1,12 @@
 # Business Scenarios
 
+**Tables:** `orders`, `order_items`, `products`, `categories`, `customers`, `complaints`, `returns`, `shipping`, `reviews`, `payments`, `suppliers`, `staff`
+
+**Concepts:** CTE, Scalar Subquery, CASE, JULIANDAY, Business Reporting
+
+
+---
+
 
 ### 1. Scenario 1: CEO Weekly Report
 

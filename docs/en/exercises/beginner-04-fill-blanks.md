@@ -1,6 +1,9 @@
 # Fill in the Blanks
 
-The key parts of the query are replaced with ___. Fill in the correct SQL.
+**Tables:** `categories`, `customers`, `orders`, `payments`, `products`, `shipping`
+
+**Concepts:** WHERE, ORDER BY, COUNT, HAVING, JOIN, LEFT JOIN, IS NULL, BETWEEN, CASE WHEN, COALESCE, subquery, GROUP BY, LIKE, SUBSTR, IN
+
 
 ---
 

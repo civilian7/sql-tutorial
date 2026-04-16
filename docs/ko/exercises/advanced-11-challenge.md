@@ -1,6 +1,9 @@
 # 도전 문제
 
-solvesql/LeetCode 스타일의 고난도 문제들입니다.
+**사용 테이블:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `shipping`, `point_transactions`, `product_views`, `inventory_transactions`, `wishlists`, `calendar`
+
+**학습 범위:** Window, Analytics, CTE, consecutive, median, retention
+
 
 ---
 

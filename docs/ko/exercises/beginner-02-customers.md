@@ -1,6 +1,9 @@
 # 고객 분석
 
-customers, customer_addresses 테이블을 사용합니다.
+**사용 테이블:** `customers`, `customer_addresses`, `orders`, `products`, `tags`, `product_tags`
+
+**학습 범위:** SELECT, WHERE, GROUP BY, COUNT, AVG, MAX, COALESCE, SUBSTR, INSTR, JOIN, HAVING, LIKE, IN, CASE WHEN
+
 
 ---
 

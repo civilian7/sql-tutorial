@@ -1,5 +1,12 @@
 # 데이터 품질 점검
 
+**사용 테이블:** `customers`, `orders`, `order_items`, `payments`, `products`, `shipping`
+
+**학습 범위:** data validation, orphan records, NULL analysis, status consistency, date validation, duplicates, outliers, cross-table consistency
+
+
+---
+
 
 ### 1. 고객 가입일보다 주문일이 빠른 주문이 있는지 확인하세요.
 

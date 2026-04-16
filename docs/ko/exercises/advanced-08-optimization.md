@@ -1,5 +1,12 @@
 # 쿼리 최적화
 
+**사용 테이블:** `orders`, `order_items`, `products`, `reviews`
+
+**학습 범위:** EXPLAIN, Index, Covering Index, Correlated Subquery, IN vs EXISTS
+
+
+---
+
 
 ### 1. EXPLAIN 읽기
 

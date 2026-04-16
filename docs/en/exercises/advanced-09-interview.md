@@ -1,5 +1,12 @@
 # SQL Interview Preparation
 
+**Tables:** `orders`, `order_items`, `products`, `categories`, `reviews`, `customers`
+
+**Concepts:** ROW_NUMBER, LAG, Running Total, Moving Average, Recursive CTE, NTILE, Funnel
+
+
+---
+
 
 ### 1. Top-N per Group
 

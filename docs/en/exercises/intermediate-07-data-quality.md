@@ -1,5 +1,12 @@
 # Data Quality Checks
 
+**Tables:** `customers`, `orders`, `order_items`, `payments`, `products`, `shipping`
+
+**Concepts:** data validation, orphan records, NULL analysis, status consistency, date validation, duplicates, outliers, cross-table consistency
+
+
+---
+
 
 ### 1. Check if there are any orders placed before the customer's s
 

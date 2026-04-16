@@ -4,6 +4,7 @@ metadata:
   title_en: "Exploring Constraints"
   difficulty: intermediate
   concepts: [PRIMARY KEY, UNIQUE, FOREIGN KEY, CHECK, NOT NULL, ON CONFLICT, UPSERT]
+  tables: [customers, products, reviews, wishlists]
   prerequisites: [intermediate-05-joins]
   estimated_minutes: 25
   default_level: 2

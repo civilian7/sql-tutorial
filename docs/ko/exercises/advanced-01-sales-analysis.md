@@ -1,5 +1,12 @@
 # 매출 분석
 
+**사용 테이블:** `orders`, `order_items`, `products`, `categories`, `payments`
+
+**학습 범위:** Aggregation, GROUP BY, Window Functions, CTE, YoY Growth, Pivot
+
+
+---
+
 
 ### 1. 월별 매출 추이 (2022-2024)
 

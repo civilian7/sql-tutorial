@@ -1,5 +1,12 @@
 # Real-World SQL Patterns
 
+**Tables:** `orders`, `order_items`, `products`, `categories`, `reviews`, `carts`, `cart_items`, `coupons`, `coupon_usage`
+
+**Concepts:** LAG, ROW_NUMBER, Cart Abandonment, Coupon ROI, Time Pattern
+
+
+---
+
 
 ### 1. View Analysis: Revenue Growth (LAG Pattern)
 

@@ -1,6 +1,9 @@
 # 빈칸 채우기
 
-쿼리의 핵심 부분이 ___로 비어 있습니다. 올바른 SQL을 채워 넣으세요.
+**사용 테이블:** `categories`, `customers`, `orders`, `payments`, `products`, `shipping`
+
+**학습 범위:** WHERE, ORDER BY, COUNT, HAVING, JOIN, LEFT JOIN, IS NULL, BETWEEN, CASE WHEN, COALESCE, subquery, GROUP BY, LIKE, SUBSTR, IN
+
 
 ---
 

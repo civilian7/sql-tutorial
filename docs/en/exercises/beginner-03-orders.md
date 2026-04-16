@@ -1,6 +1,9 @@
 # Order Basics
 
-Uses orders and payments tables.
+**Tables:** `orders`, `payments`
+
+**Concepts:** SELECT, WHERE, GROUP BY, COUNT, SUM, AVG, MAX, ROUND, SUBSTR, STRFTIME, CASE WHEN, LIKE, subquery
+
 
 ---
 

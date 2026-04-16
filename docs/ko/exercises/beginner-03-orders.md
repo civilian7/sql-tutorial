@@ -1,6 +1,9 @@
 # 주문 기초
 
-orders, payments 테이블을 사용합니다.
+**사용 테이블:** `orders`, `payments`
+
+**학습 범위:** SELECT, WHERE, GROUP BY, COUNT, SUM, AVG, MAX, ROUND, SUBSTR, STRFTIME, CASE WHEN, LIKE, subquery
+
 
 ---
 

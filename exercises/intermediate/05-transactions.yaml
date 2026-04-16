@@ -4,6 +4,7 @@ metadata:
   title_en: "Transactions"
   difficulty: intermediate
   concepts: [BEGIN, COMMIT, ROLLBACK, SAVEPOINT, ACID, atomicity, bulk insert]
+  tables: [customers, orders, payments, products, inventory_transactions]
   prerequisites: [intermediate-08-constraints]
   estimated_minutes: 25
   default_level: 2

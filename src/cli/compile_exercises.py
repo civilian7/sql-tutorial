@@ -189,12 +189,28 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
     md_ko_lines = [f"# {meta.get('title', exercise_id)}\n"]
     md_en_lines = [f"# {meta.get('title_en', exercise_id)}\n"]
 
+    # Standard info block: tables + concepts
+    tables = meta.get("tables", [])
+    concepts = meta.get("concepts", [])
     desc_ko = meta.get("description", "")
     desc_en = meta.get("description_en", "")
-    if desc_ko:
-        md_ko_lines.append(f"{desc_ko}\n\n---\n")
-    if desc_en:
-        md_en_lines.append(f"{desc_en}\n\n---\n")
+
+    if tables or concepts:
+        if tables:
+            tables_str = ", ".join(f"`{t}`" for t in tables)
+            md_ko_lines.append(f"**사용 테이블:** {tables_str}\n")
+            md_en_lines.append(f"**Tables:** {tables_str}\n")
+        if concepts:
+            concepts_str = ", ".join(concepts)
+            md_ko_lines.append(f"**학습 범위:** {concepts_str}\n")
+            md_en_lines.append(f"**Concepts:** {concepts_str}\n")
+        md_ko_lines.append("\n---\n")
+        md_en_lines.append("\n---\n")
+    elif desc_ko or desc_en:
+        if desc_ko:
+            md_ko_lines.append(f"{desc_ko}\n\n---\n")
+        if desc_en:
+            md_en_lines.append(f"{desc_en}\n\n---\n")
 
     problems = data.get("problems", [])
     for i, prob in enumerate(problems):

@@ -1,5 +1,12 @@
 # 재고 관리
 
+**사용 테이블:** `products`, `categories`, `suppliers`, `inventory_transactions`, `order_items`, `orders`
+
+**학습 범위:** Conditional Aggregation, Window Functions, ABC Analysis, Pareto, CTE
+
+
+---
+
 
 ### 1. 현재 재고 현황과 재고 부족 상품
 

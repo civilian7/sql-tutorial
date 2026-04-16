@@ -1,5 +1,12 @@
 # Advanced Analytics
 
+**Tables:** `point_transactions`, `customer_grade_history`, `product_views`, `orders`, `order_items`, `carts`, `cart_items`, `promotions`, `promotion_products`, `staff`, `product_qna`, `products`, `customers`
+
+**Concepts:** Window Functions, CTE, Funnel, Session, Cohort, Recursive CTE, RFM
+
+
+---
+
 
 ### 1. Point Running Total Verification
 

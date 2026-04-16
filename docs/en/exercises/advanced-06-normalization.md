@@ -1,5 +1,12 @@
 # Understanding Normalization
 
+**Tables:** `orders`, `order_items`, `products`, `customers`, `categories`, `wishlists`, `customer_addresses`
+
+**Concepts:** 1NF, 2NF, 3NF, Denormalization, Self-Reference, M:N, Recursive CTE
+
+
+---
+
 
 ### 1. Denormalization Problem - Redundant Data
 

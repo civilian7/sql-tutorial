@@ -1,5 +1,12 @@
 # 제약조건 체험
 
+**사용 테이블:** `customers`, `products`, `reviews`, `wishlists`
+
+**학습 범위:** PRIMARY KEY, UNIQUE, FOREIGN KEY, CHECK, NOT NULL, ON CONFLICT, UPSERT
+
+
+---
+
 
 ### 1. 이미 존재하는 id로 상품을 삽입하면 어떻게 될까요?
 

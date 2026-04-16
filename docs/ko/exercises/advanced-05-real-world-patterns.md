@@ -1,5 +1,12 @@
 # 실무 SQL 패턴
 
+**사용 테이블:** `orders`, `order_items`, `products`, `categories`, `reviews`, `carts`, `cart_items`, `coupons`, `coupon_usage`
+
+**학습 범위:** LAG, ROW_NUMBER, Cart Abandonment, Coupon ROI, Time Pattern
+
+
+---
+
 
 ### 1. 뷰 분석: 매출 성장률 (LAG 패턴)
 

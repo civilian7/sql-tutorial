@@ -1,5 +1,12 @@
 # CS 성과 분석
 
+**사용 테이블:** `complaints`, `staff`, `customers`, `orders`, `returns`
+
+**학습 범위:** JULIANDAY, CASE, Window Functions, CTE, Pivot
+
+
+---
+
 
 ### 1. 문의 유형별 현황
 

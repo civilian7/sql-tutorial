@@ -1,5 +1,12 @@
 # 고급 분석
 
+**사용 테이블:** `point_transactions`, `customer_grade_history`, `product_views`, `orders`, `order_items`, `carts`, `cart_items`, `promotions`, `promotion_products`, `staff`, `product_qna`, `products`, `customers`
+
+**학습 범위:** Window Functions, CTE, Funnel, Session, Cohort, Recursive CTE, RFM
+
+
+---
+
 
 ### 1. 포인트 누적 잔액 검증 (Running Total)
 

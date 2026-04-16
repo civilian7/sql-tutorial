@@ -4,6 +4,7 @@ metadata:
   title_en: "Subqueries and Data Transformation"
   difficulty: intermediate
   concepts: [scalar subquery, correlated subquery, CTE, CASE WHEN, NOT EXISTS, UNION ALL, window functions]
+  tables: [categories, customers, orders, order_items, payments, products, reviews, returns, wishlists]
   prerequisites: [intermediate-05-joins, intermediate-06-dates]
   estimated_minutes: 40
   default_level: 2

@@ -1,6 +1,9 @@
 # Product Exploration
 
-Uses products, categories, suppliers tables.
+**Tables:** `categories`, `products`, `suppliers`
+
+**Concepts:** SELECT, WHERE, ORDER BY, LIMIT, COUNT, AVG, MIN, MAX, GROUP BY, HAVING, LIKE, CASE WHEN, IS NOT NULL
+
 
 ---
 

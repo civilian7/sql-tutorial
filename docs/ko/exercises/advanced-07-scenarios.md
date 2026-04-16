@@ -1,5 +1,12 @@
 # 비즈니스 시나리오
 
+**사용 테이블:** `orders`, `order_items`, `products`, `categories`, `customers`, `complaints`, `returns`, `shipping`, `reviews`, `payments`, `suppliers`, `staff`
+
+**학습 범위:** CTE, Scalar Subquery, CASE, JULIANDAY, Business Reporting
+
+
+---
+
 
 ### 1. 시나리오 1: CEO 주간 보고
 

@@ -1,5 +1,12 @@
 # Transactions
 
+**Tables:** `customers`, `orders`, `payments`, `products`, `inventory_transactions`
+
+**Concepts:** BEGIN, COMMIT, ROLLBACK, SAVEPOINT, ACID, atomicity, bulk insert
+
+
+---
+
 
 ### 1. Wrap an order and its payment in a single transaction. Both 
 

@@ -1,5 +1,12 @@
 # 트랜잭션
 
+**사용 테이블:** `customers`, `orders`, `payments`, `products`, `inventory_transactions`
+
+**학습 범위:** BEGIN, COMMIT, ROLLBACK, SAVEPOINT, ACID, atomicity, bulk insert
+
+
+---
+
 
 ### 1. 주문과 결제를 하나의 트랜잭션으로 묶으세요. 둘 다 성공해야 반영됩니다.
 

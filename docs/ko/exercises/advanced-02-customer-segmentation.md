@@ -1,5 +1,12 @@
 # 고객 세분화
 
+**사용 테이블:** `customers`, `orders`, `reviews`
+
+**학습 범위:** RFM, NTILE, Window Functions, CTE, Cohort Analysis, JULIANDAY
+
+
+---
+
 
 ### 1. RFM 기초: 고객별 핵심 지표 산출
 

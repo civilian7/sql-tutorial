@@ -1,5 +1,12 @@
 # Exploring Constraints
 
+**Tables:** `customers`, `products`, `reviews`, `wishlists`
+
+**Concepts:** PRIMARY KEY, UNIQUE, FOREIGN KEY, CHECK, NOT NULL, ON CONFLICT, UPSERT
+
+
+---
+
 
 ### 1. What happens if you insert a product with an id that already
 

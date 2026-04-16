@@ -6,6 +6,7 @@ metadata:
   default_level: 4
   default_type: Analytics
   concepts: [EXPLAIN, QUERY PLAN, index, performance, optimization]
+  tables: [customers, orders, order_items, products, point_transactions, product_views]
   estimated_minutes: 30
   description: "EXPLAIN으로 쿼리 실행 계획을 분석하고 성능을 최적화하는 문제입니다."
   description_en: "Analyze query execution plans with EXPLAIN and optimize performance."

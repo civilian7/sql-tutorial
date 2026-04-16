@@ -1,5 +1,12 @@
 # Sales Analysis
 
+**Tables:** `orders`, `order_items`, `products`, `categories`, `payments`
+
+**Concepts:** Aggregation, GROUP BY, Window Functions, CTE, YoY Growth, Pivot
+
+
+---
+
 
 ### 1. Monthly Revenue Trend (2022-2024)
 

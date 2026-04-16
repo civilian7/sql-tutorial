@@ -1,5 +1,12 @@
 # CS Performance Analysis
 
+**Tables:** `complaints`, `staff`, `customers`, `orders`, `returns`
+
+**Concepts:** JULIANDAY, CASE, Window Functions, CTE, Pivot
+
+
+---
+
 
 ### 1. Complaint Category Summary
 

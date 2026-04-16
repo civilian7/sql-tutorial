@@ -4,6 +4,7 @@ metadata:
   title_en: "SQL Debugging"
   difficulty: intermediate
   concepts: [cardinality explosion, NULL comparison, LEFT JOIN pitfall, GROUP BY, HAVING vs WHERE, DISTINCT, correlated subquery, date range, NULLIF, UNION]
+  tables: [categories, customers, orders, order_items, products, reviews, returns, suppliers]
   prerequisites: [intermediate-05-joins, intermediate-07-subqueries]
   estimated_minutes: 35
   default_level: 2

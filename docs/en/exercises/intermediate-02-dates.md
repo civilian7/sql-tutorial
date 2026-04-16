@@ -1,5 +1,12 @@
 # Date and Time Analysis
 
+**Tables:** `calendar`, `customers`, `orders`, `products`, `promotions`, `returns`, `shipping`
+
+**Concepts:** SUBSTR, JULIANDAY, STRFTIME, date arithmetic, LAG, CTE, window functions
+
+
+---
+
 
 ### 1. Find the number of orders and revenue per month in 2025. Exc
 

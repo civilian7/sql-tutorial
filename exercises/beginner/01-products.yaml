@@ -4,6 +4,7 @@ metadata:
   title_en: "Product Exploration"
   difficulty: beginner
   concepts: [SELECT, WHERE, ORDER BY, LIMIT, COUNT, AVG, MIN, MAX, GROUP BY, HAVING, LIKE, CASE WHEN, IS NOT NULL]
+  tables: [categories, products, suppliers]
   prerequisites: []
   estimated_minutes: 20
   default_level: 1

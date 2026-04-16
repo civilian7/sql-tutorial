@@ -1,6 +1,9 @@
 # EXPLAIN / Query Plan Analysis
 
-Analyze query execution plans with EXPLAIN and optimize performance.
+**Tables:** `customers`, `orders`, `order_items`, `products`, `point_transactions`, `product_views`
+
+**Concepts:** EXPLAIN, QUERY PLAN, index, performance, optimization
+
 
 ---
 

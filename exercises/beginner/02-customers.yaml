@@ -4,6 +4,7 @@ metadata:
   title_en: "Customer Analysis"
   difficulty: beginner
   concepts: [SELECT, WHERE, GROUP BY, COUNT, AVG, MAX, COALESCE, SUBSTR, INSTR, JOIN, HAVING, LIKE, IN, CASE WHEN]
+  tables: [customers, customer_addresses, orders, products, tags, product_tags]
   prerequisites: []
   estimated_minutes: 20
   default_level: 1

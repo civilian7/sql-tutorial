@@ -1,5 +1,12 @@
 # 서브쿼리와 데이터 변환
 
+**사용 테이블:** `categories`, `customers`, `orders`, `order_items`, `payments`, `products`, `reviews`, `returns`, `wishlists`
+
+**학습 범위:** scalar subquery, correlated subquery, CTE, CASE WHEN, NOT EXISTS, UNION ALL, window functions
+
+
+---
+
 
 ### 1. 전체 평균 가격보다 비싼 상품의 이름과 가격을 조회하세요.
 

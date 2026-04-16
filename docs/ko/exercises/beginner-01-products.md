@@ -1,6 +1,9 @@
 # 상품 탐색
 
-products, categories, suppliers 테이블을 사용합니다.
+**사용 테이블:** `categories`, `products`, `suppliers`
+
+**학습 범위:** SELECT, WHERE, ORDER BY, LIMIT, COUNT, AVG, MIN, MAX, GROUP BY, HAVING, LIKE, CASE WHEN, IS NOT NULL
+
 
 ---
 

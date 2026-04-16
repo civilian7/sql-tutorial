@@ -1,5 +1,12 @@
 # SQL Debugging
 
+**Tables:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `returns`, `suppliers`
+
+**Concepts:** cardinality explosion, NULL comparison, LEFT JOIN pitfall, GROUP BY, HAVING vs WHERE, DISTINCT, correlated subquery, date range, NULLIF, UNION
+
+
+---
+
 
 ### 1. The query below calculates revenue by product for 2024. Howe
 

@@ -1,5 +1,12 @@
 # SQL 면접 대비
 
+**사용 테이블:** `orders`, `order_items`, `products`, `categories`, `reviews`, `customers`
+
+**학습 범위:** ROW_NUMBER, LAG, Running Total, Moving Average, Recursive CTE, NTILE, Funnel
+
+
+---
+
 
 ### 1. Top-N per Group
 

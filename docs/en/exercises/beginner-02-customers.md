@@ -1,6 +1,9 @@
 # Customer Analysis
 
-Uses customers and customer_addresses tables.
+**Tables:** `customers`, `customer_addresses`, `orders`, `products`, `tags`, `product_tags`
+
+**Concepts:** SELECT, WHERE, GROUP BY, COUNT, AVG, MAX, COALESCE, SUBSTR, INSTR, JOIN, HAVING, LIKE, IN, CASE WHEN
+
 
 ---
 

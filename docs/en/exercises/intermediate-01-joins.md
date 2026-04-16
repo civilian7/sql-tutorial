@@ -1,5 +1,12 @@
 # JOIN Master
 
+**Tables:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `shipping`, `staff`, `suppliers`, `tags`, `product_tags`
+
+**Concepts:** INNER JOIN, LEFT JOIN, multi-table JOIN, GROUP BY, aggregate functions
+
+
+---
+
 
 ### 1. Retrieve each product's name, price, and category name. Top 
 
