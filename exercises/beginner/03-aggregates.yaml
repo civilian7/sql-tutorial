@@ -1,0 +1,762 @@
+metadata:
+  id: beginner-03-aggregates
+  title: "집계 함수"
+  title_en: "Aggregate Functions"
+  difficulty: beginner
+  concepts: [COUNT, SUM, AVG, MIN, MAX, ROUND, COUNT DISTINCT]
+  tables: [products, customers, orders, reviews, payments]
+  prerequisites: []
+  estimated_minutes: 30
+  default_level: 1
+  default_type: "Aggregate"
+  description: "products, customers, orders, reviews, payments 테이블을 사용합니다."
+  description_en: "Uses products, customers, orders, reviews, payments tables."
+
+problems:
+  - id: b03a-01
+    level: 1
+    type: "Aggregate"
+    question: |
+      상품 테이블에 등록된 전체 상품 수를 조회하세요.
+    question_en: |
+      Check the total number of products registered in the product table.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS total_products
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "COUNT(*)는 테이블의 전체 행 수를 셉니다"
+        en: "COUNT(*) counts the total number of rows in the table"
+    rubric:
+      ko: "COUNT(*)를 사용해야 함"
+      en: "Must use COUNT(*)"
+    max_score: 10
+    tags: [SELECT, COUNT, products]
+
+  - id: b03a-02
+    level: 1
+    type: "Aggregate"
+    question: |
+      판매 중인(`is_active = 1`) 상품 수를 조회하세요.
+    question_en: |
+      Check the number of products on sale (`is_active = 1`).
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS active_count
+        FROM products
+        WHERE is_active = 1;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "WHERE로 조건을 걸고 COUNT(*)로 세면 조건에 맞는 행만 집계됩니다"
+        en: "If you set a condition with WHERE and count with COUNT(*), only rows that meet the condition are counted"
+    rubric:
+      ko: "WHERE is_active = 1과 COUNT(*)를 사용해야 함"
+      en: "Must use WHERE is_active = 1 and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, products]
+
+  - id: b03a-03
+    level: 1
+    type: "Aggregate"
+    question: |
+      단종일(`discontinued_at`)이 기록된 상품은 몇 개인지 조회하세요.
+    question_en: |
+      Check how many products have the discontinuation date (`discontinued_at`) recorded.
+    reference_sql:
+      common: |
+        SELECT COUNT(discontinued_at) AS discontinued_count
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "COUNT(칼럼명)은 해당 칼럼이 NULL이 아닌 행만 셉니다. COUNT(*)와의 차이를 기억하세요"
+        en: "COUNT(column_name) counts only rows where the corresponding column is not NULL. Remember the difference from COUNT(*)"
+    rubric:
+      ko: "COUNT(discontinued_at)를 사용해야 함"
+      en: "Must use COUNT(discontinued_at)"
+    max_score: 10
+    tags: [SELECT, COUNT, products]
+
+  - id: b03a-04
+    level: 1
+    type: "Aggregate"
+    question: |
+      전체 상품의 재고 수량 합계를 구하세요.
+    question_en: |
+      Get the total inventory quantity for all products.
+    reference_sql:
+      common: |
+        SELECT SUM(stock_qty) AS total_stock
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "SUM(칼럼명)은 해당 칼럼의 모든 값을 더합니다"
+        en: "SUM(column_name) adds all values in that column"
+    rubric:
+      ko: "SUM(stock_qty)를 사용해야 함"
+      en: "Must use SUM(stock_qty)"
+    max_score: 10
+    tags: [SELECT, SUM, products]
+
+  - id: b03a-05
+    level: 1
+    type: "Aggregate"
+    question: |
+      전체 상품의 평균 가격을 조회하세요.
+    question_en: |
+      Check the average price of all products.
+    reference_sql:
+      common: |
+        SELECT AVG(price) AS avg_price
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "AVG(칼럼명)은 해당 칼럼의 평균을 계산합니다"
+        en: "AVG(column_name) calculates the average of that column"
+    rubric:
+      ko: "AVG(price)를 사용해야 함"
+      en: "Must use AVG(price)"
+    max_score: 10
+    tags: [SELECT, AVG, products]
+
+  - id: b03a-06
+    level: 1
+    type: "Aggregate"
+    question: |
+      가장 비싼 상품의 가격을 조회하세요.
+    question_en: |
+      Check the price of the most expensive product.
+    reference_sql:
+      common: |
+        SELECT MAX(price) AS max_price
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "MAX(칼럼명)은 해당 칼럼의 최댓값을 반환합니다"
+        en: "MAX(column_name) returns the maximum value of the column"
+    rubric:
+      ko: "MAX(price)를 사용해야 함"
+      en: "Must use MAX(price)"
+    max_score: 10
+    tags: [SELECT, MAX, products]
+
+  - id: b03a-07
+    level: 1
+    type: "Aggregate"
+    question: |
+      가장 저렴한 상품의 가격을 조회하세요.
+    question_en: |
+      Check the price of the cheapest product.
+    reference_sql:
+      common: |
+        SELECT MIN(price) AS min_price
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "MIN(칼럼명)은 해당 칼럼의 최솟값을 반환합니다"
+        en: "MIN(column_name) returns the minimum value of the column"
+    rubric:
+      ko: "MIN(price)를 사용해야 함"
+      en: "Must use MIN(price)"
+    max_score: 10
+    tags: [SELECT, MIN, products]
+
+  - id: b03a-08
+    level: 1
+    type: "Aggregate"
+    question: |
+      전체 주문의 총 매출(`total_amount` 합계)을 구하세요.
+    question_en: |
+      Find the total sales (`total_amount` sum) of all orders.
+    reference_sql:
+      common: |
+        SELECT SUM(total_amount) AS total_revenue
+        FROM orders;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "orders 테이블의 total_amount 칼럼에 SUM을 적용합니다"
+        en: "Applies SUM to the total_amount column of the orders table"
+    rubric:
+      ko: "SUM(total_amount)를 사용해야 함"
+      en: "Must use SUM(total_amount)"
+    max_score: 10
+    tags: [SELECT, SUM, orders]
+
+  - id: b03a-09
+    level: 1
+    type: "Aggregate"
+    question: |
+      리뷰의 평균 평점을 조회하세요.
+    question_en: |
+      Check the average rating of the reviews.
+    reference_sql:
+      common: |
+        SELECT AVG(rating) AS avg_rating
+        FROM reviews;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "reviews 테이블의 rating 칼럼에 AVG를 적용합니다"
+        en: "Applies AVG to the rating column of the reviews table"
+    rubric:
+      ko: "AVG(rating)를 사용해야 함"
+      en: "Must use AVG(rating)"
+    max_score: 10
+    tags: [SELECT, AVG, reviews]
+
+  - id: b03a-10
+    level: 1
+    type: "Aggregate"
+    question: |
+      고객 중 가장 많은 적립금을 보유한 금액을 조회하세요.
+    question_en: |
+      Check which customer has the most points.
+    reference_sql:
+      common: |
+        SELECT MAX(point_balance) AS max_points
+        FROM customers;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "customers 테이블의 point_balance에 MAX를 적용합니다"
+        en: "Applies MAX to point_balance in table customers"
+    rubric:
+      ko: "MAX(point_balance)를 사용해야 함"
+      en: "Must use MAX(point_balance)"
+    max_score: 10
+    tags: [SELECT, MAX, customers]
+
+  - id: b03a-11
+    level: 2
+    type: "Aggregate"
+    question: |
+      판매 중인 상품의 평균 가격을 소수점 둘째 자리까지 반올림하여 조회하세요.
+    question_en: |
+      View the average price of products on sale, rounded to two decimal places.
+    reference_sql:
+      common: |
+        SELECT ROUND(AVG(price), 2) AS avg_price
+        FROM products
+        WHERE is_active = 1;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "ROUND(값, 자릿수)로 소수점 자릿수를 지정합니다. ROUND(AVG(price), 2)처럼 집계 함수를 감쌀 수 있습니다"
+        en: "Specify the number of decimal places with ROUND(value, digits). You can wrap an aggregate function like ROUND(AVG(price), 2)"
+    rubric:
+      ko: "ROUND(AVG(price), 2)를 사용해야 함"
+      en: "Must use ROUND(AVG(price), 2)"
+    max_score: 10
+    tags: [SELECT, WHERE, AVG, ROUND, products]
+
+  - id: b03a-12
+    level: 2
+    type: "Aggregate"
+    question: |
+      상품 테이블에 등록된 브랜드가 몇 종류인지 조회하세요.
+    question_en: |
+      Check how many brands are registered in the product table.
+    reference_sql:
+      common: |
+        SELECT COUNT(DISTINCT brand) AS brand_count
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "COUNT(DISTINCT 칼럼명)은 중복을 제거한 고유값의 개수를 셉니다"
+        en: "COUNT(DISTINCT column_name) counts the number of unique values with duplicates removed"
+    rubric:
+      ko: "COUNT(DISTINCT brand)를 사용해야 함"
+      en: "Must use COUNT(DISTINCT brand)"
+    max_score: 10
+    tags: [SELECT, COUNT, DISTINCT, products]
+
+  - id: b03a-13
+    level: 2
+    type: "Aggregate"
+    question: |
+      주문을 한 적 있는 고객이 몇 명인지 조회하세요.
+    question_en: |
+      Check how many customers have placed an order.
+    reference_sql:
+      common: |
+        SELECT COUNT(DISTINCT customer_id) AS ordering_customers
+        FROM orders;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "orders 테이블의 customer_id에 COUNT(DISTINCT ...)를 적용하면 주문한 고유 고객 수를 알 수 있습니다"
+        en: "Applying COUNT(DISTINCT ...) to customer_id in the orders table gives you the number of unique customers who placed an order"
+    rubric:
+      ko: "COUNT(DISTINCT customer_id)를 사용해야 함"
+      en: "Must use COUNT(DISTINCT customer_id)"
+    max_score: 10
+    tags: [SELECT, COUNT, DISTINCT, orders]
+
+  - id: b03a-14
+    level: 2
+    type: "Aggregate"
+    question: |
+      상품의 최저가, 최고가, 평균가(소수점 없이)를 한 번에 조회하세요.
+    question_en: |
+      View the lowest, highest, and average price of a product (without decimal points) at once.
+    reference_sql:
+      common: |
+        SELECT MIN(price) AS min_price,
+               MAX(price) AS max_price,
+               ROUND(AVG(price), 0) AS avg_price
+        FROM products;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "하나의 SELECT에 여러 집계 함수를 쉼표로 구분하여 나열할 수 있습니다"
+        en: "You can list multiple aggregate functions in one SELECT, separated by commas"
+    rubric:
+      ko: "MIN, MAX, AVG를 한 쿼리에서 사용해야 함"
+      en: "Must use MIN, MAX, AVG in one query"
+    max_score: 10
+    tags: [SELECT, MIN, MAX, AVG, ROUND, products]
+
+  - id: b03a-15
+    level: 2
+    type: "Aggregate"
+    question: |
+      별점 5점 리뷰는 몇 건인지 조회하세요.
+    question_en: |
+      Check how many 5-star reviews there are.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS five_star_count
+        FROM reviews
+        WHERE rating = 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "WHERE rating = 5로 필터링한 후 COUNT(*)를 사용합니다"
+        en: "Filter by WHERE rating = 5 and then use COUNT(*)"
+    rubric:
+      ko: "WHERE rating = 5와 COUNT(*)를 사용해야 함"
+      en: "Must use WHERE rating = 5 and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, reviews]
+
+  - id: b03a-16
+    level: 2
+    type: "Aggregate"
+    question: |
+      리뷰의 평균 평점을 소수점 첫째 자리까지, 최저 평점, 최고 평점을 한 번에 조회하세요.
+    question_en: |
+      View the average rating of the review to one decimal place, lowest rating, and highest rating at once.
+    reference_sql:
+      common: |
+        SELECT ROUND(AVG(rating), 1) AS avg_rating,
+               MIN(rating) AS min_rating,
+               MAX(rating) AS max_rating
+        FROM reviews;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "ROUND(AVG(...), 1), MIN(...), MAX(...)를 하나의 SELECT에 나열합니다"
+        en: "List ROUND(AVG(...), 1), MIN(...), and MAX(...) in one SELECT"
+    rubric:
+      ko: "ROUND(AVG), MIN, MAX를 한 쿼리에서 사용해야 함"
+      en: "Must use ROUND(AVG), MIN, MAX in one query"
+    max_score: 10
+    tags: [SELECT, AVG, ROUND, MIN, MAX, reviews]
+
+  - id: b03a-17
+    level: 2
+    type: "Aggregate"
+    question: |
+      카드(`card`)로 결제한 건수를 조회하세요.
+    question_en: |
+      Check the number of payments made with card (`card`).
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS card_count
+        FROM payments
+        WHERE method = 'card';
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "payments 테이블에서 method = 'card'로 필터링합니다"
+        en: "Filter by method = 'card' in table payments"
+    rubric:
+      ko: "WHERE method = 'card'와 COUNT(*)를 사용해야 함"
+      en: "Must use WHERE method = 'card' and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, payments]
+
+  - id: b03a-18
+    level: 2
+    type: "Aggregate"
+    question: |
+      결제 수단이 몇 종류인지 조회하세요.
+    question_en: |
+      Check how many payment methods there are.
+    reference_sql:
+      common: |
+        SELECT COUNT(DISTINCT method) AS method_count
+        FROM payments;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "payments 테이블의 method 칼럼에 COUNT(DISTINCT ...)를 적용합니다"
+        en: "Applies COUNT(DISTINCT ...) to the method column of the payments table"
+    rubric:
+      ko: "COUNT(DISTINCT method)를 사용해야 함"
+      en: "Must use COUNT(DISTINCT method)"
+    max_score: 10
+    tags: [SELECT, COUNT, DISTINCT, payments]
+
+  - id: b03a-19
+    level: 2
+    type: "Aggregate"
+    question: |
+      가장 오래된 주문일과 가장 최근 주문일을 조회하세요.
+    question_en: |
+      View the oldest and most recent order dates.
+    reference_sql:
+      common: |
+        SELECT MIN(ordered_at) AS first_order,
+               MAX(ordered_at) AS last_order
+        FROM orders;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "날짜/시간 문자열에도 MIN과 MAX를 사용할 수 있습니다"
+        en: "You can also use MIN and MAX in date/time strings"
+    rubric:
+      ko: "MIN(ordered_at)과 MAX(ordered_at)를 사용해야 함"
+      en: "Must use MIN(ordered_at) and MAX(ordered_at)"
+    max_score: 10
+    tags: [SELECT, MIN, MAX, orders]
+
+  - id: b03a-20
+    level: 2
+    type: "Aggregate"
+    question: |
+      전체 주문에서 할인이 적용된 주문(`discount_amount > 0`)은 몇 건인지 조회하세요.
+    question_en: |
+      Check how many orders (`discount_amount > 0`) have discounts applied to all orders.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS discounted_orders
+        FROM orders
+        WHERE discount_amount > 0;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "WHERE discount_amount > 0으로 필터링한 후 COUNT(*)를 사용합니다"
+        en: "Filter by WHERE discount_amount > 0 and then use COUNT(*)"
+    rubric:
+      ko: "WHERE discount_amount > 0과 COUNT(*)를 사용해야 함"
+      en: "Must use WHERE discount_amount > 0 and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, orders]
+
+  - id: b03a-21
+    level: 2
+    type: "Aggregate"
+    question: |
+      확정(`confirmed`) 상태 주문의 건수, 총 매출, 평균 주문 금액을 조회하세요. 금액은 소수점 없이 반올림합니다.
+    question_en: |
+      Check the number of confirmed (`confirmed`) status orders, total sales, and average order amount. Amounts are rounded without decimal places.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS order_count,
+               ROUND(SUM(total_amount), 0) AS total_revenue,
+               ROUND(AVG(total_amount), 0) AS avg_amount
+        FROM orders
+        WHERE status = 'confirmed';
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "WHERE status = 'confirmed'로 필터링한 후 COUNT, SUM, AVG를 한 번에 사용합니다"
+        en: "Filter by WHERE status = 'confirmed', then use COUNT, SUM, and AVG at once"
+    rubric:
+      ko: "WHERE 필터링과 COUNT, SUM, AVG를 사용해야 함"
+      en: "Must use WHERE filtering with COUNT, SUM, and AVG"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, SUM, AVG, ROUND, orders]
+
+  - id: b03a-22
+    level: 2
+    type: "Aggregate"
+    question: |
+      리뷰를 작성한 고객이 몇 명인지, 리뷰가 달린 상품이 몇 종류인지 한 번에 조회하세요.
+    question_en: |
+      Check at once how many customers have written reviews and how many types of products have reviews.
+    reference_sql:
+      common: |
+        SELECT COUNT(DISTINCT customer_id) AS reviewer_count,
+               COUNT(DISTINCT product_id) AS reviewed_product_count
+        FROM reviews;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "하나의 SELECT에서 COUNT(DISTINCT customer_id)와 COUNT(DISTINCT product_id)를 함께 사용합니다"
+        en: "Use COUNT(DISTINCT customer_id) and COUNT(DISTINCT product_id) together in one SELECT"
+    rubric:
+      ko: "COUNT(DISTINCT)를 두 칼럼에 사용해야 함"
+      en: "Must use COUNT(DISTINCT) on two columns"
+    max_score: 10
+    tags: [SELECT, COUNT, DISTINCT, reviews]
+
+  - id: b03a-23
+    level: 2
+    type: "Aggregate"
+    question: |
+      고객의 적립금 합계와 평균(소수점 없이)을 조회하세요.
+    question_en: |
+      View the customer's accumulated points and average (without decimal points).
+    reference_sql:
+      common: |
+        SELECT SUM(point_balance) AS total_points,
+               ROUND(AVG(point_balance), 0) AS avg_points
+        FROM customers;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "customers 테이블의 point_balance에 SUM과 ROUND(AVG(...), 0)를 적용합니다"
+        en: "Apply SUM and ROUND(AVG(...), 0) to point_balance in table customers"
+    rubric:
+      ko: "SUM과 ROUND(AVG)를 사용해야 함"
+      en: "Must use SUM and ROUND(AVG)"
+    max_score: 10
+    tags: [SELECT, SUM, AVG, ROUND, customers]
+
+  - id: b03a-24
+    level: 2
+    type: "Aggregate"
+    question: |
+      2024년에 접수된 주문의 건수와 총 매출(소수점 없이)을 조회하세요.
+    question_en: |
+      View the number of orders placed and total sales (without decimal points) in 2024.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS order_count,
+               ROUND(SUM(total_amount), 0) AS revenue
+        FROM orders
+        WHERE ordered_at >= '2024-01-01'
+          AND ordered_at < '2025-01-01';
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "ordered_at이 '2024-01-01' 이상이고 '2025-01-01' 미만인 조건을 사용합니다"
+        en: "Use the condition that ordered_at is greater than or equal to '2024-01-01' and less than '2025-01-01'"
+    rubric:
+      ko: "날짜 범위 조건과 COUNT, SUM을 사용해야 함"
+      en: "Must use date range condition with COUNT and SUM"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, SUM, ROUND, orders]
+
+  - id: b03a-25
+    level: 2
+    type: "Aggregate"
+    question: |
+      환불(`refunded`) 상태 결제의 건수와 총 환불 금액을 조회하세요.
+    question_en: |
+      Check the number of refund (`refunded`) status payments and the total refund amount.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS refund_count,
+               ROUND(SUM(amount), 0) AS refund_total
+        FROM payments
+        WHERE status = 'refunded';
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "payments 테이블에서 status = 'refunded'로 필터링합니다"
+        en: "Filter by status = 'refunded' in table payments"
+    rubric:
+      ko: "WHERE status = 'refunded'와 COUNT, SUM을 사용해야 함"
+      en: "Must use WHERE status = 'refunded' with COUNT and SUM"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, SUM, ROUND, payments]
+
+  - id: b03a-26
+    level: 3
+    type: "Aggregate"
+    question: |
+      판매 중인 상품의 총 재고 자산 가치(원가 x 재고수량의 합)를 구하세요.
+    question_en: |
+      Find the total inventory value (cost x inventory quantity) of the products you are selling.
+    reference_sql:
+      common: |
+        SELECT ROUND(SUM(cost_price * stock_qty), 0) AS inventory_value
+        FROM products
+        WHERE is_active = 1;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "SUM 안에서 산술 연산을 사용할 수 있습니다. SUM(cost_price * stock_qty)처럼 칼럼끼리 곱한 값을 합산합니다"
+        en: "Arithmetic operations can be used inside SUM. Like SUM(cost_price * stock_qty), the values multiplied by columns are added together"
+    rubric:
+      ko: "SUM(cost_price * stock_qty)를 사용해야 함"
+      en: "Must use SUM(cost_price * stock_qty)"
+    max_score: 10
+    tags: [SELECT, WHERE, SUM, ROUND, products]
+
+  - id: b03a-27
+    level: 3
+    type: "Aggregate"
+    question: |
+      전체 주문의 순매출(주문 금액 - 할인 금액의 합)을 구하세요.
+    question_en: |
+      Find the net sales (order amount minus discount amount) for all orders.
+    reference_sql:
+      common: |
+        SELECT ROUND(SUM(total_amount - discount_amount), 0) AS net_revenue
+        FROM orders;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "SUM(total_amount - discount_amount)처럼 SUM 안에서 칼럼 간 뺄셈을 할 수 있습니다"
+        en: "Like SUM(total_amount - discount_amount), you can subtract between columns within SUM"
+    rubric:
+      ko: "SUM(total_amount - discount_amount)를 사용해야 함"
+      en: "Must use SUM(total_amount - discount_amount)"
+    max_score: 10
+    tags: [SELECT, SUM, ROUND, orders]
+
+  - id: b03a-28
+    level: 3
+    type: "Aggregate"
+    question: |
+      별점 1점 리뷰와 별점 5점 리뷰의 건수를 각각 구하세요.
+    question_en: |
+      Find the number of 1-star reviews and 5-star reviews, respectively.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS one_star_count
+        FROM reviews
+        WHERE rating = 1;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "GROUP BY를 아직 배우지 않았으므로, 두 개의 쿼리를 나란히 실행해도 됩니다"
+        en: "Since we haven't learned GROUP BY yet, you can run two queries side by side"
+    rubric:
+      ko: "WHERE rating = 1 또는 WHERE rating = 5와 COUNT(*)를 사용해야 함"
+      en: "Must use WHERE rating = 1 or WHERE rating = 5 with COUNT(*)"
+    max_score: 10
+    tags: [SELECT, WHERE, COUNT, reviews]
+
+  - id: b03a-29
+    level: 3
+    type: "Aggregate"
+    question: |
+      판매 중인 상품의 평균 마진율(%)을 구하세요. 마진율은 `(price - cost_price) * 100.0 / price`이며, 소수점 첫째 자리까지 반올림합니다.
+    question_en: |
+      Find the average margin rate (%) for products being sold. The margin rate is `(price - cost_price) * 100.0 / price`, rounded to one decimal place.
+    reference_sql:
+      common: |
+        SELECT ROUND(AVG((price - cost_price) * 100.0 / price), 1) AS avg_margin_pct
+        FROM products
+        WHERE is_active = 1;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "AVG 안에 산술식을 넣을 수 있습니다. AVG((price - cost_price) * 100.0 / price)로 각 행의 마진율 평균을 구합니다"
+        en: "You can put an arithmetic expression in AVG. Calculate the average margin rate for each row with AVG((price - cost_price) * 100.0 / price)"
+    rubric:
+      ko: "AVG 안에 마진율 산술식을 사용해야 함"
+      en: "Must use margin rate arithmetic inside AVG"
+    max_score: 10
+    tags: [SELECT, WHERE, AVG, ROUND, products]
+
+  - id: b03a-30
+    level: 3
+    type: "Aggregate"
+    question: |
+      주문 테이블에서 전체 건수, 총 매출, 평균 주문 금액, 총 할인 금액, 총 배송비, 총 사용 포인트를 한 번에 조회하세요. 금액은 모두 소수점 없이 반올림합니다.
+    question_en: |
+      View the total number of orders, total sales, average order amount, total discount amount, total shipping cost, and total points used in the order table at once. All amounts are rounded without decimal places.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS total_orders,
+               ROUND(SUM(total_amount), 0) AS total_revenue,
+               ROUND(AVG(total_amount), 0) AS avg_amount,
+               ROUND(SUM(discount_amount), 0) AS total_discount,
+               ROUND(SUM(shipping_fee), 0) AS total_shipping,
+               SUM(point_used) AS total_point_used
+        FROM orders;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "하나의 SELECT에 6개의 집계 함수를 나열합니다"
+        en: "Lists six aggregate functions in one SELECT"
+    rubric:
+      ko: "COUNT, SUM, AVG를 한 쿼리에서 6개 칼럼에 사용해야 함"
+      en: "Must use COUNT, SUM, AVG on 6 columns in one query"
+    max_score: 10
+    tags: [SELECT, COUNT, SUM, AVG, ROUND, orders]

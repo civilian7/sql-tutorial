@@ -1,31 +1,40 @@
-# Window Functions in Practice
+# Window Functions Practice
 
 !!! info "Tables"
+
     `orders` — Orders (status, amount, date)  
+
     `order_items` — Order items (qty, unit price)  
+
     `products` — Products (name, price, stock, brand)  
+
     `customers` — Customers (grade, points, channel)  
+
     `reviews` — Reviews (rating, content)  
+
     `payments` — Payments (method, amount, status)  
+
     `categories` — Categories (parent-child hierarchy)  
 
+
+
 !!! abstract "Concepts"
-    `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG`, `LEAD`, `SUM/AVG/COUNT OVER`, `FIRST_VALUE`, `LAST_VALUE`, `ROWS BETWEEN`
 
-Practice the basic syntax of window functions.
+    `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG`, `LEAD`, `SUM OVER`, `AVG OVER`, `FIRST_VALUE`, `LAST_VALUE`, `ROWS BETWEEN`
 
----
 
-### Problem 1
 
-**Sort each customer's orders in chronological order and number the orders for each customer.**
+### 1. Sort each customer's orders in chronological order and number the orders for each customer.
+
 
 Displays customer ID, customer name, order number, order date, order amount, and order number (`order_seq`) within the customer.
 Print only the top 20 rows.
 
-??? tip "Hint"
-    Use `ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...)`.
-    Group by customer with `PARTITION BY customer_id` and sort chronologically with `ORDER BY ordered_at`.
+
+**Hint 1:** Use `ROW_NUMBER() OVER (PARTITION BY ... ORDER BY ...)`.
+Group by customer with `PARTITION BY customer_id` and sort chronologically with `ORDER BY ordered_at`.
+
+
 
 ??? success "Answer"
     ```sql
@@ -46,31 +55,33 @@ Print only the top 20 rows.
     LIMIT 20;
     ```
 
-    **Result example (top 5 rows):**
+
+    **Result** (top 7 of 20 rows)
 
     | customer_id | customer_name | order_number | ordered_at | total_amount | order_seq |
-    | ----------: | ---------- | ---------- | ---------- | ----------: | ----------: |
-    | 2 | Danny Johnson | ORD-20160807-00243 | 2016-08-17 23:29:34 | 2413300.0 | 1 |
-    | 2 | Danny Johnson | ORD-20160802-00236 | 2016-08-19 22:29:34 | 298500.0 | 2 |
-    | 2 | Danny Johnson | ORD-20160830-00269 | 2016-08-30 10:49:39 | 445700.0 | 3 |
-    | 2 | Danny Johnson | ORD-20160904-00274 | 2016-09-04 08:47:04 | 597000.0 | 4 |
-    | 2 | Danny Johnson | ORD-20160915-00287 | 2016-09-15 20:07:17 | 1760400.0 | 5 |
-    | 2 | Danny Johnson | ORD-20161024-00334 | 2016-10-24 12:13:06 | 131500.0 | 6 |
-    | 2 | Danny Johnson | ORD-20161101-00343 | 2016-11-01 10:44:08 | 323500.0 | 7 |
-    | 2 | Danny Johnson | ORD-20170122-00444 | 2017-01-22 08:39:07 | 480765.0 | 8 |
-    | ... | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|---|
+    | 2 | Danny Johnson | ORD-20160807-00243 | 2016-08-17 23:29:34 | 2,413,300.00 | 1 |
+    | 2 | Danny Johnson | ORD-20160802-00236 | 2016-08-19 22:29:34 | 298,500.00 | 2 |
+    | 2 | Danny Johnson | ORD-20160830-00269 | 2016-08-30 10:49:39 | 445,700.00 | 3 |
+    | 2 | Danny Johnson | ORD-20160904-00274 | 2016-09-04 08:47:04 | 597,000.00 | 4 |
+    | 2 | Danny Johnson | ORD-20160915-00287 | 2016-09-15 20:07:17 | 1,760,400.00 | 5 |
+    | 2 | Danny Johnson | ORD-20161024-00334 | 2016-10-24 12:13:06 | 131,500.00 | 6 |
+    | 2 | Danny Johnson | ORD-20161101-00343 | 2016-11-01 10:44:08 | 323,500.00 | 7 |
+
 
 ---
 
-### Problem 2
 
-**Ranking monthly sales for 2024. If the sales are the same, the same ranking is given.**
+### 2. Ranking monthly sales for 2024. If the sales are the same, the same ranking is given.
+
 
 Total sales for each month, display both `RANK` and `DENSE_RANK` values ​​to compare the differences.
 
-??? tip "Hint"
-    First, create a subquery (or CTE) that aggregates monthly sales with `SUBSTR(ordered_at, 1, 7)`,
-    Apply `RANK() OVER (ORDER BY revenue DESC)` and `DENSE_RANK()` to the result.
+
+**Hint 1:** First, create a subquery (or CTE) that aggregates monthly sales with `SUBSTR(ordered_at, 1, 7)`,
+Apply `RANK() OVER (ORDER BY revenue DESC)` and `DENSE_RANK()` to the result.
+
+
 
 ??? success "Answer"
     ```sql
@@ -92,33 +103,33 @@ Total sales for each month, display both `RANK` and `DENSE_RANK` values ​​to
     ORDER BY year_month;
     ```
 
-    **Result example:**
+
+    **Result** (top 7 of 12 rows)
 
     | year_month | revenue | rank_val | dense_rank_val |
-    | ---------- | ----------: | ----------: | ----------: |
-    | 2024-01 | 288908320.0 | 12 | 12 |
-    | 2024-02 | 403127749.0 | 9 | 9 |
-    | 2024-03 | 519844502.0 | 3 | 3 |
-    | 2024-04 | 451877581.0 | 4 | 4 |
-    | 2024-05 | 425264478.0 | 5 | 5 |
-    | 2024-06 | 362715211.0 | 10 | 10 |
-    | 2024-07 | 343929897.0 | 11 | 11 |
-    | 2024-08 | 404803340.0 | 8 | 8 |
-    | ... | ... | ... | ... |
+    |---|---|---|---|
+    | 2024-01 | 288,908,320.00 | 12 | 12 |
+    | 2024-02 | 403,127,749.00 | 9 | 9 |
+    | 2024-03 | 519,844,502.00 | 3 | 3 |
+    | 2024-04 | 451,877,581.00 | 4 | 4 |
+    | 2024-05 | 425,264,478.00 | 5 | 5 |
+    | 2024-06 | 362,715,211.00 | 10 | 10 |
+    | 2024-07 | 343,929,897.00 | 11 | 11 |
 
-    > `RANK` skips the next position in case of a tie, `DENSE_RANK` does not skip it.
 
 ---
 
-### Problem 3
 
-**In addition to the total sales for each product, find the percentage of sales within that category.**
+### 3. In addition to the total sales for each product, find the percentage of sales within that category.
+
 
 As of 2024, the top 15 products are displayed in descending order of sales.
 
-??? tip "Hint"
-    Find the total sales of the category with `SUM(revenue) OVER (PARTITION BY category_id)`,
-    Divide individual product sales by category sales to get the ratio.
+
+**Hint 1:** Find the total sales of the category with `SUM(revenue) OVER (PARTITION BY category_id)`,
+Divide individual product sales by category sales to get the ratio.
+
+
 
 ??? success "Answer"
     ```sql
@@ -143,31 +154,33 @@ As of 2024, the top 15 products are displayed in descending order of sales.
     LIMIT 15;
     ```
 
-    **Result example (top 3 rows):**
+
+    **Result** (top 7 of 15 rows)
 
     | product_name | category | product_revenue | category_revenue | pct_of_category |
-    | ---------- | ---------- | ----------: | ----------: | ----------: |
-    | Razer Blade 18 Black | Gaming Laptop | 165417800.0 | 636925700.0 | 26.0 |
-    | Razer Blade 16 Silver | Gaming Laptop | 137007300.0 | 636925700.0 | 21.5 |
-    | MacBook Air 15 M3 Silver | MacBook | 126065300.0 | 126065300.0 | 100.0 |
-    | ASUS Dual RTX 4060 Ti Black | NVIDIA | 106992000.0 | 345858700.0 | 30.9 |
-    | ASUS Dual RTX 5070 Ti Silver | NVIDIA | 104558400.0 | 345858700.0 | 30.2 |
-    | ASUS ROG Swift PG32UCDM Silver | Gaming Monitor | 90734400.0 | 353934400.0 | 25.6 |
-    | ASUS ROG Strix Scar 16 | Gaming Laptop | 85837500.0 | 636925700.0 | 13.5 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | NVIDIA | 85456000.0 | 345858700.0 | 24.7 |
-    | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|
+    | Razer Blade 18 Black | Gaming Laptop | 165,417,800.00 | 636,925,700.00 | 26.00 |
+    | Razer Blade 16 Silver | Gaming Laptop | 137,007,300.00 | 636,925,700.00 | 21.50 |
+    | MacBook Air 15 M3 Silver | MacBook | 126,065,300.00 | 126,065,300.00 | 100.00 |
+    | ASUS Dual RTX 4060 Ti Black | NVIDIA | 106,992,000.00 | 345,858,700.00 | 30.90 |
+    | ASUS Dual RTX 5070 Ti Silver | NVIDIA | 104,558,400.00 | 345,858,700.00 | 30.20 |
+    | ASUS ROG Swift PG32UCDM Silver | Gaming Monitor | 90,734,400.00 | 353,934,400.00 | 25.60 |
+    | ASUS ROG Strix Scar 16 | Gaming Laptop | 85,837,500.00 | 636,925,700.00 | 13.50 |
+
 
 ---
 
-### Problem 4
 
-**Calculate a running total for each customer's order amount.**
+### 4. Calculate a running total for each customer's order amount.
+
 
 For customer IDs 1 to 5, the cumulative order amount is displayed in order of order time.
 
-??? tip "Hint"
-    `SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY ordered_at ROWS UNBOUNDED PRECEDING)`
-    This statement creates a running total.
+
+**Hint 1:** `SUM(total_amount) OVER (PARTITION BY customer_id ORDER BY ordered_at ROWS UNBOUNDED PRECEDING)`
+This statement creates a running total.
+
+
 
 ??? success "Answer"
     ```sql
@@ -188,32 +201,34 @@ For customer IDs 1 to 5, the cumulative order amount is displayed in order of or
     ORDER BY c.id, o.ordered_at;
     ```
 
-    **Result example:**
+
+    **Result** (top 7 of 416 rows)
 
     | customer_id | customer_name | ordered_at | total_amount | running_total |
-    | ----------: | ---------- | ---------- | ----------: | ----------: |
-    | 2 | Danny Johnson | 2016-08-17 23:29:34 | 2413300.0 | 2413300.0 |
-    | 2 | Danny Johnson | 2016-08-19 22:29:34 | 298500.0 | 2711800.0 |
-    | 2 | Danny Johnson | 2016-08-30 10:49:39 | 445700.0 | 3157500.0 |
-    | 2 | Danny Johnson | 2016-09-04 08:47:04 | 597000.0 | 3754500.0 |
-    | 2 | Danny Johnson | 2016-09-15 20:07:17 | 1760400.0 | 5514900.0 |
-    | 2 | Danny Johnson | 2016-10-24 12:13:06 | 131500.0 | 5646400.0 |
-    | 2 | Danny Johnson | 2016-11-01 10:44:08 | 323500.0 | 5969900.0 |
-    | 2 | Danny Johnson | 2017-01-22 08:39:07 | 480765.0 | 6450665.0 |
-    | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|
+    | 2 | Danny Johnson | 2016-08-17 23:29:34 | 2,413,300.00 | 2,413,300.00 |
+    | 2 | Danny Johnson | 2016-08-19 22:29:34 | 298,500.00 | 2,711,800.00 |
+    | 2 | Danny Johnson | 2016-08-30 10:49:39 | 445,700.00 | 3,157,500.00 |
+    | 2 | Danny Johnson | 2016-09-04 08:47:04 | 597,000.00 | 3,754,500.00 |
+    | 2 | Danny Johnson | 2016-09-15 20:07:17 | 1,760,400.00 | 5,514,900.00 |
+    | 2 | Danny Johnson | 2016-10-24 12:13:06 | 131,500.00 | 5,646,400.00 |
+    | 2 | Danny Johnson | 2016-11-01 10:44:08 | 323,500.00 | 5,969,900.00 |
+
 
 ---
 
-### Problem 5
 
-**Divide payment methods into 4 groups (quartiles) based on the number of payments.**
+### 5. Divide payment methods into 4 groups (quartiles) based on the number of payments.
+
 
 Payments completed in 2024 (`status = 'completed'`) are tallied by means, and quantified by `NTILE(4)`.
 
-??? tip "Hint"
-    First, create a CTE that counts the number of transactions by payment method,
-    Divide into quartiles by `NTILE(4) OVER (ORDER BY payment_count DESC)`.
-    Decile 1 is the most used group.
+
+**Hint 1:** First, create a CTE that counts the number of transactions by payment method,
+Divide into quartiles by `NTILE(4) OVER (ORDER BY payment_count DESC)`.
+Decile 1 is the most used group.
+
+
 
 ??? success "Answer"
     ```sql
@@ -236,33 +251,32 @@ Payments completed in 2024 (`status = 'completed'`) are tallied by means, and qu
     ORDER BY payment_count DESC;
     ```
 
-    **Result example:**
+
+    **Result** (6 rows)
 
     | method | payment_count | total_amount | quartile |
-    | ---------- | ----------: | ----------: | ----------: |
-    | card | 2374 | 2395888991.0 | 1 |
-    | kakao_pay | 1058 | 1002822322.0 | 1 |
-    | naver_pay | 810 | 719061948.0 | 2 |
-    | bank_transfer | 516 | 483849949.0 | 2 |
-    | point | 286 | 261926968.0 | 3 |
-    | virtual_account | 276 | 250893342.0 | 4 |
-    | ... | ... | ... | ... |
+    |---|---|---|---|
+    | card | 2374 | 2,395,888,991.00 | 1 |
+    | kakao_pay | 1058 | 1,002,822,322.00 | 1 |
+    | naver_pay | 810 | 719,061,948.00 | 2 |
+    | bank_transfer | 516 | 483,849,949.00 | 2 |
+    | point | 286 | 261,926,968.00 | 3 |
+    | virtual_account | 276 | 250,893,342.00 | 4 |
+
 
 ---
 
-Utilizes analytical functions such as LAG/LEAD and moving average.
 
----
+### 6. Find the increase/decrease and increase/decrease rate of monthly sales compared to the previous month.
 
-### Problem 6
-
-**Find the increase/decrease and increase/decrease rate of monthly sales compared to the previous month.**
 
 We use data from 2023 to 2024.
 
-??? tip "Hint"
-    Get the previous month's sales with `LAG(revenue, 1) OVER (ORDER BY year_month)`.
-    The increase/decrease rate is calculated as `(current_month - previous_month) / previous_month * 100`.
+
+**Hint 1:** Get the previous month's sales with `LAG(revenue, 1) OVER (ORDER BY year_month)`.
+The increase/decrease rate is calculated as `(current_month - previous_month) / previous_month * 100`.
+
+
 
 ??? success "Answer"
     ```sql
@@ -287,34 +301,34 @@ We use data from 2023 to 2024.
     ORDER BY year_month;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 24 rows)
 
     | year_month | revenue | prev_revenue | diff | growth_pct |
-    | ---------- | ----------: | ---------- | ---------- | ---------- |
-    | 2023-01 | 270083587.0 | (NULL) | (NULL) | (NULL) |
-    | 2023-02 | 327431648.0 | 270083587.0 | 57348061.0 | 21.2 |
-    | 2023-03 | 477735354.0 | 327431648.0 | 150303706.0 | 45.9 |
-    | 2023-04 | 396849049.0 | 477735354.0 | -80886305.0 | -16.9 |
-    | 2023-05 | 349749072.0 | 396849049.0 | -47099977.0 | -11.9 |
-    | 2023-06 | 279698633.0 | 349749072.0 | -70050439.0 | -20.0 |
-    | 2023-07 | 312983148.0 | 279698633.0 | 33284515.0 | 11.9 |
-    | 2023-08 | 358275936.0 | 312983148.0 | 45292788.0 | 14.5 |
-    | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|
+    | 2023-01 | 270,083,587.00 | NULL | NULL | NULL |
+    | 2023-02 | 327,431,648.00 | 270,083,587.00 | 57,348,061.00 | 21.20 |
+    | 2023-03 | 477,735,354.00 | 327,431,648.00 | 150,303,706.00 | 45.90 |
+    | 2023-04 | 396,849,049.00 | 477,735,354.00 | -80,886,305.00 | -16.90 |
+    | 2023-05 | 349,749,072.00 | 396,849,049.00 | -47,099,977.00 | -11.90 |
+    | 2023-06 | 279,698,633.00 | 349,749,072.00 | -70,050,439.00 | -20.00 |
+    | 2023-07 | 312,983,148.00 | 279,698,633.00 | 33,284,515.00 | 11.90 |
 
-    > `prev_revenue` in the first row is NULL because there is no previous data.
 
 ---
 
-### Problem 7
 
-**Calculate the number of days until your customer's next order.**
+### 7. Calculate the number of days until your customer's next order.
+
 
 For VIP-level customers, find the number of days between each order and the next order.
 Show the top 10 people with the shortest average intervals.
 
-??? tip "Hint"
-    Get the next order date with `LEAD(ordered_at, 1) OVER (PARTITION BY customer_id ORDER BY ordered_at)`,
-    Calculate the interval with `JULIANDAY(next_order) - JULIANDAY(ordered_at)`.
+
+**Hint 1:** Get the next order date with `LEAD(ordered_at, 1) OVER (PARTITION BY customer_id ORDER BY ordered_at)`,
+Calculate the interval with `JULIANDAY(next_order) - JULIANDAY(ordered_at)`.
+
+
 
 ??? success "Answer"
     ```sql
@@ -352,31 +366,33 @@ Show the top 10 people with the shortest average intervals.
     LIMIT 10;
     ```
 
-    **Result example (top 3 rows):**
+
+    **Result** (top 7 of 10 rows)
 
     | customer_id | name | gap_count | avg_days_between | min_gap | max_gap |
-    | ----------: | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | 97 | Jason Rivera | 341 | 10.1 | 0.0 | 112.0 |
-    | 226 | Allen Snyder | 302 | 10.8 | 0.0 | 89.0 |
-    | 549 | Ronald Arellano | 218 | 12.0 | 0.0 | 74.0 |
-    | 4840 | Jennifer Bradshaw | 6 | 12.0 | 0.0 | 26.0 |
-    | 356 | Courtney Huff | 222 | 12.3 | 0.0 | 126.0 |
-    | 162 | Brenda Garcia | 248 | 13.0 | 0.0 | 102.0 |
-    | 98 | Gabriel Walters | 274 | 13.2 | 0.0 | 143.0 |
-    | 1323 | Austin Townsend | 159 | 13.5 | 0.0 | 112.0 |
-    | ... | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|---|
+    | 97 | Jason Rivera | 341 | 10.10 | 0.0 | 112.00 |
+    | 226 | Allen Snyder | 302 | 10.80 | 0.0 | 89.00 |
+    | 549 | Ronald Arellano | 218 | 12.00 | 0.0 | 74.00 |
+    | 4840 | Jennifer Bradshaw | 6 | 12.00 | 0.0 | 26.00 |
+    | 356 | Courtney Huff | 222 | 12.30 | 0.0 | 126.00 |
+    | 162 | Brenda Garcia | 248 | 13.00 | 0.0 | 102.00 |
+    | 98 | Gabriel Walters | 274 | 13.20 | 0.0 | 143.00 |
+
 
 ---
 
-### Problem 8
 
-**Find the three-month moving average of sales.**
+### 8. Find the three-month moving average of sales.
+
 
 For monthly sales for 2023-2024, calculate the moving average of the three months preceding the current month.
 
-??? tip "Hint"
-    `AVG(revenue) OVER (ORDER BY year_month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)`
-    This statement calculates the average of the 2 rows preceding the current row (3 rows in total).
+
+**Hint 1:** `AVG(revenue) OVER (ORDER BY year_month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)`
+This statement calculates the average of the 2 rows preceding the current row (3 rows in total).
+
+
 
 ??? success "Answer"
     ```sql
@@ -405,33 +421,33 @@ For monthly sales for 2023-2024, calculate the moving average of the three month
     ORDER BY year_month;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 24 rows)
 
     | year_month | revenue | moving_avg_3m | window_size |
-    | ---------- | ----------: | ----------: | ----------: |
-    | 2023-01 | 270083587.0 | 270083587.0 | 1 |
-    | 2023-02 | 327431648.0 | 298757618.0 | 2 |
-    | 2023-03 | 477735354.0 | 358416863.0 | 3 |
-    | 2023-04 | 396849049.0 | 400672017.0 | 3 |
-    | 2023-05 | 349749072.0 | 408111158.0 | 3 |
-    | 2023-06 | 279698633.0 | 342098918.0 | 3 |
-    | 2023-07 | 312983148.0 | 314143618.0 | 3 |
-    | 2023-08 | 358275936.0 | 316985906.0 | 3 |
-    | ... | ... | ... | ... |
+    |---|---|---|---|
+    | 2023-01 | 270,083,587.00 | 270,083,587.00 | 1 |
+    | 2023-02 | 327,431,648.00 | 298,757,618.00 | 2 |
+    | 2023-03 | 477,735,354.00 | 358,416,863.00 | 3 |
+    | 2023-04 | 396,849,049.00 | 400,672,017.00 | 3 |
+    | 2023-05 | 349,749,072.00 | 408,111,158.00 | 3 |
+    | 2023-06 | 279,698,633.00 | 342,098,918.00 | 3 |
+    | 2023-07 | 312,983,148.00 | 314,143,618.00 | 3 |
 
-    > The initial rows where `window_size` is less than 3 are for reference only as the moving average is not accurate.
 
 ---
 
-### Problem 9
 
-**List the names of the most expensive and least expensive products in each category in one row.**
+### 9. List the names of the most expensive and least expensive products in each category in one row.
+
 
 Use `FIRST_VALUE` and `LAST_VALUE`.
 
-??? tip "Hint"
-    `FIRST_VALUE(name) OVER (PARTITION BY category_id ORDER BY price DESC)` is the most expensive product name.
-    When using `LAST_VALUE`, `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` must be specified to view the entire partition.
+
+**Hint 1:** `FIRST_VALUE(name) OVER (PARTITION BY category_id ORDER BY price DESC)` is the most expensive product name.
+When using `LAST_VALUE`, `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` must be specified to view the entire partition.
+
+
 
 ??? success "Answer"
     ```sql
@@ -472,32 +488,34 @@ Use `FIRST_VALUE` and `LAST_VALUE`.
     ORDER BY category;
     ```
 
-    **Result example (top 3 rows):**
+
+    **Result** (top 7 of 38 rows)
 
     | category | most_expensive | max_price | cheapest | min_price |
-    | ---------- | ---------- | ----------: | ---------- | ----------: |
-    | 2-in-1 | Lenovo ThinkPad X1 2in1 Silver | 1866100.0 | Samsung Galaxy Book5 360 Black | 1179900.0 |
-    | AMD | AMD Ryzen 9 9900X | 591800.0 | AMD Ryzen 9 9900X | 335700.0 |
-    | AMD | MSI Radeon RX 9070 XT GAMING X | 1896000.0 | MSI Radeon RX 9070 VENTUS 3X White | 383100.0 |
-    | AMD Socket | ASRock B850M Pro RS Silver | 665600.0 | Gigabyte B650M AORUS ELITE AX | 376000.0 |
-    | Air Cooling | Noctua NH-D15 G2 Black | 106000.0 | Arctic Freezer 36 A-RGB White | 23000.0 |
-    | Barebone | ASUS ExpertCenter PN65 Silver | 722100.0 | ASUS ExpertCenter PN65 Silver | 722100.0 |
-    | Case | NZXT H7 Flow Silver | 248700.0 | be quiet! Light Base 900 | 85300.0 |
-    | Custom Build | ASUS ROG Strix G16CH White | 3671500.0 | Hansung BossMonster DX9900 Silver | 739900.0 |
-    | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|
+    | 2-in-1 | Lenovo ThinkPad X1 2in1 Silver | 1,866,100.00 | Samsung Galaxy Book5 360 Black | 1,179,900.00 |
+    | AMD | AMD Ryzen 9 9900X | 591,800.00 | AMD Ryzen 9 9900X | 335,700.00 |
+    | AMD | MSI Radeon RX 9070 XT GAMING X | 1,896,000.00 | MSI Radeon RX 9070 VENTUS 3X White | 383,100.00 |
+    | AMD Socket | ASRock B850M Pro RS Silver | 665,600.00 | Gigabyte B650M AORUS ELITE AX | 376,000.00 |
+    | Air Cooling | Noctua NH-D15 G2 Black | 106,000.00 | Arctic Freezer 36 A-RGB White | 23,000.00 |
+    | Barebone | ASUS ExpertCenter PN65 Silver | 722,100.00 | ASUS ExpertCenter PN65 Silver | 722,100.00 |
+    | Case | NZXT H7 Flow Silver | 248,700.00 | be quiet! Light Base 900 | 85,300.00 |
+
 
 ---
 
-### Problem 10
 
-**Divide products into 5 grades (NTILE) based on review ratings and obtain statistics for each grade.**
+### 10. Divide products into 5 grades (NTILE) based on review ratings and obtain statistics for each grade.
+
 
 Only products with 3 or more reviews are eligible.
 
-??? tip "Hint"
-    First, find the average rating for each product (`HAVING COUNT(*) >= 3`),
-    After dividing the result into `NTILE(5) OVER (ORDER BY avg_rating)`,
-    We count again by grade.
+
+**Hint 1:** First, find the average rating for each product (`HAVING COUNT(*) >= 3`),
+After dividing the result into `NTILE(5) OVER (ORDER BY avg_rating)`,
+We count again by grade.
+
+
 
 ??? success "Answer"
     ```sql
@@ -530,32 +548,31 @@ Only products with 3 or more reviews are eligible.
     ORDER BY tier;
     ```
 
-    **Result example:**
+
+    **Result** (5 rows)
 
     | tier | product_count | min_rating | max_rating | avg_of_avg | avg_reviews |
-    | ----------: | ----------: | ----------: | ----------: | ----------: | ----------: |
-    | 1 | 53 | 3.0 | 3.68 | 3.5 | 23.2 |
-    | 2 | 53 | 3.7 | 3.83 | 3.76 | 33.9 |
-    | 3 | 53 | 3.83 | 3.97 | 3.9 | 42.2 |
-    | 4 | 53 | 3.97 | 4.1 | 4.02 | 33.7 |
-    | 5 | 52 | 4.1 | 4.8 | 4.26 | 28.3 |
-    | ... | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|---|
+    | 1 | 53 | 3.00 | 3.68 | 3.50 | 23.20 |
+    | 2 | 53 | 3.70 | 3.83 | 3.76 | 33.90 |
+    | 3 | 53 | 3.83 | 3.97 | 3.90 | 42.20 |
+    | 4 | 53 | 3.97 | 4.10 | 4.02 | 33.70 |
+    | 5 | 52 | 4.10 | 4.80 | 4.26 | 28.30 |
+
 
 ---
 
-Solve practical analysis scenarios with complex window function combinations.
 
----
+### 11. Rank order amount by customer level and extract information from the top 3 people within the level.
 
-### Problem 11
-
-**Rank order amount by customer level and extract information from the top 3 people within the level.**
 
 Shows the top 3 players in each tier (BRONZE, SILVER, GOLD, VIP) by total order value.
 
-??? tip "Hint"
-    After tallying up the total order amount for each customer in CTE, enter `ROW_NUMBER() OVER (PARTITION BY grade ORDER BY total_spent DESC)`
-    Rank by rating and filter by `WHERE rn <= 3` in the outer query.
+
+**Hint 1:** After tallying up the total order amount for each customer in CTE, enter `ROW_NUMBER() OVER (PARTITION BY grade ORDER BY total_spent DESC)`
+Rank by rating and filter by `WHERE rn <= 3` in the outer query.
+
+
 
 ??? success "Answer"
     ```sql
@@ -598,28 +615,34 @@ Shows the top 3 players in each tier (BRONZE, SILVER, GOLD, VIP) by total order 
         rn;
     ```
 
-    **Result example:**
+
+    **Result** (top 7 of 12 rows)
 
     | grade | rank_in_grade | customer_name | order_count | total_spent |
     |---|---|---|---|---|
-    | VIP | 1 | 김... | 35 | 12500000 |
-    | VIP | 2 | 박... | 28 | 10800000 |
-    | VIP | 3 | 이... | 31 | 9950000 |
-    | GOLD | 1 | 최... | 22 | 7200000 |
-    | ... | ... | ... | ... | ... |
+    | VIP | 1 | Allen Snyder | 303 | 403,448,758.00 |
+    | VIP | 2 | Jason Rivera | 342 | 366,385,931.00 |
+    | VIP | 3 | Brenda Garcia | 249 | 253,180,338.00 |
+    | GOLD | 1 | Sandra Callahan | 171 | 204,611,811.00 |
+    | GOLD | 2 | David York | 160 | 199,282,408.00 |
+    | GOLD | 3 | Robert Williams | 117 | 116,612,251.00 |
+    | SILVER | 1 | April Rasmussen | 159 | 131,134,943.00 |
+
 
 ---
 
-### Problem 12
 
-**Display the monthly sales trend for each product and the ratio compared to the overall average for that product.**
+### 12. Display the monthly sales trend for each product and the ratio compared to the overall average for that product.
+
 
 For the top five products in 2024, find the monthly sales and the ratio (%) of the average monthly sales for all products.
 
-??? tip "Hint"
-    Step 1: Calculate product-monthly sales. Step 2: Select the top five products (based on total sales).
-    Step 3: Find the overall average for each product with `AVG(monthly_revenue) OVER (PARTITION BY product_id)`,
-    Calculate the ratio by dividing your monthly sales by the average.
+
+**Hint 1:** Step 1: Calculate product-monthly sales. Step 2: Select the top five products (based on total sales).
+Step 3: Find the overall average for each product with `AVG(monthly_revenue) OVER (PARTITION BY product_id)`,
+Calculate the ratio by dividing your monthly sales by the average.
+
+
 
 ??? success "Answer"
     ```sql
@@ -658,28 +681,33 @@ For the top five products in 2024, find the monthly sales and the ratio (%) of t
     ORDER BY pm.product_name, pm.year_month;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 55 rows)
 
     | product_name | year_month | monthly_revenue | avg_monthly | pct_of_avg |
-    | ---------- | ---------- | ----------: | ----------: | ----------: |
-    | ASUS Dual RTX 4060 Ti Black | 2024-01 | 8024400.0 | 8916000.0 | 90.0 |
-    | ASUS Dual RTX 4060 Ti Black | 2024-02 | 8024400.0 | 8916000.0 | 90.0 |
-    | ASUS Dual RTX 4060 Ti Black | 2024-03 | 8024400.0 | 8916000.0 | 90.0 |
-    | ASUS Dual RTX 4060 Ti Black | 2024-04 | 13374000.0 | 8916000.0 | 150.0 |
-    | ASUS Dual RTX 4060 Ti Black | 2024-05 | 5349600.0 | 8916000.0 | 60.0 |
-    | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|
+    | ASUS Dual RTX 4060 Ti Black | 2024-01 | 8,024,400.00 | 8,916,000.00 | 90.00 |
+    | ASUS Dual RTX 4060 Ti Black | 2024-02 | 8,024,400.00 | 8,916,000.00 | 90.00 |
+    | ASUS Dual RTX 4060 Ti Black | 2024-03 | 8,024,400.00 | 8,916,000.00 | 90.00 |
+    | ASUS Dual RTX 4060 Ti Black | 2024-04 | 13,374,000.00 | 8,916,000.00 | 150.00 |
+    | ASUS Dual RTX 4060 Ti Black | 2024-05 | 5,349,600.00 | 8,916,000.00 | 60.00 |
+    | ASUS Dual RTX 4060 Ti Black | 2024-06 | 2,674,800.00 | 8,916,000.00 | 30.00 |
+    | ASUS Dual RTX 4060 Ti Black | 2024-07 | 2,674,800.00 | 8,916,000.00 | 30.00 |
+
 
 ---
 
-### Problem 13
 
-**Track monthly share changes by payment method.**
+### 13. Track monthly share changes by payment method.
+
 
 Calculate the share (%) of each payment method by month in 2024 and calculate the change in share (pp) compared to the previous month.
 
-??? tip "Hint"
-    After finding the monthly amount by payment method, calculate the total monthly total with `SUM(amount) OVER (PARTITION BY year_month)`.
-    Get the previous month's market share with `LAG(share_pct, 1) OVER (PARTITION BY method ORDER BY year_month)`.
+
+**Hint 1:** After finding the monthly amount by payment method, calculate the total monthly total with `SUM(amount) OVER (PARTITION BY year_month)`.
+Get the previous month's market share with `LAG(share_pct, 1) OVER (PARTITION BY method ORDER BY year_month)`.
+
+
 
 ??? success "Answer"
     ```sql
@@ -720,32 +748,34 @@ Calculate the share (%) of each payment method by month in 2024 and calculate th
     ORDER BY year_month, share_pct DESC;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 72 rows)
 
     | year_month | method | method_amount | share_pct | prev_share_pct | share_change_pp |
-    | ---------- | ---------- | ----------: | ----------: | ---------- | ---------- |
-    | 2024-01 | card | 147207539.0 | 51.0 | (NULL) | (NULL) |
-    | 2024-01 | kakao_pay | 53100585.0 | 18.4 | (NULL) | (NULL) |
-    | 2024-01 | naver_pay | 33230574.0 | 11.5 | (NULL) | (NULL) |
-    | 2024-01 | bank_transfer | 24355270.0 | 8.4 | (NULL) | (NULL) |
-    | 2024-01 | virtual_account | 17502152.0 | 6.1 | (NULL) | (NULL) |
-    | 2024-01 | point | 13512200.0 | 4.7 | (NULL) | (NULL) |
-    | 2024-02 | card | 169679102.0 | 42.1 | 51.0 | -8.9 |
-    | 2024-02 | naver_pay | 80746191.0 | 20.0 | 11.5 | 8.5 |
-    | ... | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|---|
+    | 2024-01 | card | 147,207,539.00 | 51.00 | NULL | NULL |
+    | 2024-01 | kakao_pay | 53,100,585.00 | 18.40 | NULL | NULL |
+    | 2024-01 | naver_pay | 33,230,574.00 | 11.50 | NULL | NULL |
+    | 2024-01 | bank_transfer | 24,355,270.00 | 8.40 | NULL | NULL |
+    | 2024-01 | virtual_account | 17,502,152.00 | 6.10 | NULL | NULL |
+    | 2024-01 | point | 13,512,200.00 | 4.70 | NULL | NULL |
+    | 2024-02 | card | 169,679,102.00 | 42.10 | 51.00 | -8.90 |
+
 
 ---
 
-### Problem 14
 
-**Perform gap analysis of order amount for each customer.**
+### 14. Perform gap analysis of order amount for each customer.
+
 
 각 고객의 주문을 금액 순으로 정렬했을 때, 이전 주문 대비 금액 차이가 가장 큰 "점프"를 찾습니다.
 Extract only if the jump amount is more than 500,000 won.
 
-??? tip "Hint"
-    to `LAG(total_amount, 1) OVER (PARTITION BY customer_id ORDER BY total_amount)`
-    Amount Net Get the amount of the previous order. Find the difference and filter only rows that are over 500,000 won.
+
+**Hint 1:** to `LAG(total_amount, 1) OVER (PARTITION BY customer_id ORDER BY total_amount)`
+Amount Net Get the amount of the previous order. Find the difference and filter only rows that are over 500,000 won.
+
+
 
 ??? success "Answer"
     ```sql
@@ -777,31 +807,33 @@ Extract only if the jump amount is more than 500,000 won.
     LIMIT 20;
     ```
 
-    **Result example (top 3 rows):**
+
+    **Result** (top 7 of 20 rows)
 
     | customer_id | name | order_number | prev_amount | total_amount | gap |
-    | ----------: | ---------- | ---------- | ----------: | ----------: | ----------: |
-    | 514 | Steven Johnson | ORD-20201121-08810 | 837600.0 | 50867500.0 | 50029900.0 |
-    | 3774 | Dylan Green | ORD-20250305-32265 | 6346600.0 | 46820024.0 | 40473424.0 |
-    | 4136 | Zachary Ford | ORD-20251218-37240 | 405600.0 | 38626400.0 | 38220800.0 |
-    | 1322 | Donald Landry | ORD-20220106-15263 | 1898100.0 | 37987600.0 | 36089500.0 |
-    | 3 | Adam Moore | ORD-20200209-05404 | 9690532.0 | 43677500.0 | 33986968.0 |
-    | 551 | Katie Warner | ORD-20200820-07684 | 4885100.0 | 37518200.0 | 32633100.0 |
-    | 4965 | Sandra Williams | ORD-20251207-37004 | 369800.0 | 31985600.0 | 31615800.0 |
-    | 3167 | Mitchell Wilkinson | ORD-20221108-19517 | 2845300.0 | 33599000.0 | 30753700.0 |
-    | ... | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|---|
+    | 514 | Steven Johnson | ORD-20201121-08810 | 837,600.00 | 50,867,500.00 | 50,029,900.00 |
+    | 3774 | Dylan Green | ORD-20250305-32265 | 6,346,600.00 | 46,820,024.00 | 40,473,424.00 |
+    | 4136 | Zachary Ford | ORD-20251218-37240 | 405,600.00 | 38,626,400.00 | 38,220,800.00 |
+    | 1322 | Donald Landry | ORD-20220106-15263 | 1,898,100.00 | 37,987,600.00 | 36,089,500.00 |
+    | 3 | Adam Moore | ORD-20200209-05404 | 9,690,532.00 | 43,677,500.00 | 33,986,968.00 |
+    | 551 | Katie Warner | ORD-20200820-07684 | 4,885,100.00 | 37,518,200.00 | 32,633,100.00 |
+    | 4965 | Sandra Williams | ORD-20251207-37004 | 369,800.00 | 31,985,600.00 | 31,615,800.00 |
+
 
 ---
 
-### Problem 15
 
-**Calculate year-on-year (YoY) sales growth rate using a window function, and also display quarterly trends.**
+### 15. Calculate year-on-year (YoY) sales growth rate using a window function, and also display quarterly trends.
+
 
 Find sales for each quarter, sales for the same quarter last year, and YoY growth rate.
 
-??? tip "Hint"
-    Branches are calculated as `(CAST(SUBSTR(ordered_at,6,2) AS INTEGER) + 2) / 3`.
-    Get the value from 4 quarters ago (= same quarter of previous year) with `LAG(revenue, 4) OVER (ORDER BY year, quarter)`.
+
+**Hint 1:** Branches are calculated as `(CAST(SUBSTR(ordered_at,6,2) AS INTEGER) + 2) / 3`.
+Get the value from 4 quarters ago (= same quarter of previous year) with `LAG(revenue, 4) OVER (ORDER BY year, quarter)`.
+
+
 
 ??? success "Answer"
     ```sql
@@ -833,18 +865,18 @@ Find sales for each quarter, sales for the same quarter last year, and YoY growt
     ORDER BY year, quarter;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 24 rows)
 
     | year | quarter | revenue | order_count | prev_year_revenue | yoy_growth_pct |
-    | ----------: | ----------: | ----------: | ----------: | ---------- | ---------- |
-    | 2020 | 1 | 1001221410.0 | 990 | (NULL) | (NULL) |
-    | 2020 | 2 | 991211380.0 | 982 | (NULL) | (NULL) |
-    | 2020 | 3 | 1009837258.0 | 964 | (NULL) | (NULL) |
-    | 2020 | 4 | 1086405018.0 | 1084 | (NULL) | (NULL) |
-    | 2021 | 1 | 1458348254.0 | 1351 | 1001221410.0 | 45.7 |
-    | 2021 | 2 | 1210987985.0 | 1143 | 991211380.0 | 22.2 |
-    | 2021 | 3 | 1361699965.0 | 1412 | 1009837258.0 | 34.8 |
-    | 2021 | 4 | 1507109679.0 | 1515 | 1086405018.0 | 38.7 |
-    | ... | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|---|
+    | 2020 | 1 | 1,001,221,410.00 | 990 | NULL | NULL |
+    | 2020 | 2 | 991,211,380.00 | 982 | NULL | NULL |
+    | 2020 | 3 | 1,009,837,258.00 | 964 | NULL | NULL |
+    | 2020 | 4 | 1,086,405,018.00 | 1084 | NULL | NULL |
+    | 2021 | 1 | 1,458,348,254.00 | 1351 | 1,001,221,410.00 | 45.70 |
+    | 2021 | 2 | 1,210,987,985.00 | 1143 | 991,211,380.00 | 22.20 |
+    | 2021 | 3 | 1,361,699,965.00 | 1412 | 1,009,837,258.00 | 34.80 |
 
-    > For the first year (2020), there is no data from the previous year, so `prev_year_revenue` and `yoy_growth_pct` are NULL.
+
+---

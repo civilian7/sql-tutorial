@@ -1,28 +1,39 @@
 # CTE Applications
 
 !!! info "Tables"
+
     `categories` — Categories (parent-child hierarchy)  
+
     `staff` — Staff (dept, role, manager)  
+
     `orders` — Orders (status, amount, date)  
+
     `customers` — Customers (grade, points, channel)  
+
     `order_items` — Order items (qty, unit price)  
+
     `products` — Products (name, price, stock, brand)  
+
     `calendar` — Calendar (weekday, holiday)  
 
+
+
 !!! abstract "Concepts"
-    `WITH`, Recursive CTE(`WITH RECURSIVE`), Multiple CTE Chaining, CTE + Aggregate/JOIN/Window Function
 
-Practice single CTE and CTE + JOIN/aggregation.
+    `WITH`, `WITH RECURSIVE`, `Multiple CTE Chaining`, `CTE + Aggregate`, `CTE + JOIN`, `CTE + Window Function`
 
----
 
-### Problem 1
 
-**Find monthly sales in 2024 in CTE, and view only months with sales above the overall average.**
+### 1. Monthly Sales vs Average
 
-??? tip "Hint"
-    After collecting monthly sales in CTE, use `WHERE revenue >= (SELECT AVG(revenue) FROM cte_name)` in external query.
-    Filter. CTE may be referenced multiple times.
+
+Find monthly sales in 2024 in CTE, and view only months with sales above the overall average.
+
+
+**Hint 1:** After collecting monthly sales in CTE, use `WHERE revenue >= (SELECT AVG(revenue) FROM cte_name)` in external query.
+Filter. CTE may be referenced multiple times.
+
+
 
 ??? success "Answer"
     ```sql
@@ -42,34 +53,38 @@ Practice single CTE and CTE + JOIN/aggregation.
         order_count,
         (SELECT ROUND(AVG(revenue), 0) FROM monthly_revenue) AS avg_revenue,
         CASE
-            WHEN revenue >= (SELECT AVG(revenue) FROM monthly_revenue) THEN 'Above average'
-            ELSE 'Below average'
+            WHEN revenue >= (SELECT AVG(revenue) FROM monthly_revenue) THEN '평균 이상'
+            ELSE '평균 미만'
         END AS status
     FROM monthly_revenue
     WHERE revenue >= (SELECT AVG(revenue) FROM monthly_revenue)
     ORDER BY revenue DESC;
     ```
 
-    **Result example:**
+
+    **Result** (4 rows)
 
     | year_month | revenue | order_count | avg_revenue | status |
-    | ---------- | ----------: | ----------: | ----------: | ---------- |
-    | 2024-11 | 543313372.0 | 547 | 426203627.0 | Above average |
-    | 2024-09 | 536079841.0 | 523 | 426203627.0 | Above average |
-    | 2024-03 | 519844502.0 | 555 | 426203627.0 | Above average |
-    | 2024-04 | 451877581.0 | 466 | 426203627.0 | Above average |
+    |---|---|---|---|---|
+    | 2024-11 | 543,313,372.00 | 547 | 426,203,627.00 | 평균 이상 |
+    | 2024-09 | 536,079,841.00 | 523 | 426,203,627.00 | 평균 이상 |
+    | 2024-03 | 519,844,502.00 | 555 | 426,203,627.00 | 평균 이상 |
+    | 2024-04 | 451,877,581.00 | 466 | 426,203,627.00 | 평균 이상 |
+
 
 ---
 
-### Problem 2
 
-**Find the total purchase amount for each customer in CTE, then extract the top 5 customers by grade.**
+### 2. Find the total purchase amount for each customer in CTE, then extract the top 5 customers by grade.
+
 
 Combines CTE and `ROW_NUMBER` window functions.
 
-??? tip "Hint"
-    In the first CTE, aggregate the total purchase amount by customer,
-    Apply `ROW_NUMBER() OVER (PARTITION BY grade ORDER BY total_spent DESC)` in the second CTE.
+
+**Hint 1:** In the first CTE, aggregate the total purchase amount by customer,
+Apply `ROW_NUMBER() OVER (PARTITION BY grade ORDER BY total_spent DESC)` in the second CTE.
+
+
 
 ??? success "Answer"
     ```sql
@@ -112,26 +127,33 @@ Combines CTE and `ROW_NUMBER` window functions.
         rn;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 20 rows)
 
     | grade | rank_in_grade | name | order_count | total_spent |
     |---|---|---|---|---|
-    | VIP | 1 | 김... | 35 | 12500000 |
-    | VIP | 2 | 박... | 28 | 10800000 |
-    | ... | ... | ... | ... | ... |
-    | BRONZE | 5 | 한... | 3 | 450000 |
+    | VIP | 1 | Allen Snyder | 303 | 403,448,758.00 |
+    | VIP | 2 | Jason Rivera | 342 | 366,385,931.00 |
+    | VIP | 3 | Brenda Garcia | 249 | 253,180,338.00 |
+    | VIP | 4 | Courtney Huff | 223 | 244,604,910.00 |
+    | VIP | 5 | Ronald Arellano | 219 | 235,775,349.00 |
+    | GOLD | 1 | Sandra Callahan | 171 | 204,611,811.00 |
+    | GOLD | 2 | David York | 160 | 199,282,408.00 |
+
 
 ---
 
-### Problem 3
 
-**Use CTE to view sales and review summaries for each product at once.**
+### 3. Use CTE to view sales and review summaries for each product at once.
+
 
 Displays the sales amount, sales volume, number of reviews, and average rating of the top 10 selling products in 2024.
 
-??? tip "Hint"
-    Create the sales CTE and review CTE separately, then combine them into `LEFT JOIN` in the external query.
-    Products without reviews should also be included.
+
+**Hint 1:** Create the sales CTE and review CTE separately, then combine them into `LEFT JOIN` in the external query.
+Products without reviews should also be included.
+
+
 
 ??? success "Answer"
     ```sql
@@ -169,31 +191,33 @@ Displays the sales amount, sales volume, number of reviews, and average rating o
     LIMIT 10;
     ```
 
-    **Result example (top 3 rows):**
+
+    **Result** (top 7 of 10 rows)
 
     | product_name | category | units_sold | total_revenue | review_count | avg_rating |
-    | ---------- | ---------- | ----------: | ----------: | ----------: | ----------: |
-    | Razer Blade 18 Black | Gaming Laptop | 38 | 165417800.0 | 20 | 4.1 |
-    | Razer Blade 16 Silver | Gaming Laptop | 37 | 137007300.0 | 19 | 3.95 |
-    | MacBook Air 15 M3 Silver | MacBook | 23 | 126065300.0 | 4 | 3.75 |
-    | ASUS Dual RTX 4060 Ti Black | NVIDIA | 40 | 106992000.0 | 16 | 3.75 |
-    | ASUS Dual RTX 5070 Ti Silver | NVIDIA | 106 | 104558400.0 | 23 | 3.65 |
-    | ASUS ROG Swift PG32UCDM Silver | Gaming Monitor | 48 | 90734400.0 | 24 | 3.67 |
-    | ASUS ROG Strix Scar 16 | Gaming Laptop | 35 | 85837500.0 | 13 | 4.23 |
-    | MSI GeForce RTX 4070 Ti Super GAMING X | NVIDIA | 49 | 85456000.0 | 42 | 4.12 |
-    | ... | ... | ... | ... | ... | ... |
+    |---|---|---|---|---|---|
+    | Razer Blade 18 Black | Gaming Laptop | 38 | 165,417,800.00 | 20 | 4.10 |
+    | Razer Blade 16 Silver | Gaming Laptop | 37 | 137,007,300.00 | 19 | 3.95 |
+    | MacBook Air 15 M3 Silver | MacBook | 23 | 126,065,300.00 | 4 | 3.75 |
+    | ASUS Dual RTX 4060 Ti Black | NVIDIA | 40 | 106,992,000.00 | 16 | 3.75 |
+    | ASUS Dual RTX 5070 Ti Silver | NVIDIA | 106 | 104,558,400.00 | 23 | 3.65 |
+    | ASUS ROG Swift PG32UCDM Silver | Gaming Monitor | 48 | 90,734,400.00 | 24 | 3.67 |
+    | ASUS ROG Strix Scar 16 | Gaming Laptop | 35 | 85,837,500.00 | 13 | 4.23 |
+
 
 ---
 
-### Problem 4
 
-**Practice chaining, where you aggregate results from one CTE and filter them from another CTE.**
+### 4. Practice chaining, where you aggregate results from one CTE and filter them from another CTE.
+
 
 Find the number of new subscribers per month and look for “surge” months, which are month-on-month increases of 20% or more.
 
-??? tip "Hint"
-    CTE 1: Counting the number of new subscribers per month. CTE 2: Calculate the change rate by taking the previous month's figures with `LAG`.
-    In the outer query, filter only rows with growth rate >= 20.
+
+**Hint 1:** CTE 1: Counting the number of new subscribers per month. CTE 2: Calculate the change rate by taking the previous month's figures with `LAG`.
+In the outer query, filter only rows with growth rate >= 20.
+
+
 
 ??? success "Answer"
     ```sql
@@ -224,29 +248,32 @@ Find the number of new subscribers per month and look for “surge” months, wh
     ORDER BY growth_pct DESC;
     ```
 
-    **Result example:**
+
+    **Result** (6 rows)
 
     | year_month | signup_count | prev_count | growth_pct |
-    | ---------- | ----------: | ----------: | ----------: |
-    | 2024-06 | 68 | 43 | 58.1 |
-    | 2024-03 | 71 | 48 | 47.9 |
-    | 2025-10 | 76 | 54 | 40.7 |
-    | 2022-03 | 59 | 42 | 40.5 |
-    | 2024-10 | 65 | 51 | 27.5 |
-    | 2025-07 | 66 | 55 | 20.0 |
-    | ... | ... | ... | ... |
+    |---|---|---|---|
+    | 2024-06 | 68 | 43 | 58.10 |
+    | 2024-03 | 71 | 48 | 47.90 |
+    | 2025-10 | 76 | 54 | 40.70 |
+    | 2022-03 | 59 | 42 | 40.50 |
+    | 2024-10 | 65 | 51 | 27.50 |
+    | 2025-07 | 66 | 55 | 20.00 |
+
 
 ---
 
-### Problem 5
 
-**Find the proportion of sales by category in CTE and calculate the cumulative proportion (Pareto).**
+### 5. Find the proportion of sales by category in CTE and calculate the cumulative proportion (Pareto).
+
 
 Calculate sales by category as of 2024 and display cumulative proportions in descending order.
 
-??? tip "Hint"
-    After counting sales by category in CTE,
-    Find the cumulative proportion with `SUM(share_pct) OVER (ORDER BY revenue DESC ROWS UNBOUNDED PRECEDING)`.
+
+**Hint 1:** After counting sales by category in CTE,
+Find the cumulative proportion with `SUM(share_pct) OVER (ORDER BY revenue DESC ROWS UNBOUNDED PRECEDING)`.
+
+
 
 ??? success "Answer"
     ```sql
@@ -281,41 +308,39 @@ Calculate sales by category as of 2024 and display cumulative proportions in des
     ORDER BY revenue DESC;
     ```
 
-    **Result example (top 5 rows):**
+
+    **Result** (top 7 of 38 rows)
 
     | category | revenue | share_pct | cumulative_pct |
-    | ---------- | ----------: | ----------: | ----------: |
-    | Gaming Laptop | 636925700.0 | 12.3 | 12.3 |
-    | AMD | 447953400.0 | 8.7 | 21.0 |
-    | Gaming Monitor | 353934400.0 | 6.9 | 27.9 |
-    | NVIDIA | 345858700.0 | 6.7 | 34.6 |
-    | 2-in-1 | 340884400.0 | 6.6 | 41.2 |
-    | General Laptop | 291760500.0 | 5.7 | 46.9 |
-    | Professional Monitor | 254590200.0 | 4.9 | 51.8 |
-    | Speakers/Headsets | 232144800.0 | 4.5 | 56.3 |
-    | ... | ... | ... | ... |
+    |---|---|---|---|
+    | Gaming Laptop | 636,925,700.00 | 12.30 | 12.30 |
+    | AMD | 447,953,400.00 | 8.70 | 21.00 |
+    | Gaming Monitor | 353,934,400.00 | 6.90 | 27.90 |
+    | NVIDIA | 345,858,700.00 | 6.70 | 34.60 |
+    | 2-in-1 | 340,884,400.00 | 6.60 | 41.20 |
+    | General Laptop | 291,760,500.00 | 5.70 | 46.90 |
+    | Professional Monitor | 254,590,200.00 | 4.90 | 51.80 |
+
 
 ---
 
-Utilizes recursive CTEs and multiple CTEs.
 
----
+### 6. Expand your category hierarchy into recursive CTEs.
 
-### Problem 6
-
-**Expand your category hierarchy into recursive CTEs.**
 
 Displays the entire path, from the top category (parent_id IS NULL) to subcategories.
 
-??? tip "Hint"
-    Use `WITH RECURSIVE`. Anchor member: `WHERE parent_id IS NULL`.
-    Recursive member: JOIN CTE itself and `categories` with `c.parent_id = cte.id`.
-    The path connects to `parent_path || ' > ' || c.name`.
+
+**Hint 1:** Use `WITH RECURSIVE`. Anchor member: `WHERE parent_id IS NULL`.
+Recursive member: JOIN CTE itself and `categories` with `c.parent_id = cte.id`.
+The path connects to `parent_path || ' > ' || c.name`.
+
+
 
 ??? success "Answer"
     ```sql
     WITH RECURSIVE cat_tree AS (
-        -- Anchor: top-level categories
+        -- 앵커: 최상위 카테고리
         SELECT
             id,
             parent_id,
@@ -325,10 +350,10 @@ Displays the entire path, from the top category (parent_id IS NULL) to subcatego
             0 AS level
         FROM categories
         WHERE parent_id IS NULL
-
+    
         UNION ALL
-
-        -- Recursive: child categories
+    
+        -- 재귀: 자식 카테고리
         SELECT
             c.id,
             c.parent_id,
@@ -348,10 +373,11 @@ Displays the entire path, from the top category (parent_id IS NULL) to subcatego
     ORDER BY full_path;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 53 rows)
 
     | id | full_path | level | depth |
-    | ----------: | ---------- | ----------: | ----------: |
+    |---|---|---|---|
     | 14 | CPU | 0 | 0 |
     | 16 | CPU > AMD | 1 | 1 |
     | 15 | CPU > Intel | 1 | 1 |
@@ -359,26 +385,27 @@ Displays the entire path, from the top category (parent_id IS NULL) to subcatego
     | 32 | Cooling | 0 | 0 |
     | 33 | Cooling > Air Cooling | 1 | 1 |
     | 34 | Cooling > Liquid Cooling | 1 | 1 |
-    | 1 | Desktop PC | 0 | 0 |
-    | ... | ... | ... | ... |
+
 
 ---
 
-### Problem 7
 
-**Expand your employee org chart as a recursive CTE.**
+### 7. Expand your employee org chart as a recursive CTE.
+
 
 Displays the path to every employee's immediate supervisor, starting with the manager (manager_id IS NULL).
 
-??? tip "Hint"
-    `manager_id` in table `staff` is self-referencing (Self-Join).
-    Anchor: `WHERE manager_id IS NULL` (top level administrator).
-    Recursive: Associate subordinates with `s.manager_id = tree.id`.
+
+**Hint 1:** `manager_id` in table `staff` is self-referencing (Self-Join).
+Anchor: `WHERE manager_id IS NULL` (top level administrator).
+Recursive: Associate subordinates with `s.manager_id = tree.id`.
+
+
 
 ??? success "Answer"
     ```sql
     WITH RECURSIVE org_tree AS (
-        -- Anchor: top-level manager
+        -- 앵커: 최고 관리자
         SELECT
             id,
             name,
@@ -389,10 +416,10 @@ Displays the path to every employee's immediate supervisor, starting with the ma
             0 AS depth
         FROM staff
         WHERE manager_id IS NULL
-
+    
         UNION ALL
-
-        -- Recursive: add subordinates
+    
+        -- 재귀: 부하 직원
         SELECT
             s.id,
             s.name,
@@ -415,42 +442,45 @@ Displays the path to every employee's immediate supervisor, starting with the ma
     ORDER BY chain;
     ```
 
-    **Result example (partial):**
+
+    **Result** (5 rows)
 
     | id | name | department | role | depth | chain |
-    | ----------: | ---------- | ---------- | ---------- | ----------: | ---------- |
+    |---|---|---|---|---|---|
     | 1 | Michael Thomas | Management | admin | 0 | Michael Thomas |
     | 4 | Jaime Phelps | Sales | manager | 1 | Michael Thomas > Jaime Phelps |
     | 3 | Jonathan Smith | Management | admin | 1 | Michael Thomas > Jonathan Smith |
-    | 5 | Nicole Hamilton | Marketing | manager | 2 | Michael Thomas > Jonathan Smith > Nicole Hamilton |
+    | 5 | Nicole Hamilton | Marketing | manager | 2 | Michael Thomas > Jonathan Smith > Nic... |
     | 2 | Michael Mcguire | Management | admin | 1 | Michael Thomas > Michael Mcguire |
-    | ... | ... | ... | ... | ... | ... |
+
 
 ---
 
-### Problem 8
 
-**Find the total number of subordinates under each manager with recursive CTE.**
+### 8. Find the total number of subordinates under each manager with recursive CTE.
+
 
 Calculate the overall team size, including direct loads as well as indirect loads (loads of direct reports).
 
-??? tip "Hint"
-    After expanding all parent-child relationships with a recursive CTE, record each parent manager's `id` as the root.
-    You can find `COUNT(*) - 1` (excluding itself) for each root.
+
+**Hint 1:** After expanding all parent-child relationships with a recursive CTE, record each parent manager's `id` as the root.
+You can find `COUNT(*) - 1` (excluding itself) for each root.
+
+
 
 ??? success "Answer"
     ```sql
     WITH RECURSIVE subordinates AS (
-        -- Anchor: start each employee as their own root
+        -- 앵커: 각 직원을 자기 자신의 루트로 시작
         SELECT
             id AS root_id,
             id AS member_id
         FROM staff
         WHERE is_active = 1
-
+    
         UNION ALL
-
-        -- Recursive: add subordinates
+    
+        -- 재귀: 부하 직원 추가
         SELECT
             sub.root_id,
             s.id
@@ -471,25 +501,29 @@ Calculate the overall team size, including direct loads as well as indirect load
     ORDER BY total_subordinates DESC;
     ```
 
-    **Result example:**
+
+    **Result** (2 rows)
 
     | id | name | department | role | total_subordinates |
-    | ----------: | ---------- | ---------- | ---------- | ----------: |
+    |---|---|---|---|---|
     | 1 | Michael Thomas | Management | admin | 4 |
     | 3 | Jonathan Smith | Management | admin | 1 |
 
+
 ---
 
-### Problem 9
 
-**Build customer RFM (Recency, Frequency, Monetary) segments with multiple CTEs.**
+### 9. Build customer RFM (Recency, Frequency, Monetary) segments with multiple CTEs.
+
 
 We chain three CTEs: (1) RFM raw metrics, (2) NTILE scores, and (3) segment labeling.
 
-??? tip "Hint"
-    CTE 1(`rfm_raw`): `MAX(ordered_at)`, `COUNT(*)`, `SUM(total_amount)`.
-    CTE 2(`rfm_scored`): Apply `NTILE(4)`.
-    CTE 3 or external query: Segments (VIP/Loyal/General/churn risk) are assigned with a combined score of R+F+M.
+
+**Hint 1:** CTE 1(`rfm_raw`): `MAX(ordered_at)`, `COUNT(*)`, `SUM(total_amount)`.
+CTE 2(`rfm_scored`): Apply `NTILE(4)`.
+CTE 3 or external query: Segments (VIP/Loyal/General/churn risk) are assigned with a combined score of R+F+M.
+
+
 
 ??? success "Answer"
     ```sql
@@ -537,41 +571,47 @@ We chain three CTEs: (1) RFM raw metrics, (2) NTILE scores, and (3) segment labe
     ORDER BY avg_score DESC;
     ```
 
-    **Result example:**
+
+    **Result** (4 rows)
 
     | segment | customer_count | avg_frequency | avg_monetary | avg_score |
     |---|---|---|---|---|
-    | Champions | 85 | 18.2 | 5200000 | 10.8 |
-    | Loyal | 142 | 12.5 | 3100000 | 8.7 |
-    | Potential | 320 | 6.3 | 1200000 | 6.2 |
-    | At Risk | 253 | 2.1 | 350000 | 3.4 |
+    | Champions | 784 | 32.90 | 34,334,528.00 | 11.00 |
+    | Loyal | 569 | 8.50 | 8,532,740.00 | 8.40 |
+    | Potential | 999 | 3.40 | 2,797,314.00 | 6.00 |
+    | At Risk | 441 | 1.50 | 456,944.00 | 3.50 |
+
 
 ---
 
-### Problem 10
 
-**After developing the category tree with recursive CTE, count the number of products and sales for each top category.**
+### 10. Revenue by Category Tree
 
-??? tip "Hint"
-    Track the top root of each category with a recursive CTE.
-    log `id AS root_id, name AS root_name` in anchor,
-    In recursion, it propagates `root_id` and `root_name` from the parent as is.
-    Aggregate by root by joining `products`, `order_items`, and `orders` to the results.
+
+After developing the category tree with recursive CTE, count the number of products and sales for each top category.
+
+
+**Hint 1:** Track the top root of each category with a recursive CTE.
+log `id AS root_id, name AS root_name` in anchor,
+In recursion, it propagates `root_id` and `root_name` from the parent as is.
+Aggregate by root by joining `products`, `order_items`, and `orders` to the results.
+
+
 
 ??? success "Answer"
     ```sql
     WITH RECURSIVE cat_root AS (
-        -- Anchor: top-level categories (self as root)
+        -- 앵커: 최상위 카테고리 (자기 자신이 루트)
         SELECT
             id,
             id   AS root_id,
             name AS root_name
         FROM categories
         WHERE parent_id IS NULL
-
+    
         UNION ALL
-
-        -- Recursive: child categories inherit parent's root
+    
+        -- 재귀: 자식 카테고리는 부모의 루트를 상속
         SELECT
             c.id,
             cr.root_id,
@@ -594,36 +634,34 @@ We chain three CTEs: (1) RFM raw metrics, (2) NTILE scores, and (3) segment labe
     ORDER BY total_revenue DESC;
     ```
 
-    **Result example:**
+
+    **Result** (top 7 of 18 rows)
 
     | top_category | product_count | total_revenue | units_sold |
-    | ---------- | ----------: | ----------: | ----------: |
-    | Laptop | 21 | 1395635900.0 | 660 |
-    | Monitor | 19 | 727065300.0 | 712 |
-    | Graphics Card | 10 | 713579800.0 | 580 |
-    | Motherboard | 16 | 398988900.0 | 920 |
-    | Speakers/Headsets | 8 | 232144800.0 | 921 |
-    | Storage | 13 | 205861200.0 | 833 |
-    | Memory (RAM) | 14 | 200423600.0 | 1354 |
-    | Power Supply (PSU) | 10 | 192782400.0 | 913 |
-    | ... | ... | ... | ... |
+    |---|---|---|---|
+    | Laptop | 21 | 1,395,635,900.00 | 660 |
+    | Monitor | 19 | 727,065,300.00 | 712 |
+    | Graphics Card | 10 | 713,579,800.00 | 580 |
+    | Motherboard | 16 | 398,988,900.00 | 920 |
+    | Speakers/Headsets | 8 | 232,144,800.00 | 921 |
+    | Storage | 13 | 205,861,200.00 | 833 |
+    | Memory (RAM) | 14 | 200,423,600.00 | 1354 |
+
 
 ---
 
-We cover advanced patterns such as chaining more than 3 CTEs, leveraging recursion depth, and creating date sequences.
 
----
+### 11. Create month sequences with recursive CTEs and create monthly reports, including months with no sales.
 
-### Problem 11
-
-**Create month sequences with recursive CTEs and create monthly reports, including months with no sales.**
 
 Create a 12-month sequence from 2024-01 to 2024-12 with a recursive CTE and LEFT JOIN it with actual sales data.
 
-??? tip "Hint"
-    With a recursive CTE, we create a sequence starting from '2024-01' and incrementing by +1 for each month.
-    Calculate the next month as `DATE(year_month || '-01', '+1 month')`, formatted as `SUBSTR(..., 1, 7)`.
-    Exit condition: `year_month < '2024-12'`.
+
+**Hint 1:** With a recursive CTE, we create a sequence starting from '2024-01' and incrementing by +1 for each month.
+Calculate the next month as `DATE(year_month || '-01', '+1 month')`, formatted as `SUBSTR(..., 1, 7)`.
+Exit condition: `year_month < '2024-12'`.
+
+
 
 ??? success "Answer"
     ```sql
@@ -653,35 +691,35 @@ Create a 12-month sequence from 2024-01 to 2024-12 with a recursive CTE and LEFT
     ORDER BY m.year_month;
     ```
 
-    **Result (line 12):**
+
+    **Result** (top 7 of 12 rows)
 
     | year_month | order_count | revenue |
-    | ---------- | ----------: | ----------: |
-    | 2024-01 | 314 | 288908320.0 |
-    | 2024-02 | 416 | 403127749.0 |
-    | 2024-03 | 555 | 519844502.0 |
-    | 2024-04 | 466 | 451877581.0 |
-    | 2024-05 | 385 | 425264478.0 |
-    | 2024-06 | 389 | 362715211.0 |
-    | 2024-07 | 381 | 343929897.0 |
-    | 2024-08 | 416 | 404803340.0 |
-    | ... | ... | ... |
+    |---|---|---|
+    | 2024-01 | 314 | 288,908,320.00 |
+    | 2024-02 | 416 | 403,127,749.00 |
+    | 2024-03 | 555 | 519,844,502.00 |
+    | 2024-04 | 466 | 451,877,581.00 |
+    | 2024-05 | 385 | 425,264,478.00 |
+    | 2024-06 | 389 | 362,715,211.00 |
+    | 2024-07 | 381 | 343,929,897.00 |
 
-    > All months are displayed without exception. Months with no data are filled with 0.
 
 ---
 
-### Problem 12
 
-**Calculate product performance ratings with a 3-step CTE chain.**
+### 12. Calculate product performance ratings with a 3-step CTE chain.
+
 
 CTE 1: Sales by product. CTE 2: NTILE(5) rating based on sales. CTE 3: Statistics by grade.
 The final output includes the number of products by grade, sales range, and representative products (#1 in sales).
 
-??? tip "Hint"
-    CTE 3 to `FIRST_VALUE(product_name) OVER (PARTITION BY tier ORDER BY revenue DESC)`
-    Extract representative products from each grade.
-    Use `DISTINCT` to summarize each grade into one row.
+
+**Hint 1:** CTE 3 to `FIRST_VALUE(product_name) OVER (PARTITION BY tier ORDER BY revenue DESC)`
+Extract representative products from each grade.
+Use `DISTINCT` to summarize each grade into one row.
+
+
 
 ??? success "Answer"
     ```sql
@@ -719,11 +757,11 @@ The final output includes the number of products by grade, sales range, and repr
     SELECT
         tier,
         CASE tier
-            WHEN 1 THEN 'S (Top)'
-            WHEN 2 THEN 'A (Excellent)'
-            WHEN 3 THEN 'B (Average)'
-            WHEN 4 THEN 'C (Below Average)'
-            WHEN 5 THEN 'D (Poor)'
+            WHEN 1 THEN 'S (최상위)'
+            WHEN 2 THEN 'A (우수)'
+            WHEN 3 THEN 'B (보통)'
+            WHEN 4 THEN 'C (저조)'
+            WHEN 5 THEN 'D (부진)'
         END AS tier_label,
         product_count,
         min_revenue,
@@ -734,28 +772,32 @@ The final output includes the number of products by grade, sales range, and repr
     ORDER BY tier;
     ```
 
-    **Result example:**
+
+    **Result** (5 rows)
 
     | tier | tier_label | product_count | min_revenue | max_revenue | avg_revenue | top_product |
     |---|---|---|---|---|---|---|
-    | 1 | S (Top) | 20 | 15000000 | 45200000 | 25000000 | MacBook Pro 16 M3 |
-    | 2 | A (Excellent) | 20 | 8000000 | 14800000 | 11000000 | ASUS ROG Strix ... |
-    | 3 | B (Average) | 20 | 3500000 | 7900000 | 5500000 | Logitech MX ... |
-    | 4 | C (Below Average) | 20 | 1200000 | 3400000 | 2100000 | ... |
-    | 5 | D (Poor) | 20 | 50000 | 1100000 | 580000 | ... |
+    | 1 | S (최상위) | 44 | 39,196,400.00 | 165,417,800.00 | 66,665,918.00 | Razer Blade 18 Black |
+    | 2 | A (우수) | 44 | 18,568,800.00 | 38,656,400.00 | 26,834,570.00 | SteelSeries Arctis Nova Pro Wireless ... |
+    | 3 | B (보통) | 43 | 10,200,000.00 | 18,087,300.00 | 14,174,188.00 | JBL Flip 6 Black |
+    | 4 | C (저조) | 43 | 5,400,000.00 | 10,027,500.00 | 7,904,735.00 | Razer DeathAdder V4 Pro White |
+    | 5 | D (부진) | 43 | 159,000.00 | 5,188,800.00 | 2,268,381.00 | Arctic Liquid Freezer III 240 White |
+
 
 ---
 
-### Problem 13
 
-**Create a sequence of consecutive days with a recursive CTE and find days (gaps) with no orders.**
+### 13. Create a sequence of consecutive days with a recursive CTE and find days (gaps) with no orders.
+
 
 Generate consecutive dates from 2024-01-01 to 2024-12-31 and extract days with 0 orders.
 
-??? tip "Hint"
-    In a recursive CTE, `DATE(date_val, '+1 day')` is incremented by one day.
-    Connect to the actual order date with `LEFT JOIN` and filter out days where the order is NULL.
-    Alternatively, you can use the `calendar` table if you have one.
+
+**Hint 1:** In a recursive CTE, `DATE(date_val, '+1 day')` is incremented by one day.
+Connect to the actual order date with `LEFT JOIN` and filter out days where the order is NULL.
+Alternatively, you can use the `calendar` table if you have one.
+
+
 
 ??? success "Answer"
     ```sql
@@ -779,13 +821,13 @@ Generate consecutive dates from 2024-01-01 to 2024-12-31 and extract days with 0
     SELECT
         d.date_val AS gap_date,
         CASE CAST(STRFTIME('%w', d.date_val) AS INTEGER)
-            WHEN 0 THEN 'Sun'
-            WHEN 1 THEN 'Mon'
-            WHEN 2 THEN 'Tue'
-            WHEN 3 THEN 'Wed'
-            WHEN 4 THEN 'Thu'
-            WHEN 5 THEN 'Fri'
-            WHEN 6 THEN 'Sat'
+            WHEN 0 THEN '일'
+            WHEN 1 THEN '월'
+            WHEN 2 THEN '화'
+            WHEN 3 THEN '수'
+            WHEN 4 THEN '목'
+            WHEN 5 THEN '금'
+            WHEN 6 THEN '토'
         END AS day_name
     FROM date_seq AS d
     LEFT JOIN daily_orders AS o ON d.date_val = o.order_date
@@ -793,29 +835,21 @@ Generate consecutive dates from 2024-01-01 to 2024-12-31 and extract days with 0
     ORDER BY d.date_val;
     ```
 
-    **Result example:**
-
-    | gap_date | day_name |
-    |---|---|
-    | 2024-01-01 | Mon |
-    | 2024-02-10 | Sat |
-    | 2024-05-01 | Wed |
-    | ... | ... |
-
-    > Days without orders usually occur on public holidays or weekends.
 
 ---
 
-### Problem 14
 
-**Perform “Cohort Retention” analysis with a 4-step CTE chain.**
+### 14. Perform “Cohort Retention” analysis with a 4-step CTE chain.
+
 
 CTE 1: First order month (cohort) for each customer. CTE 2: List of order months by customer. CTE 3: Cohort-relative month mapping. CTE 4: Retention rate by cohort.
 
-??? tip "Hint"
-    The relative month is `(CAST(SUBSTR(order_month,1,4) AS INTEGER)*12 + CAST(SUBSTR(order_month,6,2) AS INTEGER))
-    - Calculated as (CAST(SUBSTR(cohort_month,1,4) AS INTEGER)*12 + CAST(SUBSTR(cohort_month,6,2) AS INTEGER))`.
-    Retention rate = Active customers per month / Total customers in the cohort * 100.
+
+**Hint 1:** The relative month is `(CAST(SUBSTR(order_month,1,4) AS INTEGER)*12 + CAST(SUBSTR(order_month,6,2) AS INTEGER))
+- Calculated as (CAST(SUBSTR(cohort_month,1,4) AS INTEGER)*12 + CAST(SUBSTR(cohort_month,6,2) AS INTEGER))`.
+Retention rate = Active customers per month / Total customers in the cohort * 100.
+
+
 
 ??? success "Answer"
     ```sql
@@ -866,31 +900,35 @@ CTE 1: First order month (cohort) for each customer. CTE 2: List of order months
     ORDER BY ca.cohort_month, ca.months_since;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 147 rows)
 
     | cohort_month | total_customers | months_since | active_customers | retention_pct |
     |---|---|---|---|---|
-    | 2024-01 | 45 | 0 | 45 | 100.0 |
-    | 2024-01 | 45 | 1 | 18 | 40.0 |
-    | 2024-01 | 45 | 2 | 12 | 26.7 |
-    | 2024-01 | 45 | 3 | 9 | 20.0 |
-    | 2024-02 | 38 | 0 | 38 | 100.0 |
-    | 2024-02 | 38 | 1 | 15 | 39.5 |
-    | ... | ... | ... | ... | ... |
+    | 2024-01 | 30 | 0 | 30 | 100.00 |
+    | 2024-01 | 30 | 1 | 7 | 23.30 |
+    | 2024-01 | 30 | 2 | 8 | 26.70 |
+    | 2024-01 | 30 | 3 | 12 | 40.00 |
+    | 2024-01 | 30 | 4 | 3 | 10.00 |
+    | 2024-01 | 30 | 5 | 5 | 16.70 |
+    | 2024-01 | 30 | 6 | 4 | 13.30 |
+
 
 ---
 
-### Problem 15
 
-**Obtain statistics by category depth with recursive CTE and visualize them in tree form.**
+### 15. Obtain statistics by category depth with recursive CTE and visualize them in tree form.
+
 
 The tree structure is expressed as text, including the indentation (space according to depth) of each category,
 The number of direct products in each category and the total number of sub-products are displayed together.
 
-??? tip "Hint"
-    Unfolds the category tree with a recursive CTE, creating `sort_path` for sorting (e.g. `'001/003/007'`).
-    Indent is `REPLACE(SUBSTR('                ', 1, level * 4), ' ', ' ')` or
-    Expressed as `CASE level WHEN 0 THEN '' WHEN 1 THEN '  ' WHEN 2 THEN '    ' END`, etc.
+
+**Hint 1:** Unfolds the category tree with a recursive CTE, creating `sort_path` for sorting (e.g. `'001/003/007'`).
+Indent is `REPLACE(SUBSTR('                ', 1, level * 4), ' ', ' ')` or
+Expressed as `CASE level WHEN 0 THEN '' WHEN 1 THEN '  ' WHEN 2 THEN '    ' END`, etc.
+
+
 
 ??? success "Answer"
     ```sql
@@ -905,9 +943,9 @@ The number of direct products in each category and the total number of sub-produ
             0 AS level
         FROM categories
         WHERE parent_id IS NULL
-
+    
         UNION ALL
-
+    
         SELECT
             c.id,
             c.parent_id,
@@ -939,17 +977,18 @@ The number of direct products in each category and the total number of sub-produ
     ORDER BY ct.sort_path;
     ```
 
-    **Result example (partial):**
+
+    **Result** (top 7 of 53 rows)
 
     | id | tree_display | level | direct_products |
     |---|---|---|---|
-    | 1 | 데스크탑/워크스테이션 | 0 | 0 |
-    | 3 |   데스크탑 PC | 1 | 0 |
-    | 5 |     게이밍 데스크탑 | 2 | 15 |
-    | 6 |     사무용 데스크탑 | 2 | 12 |
-    | 2 | 노트북/태블릿 | 0 | 0 |
-    | 4 |   노트북 | 1 | 0 |
-    | 7 |     게이밍 노트북 | 2 | 18 |
-    | 8 |     비즈니스 노트북 | 2 | 14 |
+    | 1 | Desktop PC | 0 | 0 |
+    | 2 |   Pre-built | 1 | 3 |
+    | 3 |   Custom Build | 1 | 9 |
+    | 4 |   Barebone | 1 | 1 |
+    | 5 | Laptop | 0 | 0 |
+    | 6 |   General Laptop | 1 | 8 |
+    | 7 |   Gaming Laptop | 1 | 6 |
 
-    > Top/middle categories do not have products directly, only leaf (depth=2) categories have products.
+
+---

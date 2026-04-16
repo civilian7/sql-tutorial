@@ -1,0 +1,813 @@
+metadata:
+  id: beginner-02-sort-paging
+  title: "정렬과 페이징"
+  title_en: "Sorting and Paging"
+  difficulty: beginner
+  concepts: [SELECT, WHERE, ORDER BY, LIMIT, OFFSET, DISTINCT, AS, arithmetic operations]
+  tables: [products, customers, orders, reviews, payments]
+  prerequisites: []
+  estimated_minutes: 30
+  default_level: 1
+  default_type: "SELECT"
+  description: "products, customers, orders, reviews, payments 테이블을 사용합니다."
+  description_en: "Uses products, customers, orders, reviews, payments tables."
+
+problems:
+  - id: b02s-01
+    level: 1
+    type: "SELECT"
+    question: |
+      상품을 가격이 비싼 순서대로 정렬하여 이름(`name`)과 가격(`price`)을 조회하세요.
+    question_en: |
+      Sort the products in order of highest price and look up the name (`name`) and price (`price`).
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        ORDER BY price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY price DESC를 사용하면 내림차순 정렬입니다"
+        en: "Using ORDER BY price DESC sorts in descending order"
+    rubric:
+      ko: "ORDER BY price DESC를 사용해야 함"
+      en: "Must use ORDER BY price DESC"
+    max_score: 10
+    tags: [SELECT, ORDER BY, products]
+
+  - id: b02s-02
+    level: 1
+    type: "SELECT"
+    question: |
+      상품을 가격이 저렴한 순서대로 정렬하여 이름, 브랜드(`brand`), 가격을 조회하세요.
+    question_en: |
+      Sort products in descending order of price and search for name, brand (`brand`), and price.
+    reference_sql:
+      common: |
+        SELECT name, brand, price
+        FROM products
+        ORDER BY price ASC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY price ASC 또는 ORDER BY price만 써도 오름차순(기본값)입니다"
+        en: "Just using ORDER BY price ASC or ORDER BY price will result in ascending order (default)"
+    rubric:
+      ko: "ORDER BY price ASC를 사용해야 함"
+      en: "Must use ORDER BY price ASC"
+    max_score: 10
+    tags: [SELECT, ORDER BY, products]
+
+  - id: b02s-03
+    level: 1
+    type: "SELECT"
+    question: |
+      가장 비싼 상품 5개의 이름과 가격을 조회하세요.
+    question_en: |
+      View the names and prices of the 5 most expensive products.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        ORDER BY price DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY로 정렬한 뒤 LIMIT으로 상위 N개만 가져옵니다"
+        en: "Sort by ORDER BY and then get only the top N by LIMIT"
+    rubric:
+      ko: "ORDER BY price DESC와 LIMIT 5를 사용해야 함"
+      en: "Must use ORDER BY price DESC and LIMIT 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, products]
+
+  - id: b02s-04
+    level: 1
+    type: "SELECT"
+    question: |
+      재고 수량(`stock_qty`)이 가장 적은 상품 5개의 이름, 가격, 재고 수량을 조회하세요.
+    question_en: |
+      View the name, price, and inventory quantity of the five products with the lowest inventory quantity (`stock_qty`).
+    reference_sql:
+      common: |
+        SELECT name, price, stock_qty
+        FROM products
+        ORDER BY stock_qty ASC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY stock_qty ASC로 오름차순 정렬하면 재고가 적은 순서입니다"
+        en: "If you sort by ORDER BY stock_qty ASC in ascending order, the inventory is low"
+    rubric:
+      ko: "ORDER BY stock_qty ASC와 LIMIT 5를 사용해야 함"
+      en: "Must use ORDER BY stock_qty ASC and LIMIT 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, products]
+
+  - id: b02s-05
+    level: 1
+    type: "SELECT"
+    question: |
+      고객을 가입일(`created_at`) 순서대로 정렬하여 가장 먼저 가입한 고객 5명의 이름, 이메일, 등급(`grade`), 가입일을 조회하세요.
+    question_en: |
+      Sort customers in order of sign-up date (`created_at`) to view the names, emails, ratings (`grade`), and sign-up dates of the five customers who signed up first.
+    reference_sql:
+      common: |
+        SELECT name, email, grade, created_at
+        FROM customers
+        ORDER BY created_at ASC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "가장 오래된 가입일이 먼저 나오려면 ORDER BY created_at ASC를 사용합니다"
+        en: "Use ORDER BY created_at ASC to list the oldest subscription date first"
+    rubric:
+      ko: "ORDER BY created_at ASC와 LIMIT 5를 사용해야 함"
+      en: "Must use ORDER BY created_at ASC and LIMIT 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, customers]
+
+  - id: b02s-06
+    level: 1
+    type: "SELECT"
+    question: |
+      상품 이름을 알파벳/가나다 순서대로 정렬하여 처음 5개를 조회하세요.
+    question_en: |
+      Sort product names in alphabetical/alphabetical order to view the first 5 items.
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        ORDER BY name
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY name으로 정렬하면 영문 알파벳이 한글보다 먼저 옵니다"
+        en: "When sorted by ORDER BY name, the English alphabet comes before the Korean alphabet"
+    rubric:
+      ko: "ORDER BY name과 LIMIT 5를 사용해야 함"
+      en: "Must use ORDER BY name and LIMIT 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, products]
+
+  - id: b02s-07
+    level: 1
+    type: "SELECT"
+    question: |
+      가격이 비싼 상품 상위 6~10위를 조회하세요. (즉, 상위 5개를 건너뛰고 다음 5개)
+    question_en: |
+      View the top 6-10 most expensive products (i.e. skip the top 5 and go to the next 5).
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        ORDER BY price DESC
+        LIMIT 5 OFFSET 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "OFFSET은 지정한 행 수만큼 건너뜁니다. LIMIT 5 OFFSET 5로 6번째부터 가져옵니다"
+        en: "OFFSET skips the specified number of rows. Fetch from the 6th with LIMIT 5 OFFSET 5"
+    rubric:
+      ko: "LIMIT 5 OFFSET 5를 사용해야 함"
+      en: "Must use LIMIT 5 OFFSET 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, OFFSET, products]
+
+  - id: b02s-08
+    level: 1
+    type: "SELECT"
+    question: |
+      적립금(`point_balance`)이 가장 많은 고객 5명의 이름, 등급, 적립금을 조회하세요.
+    question_en: |
+      View the names, levels, and points of the 5 customers with the most points (`point_balance`).
+    reference_sql:
+      common: |
+        SELECT name, grade, point_balance
+        FROM customers
+        ORDER BY point_balance DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY point_balance DESC로 내림차순 정렬 후 LIMIT 5를 적용합니다"
+        en: "Sort in descending order with ORDER BY point_balance DESC and then apply LIMIT 5"
+    rubric:
+      ko: "ORDER BY point_balance DESC와 LIMIT 5를 사용해야 함"
+      en: "Must use ORDER BY point_balance DESC and LIMIT 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, customers]
+
+  - id: b02s-09
+    level: 1
+    type: "SELECT"
+    question: |
+      주문 금액(`total_amount`)이 가장 큰 주문 5건의 주문번호(`order_number`), 주문 금액, 주문일(`ordered_at`)을 조회하세요.
+    question_en: |
+      Look up the order number (`order_number`), order amount, and order date (`ordered_at`) of the five orders with the largest order amount (`total_amount`).
+    reference_sql:
+      common: |
+        SELECT order_number, total_amount, ordered_at
+        FROM orders
+        ORDER BY total_amount DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "orders 테이블에서 ORDER BY total_amount DESC LIMIT 5를 사용합니다"
+        en: "Use ORDER BY total_amount DESC LIMIT 5 in table orders"
+    rubric:
+      ko: "ORDER BY total_amount DESC와 LIMIT 5를 사용해야 함"
+      en: "Must use ORDER BY total_amount DESC and LIMIT 5"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, orders]
+
+  - id: b02s-10
+    level: 1
+    type: "SELECT"
+    question: |
+      상품 테이블에 등록된 브랜드 목록을 중복 없이 알파벳 순서대로 조회하세요.
+    question_en: |
+      View the list of brands registered in the product table in alphabetical order without duplication.
+    reference_sql:
+      common: |
+        SELECT DISTINCT brand
+        FROM products
+        ORDER BY brand;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SELECT DISTINCT brand로 중복을 제거하고, ORDER BY brand로 정렬합니다"
+        en: "Remove duplicates with SELECT DISTINCT brand and sort with ORDER BY brand"
+    rubric:
+      ko: "SELECT DISTINCT와 ORDER BY를 사용해야 함"
+      en: "Must use SELECT DISTINCT and ORDER BY"
+    max_score: 10
+    tags: [SELECT, DISTINCT, ORDER BY, products]
+
+  - id: b02s-11
+    level: 2
+    type: "SELECT"
+    question: |
+      가격이 100만 원 이상인 상품을 비싼 순서대로 정렬하여 이름, 브랜드, 가격을 조회하세요. 상위 5개만 출력합니다.
+    question_en: |
+      Sort products with a price of 1 million won or more in descending order of price and search for name, brand, and price. Prints only the top 5.
+    reference_sql:
+      common: |
+        SELECT name, brand, price
+        FROM products
+        WHERE price >= 1000000
+        ORDER BY price DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE price >= 1000000으로 필터링한 뒤 ORDER BY price DESC LIMIT 5를 적용합니다"
+        en: "Filter by WHERE price >= 1000000 and then apply ORDER BY price DESC LIMIT 5"
+    rubric:
+      ko: "WHERE price >= 1000000과 ORDER BY price DESC LIMIT 5를 사용해야 함"
+      en: "Must use WHERE price >= 1000000 and ORDER BY price DESC LIMIT 5"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, products]
+
+  - id: b02s-12
+    level: 2
+    type: "SELECT"
+    question: |
+      삼성전자 또는 LG전자 브랜드 상품을 가격 내림차순으로 정렬하여 이름, 브랜드, 가격을 조회하세요. 상위 5개만 출력합니다.
+    question_en: |
+      Sort Samsung Electronics or LG Electronics brand products in descending price order to search for name, brand, and price. Prints only the top 5.
+    reference_sql:
+      common: |
+        SELECT name, brand, price
+        FROM products
+        WHERE brand IN ('삼성전자', 'LG전자')
+        ORDER BY price DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE brand IN ('삼성전자', 'LG전자')로 두 브랜드를 필터링합니다"
+        en: "Filter the two brands by WHERE brand IN ('삼성전자', 'LG전자')"
+    rubric:
+      ko: "WHERE brand IN과 ORDER BY price DESC를 사용해야 함"
+      en: "Must use WHERE brand IN and ORDER BY price DESC"
+    max_score: 10
+    tags: [SELECT, WHERE, IN, ORDER BY, LIMIT, products]
+
+  - id: b02s-13
+    level: 2
+    type: "SELECT"
+    question: |
+      VIP 등급 고객 중 성이 '김'인 고객을 적립금이 많은 순서대로 정렬하여 이름, 등급, 적립금을 5명만 조회하세요.
+    question_en: |
+      Among VIP level customers, sort the customers with the last name 'Kim' in order of the highest amount of points and view the names, levels, and points of only 5 people.
+    reference_sql:
+      common: |
+        SELECT name, grade, point_balance
+        FROM customers
+        WHERE grade = 'VIP'
+          AND name LIKE '김%'
+        ORDER BY point_balance DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE grade = 'VIP' AND name LIKE '김%'로 두 조건을 동시에 적용합니다"
+        en: "Apply both conditions simultaneously with WHERE grade = 'VIP' AND name LIKE '김%'"
+    rubric:
+      ko: "WHERE에서 AND로 두 조건을 결합해야 함"
+      en: "Must combine two conditions with AND in WHERE"
+    max_score: 10
+    tags: [SELECT, WHERE, LIKE, ORDER BY, LIMIT, customers]
+
+  - id: b02s-14
+    level: 2
+    type: "SELECT"
+    question: |
+      판매 중단된 상품(`discontinued_at`이 NULL이 아닌 상품)을 중단일 기준 최신순으로 정렬하여 이름, 가격, 중단일을 5개만 조회하세요.
+    question_en: |
+      Sort discontinued products (products where `discontinued_at` is not NULL) in the most recent order based on the discontinuation date to view only 5 names, prices, and discontinuation dates.
+    reference_sql:
+      common: |
+        SELECT name, price, discontinued_at
+        FROM products
+        WHERE discontinued_at IS NOT NULL
+        ORDER BY discontinued_at DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE discontinued_at IS NOT NULL로 판매 중단 상품만 필터링합니다"
+        en: "Filter only discontinued products with WHERE discontinued_at IS NOT NULL"
+    rubric:
+      ko: "WHERE discontinued_at IS NOT NULL을 사용해야 함"
+      en: "Must use WHERE discontinued_at IS NOT NULL"
+    max_score: 10
+    tags: [SELECT, WHERE, IS NOT NULL, ORDER BY, LIMIT, products]
+
+  - id: b02s-15
+    level: 2
+    type: "SELECT"
+    question: |
+      리뷰 평점(`rating`)이 1점인 리뷰를 최신순으로 정렬하여 제목(`title`), 평점, 작성일(`created_at`)을 5개 조회하세요.
+    question_en: |
+      Sort reviews with a review rating (`rating`) of 1 in the most recent order and view the 5 titles (`title`), rating, and creation date (`created_at`).
+    reference_sql:
+      common: |
+        SELECT title, rating, created_at
+        FROM reviews
+        WHERE rating = 1
+        ORDER BY created_at DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "reviews 테이블에서 WHERE rating = 1로 필터링하고 ORDER BY created_at DESC로 정렬합니다"
+        en: "In table reviews, filter by WHERE rating = 1 and sort by ORDER BY created_at DESC"
+    rubric:
+      ko: "WHERE rating = 1과 ORDER BY created_at DESC를 사용해야 함"
+      en: "Must use WHERE rating = 1 and ORDER BY created_at DESC"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, reviews]
+
+  - id: b02s-16
+    level: 2
+    type: "SELECT"
+    question: |
+      가격이 50만 원 이상 100만 원 이하인 상품을 가격 오름차순으로 정렬하여 이름, 브랜드, 가격을 5개 조회하세요.
+    question_en: |
+      Sort products priced between 500,000 won and 1 million won or less in ascending order of price and search for 5 names, brands, and prices.
+    reference_sql:
+      common: |
+        SELECT name, brand, price
+        FROM products
+        WHERE price BETWEEN 500000 AND 1000000
+        ORDER BY price ASC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE price BETWEEN 500000 AND 1000000으로 범위를 지정합니다"
+        en: "Specify the range with WHERE price BETWEEN 500000 AND 1000000"
+    rubric:
+      ko: "WHERE price BETWEEN과 ORDER BY price ASC를 사용해야 함"
+      en: "Must use WHERE price BETWEEN and ORDER BY price ASC"
+    max_score: 10
+    tags: [SELECT, WHERE, BETWEEN, ORDER BY, LIMIT, products]
+
+  - id: b02s-17
+    level: 2
+    type: "SELECT"
+    question: |
+      카드 결제(`method = 'card'`) 중 할부 개월 수(`installment_months`)가 0보다 큰 건을 할부 개월 수 내림차순, 결제 금액(`amount`) 내림차순으로 정렬하여 5건 조회하세요. 주문 ID, 결제 금액, 카드사(`card_issuer`), 할부 개월 수를 출력합니다.
+    question_en: |
+      Among card payments (`method = 'card'`), search for 5 cases where the number of installment months (`installment_months`) is greater than 0 by sorting them in descending order of the number of installment months and descending order of payment amount (`amount`). Prints order ID, payment amount, card company (`card_issuer`), and number of installment months.
+    reference_sql:
+      common: |
+        SELECT order_id, amount, card_issuer, installment_months
+        FROM payments
+        WHERE method = 'card'
+          AND installment_months > 0
+        ORDER BY installment_months DESC, amount DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ORDER BY 뒤에 칼럼을 쉼표로 구분하면 다중 정렬이 됩니다. 첫 번째 칼럼이 같을 때 두 번째 칼럼으로 정렬합니다"
+        en: "Multiple sorting occurs if you separate the columns after ORDER BY with a comma. Sort by the second column when the first column is the same"
+    rubric:
+      ko: "다중 정렬(ORDER BY col1 DESC, col2 DESC)을 사용해야 함"
+      en: "Must use multiple sorting (ORDER BY col1 DESC, col2 DESC)"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, payments]
+
+  - id: b02s-18
+    level: 2
+    type: "SELECT"
+    question: |
+      GOLD 등급 고객을 이름 가나다순으로 정렬하여 11~15번째 고객의 이름과 이메일을 조회하세요.
+    question_en: |
+      Sort GOLD level customers alphabetically by name to view the names and emails of customers 11-15.
+    reference_sql:
+      common: |
+        SELECT name, email
+        FROM customers
+        WHERE grade = 'GOLD'
+        ORDER BY name
+        LIMIT 5 OFFSET 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "11번째부터 시작하려면 OFFSET 10 (10개를 건너뜀), 5명을 가져오려면 LIMIT 5입니다"
+        en: "OFFSET 10 (skip 10) to start with the 11th, LIMIT 5 to get 5 people"
+    rubric:
+      ko: "LIMIT 5 OFFSET 10을 사용해야 함"
+      en: "Must use LIMIT 5 OFFSET 10"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, OFFSET, customers]
+
+  - id: b02s-19
+    level: 1
+    type: "SELECT"
+    question: |
+      결제 수단(`method`)의 종류를 중복 없이 조회하세요.
+    question_en: |
+      Check the type of payment method (`method`) without duplicates.
+    reference_sql:
+      common: |
+        SELECT DISTINCT method
+        FROM payments
+        ORDER BY method;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SELECT DISTINCT method FROM payments를 사용합니다"
+        en: "Use SELECT DISTINCT method FROM payments"
+    rubric:
+      ko: "SELECT DISTINCT를 사용해야 함"
+      en: "Must use SELECT DISTINCT"
+    max_score: 10
+    tags: [SELECT, DISTINCT, ORDER BY, payments]
+
+  - id: b02s-20
+    level: 2
+    type: "SELECT"
+    question: |
+      상품의 이름, 가격, 원가(`cost_price`), 마진(가격 - 원가)을 마진이 큰 순서대로 정렬하여 5개 조회하세요. 마진 칼럼에는 `margin`이라는 별칭을 붙이세요.
+    question_en: |
+      Search 5 items by sorting the product name, price, cost (`cost_price`), and margin (price - cost) in order of largest margin. Add the alias `margin` to the margin column.
+    reference_sql:
+      common: |
+        SELECT name, price, cost_price, price - cost_price AS margin
+        FROM products
+        ORDER BY margin DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SELECT 절에서 price - cost_price AS margin으로 계산 칼럼을 만들 수 있습니다"
+        en: "You can create a calculated column as price - cost_price AS margin in the SELECT clause"
+    rubric:
+      ko: "산술 연산과 AS 별칭을 사용해야 함"
+      en: "Must use arithmetic operations and AS alias"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, AS, products]
+
+  - id: b02s-21
+    level: 2
+    type: "SELECT"
+    question: |
+      취소된 주문(`status = 'cancelled'`) 중 주문 금액이 가장 큰 5건의 주문번호, 주문 금액, 취소일(`cancelled_at`)을 조회하세요.
+    question_en: |
+      Out of the canceled orders (`status = 'cancelled'`), look up the order number, order amount, and cancellation date (`cancelled_at`) of the five orders with the largest order amount.
+    reference_sql:
+      common: |
+        SELECT order_number, total_amount, cancelled_at
+        FROM orders
+        WHERE status = 'cancelled'
+        ORDER BY total_amount DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE status = 'cancelled'로 필터링하고 ORDER BY total_amount DESC로 정렬합니다"
+        en: "Filter by WHERE status = 'cancelled' and sort by ORDER BY total_amount DESC"
+    rubric:
+      ko: "WHERE status = 'cancelled'과 ORDER BY total_amount DESC를 사용해야 함"
+      en: "Must use WHERE status = 'cancelled' and ORDER BY total_amount DESC"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, orders]
+
+  - id: b02s-22
+    level: 2
+    type: "SELECT"
+    question: |
+      재고가 10개 이하인 상품을 재고 오름차순, 가격 내림차순으로 정렬하여 이름, 가격, 재고 수량을 조회하세요.
+    question_en: |
+      For products with less than 10 items in stock, sort them in ascending order of stock or descending price to view the name, price, and quantity in stock.
+    reference_sql:
+      common: |
+        SELECT name, price, stock_qty
+        FROM products
+        WHERE stock_qty <= 10
+        ORDER BY stock_qty ASC, price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE stock_qty <= 10으로 필터링하고 ORDER BY stock_qty ASC, price DESC로 다중 정렬합니다"
+        en: "Filter by WHERE stock_qty <= 10 and multi-sort by ORDER BY stock_qty ASC, price DESC"
+    rubric:
+      ko: "WHERE 필터링과 다중 정렬을 사용해야 함"
+      en: "Must use WHERE filtering and multiple sorting"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, products]
+
+  - id: b02s-23
+    level: 2
+    type: "SELECT"
+    question: |
+      한 번도 로그인하지 않은 고객(`last_login_at`이 NULL)을 가입일 순서대로 정렬하여 이름, 이메일, 등급을 10명 조회하세요.
+    question_en: |
+      View 10 customers who have never logged in (`last_login_at` is NULL) by name, email, and rating by sorting them in order of sign-up date.
+    reference_sql:
+      common: |
+        SELECT name, email, grade
+        FROM customers
+        WHERE last_login_at IS NULL
+        ORDER BY created_at ASC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "NULL 여부는 = NULL이 아니라 IS NULL로 확인합니다"
+        en: "NULL is checked with IS NULL, not = NULL"
+    rubric:
+      ko: "WHERE last_login_at IS NULL을 사용해야 함"
+      en: "Must use WHERE last_login_at IS NULL"
+    max_score: 10
+    tags: [SELECT, WHERE, IS NULL, ORDER BY, LIMIT, customers]
+
+  - id: b02s-24
+    level: 2
+    type: "SELECT"
+    question: |
+      상품의 이름, 가격, 부가세 포함 가격을 조회하세요. 부가세 포함 가격은 `price * 1.1`로 계산하고 `price_with_tax`라는 별칭을 붙이세요. 부가세 포함 가격이 비싼 순서대로 5개만 출력합니다.
+    question_en: |
+      Check the product name, price, and price including VAT. Calculate the price including VAT as `price * 1.1` and add the aliases `price_with_tax`. Only 5 items will be printed in order of highest price including VAT.
+    reference_sql:
+      common: |
+        SELECT name, price, ROUND(price * 1.1) AS price_with_tax
+        FROM products
+        ORDER BY price_with_tax DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "ROUND(price * 1.1)로 소수점을 정리하면 깔끔한 결과를 얻을 수 있습니다"
+        en: "You can get neat results by organizing the decimal points with ROUND(price * 1.1)"
+    rubric:
+      ko: "산술 연산과 ROUND, AS 별칭을 사용해야 함"
+      en: "Must use arithmetic operations, ROUND, and AS alias"
+    max_score: 10
+    tags: [SELECT, ORDER BY, LIMIT, AS, ROUND, products]
+
+  - id: b02s-25
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년에 접수된 주문(`ordered_at`이 2024년) 중 주문 금액이 가장 큰 5건의 주문번호, 주문 금액, 주문일을 조회하세요.
+    question_en: |
+      Look up the order number, order amount, and order date of the five orders with the largest order amount among orders received in 2024 (`ordered_at` is 2024).
+    reference_sql:
+      common: |
+        SELECT order_number, total_amount, ordered_at
+        FROM orders
+        WHERE ordered_at >= '2024-01-01'
+          AND ordered_at < '2025-01-01'
+        ORDER BY total_amount DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE ordered_at >= '2024-01-01' AND ordered_at < '2025-01-01'로 2024년 범위를 지정합니다"
+        en: "Specify the range to 2024 with WHERE ordered_at >= '2024-01-01' AND ordered_at < '2025-01-01'"
+    rubric:
+      ko: "날짜 범위 필터링과 ORDER BY, LIMIT를 사용해야 함"
+      en: "Must use date range filtering with ORDER BY and LIMIT"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, orders]
+
+  - id: b02s-26
+    level: 2
+    type: "SELECT"
+    question: |
+      할인 금액(`discount_amount`)이 0보다 큰 주문을 할인 금액이 큰 순서대로 정렬하여 주문번호, 주문 금액, 할인 금액, 주문일을 5건 조회하세요.
+    question_en: |
+      Order orders with a discount amount (`discount_amount`) greater than 0 in descending order of discount amount, and view 5 order numbers, order amount, discount amount, and order date.
+    reference_sql:
+      common: |
+        SELECT order_number, total_amount, discount_amount, ordered_at
+        FROM orders
+        WHERE discount_amount > 0
+        ORDER BY discount_amount DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE discount_amount > 0으로 할인이 적용된 주문만 필터링합니다"
+        en: "Filter only orders with a discount applied to WHERE discount_amount > 0"
+    rubric:
+      ko: "WHERE discount_amount > 0과 ORDER BY discount_amount DESC를 사용해야 함"
+      en: "Must use WHERE discount_amount > 0 and ORDER BY discount_amount DESC"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, orders]
+
+  - id: b02s-27
+    level: 2
+    type: "SELECT"
+    question: |
+      카카오페이(`method = 'kakao_pay'`)로 결제된 건을 결제 금액이 큰 순서대로 정렬하여 주문 ID(`order_id`), 결제 금액, 결제일(`paid_at`)을 5건 조회하세요.
+    question_en: |
+      Sort the items paid with Kakao Pay (`method = 'kakao_pay'`) in order of largest payment amount and search for 5 items including order ID (`order_id`), payment amount, and payment date (`paid_at`).
+    reference_sql:
+      common: |
+        SELECT order_id, amount, paid_at
+        FROM payments
+        WHERE method = 'kakao_pay'
+        ORDER BY amount DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "payments 테이블에서 WHERE method = 'kakao_pay'로 필터링합니다"
+        en: "Filter by WHERE method = 'kakao_pay' in table payments"
+    rubric:
+      ko: "WHERE method = 'kakao_pay'와 ORDER BY amount DESC를 사용해야 함"
+      en: "Must use WHERE method = 'kakao_pay' and ORDER BY amount DESC"
+    max_score: 10
+    tags: [SELECT, WHERE, ORDER BY, LIMIT, payments]
+
+  - id: b02s-28
+    level: 3
+    type: "SELECT"
+    question: |
+      2025년에 가입한 고객 중 GOLD 또는 VIP 등급인 고객을 적립금이 많은 순서대로 5명 조회하세요. 이름, 등급, 적립금, 가입일을 출력합니다.
+    question_en: |
+      Find 5 customers who signed up in 2025 who are GOLD or VIP level in order of highest accumulated points. Prints name, level, points, and membership date.
+    reference_sql:
+      common: |
+        SELECT name, grade, point_balance, created_at
+        FROM customers
+        WHERE created_at >= '2025-01-01'
+          AND grade IN ('GOLD', 'VIP')
+        ORDER BY point_balance DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE created_at >= '2025-01-01' AND grade IN ('GOLD', 'VIP')로 조건을 조합합니다"
+        en: "Combine conditions with WHERE created_at >= '2025-01-01' AND grade IN ('GOLD', 'VIP')"
+    rubric:
+      ko: "날짜 조건과 IN을 AND로 결합해야 함"
+      en: "Must combine date condition and IN with AND"
+    max_score: 10
+    tags: [SELECT, WHERE, IN, ORDER BY, LIMIT, customers]
+
+  - id: b02s-29
+    level: 3
+    type: "SELECT"
+    question: |
+      ASUS 브랜드가 아닌 상품(`brand != 'ASUS'`) 중 삼성전자, LG전자, MSI도 제외한 상품을 가격 내림차순으로 5개 조회하세요. 이름, 브랜드, 가격을 출력합니다.
+    question_en: |
+      View 5 non-ASUS brand products (`brand != 'ASUS'`) excluding Samsung Electronics, LG Electronics, and MSI in descending order of price. Prints name, brand, and price.
+    reference_sql:
+      common: |
+        SELECT name, brand, price
+        FROM products
+        WHERE brand NOT IN ('ASUS', '삼성전자', 'LG전자', 'MSI')
+        ORDER BY price DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "NOT IN을 사용하면 여러 값을 한꺼번에 제외할 수 있습니다"
+        en: "NOT IN allows you to exclude multiple values at once"
+    rubric:
+      ko: "NOT IN을 사용해야 함"
+      en: "Must use NOT IN"
+    max_score: 10
+    tags: [SELECT, WHERE, NOT IN, ORDER BY, LIMIT, products]
+
+  - id: b02s-30
+    level: 3
+    type: "SELECT"
+    question: |
+      무게(`weight_grams`)가 기록된 상품 중 가장 무거운 상품 5개의 이름, 무게(그램), 가격을 조회하세요. 무게를 킬로그램으로 환산한 `weight_kg` 칼럼도 함께 출력하세요.
+    question_en: |
+      Look up the names, weights (grams), and prices of the five heaviest products among products with recorded weight (`weight_grams`). Also print the `weight_kg` column, which converts the weight to kilograms.
+    reference_sql:
+      common: |
+        SELECT name,
+               weight_grams,
+               ROUND(weight_grams / 1000.0, 1) AS weight_kg,
+               price
+        FROM products
+        WHERE weight_grams IS NOT NULL
+        ORDER BY weight_grams DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE weight_grams IS NOT NULL로 무게가 있는 상품만 필터링합니다. weight_grams / 1000.0으로 킬로그램을 계산합니다"
+        en: "Filter only products with weight by WHERE weight_grams IS NOT NULL. Calculate kilograms with weight_grams / 1000.0"
+    rubric:
+      ko: "IS NOT NULL 필터링과 산술 연산을 사용해야 함"
+      en: "Must use IS NOT NULL filtering and arithmetic operations"
+    max_score: 10
+    tags: [SELECT, WHERE, IS NOT NULL, ORDER BY, LIMIT, AS, products]

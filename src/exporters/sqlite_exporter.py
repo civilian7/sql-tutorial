@@ -1282,6 +1282,13 @@ class SQLiteExporter:
         # Create triggers
         conn.executescript(TRIGGER_SQL)
 
+        # Add table/column comments (_sc_metadata)
+        comments_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__)))), "data", "add_comments.sql")
+        if os.path.exists(comments_path):
+            with open(comments_path, encoding="utf-8") as f:
+                conn.executescript(f.read())
+
         conn.execute("PRAGMA journal_mode=DELETE")
         conn.execute("VACUUM")
         conn.close()
@@ -1310,7 +1317,15 @@ class SQLiteExporter:
             f.write(VIEW_SQL.strip())
             f.write("\n\n")
             f.write(TRIGGER_SQL.strip())
-            f.write("\n\nPRAGMA foreign_keys = ON;\n")
+            f.write("\n\n")
+            # Include _sc_metadata comments
+            comments_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
+                os.path.abspath(__file__)))), "data", "add_comments.sql")
+            if os.path.exists(comments_path):
+                with open(comments_path, encoding="utf-8") as cf:
+                    f.write(cf.read().strip())
+                f.write("\n")
+            f.write("\nPRAGMA foreign_keys = ON;\n")
 
         # data.sql — INSERT statements
         data_path = os.path.join(sql_dir, "data.sql")

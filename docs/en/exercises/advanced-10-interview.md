@@ -1,25 +1,35 @@
-# SQL interview preparation
+# SQL Interview Preparation
 
 !!! info "Tables"
+
     `orders` — Orders (status, amount, date)  
+
     `order_items` — Order items (qty, unit price)  
+
     `products` — Products (name, price, stock, brand)  
+
     `categories` — Categories (parent-child hierarchy)  
+
     `customers` — Customers (grade, points, channel)  
+
     `reviews` — Reviews (rating, content)  
+
     `product_views` — View log (customer, product, date)  
+
     `calendar` — Calendar (weekday, holiday)  
+
     `staff` — Staff (dept, role, manager)  
 
+
+
 !!! abstract "Concepts"
-    DENSE_RANK, N days in a row, Median, Session Analysis, Rating by category, MoM growth rate, Percentile, Calculate working days, Organization Chart Recursion
 
-This is a SQL pattern frequently asked in interviews at FAANG (Amazon, Google, Meta) and domestic IT companies (Kakao, Coupang, Naver).
-Each question has a **Question Frequency** tag, and we recommend that you practice solving them within the time limit.
+    `DENSE_RANK`, `Consecutive N Days`, `Median`, `Session Analysis`, `MoM Growth Rate`, `Percentile`, `Working Days`, `Organization Chart Recursion`
 
----
 
-### Problem 1. Second highest selling product ★★★
+
+### 1. Second highest selling product ★★★
+
 
 Find the product with the **second highest total sales** among all products.
 Use `DENSE_RANK` because there may be multiple products with the same sales as the product with the highest sales.
@@ -30,9 +40,11 @@ Use `DENSE_RANK` because there may be multiple products with the same sales as t
 |-------------|----------|-------------|-------------|
 | ... | ... | ... | 2 |
 
-??? tip "Hint"
-    - `DENSE_RANK() OVER (ORDER BY total_revenue DESC)`: Ranking where ties are allowed
-    - Sum up sales by product in CTE → Ranking → `WHERE rank = 2`
+
+**Hint 1:** - `DENSE_RANK() OVER (ORDER BY total_revenue DESC)`: Ranking where ties are allowed
+- Sum up sales by product in CTE → Ranking → `WHERE rank = 2`
+
+
 
 ??? success "Answer"
     ```sql
@@ -61,9 +73,19 @@ Use `DENSE_RANK` because there may be multiple products with the same sales as t
     WHERE revenue_rank = 2;
     ```
 
+
+    **Result** (1 rows)
+
+    | product_name | category | total_revenue | revenue_rank |
+    |---|---|---|---|
+    | Razer Blade 16 Silver | Gaming Laptop | 907,210,500 | 2 |
+
+
 ---
 
-### Problem 2. Running Total ★★★
+
+### 2. Running Total ★★★
+
 
 Find the **monthly sales** and **year-to-date (YTD)** for 2024.
 
@@ -73,9 +95,11 @@ Find the **monthly sales** and **year-to-date (YTD)** for 2024.
 |-------|----------------|------------|
 | 2024-01 | ... | ... |
 
-??? tip "Hint"
-    - `SUM(monthly_revenue) OVER (ORDER BY month)` = running total
-    - The basic frame of the window function is `UNBOUNDED PRECEDING ~ CURRENT ROW`
+
+**Hint 1:** - `SUM(monthly_revenue) OVER (ORDER BY month)` = running total
+- The basic frame of the window function is `UNBOUNDED PRECEDING ~ CURRENT ROW`
+
+
 
 ??? success "Answer"
     ```sql
@@ -90,9 +114,25 @@ Find the **monthly sales** and **year-to-date (YTD)** for 2024.
     ORDER BY month;
     ```
 
+
+    **Result** (top 7 of 12 rows)
+
+    | month | monthly_revenue | ytd_revenue |
+    |---|---|---|
+    | 2024-01 | 301,075,320 | 301,075,320 |
+    | 2024-02 | 426,177,449 | 727,252,769 |
+    | 2024-03 | 536,322,767 | 1,263,575,536 |
+    | 2024-04 | 470,154,081 | 1,733,729,617 |
+    | 2024-05 | 459,724,596 | 2,193,454,213 |
+    | 2024-06 | 377,040,302 | 2,570,494,515 |
+    | 2024-07 | 363,944,597 | 2,934,439,112 |
+
+
 ---
 
-### Problem 3. Identifying duplicate data ★★★
+
+### 3. Identifying duplicate data ★★★
+
 
 **Find cases where the same customer ordered the same product on the same day (suspected duplicates).
 Only the most recent order is marked as valid and the rest are flagged as duplicates.
@@ -102,9 +142,11 @@ Only the most recent order is marked as valid and the rest are flagged as duplic
 | order_id | customer_name | product_name | ordered_at | is_duplicate |
 |---------|-------------|-------------|-----------|-------------|
 
-??? tip "Hint"
-    - `ROW_NUMBER() OVER (PARTITION BY customer_id, product_id, DATE(ordered_at) ORDER BY ordered_at DESC)`
-    - Valid if `rn = 1`, duplicate if `rn > 1`
+
+**Hint 1:** - `ROW_NUMBER() OVER (PARTITION BY customer_id, product_id, DATE(ordered_at) ORDER BY ordered_at DESC)`
+- Valid if `rn = 1`, duplicate if `rn > 1`
+
+
 
 ??? success "Answer"
     ```sql
@@ -135,9 +177,25 @@ Only the most recent order is marked as valid and the rest are flagged as duplic
     ORDER BY od.customer_id, od.product_id, DATE(od.ordered_at), od.rn;
     ```
 
+
+    **Result** (top 7 of 86,611 rows)
+
+    | order_id | customer_name | product_name | ordered_at | is_duplicate |
+    |---|---|---|---|---|
+    | 1049 | Danny Johnson | Razer Blade 18 Black | 2017-12-04 15:52:09 | N |
+    | 31,251 | Danny Johnson | Razer Blade 18 Black | 2025-01-02 18:41:57 | N |
+    | 243 | Danny Johnson | MSI GeForce RTX 4070 Ti Super GAMING X | 2016-08-17 23:29:34 | N |
+    | 17,814 | Danny Johnson | MSI GeForce RTX 4070 Ti Super GAMING X | 2022-07-18 12:29:51 | N |
+    | 21,134 | Danny Johnson | MSI GeForce RTX 4070 Ti Super GAMING X | 2023-03-04 08:54:35 | N |
+    | 5736 | Danny Johnson | Dell U2724D | 2020-03-09 16:09:46 | N |
+    | 236 | Danny Johnson | G.SKILL Trident Z5 DDR5 64GB 6000MHz ... | 2016-08-19 22:29:34 | N |
+
+
 ---
 
-### Problem 4. Finding the median ★★☆
+
+### 4. Finding the median ★★☆
+
 
 Find the **median** of the order amount for each customer.
 SQLite does not have a `MEDIAN` function, so it is implemented as a window function.
@@ -148,10 +206,12 @@ SQLite does not have a `MEDIAN` function, so it is implemented as a window funct
 |-------------|------------|-------------|
 | ... | ... | ... |
 
-??? tip "Hint"
-    - Ranking as `ROW_NUMBER()`, total number of cases as `COUNT(*) OVER()`
-    - Median = (n+1)/2nd if the total number of cases is odd, average of n/2 and n/2+1 if the total number of cases is even.
-    - Extract center row with `WHERE rn IN (cnt/2, cnt/2+1, (cnt+1)/2)`
+
+**Hint 1:** - Ranking as `ROW_NUMBER()`, total number of cases as `COUNT(*) OVER()`
+- Median = (n+1)/2nd if the total number of cases is odd, average of n/2 and n/2+1 if the total number of cases is even.
+- Extract center row with `WHERE rn IN (cnt/2, cnt/2+1, (cnt+1)/2)`
+
+
 
 ??? success "Answer"
     ```sql
@@ -184,9 +244,25 @@ SQLite does not have a `MEDIAN` function, so it is implemented as a window funct
     LIMIT 20;
     ```
 
+
+    **Result** (top 7 of 20 rows)
+
+    | customer_name | order_count | median_amount |
+    |---|---|---|
+    | Johnny Gutierrez | 5 | 3,162,000.00 |
+    | John Brown | 5 | 2,741,600.00 |
+    | Abigail Richardson | 5 | 2,461,800.00 |
+    | Joanne Jones | 12 | 2,403,150.00 |
+    | Jeremy Ellis | 6 | 2,282,947.00 |
+    | Margaret Kirk | 5 | 2,281,800.00 |
+    | Corey Carroll | 9 | 2,279,500.00 |
+
+
 ---
 
-### Problem 5. Login for N consecutive days (Islands) ★★★
+
+### 5. Login for N consecutive days (Islands) ★★★
+
 
 Consider `product_views` as your login log, and find customers **active for more than 3 consecutive days**.
 
@@ -195,10 +271,12 @@ Consider `product_views` as your login log, and find customers **active for more
 | customer_name | streak_days | streak_start | streak_end |
 |-------------|-----------|------------|----------|
 
-??? tip "Hint"
-    - `DATE(viewed_at)` Detect groups of consecutive dates after removing duplicates
-    - `DATE(viewed_at, '-' || (ROW_NUMBER()-1) || ' days')` → Same value if in the same group
-    - `HAVING COUNT(*) >= 3`
+
+**Hint 1:** - `DATE(viewed_at)` Detect groups of consecutive dates after removing duplicates
+- `DATE(viewed_at, '-' || (ROW_NUMBER()-1) || ' days')` → Same value if in the same group
+- `HAVING COUNT(*) >= 3`
+
+
 
 ??? success "Answer"
     ```sql
@@ -238,9 +316,25 @@ Consider `product_views` as your login log, and find customers **active for more
     LIMIT 20;
     ```
 
+
+    **Result** (top 7 of 20 rows)
+
+    | customer_name | streak_days | streak_start | streak_end |
+    |---|---|---|---|
+    | Austin Townsend | 46 | 2020-02-28 | 2020-04-13 |
+    | Gabriel Walters | 40 | 2016-01-09 | 2016-02-17 |
+    | James Banks | 39 | 2020-05-02 | 2020-06-09 |
+    | Jason Rivera | 27 | 2020-02-28 | 2020-03-25 |
+    | John Maldonado | 26 | 2019-03-13 | 2019-04-07 |
+    | Adam Moore | 25 | 2016-03-05 | 2016-03-29 |
+    | Gabriel Walters | 25 | 2016-04-18 | 2016-05-12 |
+
+
 ---
 
-### Problem 6. Top-N by category (ranking within group) ★★★
+
+### 6. Top-N by category (ranking within group) ★★★
+
 
 Extract the **two products with the highest review ratings** from each category.
 Only products with 10 or more reviews are eligible. In case of a tie, the product with the most reviews will take precedence.
@@ -250,10 +344,12 @@ Only products with 10 or more reviews are eligible. In case of a tie, the produc
 | category | product_name | avg_rating | review_count | rank |
 |----------|-------------|-----------|-------------|------|
 
-??? tip "Hint"
-    - Filter number of reviews by `HAVING COUNT(*) >= 10`
-    - `ROW_NUMBER() OVER (PARTITION BY category ORDER BY avg_rating DESC, review_count DESC)`
-    - `WHERE rn <= 2`
+
+**Hint 1:** - Filter number of reviews by `HAVING COUNT(*) >= 10`
+- `ROW_NUMBER() OVER (PARTITION BY category ORDER BY avg_rating DESC, review_count DESC)`
+- `WHERE rn <= 2`
+
+
 
 ??? success "Answer"
     ```sql
@@ -283,9 +379,25 @@ Only products with 10 or more reviews are eligible. In case of a tie, the produc
     ORDER BY category, rn;
     ```
 
+
+    **Result** (top 7 of 70 rows)
+
+    | category | product_name | avg_rating | review_count | rank |
+    |---|---|---|---|---|
+    | 2-in-1 | HP Pavilion x360 14 Black | 3.79 | 28 | 1 |
+    | 2-in-1 | Lenovo IdeaPad Flex 5 | 3.75 | 12 | 2 |
+    | AMD | MSI Radeon RX 9070 VENTUS 3X White | 4.08 | 40 | 1 |
+    | AMD | AMD Ryzen 9 9900X | 4.08 | 13 | 2 |
+    | AMD Socket | MSI MAG X870E TOMAHAWK WIFI White | 4.06 | 32 | 1 |
+    | AMD Socket | ASRock B850M Pro RS Silver | 4.04 | 25 | 2 |
+    | Air Cooling | Arctic Freezer 36 A-RGB White | 4.02 | 59 | 1 |
+
+
 ---
 
-### Problem 7. Year-on-year (YoY) growth rate ★★★
+
+### 7. Year-on-year (YoY) growth rate ★★★
+
 
 Find the year-over-year growth rate (YoY %) of **quarterly sales**.
 It covers data from 2023 to 2025.
@@ -295,9 +407,11 @@ It covers data from 2023 to 2025.
 | year | quarter | revenue | prev_year_revenue | yoy_growth_pct |
 |------|---------|---------|------------------|---------------|
 
-??? tip "Hint"
-    - Refer to sales in the same quarter of the previous year as `LAG(revenue, 4) OVER (ORDER BY year, quarter)` — since quarters are 1 to 4, 4 transitions are the same quarter of the previous year.
-    - or `LAG(revenue, 1) OVER (PARTITION BY quarter ORDER BY year)`
+
+**Hint 1:** - Refer to sales in the same quarter of the previous year as `LAG(revenue, 4) OVER (ORDER BY year, quarter)` — since quarters are 1 to 4, 4 transitions are the same quarter of the previous year.
+- or `LAG(revenue, 1) OVER (PARTITION BY quarter ORDER BY year)`
+
+
 
 ??? success "Answer"
     ```sql
@@ -327,9 +441,25 @@ It covers data from 2023 to 2025.
     ORDER BY year, quarter;
     ```
 
+
+    **Result** (top 7 of 12 rows)
+
+    | year | quarter | revenue | prev_year_revenue | yoy_growth_pct |
+    |---|---|---|---|---|
+    | 2023 | 1 | 1,112,502,647 | NULL | NULL |
+    | 2023 | 2 | 1,075,865,258 | NULL | NULL |
+    | 2023 | 3 | 1,162,362,566 | NULL | NULL |
+    | 2023 | 4 | 1,464,300,253 | NULL | NULL |
+    | 2024 | 1 | 1,263,575,536 | 1,112,502,647 | 13.60 |
+    | 2024 | 2 | 1,306,918,979 | 1,075,865,258 | 21.50 |
+    | 2024 | 3 | 1,340,721,817 | 1,162,362,566 | 15.30 |
+
+
 ---
 
-### Problem 8. Moving Average ★★☆
+
+### 8. Moving Average ★★☆
+
 
 Find the **7-day moving average of daily sales** for 2024.
 The moving average is the average of the previous 7 days including the current day.
@@ -339,9 +469,11 @@ The moving average is the average of the previous 7 days including the current d
 | order_date | daily_revenue | ma_7d |
 |-----------|-------------|------|
 
-??? tip "Hint"
-    - `AVG(daily_revenue) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`
-    - LEFT JOIN with `calendar` to include days without orders as 0
+
+**Hint 1:** - `AVG(daily_revenue) OVER (ORDER BY order_date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`
+- LEFT JOIN with `calendar` to include days without orders as 0
+
+
 
 ??? success "Answer"
     ```sql
@@ -367,9 +499,25 @@ The moving average is the average of the previous 7 days including the current d
     ORDER BY order_date;
     ```
 
+
+    **Result** (top 7 of 366 rows)
+
+    | order_date | daily_revenue | ma_7d |
+    |---|---|---|
+    | 2024-01-01 | 7,732,372 | 7,732,372 |
+    | 2024-01-02 | 14,807,975 | 11,270,173 |
+    | 2024-01-03 | 2,825,828 | 8,455,391 |
+    | 2024-01-04 | 4,332,900 | 7,424,768 |
+    | 2024-01-05 | 8,083,504 | 7,556,515 |
+    | 2024-01-06 | 9,182,200 | 7,827,463 |
+    | 2024-01-07 | 23,522,036 | 10,069,545 |
+
+
 ---
 
-### Problem 9. Percentile ★★☆
+
+### 9. Percentile ★★☆
+
 
 Find the values ​​where the total purchase amount for each customer falls within the **top 10%, 25%, 50% (median), 75%, and 90%** boundaries.
 
@@ -380,9 +528,11 @@ Find the values ​​where the total purchase amount for each customer falls wi
 | 10 | ... |
 | 25 | ... |
 
-??? tip "Hint"
-    - Assign percentile group to `NTILE(100) OVER (ORDER BY total_spent)`
-    - Each percentile boundary value: MAX value in `WHERE percentile_group IN (10, 25, 50, 75, 90)`
+
+**Hint 1:** - Assign percentile group to `NTILE(100) OVER (ORDER BY total_spent)`
+- Each percentile boundary value: MAX value in `WHERE percentile_group IN (10, 25, 50, 75, 90)`
+
+
 
 ??? success "Answer"
     ```sql
@@ -409,9 +559,23 @@ Find the values ​​where the total purchase amount for each customer falls wi
     ORDER BY pctl;
     ```
 
+
+    **Result** (5 rows)
+
+    | percentile | threshold_amount |
+    |---|---|
+    | 10 | 180,500 |
+    | 25 | 1,183,200 |
+    | 50 | 4,654,232 |
+    | 75 | 13,607,591 |
+    | 90 | 31,606,150 |
+
+
 ---
 
-### Problem 10. Change rate compared to previous day + 7-day moving change rate ★★☆
+
+### 10. Change rate compared to previous day + 7-day moving change rate ★★☆
+
 
 **Percent change from previous day (DoD %)** for the number of daily orders in December 2024
 Find the **change rate (WoW %) compared to 7 days ago** at the same time.
@@ -421,10 +585,12 @@ Find the **change rate (WoW %) compared to 7 days ago** at the same time.
 | order_date | order_count | prev_day | dod_pct | prev_week | wow_pct |
 |-----------|------------|---------|--------|----------|--------|
 
-??? tip "Hint"
-    - `LAG(order_count, 1)` = the previous day, `LAG(order_count, 7)` = 7 days ago
-    - Rate of change = `(current_day - previous) / previous * 100`
-    - `calendar` Includes days missed due to LEFT JOIN
+
+**Hint 1:** - `LAG(order_count, 1)` = the previous day, `LAG(order_count, 7)` = 7 days ago
+- Rate of change = `(current_day - previous) / previous * 100`
+- `calendar` Includes days missed due to LEFT JOIN
+
+
 
 ??? success "Answer"
     ```sql
@@ -452,9 +618,25 @@ Find the **change rate (WoW %) compared to 7 days ago** at the same time.
     ORDER BY order_date;
     ```
 
+
+    **Result** (top 7 of 31 rows)
+
+    | order_date | order_count | prev_day | dod_pct | prev_week | wow_pct |
+    |---|---|---|---|---|---|
+    | 2024-12-01 | 17 | NULL | NULL | NULL | NULL |
+    | 2024-12-02 | 14 | 17 | -17.60 | NULL | NULL |
+    | 2024-12-03 | 15 | 14 | 7.10 | NULL | NULL |
+    | 2024-12-04 | 14 | 15 | -6.70 | NULL | NULL |
+    | 2024-12-05 | 9 | 14 | -35.70 | NULL | NULL |
+    | 2024-12-06 | 14 | 9 | 55.60 | NULL | NULL |
+    | 2024-12-07 | 15 | 14 | 7.10 | NULL | NULL |
+
+
 ---
 
-### Problem 11. Recursive CTE: Organizational Tree ★★★
+
+### 11. Recursive CTE: Organizational Tree ★★★
+
 
 Print the **full organizational hierarchy** using `manager_id` in the `staff` table.
 Include depth, supervisor name, and full path (CEO > ... > yourself).
@@ -466,15 +648,17 @@ Include depth, supervisor name, and full path (CEO > ... > yourself).
 | CEO Name | management | admin | 0 | NULL | CEO Name |
 | ... | ... | ... | 1 | CEO Name | CEO Name > ... |
 
-??? tip "Hint"
-    - Recursive CTE: `WHERE manager_id IS NULL` is the anchor (root)
-    - Join with `s.manager_id = tree.id` in the recursive part
-    - Accumulate paths with `path || ' > ' || s.name`
+
+**Hint 1:** - Recursive CTE: `WHERE manager_id IS NULL` is the anchor (root)
+- Join with `s.manager_id = tree.id` in the recursive part
+- Accumulate paths with `path || ' > ' || s.name`
+
+
 
 ??? success "Answer"
     ```sql
     WITH RECURSIVE org_tree AS (
-        -- Anchor: top-level manager (manager_id IS NULL)
+        -- 앵커: 최상위 관리자 (manager_id IS NULL)
         SELECT
             s.id,
             s.name,
@@ -485,10 +669,10 @@ Include depth, supervisor name, and full path (CEO > ... > yourself).
             s.name AS path
         FROM staff AS s
         WHERE s.manager_id IS NULL
-
+    
         UNION ALL
-
-        -- Recursive: subordinate employees
+    
+        -- 재귀: 하위 직원
         SELECT
             s.id,
             s.name,
@@ -505,9 +689,23 @@ Include depth, supervisor name, and full path (CEO > ... > yourself).
     ORDER BY path;
     ```
 
+
+    **Result** (5 rows)
+
+    | name | department | role | depth | manager_name | path |
+    |---|---|---|---|---|---|
+    | Michael Thomas | Management | admin | 0 | NULL | Michael Thomas |
+    | Jaime Phelps | Sales | manager | 1 | Michael Thomas | Michael Thomas > Jaime Phelps |
+    | Jonathan Smith | Management | admin | 1 | Michael Thomas | Michael Thomas > Jonathan Smith |
+    | Nicole Hamilton | Marketing | manager | 2 | Jonathan Smith | Michael Thomas > Jonathan Smith > Nic... |
+    | Michael Mcguire | Management | admin | 1 | Michael Thomas | Michael Thomas > Michael Mcguire |
+
+
 ---
 
-### Problem 12. Recursive CTE: Creating date sequences ★★☆
+
+### 12. Recursive CTE: Creating date sequences ★★☆
+
 
 **Generate all dates in December 2024 as recursive CTEs**,
 Find the number of orders and sales for each date. (Days without orders are also displayed as 0)
@@ -518,10 +716,12 @@ Find the number of orders and sales for each date. (Days without orders are also
 |----|-----------|---------|
 | 2024-12-01 | ... | ... |
 
-??? tip "Hint"
-    - Anchor: `SELECT '2024-12-01' AS dt`
-    - Recursion: `SELECT DATE(dt, '+1 day') FROM dates WHERE dt < '2024-12-31'`
-    - Combine order data with `LEFT JOIN orders`
+
+**Hint 1:** - Anchor: `SELECT '2024-12-01' AS dt`
+- Recursion: `SELECT DATE(dt, '+1 day') FROM dates WHERE dt < '2024-12-31'`
+- Combine order data with `LEFT JOIN orders`
+
+
 
 ??? success "Answer"
     ```sql
@@ -544,9 +744,25 @@ Find the number of orders and sales for each date. (Days without orders are also
     ORDER BY d.dt;
     ```
 
+
+    **Result** (top 7 of 31 rows)
+
+    | dt | order_count | revenue |
+    |---|---|---|
+    | 2024-12-01 | 17 | 12,081,245 |
+    | 2024-12-02 | 14 | 12,578,657 |
+    | 2024-12-03 | 15 | 11,867,860 |
+    | 2024-12-04 | 14 | 11,198,303 |
+    | 2024-12-05 | 9 | 5,489,585 |
+    | 2024-12-06 | 14 | 16,160,600 |
+    | 2024-12-07 | 15 | 16,802,502 |
+
+
 ---
 
-### Problem 13. Cohort analysis (repurchase by subscription month) ★★★
+
+### 13. Cohort analysis (repurchase by subscription month) ★★★
+
 
 Based on the customer's **subscription month (cohort)**, find the percentage of customers purchasing from 0 to 3 months after subscription.
 This applies to customers signing up in 2024.
@@ -556,10 +772,12 @@ This applies to customers signing up in 2024.
 | cohort | size | m0_pct | m1_pct | m2_pct | m3_pct |
 |--------|------|-------|-------|-------|-------|
 
-??? tip "Hint"
-    - Cohort: `SUBSTR(created_at, 1, 7)`
-    - Month Offset: Convert `(julianday(order_month-01) - julianday(signup_month-01)) / 30` to integer
-    - `COUNT(DISTINCT CASE WHEN offset = N THEN customer_id END)` / cohort size
+
+**Hint 1:** - Cohort: `SUBSTR(created_at, 1, 7)`
+- Month Offset: Convert `(julianday(order_month-01) - julianday(signup_month-01)) / 30` to integer
+- `COUNT(DISTINCT CASE WHEN offset = N THEN customer_id END)` / cohort size
+
+
 
 ??? success "Answer"
     ```sql
@@ -600,9 +818,25 @@ This applies to customers signing up in 2024.
     ORDER BY c.cohort_month;
     ```
 
+
+    **Result** (top 7 of 12 rows)
+
+    | cohort | size | m0_pct | m1_pct | m2_pct | m3_pct |
+    |---|---|---|---|---|---|
+    | 2024-01 | 52 | 11.50 | 5.80 | 9.60 | 7.70 |
+    | 2024-02 | 48 | 18.80 | 0.0 | 6.30 | 10.40 |
+    | 2024-03 | 71 | 16.90 | 14.10 | 15.50 | 2.80 |
+    | 2024-04 | 53 | 5.70 | 7.50 | 7.50 | 3.80 |
+    | 2024-05 | 43 | 9.30 | 9.30 | 16.30 | 4.70 |
+    | 2024-06 | 68 | 10.30 | 5.90 | 5.90 | 8.80 |
+    | 2024-07 | 62 | 8.10 | 9.70 | 11.30 | 11.30 |
+
+
 ---
 
-### Problem 14. Category hierarchy aggregation (Recursive + GROUP BY) ★★☆
+
+### 14. Category hierarchy aggregation (Recursive + GROUP BY) ★★☆
+
 
 Find the **total sales by category** from the `categories` tree.
 Roll up all sales from the lower category (small/medium) to the upper category (large).
@@ -612,9 +846,11 @@ Roll up all sales from the lower category (small/medium) to the upper category (
 | top_category | sub_category_count | product_count | total_revenue |
 |-------------|-------------------|-------------|-------------|
 
-??? tip "Hint"
-    - Find the root (depth=0) ancestor of each category with recursive CTE
-    - After recursive search, base on root `GROUP BY`
+
+**Hint 1:** - Find the root (depth=0) ancestor of each category with recursive CTE
+- After recursive search, base on root `GROUP BY`
+
+
 
 ??? success "Answer"
     ```sql
@@ -622,9 +858,9 @@ Roll up all sales from the lower category (small/medium) to the upper category (
         SELECT id, id AS root_id, name AS root_name, depth
         FROM categories
         WHERE parent_id IS NULL
-
+    
         UNION ALL
-
+    
         SELECT c.id, ct.root_id, ct.root_name, c.depth
         FROM categories AS c
         JOIN cat_tree AS ct ON c.parent_id = ct.id
@@ -644,9 +880,25 @@ Roll up all sales from the lower category (small/medium) to the upper category (
     ORDER BY total_revenue DESC;
     ```
 
+
+    **Result** (top 7 of 18 rows)
+
+    | top_category | sub_category_count | product_count | total_revenue |
+    |---|---|---|---|
+    | Laptop | 4 | 29 | 10,144,187,100 |
+    | Graphics Card | 2 | 15 | 5,608,961,100 |
+    | Monitor | 3 | 22 | 4,753,611,200 |
+    | Motherboard | 2 | 23 | 3,255,592,700 |
+    | CPU | 2 | 7 | 1,877,389,800 |
+    | Speakers/Headsets | 0 | 12 | 1,561,393,600 |
+    | Storage | 3 | 15 | 1,524,801,600 |
+
+
 ---
 
-### Problem 15. Self-Join: Employee with higher salary (number of sales processed) than boss ★★★
+
+### 15. Self-Join: Employee with higher salary (number of sales processed) than boss ★★★
+
 
 Find the number of orders processed by each employee, and find **the employee who processed more orders than his/her boss**.
 (based on orders.staff_id)
@@ -656,10 +908,12 @@ Find the number of orders processed by each employee, and find **the employee wh
 | staff_name | department | handled_orders | manager_name | manager_orders |
 |-----------|-----------|---------------|-------------|---------------|
 
-??? tip "Hint"
-    - `staff AS s JOIN staff AS m ON s.manager_id = m.id` (Self-Join)
-    - Number of orders for each employee: counted as `orders.staff_id`
-    - `WHERE s_count > m_count`
+
+**Hint 1:** - `staff AS s JOIN staff AS m ON s.manager_id = m.id` (Self-Join)
+- Number of orders for each employee: counted as `orders.staff_id`
+- `WHERE s_count > m_count`
+
+
 
 ??? success "Answer"
     ```sql
@@ -686,9 +940,12 @@ Find the number of orders processed by each employee, and find **the employee wh
     ORDER BY emp.handled_orders DESC;
     ```
 
+
 ---
 
-### Problem 16. Multi-level analysis: Measuring discount effect ★★☆
+
+### 16. Multi-level analysis: Measuring discount effect ★★☆
+
 
 Compare customers who used the coupon with those who did not and find:
 (1) Average order amount by group, (2) Repurchase rate, (3) Average review rating.
@@ -698,10 +955,12 @@ Compare customers who used the coupon with those who did not and find:
 | segment | customer_count | avg_order_value | repeat_rate_pct | avg_rating |
 |---------|--------------|----------------|----------------|-----------|
 
-??? tip "Hint"
-    - Coupon usage: Classify segments by presence of `coupon_usage`
-    - Repurchase rate: Customers who ordered more than 2 items / All customers
-    - Aggregate each of the three tables (orders, coupon_usage, reviews) into CTE and then merge them.
+
+**Hint 1:** - Coupon usage: Classify segments by presence of `coupon_usage`
+- Repurchase rate: Customers who ordered more than 2 items / All customers
+- Aggregate each of the three tables (orders, coupon_usage, reviews) into CTE and then merge them.
+
+
 
 ??? success "Answer"
     ```sql
@@ -748,9 +1007,20 @@ Compare customers who used the coupon with those who did not and find:
     ORDER BY os.segment;
     ```
 
+
+    **Result** (2 rows)
+
+    | segment | customer_count | avg_order_value | repeat_rate_pct | avg_rating |
+    |---|---|---|---|---|
+    | Coupon User | 888 | 1,030,689.00 | 97.20 | 3.89 |
+    | Non-Coupon | 2772 | 843,056.00 | 52.50 | 3.93 |
+
+
 ---
 
-### Problem 17. Data quality check: NULL/outlier detection ★★☆
+
+### 17. Data quality check: NULL/outlier detection ★★☆
+
 
 Report the following data quality issues with one query:
 (1) Order amount is 0 or less, (2) Delivery date < Order date, (3) Outside review rating range, (4) Order on a future date.
@@ -760,10 +1030,12 @@ Report the following data quality issues with one query:
 | issue_type | table_name | record_count | sample_ids |
 |-----------|-----------|-------------|-----------|
 
-??? tip "Hint"
-    - Combine the results of each quality check with `UNION ALL`
-    - List sample ID as `GROUP_CONCAT(id, ',')`
-    - Future date: `ordered_at > '2025-12-31'`
+
+**Hint 1:** - Combine the results of each quality check with `UNION ALL`
+- List sample ID as `GROUP_CONCAT(id, ',')`
+- Future date: `ordered_at > '2025-12-31'`
+
+
 
 ??? success "Answer"
     ```sql
@@ -773,9 +1045,9 @@ Report the following data quality issues with one query:
            GROUP_CONCAT(id, ',') AS sample_ids
     FROM orders
     WHERE total_amount <= 0
-
+    
     UNION ALL
-
+    
     SELECT 'Delivery Before Shipment',
            'shipping',
            COUNT(*),
@@ -784,18 +1056,18 @@ Report the following data quality issues with one query:
     WHERE delivered_at IS NOT NULL
       AND shipped_at IS NOT NULL
       AND delivered_at < shipped_at
-
+    
     UNION ALL
-
+    
     SELECT 'Rating Out of Range',
            'reviews',
            COUNT(*),
            GROUP_CONCAT(id, ',')
     FROM reviews
     WHERE rating < 1 OR rating > 5
-
+    
     UNION ALL
-
+    
     SELECT 'Future Order Date',
            'orders',
            COUNT(*),
@@ -804,9 +1076,22 @@ Report the following data quality issues with one query:
     WHERE ordered_at > DATE('now', '+1 day');
     ```
 
+
+    **Result** (4 rows)
+
+    | issue_type | table_name | record_count | sample_ids |
+    |---|---|---|---|
+    | Zero/Negative Amount | orders | 0 | NULL |
+    | Delivery Before Shipment | shipping | 0 | NULL |
+    | Rating Out of Range | reviews | 0 | NULL |
+    | Future Order Date | orders | 0 | NULL |
+
+
 ---
 
-### Problem 18. Time series anomaly detection: 3-sigma rule ★☆☆
+
+### 18. Time series anomaly detection: 3-sigma rule ★☆☆
+
 
 Find outlier days that fall outside the **average +/- 3 standard deviations** of your daily sales.
 
@@ -815,10 +1100,12 @@ Find outlier days that fall outside the **average +/- 3 standard deviations** of
 | order_date | daily_revenue | avg_revenue | stddev | z_score |
 |-----------|-------------|-----------|-------|--------|
 
-??? tip "Hint"
-    - Standard deviation: Manual calculation as it is not directly supported by SQLite
-    - `SQRT(AVG(x*x) - AVG(x)*AVG(x))` = population standard deviation
-    - If Z-score = `(value - mean) / stddev`, `ABS(z) > 3`, it is an outlier.
+
+**Hint 1:** - Standard deviation: Manual calculation as it is not directly supported by SQLite
+- `SQRT(AVG(x*x) - AVG(x)*AVG(x))` = population standard deviation
+- If Z-score = `(value - mean) / stddev`, `ABS(z) > 3`, it is an outlier.
+
+
 
 ??? success "Answer"
     ```sql
@@ -848,9 +1135,25 @@ Find outlier days that fall outside the **average +/- 3 standard deviations** of
     ORDER BY ABS((d.daily_revenue - s.avg_rev) / s.stddev_rev) DESC;
     ```
 
+
+    **Result** (top 7 of 48 rows)
+
+    | order_date | daily_revenue | avg_revenue | stddev | z_score |
+    |---|---|---|---|---|
+    | 2025-12-18 | 62,329,008 | 10,077,964 | 8,237,014 | 6.34 |
+    | 2025-03-05 | 62,266,624 | 10,077,964 | 8,237,014 | 6.34 |
+    | 2020-11-21 | 60,470,134 | 10,077,964 | 8,237,014 | 6.12 |
+    | 2025-12-21 | 56,392,485 | 10,077,964 | 8,237,014 | 5.62 |
+    | 2020-02-09 | 51,620,600 | 10,077,964 | 8,237,014 | 5.04 |
+    | 2025-05-06 | 51,138,521 | 10,077,964 | 8,237,014 | 4.98 |
+    | 2022-01-06 | 50,993,500 | 10,077,964 | 8,237,014 | 4.97 |
+
+
 ---
 
-### Problem 19. Complex analysis: RFM segmentation ★★★
+
+### 19. Complex analysis: RFM segmentation ★★★
+
 
 Segment your customers by **RFM(Recency, Frequency, Monetary)**.
 Divide each indicator into a scale of 1 to 5, and calculate the number of customers and average sales for each segment.
@@ -861,11 +1164,13 @@ Divide each indicator into a scale of 1 to 5, and calculate the number of custom
 |------------|--------|--------|--------|--------------|------------|
 | Champions | 5 | 5 | 5 | ... | ... |
 
-??? tip "Hint"
-    - Recency: Days since last order → `NTILE(5)` (the more recent, the higher the score)
-    - Frequency: Number of orders → `NTILE(5)`
-    - Monetary: Total purchase amount → `NTILE(5)`
-    - Segment classification: R+F+M sum is 13~15=Champions, 10~12=Loyal, 7~9=Potential, 4~6=AtRisk, 3=Lost
+
+**Hint 1:** - Recency: Days since last order → `NTILE(5)` (the more recent, the higher the score)
+- Frequency: Number of orders → `NTILE(5)`
+- Monetary: Total purchase amount → `NTILE(5)`
+- Segment classification: R+F+M sum is 13~15=Champions, 10~12=Loyal, 7~9=Potential, 4~6=AtRisk, 3=Lost
+
+
 
 ??? success "Answer"
     ```sql
@@ -912,9 +1217,23 @@ Divide each indicator into a scale of 1 to 5, and calculate the number of custom
     ORDER BY AVG(rfm_total) DESC;
     ```
 
+
+    **Result** (5 rows)
+
+    | rfm_segment | r_score | f_score | m_score | customer_count | avg_monetary |
+    |---|---|---|---|---|---|
+    | Champions | 4.40 | 4.80 | 4.80 | 579 | 42,854,633 |
+    | Loyal | 3.30 | 3.80 | 3.80 | 655 | 11,437,042 |
+    | Potential | 2.80 | 2.60 | 2.60 | 788 | 4,077,164 |
+    | At Risk | 2.10 | 1.50 | 1.50 | 653 | 1,071,866 |
+    | Lost | 1.00 | 1.00 | 1.00 | 134 | 175,595 |
+
+
 ---
 
-### Problem 20. Comprehensive scenario: Marketing campaign effectiveness analysis ★★★
+
+### 20. Comprehensive scenario: Marketing campaign effectiveness analysis ★★★
+
 
 Break down the following by promotions in 2024:
 (1) Number of participating customers, (2) Sales during promotion period vs. sales during the previous same period (incremental effect),
@@ -925,11 +1244,13 @@ Break down the following by promotions in 2024:
 | promo_name | promo_type | participants | promo_revenue | pre_revenue | lift_pct | post_repurchase_pct | cac |
 |-----------|-----------|------------|-------------|-----------|---------|-------------------|-----|
 
-??? tip "Hint"
-    - Set period to `started_at`/`ended_at` in `promotions`
-    - Previous same period: `DATE(started_at, '-' || (julianday(ended_at)-julianday(started_at)) || ' days')`
-    - New Customer: Customer who placed their first order during the promotion period.
-    - Separated into CTE levels 4-5
+
+**Hint 1:** - Set period to `started_at`/`ended_at` in `promotions`
+- Previous same period: `DATE(started_at, '-' || (julianday(ended_at)-julianday(started_at)) || ' days')`
+- New Customer: Customer who placed their first order during the promotion period.
+- Separated into CTE levels 4-5
+
+
 
 ??? success "Answer"
     ```sql
@@ -1011,3 +1332,19 @@ Break down the following by promotions in 2024:
              pr.pre_revenue, rp.repurchase_customers, rp.total_customers
     ORDER BY promo_revenue DESC;
     ```
+
+
+    **Result** (top 7 of 12 rows)
+
+    | promo_name | promo_type | participants | promo_revenue | pre_revenue | lift_pct | post_repurchase_pct | cac |
+    |---|---|---|---|---|---|---|---|
+    | Back to School Laptop Sale 2024 | category | 317 | 359,327,629 | 356,716,760 | 0.7 | 32.50 | 74,055 |
+    | Autumn Gift Sale 2024 | seasonal | 171 | 231,954,685 | 142,169,738 | 63.20 | 36.80 | 155,025 |
+    | Spring Sale 2024 | seasonal | 226 | 212,486,725 | 217,467,681 | -2.30 | 35.80 | 78,385 |
+    | Year-End Thank You Sale 2024 | seasonal | 186 | 192,873,636 | 188,843,699 | 2.10 | 31.20 | 121,744 |
+    | Summer Cooling Festival 2024 | category | 168 | 191,169,469 | 178,340,805 | 7.20 | 26.20 | 120,630 |
+    | Printer Special Deal 2024 | category | 121 | 147,372,860 | 158,556,326 | -7.10 | 30.60 | 120,300 |
+    | New Year Sale 2024 | seasonal | 68 | 70,486,815 | 54,386,890 | 29.60 | 25.00 | 148,566 |
+
+
+---

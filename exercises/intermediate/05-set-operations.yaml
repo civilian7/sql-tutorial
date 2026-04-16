@@ -1,0 +1,483 @@
+metadata:
+  id: intermediate-05-set-operations
+  title: "집합 연산"
+  title_en: "Set Operations"
+  difficulty: intermediate
+  concepts: [UNION, UNION ALL, INTERSECT, EXCEPT, set operations with JOIN/GROUP BY]
+  tables: [customers, orders, reviews, complaints, wishlists, order_items, products, payments, returns]
+  prerequisites: [intermediate-04-subqueries]
+  estimated_minutes: 30
+  default_level: 2
+  default_type: "SELECT"
+
+problems:
+  - id: i05s-01
+    level: 1
+    type: "SELECT"
+    question: |
+      리뷰를 작성한 고객과 불만을 접수한 고객의 이름을 중복 없이 합쳐서 조회하세요. 이름순, 상위 20명.
+    question_en: |
+      Combine customers who wrote reviews and customers who filed complaints into a single deduplicated list. Sort by name, top 20.
+    reference_sql:
+      common: |
+        SELECT c.name, c.email
+        FROM customers AS c
+        WHERE c.id IN (
+            SELECT customer_id FROM reviews
+            UNION
+            SELECT customer_id FROM complaints
+        )
+        ORDER BY c.name
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT customer_id FROM reviews UNION SELECT customer_id FROM complaints` — 양쪽 모두에 존재하는 고객은 한 번만 나타납니다."
+        en: "`SELECT customer_id FROM reviews UNION SELECT customer_id FROM complaints` — customers present in both appear only once."
+    max_score: 10
+    tags: [UNION, IN subquery, customers, reviews, complaints]
+
+  - id: i05s-02
+    level: 1
+    type: "SELECT"
+    question: |
+      리뷰를 작성한 고객과 불만을 접수한 고객의 ID를 중복 포함하여 합치고, 전체 건수를 세어보세요.
+    question_en: |
+      Combine review author IDs and complaint author IDs including duplicates, and count the total.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS total_with_dup
+        FROM (
+            SELECT customer_id FROM reviews
+            UNION ALL
+            SELECT customer_id FROM complaints
+        );
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "`UNION ALL`로 합친 뒤 `COUNT(*)`로 전체 건수를 구합니다. UNION과 비교하면 건수 차이가 있습니다."
+        en: "Combine with `UNION ALL` then use `COUNT(*)` to get the total. Comparing with UNION shows the difference."
+    max_score: 10
+    tags: [UNION ALL, COUNT, reviews, complaints]
+
+  - id: i05s-03
+    level: 1
+    type: "SELECT"
+    question: |
+      2024년과 2025년 각각의 주문 건수를 하나의 결과로 합쳐서 보세요.
+    question_en: |
+      Combine the order counts for 2024 and 2025 into a single result.
+    reference_sql:
+      common: |
+        SELECT '2024' AS year,
+               COUNT(*) AS order_count,
+               ROUND(SUM(total_amount), 2) AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+          AND status NOT IN ('cancelled')
+        UNION ALL
+        SELECT '2025' AS year,
+               COUNT(*) AS order_count,
+               ROUND(SUM(total_amount), 2) AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2025%'
+          AND status NOT IN ('cancelled');
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "`SELECT '2024' AS year, COUNT(*) ... UNION ALL SELECT '2025' AS year, COUNT(*) ...` — 리터럴 컬럼으로 구분합니다."
+        en: "`SELECT '2024' AS year, COUNT(*) ... UNION ALL SELECT '2025' AS year, COUNT(*) ...` — distinguish with a literal column."
+    max_score: 10
+    tags: [UNION ALL, COUNT, SUM, orders]
+
+  - id: i05s-04
+    level: 1
+    type: "SELECT"
+    question: |
+      위시리스트에 담긴 상품 ID와 실제 주문된 상품 ID를 중복 없이 합쳐서 총 몇 종류인지 세어보세요.
+    question_en: |
+      Combine wishlisted product IDs and ordered product IDs (deduplicated) and count the total unique products.
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS total_products
+        FROM (
+            SELECT product_id FROM wishlists
+            UNION
+            SELECT product_id FROM order_items
+        );
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "`SELECT product_id FROM wishlists UNION SELECT product_id FROM order_items` — 합집합의 행 수가 곧 종류 수입니다."
+        en: "The row count of the union equals the number of products with either interest or purchase history."
+    max_score: 10
+    tags: [UNION, COUNT, wishlists, order_items]
+
+  - id: i05s-05
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 취소 이벤트와 반품 요청 이벤트를 하나의 타임라인으로 합치세요. 최근 20건.
+    question_en: |
+      Combine order cancellation events and return request events into a single timeline. Most recent 20.
+    reference_sql:
+      common: |
+        SELECT '취소' AS event_type,
+               order_number AS reference,
+               cancelled_at AS event_date
+        FROM orders
+        WHERE status = 'cancelled' AND cancelled_at IS NOT NULL
+        UNION ALL
+        SELECT '반품' AS event_type,
+               CAST(order_id AS TEXT) AS reference,
+               requested_at AS event_date
+        FROM returns
+        WHERE requested_at IS NOT NULL
+        ORDER BY event_date DESC
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "이벤트 유형을 구분하는 리터럴 컬럼을 추가하세요. ORDER BY는 전체 결과에 적용됩니다."
+        en: "Add a literal column to distinguish event types. ORDER BY applies to the entire result."
+    max_score: 10
+    tags: [UNION ALL, CAST, ORDER BY, orders, returns]
+
+  - id: i05s-06
+    level: 2
+    type: "SELECT"
+    question: |
+      2025년 월별 매출과 함께 연간 합계 행을 추가하세요.
+    question_en: |
+      Show 2025 monthly revenue with an annual total row appended.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(ordered_at, 1, 7) AS month,
+            COUNT(*) AS order_count,
+            ROUND(SUM(total_amount), 2) AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2025%'
+          AND status NOT IN ('cancelled')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        UNION ALL
+        SELECT
+            '== 합계 ==' AS month,
+            COUNT(*) AS order_count,
+            ROUND(SUM(total_amount), 2) AS revenue
+        FROM orders
+        WHERE ordered_at LIKE '2025%'
+          AND status NOT IN ('cancelled')
+        ORDER BY month;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "월별 `GROUP BY` 결과에 `UNION ALL`로 전체 합계 행을 추가합니다."
+        en: "Append a `UNION ALL` total row to the monthly `GROUP BY` result."
+    max_score: 10
+    tags: [UNION ALL, GROUP BY, SUM, orders]
+
+  - id: i05s-07
+    level: 2
+    type: "SELECT"
+    question: |
+      결제 수단별 건수를 조회하되, 마지막 행에 전체 합계를 추가하세요.
+    question_en: |
+      Show payment method counts with a total row at the end.
+    reference_sql:
+      common: |
+        SELECT
+            method,
+            COUNT(*) AS tx_count,
+            ROUND(SUM(amount), 2) AS total_amount
+        FROM payments
+        WHERE status = 'completed'
+        GROUP BY method
+        UNION ALL
+        SELECT
+            '== 합계 ==' AS method,
+            COUNT(*) AS tx_count,
+            ROUND(SUM(amount), 2) AS total_amount
+        FROM payments
+        WHERE status = 'completed'
+        ORDER BY
+            CASE WHEN method = '== 합계 ==' THEN 1 ELSE 0 END,
+            tx_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT method, COUNT(*), SUM(amount) FROM payments GROUP BY method UNION ALL SELECT '합계', COUNT(*), SUM(amount) FROM payments` 구조입니다."
+        en: "Structure: GROUP BY result UNION ALL total row."
+    max_score: 10
+    tags: [UNION ALL, GROUP BY, CASE, payments]
+
+  - id: i05s-08
+    level: 2
+    type: "SELECT"
+    question: |
+      리뷰를 작성하고 불만도 접수한 고객(교집합)을 찾으세요. 이름순, 상위 15명.
+    question_en: |
+      Find customers who have both written a review and filed a complaint (intersection). Sort by name, top 15.
+    reference_sql:
+      common: |
+        SELECT c.name, c.email, c.grade
+        FROM customers AS c
+        WHERE c.id IN (
+            SELECT customer_id FROM reviews
+            INTERSECT
+            SELECT customer_id FROM complaints
+        )
+        ORDER BY c.name
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT customer_id FROM reviews INTERSECT SELECT customer_id FROM complaints` — 양쪽 모두에 존재하는 고객 ID만 반환합니다."
+        en: "Returns only customer IDs present in both."
+    max_score: 10
+    tags: [INTERSECT, customers, reviews, complaints]
+
+  - id: i05s-09
+    level: 2
+    type: "SELECT"
+    question: |
+      위시리스트에 담았지만 한 번도 주문하지 않은 상품(차집합)을 찾으세요. 가격 내림차순, 상위 15개.
+    question_en: |
+      Find products that were wishlisted but never ordered (set difference). Sort by price descending, top 15.
+    reference_sql:
+      common: |
+        SELECT p.name, p.price
+        FROM products AS p
+        WHERE p.id IN (
+            SELECT product_id FROM wishlists
+            EXCEPT
+            SELECT product_id FROM order_items
+        )
+        ORDER BY p.price DESC
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT product_id FROM wishlists EXCEPT SELECT product_id FROM order_items` — 위시리스트에만 있고 주문에는 없는 상품 ID입니다."
+        en: "Product IDs only in wishlists, not in orders."
+    max_score: 10
+    tags: [EXCEPT, products, wishlists, order_items]
+
+  - id: i05s-10
+    level: 2
+    type: "SELECT"
+    question: |
+      2024년에는 주문했지만 2025년에는 주문하지 않은 고객을 찾으세요. 이름순, 상위 20명.
+    question_en: |
+      Find customers who ordered in 2024 but not in 2025. Sort by name, top 20.
+    reference_sql:
+      common: |
+        SELECT c.name, c.grade, c.email
+        FROM customers AS c
+        WHERE c.id IN (
+            SELECT customer_id
+            FROM orders
+            WHERE ordered_at LIKE '2024%'
+              AND status NOT IN ('cancelled')
+            EXCEPT
+            SELECT customer_id
+            FROM orders
+            WHERE ordered_at LIKE '2025%'
+              AND status NOT IN ('cancelled')
+        )
+        ORDER BY c.name
+        LIMIT 20;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT customer_id FROM orders WHERE ordered_at LIKE '2024%' EXCEPT SELECT customer_id FROM orders WHERE ordered_at LIKE '2025%'` — 2024년 고객에서 2025년 고객을 뺍니다."
+        en: "Subtract 2025 customers from 2024 customers."
+    max_score: 10
+    tags: [EXCEPT, customers, orders]
+
+  - id: i05s-11
+    level: 2
+    type: "SELECT"
+    question: |
+      고객 활동 유형별 건수를 하나의 보고서로 합치세요 (주문, 리뷰, 불만, 위시리스트).
+    question_en: |
+      Combine customer activity counts into a single report (orders, reviews, complaints, wishlists).
+    reference_sql:
+      common: |
+        SELECT '주문' AS activity_type, COUNT(*) AS total_count
+        FROM orders
+        WHERE status NOT IN ('cancelled')
+        UNION ALL
+        SELECT '리뷰', COUNT(*)
+        FROM reviews
+        UNION ALL
+        SELECT '불만 접수', COUNT(*)
+        FROM complaints
+        UNION ALL
+        SELECT '위시리스트', COUNT(*)
+        FROM wishlists
+        ORDER BY total_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT '주문' AS activity, COUNT(*) FROM orders UNION ALL SELECT '리뷰', COUNT(*) FROM reviews UNION ALL ...` — 각 SELECT의 컬럼 이름과 타입을 맞춰야 합니다."
+        en: "Column names and types must match across each SELECT."
+    max_score: 10
+    tags: [UNION ALL, COUNT, orders, reviews, complaints, wishlists]
+
+  - id: i05s-12
+    level: 3
+    type: "SELECT"
+    question: |
+      2024년과 2025년 모두 주문한 충성 고객의 이름, 등급, 두 해의 주문 건수를 구하세요. 상위 15명.
+    question_en: |
+      Find loyal customers who ordered in both 2024 and 2025, showing name, grade, and order counts for each year. Top 15.
+    reference_sql:
+      common: |
+        SELECT
+            c.name,
+            c.grade,
+            (SELECT COUNT(*) FROM orders
+             WHERE customer_id = c.id
+               AND ordered_at LIKE '2024%'
+               AND status NOT IN ('cancelled')) AS orders_2024,
+            (SELECT COUNT(*) FROM orders
+             WHERE customer_id = c.id
+               AND ordered_at LIKE '2025%'
+               AND status NOT IN ('cancelled')) AS orders_2025
+        FROM customers AS c
+        WHERE c.id IN (
+            SELECT customer_id FROM orders
+            WHERE ordered_at LIKE '2024%' AND status NOT IN ('cancelled')
+            INTERSECT
+            SELECT customer_id FROM orders
+            WHERE ordered_at LIKE '2025%' AND status NOT IN ('cancelled')
+        )
+        ORDER BY orders_2025 DESC, orders_2024 DESC
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "먼저 INTERSECT로 두 해 모두 주문한 고객 ID를 구하고, 그 고객에 대해 연도별 주문 건수를 SELECT 절 스칼라 서브쿼리로 추가합니다."
+        en: "First use INTERSECT to get customer IDs who ordered in both years, then add yearly order counts as SELECT clause scalar subqueries."
+    max_score: 10
+    tags: [INTERSECT, correlated subquery, customers, orders]
+
+  - id: i05s-13
+    level: 2
+    type: "SELECT"
+    question: |
+      불만이 접수되었지만 반품은 하지 않은 주문의 주문번호와 금액을 구하세요. 최근 15건.
+    question_en: |
+      Find orders that received complaints but were not returned. Show order number and amount. Most recent 15.
+    reference_sql:
+      common: |
+        SELECT o.order_number, o.total_amount, o.ordered_at
+        FROM orders AS o
+        WHERE o.id IN (
+            SELECT order_id FROM complaints WHERE order_id IS NOT NULL
+            EXCEPT
+            SELECT order_id FROM returns
+        )
+        ORDER BY o.ordered_at DESC
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT order_id FROM complaints WHERE order_id IS NOT NULL EXCEPT SELECT order_id FROM returns` — 불만은 있지만 반품까지 이어지지 않은 주문입니다."
+        en: "Orders with complaints but no returns."
+    max_score: 10
+    tags: [EXCEPT, orders, complaints, returns]
+
+  - id: i05s-14
+    level: 3
+    type: "SELECT"
+    question: |
+      상품별 "리뷰 건수 + 위시리스트 등록 수"를 UNION ALL 서브쿼리로 합산하세요. 상위 10개.
+    question_en: |
+      Compute per-product "review count + wishlist count" using a UNION ALL subquery. Top 10.
+    reference_sql:
+      common: |
+        SELECT
+            p.name,
+            COUNT(*) AS interest_score
+        FROM (
+            SELECT product_id FROM reviews
+            UNION ALL
+            SELECT product_id FROM wishlists
+        ) AS combined
+        INNER JOIN products AS p ON combined.product_id = p.id
+        GROUP BY p.id, p.name
+        ORDER BY interest_score DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`FROM (SELECT product_id FROM reviews UNION ALL SELECT product_id FROM wishlists) AS combined` — 합친 뒤 `GROUP BY product_id`로 건수를 세면 통합 관심도가 됩니다."
+        en: "After combining, `GROUP BY product_id` count gives the combined interest score."
+    max_score: 10
+    tags: [UNION ALL, GROUP BY, COUNT, products, reviews, wishlists]
+
+  - id: i05s-15
+    level: 3
+    type: "SELECT"
+    question: |
+      2024년 분기별 신규 고객 수와 주문 고객 수를 각각 구한 뒤 하나의 보고서로 합치세요.
+    question_en: |
+      Compute quarterly new signups and ordering customers for 2024, combined into one report.
+    reference_sql:
+      common: |
+        SELECT
+            'Q' || ((CAST(SUBSTR(created_at, 6, 2) AS INTEGER) - 1) / 3 + 1) AS quarter,
+            '신규가입' AS metric,
+            COUNT(*) AS value
+        FROM customers
+        WHERE created_at LIKE '2024%'
+        GROUP BY quarter
+        UNION ALL
+        SELECT
+            'Q' || ((CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) - 1) / 3 + 1) AS quarter,
+            '주문고객' AS metric,
+            COUNT(DISTINCT customer_id) AS value
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+          AND status NOT IN ('cancelled')
+        GROUP BY quarter
+        ORDER BY quarter, metric;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SELECT quarter, '신규가입' AS metric, COUNT(*) ... UNION ALL SELECT quarter, '주문' AS metric, COUNT(DISTINCT customer_id) ...` — metric 컬럼으로 지표를 구분합니다."
+        en: "Use a metric column to distinguish indicators."
+    max_score: 10
+    tags: [UNION ALL, GROUP BY, SUBSTR, CAST, customers, orders]

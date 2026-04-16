@@ -1,0 +1,345 @@
+metadata:
+  id: advanced-05-json
+  title: "JSON 활용"
+  title_en: "JSON Applications"
+  difficulty: advanced
+  category: exercises
+  concepts: [JSON_EXTRACT, JSON_EACH, JSON_GROUP_ARRAY, JSON_GROUP_OBJECT, json_set, json_remove, JSON Path Expression]
+  table_count: 2
+  tables: [products, categories]
+
+problems:
+  - id: a05j-01
+    level: 3
+    type: "JSON"
+    title: "JSON 기본 추출 — 노트북 CPU 목록"
+    title_en: "JSON Basic Extraction — Laptop CPU List"
+    body: |
+      노트북 카테고리의 모든 활성 상품에서 상품명과 CPU 사양을 추출하세요.
+      CPU 사양이 NULL인 상품은 제외합니다.
+    body_en: |
+      Extract product names and CPU specifications from all active products in the Laptop category.
+      Products with NULL CPU specifications are excluded.
+    hint: |
+      - `json_extract(specs, '$.cpu')`로 JSON 내부 값을 추출합니다
+      - `categories` 테이블과 JOIN하여 카테고리 필터링
+    hint_en: |
+      - Extract JSON internal values ​​with `json_extract(specs, '$.cpu')`
+      - Filter categories by JOIN with `categories` table
+    reference_sql: |
+      SELECT
+          p.name        AS product_name,
+          json_extract(p.specs, '$.cpu') AS cpu
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE cat.slug LIKE 'laptop%'
+        AND p.is_active = 1
+        AND p.specs IS NOT NULL
+      ORDER BY p.name;
+
+  - id: a05j-02
+    level: 3
+    type: "JSON"
+    title: "JSON 여러 필드 추출 — 노트북 스펙 시트"
+    title_en: "JSON Multiple Field Extraction — Notebook Spec Sheet"
+    body: |
+      노트북 상품의 화면 크기, CPU, RAM(GB), 저장 용량(GB), 배터리(시간)를 한 번에 추출하여 스펙 시트를 만드세요.
+      가격 내림차순으로 정렬합니다.
+    body_en: |
+      Create a spec sheet by extracting the screen size, CPU, RAM (GB), storage capacity (GB), and battery (hours) of your laptop product at once.
+      Sort by price descending.
+    hint: |
+      - `json_extract`를 여러 번 호출하여 각 필드를 별도 칼럼으로 추출
+      - `$.screen_size`, `$.cpu`, `$.ram_gb`, `$.storage_gb`, `$.battery_hours`
+    hint_en: |
+      - Call `json_extract` multiple times to extract each field into a separate column
+      - `$.screen_size`, `$.cpu`, `$.ram_gb`, `$.storage_gb`, `$.battery_hours`
+    reference_sql: |
+      SELECT
+          p.name                                     AS product_name,
+          p.price,
+          json_extract(p.specs, '$.screen_size')     AS screen_size,
+          json_extract(p.specs, '$.cpu')             AS cpu,
+          json_extract(p.specs, '$.ram_gb')          AS ram_gb,
+          json_extract(p.specs, '$.storage_gb')      AS storage_gb,
+          json_extract(p.specs, '$.battery_hours')   AS battery_hours
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE cat.slug LIKE 'laptop%'
+        AND p.is_active = 1
+        AND p.specs IS NOT NULL
+      ORDER BY p.price DESC
+      LIMIT 20;
+
+  - id: a05j-03
+    level: 3
+    type: "JSON"
+    title: "specs가 NULL인 상품 파악"
+    title_en: "Identifying products with NULL specs"
+    body: |
+      specs 정보가 없는(NULL) 상품의 카테고리별 분포를 확인하세요.
+      어떤 카테고리에 스펙 정보가 누락되어 있는지 파악하는 것이 목적입니다.
+    body_en: |
+      Check the distribution by category of products without specs information (NULL).
+      The goal is to determine which categories are missing specification information.
+    hint: |
+      - `WHERE p.specs IS NULL` 조건
+      - `GROUP BY` 카테고리명으로 집계
+    hint_en: |
+      - `WHERE p.specs IS NULL` condition
+      - Aggregated by `GROUP BY` Category name
+    reference_sql: |
+      SELECT
+          cat.name          AS category,
+          COUNT(*)          AS no_specs_count
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE p.specs IS NULL
+        AND p.is_active = 1
+      GROUP BY cat.name
+      ORDER BY no_specs_count DESC;
+
+  - id: a05j-04
+    level: 3
+    type: "JSON"
+    title: "JSON 키 목록 나열 — json_each 활용"
+    title_en: "List JSON keys — utilizing json_each"
+    body: |
+      노트북 상품 하나를 골라, specs JSON에 포함된 모든 키(key) 목록을 나열하세요.
+      `json_each` 테이블 반환 함수를 사용합니다.
+    body_en: |
+      Pick a laptop product and list all the keys included in the specs JSON.
+      `json_each` uses table-valued functions.
+    hint: |
+      - `json_each(specs)`는 JSON 객체의 각 key-value 쌍을 행으로 반환합니다
+      - 반환 칼럼: `key`, `value`, `type`
+      - `LIMIT 1`로 상품 하나를 선택한 뒤, `json_each`에 전달
+    hint_en: |
+      - `json_each(specs)` returns each key-value pair in a JSON object as a row
+      - Return columns: `key`, `value`, `type`
+      - Select one product with `LIMIT 1` and send it to `json_each`
+    reference_sql: |
+      SELECT
+          je.key,
+          je.value,
+          je.type
+      FROM products AS p,
+           json_each(p.specs) AS je
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE cat.slug LIKE 'laptop%'
+        AND p.specs IS NOT NULL
+        AND p.id = (
+            SELECT MIN(p2.id) FROM products AS p2
+            INNER JOIN categories AS c2 ON p2.category_id = c2.id
+            WHERE c2.slug LIKE 'laptop%' AND p2.specs IS NOT NULL
+        );
+
+  - id: a05j-05
+    level: 3
+    type: "JSON"
+    title: "JSON 조건 필터링 — 고성능 노트북 찾기"
+    title_en: "JSON Condition Filtering — Finding High-Performance Laptops"
+    body: |
+      RAM이 32GB 이상이고 저장 용량이 1024GB 이상인 노트북을 찾으세요.
+      상품명, 가격, RAM, 저장 용량을 표시합니다.
+    body_en: |
+      Look for a laptop with at least 32GB of RAM and at least 1024GB of storage.
+      Displays product name, price, RAM, and storage capacity.
+    hint: |
+      - `json_extract(specs, '$.ram_gb') >= 32`처럼 WHERE 절에서 JSON 값을 조건으로 사용
+      - JSON에서 추출된 값은 자동으로 적절한 타입으로 변환됩니다
+    hint_en: |
+      - Use JSON value as condition in WHERE clause like `json_extract(specs, '$.ram_gb') >= 32`
+      - Values ​​extracted from JSON are automatically converted to the appropriate type.
+    reference_sql: |
+      SELECT
+          p.name       AS product_name,
+          p.price,
+          json_extract(p.specs, '$.ram_gb')      AS ram_gb,
+          json_extract(p.specs, '$.storage_gb')  AS storage_gb,
+          json_extract(p.specs, '$.cpu')         AS cpu
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE cat.slug LIKE 'laptop%'
+        AND p.is_active = 1
+        AND p.specs IS NOT NULL
+        AND json_extract(p.specs, '$.ram_gb') >= 32
+        AND json_extract(p.specs, '$.storage_gb') >= 1024
+      ORDER BY p.price DESC;
+
+  - id: a05j-06
+    level: 3
+    type: "JSON"
+    title: "JSON 기반 그룹 집계 — CPU별 평균 가격"
+    title_en: "JSON-based group aggregation — average price by CPU"
+    body: |
+      노트북과 데스크톱의 CPU 사양별 평균 가격과 상품 수를 구하세요.
+      상품 수가 3개 이상인 CPU만 표시합니다.
+    body_en: |
+      Find the average price and number of products by CPU specification for laptops and desktops.
+      Shows only CPUs with 3 or more products.
+    hint: |
+      - `json_extract(specs, '$.cpu')`를 `GROUP BY`에 사용
+      - `HAVING COUNT(*) >= 3`으로 소수 그룹 제외
+    hint_en: |
+      - Use `json_extract(specs, '$.cpu')` for `GROUP BY`
+      - Exclude minority groups with `HAVING COUNT(*) >= 3`
+    reference_sql: |
+      SELECT
+          json_extract(p.specs, '$.cpu')     AS cpu,
+          COUNT(*)                           AS product_count,
+          ROUND(AVG(p.price))                AS avg_price,
+          MIN(p.price)                       AS min_price,
+          MAX(p.price)                       AS max_price
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE (cat.slug LIKE 'laptop%' OR cat.slug LIKE 'desktop%')
+        AND p.is_active = 1
+        AND p.specs IS NOT NULL
+      GROUP BY json_extract(p.specs, '$.cpu')
+      HAVING COUNT(*) >= 3
+      ORDER BY avg_price DESC;
+
+  - id: a05j-07
+    level: 3
+    type: "JSON"
+    title: "JSON 기반 통계 — 모니터 패널 타입별 분석"
+    title_en: "JSON-based statistics — Analysis by monitor panel type"
+    body: |
+      모니터 카테고리에서 패널 타입(IPS/VA/OLED)별로 상품 수, 평균 가격, 평균 주사율을 집계하세요.
+      각 패널 타입의 해상도 분포도 함께 확인합니다.
+    body_en: |
+      In the monitor category, tally the number of products, average price, and average refresh rate by panel type (IPS/VA/OLED).
+      Also check the resolution distribution of each panel type.
+    hint: |
+      - `json_extract(specs, '$.panel')`, `json_extract(specs, '$.refresh_rate')` 사용
+      - 해상도 분포는 별도 쿼리 또는 조건부 집계(`CASE WHEN`)로 처리
+    hint_en: |
+      - Use `json_extract(specs, '$.panel')`, `json_extract(specs, '$.refresh_rate')`
+      - Resolution distribution is processed as a separate query or conditional aggregation (`CASE WHEN`)
+    reference_sql: |
+      SELECT
+          json_extract(p.specs, '$.panel')          AS panel_type,
+          COUNT(*)                                   AS product_count,
+          ROUND(AVG(p.price))                        AS avg_price,
+          ROUND(AVG(json_extract(p.specs, '$.refresh_rate'))) AS avg_refresh_rate,
+          SUM(CASE WHEN json_extract(p.specs, '$.resolution') = 'FHD' THEN 1 ELSE 0 END) AS fhd_count,
+          SUM(CASE WHEN json_extract(p.specs, '$.resolution') = 'QHD' THEN 1 ELSE 0 END) AS qhd_count,
+          SUM(CASE WHEN json_extract(p.specs, '$.resolution') = '4K'  THEN 1 ELSE 0 END) AS uhd_4k_count
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE cat.slug LIKE 'monitor%'
+        AND p.is_active = 1
+        AND p.specs IS NOT NULL
+      GROUP BY json_extract(p.specs, '$.panel')
+      ORDER BY avg_price DESC;
+
+  - id: a05j-08
+    level: 3
+    type: "JSON"
+    title: "json_set으로 JSON 값 수정 (SELECT 내)"
+    title_en: "Modifying JSON value with json_set (within SELECT)"
+    body: |
+      SQLite의 `json_set` 함수를 사용하여, 노트북 상품의 specs에 `"warranty_years": 3` 필드를 추가한 결과를 확인하세요.
+      실제 UPDATE가 아닌 SELECT에서 변환된 JSON을 미리보기합니다.
+    body_en: |
+      Use SQLite's `json_set` function to check the result of adding the `"warranty_years": 3` field to the laptop product's specs.
+      Preview the converted JSON from a SELECT, not an actual UPDATE.
+    hint: |
+      - `json_set(specs, '$.warranty_years', 3)`은 기존 JSON에 새 키를 추가합니다
+      - 이미 존재하는 키라면 값을 덮어씁니다
+      - SELECT에서만 확인하므로 실제 데이터는 변경되지 않습니다
+    hint_en: |
+      - `json_set(specs, '$.warranty_years', 3)` adds a new key to an existing JSON
+      - If the key already exists, the value is overwritten.
+      - It is checked only in SELECT, so the actual data is not changed
+    reference_sql: |
+      SELECT
+          p.name         AS product_name,
+          p.specs        AS original_specs,
+          json_set(p.specs, '$.warranty_years', 3) AS modified_specs
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE cat.slug LIKE 'laptop%'
+        AND p.specs IS NOT NULL
+      LIMIT 3;
+
+  - id: a05j-09
+    level: 3
+    type: "JSON"
+    title: "json_remove로 JSON 키 제거 (SELECT 내)"
+    title_en: "Removing a JSON key with json_remove (within a SELECT)"
+    body: |
+      GPU 상품의 specs에서 `tdp_watts` 키를 제거한 결과와 원본을 비교하세요.
+      `json_remove` 함수를 사용합니다.
+    body_en: |
+      Compare the original with the result of removing the `tdp_watts` key from the GPU product's specs.
+      Use the `json_remove` function.
+    hint: |
+      - `json_remove(specs, '$.tdp_watts')`는 지정한 키를 삭제한 JSON을 반환합니다
+      - 원본과 비교하기 위해 `specs`와 `json_remove(...)` 결과를 나란히 표시
+    hint_en: |
+      - `json_remove(specs, '$.tdp_watts')` returns JSON with the specified key removed
+      - Display `specs` and `json_remove(...)` results side by side for comparison with the original
+    reference_sql: |
+      SELECT
+          p.name        AS product_name,
+          p.specs       AS original_specs,
+          json_remove(p.specs, '$.tdp_watts') AS specs_without_tdp
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.category_id = cat.id
+      WHERE cat.slug LIKE 'gpu%'
+        AND p.specs IS NOT NULL
+      LIMIT 5;
+
+  - id: a05j-10
+    level: 3
+    type: "JSON"
+    title: "종합 JSON 분석 — 카테고리별 스펙 비교 리포트"
+    title_en: "Comprehensive JSON analysis — Specification comparison report by category"
+    body: |
+      모든 카테고리의 상품 specs를 분석하여, 카테고리별로 JSON에 포함된 고유 키 목록과 각 키의 출현 비율을 구하세요.
+      어떤 카테고리에 어떤 스펙 정보가 존재하는지 한눈에 파악하는 리포트입니다.
+    body_en: |
+      Analyze product specs for all categories to find a list of unique keys included in JSON for each category and the occurrence rate of each key.
+      This report allows you to see at a glance what specification information exists in which category.
+    hint: |
+      - `json_each(specs)`로 모든 키를 행으로 펼친 뒤, 카테고리+키 조합으로 GROUP BY
+      - 출현 비율 = 해당 키가 있는 상품 수 / 카테고리 전체 상품 수
+      - CTE를 사용하여 단계적으로 집계
+    hint_en: |
+      - Spread all keys into rows with `json_each(specs)`, then GROUP BY with category + key combination
+      - Appearance rate = Number of products with that key / Total number of products in the category
+      - Step by step aggregation using CTEs
+    reference_sql: |
+      WITH spec_keys AS (
+          SELECT
+              cat.name       AS category,
+              je.key,
+              COUNT(*)       AS key_count
+          FROM products AS p
+          INNER JOIN categories AS cat ON p.category_id = cat.id,
+               json_each(p.specs) AS je
+          WHERE p.specs IS NOT NULL
+            AND p.is_active = 1
+          GROUP BY cat.name, je.key
+      ),
+      category_totals AS (
+          SELECT
+              cat.name       AS category,
+              COUNT(*)       AS total_products
+          FROM products AS p
+          INNER JOIN categories AS cat ON p.category_id = cat.id
+          WHERE p.specs IS NOT NULL
+            AND p.is_active = 1
+          GROUP BY cat.name
+      )
+      SELECT
+          sk.category,
+          sk.key               AS spec_key,
+          sk.key_count,
+          ct.total_products,
+          ROUND(100.0 * sk.key_count / ct.total_products, 1) AS presence_pct
+      FROM spec_keys AS sk
+      INNER JOIN category_totals AS ct ON sk.category = ct.category
+      ORDER BY sk.category, sk.key_count DESC;

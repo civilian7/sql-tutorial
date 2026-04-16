@@ -1,33 +1,44 @@
 # DB 객체 설계
 
 !!! info "사용 테이블"
+
     `orders` — 주문 (상태, 금액, 일시)  
+
     `order_items` — 주문 상세 (수량, 단가)  
+
     `products` — 상품 (이름, 가격, 재고, 브랜드)  
+
     `customers` — 고객 (등급, 포인트, 가입채널)  
+
     `categories` — 카테고리 (부모-자식 계층)  
+
     `reviews` — 리뷰 (평점, 내용)  
+
     `inventory_transactions` — 재고 입출고 (유형, 수량)  
+
     `staff` — 직원 (부서, 역할, 관리자)  
+
     `payments` — 결제 (방법, 금액, 상태)  
 
+
+
 !!! abstract "학습 범위"
-    `CREATE VIEW`, 뷰 쿼리, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), 감사 로깅, 저장 프로시저 개념(MySQL/PG)
 
-뷰(View)의 생성, 활용, 관리를 연습합니다.
+    `CREATE VIEW`, `DROP VIEW`, `CREATE TRIGGER`, `AFTER/BEFORE`, `INSERT/UPDATE/DELETE`, `OLD/NEW`, `Audit Logging`
 
----
 
-### 문제 1
 
-**월별 매출 요약 뷰를 생성하세요.**
+### 1. 월별 매출 요약 뷰를 생성하세요.
+
 
 뷰 이름: `v_monthly_revenue`. 칼럼: 년월, 주문 수, 총 매출, 평균 주문 금액.
 취소/반품 주문은 제외합니다.
 
-??? tip "힌트"
-    `CREATE VIEW v_monthly_revenue AS SELECT ...`로 뷰를 정의합니다.
-    뷰 내부에서 `GROUP BY`를 사용할 수 있습니다.
+
+**힌트 1:** `CREATE VIEW v_monthly_revenue AS SELECT ...`로 뷰를 정의합니다.
+뷰 내부에서 `GROUP BY`를 사용할 수 있습니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -40,9 +51,7 @@
     FROM orders
     WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
     GROUP BY SUBSTR(ordered_at, 1, 7);
-    ```
-
-    ```sql
+    
     -- 뷰 사용
     SELECT *
     FROM v_monthly_revenue
@@ -50,26 +59,20 @@
     ORDER BY year_month;
     ```
 
-    **결과 예시:**
-
-    | year_month | order_count | total_revenue | avg_order_value |
-    |---|---|---|---|
-    | 2024-01 | 580 | 98500000 | 169828 |
-    | 2024-02 | 520 | 87200000 | 167692 |
-    | ... | ... | ... | ... |
-    | 2024-12 | 890 | 145600000 | 163596 |
 
 ---
 
-### 문제 2
 
-**고객 대시보드 뷰를 생성하세요.**
+### 2. 고객 대시보드 뷰를 생성하세요.
+
 
 뷰 이름: `v_customer_dashboard`. 고객별 기본 정보, 총 주문 수, 총 구매 금액, 마지막 주문일, 리뷰 수를 포함합니다.
 
-??? tip "힌트"
-    `LEFT JOIN`으로 주문과 리뷰를 연결하면 중복 카운트 문제가 생길 수 있습니다.
-    서브쿼리나 CTE로 각각 집계한 뒤 JOIN하는 것이 안전합니다.
+
+**힌트 1:** `LEFT JOIN`으로 주문과 리뷰를 연결하면 중복 카운트 문제가 생길 수 있습니다.
+서브쿼리나 CTE로 각각 집계한 뒤 JOIN하는 것이 안전합니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -104,9 +107,7 @@
     FROM customers AS c
     LEFT JOIN order_stats  AS os ON c.id = os.customer_id
     LEFT JOIN review_stats AS rs ON c.id = rs.customer_id;
-    ```
-
-    ```sql
+    
     -- VIP 고객 조회
     SELECT *
     FROM v_customer_dashboard
@@ -115,25 +116,20 @@
     LIMIT 10;
     ```
 
-    **결과 예시 (상위 3행):**
-
-    | customer_id | name | email | grade | signup_date | order_count | total_spent | last_order_date | review_count |
-    |---|---|---|---|---|---|---|---|---|
-    | 12 | 김... | user012@testmail.kr | VIP | 2016-08-... | 35 | 12500000 | 2025-11-... | 18 |
-    | 45 | 박... | user045@testmail.kr | VIP | 2017-02-... | 28 | 10800000 | 2025-10-... | 12 |
-    | 78 | 이... | user078@testmail.kr | VIP | 2016-12-... | 31 | 9950000 | 2025-12-... | 15 |
 
 ---
 
-### 문제 3
 
-**상품 성과 뷰를 생성하고, 이 뷰를 이용해 재고 대비 판매 효율을 분석하세요.**
+### 3. 상품 성과 뷰를 생성하고, 이 뷰를 이용해 재고 대비 판매 효율을 분석하세요.
+
 
 뷰 이름: `v_product_performance`. 상품별 총 판매량, 매출, 현재 재고, 평균 평점을 포함합니다.
 
-??? tip "힌트"
-    뷰 생성 시 `LEFT JOIN`으로 리뷰가 없는 상품도 포함합니다.
-    뷰를 조회할 때 "재고 회전율"(`units_sold / stock_qty`) 같은 파생 칼럼을 추가할 수 있습니다.
+
+**힌트 1:** 뷰 생성 시 `LEFT JOIN`으로 리뷰가 없는 상품도 포함합니다.
+뷰를 조회할 때 "재고 회전율"(`units_sold / stock_qty`) 같은 파생 칼럼을 추가할 수 있습니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -164,9 +160,7 @@
     WHERE p.is_active = 1
     GROUP BY p.id, p.name, cat.name, p.price, p.stock_qty,
              r.review_count, r.avg_rating;
-    ```
-
-    ```sql
+    
     -- 재고 대비 판매 효율 분석
     SELECT
         product_name,
@@ -186,26 +180,21 @@
     LIMIT 10;
     ```
 
-    **결과 예시 (상위 3행):**
-
-    | product_name | category | total_sold | stock_qty | turnover_ratio | total_revenue | avg_rating |
-    |---|---|---|---|---|---|---|
-    | 삼성 DDR4 32GB | RAM | 450 | 35 | 12.86 | 22095000 | 4.52 |
-    | Logitech MX Keys | 키보드 | 380 | 42 | 9.05 | 45220000 | 4.68 |
-    | ... | ... | ... | ... | ... | ... | ... |
 
 ---
 
-### 문제 4
 
-**뷰를 활용한 중첩 쿼리 — 월별 매출 뷰에서 전년 동월 대비 성장률을 구하세요.**
+### 4. 뷰를 활용한 중첩 쿼리 — 월별 매출 뷰에서 전년 동월 대비 성장률을 구하세요.
+
 
 앞서 생성한 `v_monthly_revenue`를 셀프 조인합니다.
 
-??? tip "힌트"
-    `v_monthly_revenue`를 두 번 참조합니다.
-    JOIN 조건: 현재 월의 "월 부분"이 전년의 "월 부분"과 같고, 연도가 1 차이.
-    `SUBSTR(year_month, 6, 2)`로 월 부분, `SUBSTR(year_month, 1, 4)`로 연도를 추출합니다.
+
+**힌트 1:** `v_monthly_revenue`를 두 번 참조합니다.
+JOIN 조건: 현재 월의 "월 부분"이 전년의 "월 부분"과 같고, 연도가 1 차이.
+`SUBSTR(year_month, 6, 2)`로 월 부분, `SUBSTR(year_month, 1, 4)`로 연도를 추출합니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -225,25 +214,20 @@
     ORDER BY curr.year_month;
     ```
 
-    **결과 예시 (일부):**
-
-    | year_month | current_revenue | prev_year_revenue | diff | yoy_growth_pct |
-    |---|---|---|---|---|
-    | 2024-01 | 98500000 | 85000000 | 13500000 | 15.9 |
-    | 2024-02 | 87200000 | 78000000 | 9200000 | 11.8 |
-    | ... | ... | ... | ... | ... |
 
 ---
 
-### 문제 5
 
-**현재 DB에 존재하는 모든 뷰 목록을 조회하세요.**
+### 5. 현재 DB에 존재하는 모든 뷰 목록을 조회하세요.
+
 
 SQLite의 시스템 카탈로그를 사용합니다.
 
-??? tip "힌트"
-    SQLite에서는 `sqlite_master` 테이블에 모든 DB 객체 정보가 저장됩니다.
-    `type = 'view'`로 필터링합니다.
+
+**힌트 1:** SQLite에서는 `sqlite_master` 테이블에 모든 DB 객체 정보가 저장됩니다.
+`type = 'view'`로 필터링합니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -256,422 +240,45 @@ SQLite의 시스템 카탈로그를 사용합니다.
     ORDER BY name;
     ```
 
-    **결과 예시:**
+
+    **실행 결과** (총 18행 중 상위 7행)
 
     | name | type | sql |
-    | ---------- | ---------- | ---------- |
+    |---|---|---|
     | v_cart_abandonment | view | CREATE VIEW v_cart_abandonment AS
-    SELECT
-        c.id AS cart_id,
-        cust.name AS customer_name,
-        cust.email,
-        c.status,
-        c.created_at,
-        COUNT(ci.id) AS item_count,
-        CAST(SUM(p.price * ci.quantity) AS INTEGER) AS potential_revenue,
-        GROUP_CONCAT(p.name, ', ') AS products
-    FROM carts c
-    JOIN customers cust ON c.customer_id = cust.id
-    JOIN cart_items ci ON c.id = ci.cart_id
-    JOIN products p ON ci.product_id = p.id
-    WHERE c.status = 'abandoned'
-    GROUP BY c.id |
+SEL... |
     | v_category_tree | view | CREATE VIEW v_category_tree AS
-    WITH RECURSIVE tree AS (
-        SELECT id, name, parent_id, depth,
-               name AS full_path,
-               CAST(printf('%04d', sort_order) AS TEXT) AS sort_key
-        FROM categories
-        WHERE parent_id IS NULL
-        UNION ALL
-        SELECT c.id, c.name, c.parent_id, c.depth,
-               tree.full_path || ' > ' || c.name,
-               tree.sort_key || '.' || printf('%04d', c.sort_order)
-        FROM categories c
-        JOIN tree ON c.parent_id = tree.id
-    )
-    SELECT t.id, t.name, t.parent_id, t.depth, t.full_path,
-           COALESCE(p.product_count, 0) AS product_count
-    FROM tree t
-    LEFT JOIN (
-        SELECT category_id, COUNT(*) AS product_count
-        FROM products
-        GROUP BY category_id
-    ) p ON t.id = p.category_id
-    ORDER BY t.sort_key |
-    | v_coupon_effectiveness | view | CREATE VIEW v_coupon_effectiveness AS
-    SELECT
-        cp.id AS coupon_id,
-        cp.code,
-        cp.name,
-        cp.type,
-        cp.discount_value,
-        cp.is_active,
-        COALESCE(u.usage_count, 0) AS usage_count,
-        cp.usage_limit,
-        COALESCE(u.total_discount, 0) AS total_discount_given,
-        COALESCE(u.total_order_revenue, 0) AS total_order_revenue,
-        CASE
-            WHEN COALESCE(u.total_discount, 0) > 0
-            THEN ROUND(u.total_order_revenue / u.total_discount, 1)
-            ELSE 0
-        END AS roi_ratio
-    FROM coupons cp
-    LEFT JOIN (
-        SELECT
-            cu.coupon_id,
-            COUNT(*) AS usage_count,
-            CAST(SUM(cu.discount_amount) AS INTEGER) AS total_discount,
-            CAST(SUM(o.total_amount) AS INTEGER) AS total_order_revenue
-        FROM coupon_usage cu
-        JOIN orders o ON cu.order_id = o.id
-        GROUP BY cu.coupon_id
-    ) u ON cp.id = u.coupon_id
-    ORDER BY COALESCE(u.usage_count, 0) DESC |
+WITH R... |
+    | v_coupon_effectiveness | view | CREATE VIEW v_coupon_effectiveness AS... |
     | v_customer_rfm | view | CREATE VIEW v_customer_rfm AS
-    WITH rfm_raw AS (
-        SELECT
-            c.id AS customer_id,
-            c.name,
-            c.grade,
-            CAST(julianday('2025-06-30') - julianday(MAX(o.ordered_at)) AS INTEGER) AS recency_days,
-            COUNT(o.id) AS frequency,
-            CAST(SUM(o.total_amount) AS INTEGER) AS monetary
-        FROM customers c
-        JOIN orders o ON c.id = o.customer_id
-        WHERE o.status NOT IN ('cancelled')
-        GROUP BY c.id
-    ),
-    rfm_scored AS (
-        SELECT *,
-            NTILE(5) OVER (ORDER BY recency_days ASC) AS r_score,   -- more recent = higher score
-            NTILE(5) OVER (ORDER BY frequency DESC) AS f_score,
-            NTILE(5) OVER (ORDER BY monetary DESC) AS m_score
-        FROM rfm_raw
-    )
-    SELECT
-        customer_id, name, grade,
-        recency_days, frequency, monetary,
-        r_score, f_score, m_score,
-        r_score + f_score + m_score AS rfm_total,
-        CASE
-            WHEN r_score >= 4 AND f_score >= 4 AND m_score >= 4 THEN 'Champions'
-            WHEN r_score >= 3 AND f_score >= 3 THEN 'Loyal'
-            WHEN r_score >= 4 AND f_score <= 2 THEN 'New Customers'
-            WHEN r_score <= 2 AND f_score >= 3 THEN 'At Risk'
-            WHEN r_score <= 2 AND f_score <= 2 THEN 'Lost'
-            ELSE 'Others'
-        END AS segment
-    FROM rfm_scored |
+WITH rf... |
     | v_customer_summary | view | CREATE VIEW v_customer_summary AS
-    SELECT
-        c.id,
-        c.name,
-        c.email,
-        c.grade,
-        c.gender,
-        CASE
-            WHEN c.birth_date IS NULL THEN NULL
-            ELSE CAST((julianday('2025-06-30') - julianday(c.birth_date)) / 365.25 AS INTEGER)
-        END AS age,
-        c.created_at AS joined_at,
-        COALESCE(os.order_count, 0) AS total_orders,
-        COALESCE(os.total_spent, 0) AS total_spent,
-        COALESCE(os.first_order, '') AS first_order_at,
-        COALESCE(os.last_order, '') AS last_order_at,
-        COALESCE(rv.review_count, 0) AS review_count,
-        COALESCE(rv.avg_rating, 0) AS avg_rating_given,
-        COALESCE(ws.wishlist_count, 0) AS wishlist_count,
-        c.is_active,
-        c.last_login_at,
-        CASE
-            WHEN c.is_active = 0 THEN 'inactive'
-            WHEN c.last_login_at IS NULL THEN 'never_logged_in'
-            WHEN c.last_login_at < DATE('2025-06-30', '-365 days') THEN 'dormant'
-            ELSE 'active'
-        END AS activity_status
-    FROM customers c
-    LEFT JOIN (
-        SELECT customer_id,
-               COUNT(*) AS order_count,
-               CAST(SUM(total_amount) AS INTEGER) AS total_spent,
-               MIN(ordered_at) AS first_order,
-               MAX(ordered_at) AS last_order
-        FROM orders
-        WHERE status NOT IN ('cancelled')
-        GROUP BY customer_id
-    ) os ON c.id = os.customer_id
-    LEFT JOIN (
-        SELECT customer_id,
-               COUNT(*) AS review_count,
-               ROUND(AVG(rating), 1) AS avg_rating
-        FROM reviews
-        GROUP BY customer_id
-    ) rv ON c.id = rv.customer_id
-    LEFT JOIN (
-        SELECT customer_id, COUNT(*) AS wishlist_count
-        FROM wishlists
-        GROUP BY customer_id
-    ) ws ON c.id = ws.customer_id |
+SEL... |
     | v_daily_orders | view | CREATE VIEW v_daily_orders AS
-    SELECT
-        DATE(ordered_at) AS order_date,
-        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
-            WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
-            WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
-        END AS day_of_week,
-        COUNT(*) AS total_orders,
-        SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed,
-        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,
-        SUM(CASE WHEN status IN ('return_requested','returned') THEN 1 ELSE 0 END) AS returned,
-        CAST(SUM(CASE WHEN status != 'cancelled' THEN total_amount ELSE 0 END) AS INTEGER) AS revenue,
-        CAST(AVG(CASE WHEN status != 'cancelled' THEN total_amount END) AS INTEGER) AS avg_order_amount
-    FROM orders
-    GROUP BY DATE(ordered_at)
-    ORDER BY order_date |
+SELECT
+... |
     | v_hourly_pattern | view | CREATE VIEW v_hourly_pattern AS
-    SELECT
-        CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) AS hour,
-        COUNT(*) AS order_count,
-        CAST(AVG(total_amount) AS INTEGER) AS avg_amount,
-        CASE
-            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 0 AND 5 THEN 'dawn'
-            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 6 AND 11 THEN 'morning'
-            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 12 AND 17 THEN 'afternoon'
-            ELSE 'evening'
-        END AS time_slot
-    FROM orders
-    WHERE status NOT IN ('cancelled')
-    GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
-    ORDER BY hour |
-    | v_monthly_sales | view | CREATE VIEW v_monthly_sales AS
-    SELECT
-        SUBSTR(o.ordered_at, 1, 7) AS month,               -- YYYY-MM
-        COUNT(DISTINCT o.id) AS order_count,                -- number of orders
-        COUNT(DISTINCT o.customer_id) AS customer_count,    -- unique buyers
-        CAST(SUM(o.total_amount) AS INTEGER) AS revenue,    -- total revenue
-        CAST(AVG(o.total_amount) AS INTEGER) AS avg_order,  -- average order value
-        SUM(o.discount_amount) AS total_discount            -- total discount
-    FROM orders o
-    WHERE o.status NOT IN ('cancelled')
-    GROUP BY SUBSTR(o.ordered_at, 1, 7)
-    ORDER BY month |
-    | ... | ... | ... |
-    SELECT
-        c.id AS cart_id,
-        cust.name AS customer_name,
-        cust.email,
-        c.status,
-        c.created_at,
-        COUNT(ci.id) AS item_count,
-        CAST(SUM(p.price * ci.quantity) AS INTEGER) AS potential_revenue,
-        GROUP_CONCAT(p.name, ', ') AS products
-    FROM carts c
-    JOIN customers cust ON c.customer_id = cust.id
-    JOIN cart_items ci ON c.id = ci.cart_id
-    JOIN products p ON ci.product_id = p.id
-    WHERE c.status = 'abandoned'
-    GROUP BY c.id |
-    | v_category_tree | view | CREATE VIEW v_category_tree AS
-    WITH RECURSIVE tree AS (
-        SELECT id, name, parent_id, depth,
-               name AS full_path,
-               CAST(printf('%04d', sort_order) AS TEXT) AS sort_key
-        FROM categories
-        WHERE parent_id IS NULL
-        UNION ALL
-        SELECT c.id, c.name, c.parent_id, c.depth,
-               tree.full_path || ' > ' || c.name,
-               tree.sort_key || '.' || printf('%04d', c.sort_order)
-        FROM categories c
-        JOIN tree ON c.parent_id = tree.id
-    )
-    SELECT t.id, t.name, t.parent_id, t.depth, t.full_path,
-           COALESCE(p.product_count, 0) AS product_count
-    FROM tree t
-    LEFT JOIN (
-        SELECT category_id, COUNT(*) AS product_count
-        FROM products
-        GROUP BY category_id
-    ) p ON t.id = p.category_id
-    ORDER BY t.sort_key |
-    | v_coupon_effectiveness | view | CREATE VIEW v_coupon_effectiveness AS
-    SELECT
-        cp.id AS coupon_id,
-        cp.code,
-        cp.name,
-        cp.type,
-        cp.discount_value,
-        cp.is_active,
-        COALESCE(u.usage_count, 0) AS usage_count,
-        cp.usage_limit,
-        COALESCE(u.total_discount, 0) AS total_discount_given,
-        COALESCE(u.total_order_revenue, 0) AS total_order_revenue,
-        CASE
-            WHEN COALESCE(u.total_discount, 0) > 0
-            THEN ROUND(u.total_order_revenue / u.total_discount, 1)
-            ELSE 0
-        END AS roi_ratio
-    FROM coupons cp
-    LEFT JOIN (
-        SELECT
-            cu.coupon_id,
-            COUNT(*) AS usage_count,
-            CAST(SUM(cu.discount_amount) AS INTEGER) AS total_discount,
-            CAST(SUM(o.total_amount) AS INTEGER) AS total_order_revenue
-        FROM coupon_usage cu
-        JOIN orders o ON cu.order_id = o.id
-        GROUP BY cu.coupon_id
-    ) u ON cp.id = u.coupon_id
-    ORDER BY COALESCE(u.usage_count, 0) DESC |
-    | v_customer_rfm | view | CREATE VIEW v_customer_rfm AS
-    WITH rfm_raw AS (
-        SELECT
-            c.id AS customer_id,
-            c.name,
-            c.grade,
-            CAST(julianday('2025-06-30') - julianday(MAX(o.ordered_at)) AS INTEGER) AS recency_days,
-            COUNT(o.id) AS frequency,
-            CAST(SUM(o.total_amount) AS INTEGER) AS monetary
-        FROM customers c
-        JOIN orders o ON c.id = o.customer_id
-        WHERE o.status NOT IN ('cancelled')
-        GROUP BY c.id
-    ),
-    rfm_scored AS (
-        SELECT *,
-            NTILE(5) OVER (ORDER BY recency_days ASC) AS r_score,   -- more recent = higher score
-            NTILE(5) OVER (ORDER BY frequency DESC) AS f_score,
-            NTILE(5) OVER (ORDER BY monetary DESC) AS m_score
-        FROM rfm_raw
-    )
-    SELECT
-        customer_id, name, grade,
-        recency_days, frequency, monetary,
-        r_score, f_score, m_score,
-        r_score + f_score + m_score AS rfm_total,
-        CASE
-            WHEN r_score >= 4 AND f_score >= 4 AND m_score >= 4 THEN 'Champions'
-            WHEN r_score >= 3 AND f_score >= 3 THEN 'Loyal'
-            WHEN r_score >= 4 AND f_score <= 2 THEN 'New Customers'
-            WHEN r_score <= 2 AND f_score >= 3 THEN 'At Risk'
-            WHEN r_score <= 2 AND f_score <= 2 THEN 'Lost'
-            ELSE 'Others'
-        END AS segment
-    FROM rfm_scored |
-    | v_customer_summary | view | CREATE VIEW v_customer_summary AS
-    SELECT
-        c.id,
-        c.name,
-        c.email,
-        c.grade,
-        c.gender,
-        CASE
-            WHEN c.birth_date IS NULL THEN NULL
-            ELSE CAST((julianday('2025-06-30') - julianday(c.birth_date)) / 365.25 AS INTEGER)
-        END AS age,
-        c.created_at AS joined_at,
-        COALESCE(os.order_count, 0) AS total_orders,
-        COALESCE(os.total_spent, 0) AS total_spent,
-        COALESCE(os.first_order, '') AS first_order_at,
-        COALESCE(os.last_order, '') AS last_order_at,
-        COALESCE(rv.review_count, 0) AS review_count,
-        COALESCE(rv.avg_rating, 0) AS avg_rating_given,
-        COALESCE(ws.wishlist_count, 0) AS wishlist_count,
-        c.is_active,
-        c.last_login_at,
-        CASE
-            WHEN c.is_active = 0 THEN 'inactive'
-            WHEN c.last_login_at IS NULL THEN 'never_logged_in'
-            WHEN c.last_login_at < DATE('2025-06-30', '-365 days') THEN 'dormant'
-            ELSE 'active'
-        END AS activity_status
-    FROM customers c
-    LEFT JOIN (
-        SELECT customer_id,
-               COUNT(*) AS order_count,
-               CAST(SUM(total_amount) AS INTEGER) AS total_spent,
-               MIN(ordered_at) AS first_order,
-               MAX(ordered_at) AS last_order
-        FROM orders
-        WHERE status NOT IN ('cancelled')
-        GROUP BY customer_id
-    ) os ON c.id = os.customer_id
-    LEFT JOIN (
-        SELECT customer_id,
-               COUNT(*) AS review_count,
-               ROUND(AVG(rating), 1) AS avg_rating
-        FROM reviews
-        GROUP BY customer_id
-    ) rv ON c.id = rv.customer_id
-    LEFT JOIN (
-        SELECT customer_id, COUNT(*) AS wishlist_count
-        FROM wishlists
-        GROUP BY customer_id
-    ) ws ON c.id = ws.customer_id |
-    | v_daily_orders | view | CREATE VIEW v_daily_orders AS
-    SELECT
-        DATE(ordered_at) AS order_date,
-        CASE CAST(strftime('%w', ordered_at) AS INTEGER)
-            WHEN 0 THEN '일' WHEN 1 THEN '월' WHEN 2 THEN '화'
-            WHEN 3 THEN '수' WHEN 4 THEN '목' WHEN 5 THEN '금' WHEN 6 THEN '토'
-        END AS day_of_week,
-        COUNT(*) AS total_orders,
-        SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) AS confirmed,
-        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,
-        SUM(CASE WHEN status IN ('return_requested','returned') THEN 1 ELSE 0 END) AS returned,
-        CAST(SUM(CASE WHEN status != 'cancelled' THEN total_amount ELSE 0 END) AS INTEGER) AS revenue,
-        CAST(AVG(CASE WHEN status != 'cancelled' THEN total_amount END) AS INTEGER) AS avg_order_amount
-    FROM orders
-    GROUP BY DATE(ordered_at)
-    ORDER BY order_date |
-    | v_hourly_pattern | view | CREATE VIEW v_hourly_pattern AS
-    SELECT
-        CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) AS hour,
-        COUNT(*) AS order_count,
-        CAST(AVG(total_amount) AS INTEGER) AS avg_amount,
-        CASE
-            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 0 AND 5 THEN 'dawn'
-            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 6 AND 11 THEN 'morning'
-            WHEN CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER) BETWEEN 12 AND 17 THEN 'afternoon'
-            ELSE 'evening'
-        END AS time_slot
-    FROM orders
-    WHERE status NOT IN ('cancelled')
-    GROUP BY CAST(SUBSTR(ordered_at, 12, 2) AS INTEGER)
-    ORDER BY hour |
-    | v_monthly_sales | view | CREATE VIEW v_monthly_sales AS
-    SELECT
-        SUBSTR(o.ordered_at, 1, 7) AS month,               -- YYYY-MM
-        COUNT(DISTINCT o.id) AS order_count,                -- number of orders
-        COUNT(DISTINCT o.customer_id) AS customer_count,    -- unique buyers
-        CAST(SUM(o.total_amount) AS INTEGER) AS revenue,    -- total revenue
-        CAST(AVG(o.total_amount) AS INTEGER) AS avg_order,  -- average order value
-        SUM(o.discount_amount) AS total_discount            -- total discount
-    FROM orders o
-    WHERE o.status NOT IN ('cancelled')
-    GROUP BY SUBSTR(o.ordered_at, 1, 7)
-    ORDER BY month |
-    | ... | ... | ... |
+SELEC... |
 
-    > `sql` 칼럼에 뷰의 전체 정의(DDL)가 저장되어 있습니다.
 
 ---
 
-### 문제 6
 
-**뷰를 삭제하고 재생성하세요 (DROP + CREATE).**
+### 6. 뷰를 삭제하고 재생성하세요 (DROP + CREATE).
+
 
 `v_monthly_revenue` 뷰에 전월 대비 증감률 칼럼을 추가하여 재생성합니다.
 
-??? tip "힌트"
-    SQLite는 `ALTER VIEW`를 지원하지 않으므로, `DROP VIEW IF EXISTS`로 삭제 후 다시 생성합니다.
-    윈도우 함수 `LAG`를 뷰 정의 내부에서 사용할 수 있습니다.
+
+**힌트 1:** SQLite는 `ALTER VIEW`를 지원하지 않으므로, `DROP VIEW IF EXISTS`로 삭제 후 다시 생성합니다.
+윈도우 함수 `LAG`를 뷰 정의 내부에서 사용할 수 있습니다.
+
+
 
 ??? success "정답"
     ```sql
     DROP VIEW IF EXISTS v_monthly_revenue;
-
+    
     CREATE VIEW v_monthly_revenue AS
     WITH base AS (
         SELECT
@@ -692,9 +299,7 @@ SQLite의 시스템 카탈로그를 사용합니다.
         ROUND(100.0 * (total_revenue - LAG(total_revenue, 1) OVER (ORDER BY year_month))
             / LAG(total_revenue, 1) OVER (ORDER BY year_month), 1) AS mom_growth_pct
     FROM base;
-    ```
-
-    ```sql
+    
     -- 개선된 뷰 확인
     SELECT *
     FROM v_monthly_revenue
@@ -702,33 +307,28 @@ SQLite의 시스템 카탈로그를 사용합니다.
     ORDER BY year_month;
     ```
 
-    **결과 예시 (일부):**
-
-    | year_month | order_count | total_revenue | avg_order_value | prev_month_revenue | mom_growth_pct |
-    |---|---|---|---|---|---|
-    | 2024-01 | 580 | 98500000 | 169828 | 132000000 | -25.4 |
-    | 2024-02 | 520 | 87200000 | 167692 | 98500000 | -11.5 |
-    | 2024-03 | 680 | 112000000 | 164706 | 87200000 | 28.4 |
 
 ---
 
-### 문제 7
 
-**Materialized View 개념을 SQLite에서 시뮬레이션하세요.**
+### 7. Materialized View 개념을 SQLite에서 시뮬레이션하세요.
+
 
 일반 뷰는 매번 쿼리를 실행하지만, "구체화된 뷰"는 결과를 테이블로 저장합니다.
 상품별 통계를 테이블로 저장하고, 갱신하는 패턴을 구현하세요.
 
-??? tip "힌트"
-    `CREATE TABLE mv_product_stats AS SELECT ...`로 결과를 테이블에 저장합니다.
-    갱신 시 `DROP TABLE IF EXISTS` + `CREATE TABLE AS`를 다시 실행합니다.
-    SQLite는 네이티브 MATERIALIZED VIEW를 지원하지 않으므로 이 패턴이 대안입니다.
+
+**힌트 1:** `CREATE TABLE mv_product_stats AS SELECT ...`로 결과를 테이블에 저장합니다.
+갱신 시 `DROP TABLE IF EXISTS` + `CREATE TABLE AS`를 다시 실행합니다.
+SQLite는 네이티브 MATERIALIZED VIEW를 지원하지 않으므로 이 패턴이 대안입니다.
+
+
 
 ??? success "정답"
     ```sql
     -- 1. 구체화된 뷰 생성 (테이블로 저장)
     DROP TABLE IF EXISTS mv_product_stats;
-
+    
     CREATE TABLE mv_product_stats AS
     SELECT
         p.id              AS product_id,
@@ -746,44 +346,30 @@ SQLite의 시스템 카탈로그를 사용합니다.
         AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
     WHERE p.is_active = 1
     GROUP BY p.id, p.name, cat.name;
-    ```
-
-    ```sql
+    
     -- 2. 구체화된 뷰 사용 (인덱스 생성 가능 — 일반 뷰와의 차이점)
     CREATE INDEX idx_mv_product_stats_revenue ON mv_product_stats(total_revenue);
-
+    
     SELECT *
     FROM mv_product_stats
     ORDER BY total_revenue DESC
     LIMIT 5;
     ```
 
-    **결과 예시:**
-
-    | product_id | product_name | category | total_sold | total_revenue | review_count | avg_rating | refreshed_at |
-    |---|---|---|---|---|---|---|---|
-    | 1 | MacBook Pro 16 M3 | 노트북 | 85 | 254125000 | 42 | 4.58 | 2025-12-15 10:30:00 |
-    | 12 | LG 울트라기어 27GP950 | 모니터 | 120 | 96000000 | 35 | 4.25 | 2025-12-15 10:30:00 |
-    | ... | ... | ... | ... | ... | ... | ... | ... |
-
-    > 구체화된 뷰는 복잡한 집계를 미리 계산해 놓으므로 조회 성능이 뛰어납니다.
-    > 단, 원본 데이터가 변경되면 수동으로 갱신해야 합니다. PostgreSQL은 `REFRESH MATERIALIZED VIEW`를 네이티브 지원합니다.
 
 ---
 
-트리거(Trigger)의 정의, 생성, 활용을 연습합니다.
 
----
+### 8. 현재 DB에 존재하는 트리거 목록을 조회하세요.
 
-### 문제 8
-
-**현재 DB에 존재하는 트리거 목록을 조회하세요.**
 
 트리거 이름과 연결된 테이블, 그리고 정의(SQL)를 표시합니다.
 
-??? tip "힌트"
-    `sqlite_master`에서 `type = 'trigger'`로 필터링합니다.
-    `tbl_name` 칼럼이 트리거가 연결된 테이블입니다.
+
+**힌트 1:** `sqlite_master`에서 `type = 'trigger'`로 필터링합니다.
+`tbl_name` 칼럼이 트리거가 연결된 테이블입니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -796,92 +382,33 @@ SQLite의 시스템 카탈로그를 사용합니다.
     ORDER BY tbl_name, name;
     ```
 
-    **결과 예시:**
+
+    **실행 결과** (5행)
 
     | trigger_name | table_name | definition |
-    | ---------- | ---------- | ---------- |
-    | trg_customers_updated_at | customers | CREATE TRIGGER trg_customers_updated_at
-    AFTER UPDATE ON customers
-    BEGIN
-        UPDATE customers SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
+    |---|---|---|
+    | trg_customers_updated_at | customers | CREATE TRIGGER trg_customers_updated_... |
     | trg_orders_updated_at | orders | CREATE TRIGGER trg_orders_updated_at
-    AFTER UPDATE OF status ON orders
-    BEGIN
-        UPDATE orders SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
-    | trg_product_price_history | products | CREATE TRIGGER trg_product_price_history
-    AFTER UPDATE OF price ON products
-    WHEN OLD.price != NEW.price
-    BEGIN
-        -- Close existing history record
-        UPDATE product_prices
-        SET ended_at = datetime('now')
-        WHERE product_id = NEW.id AND ended_at IS NULL;
-    
-        -- Insert new history record
-        INSERT INTO product_prices (product_id, price, started_at, ended_at, change_reason)
-        VALUES (NEW.id, NEW.price, datetime('now'), NULL, 'price_update');
-    END |
-    | trg_products_updated_at | products | CREATE TRIGGER trg_products_updated_at
-    AFTER UPDATE ON products
-    BEGIN
-        UPDATE products SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
-    | trg_reviews_updated_at | reviews | CREATE TRIGGER trg_reviews_updated_at
-    AFTER UPDATE OF rating, title, content ON reviews
-    BEGIN
-        UPDATE reviews SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
-    | ... | ... | ... |
-    AFTER UPDATE ON customers
-    BEGIN
-        UPDATE customers SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
-    | trg_orders_updated_at | orders | CREATE TRIGGER trg_orders_updated_at
-    AFTER UPDATE OF status ON orders
-    BEGIN
-        UPDATE orders SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
-    | trg_product_price_history | products | CREATE TRIGGER trg_product_price_history
-    AFTER UPDATE OF price ON products
-    WHEN OLD.price != NEW.price
-    BEGIN
-        -- Close existing history record
-        UPDATE product_prices
-        SET ended_at = datetime('now')
-        WHERE product_id = NEW.id AND ended_at IS NULL;
-    
-        -- Insert new history record
-        INSERT INTO product_prices (product_id, price, started_at, ended_at, change_reason)
-        VALUES (NEW.id, NEW.price, datetime('now'), NULL, 'price_update');
-    END |
-    | trg_products_updated_at | products | CREATE TRIGGER trg_products_updated_at
-    AFTER UPDATE ON products
-    BEGIN
-        UPDATE products SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
-    | trg_reviews_updated_at | reviews | CREATE TRIGGER trg_reviews_updated_at
-    AFTER UPDATE OF rating, title, content ON reviews
-    BEGIN
-        UPDATE reviews SET updated_at = datetime('now') WHERE id = NEW.id;
-    END |
-    | ... | ... | ... |
+... |
+    | trg_product_price_history | products | CREATE TRIGGER trg_product_price_hist... |
+    | trg_products_updated_at | products | CREATE TRIGGER trg_products_updated_a... |
+    | trg_reviews_updated_at | reviews | CREATE TRIGGER trg_reviews_updated_at... |
 
-    > 새로 생성한 DB에는 트리거가 없을 수 있습니다. 이후 문제에서 트리거를 생성합니다.
 
 ---
 
-### 문제 9
 
-**주문 상태 변경 감사 로그 테이블과 트리거를 생성하세요.**
+### 9. 주문 상태 변경 감사 로그 테이블과 트리거를 생성하세요.
+
 
 `orders` 테이블의 `status`가 변경될 때 자동으로 로그를 기록합니다.
 
-??? tip "힌트"
-    먼저 감사 로그 테이블을 `CREATE TABLE`로 만들고,
-    `CREATE TRIGGER ... AFTER UPDATE OF status ON orders WHEN OLD.status != NEW.status`로
-    변경 전/후 상태를 기록합니다. `OLD`는 변경 전, `NEW`는 변경 후 값입니다.
+
+**힌트 1:** 먼저 감사 로그 테이블을 `CREATE TABLE`로 만들고,
+`CREATE TRIGGER ... AFTER UPDATE OF status ON orders WHEN OLD.status != NEW.status`로
+변경 전/후 상태를 기록합니다. `OLD`는 변경 전, `NEW`는 변경 후 값입니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -893,7 +420,7 @@ SQLite의 시스템 카탈로그를 사용합니다.
         new_status  TEXT NOT NULL,
         changed_at  TEXT NOT NULL DEFAULT (DATETIME('now'))
     );
-
+    
     -- 2. 트리거 생성
     CREATE TRIGGER trg_order_status_change
     AFTER UPDATE OF status ON orders
@@ -902,35 +429,28 @@ SQLite의 시스템 카탈로그를 사용합니다.
         INSERT INTO order_status_log (order_id, old_status, new_status)
         VALUES (NEW.id, OLD.status, NEW.status);
     END;
-    ```
-
-    ```sql
+    
     -- 3. 테스트: 주문 상태 변경
     UPDATE orders SET status = 'shipped' WHERE id = 1 AND status = 'preparing';
-
+    
     -- 4. 로그 확인
     SELECT * FROM order_status_log ORDER BY id DESC LIMIT 5;
     ```
 
-    **결과 예시:**
-
-    | id | order_id | old_status | new_status | changed_at |
-    |---|---|---|---|---|
-    | 1 | 1 | preparing | shipped | 2025-12-15 10:35:00 |
-
-    > `WHEN` 절이 있으므로 상태가 실제로 변경된 경우에만 로그가 기록됩니다.
 
 ---
 
-### 문제 10
 
-**재고 자동 차감 트리거를 생성하세요.**
+### 10. 재고 자동 차감 트리거를 생성하세요.
+
 
 `order_items`에 새 행이 삽입되면, 해당 상품의 `stock_qty`를 자동으로 차감합니다.
 
-??? tip "힌트"
-    `CREATE TRIGGER ... AFTER INSERT ON order_items`를 사용합니다.
-    `UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;`
+
+**힌트 1:** `CREATE TRIGGER ... AFTER INSERT ON order_items`를 사용합니다.
+`UPDATE products SET stock_qty = stock_qty - NEW.quantity WHERE id = NEW.product_id;`
+
+
 
 ??? success "정답"
     ```sql
@@ -942,42 +462,35 @@ SQLite의 시스템 카탈로그를 사용합니다.
             updated_at = DATETIME('now')
         WHERE id = NEW.product_id;
     END;
-    ```
-
-    ```sql
+    
     -- 테스트: 현재 재고 확인
     SELECT id, name, stock_qty FROM products WHERE id = 1;
-
+    
     -- order_items에 삽입 (실제 운영에서는 주문 프로세스에서 발생)
     -- INSERT INTO order_items (order_id, product_id, quantity, unit_price, discount_amount, subtotal)
     -- VALUES (1, 1, 2, 2987500, 0, 5975000);
-
+    
     -- 재고가 2 감소했는지 확인
     -- SELECT id, name, stock_qty FROM products WHERE id = 1;
     ```
 
-    **결과 예시 (재고 변화):**
-
-    | id | name | stock_qty |
-    | ----------: | ---------- | ----------: |
-    | 1 | Razer Blade 18 블랙 | 107 |
-
-    > 실제 운영에서는 재고 부족 검증도 함께 구현해야 합니다.
 
 ---
 
-### 문제 11
 
-**리뷰 작성 시 자동 포인트 적립 트리거를 생성하세요.**
+### 11. 리뷰 작성 시 자동 포인트 적립 트리거를 생성하세요.
+
 
 `reviews`에 새 리뷰가 삽입되면, 해당 고객에게 500 포인트를 적립합니다.
 `WHEN NEW.is_verified = 1` 조건으로 검증된 구매 리뷰에만 적용합니다.
 
-??? tip "힌트"
-    두 가지 동작을 수행해야 합니다:
-    1. `customers` 테이블의 `point_balance` 증가
-    2. `point_transactions` 테이블에 적립 기록 삽입
-    트리거 본문에서 여러 SQL 문을 실행할 수 있습니다.
+
+**힌트 1:** 두 가지 동작을 수행해야 합니다:
+1. `customers` 테이블의 `point_balance` 증가
+2. `point_transactions` 테이블에 적립 기록 삽입
+트리거 본문에서 여러 SQL 문을 실행할 수 있습니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -990,7 +503,7 @@ SQLite의 시스템 카탈로그를 사용합니다.
         SET point_balance = point_balance + 500,
             updated_at = DATETIME('now')
         WHERE id = NEW.customer_id;
-
+    
         -- 2. 포인트 이력 기록
         INSERT INTO point_transactions (
             customer_id, order_id, type, reason, amount,
@@ -1007,34 +520,29 @@ SQLite의 시스템 카탈로그를 사용합니다.
             DATETIME('now')
         );
     END;
-    ```
-
-    ```sql
+    
     -- 트리거 확인
     SELECT name, sql
     FROM sqlite_master
     WHERE type = 'trigger' AND name = 'trg_review_point';
     ```
 
-    **결과 예시:**
-
-    | name | sql |
-    |---|---|
-    | trg_review_point | CREATE TRIGGER trg_review_point AFTER INSERT ON reviews WHEN NEW.is_verified = 1 BEGIN ... END |
 
 ---
 
-### 문제 12
 
-**상품 가격 변경 이력 자동 기록 트리거를 생성하세요.**
+### 12. 상품 가격 변경 이력 자동 기록 트리거를 생성하세요.
+
 
 `products`의 `price`가 변경되면 `product_prices` 테이블에 자동으로 이력을 기록합니다.
 이전 가격 레코드의 `ended_at`을 현재 시각으로 업데이트하고, 새 가격 레코드를 삽입합니다.
 
-??? tip "힌트"
-    `AFTER UPDATE OF price ON products WHEN OLD.price != NEW.price`를 사용합니다.
-    1단계: 기존 레코드의 `ended_at`을 업데이트 (`WHERE product_id = NEW.id AND ended_at IS NULL`).
-    2단계: 새 레코드 삽입.
+
+**힌트 1:** `AFTER UPDATE OF price ON products WHEN OLD.price != NEW.price`를 사용합니다.
+1단계: 기존 레코드의 `ended_at`을 업데이트 (`WHERE product_id = NEW.id AND ended_at IS NULL`).
+2단계: 새 레코드 삽입.
+
+
 
 ??? success "정답"
     ```sql
@@ -1047,17 +555,15 @@ SQLite의 시스템 카탈로그를 사용합니다.
         SET ended_at = DATETIME('now')
         WHERE product_id = NEW.id
           AND ended_at IS NULL;
-
+    
         -- 2. 새 가격 레코드 생성
         INSERT INTO product_prices (product_id, price, started_at, change_reason)
         VALUES (NEW.id, NEW.price, DATETIME('now'), 'price_drop');
     END;
-    ```
-
-    ```sql
+    
     -- 테스트: 가격 변경
     -- UPDATE products SET price = 2800000, updated_at = DATETIME('now') WHERE id = 1;
-
+    
     -- 이력 확인
     SELECT *
     FROM product_prices
@@ -1066,27 +572,22 @@ SQLite의 시스템 카탈로그를 사용합니다.
     LIMIT 3;
     ```
 
-    **결과 예시:**
-
-    | id | product_id | price | started_at | ended_at | change_reason |
-    | ----------: | ----------: | ----------: | ---------- | ---------- | ---------- |
-    | 3 | 1 | 2987500.0 | 2024-08-26 01:34:11 | (NULL) | price_drop |
-    | 2 | 1 | 3561500.0 | 2017-12-25 04:37:06 | 2024-08-26 01:34:11 | promotion |
-    | 1 | 1 | 4409600.0 | 2016-11-20 02:59:21 | 2017-12-25 04:37:06 | regular |
 
 ---
 
-### 문제 13
 
-**삭제 방지 트리거를 생성하세요.**
+### 13. 삭제 방지 트리거를 생성하세요.
+
 
 확정된 주문(status = 'confirmed' 또는 'delivered')은 삭제할 수 없도록 합니다.
 삭제 시도 시 `RAISE(ABORT, ...)`로 에러를 발생시킵니다.
 
-??? tip "힌트"
-    `BEFORE DELETE ON orders`를 사용합니다.
-    `WHEN OLD.status IN ('confirmed', 'delivered')` 조건에서
-    `RAISE(ABORT, '확정된 주문은 삭제할 수 없습니다.')`를 실행합니다.
+
+**힌트 1:** `BEFORE DELETE ON orders`를 사용합니다.
+`WHEN OLD.status IN ('confirmed', 'delivered')` 조건에서
+`RAISE(ABORT, '확정된 주문은 삭제할 수 없습니다.')`를 실행합니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -1096,46 +597,38 @@ SQLite의 시스템 카탈로그를 사용합니다.
     BEGIN
         SELECT RAISE(ABORT, '확정/배송 완료된 주문은 삭제할 수 없습니다.');
     END;
-    ```
-
-    ```sql
+    
     -- 테스트: 확정된 주문 삭제 시도
     -- DELETE FROM orders WHERE id = 100 AND status = 'confirmed';
     -- 결과: Error: 확정/배송 완료된 주문은 삭제할 수 없습니다.
-
+    
     -- 트리거 확인
     SELECT name, sql
     FROM sqlite_master
     WHERE type = 'trigger' AND name = 'trg_prevent_order_delete';
     ```
 
-    **에러 메시지:**
-
-    ```
-    Error: 확정/배송 완료된 주문은 삭제할 수 없습니다.
-    ```
-
-    > `BEFORE` 트리거에서 `RAISE(ABORT, ...)`를 사용하면 실제 DELETE가 실행되기 전에 중단됩니다.
-    > `RAISE(ROLLBACK, ...)`, `RAISE(FAIL, ...)`도 사용 가능하며, 트랜잭션 처리 방식이 다릅니다.
 
 ---
 
-### 문제 14
 
-**트리거 삭제와 조건부 재생성을 연습하세요.**
+### 14. 트리거 삭제와 조건부 재생성을 연습하세요.
+
 
 기존 `trg_stock_deduct` 트리거를 삭제하고, 재고 부족 시 에러를 발생시키는 개선된 버전으로 재생성합니다.
 
-??? tip "힌트"
-    `DROP TRIGGER IF EXISTS trg_stock_deduct;`로 삭제합니다.
-    개선된 트리거에서는 `BEFORE INSERT`를 사용하여,
-    재고가 부족하면 `RAISE(ABORT, ...)`로 삽입 자체를 방지합니다.
+
+**힌트 1:** `DROP TRIGGER IF EXISTS trg_stock_deduct;`로 삭제합니다.
+개선된 트리거에서는 `BEFORE INSERT`를 사용하여,
+재고가 부족하면 `RAISE(ABORT, ...)`로 삽입 자체를 방지합니다.
+
+
 
 ??? success "정답"
     ```sql
     -- 1. 기존 트리거 삭제
     DROP TRIGGER IF EXISTS trg_stock_deduct;
-
+    
     -- 2. 재고 검증 트리거 (BEFORE)
     CREATE TRIGGER trg_stock_check
     BEFORE INSERT ON order_items
@@ -1143,7 +636,7 @@ SQLite의 시스템 카탈로그를 사용합니다.
     BEGIN
         SELECT RAISE(ABORT, '재고가 부족합니다.');
     END;
-
+    
     -- 3. 재고 차감 트리거 (AFTER)
     CREATE TRIGGER trg_stock_deduct
     AFTER INSERT ON order_items
@@ -1152,7 +645,7 @@ SQLite의 시스템 카탈로그를 사용합니다.
         SET stock_qty = stock_qty - NEW.quantity,
             updated_at = DATETIME('now')
         WHERE id = NEW.product_id;
-
+    
         -- 재고 변동 이력 기록
         INSERT INTO inventory_transactions (
             product_id, type, quantity, reference_id, notes, created_at
@@ -1162,9 +655,7 @@ SQLite의 시스템 카탈로그를 사용합니다.
             NEW.order_id, 'order_deduction', DATETIME('now')
         );
     END;
-    ```
-
-    ```sql
+    
     -- 트리거 확인
     SELECT name, tbl_name, sql
     FROM sqlite_master
@@ -1173,34 +664,20 @@ SQLite의 시스템 카탈로그를 사용합니다.
     ORDER BY name;
     ```
 
-    **결과 예시:**
-
-    | name | tbl_name | sql |
-    |---|---|---|
-    | trg_stock_check | order_items | CREATE TRIGGER trg_stock_check BEFORE INSERT ... |
-    | trg_stock_deduct | order_items | CREATE TRIGGER trg_stock_deduct AFTER INSERT ... |
-
-    > BEFORE 트리거(검증)와 AFTER 트리거(실행)를 분리하면 로직이 명확해집니다.
 
 ---
 
-저장 프로시저는 SQLite에서 지원하지 않습니다. MySQL/PostgreSQL 구문으로 제공합니다.
 
-!!! warning "SQLite 미지원"
-    저장 프로시저(Stored Procedure)는 MySQL, PostgreSQL, SQL Server, Oracle 등에서 지원됩니다.
-    아래 문제들은 MySQL/PostgreSQL 탭으로 제공되며, 개념 이해에 초점을 둡니다.
+### 15. SQLite에서 저장 프로시저와 유사한 기능을 확인하세요.
 
----
-
-### 문제 15
-
-**SQLite에서 저장 프로시저와 유사한 기능을 확인하세요.**
 
 시스템 카탈로그에서 현재 DB의 모든 테이블, 뷰, 트리거, 인덱스 수를 집계하세요.
 
-??? tip "힌트"
-    `sqlite_master`에서 `type`별로 `COUNT(*)`를 구합니다.
-    `GROUP BY type`으로 유형별 개수를 알 수 있습니다.
+
+**힌트 1:** `sqlite_master`에서 `type`별로 `COUNT(*)`를 구합니다.
+`GROUP BY type`으로 유형별 개수를 알 수 있습니다.
+
+
 
 ??? success "정답"
     ```sql
@@ -1219,33 +696,36 @@ SQLite의 시스템 카탈로그를 사용합니다.
         END;
     ```
 
-    **결과 예시:**
+
+    **실행 결과** (4행)
 
     | type | object_count |
-    | ---------- | ----------: |
-    | table | 31 |
+    |---|---|
+    | table | 33 |
     | view | 18 |
-    | index | 72 |
+    | index | 73 |
     | trigger | 5 |
+
 
 ---
 
-### 문제 16
 
-**고객 등급 갱신 프로시저를 설계하세요.**
+### 16. 고객 등급 갱신 프로시저를 설계하세요.
+
 
 연간 구매 금액에 따라 고객 등급을 재산정합니다:
 VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (100만원 미만).
 
-??? tip "힌트"
-    MySQL에서는 `CREATE PROCEDURE`, PostgreSQL에서는 `CREATE OR REPLACE PROCEDURE`를 사용합니다.
-    커서나 UPDATE ... FROM 패턴으로 각 고객의 등급을 갱신합니다.
+
+**힌트 1:** MySQL에서는 `CREATE PROCEDURE`, PostgreSQL에서는 `CREATE OR REPLACE PROCEDURE`를 사용합니다.
+커서나 UPDATE ... FROM 패턴으로 각 고객의 등급을 갱신합니다.
+
+
 
 ??? success "정답"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-
+    ```sql
+    DELIMITER //
+    
         CREATE PROCEDURE sp_update_customer_grades(IN p_year INT)
         BEGIN
             -- 1. 연간 구매 금액 기반 등급 갱신
@@ -1266,7 +746,7 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
                 ELSE 'BRONZE'
             END,
             c.updated_at = NOW();
-
+    
             -- 2. 등급 변경 이력 기록
             INSERT INTO customer_grade_history (customer_id, old_grade, new_grade, changed_at, reason)
             SELECT
@@ -1282,19 +762,16 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
                 )
             ) AS cgh ON c.id = cgh.customer_id
             WHERE c.grade != cgh.prev_grade;
-
+    
             SELECT ROW_COUNT() AS updated_count;
         END //
-
+    
         DELIMITER ;
-
+    
         -- 실행
         CALL sp_update_customer_grades(2024);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE PROCEDURE sp_update_customer_grades(p_year INT)
+    
+    CREATE OR REPLACE PROCEDURE sp_update_customer_grades(p_year INT)
         LANGUAGE plpgsql
         AS $$
         DECLARE
@@ -1319,48 +796,50 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
                 GROUP BY customer_id
             ) AS s
             WHERE c.id = s.customer_id;
-
+    
             GET DIAGNOSTICS v_updated = ROW_COUNT;
             RAISE NOTICE '갱신된 고객 수: %', v_updated;
         END;
         $$;
-
+    
         -- 실행
         CALL sp_update_customer_grades(2024);
-        ```
+    ```
+
 
 ---
 
-### 문제 17
 
-**월말 정산 프로시저를 설계하세요.**
+### 17. 월말 정산 프로시저를 설계하세요.
+
 
 특정 월의 매출 요약을 계산하여 정산 테이블에 저장합니다.
 
-??? tip "힌트"
-    매개변수로 연월(`p_year_month`)을 받습니다.
-    주문/결제 데이터를 집계하여 정산 레코드를 INSERT합니다.
-    이미 정산이 완료된 월은 에러를 발생시킵니다.
+
+**힌트 1:** 매개변수로 연월(`p_year_month`)을 받습니다.
+주문/결제 데이터를 집계하여 정산 레코드를 INSERT합니다.
+이미 정산이 완료된 월은 에러를 발생시킵니다.
+
+
 
 ??? success "정답"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-
+    ```sql
+    DELIMITER //
+    
         CREATE PROCEDURE sp_monthly_settlement(IN p_year_month VARCHAR(7))
         BEGIN
             DECLARE v_exists INT;
-
+    
             -- 중복 정산 검사
             SELECT COUNT(*) INTO v_exists
             FROM monthly_settlements
             WHERE year_month = p_year_month;
-
+    
             IF v_exists > 0 THEN
                 SIGNAL SQLSTATE '45000'
                     SET MESSAGE_TEXT = '이미 정산이 완료된 월입니다.';
             END IF;
-
+    
             -- 정산 데이터 삽입
             INSERT INTO monthly_settlements (
                 year_month, order_count, total_revenue,
@@ -1376,18 +855,15 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
             FROM orders
             WHERE DATE_FORMAT(ordered_at, '%Y-%m') = p_year_month
               AND status NOT IN ('cancelled', 'returned', 'return_requested');
-
+    
             SELECT * FROM monthly_settlements WHERE year_month = p_year_month;
         END //
-
+    
         DELIMITER ;
-
+    
         CALL sp_monthly_settlement('2024-12');
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE PROCEDURE sp_monthly_settlement(p_year_month TEXT)
+    
+    CREATE OR REPLACE PROCEDURE sp_monthly_settlement(p_year_month TEXT)
         LANGUAGE plpgsql
         AS $$
         BEGIN
@@ -1395,7 +871,7 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
             IF EXISTS (SELECT 1 FROM monthly_settlements WHERE year_month = p_year_month) THEN
                 RAISE EXCEPTION '이미 정산이 완료된 월입니다: %', p_year_month;
             END IF;
-
+    
             -- 정산 데이터 삽입
             INSERT INTO monthly_settlements (
                 year_month, order_count, total_revenue,
@@ -1411,32 +887,34 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
             FROM orders
             WHERE TO_CHAR(ordered_at, 'YYYY-MM') = p_year_month
               AND status NOT IN ('cancelled', 'returned', 'return_requested');
-
+    
             RAISE NOTICE '정산 완료: %', p_year_month;
         END;
         $$;
-
+    
         CALL sp_monthly_settlement('2024-12');
-        ```
+    ```
+
 
 ---
 
-### 문제 18
 
-**재고 보충 프로시저를 설계하세요.**
+### 18. 재고 보충 프로시저를 설계하세요.
+
 
 안전 재고(threshold) 이하인 상품을 찾아 자동 발주 요청을 생성합니다.
 
-??? tip "힌트"
-    안전 재고 기준(예: 20개)을 매개변수로 받습니다.
-    재고 부족 상품을 조회하여 발주 테이블에 INSERT합니다.
-    보충 수량은 "평균 월 판매량 x 2"로 계산합니다.
+
+**힌트 1:** 안전 재고 기준(예: 20개)을 매개변수로 받습니다.
+재고 부족 상품을 조회하여 발주 테이블에 INSERT합니다.
+보충 수량은 "평균 월 판매량 x 2"로 계산합니다.
+
+
 
 ??? success "정답"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-
+    ```sql
+    DELIMITER //
+    
         CREATE PROCEDURE sp_restock_check(IN p_threshold INT)
         BEGIN
             -- 재고 부족 상품 + 권장 발주 수량
@@ -1465,15 +943,12 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
             GROUP BY p.id, p.name, p.stock_qty, s.company_name
             ORDER BY p.stock_qty ASC;
         END //
-
+    
         DELIMITER ;
-
+    
         CALL sp_restock_check(20);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE PROCEDURE sp_restock_check(p_threshold INT)
+    
+    CREATE OR REPLACE PROCEDURE sp_restock_check(p_threshold INT)
         LANGUAGE plpgsql
         AS $$
         DECLARE
@@ -1509,34 +984,36 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
             END LOOP;
         END;
         $$;
-
+    
         CALL sp_restock_check(20);
-        ```
+    ```
+
 
 ---
 
-### 문제 19
 
-**고객 활동 요약 함수를 설계하세요.**
+### 19. 고객 활동 요약 함수를 설계하세요.
+
 
 특정 고객 ID를 받아 해당 고객의 종합 활동 요약(주문/리뷰/포인트/CS)을 JSON으로 반환합니다.
 
-??? tip "힌트"
-    MySQL에서는 `CREATE FUNCTION ... RETURNS JSON`, PostgreSQL에서는 `RETURNS JSONB`를 사용합니다.
-    각 지표를 서브쿼리로 구하고 `JSON_OBJECT`/`jsonb_build_object`로 합칩니다.
+
+**힌트 1:** MySQL에서는 `CREATE FUNCTION ... RETURNS JSON`, PostgreSQL에서는 `RETURNS JSONB`를 사용합니다.
+각 지표를 서브쿼리로 구하고 `JSON_OBJECT`/`jsonb_build_object`로 합칩니다.
+
+
 
 ??? success "정답"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-
+    ```sql
+    DELIMITER //
+    
         CREATE FUNCTION fn_customer_summary(p_customer_id INT)
         RETURNS JSON
         DETERMINISTIC
         READS SQL DATA
         BEGIN
             DECLARE v_result JSON;
-
+    
             SELECT JSON_OBJECT(
                 'customer_id', c.id,
                 'name', c.name,
@@ -1564,18 +1041,15 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
                 FROM complaints GROUP BY customer_id
             ) AS cs ON c.id = cs.customer_id
             WHERE c.id = p_customer_id;
-
+    
             RETURN v_result;
         END //
-
+    
         DELIMITER ;
-
+    
         SELECT fn_customer_summary(1);
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE FUNCTION fn_customer_summary(p_customer_id INT)
+    
+    CREATE OR REPLACE FUNCTION fn_customer_summary(p_customer_id INT)
         RETURNS JSONB
         LANGUAGE plpgsql
         STABLE
@@ -1610,49 +1084,35 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
                 FROM complaints GROUP BY customer_id
             ) AS cs ON c.id = cs.customer_id
             WHERE c.id = p_customer_id;
-
+    
             RETURN v_result;
         END;
         $$;
-
+    
         SELECT fn_customer_summary(1);
-        ```
-
-    **결과 예시 (JSON):**
-
-    ```json
-    {
-        "customer_id": 1,
-        "name": "김...",
-        "grade": "GOLD",
-        "order_count": 15,
-        "total_spent": 4850000,
-        "review_count": 8,
-        "avg_rating_given": 4.25,
-        "point_balance": 12500,
-        "complaint_count": 2
-    }
     ```
+
 
 ---
 
-### 문제 20
 
-**트랜잭션 기반 주문 처리 프로시저를 설계하세요.**
+### 20. 트랜잭션 기반 주문 처리 프로시저를 설계하세요.
+
 
 주문 생성의 전체 프로세스(주문 레코드 생성 -> 주문 항목 생성 -> 재고 차감 -> 결제 생성 -> 포인트 적립)를
 하나의 프로시저로 캡슐화합니다. 중간에 실패하면 전체 롤백합니다.
 
-??? tip "힌트"
-    MySQL에서는 `START TRANSACTION ... COMMIT`, PostgreSQL에서는 `BEGIN ... COMMIT`을 사용합니다.
-    에러 발생 시 `ROLLBACK`으로 전체 취소합니다.
-    MySQL의 `DECLARE ... HANDLER FOR SQLEXCEPTION`, PostgreSQL의 `EXCEPTION WHEN` 블록을 활용합니다.
+
+**힌트 1:** MySQL에서는 `START TRANSACTION ... COMMIT`, PostgreSQL에서는 `BEGIN ... COMMIT`을 사용합니다.
+에러 발생 시 `ROLLBACK`으로 전체 취소합니다.
+MySQL의 `DECLARE ... HANDLER FOR SQLEXCEPTION`, PostgreSQL의 `EXCEPTION WHEN` 블록을 활용합니다.
+
+
 
 ??? success "정답"
-    === "MySQL"
-        ```sql
-        DELIMITER //
-
+    ```sql
+    DELIMITER //
+    
         CREATE PROCEDURE sp_create_order(
             IN p_customer_id INT,
             IN p_product_id INT,
@@ -1665,31 +1125,31 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
             DECLARE v_order_id INT;
             DECLARE v_total REAL;
             DECLARE v_order_number VARCHAR(20);
-
+    
             DECLARE EXIT HANDLER FOR SQLEXCEPTION
             BEGIN
                 ROLLBACK;
                 SIGNAL SQLSTATE '45000'
                     SET MESSAGE_TEXT = '주문 처리 중 오류가 발생했습니다.';
             END;
-
+    
             START TRANSACTION;
-
+    
             -- 1. 상품 정보 & 재고 확인
             SELECT price, stock_qty INTO v_price, v_stock
             FROM products WHERE id = p_product_id FOR UPDATE;
-
+    
             IF v_stock < p_quantity THEN
                 SIGNAL SQLSTATE '45000'
                     SET MESSAGE_TEXT = '재고가 부족합니다.';
             END IF;
-
+    
             -- 2. 주문 생성
             SET v_total = v_price * p_quantity;
             SET v_order_number = CONCAT('ORD-',
                 DATE_FORMAT(NOW(), '%Y%m%d'), '-',
                 LPAD(FLOOR(RAND() * 99999), 5, '0'));
-
+    
             INSERT INTO orders (
                 order_number, customer_id, address_id, status,
                 total_amount, discount_amount, shipping_fee,
@@ -1702,36 +1162,33 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
                 CASE WHEN v_total >= 50000 THEN 0 ELSE 3000 END,
                 NOW(), NOW(), NOW()
             );
-
+    
             SET v_order_id = LAST_INSERT_ID();
-
+    
             -- 3. 주문 항목 생성
             INSERT INTO order_items (order_id, product_id, quantity, unit_price, subtotal)
             VALUES (v_order_id, p_product_id, p_quantity, v_price, v_total);
-
+    
             -- 4. 재고 차감
             UPDATE products
             SET stock_qty = stock_qty - p_quantity, updated_at = NOW()
             WHERE id = p_product_id;
-
+    
             -- 5. 결제 생성
             INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
             VALUES (v_order_id, p_payment_method, v_total, 'completed', NOW(), NOW());
-
+    
             COMMIT;
-
+    
             SELECT v_order_id AS order_id, v_order_number AS order_number,
                    v_total AS total_amount, '주문 완료' AS message;
         END //
-
+    
         DELIMITER ;
-
+    
         CALL sp_create_order(1, 10, 2, 'card');
-        ```
-
-    === "PostgreSQL"
-        ```sql
-        CREATE OR REPLACE PROCEDURE sp_create_order(
+    
+    CREATE OR REPLACE PROCEDURE sp_create_order(
             p_customer_id INT,
             p_product_id INT,
             p_quantity INT,
@@ -1749,16 +1206,16 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
             -- 1. 상품 정보 & 재고 확인 (행 잠금)
             SELECT price, stock_qty INTO v_price, v_stock
             FROM products WHERE id = p_product_id FOR UPDATE;
-
+    
             IF v_stock < p_quantity THEN
                 RAISE EXCEPTION '재고가 부족합니다. (현재: %, 요청: %)', v_stock, p_quantity;
             END IF;
-
+    
             -- 2. 주문 생성
             v_total := v_price * p_quantity;
             v_order_number := 'ORD-' || TO_CHAR(NOW(), 'YYYYMMDD') || '-'
                 || LPAD(FLOOR(RANDOM() * 99999)::TEXT, 5, '0');
-
+    
             INSERT INTO orders (
                 order_number, customer_id, address_id, status,
                 total_amount, discount_amount, shipping_fee,
@@ -1772,32 +1229,26 @@ VIP (500만원 이상), GOLD (300~500만원), SILVER (100~300만원), BRONZE (10
                 NOW(), NOW(), NOW()
             )
             RETURNING id INTO v_order_id;
-
+    
             -- 3. 주문 항목 생성
             INSERT INTO order_items (order_id, product_id, quantity, unit_price, subtotal)
             VALUES (v_order_id, p_product_id, p_quantity, v_price, v_total);
-
+    
             -- 4. 재고 차감
             UPDATE products
             SET stock_qty = stock_qty - p_quantity, updated_at = NOW()
             WHERE id = p_product_id;
-
+    
             -- 5. 결제 생성
             INSERT INTO payments (order_id, method, amount, status, paid_at, created_at)
             VALUES (v_order_id, p_payment_method, v_total, 'completed', NOW(), NOW());
-
+    
             RAISE NOTICE '주문 완료: % (금액: %)', v_order_number, v_total;
         END;
         $$;
-
+    
         CALL sp_create_order(1, 10, 2, 'card');
-        ```
+    ```
 
-    **실행 결과 예시:**
 
-    | order_id | order_number | total_amount | message |
-    |---|---|---|---|
-    | 9001 | ORD-20251215-38291 | 1590000 | 주문 완료 |
-
-    > 이 프로시저는 5단계를 하나의 트랜잭션으로 묶어, 중간 단계에서 실패하면 전체가 롤백됩니다.
-    > `FOR UPDATE`로 상품 행을 잠가 동시 주문 시 재고 경합(Race Condition)을 방지합니다.
+---

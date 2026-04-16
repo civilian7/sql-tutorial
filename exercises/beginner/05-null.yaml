@@ -1,0 +1,885 @@
+metadata:
+  id: beginner-05-null
+  title: NULL 처리
+  title_en: NULL Handling
+  difficulty: beginner
+  concepts:
+  - IS NULL
+  - IS NOT NULL
+  - COALESCE
+  - IFNULL
+  - NULL and aggregates
+  - NULL sorting
+  tables:
+  - customers
+  - orders
+  - products
+  prerequisites: []
+  estimated_minutes: 30
+  default_level: 1
+  default_type: SELECT
+  description: customers, orders, products 테이블을 사용합니다.
+  description_en: Uses customers, orders, products tables.
+problems:
+- id: b05n-01
+  level: 1
+  type: SELECT
+  question: |
+    생년월일(`birth_date`)이 없는 고객의 이름과 이메일을 조회하세요.
+  question_en: |
+    Query the name and email of customers who do not have a date of birth (`birth_date`).
+  reference_sql:
+    common: |
+      SELECT name, email
+      FROM customers
+      WHERE birth_date IS NULL;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: NULL 값을 찾으려면 `= NULL`이 아니라 `IS NULL`을 사용해야 합니다.
+    en: To find NULL values, you must use `IS NULL` instead of `= NULL`.
+  rubric:
+    ko: NULL 값을 찾으려면 `= NULL`이 아니라 `IS NULL`을 사용해야 합니다.
+    en: To find NULL values, you must use `IS NULL` instead of `= NULL`.
+  max_score: 10
+  tags: []
+- id: b05n-02
+  level: 1
+  type: SELECT
+  question: |
+    성별(`gender`)이 입력되어 있는 고객의 수를 구하세요.
+  question_en: |
+    Find the number of customers who have a gender (`gender`) value entered.
+  reference_sql:
+    common: |
+      SELECT COUNT(*) AS gender_filled_count
+      FROM customers
+      WHERE gender IS NOT NULL;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`IS NOT NULL`로 값이 있는 행만 필터링한 뒤 `COUNT(*)`로 셉니다.'
+    en: Filter only rows with values using `IS NOT NULL`, then count with `COUNT(*)`.
+  rubric:
+    ko: '`IS NOT NULL`로 값이 있는 행만 필터링한 뒤 `COUNT(*)`로 셉니다.'
+    en: Filter only rows with values using `IS NOT NULL`, then count with `COUNT(*)`.
+  max_score: 10
+  tags: []
+- id: b05n-03
+  level: 1
+  type: SELECT
+  question: |
+    한 번도 로그인하지 않은(`last_login_at`이 NULL인) 고객의 이름, 등급, 가입일을 조회하세요.
+  question_en: |
+    Query the name, tier, and signup date of customers who have never logged in (`last_login_at` is NULL).
+  reference_sql:
+    common: |
+      SELECT name, grade, created_at
+      FROM customers
+      WHERE last_login_at IS NULL;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`last_login_at IS NULL`로 로그인 기록이 없는 고객을 찾습니다.'
+    en: Use `last_login_at IS NULL` to find customers with no login history.
+  rubric:
+    ko: '`last_login_at IS NULL`로 로그인 기록이 없는 고객을 찾습니다.'
+    en: Use `last_login_at IS NULL` to find customers with no login history.
+  max_score: 10
+  tags: []
+- id: b05n-04
+  level: 1
+  type: SELECT
+  question: |
+    배송 요청사항(`notes`)이 있는 주문의 주문번호와 요청사항을 최근 주문 순으로 10건 조회하세요.
+  question_en: |
+    Query the order number and delivery notes (`notes`) for orders that have delivery instructions. Show the 10 most recent orders.
+  reference_sql:
+    common: |
+      SELECT order_number, notes
+      FROM orders
+      WHERE notes IS NOT NULL
+      ORDER BY ordered_at DESC
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`IS NOT NULL`로 notes가 비어있지 않은 주문만 필터링합니다.'
+    en: Use `IS NOT NULL` to filter only orders where notes is not empty.
+  rubric:
+    ko: '`IS NOT NULL`로 notes가 비어있지 않은 주문만 필터링합니다.'
+    en: Use `IS NOT NULL` to filter only orders where notes is not empty.
+  max_score: 10
+  tags: []
+- id: b05n-05
+  level: 1
+  type: SELECT
+  question: |
+    취소된 주문(`cancelled_at`이 NULL이 아닌)의 수를 구하세요.
+  question_en: |
+    Find the number of cancelled orders (where `cancelled_at` is not NULL).
+  reference_sql:
+    common: |
+      SELECT COUNT(*) AS cancelled_count
+      FROM orders
+      WHERE cancelled_at IS NOT NULL;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`cancelled_at IS NOT NULL`이면 취소 일시가 기록된, 즉 취소된 주문입니다.'
+    en: If `cancelled_at IS NOT NULL`, it means the cancellation date was recorded, i.e., the order was cancelled.
+  rubric:
+    ko: '`cancelled_at IS NOT NULL`이면 취소 일시가 기록된, 즉 취소된 주문입니다.'
+    en: If `cancelled_at IS NOT NULL`, it means the cancellation date was recorded, i.e.
+  max_score: 10
+  tags: []
+- id: b05n-06
+  level: 1
+  type: SELECT
+  question: |
+    상품의 사양 정보(`specs`)가 없는 상품의 이름과 브랜드를 조회하세요.
+  question_en: |
+    Query the name and brand of products that have no specification information (`specs`).
+  reference_sql:
+    common: |
+      SELECT name, brand
+      FROM products
+      WHERE specs IS NULL;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`specs IS NULL`로 사양 정보가 누락된 상품을 찾습니다.'
+    en: Use `specs IS NULL` to find products with missing specification information.
+  rubric:
+    ko: '`specs IS NULL`로 사양 정보가 누락된 상품을 찾습니다.'
+    en: Use `specs IS NULL` to find products with missing specification information.
+  max_score: 10
+  tags: []
+- id: b05n-07
+  level: 1
+  type: SELECT
+  question: |
+    고객의 이름과 성별을 조회하되, 성별이 NULL이면 '미입력'으로 표시하세요.
+  question_en: |
+    Query the name and gender of customers, displaying 'N/A' when gender is NULL.
+  reference_sql:
+    common: |
+      SELECT name, COALESCE(gender, '미입력') AS gender
+      FROM customers;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COALESCE(칼럼, 대체값)`은 칼럼이 NULL일 때 대체값을 반환합니다.'
+    en: '`COALESCE(column, replacement)` returns the replacement value when the column is NULL.'
+  rubric:
+    ko: '`COALESCE(칼럼, 대체값)`은 칼럼이 NULL일 때 대체값을 반환합니다.'
+    en: '`COALESCE(column, replacement)` returns the replacement value when the column is'
+  max_score: 10
+  tags: []
+- id: b05n-08
+  level: 1
+  type: SELECT
+  question: |
+    주문의 주문번호와 배송 요청사항을 조회하되, 요청사항이 없으면 '없음'으로 표시하세요. 최근 10건만 조회합니다.
+  question_en: |
+    Query the order number and delivery notes, displaying 'None' when notes are missing. Show only the 10 most recent orders.
+  reference_sql:
+    common: |
+      SELECT order_number, IFNULL(notes, '없음') AS notes
+      FROM orders
+      ORDER BY ordered_at DESC
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`IFNULL(notes, ''없음'')` 또는 `COALESCE(notes, ''없음'')`을 사용합니다. SQLite에서 둘 다 동작합니다.'
+    en: Use `IFNULL(notes, 'None')` or `COALESCE(notes, 'None')`. Both work in SQLite.
+  rubric:
+    ko: '`IFNULL(notes, ''없음'')` 또는 `COALESCE(notes, ''없음'')`을 사용합니다. SQLite에서 둘 다 동작합니다.'
+    en: Use `IFNULL(notes, 'None')` or `COALESCE(notes, 'None')`. Both work in SQLite.
+  max_score: 10
+  tags: []
+- id: b05n-09
+  level: 1
+  type: SELECT
+  question: |
+    단종일(`discontinued_at`)이 있는 상품의 이름, 가격, 단종일을 조회하세요.
+  question_en: |
+    Query the name, price, and discontinuation date of products that have a discontinuation date (`discontinued_at`).
+  reference_sql:
+    common: |
+      SELECT name, price, discontinued_at
+      FROM products
+      WHERE discontinued_at IS NOT NULL;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`discontinued_at IS NOT NULL`이면 단종된 상품입니다.'
+    en: If `discontinued_at IS NOT NULL`, the product has been discontinued.
+  rubric:
+    ko: '`discontinued_at IS NOT NULL`이면 단종된 상품입니다.'
+    en: If `discontinued_at IS NOT NULL`, the product has been discontinued.
+  max_score: 10
+  tags: []
+- id: b05n-10
+  level: 1
+  type: SELECT
+  question: |
+    구매 확정(`completed_at`)이 아직 되지 않은 주문 중 취소도 되지 않은 주문의 수를 구하세요.
+  question_en: |
+    Find the number of orders that have not been confirmed (`completed_at`) and have not been cancelled either.
+  reference_sql:
+    common: |
+      SELECT COUNT(*) AS pending_count
+      FROM orders
+      WHERE completed_at IS NULL
+        AND cancelled_at IS NULL;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`completed_at IS NULL AND cancelled_at IS NULL`로 두 칼럼 모두 NULL인 행을 찾습니다.'
+    en: Use `completed_at IS NULL AND cancelled_at IS NULL` to find rows where both columns are NULL.
+  rubric:
+    ko: '`completed_at IS NULL AND cancelled_at IS NULL`로 두 칼럼 모두 NULL인 행을 찾습니다.'
+    en: Use `completed_at IS NULL AND cancelled_at IS NULL` to find rows where both colu
+  max_score: 10
+  tags: []
+- id: b05n-11
+  level: 2
+  type: SELECT
+  question: |
+    고객의 이름, 생년월일, 성별을 조회하되 생년월일은 NULL이면 '정보없음', 성별은 NULL이면 '미선택'으로 표시하세요. 상위 20건만 조회합니다.
+  question_en: |
+    Query the name, birth date, and gender of customers, displaying 'Unknown' for NULL birth dates and 'Not specified' for NULL genders. Show only the top 20 rows.
+  reference_sql:
+    common: |
+      SELECT name,
+             COALESCE(birth_date, '정보없음') AS birth_date,
+             COALESCE(gender, '미선택') AS gender
+      FROM customers
+      LIMIT 20;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COALESCE`를 각 칼럼에 개별 적용합니다.'
+    en: Apply `COALESCE` individually to each column.
+  rubric:
+    ko: '`COALESCE`를 각 칼럼에 개별 적용합니다.'
+    en: Apply `COALESCE` individually to each column.
+  max_score: 10
+  tags: []
+- id: b05n-12
+  level: 2
+  type: SELECT
+  question: |
+    상품의 이름, 무게를 조회하되 무게(`weight_grams`)가 NULL이면 0으로 대체하세요. 무게가 무거운 순으로 10건만 조회합니다.
+  question_en: |
+    Query the name and weight of products, replacing NULL weight (`weight_grams`) with 0. Show the 10 heaviest products.
+  reference_sql:
+    common: |
+      SELECT name, COALESCE(weight_grams, 0) AS weight_grams
+      FROM products
+      ORDER BY weight_grams DESC
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COALESCE(weight_grams, 0)`으로 NULL을 0으로 대체한 뒤 정렬합니다.'
+    en: Replace NULL with 0 using `COALESCE(weight_grams, 0)`, then sort.
+  rubric:
+    ko: '`COALESCE(weight_grams, 0)`으로 NULL을 0으로 대체한 뒤 정렬합니다.'
+    en: Replace NULL with 0 using `COALESCE(weight_grams, 0)`, then sort.
+  max_score: 10
+  tags: []
+- id: b05n-13
+  level: 2
+  type: SELECT
+  question: |
+    전체 고객 수와 생년월일이 입력된 고객 수를 함께 조회하세요.
+  question_en: |
+    Query the total number of customers and the number of customers with a birth date entered, in a single query.
+  reference_sql:
+    common: |
+      SELECT COUNT(*) AS total_customers,
+             COUNT(birth_date) AS has_birth_date
+      FROM customers;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COUNT(*)`는 모든 행을 세고, `COUNT(칼럼)`은 해당 칼럼이 NULL이 아닌 행만 셉니다.'
+    en: '`COUNT(*)` counts all rows, while `COUNT(column)` counts only rows where the column is not NULL.'
+  rubric:
+    ko: '`COUNT(*)`는 모든 행을 세고, `COUNT(칼럼)`은 해당 칼럼이 NULL이 아닌 행만 셉니다.'
+    en: '`COUNT(*)` counts all rows, while `COUNT(column)` counts only rows where the col'
+  max_score: 10
+  tags: []
+- id: b05n-14
+  level: 2
+  type: SELECT
+  question: |
+    전체 주문 수, 배송 요청사항이 있는 주문 수, 구매 확정된 주문 수를 한 번에 조회하세요.
+  question_en: |
+    Query the total number of orders, the number of orders with delivery notes, and the number of confirmed orders in a single query.
+  reference_sql:
+    common: |
+      SELECT COUNT(*) AS total_orders,
+             COUNT(notes) AS has_notes,
+             COUNT(completed_at) AS completed
+      FROM orders;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COUNT(notes)`, `COUNT(completed_at)`처럼 각 칼럼에 `COUNT`를 적용하면 NULL이 아닌 행만 셉니다.'
+    en: Applying `COUNT` to each column like `COUNT(notes)` and `COUNT(completed_at)` counts only non-NULL rows.
+  rubric:
+    ko: '`COUNT(notes)`, `COUNT(completed_at)`처럼 각 칼럼에 `COUNT`를 적용하면 NULL이 아닌 행만 셉니다.'
+    en: Applying `COUNT` to each column like `COUNT(notes)` and `COUNT(completed_at)` co
+  max_score: 10
+  tags: []
+- id: b05n-15
+  level: 2
+  type: SELECT
+  question: |
+    고객을 마지막 로그인일 기준 최근 순으로 정렬하되, 로그인 기록이 없는(NULL) 고객은 맨 뒤에 표시하세요. 상위 20건만 조회합니다.
+  question_en: |
+    Sort customers by last login date in descending order, but place customers with no login history (NULL) at the end. Show only the top 20 rows.
+  reference_sql:
+    common: |
+      SELECT name, last_login_at
+      FROM customers
+      ORDER BY last_login_at IS NULL, last_login_at DESC
+      LIMIT 20;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: SQLite에서 `ORDER BY 칼럼 DESC`를 사용하면 NULL이 맨 뒤로 갑니다. 또는 `ORDER BY 칼럼 IS NULL, 칼럼 DESC`로 명시적으로 제어합니다.
+    en: In SQLite, using `ORDER BY column DESC` places NULLs at the end. Alternatively, use `ORDER BY column IS NULL, column
+      DESC` for explicit control.
+  rubric:
+    ko: SQLite에서 `ORDER BY 칼럼 DESC`를 사용하면 NULL이 맨 뒤로 갑니다. 또는 `ORDER BY 칼럼 IS NULL, 칼럼 DE
+    en: 'In SQLite, using `ORDER BY column DESC` places NULLs at the end. Alternatively, '
+  max_score: 10
+  tags: []
+- id: b05n-16
+  level: 2
+  type: SELECT
+  question: |
+    상품을 단종일 기준 오래된 순으로 정렬하되, 단종되지 않은 상품(NULL)은 맨 뒤에 표시하세요. 상위 10건만 조회합니다.
+  question_en: |
+    Sort products by discontinuation date in ascending order, but place non-discontinued products (NULL) at the end. Show only the top 10 rows.
+  reference_sql:
+    common: |
+      SELECT name, price, discontinued_at
+      FROM products
+      ORDER BY discontinued_at IS NULL, discontinued_at ASC
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`ORDER BY discontinued_at IS NULL, discontinued_at ASC`로 NULL을 뒤로 보냅니다.'
+    en: Use `ORDER BY discontinued_at IS NULL, discontinued_at ASC` to push NULLs to the end.
+  rubric:
+    ko: '`ORDER BY discontinued_at IS NULL, discontinued_at ASC`로 NULL을 뒤로 보냅니다.'
+    en: Use `ORDER BY discontinued_at IS NULL, discontinued_at ASC` to push NULLs to the
+  max_score: 10
+  tags: []
+- id: b05n-17
+  level: 2
+  type: SELECT
+  question: |
+    등급별 고객 수와 생년월일 입력률(%)을 구하세요. 입력률은 소수점 1자리까지 반올림합니다.
+  question_en: |
+    Find the customer count and birth date completion rate (%) per tier. Round the rate to 1 decimal place.
+  reference_sql:
+    common: |
+      SELECT grade,
+             COUNT(*) AS total,
+             COUNT(birth_date) AS has_birth,
+             ROUND(COUNT(birth_date) * 100.0 / COUNT(*), 1) AS birth_rate_pct
+      FROM customers
+      GROUP BY grade
+      ORDER BY birth_rate_pct DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COUNT(birth_date) * 100.0 / COUNT(*)`로 NULL이 아닌 비율을 계산합니다. `GROUP BY grade`로 등급별 집계합니다.'
+    en: Calculate the non-NULL ratio with `COUNT(birth_date) * 100.0 / COUNT(*)`. Aggregate by tier with `GROUP BY grade`.
+  rubric:
+    ko: '`COUNT(birth_date) * 100.0 / COUNT(*)`로 NULL이 아닌 비율을 계산합니다. `GROUP BY grade`로 등급'
+    en: Calculate the non-NULL ratio with `COUNT(birth_date) * 100.0 / COUNT(*)`. Aggreg
+  max_score: 10
+  tags: []
+- id: b05n-18
+  level: 2
+  type: SELECT
+  question: |
+    가입 경로(`acquisition_channel`)별 고객 수를 구하되, NULL인 경우 '미분류'로 표시하세요.
+  question_en: |
+    Find the customer count per signup channel (`acquisition_channel`), displaying 'Unclassified' for NULL values.
+  reference_sql:
+    common: |
+      SELECT COALESCE(acquisition_channel, '미분류') AS channel,
+             COUNT(*) AS customer_count
+      FROM customers
+      GROUP BY COALESCE(acquisition_channel, '미분류')
+      ORDER BY customer_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COALESCE(acquisition_channel, ''미분류'')`를 SELECT와 GROUP BY 모두에 사용합니다.'
+    en: Use `COALESCE(acquisition_channel, 'Unclassified')` in both `SELECT` and `GROUP BY`.
+  rubric:
+    ko: '`COALESCE(acquisition_channel, ''미분류'')`를 SELECT와 GROUP BY 모두에 사용합니다.'
+    en: 'Use `COALESCE(acquisition_channel, ''Unclassified'')` in both `SELECT` and `GROUP '
+  max_score: 10
+  tags: []
+- id: b05n-19
+  level: 2
+  type: SELECT
+  question: |
+    주문 상태별로 주문 수와 배송 요청사항 입력 비율(%)을 구하세요.
+  question_en: |
+    Find the order count and delivery notes completion rate (%) per order status.
+  reference_sql:
+    common: |
+      SELECT status,
+             COUNT(*) AS order_count,
+             ROUND(COUNT(notes) * 100.0 / COUNT(*), 1) AS notes_rate_pct
+      FROM orders
+      GROUP BY status
+      ORDER BY order_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COUNT(notes) * 100.0 / COUNT(*)`로 notes가 NULL이 아닌 비율을 계산합니다.'
+    en: Calculate the non-NULL ratio of notes with `COUNT(notes) * 100.0 / COUNT(*)`.
+  rubric:
+    ko: '`COUNT(notes) * 100.0 / COUNT(*)`로 notes가 NULL이 아닌 비율을 계산합니다.'
+    en: Calculate the non-NULL ratio of notes with `COUNT(notes) * 100.0 / COUNT(*)`.
+  max_score: 10
+  tags: []
+- id: b05n-20
+  level: 2
+  type: SELECT
+  question: |
+    상품의 이름, 가격, 무게를 조회하되, 무게가 NULL이면 가격 기준 100g당 1,000원으로 추정한 무게(`price / 10`)를 표시하세요. 칼럼명은 `estimated_weight`로 지정합니다.
+  question_en: |
+    Query product name, price, and weight, but when weight is NULL, display an estimated weight calculated as price / 10 (assuming 1,000 won per 100g). Name the column `estimated_weight`.
+  reference_sql:
+    common: |
+      SELECT name,
+             price,
+             COALESCE(weight_grams, CAST(price / 10 AS INTEGER)) AS estimated_weight
+      FROM products
+      ORDER BY estimated_weight DESC
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COALESCE(weight_grams, 다른_계산식)`으로 NULL일 때만 대체 계산을 적용합니다.'
+    en: Use `COALESCE(weight_grams, alternative_calculation)` to apply the alternative calculation only when NULL.
+  rubric:
+    ko: '`COALESCE(weight_grams, 다른_계산식)`으로 NULL일 때만 대체 계산을 적용합니다.'
+    en: Use `COALESCE(weight_grams, alternative_calculation)` to apply the alternative c
+  max_score: 10
+  tags: []
+- id: b05n-21
+  level: 3
+  type: SELECT
+  question: |
+    고객 테이블에서 각 칼럼의 NULL 수를 한 번에 조회하세요. birth_date, gender, last_login_at, acquisition_channel의 NULL 수를 구합니다.
+  question_en: |
+    Query the NULL count for multiple columns in the customers table at once. Find the NULL count for birth_date, gender, last_login_at, and acquisition_channel.
+  reference_sql:
+    common: |
+      SELECT COUNT(*) - COUNT(birth_date) AS birth_null,
+             COUNT(*) - COUNT(gender) AS gender_null,
+             COUNT(*) - COUNT(last_login_at) AS login_null,
+             COUNT(*) - COUNT(acquisition_channel) AS channel_null
+      FROM customers;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COUNT(*) - COUNT(칼럼)`으로 해당 칼럼의 NULL 수를 계산합니다.'
+    en: Calculate the NULL count for each column with `COUNT(*) - COUNT(column)`.
+  rubric:
+    ko: '`COUNT(*) - COUNT(칼럼)`으로 해당 칼럼의 NULL 수를 계산합니다.'
+    en: Calculate the NULL count for each column with `COUNT(*) - COUNT(column)`.
+  max_score: 10
+  tags: []
+- id: b05n-22
+  level: 3
+  type: SELECT
+  question: |
+    고객 테이블에서 각 NULL 허용 칼럼의 결측률(%)을 구하세요. 소수점 1자리까지 표시합니다.
+  question_en: |
+    Find the missing rate (%) for each nullable column in the customers table. Display to 1 decimal place.
+  reference_sql:
+    common: |
+      SELECT ROUND((COUNT(*) - COUNT(birth_date)) * 100.0 / COUNT(*), 1) AS birth_missing_pct,
+             ROUND((COUNT(*) - COUNT(gender)) * 100.0 / COUNT(*), 1) AS gender_missing_pct,
+             ROUND((COUNT(*) - COUNT(last_login_at)) * 100.0 / COUNT(*), 1) AS login_missing_pct,
+             ROUND((COUNT(*) - COUNT(acquisition_channel)) * 100.0 / COUNT(*), 1) AS channel_missing_pct
+      FROM customers;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`(COUNT(*) - COUNT(칼럼)) * 100.0 / COUNT(*)`로 결측률을 계산합니다.'
+    en: Calculate the missing rate with `(COUNT(*) - COUNT(column)) * 100.0 / COUNT(*)`.
+  rubric:
+    ko: '`(COUNT(*) - COUNT(칼럼)) * 100.0 / COUNT(*)`로 결측률을 계산합니다.'
+    en: Calculate the missing rate with `(COUNT(*) - COUNT(column)) * 100.0 / COUNT(*)`.
+  max_score: 10
+  tags: []
+- id: b05n-23
+  level: 3
+  type: SELECT
+  question: |
+    주문 테이블에서 notes, completed_at, cancelled_at 각각의 NULL 비율(%)을 구하세요.
+  question_en: |
+    Find the NULL rate (%) for notes, completed_at, and cancelled_at in the orders table.
+  reference_sql:
+    common: |
+      SELECT ROUND((COUNT(*) - COUNT(notes)) * 100.0 / COUNT(*), 1) AS notes_missing_pct,
+             ROUND((COUNT(*) - COUNT(completed_at)) * 100.0 / COUNT(*), 1) AS completed_missing_pct,
+             ROUND((COUNT(*) - COUNT(cancelled_at)) * 100.0 / COUNT(*), 1) AS cancelled_missing_pct
+      FROM orders;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 문제 22와 동일한 패턴을 orders 테이블에 적용합니다.
+    en: Apply the same pattern from Problem 22 to the orders table.
+  rubric:
+    ko: 문제 22와 동일한 패턴을 orders 테이블에 적용합니다.
+    en: Apply the same pattern from Problem 22 to the orders table.
+  max_score: 10
+  tags: []
+- id: b05n-24
+  level: 3
+  type: SELECT
+  question: |
+    성별이 NULL인 고객의 등급별 분포를 구하세요. 등급별 수와 비율(%)을 표시합니다.
+  question_en: |
+    Find the tier distribution of customers whose gender is NULL. Show the count and percentage (%) per tier.
+  reference_sql:
+    common: |
+      SELECT grade,
+             COUNT(*) AS cnt,
+             ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 1) AS pct
+      FROM customers
+      WHERE gender IS NULL
+      GROUP BY grade
+      ORDER BY cnt DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`WHERE gender IS NULL`로 필터링 후 `GROUP BY grade`로 집계합니다. 비율은 전체 NULL 고객 대비입니다.'
+    en: Filter with `WHERE gender IS NULL`, then aggregate with `GROUP BY grade`. The percentage is relative to the total
+      number of NULL-gender customers.
+  rubric:
+    ko: '`WHERE gender IS NULL`로 필터링 후 `GROUP BY grade`로 집계합니다. 비율은 전체 NULL 고객 대비입니다.'
+    en: Filter with `WHERE gender IS NULL`, then aggregate with `GROUP BY grade`. The pe
+  max_score: 10
+  tags: []
+- id: b05n-25
+  level: 3
+  type: SELECT
+  question: |
+    생년월일과 성별이 모두 NULL인 고객의 수를 구하세요. 그리고 생년월일 또는 성별 중 하나라도 NULL인 고객의 수도 함께 구하세요.
+  question_en: |
+    Find the number of customers where both birth_date and gender are NULL. Also find the number of customers where at least one of them is NULL.
+  reference_sql:
+    common: |
+      SELECT COUNT(*) AS total,
+             SUM(CASE WHEN birth_date IS NULL AND gender IS NULL THEN 1 ELSE 0 END) AS both_null,
+             SUM(CASE WHEN birth_date IS NULL OR gender IS NULL THEN 1 ELSE 0 END) AS any_null
+      FROM customers;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`AND`로 모두 NULL인 조건, `OR`로 하나라도 NULL인 조건을 만듭니다.'
+    en: Use `AND` for the "both NULL" condition and `OR` for the "at least one NULL" condition.
+  rubric:
+    ko: '`AND`로 모두 NULL인 조건, `OR`로 하나라도 NULL인 조건을 만듭니다.'
+    en: Use `AND` for the "both NULL" condition and `OR` for the "at least one NULL" con
+  max_score: 10
+  tags: []
+- id: b05n-26
+  level: 3
+  type: SELECT
+  question: |
+    가입 경로가 NULL인 고객 중 VIP 등급의 수와, 가입 경로가 있는 고객 중 VIP 등급의 수를 비교하세요.
+  question_en: |
+    Compare the number of VIP-tier customers with NULL signup channel versus those with a signup channel.
+  reference_sql:
+    common: |
+      SELECT '경로없음' AS channel_status,
+             COUNT(*) AS vip_count
+      FROM customers
+      WHERE acquisition_channel IS NULL AND grade = 'VIP'
+      UNION ALL
+      SELECT '경로있음',
+             COUNT(*)
+      FROM customers
+      WHERE acquisition_channel IS NOT NULL AND grade = 'VIP';
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 두 개의 `COUNT`에 각각 다른 `WHERE` 조건을 적용하거나, 하나의 쿼리에서 필터링된 COUNT를 사용합니다.
+    en: Apply different `WHERE` conditions to two `COUNT` expressions, or use filtered COUNTs in a single query.
+  rubric:
+    ko: 두 개의 `COUNT`에 각각 다른 `WHERE` 조건을 적용하거나, 하나의 쿼리에서 필터링된 COUNT를 사용합니다.
+    en: Apply different `WHERE` conditions to two `COUNT` expressions, or use filtered C
+  max_score: 10
+  tags: []
+- id: b05n-27
+  level: 3
+  type: SELECT
+  question: |
+    상품의 설명(`description`)과 사양(`specs`) 중 하나라도 NULL인 상품의 수를 구하고, 둘 다 NULL인 상품의 수도 함께 조회하세요.
+  question_en: |
+    Find the number of products where either description or specs is NULL, and also the number where both are NULL.
+  reference_sql:
+    common: |
+      SELECT COUNT(*) AS total_products,
+             SUM(CASE WHEN description IS NULL OR specs IS NULL THEN 1 ELSE 0 END) AS any_null,
+             SUM(CASE WHEN description IS NULL AND specs IS NULL THEN 1 ELSE 0 END) AS both_null
+      FROM products;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`OR`와 `AND`를 조합하여 두 가지 조건을 만듭니다.'
+    en: Combine `OR` and `AND` to create two different conditions.
+  rubric:
+    ko: '`OR`와 `AND`를 조합하여 두 가지 조건을 만듭니다.'
+    en: Combine `OR` and `AND` to create two different conditions.
+  max_score: 10
+  tags: []
+- id: b05n-28
+  level: 3
+  type: SELECT
+  question: |
+    연도별 주문 수와 배송 요청사항 작성률(%)을 구하세요. `SUBSTR(ordered_at, 1, 4)`로 연도를 추출합니다.
+  question_en: |
+    Find the order count and delivery notes completion rate (%) per year. Extract the year with `SUBSTR(ordered_at, 1, 4)`.
+  reference_sql:
+    common: |
+      SELECT SUBSTR(ordered_at, 1, 4) AS year,
+             COUNT(*) AS order_count,
+             ROUND(COUNT(notes) * 100.0 / COUNT(*), 1) AS notes_rate_pct
+      FROM orders
+      GROUP BY SUBSTR(ordered_at, 1, 4)
+      ORDER BY year;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`GROUP BY SUBSTR(ordered_at, 1, 4)`로 연도별 그룹화 후 `COUNT(notes) * 100.0 / COUNT(*)`로 작성률을 계산합니다.'
+    en: Group by year with `GROUP BY SUBSTR(ordered_at, 1, 4)`, then calculate the completion rate with `COUNT(notes) * 100.0
+      / COUNT(*)`.
+  rubric:
+    ko: '`GROUP BY SUBSTR(ordered_at, 1, 4)`로 연도별 그룹화 후 `COUNT(notes) * 100.0 / COUNT(*)`'
+    en: Group by year with `GROUP BY SUBSTR(ordered_at, 1, 4)`, then calculate the compl
+  max_score: 10
+  tags: []
+- id: b05n-29
+  level: 3
+  type: SELECT
+  question: |
+    상품 무게(`weight_grams`)가 NULL인 상품의 브랜드별 수를 구하고, 5개 이상인 브랜드만 조회하세요.
+  question_en: |
+    Find the brand-wise count of products where weight (`weight_grams`) is NULL, showing only brands with 5 or more such products.
+  reference_sql:
+    common: |
+      SELECT brand, COUNT(*) AS null_weight_count
+      FROM products
+      WHERE weight_grams IS NULL
+      GROUP BY brand
+      HAVING COUNT(*) >= 5
+      ORDER BY null_weight_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`WHERE weight_grams IS NULL`로 필터링 후 `GROUP BY brand`, `HAVING COUNT(*) >= 5`로 조건을 겁니다.'
+    en: Filter with `WHERE weight_grams IS NULL`, then apply `GROUP BY brand` and `HAVING COUNT(*) >= 5`.
+  rubric:
+    ko: '`WHERE weight_grams IS NULL`로 필터링 후 `GROUP BY brand`, `HAVING COUNT(*) >= 5`로 조건'
+    en: Filter with `WHERE weight_grams IS NULL`, then apply `GROUP BY brand` and `HAVIN
+  max_score: 10
+  tags: []
+- id: b05n-30
+  level: 3
+  type: SELECT
+  question: |
+    고객의 데이터 완성도를 점수로 계산하세요. birth_date, gender, last_login_at, acquisition_channel 4개 칼럼 중 NULL이 아닌 칼럼 수를 세어 0~4점으로 표시합니다. 점수별 고객 수를 구하세요.
+  question_en: |
+    Calculate a data completeness score for each customer. Count the number of non-NULL columns among birth_date, gender, last_login_at, and acquisition_channel (score 0-4). Find the customer count per score.
+  reference_sql:
+    common: |
+      SELECT (birth_date IS NOT NULL)
+           + (gender IS NOT NULL)
+           + (last_login_at IS NOT NULL)
+           + (acquisition_channel IS NOT NULL) AS completeness_score,
+             COUNT(*) AS customer_count
+      FROM customers
+      GROUP BY completeness_score
+      ORDER BY completeness_score;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`(칼럼 IS NOT NULL)`은 SQLite에서 TRUE=1, FALSE=0을 반환합니다. 4개를 더하면 완성도 점수가 됩니다.'
+    en: '`(column IS NOT NULL)` returns TRUE=1 and FALSE=0 in SQLite. Adding all four gives the completeness score.'
+  rubric:
+    ko: '`(칼럼 IS NOT NULL)`은 SQLite에서 TRUE=1, FALSE=0을 반환합니다. 4개를 더하면 완성도 점수가 됩니다.'
+    en: '`(column IS NOT NULL)` returns TRUE=1 and FALSE=0 in SQLite. Adding all four giv'
+  max_score: 10
+  tags: []

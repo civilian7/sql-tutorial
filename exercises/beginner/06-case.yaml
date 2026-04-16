@@ -1,0 +1,1059 @@
+metadata:
+  id: beginner-06-case
+  title: CASE 표현식
+  title_en: CASE Expressions
+  difficulty: beginner
+  concepts:
+  - CASE WHEN THEN ELSE END
+  - Simple CASE
+  - Searched CASE
+  - CASE + aggregation
+  - CASE + sorting
+  tables:
+  - products
+  - customers
+  - orders
+  - reviews
+  - payments
+  prerequisites: []
+  estimated_minutes: 30
+  default_level: 1
+  default_type: SELECT
+  description: products, customers, orders, reviews, payments 테이블을 사용합니다.
+  description_en: Uses products, customers, orders, reviews, payments tables.
+problems:
+- id: b06c-01
+  level: 1
+  type: SELECT
+  question: |
+    고객의 이름과 등급을 조회하되, 등급을 한글로 표시하세요. BRONZE='브론즈', SILVER='실버', GOLD='골드', VIP='VIP'
+  question_en: |
+    Query customer names and tiers, displaying the tier in Korean. BRONZE='브론즈', SILVER='실버', GOLD='골드', VIP='VIP'
+  reference_sql:
+    common: |
+      SELECT name,
+             CASE grade
+                 WHEN 'BRONZE' THEN '브론즈'
+                 WHEN 'SILVER' THEN '실버'
+                 WHEN 'GOLD' THEN '골드'
+                 WHEN 'VIP' THEN 'VIP'
+             END AS grade_kr
+      FROM customers
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '단순 CASE 문법: `CASE 칼럼 WHEN 값1 THEN 결과1 WHEN 값2 THEN 결과2 ... END`'
+    en: 'Simple CASE syntax: `CASE column WHEN value1 THEN result1 WHEN value2 THEN result2 ... END`'
+  rubric:
+    ko: '단순 CASE 문법: `CASE 칼럼 WHEN 값1 THEN 결과1 WHEN 값2 THEN 결과2 ... END`'
+    en: 'Simple CASE syntax: `CASE column WHEN value1 THEN result1 WHEN value2 THEN resul'
+  max_score: 10
+  tags: []
+- id: b06c-02
+  level: 1
+  type: SELECT
+  question: |
+    상품의 이름과 가격, 그리고 가격대를 표시하세요. 10만원 미만='저가', 10만원~50만원='중저가', 50만원~100만원='중가', 100만원 이상='고가'
+  question_en: |
+    Display the product name, price, and price tier. Under 100K='Budget', 100K-500K='Mid-low', 500K-1M='Mid', 1M+='Premium'
+  reference_sql:
+    common: |
+      SELECT name, price,
+             CASE
+                 WHEN price < 100000 THEN '저가'
+                 WHEN price < 500000 THEN '중저가'
+                 WHEN price < 1000000 THEN '중가'
+                 ELSE '고가'
+             END AS price_tier
+      FROM products
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '검색 CASE 문법: `CASE WHEN 조건1 THEN 결과1 WHEN 조건2 THEN 결과2 ... ELSE 기본값 END`. 조건은 위에서 아래로 평가되므로 순서에 주의하세요.'
+    en: 'Searched CASE syntax: `CASE WHEN condition1 THEN result1 WHEN condition2 THEN result2 ... ELSE default END`. Conditions
+      are evaluated top-to-bottom, so order matters.'
+  rubric:
+    ko: '검색 CASE 문법: `CASE WHEN 조건1 THEN 결과1 WHEN 조건2 THEN 결과2 ... ELSE 기본값 END`. 조건은 위에서'
+    en: 'Searched CASE syntax: `CASE WHEN condition1 THEN result1 WHEN condition2 THEN re'
+  max_score: 10
+  tags: []
+- id: b06c-03
+  level: 1
+  type: SELECT
+  question: |
+    주문의 주문번호와 상태를 조회하되, 상태를 한글로 표시하세요. pending='주문접수', paid='결제완료', preparing='준비중', shipped='배송중', delivered='배송완료', confirmed='구매확정', cancelled='취소', return_requested='반품요청', returned='반품완료'
+  question_en: |
+    Query order numbers and statuses, displaying the status in Korean. pending='주문접수', paid='결제완료', preparing='준비중', shipped='배송중', delivered='배송완료', confirmed='구매확정', cancelled='취소', return_requested='반품요청', returned='반품완료'
+  reference_sql:
+    common: |
+      SELECT order_number,
+             CASE status
+                 WHEN 'pending' THEN '주문접수'
+                 WHEN 'paid' THEN '결제완료'
+                 WHEN 'preparing' THEN '준비중'
+                 WHEN 'shipped' THEN '배송중'
+                 WHEN 'delivered' THEN '배송완료'
+                 WHEN 'confirmed' THEN '구매확정'
+                 WHEN 'cancelled' THEN '취소'
+                 WHEN 'return_requested' THEN '반품요청'
+                 WHEN 'returned' THEN '반품완료'
+             END AS status_kr
+      FROM orders
+      ORDER BY ordered_at DESC
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 단순 CASE를 사용하여 status 값을 한글로 변환합니다.
+    en: Use simple CASE to convert status values to Korean.
+  rubric:
+    ko: 단순 CASE를 사용하여 status 값을 한글로 변환합니다.
+    en: Use simple CASE to convert status values to Korean.
+  max_score: 10
+  tags: []
+- id: b06c-04
+  level: 1
+  type: SELECT
+  question: |
+    리뷰의 평점을 텍스트로 표시하세요. 5='최고', 4='좋음', 3='보통', 2='별로', 1='최악'
+  question_en: |
+    Display review ratings as text. 5='Excellent', 4='Good', 3='Average', 2='Poor', 1='Terrible'
+  reference_sql:
+    common: |
+      SELECT rating,
+             CASE rating
+                 WHEN 5 THEN '최고'
+                 WHEN 4 THEN '좋음'
+                 WHEN 3 THEN '보통'
+                 WHEN 2 THEN '별로'
+                 WHEN 1 THEN '최악'
+             END AS rating_text,
+             title
+      FROM reviews
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`CASE rating WHEN 5 THEN ''최고'' ...` 형태의 단순 CASE를 사용합니다.'
+    en: 'Use simple CASE: `CASE rating WHEN 5 THEN ''Excellent'' ...`'
+  rubric:
+    ko: '`CASE rating WHEN 5 THEN ''최고'' ...` 형태의 단순 CASE를 사용합니다.'
+    en: 'Use simple CASE: `CASE rating WHEN 5 THEN ''Excellent'' ...`'
+  max_score: 10
+  tags: []
+- id: b06c-05
+  level: 1
+  type: SELECT
+  question: |
+    상품의 재고 상태를 표시하세요. 재고 0='품절', 1~10='부족', 11~100='보통', 101 이상='충분'
+  question_en: |
+    Display the stock status of products. Stock 0='Out of stock', 1-10='Low', 11-100='Normal', 101+='Sufficient'
+  reference_sql:
+    common: |
+      SELECT name, stock_qty,
+             CASE
+                 WHEN stock_qty = 0 THEN '품절'
+                 WHEN stock_qty <= 10 THEN '부족'
+                 WHEN stock_qty <= 100 THEN '보통'
+                 ELSE '충분'
+             END AS stock_status
+      FROM products
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 검색 CASE에서 `stock_qty`의 범위를 조건으로 사용합니다.
+    en: Use the `stock_qty` range as conditions in a searched CASE.
+  rubric:
+    ko: 검색 CASE에서 `stock_qty`의 범위를 조건으로 사용합니다.
+    en: Use the `stock_qty` range as conditions in a searched CASE.
+  max_score: 10
+  tags: []
+- id: b06c-06
+  level: 1
+  type: SELECT
+  question: |
+    결제 수단(`method`)을 한글로 표시하세요. card='신용카드', bank_transfer='계좌이체', virtual_account='가상계좌', kakao_pay='카카오페이', naver_pay='네이버페이', point='포인트'. 상위 10건만 조회합니다.
+  question_en: |
+    Display the payment method (`method`) in Korean. card='신용카드', bank_transfer='계좌이체', virtual_account='가상계좌', kakao_pay='카카오페이', naver_pay='네이버페이', point='포인트'. Show only the top 10 rows.
+  reference_sql:
+    common: |
+      SELECT order_id,
+             CASE method
+                 WHEN 'card' THEN '신용카드'
+                 WHEN 'bank_transfer' THEN '계좌이체'
+                 WHEN 'virtual_account' THEN '가상계좌'
+                 WHEN 'kakao_pay' THEN '카카오페이'
+                 WHEN 'naver_pay' THEN '네이버페이'
+                 WHEN 'point' THEN '포인트'
+             END AS method_kr,
+             amount
+      FROM payments
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 단순 CASE로 method 값을 한글로 변환합니다.
+    en: Use simple CASE to convert method values to Korean.
+  rubric:
+    ko: 단순 CASE로 method 값을 한글로 변환합니다.
+    en: Use simple CASE to convert method values to Korean.
+  max_score: 10
+  tags: []
+- id: b06c-07
+  level: 1
+  type: SELECT
+  question: |
+    고객의 활성 상태를 텍스트로 표시하세요. is_active가 1이면 '활성', 0이면 '탈퇴'
+  question_en: |
+    Display the customer active status as text. is_active 1='Active', 0='Withdrawn'
+  reference_sql:
+    common: |
+      SELECT name, email,
+             CASE is_active
+                 WHEN 1 THEN '활성'
+                 WHEN 0 THEN '탈퇴'
+             END AS status
+      FROM customers
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`CASE is_active WHEN 1 THEN ''활성'' WHEN 0 THEN ''탈퇴'' END` 또는 검색 CASE를 사용합니다.'
+    en: Use `CASE is_active WHEN 1 THEN 'Active' WHEN 0 THEN 'Withdrawn' END` or a searched CASE.
+  rubric:
+    ko: '`CASE is_active WHEN 1 THEN ''활성'' WHEN 0 THEN ''탈퇴'' END` 또는 검색 CASE를 사용합니다.'
+    en: Use `CASE is_active WHEN 1 THEN 'Active' WHEN 0 THEN 'Withdrawn' END` or a searc
+  max_score: 10
+  tags: []
+- id: b06c-08
+  level: 1
+  type: SELECT
+  question: |
+    주문 금액 구간을 표시하세요. 5만원 미만='소액', 5만원~20만원='일반', 20만원~100만원='고액', 100만원 이상='VIP급'. 최근 주문 10건에 대해 조회합니다.
+  question_en: |
+    Display the order amount tier. Under 50K='Small', 50K-200K='Regular', 200K-1M='Large', 1M+='VIP-level'. Show the 10 most recent orders.
+  reference_sql:
+    common: |
+      SELECT order_number, total_amount,
+             CASE
+                 WHEN total_amount < 50000 THEN '소액'
+                 WHEN total_amount < 200000 THEN '일반'
+                 WHEN total_amount < 1000000 THEN '고액'
+                 ELSE 'VIP급'
+             END AS amount_tier
+      FROM orders
+      ORDER BY ordered_at DESC
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 검색 CASE로 `total_amount`의 범위를 구분합니다.
+    en: Use searched CASE to categorize `total_amount` ranges.
+  rubric:
+    ko: 검색 CASE로 `total_amount`의 범위를 구분합니다.
+    en: Use searched CASE to categorize `total_amount` ranges.
+  max_score: 10
+  tags: []
+- id: b06c-09
+  level: 1
+  type: SELECT
+  question: |
+    상품의 판매 상태를 종합적으로 표시하세요. is_active가 0이면 '단종', stock_qty가 0이면 '품절', 그 외는 '판매중'
+  question_en: |
+    Display the comprehensive sale status of products. If is_active is 0, show 'Discontinued'; if stock_qty is 0, show 'Out of stock'; otherwise show 'On sale'
+  reference_sql:
+    common: |
+      SELECT name, price, is_active, stock_qty,
+             CASE
+                 WHEN is_active = 0 THEN '단종'
+                 WHEN stock_qty = 0 THEN '품절'
+                 ELSE '판매중'
+             END AS sale_status
+      FROM products
+      LIMIT 15;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: CASE는 위에서 아래로 평가됩니다. 단종 여부를 먼저 체크하고, 그다음 품절을 체크합니다.
+    en: CASE evaluates conditions top-to-bottom. Check discontinuation first, then out-of-stock.
+  rubric:
+    ko: CASE는 위에서 아래로 평가됩니다. 단종 여부를 먼저 체크하고, 그다음 품절을 체크합니다.
+    en: CASE evaluates conditions top-to-bottom. Check discontinuation first, then out-o
+  max_score: 10
+  tags: []
+- id: b06c-10
+  level: 1
+  type: SELECT
+  question: |
+    고객의 적립금 수준을 표시하세요. 0='없음', 1~5000='소액', 5001~20000='보통', 20001 이상='고액'. 상위 10건만 조회합니다.
+  question_en: |
+    Display the customer points level. 0='None', 1-5000='Low', 5001-20000='Medium', 20001+='High'. Show only the top 10 rows.
+  reference_sql:
+    common: |
+      SELECT name, point_balance,
+             CASE
+                 WHEN point_balance = 0 THEN '없음'
+                 WHEN point_balance <= 5000 THEN '소액'
+                 WHEN point_balance <= 20000 THEN '보통'
+                 ELSE '고액'
+             END AS point_level
+      FROM customers
+      LIMIT 10;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`point_balance`의 범위를 검색 CASE로 분류합니다.'
+    en: Classify `point_balance` ranges using searched CASE.
+  rubric:
+    ko: '`point_balance`의 범위를 검색 CASE로 분류합니다.'
+    en: Classify `point_balance` ranges using searched CASE.
+  max_score: 10
+  tags: []
+- id: b06c-11
+  level: 2
+  type: SELECT
+  question: |
+    상품을 가격대별로 분류하고, 각 가격대의 상품 수를 구하세요. 10만원 미만='저가', 10만원~50만원='중저가', 50만원~100만원='중가', 100만원 이상='고가'
+  question_en: |
+    Classify products by price tier and find the product count per tier. Under 100K='Budget', 100K-500K='Mid-low', 500K-1M='Mid', 1M+='Premium'
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN price < 100000 THEN '저가'
+                 WHEN price < 500000 THEN '중저가'
+                 WHEN price < 1000000 THEN '중가'
+                 ELSE '고가'
+             END AS price_tier,
+             COUNT(*) AS product_count
+      FROM products
+      GROUP BY CASE
+                   WHEN price < 100000 THEN '저가'
+                   WHEN price < 500000 THEN '중저가'
+                   WHEN price < 1000000 THEN '중가'
+                   ELSE '고가'
+               END
+      ORDER BY product_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: CASE 표현식을 `SELECT`와 `GROUP BY` 모두에 사용합니다.
+    en: Use the CASE expression in both `SELECT` and `GROUP BY`.
+  rubric:
+    ko: CASE 표현식을 `SELECT`와 `GROUP BY` 모두에 사용합니다.
+    en: Use the CASE expression in both `SELECT` and `GROUP BY`.
+  max_score: 10
+  tags: []
+- id: b06c-12
+  level: 2
+  type: SELECT
+  question: |
+    주문을 진행 상태로 크게 3분류하고, 각각의 건수를 구하세요. pending/paid/preparing='처리중', shipped/delivered/confirmed='완료', cancelled/return_requested/returned='취소/반품'
+  question_en: |
+    Classify orders into 3 major status groups and find the count for each. pending/paid/preparing='Processing', shipped/delivered/confirmed='Completed', cancelled/return_requested/returned='Cancelled/Returned'
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN status IN ('pending', 'paid', 'preparing') THEN '처리중'
+                 WHEN status IN ('shipped', 'delivered', 'confirmed') THEN '완료'
+                 WHEN status IN ('cancelled', 'return_requested', 'returned') THEN '취소/반품'
+             END AS status_group,
+             COUNT(*) AS order_count
+      FROM orders
+      GROUP BY status_group
+      ORDER BY order_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`CASE WHEN status IN (...) THEN ...`으로 여러 값을 하나의 그룹으로 묶습니다.'
+    en: Use `CASE WHEN status IN (...) THEN ...` to group multiple values into a single category.
+  rubric:
+    ko: '`CASE WHEN status IN (...) THEN ...`으로 여러 값을 하나의 그룹으로 묶습니다.'
+    en: 'Use `CASE WHEN status IN (...) THEN ...` to group multiple values into a single '
+  max_score: 10
+  tags: []
+- id: b06c-13
+  level: 2
+  type: SELECT
+  question: |
+    리뷰를 긍정(4~5점)/보통(3점)/부정(1~2점)으로 분류하고, 각 그룹의 리뷰 수를 구하세요.
+  question_en: |
+    Classify reviews as Positive (4-5 stars), Neutral (3 stars), or Negative (1-2 stars) and find the count for each group.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN rating >= 4 THEN '긍정'
+                 WHEN rating = 3 THEN '보통'
+                 ELSE '부정'
+             END AS sentiment,
+             COUNT(*) AS review_count
+      FROM reviews
+      GROUP BY sentiment
+      ORDER BY review_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 검색 CASE로 rating 범위를 3개 그룹으로 나눕니다.
+    en: Use searched CASE to divide the rating range into 3 groups.
+  rubric:
+    ko: 검색 CASE로 rating 범위를 3개 그룹으로 나눕니다.
+    en: Use searched CASE to divide the rating range into 3 groups.
+  max_score: 10
+  tags: []
+- id: b06c-14
+  level: 2
+  type: SELECT
+  question: |
+    상품을 가격대별로 분류하고, 각 가격대의 평균 재고 수량을 구하세요. 소수점 없이 반올림합니다.
+  question_en: |
+    Classify products by price tier and find the average stock quantity per tier. Round to no decimal places.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN price < 100000 THEN '저가'
+                 WHEN price < 500000 THEN '중저가'
+                 WHEN price < 1000000 THEN '중가'
+                 ELSE '고가'
+             END AS price_tier,
+             COUNT(*) AS product_count,
+             ROUND(AVG(stock_qty)) AS avg_stock
+      FROM products
+      GROUP BY price_tier
+      ORDER BY avg_stock DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: CASE로 가격대를 분류하고 `AVG(stock_qty)`로 평균 재고를 구합니다.
+    en: Classify the price tier with CASE and calculate the average stock with `AVG(stock_qty)`.
+  rubric:
+    ko: CASE로 가격대를 분류하고 `AVG(stock_qty)`로 평균 재고를 구합니다.
+    en: Classify the price tier with CASE and calculate the average stock with `AVG(stoc
+  max_score: 10
+  tags: []
+- id: b06c-15
+  level: 2
+  type: SELECT
+  question: |
+    고객을 성별로 분류하되, NULL은 '미입력'으로 표시하고 각 그룹의 수를 구하세요.
+  question_en: |
+    Classify customers by gender, displaying NULL as 'Not entered', and find the count per group.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN gender IS NULL THEN '미입력'
+                 WHEN gender = 'M' THEN '남성'
+                 WHEN gender = 'F' THEN '여성'
+             END AS gender_kr,
+             COUNT(*) AS customer_count
+      FROM customers
+      GROUP BY gender_kr
+      ORDER BY customer_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`CASE WHEN gender IS NULL THEN ''미입력'' WHEN gender = ''M'' THEN ''남성'' ...`처럼 NULL을 먼저 처리합니다.'
+    en: 'Handle NULL first: `CASE WHEN gender IS NULL THEN ''Not entered'' WHEN gender = ''M'' THEN ''Male'' ...`'
+  rubric:
+    ko: '`CASE WHEN gender IS NULL THEN ''미입력'' WHEN gender = ''M'' THEN ''남성'' ...`처럼 NULL을 먼저'
+    en: 'Handle NULL first: `CASE WHEN gender IS NULL THEN ''Not entered'' WHEN gender = ''M'
+  max_score: 10
+  tags: []
+- id: b06c-16
+  level: 2
+  type: SELECT
+  question: |
+    결제 수단별 건수와 평균 결제 금액을 구하되, 결제 수단을 한글로 표시하세요. 평균 금액은 원 단위로 반올림합니다.
+  question_en: |
+    Find the count and average payment amount per payment method, displaying the method in Korean. Round the average amount to the nearest won.
+  reference_sql:
+    common: |
+      SELECT CASE method
+                 WHEN 'card' THEN '신용카드'
+                 WHEN 'bank_transfer' THEN '계좌이체'
+                 WHEN 'virtual_account' THEN '가상계좌'
+                 WHEN 'kakao_pay' THEN '카카오페이'
+                 WHEN 'naver_pay' THEN '네이버페이'
+                 WHEN 'point' THEN '포인트'
+             END AS method_kr,
+             COUNT(*) AS payment_count,
+             ROUND(AVG(amount)) AS avg_amount
+      FROM payments
+      GROUP BY method
+      ORDER BY payment_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: CASE로 method를 한글로 변환한 뒤 GROUP BY와 집계 함수를 함께 사용합니다.
+    en: Convert method to Korean with CASE, then use GROUP BY and aggregate functions together.
+  rubric:
+    ko: CASE로 method를 한글로 변환한 뒤 GROUP BY와 집계 함수를 함께 사용합니다.
+    en: Convert method to Korean with CASE, then use GROUP BY and aggregate functions to
+  max_score: 10
+  tags: []
+- id: b06c-17
+  level: 2
+  type: SELECT
+  question: |
+    상품을 정렬하되, 품절 상품(stock_qty=0)을 맨 아래로, 나머지는 가격이 저렴한 순으로 정렬하세요. 상위 15건만 조회합니다.
+  question_en: |
+    Sort products with out-of-stock items (stock_qty=0) at the bottom, and the rest by price ascending. Show only the top 15 rows.
+  reference_sql:
+    common: |
+      SELECT name, price, stock_qty
+      FROM products
+      WHERE is_active = 1
+      ORDER BY CASE WHEN stock_qty = 0 THEN 1 ELSE 0 END,
+               price ASC
+      LIMIT 15;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`ORDER BY`에 CASE를 사용하면 커스텀 정렬이 가능합니다. 품절이면 1, 아니면 0을 반환하여 품절을 뒤로 보냅니다.'
+    en: Using CASE in `ORDER BY` enables custom sorting. Return 1 for out-of-stock and 0 otherwise to push out-of-stock items
+      to the bottom.
+  rubric:
+    ko: '`ORDER BY`에 CASE를 사용하면 커스텀 정렬이 가능합니다. 품절이면 1, 아니면 0을 반환하여 품절을 뒤로 보냅니다.'
+    en: Using CASE in `ORDER BY` enables custom sorting. Return 1 for out-of-stock and 0
+  max_score: 10
+  tags: []
+- id: b06c-18
+  level: 2
+  type: SELECT
+  question: |
+    고객 등급을 커스텀 순서(VIP > GOLD > SILVER > BRONZE)로 정렬하여 등급별 고객 수를 조회하세요.
+  question_en: |
+    Sort customer tiers in custom order (VIP > GOLD > SILVER > BRONZE) and show the customer count per tier.
+  reference_sql:
+    common: |
+      SELECT grade, COUNT(*) AS customer_count
+      FROM customers
+      GROUP BY grade
+      ORDER BY CASE grade
+                   WHEN 'VIP' THEN 1
+                   WHEN 'GOLD' THEN 2
+                   WHEN 'SILVER' THEN 3
+                   WHEN 'BRONZE' THEN 4
+               END;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`ORDER BY CASE grade WHEN ''VIP'' THEN 1 WHEN ''GOLD'' THEN 2 ...`로 원하는 순서를 지정합니다.'
+    en: Use `ORDER BY CASE grade WHEN 'VIP' THEN 1 WHEN 'GOLD' THEN 2 ...` to specify the desired order.
+  rubric:
+    ko: '`ORDER BY CASE grade WHEN ''VIP'' THEN 1 WHEN ''GOLD'' THEN 2 ...`로 원하는 순서를 지정합니다.'
+    en: Use `ORDER BY CASE grade WHEN 'VIP' THEN 1 WHEN 'GOLD' THEN 2 ...` to specify th
+  max_score: 10
+  tags: []
+- id: b06c-19
+  level: 2
+  type: SELECT
+  question: |
+    주문 금액 구간별로 건수와 총 매출을 구하세요. 구간: 5만원 미만, 5~20만원, 20~100만원, 100만원 이상
+  question_en: |
+    Find the order count and total revenue per order amount tier. Tiers: under 50K, 50K-200K, 200K-1M, 1M+
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN total_amount < 50000 THEN '5만원 미만'
+                 WHEN total_amount < 200000 THEN '5~20만원'
+                 WHEN total_amount < 1000000 THEN '20~100만원'
+                 ELSE '100만원 이상'
+             END AS amount_tier,
+             COUNT(*) AS order_count,
+             ROUND(SUM(total_amount)) AS total_revenue
+      FROM orders
+      GROUP BY amount_tier
+      ORDER BY total_revenue DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: CASE로 금액 구간을 분류한 뒤 `COUNT(*)`와 `SUM(total_amount)`를 함께 집계합니다.
+    en: Classify the amount tier with CASE, then aggregate with `COUNT(*)` and `SUM(total_amount)` together.
+  rubric:
+    ko: CASE로 금액 구간을 분류한 뒤 `COUNT(*)`와 `SUM(total_amount)`를 함께 집계합니다.
+    en: Classify the amount tier with CASE, then aggregate with `COUNT(*)` and `SUM(tota
+  max_score: 10
+  tags: []
+- id: b06c-20
+  level: 2
+  type: SELECT
+  question: |
+    리뷰를 평점 그룹별(긍정/보통/부정)로 분류하고, 제목(`title`)이 있는 리뷰의 비율(%)을 구하세요.
+  question_en: |
+    Classify reviews by rating group (Positive/Neutral/Negative) and find the percentage (%) of reviews with a title.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN rating >= 4 THEN '긍정'
+                 WHEN rating = 3 THEN '보통'
+                 ELSE '부정'
+             END AS sentiment,
+             COUNT(*) AS review_count,
+             ROUND(COUNT(title) * 100.0 / COUNT(*), 1) AS title_rate_pct
+      FROM reviews
+      GROUP BY sentiment
+      ORDER BY review_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`COUNT(title) * 100.0 / COUNT(*)`로 title이 NULL이 아닌 비율을 구합니다. CASE로 평점 그룹화 후 GROUP BY합니다.'
+    en: Calculate the non-NULL title ratio with `COUNT(title) * 100.0 / COUNT(*)`. Group by rating with CASE, then GROUP BY.
+  rubric:
+    ko: '`COUNT(title) * 100.0 / COUNT(*)`로 title이 NULL이 아닌 비율을 구합니다. CASE로 평점 그룹화 후 GROU'
+    en: Calculate the non-NULL title ratio with `COUNT(title) * 100.0 / COUNT(*)`. Group
+  max_score: 10
+  tags: []
+- id: b06c-21
+  level: 3
+  type: SELECT
+  question: |
+    상품을 마진율 구간으로 분류하세요. 마진율 = (price - cost_price) / price * 100. 10% 미만='저마진', 10~20%='표준', 20~30%='고마진', 30% 이상='프리미엄'. 판매 중인 상품(`is_active = 1`)만 대상으로, 구간별 상품 수와 평균 마진율을 구하세요.
+  question_en: |
+    Classify products by margin rate tier. Margin rate = (price - cost_price) / price * 100. Under 10%='Low margin', 10-20%='Standard', 20-30%='High margin', 30%+='Premium'. For active products only (is_active = 1), find the product count and average margin rate per tier.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN (price - cost_price) * 100.0 / price < 10 THEN '저마진'
+                 WHEN (price - cost_price) * 100.0 / price < 20 THEN '표준'
+                 WHEN (price - cost_price) * 100.0 / price < 30 THEN '고마진'
+                 ELSE '프리미엄'
+             END AS margin_tier,
+             COUNT(*) AS product_count,
+             ROUND(AVG((price - cost_price) * 100.0 / price), 1) AS avg_margin_pct
+      FROM products
+      WHERE is_active = 1
+      GROUP BY margin_tier
+      ORDER BY avg_margin_pct DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 마진율 계산식을 CASE의 조건에 그대로 사용합니다. `(price - cost_price) * 100.0 / price`로 계산합니다.
+    en: Use the margin rate formula directly in the CASE conditions. Calculate with `(price - cost_price) * 100.0 / price`.
+  rubric:
+    ko: 마진율 계산식을 CASE의 조건에 그대로 사용합니다. `(price - cost_price) * 100.0 / price`로 계산합니다.
+    en: Use the margin rate formula directly in the CASE conditions. Calculate with `(pr
+  max_score: 10
+  tags: []
+- id: b06c-22
+  level: 3
+  type: SELECT
+  question: |
+    고객을 가입 연도별, 등급별로 분류하여 수를 구하세요. 가입 연도는 SUBSTR(created_at, 1, 4)로 추출합니다. 최근 3년(2023, 2024, 2025)만 대상으로 합니다.
+  question_en: |
+    Classify customers by signup year and tier, and find the count. Extract the signup year with SUBSTR(created_at, 1, 4). Only include the last 3 years (2023, 2024, 2025).
+  reference_sql:
+    common: |
+      SELECT SUBSTR(created_at, 1, 4) AS join_year,
+             grade,
+             COUNT(*) AS customer_count
+      FROM customers
+      WHERE SUBSTR(created_at, 1, 4) IN ('2023', '2024', '2025')
+      GROUP BY join_year, grade
+      ORDER BY join_year, CASE grade
+                              WHEN 'VIP' THEN 1
+                              WHEN 'GOLD' THEN 2
+                              WHEN 'SILVER' THEN 3
+                              WHEN 'BRONZE' THEN 4
+                          END;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`GROUP BY`에 `SUBSTR(created_at, 1, 4)`와 `grade`를 함께 사용합니다. `HAVING`이 아닌 `WHERE`로 연도를 필터링합니다.'
+    en: Use both `SUBSTR(created_at, 1, 4)` and `grade` in `GROUP BY`. Filter years with `WHERE`, not `HAVING`.
+  rubric:
+    ko: '`GROUP BY`에 `SUBSTR(created_at, 1, 4)`와 `grade`를 함께 사용합니다. `HAVING`이 아닌 `WHERE`로'
+    en: Use both `SUBSTR(created_at, 1, 4)` and `grade` in `GROUP BY`. Filter years with
+  max_score: 10
+  tags: []
+- id: b06c-23
+  level: 3
+  type: SELECT
+  question: |
+    배송비 정책을 분석하세요. 주문 금액 5만원 미만은 배송비 부과, 5만원 이상은 무료배송입니다. 2024년 주문에서 유료/무료배송 각각의 건수, 평균 주문 금액, 총 배송비를 구하세요.
+  question_en: |
+    Analyze the shipping fee policy. Orders under 50K are charged shipping, orders 50K+ get free shipping. For 2024 orders, find the count, average order amount, and total shipping fee for paid/free shipping.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN total_amount < 50000 THEN '유료배송'
+                 ELSE '무료배송'
+             END AS shipping_type,
+             COUNT(*) AS order_count,
+             ROUND(AVG(total_amount)) AS avg_amount,
+             ROUND(SUM(shipping_fee)) AS total_shipping_fee
+      FROM orders
+      WHERE ordered_at LIKE '2024%'
+      GROUP BY shipping_type;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`CASE WHEN total_amount < 50000 THEN ''유료배송'' ELSE ''무료배송'' END`로 분류합니다.'
+    en: Classify with `CASE WHEN total_amount < 50000 THEN 'Paid shipping' ELSE 'Free shipping' END`.
+  rubric:
+    ko: '`CASE WHEN total_amount < 50000 THEN ''유료배송'' ELSE ''무료배송'' END`로 분류합니다.'
+    en: Classify with `CASE WHEN total_amount < 50000 THEN 'Paid shipping' ELSE 'Free sh
+  max_score: 10
+  tags: []
+- id: b06c-24
+  level: 3
+  type: SELECT
+  question: |
+    결제 상태별로 건수를 구하되, 상태를 한글로 표시하고 '완료' 건의 비율(%)도 함께 표시하세요.
+  question_en: |
+    Find the count per payment status, displaying the status in Korean, and also show the percentage (%) of 'completed' payments.
+  reference_sql:
+    common: |
+      SELECT CASE status
+                 WHEN 'completed' THEN '완료'
+                 WHEN 'pending' THEN '대기'
+                 WHEN 'failed' THEN '실패'
+                 WHEN 'refunded' THEN '환불'
+             END AS status_kr,
+             COUNT(*) AS payment_count,
+             ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 1) AS pct
+      FROM payments
+      GROUP BY status
+      ORDER BY payment_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 전체 건수 대비 특정 조건의 비율은 `SUM(CASE WHEN ... THEN 1 ELSE 0 END) * 100.0 / COUNT(*)`로 계산합니다.
+    en: Calculate the ratio of a specific condition to the total with `SUM(CASE WHEN ... THEN 1 ELSE 0 END) * 100.0 / COUNT(*)`.
+  rubric:
+    ko: 전체 건수 대비 특정 조건의 비율은 `SUM(CASE WHEN ... THEN 1 ELSE 0 END) * 100.0 / COUNT(*)`로 계
+    en: Calculate the ratio of a specific condition to the total with `SUM(CASE WHEN ...
+  max_score: 10
+  tags: []
+- id: b06c-25
+  level: 3
+  type: SELECT
+  question: |
+    고객을 활동 상태로 3단계 분류하세요. 탈퇴(is_active=0), 휴면(is_active=1이지만 last_login_at이 NULL), 활동(나머지). 각 그룹의 고객 수를 구하세요.
+  question_en: |
+    Classify customers into 3 activity levels. Withdrawn (is_active=0), Dormant (is_active=1 but last_login_at is NULL), Active (the rest). Find the customer count per group.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN is_active = 0 THEN '탈퇴'
+                 WHEN last_login_at IS NULL THEN '휴면'
+                 ELSE '활동'
+             END AS activity_status,
+             COUNT(*) AS customer_count
+      FROM customers
+      GROUP BY activity_status
+      ORDER BY customer_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: CASE 조건 순서가 중요합니다. `is_active = 0`을 먼저, 그다음 `last_login_at IS NULL`을 체크합니다.
+    en: The order of CASE conditions matters. Check `is_active = 0` first, then `last_login_at IS NULL`.
+  rubric:
+    ko: CASE 조건 순서가 중요합니다. `is_active = 0`을 먼저, 그다음 `last_login_at IS NULL`을 체크합니다.
+    en: The order of CASE conditions matters. Check `is_active = 0` first, then `last_lo
+  max_score: 10
+  tags: []
+- id: b06c-26
+  level: 3
+  type: SELECT
+  question: |
+    2024년 월별 주문 건수를 구하되, 계절도 함께 표시하세요. 3~5월='봄', 6~8월='여름', 9~11월='가을', 12~2월='겨울'
+  question_en: |
+    Find the monthly order count for 2024, displaying the season as well. Mar-May='Spring', Jun-Aug='Summer', Sep-Nov='Fall', Dec-Feb='Winter'
+  reference_sql:
+    common: |
+      SELECT SUBSTR(ordered_at, 1, 7) AS month,
+             CASE
+                 WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) IN (3, 4, 5) THEN '봄'
+                 WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) IN (6, 7, 8) THEN '여름'
+                 WHEN CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) IN (9, 10, 11) THEN '가을'
+                 ELSE '겨울'
+             END AS season,
+             COUNT(*) AS order_count
+      FROM orders
+      WHERE ordered_at LIKE '2024%'
+      GROUP BY month
+      ORDER BY month;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER)`로 월을 추출합니다. CASE로 계절을 분류합니다.'
+    en: Extract the month with `CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER)`. Classify the season with CASE.
+  rubric:
+    ko: '`CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER)`로 월을 추출합니다. CASE로 계절을 분류합니다.'
+    en: Extract the month with `CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER)`. Classify the
+  max_score: 10
+  tags: []
+- id: b06c-27
+  level: 3
+  type: SELECT
+  question: |
+    브랜드별 상품 수와 평균 가격을 구하되, 상품 수가 10개 이상인 브랜드만 조회하세요. 평균 가격에 따라 '프리미엄 브랜드'(100만원 이상), '대중 브랜드'(30만원~100만원), '보급형 브랜드'(30만원 미만)로 분류하세요.
+  question_en: |
+    Find the product count and average price per brand, showing only brands with 10+ products. Classify brands by average price as 'Premium brand' (1M+), 'Mainstream brand' (300K-1M), or 'Budget brand' (under 300K).
+  reference_sql:
+    common: |
+      SELECT brand,
+             COUNT(*) AS product_count,
+             ROUND(AVG(price)) AS avg_price,
+             CASE
+                 WHEN AVG(price) >= 1000000 THEN '프리미엄 브랜드'
+                 WHEN AVG(price) >= 300000 THEN '대중 브랜드'
+                 ELSE '보급형 브랜드'
+             END AS brand_tier
+      FROM products
+      WHERE is_active = 1
+      GROUP BY brand
+      HAVING COUNT(*) >= 10
+      ORDER BY avg_price DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`GROUP BY brand` + `HAVING COUNT(*) >= 10`으로 필터링 후, `CASE`로 평균 가격을 분류합니다.'
+    en: Filter with `GROUP BY brand` + `HAVING COUNT(*) >= 10`, then classify the average price with `CASE`.
+  rubric:
+    ko: '`GROUP BY brand` + `HAVING COUNT(*) >= 10`으로 필터링 후, `CASE`로 평균 가격을 분류합니다.'
+    en: Filter with `GROUP BY brand` + `HAVING COUNT(*) >= 10`, then classify the averag
+  max_score: 10
+  tags: []
+- id: b06c-28
+  level: 3
+  type: SELECT
+  question: |
+    포인트 사용 분석: 주문에서 포인트를 사용한 건과 사용하지 않은 건을 분류하고, 각각의 건수, 평균 주문 금액, 평균 할인 금액을 구하세요.
+  question_en: |
+    Points usage analysis: Classify orders by whether points were used or not, and find the count, average order amount, and average discount amount for each.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN point_used > 0 THEN '포인트 사용'
+                 ELSE '포인트 미사용'
+             END AS point_usage,
+             COUNT(*) AS order_count,
+             ROUND(AVG(total_amount)) AS avg_amount,
+             ROUND(AVG(discount_amount)) AS avg_discount
+      FROM orders
+      GROUP BY point_usage;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`CASE WHEN point_used > 0 THEN ''사용'' ELSE ''미사용'' END`로 분류합니다.'
+    en: Classify with `CASE WHEN point_used > 0 THEN 'Used' ELSE 'Not used' END`.
+  rubric:
+    ko: '`CASE WHEN point_used > 0 THEN ''사용'' ELSE ''미사용'' END`로 분류합니다.'
+    en: Classify with `CASE WHEN point_used > 0 THEN 'Used' ELSE 'Not used' END`.
+  max_score: 10
+  tags: []
+- id: b06c-29
+  level: 3
+  type: SELECT
+  question: |
+    상품을 단종 여부와 재고 상태로 4분류하세요. (단종+재고있음, 단종+재고없음, 판매중+재고있음, 판매중+재고없음) 각 그룹의 상품 수와 평균 가격을 구하세요.
+  question_en: |
+    Classify products into 4 groups by discontinuation status and stock status. (Discontinued+In stock, Discontinued+No stock, On sale+In stock, On sale+No stock) Find the product count and average price for each group.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN is_active = 0 AND stock_qty > 0 THEN '단종+재고있음'
+                 WHEN is_active = 0 AND stock_qty = 0 THEN '단종+재고없음'
+                 WHEN is_active = 1 AND stock_qty > 0 THEN '판매중+재고있음'
+                 WHEN is_active = 1 AND stock_qty = 0 THEN '판매중+품절'
+             END AS status_group,
+             COUNT(*) AS product_count,
+             ROUND(AVG(price)) AS avg_price
+      FROM products
+      GROUP BY status_group
+      ORDER BY product_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: 두 개의 조건(is_active, stock_qty)을 조합하여 CASE로 4가지를 분류합니다.
+    en: Combine two conditions (is_active, stock_qty) in a CASE to classify into 4 categories.
+  rubric:
+    ko: 두 개의 조건(is_active, stock_qty)을 조합하여 CASE로 4가지를 분류합니다.
+    en: Combine two conditions (is_active, stock_qty) in a CASE to classify into 4 categ
+  max_score: 10
+  tags: []
+- id: b06c-30
+  level: 3
+  type: SELECT
+  question: |
+    카드 결제의 할부 분석: 결제 수단이 'card'인 건에서 할부 구간별(일시불, 2~3개월, 4~6개월, 7개월 이상, 정보없음) 건수와 평균 결제 금액을 구하세요. 일시불은 installment_months가 0인 경우입니다.
+  question_en: |
+    Card payment installment analysis: For card payments (method = 'card'), find the count and average amount per installment tier (Lump sum, 2-3 months, 4-6 months, 7+ months, No info). Lump sum means installment_months is 0.
+  reference_sql:
+    common: |
+      SELECT CASE
+                 WHEN installment_months IS NULL THEN '정보없음'
+                 WHEN installment_months = 0 THEN '일시불'
+                 WHEN installment_months <= 3 THEN '2~3개월'
+                 WHEN installment_months <= 6 THEN '4~6개월'
+                 ELSE '7개월 이상'
+             END AS installment_tier,
+             COUNT(*) AS payment_count,
+             ROUND(AVG(amount)) AS avg_amount
+      FROM payments
+      WHERE method = 'card'
+      GROUP BY installment_tier
+      ORDER BY payment_count DESC;
+  supported_db:
+  - sqlite
+  - mysql
+  - postgresql
+  validation:
+    type: result_match
+    ordered: false
+  hints:
+  - ko: '`WHERE method = ''card''`로 카드 결제만 필터링합니다. `installment_months`가 NULL인 경우도 고려해야 합니다.'
+    en: Filter card payments with `WHERE method = 'card'`. Also consider cases where `installment_months` is NULL.
+  rubric:
+    ko: '`WHERE method = ''card''`로 카드 결제만 필터링합니다. `installment_months`가 NULL인 경우도 고려해야 합니다'
+    en: Filter card payments with `WHERE method = 'card'`. Also consider cases where `in
+  max_score: 10
+  tags: []

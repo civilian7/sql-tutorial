@@ -1998,6 +1998,957 @@ _IDENTITY_TABLES = {
 }
 
 
+COMMENTS_SQL = """\n-- =============================================
+-- Table & Column Comments - SQL Server (Extended Properties)
+-- =============================================
+
+USE ecommerce;
+GO
+
+-- Table comments
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'고객 마스터. 등급(BRONZE/SILVER/GOLD/VIP), 적립금, 가입채널, 활성상태 관리',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'고객 배송지. 고객당 복수 주소, 기본 배송지 지정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 카테고리. 대/중/소 3단계 계층(self-referencing FK)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'공급업체(입점 판매자). 사업자 정보, 담당자 연락처 관리',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 마스터. SKU, 판매가/원가, 재고, 브랜드/모델, 후속상품 관리',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 이미지. 상품당 복수 이미지(메인/상세/라이프스타일 등)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 가격 이력. 가격 변경 시 트리거 자동 기록',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_prices';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'주문. 주문번호(ORD-YYYYMMDD-NNNNN), 상태 흐름(pending→delivered/cancelled)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'주문 상세 항목. 주문 시점 단가/수량, 아이템별 할인',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'결제. 카드/계좌이체/간편결제, PG 거래번호, 현금영수증',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'배송. 택배사, 운송장번호, 배송 상태 추적',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'반품/교환. 사유, 검수 결과, 환불 상태, 수거 택배 정보',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 리뷰. 1~5점 별점, 구매 인증 여부',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'장바구니. active/converted/abandoned 상태 관리',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'carts';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'장바구니 항목. 담긴 상품과 수량',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'cart_items';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'쿠폰 정의. 정률/정액 할인, 사용 한도, 유효기간',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'쿠폰 사용 이력. 고객-주문-쿠폰 매핑',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupon_usage';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'고객 문의/불만. 카테고리별 분류, 우선순위, CS 담당자 배정, 보상 관리',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'재고 변동 이력. 입고/출고/반품/조정 트랜잭션',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'내부 직원. 부서(sales/CS/logistics 등), 역할(admin/manager/staff), 조직도',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'위시리스트. 고객-상품 UNIQUE, 가격 하락 알림 설정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'wishlists';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'날짜 차원 테이블. 요일, 공휴일, 분기 등 날짜 속성',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'고객 등급 변경 이력(SCD Type 2). 변경 전후 등급, 변경 사유',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_grade_history';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'포인트 적립/사용/소멸 원장. 거래 유형별 증감, 잔액 추적',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 Q&A. 질문-답변 자기참조 스레드',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품-태그 연결(M:N). 복합 PK',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_tags';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 조회 로그. 유입경로, 기기유형, 체류시간 기록',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'프로모션 대상 상품. 프로모션-상품 연결(M:N), 특가 설정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotion_products';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'프로모션/세일 이벤트. 할인율/금액, 기간, 대상 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 태그 마스터. 태그명, 분류(feature/use_case/target/spec)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'tags';
+
+-- Column comments
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 고객 고유 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'UNIQUE. 이메일 주소. 로그인 ID',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'email';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. SHA-256 비밀번호 해시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'password_hash';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 고객 실명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 020-XXXX-XXXX 형식. 연락처',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'phone';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD. 생년월일. NULL=미입력(약 15%)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'birth_date';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(M,F). 성별. NULL=미입력(약 10%)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'gender';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(BRONZE,SILVER,GOLD,VIP). 구매 실적 기반 회원 등급. 분기별 재산정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'grade';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수 ≥0. 보유 적립금',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'point_balance';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 활성=1, 탈퇴=0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'is_active';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 마지막 로그인 일시. NULL=미접속',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'last_login_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 가입 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시. 트리거 자동 갱신',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(organic,search_ad,social,referral,direct). 유입 경로. NULL=미확인',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customers',
+  @level2type=N'COLUMN', @level2name=N'acquisition_channel';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 상품 고유 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→categories(id). NOT NULL. 소속 카테고리',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'category_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→suppliers(id). NOT NULL. 공급업체',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'supplier_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 상품명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'UNIQUE. NOT NULL. 재고관리코드',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'sku';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 브랜드명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'brand';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'제조사 모델번호. NULL=미등록',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'model_number';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상품 설명. NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'description';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL ≥0. 현재 판매가(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'price';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL ≥0. 원가(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'cost_price';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 현재 재고 수량. 기본값 0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'stock_qty';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 배송 무게(그램). NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'weight_grams';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 판매중=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'is_active';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 단종일. NULL=판매중',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'discontinued_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). 후속 상품(단종 시 대체). NULL=없음',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'successor_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'JSON. 상품 상세 스펙. NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'specs';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시. 트리거 자동 갱신',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'products',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 주문 고유 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'UNIQUE. ORD-YYYYMMDD-NNNNN 형식. 주문번호',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'order_number';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 주문한 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customer_addresses(id). 배송지',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'address_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→staff(id). CS 담당 직원. NULL=미배정(취소/반품 시 배정)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'staff_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(pending,paid,preparing,shipped,delivered,confirmed,cancelled). 주문 상태',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'status';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 최종 결제 금액(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'total_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 할인 합계. 기본값 0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'discount_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 배송비. 5만원 이상 무료',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'shipping_fee';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 사용한 적립금. 기본값 0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'point_used';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 적립 예정 포인트. 기본값 0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'point_earned';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'배송 메모. NULL=메모 없음',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'notes';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 주문 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'ordered_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 구매확정일. NULL=미확정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'completed_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 취소일. NULL=취소 안 됨',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'cancelled_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 레코드 생성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시. 트리거 자동 갱신',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'orders',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). NOT NULL. 소속 주문',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 주문 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수 ≥1. 주문 수량',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items',
+  @level2type=N'COLUMN', @level2name=N'quantity';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 주문 시점 단가(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items',
+  @level2type=N'COLUMN', @level2name=N'unit_price';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 아이템별 할인 금액. 기본값 0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items',
+  @level2type=N'COLUMN', @level2name=N'discount_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 소계 = (단가 × 수량) - 할인',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items',
+  @level2type=N'COLUMN', @level2name=N'subtotal';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 주문 항목 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'order_items',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(card,bank_transfer,kakao_pay,naver_pay,point). 결제 수단',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'method';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 결제 금액(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(pending,completed,failed,refunded). 결제 상태',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'status';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PG사 거래번호. NULL=미발급',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'pg_transaction_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'카드사(신한/삼성/KB국민/현대 등). NULL=카드 외 결제',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'card_issuer';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 할부 개월수. 0=일시불',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'installment_months';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 결제 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). NOT NULL. 소속 주문',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'8자리. 카드 승인번호. NULL=카드 외 결제',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'card_approval_no';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'은행명. NULL=계좌이체/가상계좌 외',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'bank_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'가상계좌 번호. NULL=해당 없음',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'account_no';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'입금자명. NULL=계좌이체 외',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'depositor_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'간편결제 세부수단(카카오페이 잔액/연결카드 등). NULL=간편결제 외',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'easy_pay_method';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'소득공제/지출증빙. 현금영수증 유형. NULL=미발급',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'receipt_type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'현금영수증 번호. NULL=미발급',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'receipt_no';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 결제 완료 일시. NULL=미완료',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'paid_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 환불 일시. NULL=환불 없음',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'refunded_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 결제 레코드 생성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'payments',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(refund,exchange). 반품 유형',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'return_type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(defective,wrong_item,change_of_mind,damaged_in_transit,not_as_described,late_delivery). 반품 사유',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'reason';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(requested,pickup_scheduled,in_transit,completed). 반품 상태',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'status';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 부분반품=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'is_partial';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(good,opened_good,defective,unsellable). 검수 결과. NULL=미검수',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'inspection_result';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 반품 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). NOT NULL. 원 주문',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 반품 요청 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'반품 상세 사유 설명. NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'reason_detail';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 환불 금액(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'refund_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(pending,refunded,exchanged,partial_refund). 환불 상태',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'refund_status';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'수거 택배사. NULL=미배정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'carrier';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'수거 운송장 번호. NULL=미발급',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'tracking_number';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 반품 요청 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'requested_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 수거 예정/완료 일시. NULL=미예약',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'pickup_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 물류센터 입고 일시. NULL=미입고',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'received_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 검수 완료 일시. NULL=미검수',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'inspected_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 처리 완료 일시. NULL=미완료',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'completed_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→complaints(id). 연결 클레임. NULL=CS 미연결',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'claim_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). 교환 상품. NULL=환불 건',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'exchange_product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 변심 반품 재입고 수수료. 기본값 0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'restocking_fee';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 레코드 생성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'returns',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'범위 1~5. 별점',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'rating';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 구매인증=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'is_verified';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 리뷰 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 리뷰 대상 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 작성 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). 구매 주문. NULL=비구매 리뷰',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'리뷰 제목. NULL=미작성(약 20%)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'title';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'리뷰 본문. NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'content';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 작성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시. 트리거 자동 갱신',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'reviews',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'UNIQUE. 쿠폰 코드',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'code';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(percent,fixed). percent=정률, fixed=정액',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 할인율(%) 또는 할인금액(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'discount_value';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 최소 주문금액 조건',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'min_order_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 최대 할인금액(정률 시 상한). NULL=제한 없음',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'max_discount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 쿠폰 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 쿠폰명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 전체 사용 한도. NULL=무제한',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'usage_limit';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 1인당 사용 한도. 기본값 1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'per_user_limit';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 활성=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'is_active';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 유효기간 시작일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'started_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 유효기간 종료일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'expired_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupons',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(product_defect,delivery_issue,wrong_item,refund_request,exchange_request,general_inquiry,price_inquiry). 문의 유형',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'category';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(website,phone,email,chat,kakao). 접수 채널',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'channel';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(low,medium,high,urgent). 우선순위',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'priority';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(open,resolved,closed). 처리 상태',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'status';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 문의/클레임 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). 관련 주문. NULL=일반문의',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 문의 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→staff(id). CS 담당 직원. NULL=미배정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'staff_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 문의 제목',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'title';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 문의 내용',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'content';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'처리 결과 상세. resolved 시 작성. NULL=미해결',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'resolution';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(inquiry,claim,report). 문의 유형. 기본값 inquiry',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'세부 분류(initial_defect/in_use_damage/misdelivery 등). NULL=미지정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'sub_category';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(refund,exchange,partial_refund,point_compensation,none). 보상 유형',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'compensation_type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 보상 금액(원). 기본값 0',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'compensation_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 상위 관리자 에스컬레이션=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'escalated';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 응대 횟수. 기본값 1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'response_count';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 접수 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 해결 일시. NULL=미해결',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'resolved_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 종료 일시. NULL=미종료',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'complaints',
+  @level2type=N'COLUMN', @level2name=N'closed_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(inbound,outbound,return,adjustment). 변동 유형',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions',
+  @level2type=N'COLUMN', @level2name=N'type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 양수=입고, 음수=출고',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions',
+  @level2type=N'COLUMN', @level2name=N'quantity';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 재고 변동 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 대상 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'관련 주문 ID. NULL=초기입고/조정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions',
+  @level2type=N'COLUMN', @level2name=N'reference_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'비고(initial_stock/regular_inbound/return_inbound 등)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions',
+  @level2type=N'COLUMN', @level2name=N'notes';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 변동 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'inventory_transactions',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→categories(id). 상위 카테고리. NULL=최상위',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'parent_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'범위 0~2. 0=대분류, 1=중분류, 2=소분류',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'depth';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'UNIQUE. URL용 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'slug';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 카테고리 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 카테고리명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 표시 순서(오름차순)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'sort_order';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 활성=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'is_active';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'categories',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'CJ대한통운/한진택배/로젠택배/우체국택배. 택배사',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'carrier';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'운송장 번호. NULL=미발급',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'tracking_number';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(preparing,shipped,in_transit,delivered,returned). 배송 상태',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'status';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 배송 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). NOT NULL. 소속 주문',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 발송 일시. NULL=미발송',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'shipped_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 배송완료 일시. NULL=미배송',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'delivered_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 레코드 생성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'shipping',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 가격 하락 알림=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'wishlists',
+  @level2type=N'COLUMN', @level2name=N'notify_on_sale';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 위시리스트 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'wishlists',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). UNIQUE(customer_id,product_id). 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'wishlists',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). UNIQUE(customer_id,product_id). 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'wishlists',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 구매 전환=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'wishlists',
+  @level2type=N'COLUMN', @level2name=N'is_purchased';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'wishlists',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. YYYY-MM-DD 형식. 날짜 키',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'date_key';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 연도(예: 2024)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'year';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'범위 1~12. 월',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'month';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'범위 1~31. 일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'day';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'범위 1~4. 분기',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'quarter';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'범위 0~6. 0=월요일, 6=일요일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'day_of_week';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Monday~Sunday. 요일명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'day_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 주말=1(토/일)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'is_weekend';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 공휴일=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'is_holiday';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'공휴일명. NULL=공휴일 아님',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'calendar',
+  @level2type=N'COLUMN', @level2name=N'holiday_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 장바구니 항목 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'cart_items',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→carts(id). NOT NULL. 소속 장바구니',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'cart_items',
+  @level2type=N'COLUMN', @level2name=N'cart_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 담은 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'cart_items',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수 ≥1. 담은 수량. 기본값 1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'cart_items',
+  @level2type=N'COLUMN', @level2name=N'quantity';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 장바구니 담은 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'cart_items',
+  @level2type=N'COLUMN', @level2name=N'added_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 장바구니 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'carts',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 소유 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'carts',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(active,converted,abandoned). 장바구니 상태',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'carts',
+  @level2type=N'COLUMN', @level2name=N'status';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 생성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'carts',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'carts',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 쿠폰 사용 이력 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupon_usage',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→coupons(id). NOT NULL. 사용 쿠폰',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupon_usage',
+  @level2type=N'COLUMN', @level2name=N'coupon_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 사용 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupon_usage',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). NOT NULL. 사용 주문',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupon_usage',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 실제 할인 금액(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupon_usage',
+  @level2type=N'COLUMN', @level2name=N'discount_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 쿠폰 사용 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'coupon_usage',
+  @level2type=N'COLUMN', @level2name=N'used_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 배송지 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 소유 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(home,office,other). 배송지 구분',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'label';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 수령인 이름',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'recipient_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 수령인 연락처',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'phone';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 우편번호',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'zip_code';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 기본 주소',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'address1';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'상세 주소. NULL=미입력',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'address2';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 기본 배송지=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'is_default';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 수정 일시. NULL=미수정',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_addresses',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 등급 이력 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_grade_history',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 대상 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_grade_history',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(BRONZE,SILVER,GOLD,VIP). 변경 전 등급. NULL=최초 가입',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_grade_history',
+  @level2type=N'COLUMN', @level2name=N'old_grade';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(BRONZE,SILVER,GOLD,VIP). NOT NULL. 변경 후 등급',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_grade_history',
+  @level2type=N'COLUMN', @level2name=N'new_grade';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등급 변경 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_grade_history',
+  @level2type=N'COLUMN', @level2name=N'changed_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(signup,upgrade,downgrade,yearly_review). 변경 사유',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'customer_grade_history',
+  @level2type=N'COLUMN', @level2name=N'reason';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 포인트 거래 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 대상 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→orders(id). 관련 주문. NULL=가입/소멸',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'order_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(earn,use,expire). 거래 유형',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(purchase,confirm,review,signup,use,expiry). 사유',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'reason';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 양수=적립, 음수=사용/소멸',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 거래 후 잔여 포인트',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'balance_after';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 적립 포인트 만료일. NULL=사용/소멸 건',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'expires_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 거래 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'point_transactions',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 이미지 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 소속 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 이미지 경로/URL',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'image_url';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 파일명(예: 42_1.jpg)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'file_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(main,angle,side,back,detail,package,lifestyle,accessory,size_comparison). 이미지 유형',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'image_type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'대체 텍스트(접근성용). NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'alt_text';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 이미지 가로(px). NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'width';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 이미지 세로(px). NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'height';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 파일 크기(bytes). NULL 가능',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'file_size';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 표시 순서. 기본값 1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'sort_order';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 대표 이미지=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'is_primary';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_images',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 가격 이력 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_prices',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 대상 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_prices',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 해당 기간 판매가(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_prices',
+  @level2type=N'COLUMN', @level2name=N'price';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 적용 시작일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_prices',
+  @level2type=N'COLUMN', @level2name=N'started_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 적용 종료일. NULL=현재 가격',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_prices',
+  @level2type=N'COLUMN', @level2name=N'ended_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(regular,promotion,price_drop,cost_increase). 변경 사유',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_prices',
+  @level2type=N'COLUMN', @level2name=N'change_reason';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. Q&A 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 대상 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). 질문 고객. NULL=직원 답변',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→staff(id). 답변 직원. NULL=고객 질문',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'staff_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→product_qna(id). 부모 글. NULL=질문, 값 있으면=답변',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'parent_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 질문 또는 답변 내용',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'content';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 답변 완료=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'is_answered';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 작성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_qna',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). 복합 PK. 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_tags',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→tags(id). 복합 PK. 태그',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_tags',
+  @level2type=N'COLUMN', @level2name=N'tag_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 조회 로그 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→customers(id). NOT NULL. 조회 고객',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views',
+  @level2type=N'COLUMN', @level2name=N'customer_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). NOT NULL. 조회 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(direct,search,ad,recommendation,social,email). 유입 경로',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views',
+  @level2type=N'COLUMN', @level2name=N'referrer_source';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(desktop,mobile,tablet). 접속 기기',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views',
+  @level2type=N'COLUMN', @level2name=N'device_type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'정수. 페이지 체류 시간(초)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views',
+  @level2type=N'COLUMN', @level2name=N'duration_seconds';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 조회 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'product_views',
+  @level2type=N'COLUMN', @level2name=N'viewed_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→promotions(id). 복합 PK. 프로모션',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotion_products',
+  @level2type=N'COLUMN', @level2name=N'promotion_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→products(id). 복합 PK. 상품',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotion_products',
+  @level2type=N'COLUMN', @level2name=N'product_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 특가. NULL=프로모션 할인율 적용',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotion_products',
+  @level2type=N'COLUMN', @level2name=N'override_price';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 프로모션 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 프로모션명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(seasonal,flash,category). 프로모션 유형',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(percent,fixed). percent=정률, fixed=정액',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'discount_type';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 할인율(%) 또는 할인금액(원)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'discount_value';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'DECIMAL. 최소 주문금액 조건. NULL=조건 없음',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'min_order_amount';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 프로모션 시작일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'started_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 프로모션 종료일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'ended_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 활성=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'is_active';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'promotions',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 직원 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'FK→staff(id). 상위 관리자(Self-Join). NULL=최상위',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'manager_id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'UNIQUE. staffN@techshop-staff.kr 형식. 직원 이메일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'email';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 직원 이름',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 연락처',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'phone';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(sales,logistics,CS,marketing,dev,management). 부서',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'department';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(admin,manager,staff). 역할',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'role';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 재직=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'is_active';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD. 입사일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'hired_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 레코드 생성 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'staff',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 공급업체 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 회사명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'company_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 사업자등록번호(가상 번호)',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'business_number';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 담당자명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'contact_name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 020-XXXX-XXXX 형식. 연락처',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'phone';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'NOT NULL. 담당자 이메일',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'email';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'사업장 주소. NULL=미등록',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'address';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'0/1. 거래 활성=1',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'is_active';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 등록 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'created_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'YYYY-MM-DD HH:MM:SS. 최종 수정 일시',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'suppliers',
+  @level2type=N'COLUMN', @level2name=N'updated_at';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'PK. 자동증가. 태그 식별자',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'tags',
+  @level2type=N'COLUMN', @level2name=N'id';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'UNIQUE. NOT NULL. 태그명',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'tags',
+  @level2type=N'COLUMN', @level2name=N'name';
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'ENUM(feature,use_case,target,spec). 태그 분류',
+  @level0type=N'SCHEMA', @level0name=N'dbo', @level1type=N'TABLE', @level1name=N'tags',
+  @level2type=N'COLUMN', @level2name=N'category';
+"""
+
 class SQLServerExporter:
     """Export generated data to SQL Server-compatible SQL files."""
 
@@ -2051,6 +3002,11 @@ class SQLServerExporter:
         # Write stored procedures
         with open(proc_path, "w", encoding="utf-8") as f:
             f.write(PROCEDURES_SQL)
+
+        # Write comments
+        comments_path = os.path.join(self.output_dir, "comments.sql")
+        with open(comments_path, "w", encoding="utf-8") as f:
+            f.write(COMMENTS_SQL)
 
         return self.output_dir
 

@@ -1,0 +1,841 @@
+metadata:
+  id: intermediate-10-debugging
+  title: "SQL 디버깅 — 중급"
+  title_en: "SQL Debugging -- Intermediate"
+  difficulty: intermediate
+  concepts: [JOIN errors, subquery errors, date function errors, aggregation errors, UNION errors, DML errors, cardinality explosion, NULL handling]
+  tables: [customers, orders, order_items, products, categories, suppliers, reviews, shipping, payments]
+  prerequisites: [intermediate-01-joins, intermediate-04-subqueries]
+  estimated_minutes: 50
+  default_level: 2
+  default_type: "SELECT"
+
+problems:
+  - id: i10d-01
+    level: 1
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요.
+      ```sql
+      SELECT name, order_number, total_amount
+      FROM customers
+      INNER JOIN orders ON customer_id = id;
+      ```
+    question_en: |
+      Find and fix the error in the following query.
+      ```sql
+      SELECT name, order_number, total_amount
+      FROM customers
+      INNER JOIN orders ON customer_id = id;
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, o.order_number, o.total_amount
+        FROM customers AS c
+        INNER JOIN orders AS o ON o.customer_id = c.id;
+    hints:
+      - ko: "두 테이블 모두 `id` 칼럼이 있습니다. `customer_id = id`가 어느 테이블의 `id`인지 모호합니다."
+        en: "Both tables have an `id` column. `customer_id = id` is ambiguous."
+    max_score: 10
+    tags: [ambiguous column, JOIN, alias]
+
+  - id: i10d-02
+    level: 1
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. JOIN 순서 문제.
+      ```sql
+      SELECT c.name, o.order_number, oi.quantity
+      FROM customers AS c
+      INNER JOIN order_items AS oi ON o.id = oi.order_id
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      LIMIT 10;
+      ```
+    question_en: |
+      Find and fix the error. JOIN order issue.
+      ```sql
+      SELECT c.name, o.order_number, oi.quantity
+      FROM customers AS c
+      INNER JOIN order_items AS oi ON o.id = oi.order_id
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      LIMIT 10;
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, o.order_number, oi.quantity
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        INNER JOIN order_items AS oi ON o.id = oi.order_id
+        LIMIT 10;
+    hints:
+      - ko: "SQL에서 테이블 별칭은 `FROM`/`JOIN` 절에 나타난 순서대로 정의됩니다. `o`를 사용하기 전에 정의해야 합니다."
+        en: "Table aliases are defined in the order they appear. `o` must be defined before use."
+    max_score: 10
+    tags: [JOIN order, alias, undefined reference]
+
+  - id: i10d-03
+    level: 1
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 주문이 없는 고객도 포함하려 했습니다.
+      ```sql
+      SELECT c.name, COUNT(o.id) AS order_count
+      FROM customers AS c
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      GROUP BY c.id, c.name
+      ORDER BY order_count DESC;
+      ```
+    question_en: |
+      Find and fix the error. Intent was to include customers without orders.
+      ```sql
+      SELECT c.name, COUNT(o.id) AS order_count
+      FROM customers AS c
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      GROUP BY c.id, c.name
+      ORDER BY order_count DESC;
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, COUNT(o.id) AS order_count
+        FROM customers AS c
+        LEFT JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.name
+        ORDER BY order_count ASC
+        LIMIT 20;
+    hints:
+      - ko: "INNER JOIN은 양쪽 모두에 매칭이 있는 행만 반환합니다. 주문이 없는 고객을 포함하려면 LEFT JOIN을 사용하세요."
+        en: "INNER JOIN excludes customers without orders. Use LEFT JOIN to include them."
+    max_score: 10
+    tags: [INNER JOIN vs LEFT JOIN]
+
+  - id: i10d-04
+    level: 1
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. FK 칼럼 오류.
+      ```sql
+      SELECT p.name, cat.name, s.company_name
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.id = cat.id
+      INNER JOIN suppliers AS s ON p.supplier_id = s.id
+      LIMIT 10;
+      ```
+    question_en: |
+      Find and fix the error. Wrong FK column.
+      ```sql
+      SELECT p.name, cat.name, s.company_name
+      FROM products AS p
+      INNER JOIN categories AS cat ON p.id = cat.id
+      INNER JOIN suppliers AS s ON p.supplier_id = s.id
+      LIMIT 10;
+      ```
+    reference_sql:
+      common: |
+        SELECT p.name, cat.name, s.company_name
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        INNER JOIN suppliers AS s ON p.supplier_id = s.id
+        LIMIT 10;
+    hints:
+      - ko: "`p.id = cat.id`는 상품 ID와 카테고리 ID를 비교하는 것으로 FK 관계가 아닙니다. `products.category_id`가 `categories.id`를 참조합니다."
+        en: "`p.id = cat.id` compares product ID with category ID, not a FK relationship. Use `p.category_id = cat.id`."
+    max_score: 10
+    tags: [wrong FK, JOIN condition]
+
+  - id: i10d-05
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. GROUP BY 불일치.
+      ```sql
+      SELECT company_name, COUNT(*) AS product_count
+      FROM products AS p
+      INNER JOIN suppliers AS s ON p.supplier_id = s.id
+      GROUP BY s.id;
+      ```
+    question_en: |
+      Find and fix the error. GROUP BY mismatch.
+      ```sql
+      SELECT company_name, COUNT(*) AS product_count
+      FROM products AS p
+      INNER JOIN suppliers AS s ON p.supplier_id = s.id
+      GROUP BY s.id;
+      ```
+    reference_sql:
+      common: |
+        SELECT s.company_name, COUNT(*) AS product_count
+        FROM products AS p
+        INNER JOIN suppliers AS s ON p.supplier_id = s.id
+        GROUP BY s.id, s.company_name;
+    hints:
+      - ko: "`GROUP BY`에 포함되지 않은 칼럼이 `SELECT`에 있습니다. `company_name`의 소속 테이블도 명시되지 않았습니다."
+        en: "SELECT has columns not in GROUP BY. Table for company_name is also not specified."
+    max_score: 10
+    tags: [GROUP BY, non-aggregate column]
+
+  - id: i10d-06
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. WHERE에서 집계 함수 사용.
+      ```sql
+      SELECT c.name, c.email, o.ordered_at AS last_order
+      FROM customers AS c
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      WHERE o.ordered_at = MAX(o.ordered_at)
+      GROUP BY c.id;
+      ```
+    question_en: |
+      Find and fix the error. Aggregate function in WHERE.
+      ```sql
+      SELECT c.name, c.email, o.ordered_at AS last_order
+      FROM customers AS c
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      WHERE o.ordered_at = MAX(o.ordered_at)
+      GROUP BY c.id;
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, c.email, MAX(o.ordered_at) AS last_order
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.name, c.email;
+    hints:
+      - ko: "`WHERE` 절에서는 집계 함수(`MAX`, `SUM` 등)를 사용할 수 없습니다."
+        en: "Aggregate functions cannot be used in WHERE. Use them in SELECT with GROUP BY."
+    max_score: 10
+    tags: [WHERE vs HAVING, MAX, GROUP BY]
+
+  - id: i10d-07
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 암시적 JOIN과 중복 결과.
+      ```sql
+      SELECT p.name, p.price, r.rating
+      FROM products AS p, reviews AS r
+      WHERE p.id = r.product_id AND p.price > 100000
+      ORDER BY p.price DESC LIMIT 10;
+      ```
+    question_en: |
+      Find and fix the error. Implicit JOIN and duplicate results.
+      ```sql
+      SELECT p.name, p.price, r.rating
+      FROM products AS p, reviews AS r
+      WHERE p.id = r.product_id AND p.price > 100000
+      ORDER BY p.price DESC LIMIT 10;
+      ```
+    reference_sql:
+      common: |
+        SELECT p.name, p.price, ROUND(AVG(r.rating), 1) AS avg_rating
+        FROM products AS p
+        INNER JOIN reviews AS r ON p.id = r.product_id
+        WHERE p.price > 100000
+        GROUP BY p.id, p.name, p.price
+        ORDER BY p.price DESC
+        LIMIT 10;
+    hints:
+      - ko: "한 상품에 리뷰가 여러 개면 같은 상품이 반복됩니다. 명시적 JOIN + 집계로 수정하세요."
+        en: "Products with multiple reviews repeat. Use explicit JOIN + aggregation."
+    max_score: 10
+    tags: [implicit JOIN, duplicate rows, GROUP BY]
+
+  - id: i10d-08
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. LEFT JOIN + WHERE로 INNER JOIN 효과.
+      ```sql
+      SELECT c.name, o.order_number, sh.tracking_number
+      FROM customers AS c
+      LEFT JOIN orders AS o ON c.id = o.customer_id
+      LEFT JOIN shipping AS sh ON o.id = sh.order_id
+      WHERE sh.status = 'shipped';
+      ```
+    question_en: |
+      Find and fix the error. LEFT JOIN + WHERE effectively becomes INNER JOIN.
+      ```sql
+      SELECT c.name, o.order_number, sh.tracking_number
+      FROM customers AS c
+      LEFT JOIN orders AS o ON c.id = o.customer_id
+      LEFT JOIN shipping AS sh ON o.id = sh.order_id
+      WHERE sh.status = 'shipped';
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, o.order_number, sh.tracking_number
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        INNER JOIN shipping AS sh ON o.id = sh.order_id
+        WHERE sh.status = 'shipped';
+    hints:
+      - ko: "`LEFT JOIN` 후 `WHERE`에서 오른쪽 테이블의 칼럼을 필터링하면 사실상 INNER JOIN과 같아집니다."
+        en: "Filtering on right-table columns in WHERE after LEFT JOIN effectively makes it an INNER JOIN."
+    max_score: 10
+    tags: [LEFT JOIN, WHERE, INNER JOIN equivalence]
+
+  - id: i10d-09
+    level: 3
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 카디널리티 폭발로 매출이 부풀어짐.
+      ```sql
+      SELECT p.name, SUM(oi.quantity * oi.unit_price) AS revenue, ROUND(AVG(r.rating), 1) AS avg_rating
+      FROM products AS p
+      INNER JOIN order_items AS oi ON p.id = oi.product_id
+      INNER JOIN reviews AS r ON p.id = r.product_id
+      GROUP BY p.id, p.name
+      ORDER BY revenue DESC LIMIT 10;
+      ```
+    question_en: |
+      Find and fix the error. Cardinality explosion inflates revenue.
+      ```sql
+      SELECT p.name, SUM(oi.quantity * oi.unit_price) AS revenue, ROUND(AVG(r.rating), 1) AS avg_rating
+      FROM products AS p
+      INNER JOIN order_items AS oi ON p.id = oi.product_id
+      INNER JOIN reviews AS r ON p.id = r.product_id
+      GROUP BY p.id, p.name
+      ORDER BY revenue DESC LIMIT 10;
+      ```
+    reference_sql:
+      common: |
+        SELECT p.name, SUM(oi.quantity * oi.unit_price) AS revenue, sub_r.avg_rating
+        FROM products AS p
+        INNER JOIN order_items AS oi ON p.id = oi.product_id
+        LEFT JOIN (
+            SELECT product_id, ROUND(AVG(rating), 1) AS avg_rating
+            FROM reviews GROUP BY product_id
+        ) AS sub_r ON p.id = sub_r.product_id
+        GROUP BY p.id, p.name, sub_r.avg_rating
+        ORDER BY revenue DESC
+        LIMIT 10;
+    hints:
+      - ko: "`order_items`와 `reviews`를 동시에 JOIN하면 행이 곱해집니다 (카디널리티 폭발). 리뷰는 서브쿼리로 분리하세요."
+        en: "JOINing order_items and reviews simultaneously multiplies rows. Separate reviews into a subquery."
+    max_score: 10
+    tags: [cardinality explosion, FROM subquery, products]
+
+  - id: i10d-10
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. WHERE에서 SUM 사용.
+      ```sql
+      SELECT c.name, SUM(o.total_amount) AS total_spent
+      FROM customers AS c
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      WHERE SUM(o.total_amount) >= 1000000
+      GROUP BY c.id, c.name;
+      ```
+    question_en: |
+      Find and fix the error. SUM used in WHERE.
+      ```sql
+      SELECT c.name, SUM(o.total_amount) AS total_spent
+      FROM customers AS c
+      INNER JOIN orders AS o ON c.id = o.customer_id
+      WHERE SUM(o.total_amount) >= 1000000
+      GROUP BY c.id, c.name;
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, SUM(o.total_amount) AS total_spent
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.name
+        HAVING SUM(o.total_amount) >= 1000000
+        ORDER BY total_spent DESC;
+    hints:
+      - ko: "`WHERE` 절에서는 집계 함수를 사용할 수 없습니다. 그룹화 후 필터링은 `HAVING`에서 합니다."
+        en: "Aggregate functions cannot be used in WHERE. Use HAVING for post-group filtering."
+    max_score: 10
+    tags: [WHERE vs HAVING, SUM]
+
+  - id: i10d-11
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 서브쿼리가 여러 행을 반환.
+      ```sql
+      SELECT p.name, p.price FROM products AS p
+      WHERE p.price > (SELECT AVG(price) FROM products GROUP BY category_id);
+      ```
+    question_en: |
+      Find and fix the error. Subquery returns multiple rows.
+      ```sql
+      SELECT p.name, p.price FROM products AS p
+      WHERE p.price > (SELECT AVG(price) FROM products GROUP BY category_id);
+      ```
+    reference_sql:
+      common: |
+        SELECT p.name, p.price
+        FROM products AS p
+        WHERE p.price > (
+            SELECT AVG(p2.price) FROM products AS p2
+            WHERE p2.category_id = p.category_id
+        )
+        ORDER BY p.price DESC;
+    hints:
+      - ko: "`>` 연산자는 단일 값과만 비교할 수 있습니다. 상관 서브쿼리로 자기 카테고리의 평균만 구해야 합니다."
+        en: "`>` can only compare with a single value. Use a correlated subquery for the same category."
+    max_score: 10
+    tags: [scalar subquery, correlated subquery, multiple rows error]
+
+  - id: i10d-12
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. BETWEEN 날짜 범위 누락.
+      ```sql
+      SELECT COUNT(*) AS q3_orders FROM orders
+      WHERE ordered_at BETWEEN '2024-07-01' AND '2024-09-30';
+      ```
+    question_en: |
+      Find and fix the error. BETWEEN date range misses end-of-day orders.
+      ```sql
+      SELECT COUNT(*) AS q3_orders FROM orders
+      WHERE ordered_at BETWEEN '2024-07-01' AND '2024-09-30';
+      ```
+    reference_sql:
+      common: |
+        SELECT COUNT(*) AS q3_orders
+        FROM orders
+        WHERE ordered_at >= '2024-07-01'
+          AND ordered_at < '2024-10-01';
+    hints:
+      - ko: "`ordered_at`에 시간 정보가 포함되어 있다면, `'2024-09-30'`은 `'2024-09-30 00:00:00'`과 같아 9월 30일 오후 주문이 빠집니다."
+        en: "If ordered_at includes time, '2024-09-30' equals '2024-09-30 00:00:00', missing afternoon orders on Sep 30."
+    max_score: 10
+    tags: [BETWEEN, date range, time precision]
+
+  - id: i10d-13
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. DATEDIFF는 SQLite에 없음.
+      ```sql
+      SELECT order_number, ordered_at,
+             DATEDIFF('2025-01-01', ordered_at) AS days_elapsed
+      FROM orders LIMIT 10;
+      ```
+    question_en: |
+      Find and fix the error. DATEDIFF does not exist in SQLite.
+      ```sql
+      SELECT order_number, ordered_at,
+             DATEDIFF('2025-01-01', ordered_at) AS days_elapsed
+      FROM orders LIMIT 10;
+      ```
+    reference_sql:
+      common: |
+        SELECT order_number, ordered_at,
+               CAST(JULIANDAY('2025-01-01') - JULIANDAY(ordered_at) AS INTEGER) AS days_elapsed
+        FROM orders LIMIT 10;
+    hints:
+      - ko: "SQLite에는 `DATEDIFF` 함수가 없습니다. `JULIANDAY()` 함수로 날짜 차이를 계산합니다."
+        en: "SQLite has no DATEDIFF. Use JULIANDAY() to calculate date differences."
+    max_score: 10
+    tags: [DATEDIFF, JULIANDAY, SQLite-specific]
+
+  - id: i10d-14
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. HAVING에서 별칭 사용과 GROUP BY 표현식 불일치.
+      ```sql
+      SELECT STRFTIME('%Y-%m', created_at) AS month, COUNT(*) AS new_customers
+      FROM customers
+      GROUP BY month
+      HAVING new_customers > 100
+      ORDER BY month;
+      ```
+    question_en: |
+      Find and fix the error. Alias in HAVING and GROUP BY expression mismatch.
+      ```sql
+      SELECT STRFTIME('%Y-%m', created_at) AS month, COUNT(*) AS new_customers
+      FROM customers
+      GROUP BY month
+      HAVING new_customers > 100
+      ORDER BY month;
+      ```
+    reference_sql:
+      common: |
+        SELECT STRFTIME('%Y-%m', created_at) AS month, COUNT(*) AS new_customers
+        FROM customers
+        GROUP BY STRFTIME('%Y-%m', created_at)
+        HAVING COUNT(*) > 100
+        ORDER BY month;
+    hints:
+      - ko: "`HAVING`에서 표준 SQL은 집계 표현식을 직접 써야 합니다. `HAVING COUNT(*) > 100`."
+        en: "Standard SQL requires aggregate expressions in HAVING: `HAVING COUNT(*) > 100`."
+    max_score: 10
+    tags: [HAVING, alias, standard SQL]
+
+  - id: i10d-15
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. "상위 10%"를 "평균의 110%"로 잘못 계산.
+      ```sql
+      SELECT name, price FROM products
+      WHERE price > (SELECT AVG(price) * 1.1 FROM products)
+      ORDER BY price DESC;
+      ```
+    question_en: |
+      Find and fix the error. "Top 10%" is incorrectly calculated as "110% of average".
+      ```sql
+      SELECT name, price FROM products
+      WHERE price > (SELECT AVG(price) * 1.1 FROM products)
+      ORDER BY price DESC;
+      ```
+    reference_sql:
+      common: |
+        SELECT name, price
+        FROM products
+        WHERE price >= (
+            SELECT price FROM products
+            ORDER BY price DESC
+            LIMIT 1 OFFSET (SELECT COUNT(*) / 10 FROM products)
+        )
+        ORDER BY price DESC;
+    hints:
+      - ko: "\"상위 10%\"는 \"평균의 110%\"가 아닙니다. 전체 중 가격 순위가 상위 10%에 해당하는 것입니다."
+        en: "\"Top 10%\" is not \"110% of average\". It means products at or above the 90th percentile by price rank."
+    max_score: 10
+    tags: [percentile, OFFSET, logic error]
+
+  - id: i10d-16
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 리뷰 수 최소 조건 누락.
+      ```sql
+      SELECT cat.name, AVG(r.rating) AS avg_rating
+      FROM categories AS cat
+      INNER JOIN products AS p ON cat.id = p.category_id
+      LEFT JOIN reviews AS r ON p.id = r.product_id
+      GROUP BY cat.id, cat.name
+      HAVING avg_rating >= 4.0
+      ORDER BY avg_rating DESC;
+      ```
+    question_en: |
+      Find and fix the error. Missing minimum review count condition.
+      ```sql
+      SELECT cat.name, AVG(r.rating) AS avg_rating
+      FROM categories AS cat
+      INNER JOIN products AS p ON cat.id = p.category_id
+      LEFT JOIN reviews AS r ON p.id = r.product_id
+      GROUP BY cat.id, cat.name
+      HAVING avg_rating >= 4.0
+      ORDER BY avg_rating DESC;
+      ```
+    reference_sql:
+      common: |
+        SELECT cat.name, ROUND(AVG(r.rating), 2) AS avg_rating, COUNT(r.id) AS review_count
+        FROM categories AS cat
+        INNER JOIN products AS p ON cat.id = p.category_id
+        INNER JOIN reviews AS r ON p.id = r.product_id
+        GROUP BY cat.id, cat.name
+        HAVING AVG(r.rating) >= 4.0 AND COUNT(r.id) >= 10
+        ORDER BY avg_rating DESC;
+    hints:
+      - ko: "리뷰가 극소수인 카테고리도 4.0 이상이 될 수 있으므로 최소 리뷰 수 조건을 추가하세요."
+        en: "Categories with very few reviews could reach 4.0+. Add a minimum review count."
+    max_score: 10
+    tags: [HAVING, minimum count, statistical validity]
+
+  - id: i10d-17
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. UNION ALL 칼럼 의미 불일치.
+      ```sql
+      SELECT order_number, total_amount, status, ordered_at FROM orders
+      UNION ALL
+      SELECT order_id, amount, status, paid_at FROM payments;
+      ```
+    question_en: |
+      Find and fix the error. UNION ALL column semantic mismatch.
+      ```sql
+      SELECT order_number, total_amount, status, ordered_at FROM orders
+      UNION ALL
+      SELECT order_id, amount, status, paid_at FROM payments;
+      ```
+    reference_sql:
+      common: |
+        SELECT '주문' AS event_type, order_number AS reference, total_amount AS amount, status, ordered_at AS event_at
+        FROM orders
+        UNION ALL
+        SELECT '결제' AS event_type, CAST(order_id AS TEXT) AS reference, amount, status, paid_at AS event_at
+        FROM payments WHERE paid_at IS NOT NULL
+        ORDER BY event_at DESC LIMIT 20;
+    hints:
+      - ko: "`order_number`(TEXT)와 `order_id`(INTEGER)를 합치면 의미가 맞지 않습니다. 이벤트 유형 칼럼을 추가하세요."
+        en: "Combining order_number (TEXT) and order_id (INTEGER) doesn't match semantically. Add an event type column."
+    max_score: 10
+    tags: [UNION ALL, semantic mismatch, CAST]
+
+  - id: i10d-18
+    level: 3
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. LEFT JOIN + WHERE로 NULL 행 손실.
+      ```sql
+      SELECT p.name, p.price, COUNT(r.id) AS review_count
+      FROM products AS p
+      LEFT JOIN reviews AS r ON p.id = r.product_id
+      WHERE r.rating >= 3 OR r.rating IS NULL
+      GROUP BY p.id, p.name, p.price
+      HAVING review_count <= 5
+      ORDER BY p.price DESC;
+      ```
+    question_en: |
+      Find and fix the error. LEFT JOIN + WHERE loses NULL rows.
+      ```sql
+      SELECT p.name, p.price, COUNT(r.id) AS review_count
+      FROM products AS p
+      LEFT JOIN reviews AS r ON p.id = r.product_id
+      WHERE r.rating >= 3 OR r.rating IS NULL
+      GROUP BY p.id, p.name, p.price
+      HAVING review_count <= 5
+      ORDER BY p.price DESC;
+      ```
+    reference_sql:
+      common: |
+        SELECT p.name, p.price, COUNT(r.id) AS review_count
+        FROM products AS p
+        LEFT JOIN reviews AS r ON p.id = r.product_id AND r.rating >= 3
+        GROUP BY p.id, p.name, p.price
+        HAVING COUNT(r.id) <= 5
+        ORDER BY p.price DESC
+        LIMIT 20;
+    hints:
+      - ko: "WHERE에서 오른쪽 테이블 칼럼을 필터링하면 LEFT JOIN 효과가 손상됩니다. 조건을 ON 절로 옮기세요."
+        en: "Move the filter condition to the ON clause to preserve LEFT JOIN behavior."
+    max_score: 10
+    tags: [LEFT JOIN, ON vs WHERE, NULL handling]
+
+  - id: i10d-19
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. GROUP BY에 c.name만 있어 동명이인 문제.
+      ```sql
+      SELECT c.name, c.email, c.grade, COUNT(o.id) AS order_count, SUM(o.total_amount) AS total_spent
+      FROM customers AS c INNER JOIN orders AS o ON c.id = o.customer_id
+      GROUP BY c.name;
+      ```
+    question_en: |
+      Find and fix the error. GROUP BY only c.name causes issue with same-name customers.
+      ```sql
+      SELECT c.name, c.email, c.grade, COUNT(o.id) AS order_count, SUM(o.total_amount) AS total_spent
+      FROM customers AS c INNER JOIN orders AS o ON c.id = o.customer_id
+      GROUP BY c.name;
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, c.email, c.grade, COUNT(o.id) AS order_count, SUM(o.total_amount) AS total_spent
+        FROM customers AS c INNER JOIN orders AS o ON c.id = o.customer_id
+        GROUP BY c.id, c.name, c.email, c.grade
+        ORDER BY total_spent DESC LIMIT 20;
+    hints:
+      - ko: "`GROUP BY c.name`만 했는데 동명이인이 있으면 어떤 email/grade를 표시할까요? `c.id`로 그룹화하세요."
+        en: "GROUP BY c.name only — same-name customers cause non-deterministic results. Group by c.id."
+    max_score: 10
+    tags: [GROUP BY, non-deterministic, unique key]
+
+  - id: i10d-20
+    level: 1
+    type: "DML"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. VALUES 개수 불일치.
+      ```sql
+      INSERT INTO products (category_id, supplier_id, name, sku, brand, price, cost_price, created_at, updated_at)
+      VALUES (1, 1, '테스트 키보드', 'TEST-KB-001', 'TestBrand', 89000, 45000);
+      ```
+    question_en: |
+      Find and fix the error. VALUES count mismatch.
+      ```sql
+      INSERT INTO products (category_id, supplier_id, name, sku, brand, price, cost_price, created_at, updated_at)
+      VALUES (1, 1, '테스트 키보드', 'TEST-KB-001', 'TestBrand', 89000, 45000);
+      ```
+    reference_sql:
+      common: |
+        INSERT INTO products (category_id, supplier_id, name, sku, brand, price, cost_price, stock_qty, is_active, created_at, updated_at)
+        VALUES (1, 1, '테스트 키보드', 'TEST-KB-001', 'TestBrand', 89000, 45000, 100, 1, '2025-01-01', '2025-01-01');
+    hints:
+      - ko: "VALUES의 값 개수와 칼럼 목록의 칼럼 수를 하나씩 세어보세요."
+        en: "Count the VALUES and column list entries one by one."
+    max_score: 10
+    tags: [INSERT, column count mismatch]
+
+  - id: i10d-21
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 반품 상태도 매출에서 제외해야 함.
+      ```sql
+      SELECT SUBSTR(ordered_at, 1, 7) AS month, SUM(total_amount) AS revenue, COUNT(*) AS order_count
+      FROM orders WHERE status != 'cancelled'
+      GROUP BY SUBSTR(ordered_at, 1, 7) ORDER BY month;
+      ```
+    question_en: |
+      Find and fix the error. Returns should also be excluded from revenue.
+      ```sql
+      SELECT SUBSTR(ordered_at, 1, 7) AS month, SUM(total_amount) AS revenue, COUNT(*) AS order_count
+      FROM orders WHERE status != 'cancelled'
+      GROUP BY SUBSTR(ordered_at, 1, 7) ORDER BY month;
+      ```
+    reference_sql:
+      common: |
+        SELECT SUBSTR(ordered_at, 1, 7) AS month, SUM(total_amount) AS revenue, COUNT(*) AS order_count
+        FROM orders
+        WHERE status NOT IN ('cancelled', 'returned', 'return_requested')
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        ORDER BY month;
+    hints:
+      - ko: "`!= 'cancelled'`로 취소만 제외했지만, 반품도 매출에서 빠져야 합니다."
+        en: "Only excluding cancelled misses returned and return_requested orders from revenue."
+    max_score: 10
+    tags: [NOT IN, status filtering, business logic]
+
+  - id: i10d-22
+    level: 2
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 실패/환불 결제도 포함됨.
+      ```sql
+      SELECT p.method, COUNT(*) AS payment_count, SUM(p.amount) AS total_amount
+      FROM payments AS p GROUP BY p.method ORDER BY total_amount DESC;
+      ```
+    question_en: |
+      Find and fix the error. Failed/refunded payments are included.
+      ```sql
+      SELECT p.method, COUNT(*) AS payment_count, SUM(p.amount) AS total_amount
+      FROM payments AS p GROUP BY p.method ORDER BY total_amount DESC;
+      ```
+    reference_sql:
+      common: |
+        SELECT p.method, COUNT(*) AS payment_count, SUM(p.amount) AS total_amount
+        FROM payments AS p
+        WHERE p.status = 'completed'
+        GROUP BY p.method
+        ORDER BY total_amount DESC;
+    hints:
+      - ko: "결제 상태(`status`)를 확인하세요. 실패하거나 환불된 결제도 포함하고 있지 않나요?"
+        en: "Check payment status. Are failed or refunded payments included?"
+    max_score: 10
+    tags: [WHERE, status filtering, payments]
+
+  - id: i10d-23
+    level: 3
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. NOT IN + NULL 문제.
+      ```sql
+      SELECT c.name, c.email, c.grade FROM customers AS c
+      WHERE c.grade = 'VIP' AND c.id NOT IN (
+          SELECT customer_id FROM orders WHERE ordered_at >= DATE('now', '-6 months'));
+      ```
+    question_en: |
+      Find and fix the error. NOT IN + NULL issue.
+      ```sql
+      SELECT c.name, c.email, c.grade FROM customers AS c
+      WHERE c.grade = 'VIP' AND c.id NOT IN (
+          SELECT customer_id FROM orders WHERE ordered_at >= DATE('now', '-6 months'));
+      ```
+    reference_sql:
+      common: |
+        SELECT c.name, c.email, c.grade
+        FROM customers AS c
+        WHERE c.grade = 'VIP'
+          AND NOT EXISTS (
+              SELECT 1 FROM orders AS o
+              WHERE o.customer_id = c.id
+                AND o.ordered_at >= DATE('now', '-6 months')
+          );
+    hints:
+      - ko: "`NOT IN` 서브쿼리에서 `customer_id`가 NULL인 주문이 하나라도 있으면 결과가 0행이 됩니다. `NOT EXISTS`를 사용하세요."
+        en: "If any customer_id is NULL in the NOT IN subquery, the result is empty. Use NOT EXISTS instead."
+    max_score: 10
+    tags: [NOT IN, NULL, NOT EXISTS]
+
+  - id: i10d-24
+    level: 3
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 0으로 나누기 에러.
+      ```sql
+      SELECT s.company_name, COUNT(DISTINCT oi.id) AS total_sales, COUNT(DISTINCT ret.id) AS return_count,
+             ROUND(100.0 * COUNT(DISTINCT ret.id) / COUNT(DISTINCT oi.id), 2) AS return_rate
+      FROM suppliers AS s LEFT JOIN products AS p ON s.id = p.supplier_id
+      LEFT JOIN order_items AS oi ON p.id = oi.product_id
+      LEFT JOIN returns AS ret ON ret.order_id = oi.order_id
+      GROUP BY s.id, s.company_name ORDER BY return_rate DESC;
+      ```
+    question_en: |
+      Find and fix the error. Division by zero.
+      ```sql
+      SELECT s.company_name, COUNT(DISTINCT oi.id) AS total_sales, COUNT(DISTINCT ret.id) AS return_count,
+             ROUND(100.0 * COUNT(DISTINCT ret.id) / COUNT(DISTINCT oi.id), 2) AS return_rate
+      FROM suppliers AS s LEFT JOIN products AS p ON s.id = p.supplier_id
+      LEFT JOIN order_items AS oi ON p.id = oi.product_id
+      LEFT JOIN returns AS ret ON ret.order_id = oi.order_id
+      GROUP BY s.id, s.company_name ORDER BY return_rate DESC;
+      ```
+    reference_sql:
+      common: |
+        SELECT s.company_name, COUNT(DISTINCT oi.id) AS total_sales, COUNT(DISTINCT ret.id) AS return_count,
+               ROUND(100.0 * COUNT(DISTINCT ret.id) / NULLIF(COUNT(DISTINCT oi.id), 0), 2) AS return_rate
+        FROM suppliers AS s LEFT JOIN products AS p ON s.id = p.supplier_id
+        LEFT JOIN order_items AS oi ON p.id = oi.product_id
+        LEFT JOIN returns AS ret ON ret.order_id = oi.order_id
+        GROUP BY s.id, s.company_name ORDER BY return_rate DESC;
+    hints:
+      - ko: "판매 실적이 0인 공급업체에서 0으로 나누기 에러가 발생합니다. `NULLIF`로 분모가 0이면 NULL로 바꾸세요."
+        en: "Suppliers with 0 sales cause division by zero. Use `NULLIF` to convert 0 denominator to NULL."
+    max_score: 10
+    tags: [NULLIF, division by zero]
+
+  - id: i10d-25
+    level: 3
+    type: "SELECT"
+    question: |
+      다음 쿼리의 오류를 찾고 수정하세요. 다중 1:N JOIN으로 카디널리티 폭발, 주문 금액이 비정상적으로 큼.
+      ```sql
+      SELECT c.grade, COUNT(o.id) AS order_count, ROUND(AVG(o.total_amount), 0) AS avg_order_amount,
+             ROUND(AVG(r.rating), 2) AS avg_rating, COUNT(r.id) AS review_count
+      FROM customers AS c INNER JOIN orders AS o ON c.id = o.customer_id
+      INNER JOIN order_items AS oi ON o.id = oi.order_id
+      LEFT JOIN reviews AS r ON c.id = r.customer_id
+      GROUP BY c.grade ORDER BY avg_order_amount DESC;
+      ```
+    question_en: |
+      Find and fix the error. Multiple 1:N JOINs cause cardinality explosion, inflated order amounts.
+      ```sql
+      SELECT c.grade, COUNT(o.id) AS order_count, ROUND(AVG(o.total_amount), 0) AS avg_order_amount,
+             ROUND(AVG(r.rating), 2) AS avg_rating, COUNT(r.id) AS review_count
+      FROM customers AS c INNER JOIN orders AS o ON c.id = o.customer_id
+      INNER JOIN order_items AS oi ON o.id = oi.order_id
+      LEFT JOIN reviews AS r ON c.id = r.customer_id
+      GROUP BY c.grade ORDER BY avg_order_amount DESC;
+      ```
+    reference_sql:
+      common: |
+        SELECT
+            c.grade,
+            COUNT(DISTINCT o.id) AS order_count,
+            ROUND(SUM(o.total_amount) * 1.0 / NULLIF(COUNT(DISTINCT o.id), 0), 0) AS avg_order_amount,
+            sub_r.avg_rating,
+            sub_r.review_count
+        FROM customers AS c
+        INNER JOIN orders AS o ON c.id = o.customer_id
+        LEFT JOIN (
+            SELECT customer_id, ROUND(AVG(rating), 2) AS avg_rating, COUNT(*) AS review_count
+            FROM reviews GROUP BY customer_id
+        ) AS sub_r ON c.id = sub_r.customer_id
+        GROUP BY c.grade, sub_r.avg_rating, sub_r.review_count
+        ORDER BY avg_order_amount DESC;
+    hints:
+      - ko: "`order_items` JOIN으로 주문 행이 아이템 수만큼 복제되고, `reviews` JOIN으로 추가 카디널리티 폭발. 각 집계를 서브쿼리로 분리하세요."
+        en: "order_items JOIN duplicates rows per item, reviews JOIN adds more explosion. Separate aggregations into subqueries."
+    max_score: 10
+    tags: [cardinality explosion, COUNT DISTINCT, FROM subquery, NULLIF]

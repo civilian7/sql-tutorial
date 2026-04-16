@@ -1,0 +1,574 @@
+metadata:
+  id: intermediate-03-string-math
+  title: "문자열/숫자 함수"
+  title_en: "String/Math Functions"
+  difficulty: intermediate
+  concepts: [SUBSTR, LENGTH, UPPER, LOWER, REPLACE, TRIM, INSTR, GROUP_CONCAT, COALESCE, ROUND, ABS, CAST, NULLIF, IIF, CASE, printf]
+  tables: [products, customers, orders, order_items, categories, suppliers]
+  prerequisites: [beginner-01-products]
+  estimated_minutes: 40
+  default_level: 2
+  default_type: "SELECT"
+
+problems:
+  - id: i03s-01
+    level: 1
+    type: "SELECT"
+    question: |
+      상품명의 글자 수를 구하세요. 이름이 가장 긴 상품 10개.
+    question_en: |
+      Find the character count of product names. Top 10 longest names.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            LENGTH(name) AS name_length
+        FROM products
+        ORDER BY name_length DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`LENGTH(name)`으로 문자열 길이를 구합니다. `ORDER BY LENGTH(name) DESC LIMIT 10`."
+        en: "Get string length with `LENGTH(name)`. `ORDER BY LENGTH(name) DESC LIMIT 10`."
+    max_score: 10
+    tags: [LENGTH, ORDER BY, LIMIT, products]
+
+  - id: i03s-02
+    level: 1
+    type: "SELECT"
+    question: |
+      브랜드명을 모두 대문자로 변환하여 고유한 브랜드 목록을 조회하세요.
+    question_en: |
+      Convert all brand names to uppercase and list unique brands.
+    reference_sql:
+      common: |
+        SELECT DISTINCT UPPER(brand) AS brand_upper
+        FROM products
+        ORDER BY brand_upper;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`UPPER(brand)`로 대문자 변환, `DISTINCT`로 중복 제거합니다."
+        en: "Convert to uppercase with `UPPER(brand)`, remove duplicates with `DISTINCT`."
+    max_score: 10
+    tags: [UPPER, DISTINCT, products]
+
+  - id: i03s-03
+    level: 1
+    type: "SELECT"
+    question: |
+      상품명에서 브랜드 부분을 제거하고 나머지 이름만 추출하세요.
+    question_en: |
+      Remove the brand portion from product names and extract only the remaining name.
+    reference_sql:
+      common: |
+        SELECT
+            brand,
+            name,
+            SUBSTR(name, LENGTH(brand) + 2) AS model_name
+        FROM products
+        WHERE name LIKE brand || ' %'
+        ORDER BY brand, model_name
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SUBSTR(name, LENGTH(brand) + 2)`로 브랜드명 + 공백 이후의 문자열을 추출합니다."
+        en: "Extract the string after brand name + space with `SUBSTR(name, LENGTH(brand) + 2)`."
+    max_score: 10
+    tags: [SUBSTR, LENGTH, LIKE, products]
+
+  - id: i03s-04
+    level: 1
+    type: "SELECT"
+    question: |
+      고객 이메일에서 '@' 앞의 아이디 부분만 추출하세요.
+    question_en: |
+      Extract only the ID portion before '@' from customer emails.
+    reference_sql:
+      common: |
+        SELECT
+            email,
+            SUBSTR(email, 1, INSTR(email, '@') - 1) AS user_id
+        FROM customers
+        ORDER BY user_id
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SUBSTR(email, 1, INSTR(email, '@') - 1)`로 '@' 앞까지 자릅니다. `INSTR`은 문자열 내 특정 문자의 위치를 반환합니다."
+        en: "`SUBSTR(email, 1, INSTR(email, '@') - 1)` cuts to before '@'. `INSTR` returns the position of a specific character in a string."
+    max_score: 10
+    tags: [SUBSTR, INSTR, customers]
+
+  - id: i03s-05
+    level: 2
+    type: "SELECT"
+    question: |
+      상품명에서 색상 정보('블랙', '화이트', '실버')를 제거하세요.
+    question_en: |
+      Remove color information ('블랙', '화이트', '실버') from product names.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            TRIM(REPLACE(REPLACE(REPLACE(name, '블랙', ''), '화이트', ''), '실버', '')) AS name_no_color
+        FROM products
+        WHERE name LIKE '%블랙%' OR name LIKE '%화이트%' OR name LIKE '%실버%'
+        ORDER BY name
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`REPLACE`를 중첩하여 여러 문자열을 제거합니다. `TRIM`으로 끝에 남은 공백을 정리합니다."
+        en: "Nest `REPLACE` to remove multiple strings. Clean up trailing spaces with `TRIM`."
+    max_score: 10
+    tags: [REPLACE, TRIM, LIKE, products]
+
+  - id: i03s-06
+    level: 1
+    type: "SELECT"
+    question: |
+      고객 전화번호에서 하이픈(-)을 제거한 번호를 만드세요.
+    question_en: |
+      Create phone numbers with hyphens (-) removed.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            phone,
+            REPLACE(phone, '-', '') AS phone_no_dash,
+            LENGTH(REPLACE(phone, '-', '')) AS digit_count
+        FROM customers
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: false
+    hints:
+      - ko: "`REPLACE(phone, '-', '')`로 하이픈을 빈 문자열로 치환합니다."
+        en: "Replace hyphens with empty string using `REPLACE(phone, '-', '')`."
+    max_score: 10
+    tags: [REPLACE, LENGTH, customers]
+
+  - id: i03s-07
+    level: 1
+    type: "SELECT"
+    question: |
+      상품의 SKU 코드에서 카테고리 약어(첫 2글자)를 추출하세요.
+    question_en: |
+      Extract the category abbreviation (first 2 characters) from product SKU codes.
+    reference_sql:
+      common: |
+        SELECT
+            sku,
+            SUBSTR(sku, 1, 2) AS category_code,
+            name
+        FROM products
+        ORDER BY category_code, sku
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SUBSTR(sku, 1, 2)`로 SKU의 첫 2글자를 추출합니다. SKU 형식은 `LA-GEN-삼성-00001` 같은 구조입니다."
+        en: "Extract the first 2 characters of SKU with `SUBSTR(sku, 1, 2)`. SKU format is like `LA-GEN-삼성-00001`."
+    max_score: 10
+    tags: [SUBSTR, ORDER BY, products]
+
+  - id: i03s-08
+    level: 2
+    type: "SELECT"
+    question: |
+      카테고리별 소속 브랜드를 쉼표로 나열하세요.
+    question_en: |
+      List brands per category, separated by commas.
+    reference_sql:
+      common: |
+        SELECT
+            cat.name AS category,
+            COUNT(DISTINCT p.brand) AS brand_count,
+            GROUP_CONCAT(DISTINCT p.brand, ', ') AS brands
+        FROM products AS p
+        INNER JOIN categories AS cat ON p.category_id = cat.id
+        WHERE p.is_active = 1
+        GROUP BY cat.id, cat.name
+        ORDER BY brand_count DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`GROUP_CONCAT(DISTINCT brand, ', ')`로 카테고리 내 고유 브랜드를 쉼표 구분 문자열로 합칩니다."
+        en: "Combine unique brands within a category into a comma-separated string with `GROUP_CONCAT(DISTINCT brand, ', ')`."
+    max_score: 10
+    tags: [GROUP_CONCAT, INNER JOIN, GROUP BY, COUNT, DISTINCT, products, categories]
+
+  - id: i03s-09
+    level: 2
+    type: "SELECT"
+    question: |
+      상품명에 'RTX'가 포함된 상품에서 RTX 뒤의 모델 번호를 추출하세요.
+    question_en: |
+      Extract the model number after RTX from products containing 'RTX' in their name.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            SUBSTR(name, INSTR(name, 'RTX') + 4, 4) AS rtx_model
+        FROM products
+        WHERE name LIKE '%RTX%'
+        ORDER BY rtx_model DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`INSTR(name, 'RTX')`로 'RTX'의 위치를 찾고, `SUBSTR(name, INSTR(...) + 4, 4)`로 모델 번호 부분을 추출합니다."
+        en: "Find the position of 'RTX' with `INSTR(name, 'RTX')`, then extract the model number with `SUBSTR(name, INSTR(...) + 4, 4)`."
+    max_score: 10
+    tags: [INSTR, SUBSTR, LIKE, products]
+
+  - id: i03s-10
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 금액을 만원 단위로 반올림하세요. 금액이 큰 상위 10건.
+    question_en: |
+      Round order amounts to the nearest 10,000 won. Top 10 by amount.
+    reference_sql:
+      common: |
+        SELECT
+            order_number,
+            total_amount,
+            ROUND(total_amount, -4) AS rounded_10k,
+            ROUND(total_amount, -4) / 10000 AS in_man_won
+        FROM orders
+        WHERE status NOT IN ('cancelled')
+        ORDER BY total_amount DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`ROUND(total_amount, -4)`로 만원(10,000) 단위로 반올림합니다. 음수 자릿수는 정수 부분을 반올림합니다."
+        en: "`ROUND(total_amount, -4)` rounds to the nearest 10,000. Negative decimal places round the integer part."
+    max_score: 10
+    tags: [ROUND, ORDER BY, orders]
+
+  - id: i03s-11
+    level: 2
+    type: "SELECT"
+    question: |
+      마진율이 0인 상품을 안전하게 처리하세요. NULLIF로 0 나누기를 방지합니다.
+    question_en: |
+      Safely handle products with zero margin. Use NULLIF to prevent division by zero.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            price,
+            cost_price,
+            ROUND(100.0 * (price - cost_price) / NULLIF(cost_price, 0), 1) AS margin_pct
+        FROM products
+        WHERE is_active = 1
+        ORDER BY margin_pct DESC NULLS LAST
+        LIMIT 15;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`NULLIF(cost_price, 0)`은 cost_price가 0이면 NULL을 반환합니다. NULL로 나누면 결과가 NULL이 되어 오류가 발생하지 않습니다."
+        en: "`NULLIF(cost_price, 0)` returns NULL if cost_price is 0. Dividing by NULL results in NULL, avoiding errors."
+    max_score: 10
+    tags: [NULLIF, ROUND, products]
+
+  - id: i03s-12
+    level: 2
+    type: "SELECT"
+    question: |
+      주문 금액을 텍스트 포맷('1,234,567원')으로 변환하세요.
+    question_en: |
+      Convert order amounts to text format ('1,234,567원').
+    reference_sql:
+      common: |
+        SELECT
+            order_number,
+            total_amount,
+            printf('%,d', CAST(total_amount AS INTEGER)) || '원' AS formatted_amount
+        FROM orders
+        WHERE status NOT IN ('cancelled')
+        ORDER BY total_amount DESC
+        LIMIT 10;
+    supported_db: [sqlite]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`printf('%,d', total_amount)`로 천 단위 쉼표를 추가합니다. `||`로 '원' 단위를 붙입니다."
+        en: "Add thousands separators with `printf('%,d', total_amount)`. Append the unit with `||`."
+    max_score: 10
+    tags: [printf, CAST, orders]
+
+  - id: i03s-13
+    level: 2
+    type: "SELECT"
+    question: |
+      상품 가격을 구간별 라벨로 분류하세요. IIF 또는 CASE를 사용합니다.
+    question_en: |
+      Classify product prices into range labels. Use IIF or CASE.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            price,
+            CASE
+                WHEN price < 100000 THEN '10만원 미만'
+                WHEN price < 500000 THEN '10~50만원'
+                WHEN price < 1000000 THEN '50~100만원'
+                WHEN price < 2000000 THEN '100~200만원'
+                ELSE '200만원 이상'
+            END AS price_range,
+            IIF(price >= 1000000, '고가', '일반') AS price_class
+        FROM products
+        WHERE is_active = 1
+        ORDER BY price DESC
+        LIMIT 15;
+    supported_db: [sqlite]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`IIF(조건, 참, 거짓)`은 SQLite의 간단한 조건 함수입니다. 다중 조건에는 `CASE WHEN`이 더 적합합니다."
+        en: "`IIF(condition, true, false)` is SQLite's simple conditional function. For multiple conditions, `CASE WHEN` is more suitable."
+    max_score: 10
+    tags: [CASE, IIF, products]
+
+  - id: i03s-14
+    level: 2
+    type: "SELECT"
+    question: |
+      문자열로 저장된 숫자를 정수/실수로 변환하세요. 재고 수량의 타입 변환.
+    question_en: |
+      Convert numbers stored as strings to integer/real. Type conversion of stock quantities.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            stock_qty,
+            TYPEOF(stock_qty) AS original_type,
+            CAST(stock_qty AS REAL) AS stock_as_real,
+            TYPEOF(CAST(stock_qty AS REAL)) AS converted_type,
+            CAST(price AS INTEGER) AS price_int
+        FROM products
+        WHERE is_active = 1
+        ORDER BY stock_qty DESC
+        LIMIT 10;
+    supported_db: [sqlite]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`CAST(값 AS INTEGER)` 또는 `CAST(값 AS REAL)`로 타입을 변환합니다. `TYPEOF()`로 현재 타입을 확인할 수 있습니다."
+        en: "Convert types with `CAST(value AS INTEGER)` or `CAST(value AS REAL)`. Check current type with `TYPEOF()`."
+    max_score: 10
+    tags: [CAST, TYPEOF, products]
+
+  - id: i03s-15
+    level: 3
+    type: "SELECT"
+    question: |
+      고객 등급별 이름 목록을 만드세요. 각 등급의 처음 5명만 쉼표로 연결.
+    question_en: |
+      Create a name list per customer grade. Only first 5 per grade, comma-separated.
+    reference_sql:
+      common: |
+        SELECT
+            grade,
+            COUNT(*) AS total_count,
+            GROUP_CONCAT(name, ', ') AS sample_names
+        FROM (
+            SELECT
+                name,
+                grade,
+                ROW_NUMBER() OVER (PARTITION BY grade ORDER BY created_at) AS rn
+            FROM customers
+            WHERE is_active = 1
+        )
+        WHERE rn <= 5
+        GROUP BY grade
+        ORDER BY total_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "서브쿼리에서 `ROW_NUMBER()`로 등급 내 순번을 매기고, 5명까지만 필터한 뒤 `GROUP_CONCAT`으로 합칩니다."
+        en: "Number within each grade with `ROW_NUMBER()` in a subquery, filter to 5, then combine with `GROUP_CONCAT`."
+    max_score: 10
+    tags: [ROW_NUMBER, GROUP_CONCAT, customers]
+
+  - id: i03s-16
+    level: 2
+    type: "SELECT"
+    question: |
+      주문번호에서 날짜와 일련번호를 분리하세요. 주문번호 형식: ORD-YYYYMMDD-NNNNN.
+    question_en: |
+      Separate date and sequence number from order numbers. Format: ORD-YYYYMMDD-NNNNN.
+    reference_sql:
+      common: |
+        SELECT
+            order_number,
+            SUBSTR(order_number, 5, 8) AS date_part,
+            SUBSTR(order_number, 5, 4) || '-' || SUBSTR(order_number, 9, 2) || '-' || SUBSTR(order_number, 11, 2) AS formatted_date,
+            CAST(SUBSTR(order_number, 14) AS INTEGER) AS sequence_no
+        FROM orders
+        ORDER BY ordered_at DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SUBSTR(order_number, 5, 8)`로 날짜 부분(YYYYMMDD), `SUBSTR(order_number, 14)`로 일련번호를 추출합니다."
+        en: "Extract the date part (YYYYMMDD) with `SUBSTR(order_number, 5, 8)` and sequence number with `SUBSTR(order_number, 14)`."
+    max_score: 10
+    tags: [SUBSTR, CAST, orders]
+
+  - id: i03s-17
+    level: 2
+    type: "SELECT"
+    question: |
+      상품명에서 용량/크기 정보(숫자+GB/TB/MHz/W)를 포함하는 상품만 조회하세요.
+    question_en: |
+      Find only products whose names contain capacity/size info (number+GB/TB/MHz/W).
+    reference_sql:
+      common: |
+        SELECT name, price, brand
+        FROM products
+        WHERE name GLOB '*[0-9]GB*'
+           OR name GLOB '*[0-9]TB*'
+           OR name GLOB '*[0-9]MHz*'
+           OR name GLOB '*[0-9]W*'
+        ORDER BY price DESC
+        LIMIT 15;
+    supported_db: [sqlite]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`GLOB`은 대소문자를 구분하는 패턴 매칭입니다. `*[0-9]GB*`, `*[0-9]TB*` 등으로 숫자 뒤 단위가 오는 패턴을 찾습니다."
+        en: "`GLOB` is case-sensitive pattern matching. Find patterns with numbers followed by units like `*[0-9]GB*`, `*[0-9]TB*`."
+    max_score: 10
+    tags: [GLOB, pattern matching, products]
+
+  - id: i03s-18
+    level: 3
+    type: "SELECT"
+    question: |
+      상품 요약 카드: 상품 정보를 한 줄 문자열로 포맷팅하세요.
+    question_en: |
+      Product summary card: Format product info into a single-line string.
+    reference_sql:
+      common: |
+        SELECT
+            '[' || brand || '] ' || name
+            || ' | ' || printf('%,d', CAST(price AS INTEGER)) || '원'
+            || ' | 재고: ' || stock_qty || '개'
+            || ' | ' || COALESCE('무게: ' || (weight_grams / 1000.0) || 'kg', '무게 미정')
+            AS product_card
+        FROM products
+        WHERE is_active = 1
+        ORDER BY price DESC
+        LIMIT 5;
+    supported_db: [sqlite]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`||`(문자열 연결)과 `COALESCE`, `printf`를 조합하여 포맷팅합니다. NULL 값은 `COALESCE`로 기본값 처리."
+        en: "Combine `||` (string concatenation), `COALESCE`, and `printf` for formatting. Handle NULL values with `COALESCE`."
+    max_score: 10
+    tags: [printf, COALESCE, string concatenation, products]
+
+  - id: i03s-19
+    level: 3
+    type: "SELECT"
+    question: |
+      고객 가입 채널별 이메일 도메인 분석: 가입 채널과 이메일 도메인의 교차 집계.
+    question_en: |
+      Email domain analysis by signup channel: Cross-tabulation of signup channel and email domain.
+    reference_sql:
+      common: |
+        SELECT
+            COALESCE(acquisition_channel, '미확인') AS channel,
+            SUBSTR(email, INSTR(email, '@') + 1) AS domain,
+            COUNT(*) AS customer_count
+        FROM customers
+        GROUP BY COALESCE(acquisition_channel, '미확인'),
+                 SUBSTR(email, INSTR(email, '@') + 1)
+        ORDER BY customer_count DESC
+        LIMIT 10;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "`SUBSTR(email, INSTR(email, '@') + 1)`로 도메인을 추출합니다. `COALESCE(acquisition_channel, '미확인')`으로 NULL 처리."
+        en: "Extract domain with `SUBSTR(email, INSTR(email, '@') + 1)`. Handle NULL with `COALESCE(acquisition_channel, '미확인')`."
+    max_score: 10
+    tags: [SUBSTR, INSTR, COALESCE, GROUP BY, customers]
+
+  - id: i03s-20
+    level: 3
+    type: "SELECT"
+    question: |
+      상품별 종합 리포트: 가격 구간, 마진율, 재고 상태, 판매 활성도를 하나의 문자열로 요약하세요.
+    question_en: |
+      Comprehensive product report: Summarize price range, margin rate, stock status, and sales activity in one string.
+    reference_sql:
+      common: |
+        SELECT
+            name,
+            CASE
+                WHEN price < 100000 THEN '저가'
+                WHEN price < 500000 THEN '중가'
+                WHEN price < 1000000 THEN '중고가'
+                ELSE '고가'
+            END AS price_tier,
+            printf('%.1f%%', 100.0 * (price - cost_price) / NULLIF(cost_price, 0)) AS margin_pct,
+            CASE
+                WHEN stock_qty = 0 THEN '품절'
+                WHEN stock_qty < 10 THEN '부족'
+                WHEN stock_qty < 50 THEN '보통'
+                ELSE '충분'
+            END AS stock_status,
+            IIF(is_active = 1, '판매중', '단종') AS sale_status,
+            printf('%,d원', CAST(price AS INTEGER)) AS display_price
+        FROM products
+        ORDER BY price DESC
+        LIMIT 15;
+    supported_db: [sqlite]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "여러 함수(`CASE`, `ROUND`, `IIF`, `printf`, `COALESCE`, `||`)를 조합하여 종합 리포트를 생성합니다."
+        en: "Combine multiple functions (`CASE`, `ROUND`, `IIF`, `printf`, `COALESCE`, `||`) to generate a comprehensive report."
+    max_score: 10
+    tags: [CASE, NULLIF, IIF, printf, products]

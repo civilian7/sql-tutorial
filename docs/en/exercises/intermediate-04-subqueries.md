@@ -1,26 +1,39 @@
 # Mastering Subqueries
 
 !!! info "Tables"
+
     `products` — Products (name, price, stock, brand)  
+
     `customers` — Customers (grade, points, channel)  
+
     `orders` — Orders (status, amount, date)  
+
     `order_items` — Order items (qty, unit price)  
+
     `reviews` — Reviews (rating, content)  
+
     `wishlists` — Wishlists (customer-product)  
+
     `categories` — Categories (parent-child hierarchy)  
+
     `payments` — Payments (method, amount, status)  
 
+
+
 !!! abstract "Concepts"
-    Scalar subqueries, `IN`/`NOT IN`, `EXISTS`/`NOT EXISTS`, FROM clause subqueries (inline views), Correlated subqueries
 
----
+    `scalar subquery`, `IN`, `NOT IN`, `EXISTS`, `NOT EXISTS`, `FROM clause subquery`, `correlated subquery`
 
-### Problem 1. Find products whose name and price are higher than the overall average price.
 
-Use a scalar subquery to select only products more expensive than the average price of all products. Sort by price descending, top 10.
 
-??? tip "Hint"
-    Use a scalar subquery in the form `WHERE price > (SELECT AVG(price) FROM products)`.
+### 1. Find products whose price is higher than the overall average
+
+
+Find products whose price is higher than the overall average price. Sort by price descending, top 10.
+
+
+**Hint 1:** Use a scalar subquery in the form `WHERE price > (SELECT AVG(price) FROM products)`.
+
 
 ??? success "Answer"
     ```sql
@@ -31,19 +44,31 @@ Use a scalar subquery to select only products more expensive than the average pr
     LIMIT 10;
     ```
 
+
+    **Result** (top 7 of 10 rows)
+
     | name | price |
-    |------|-------|
-    | (product above average 1) | 2500000 |
-    | ... | ... |
+    |---|---|
+    | MacBook Air 15 M3 Silver | 5,481,100.00 |
+    | ASUS TUF Gaming RTX 5080 White | 4,526,600.00 |
+    | ASUS Dual RTX 5070 Ti [Special Limite... | 4,496,700.00 |
+    | Razer Blade 18 Black | 4,353,100.00 |
+    | Razer Blade 16 Silver | 3,702,900.00 |
+    | ASUS ROG Strix G16CH White | 3,671,500.00 |
+    | ASUS ROG Zephyrus G16 | 3,429,900.00 |
+
 
 ---
 
-### Problem 2. Find the name, price, and category ID of the most expensive product.
 
-Use a subquery to find the maximum price, then find the product matching that price.
+### 2. Find the name, price, and category ID of the most expensive 
 
-??? tip "Hint"
-    Use the form `WHERE price = (SELECT MAX(price) FROM products)` to get the maximum value via subquery.
+
+Find the name, price, and category ID of the most expensive product.
+
+
+**Hint 1:** Use the form `WHERE price = (SELECT MAX(price) FROM products)` to get the maximum value via subquery.
+
 
 ??? success "Answer"
     ```sql
@@ -52,14 +77,25 @@ Use a subquery to find the maximum price, then find the product matching that pr
     WHERE price = (SELECT MAX(price) FROM products);
     ```
 
+
+    **Result** (1 rows)
+
+    | name | price | category_id |
+    |---|---|---|
+    | MacBook Air 15 M3 Silver | 5,481,100.00 | 9 |
+
+
 ---
 
-### Problem 3. Find the name and email of customers who have placed at least one order.
 
-Use an IN subquery to find only customers whose customer_id exists in the orders table. Sort by name, top 15.
+### 3. Find the name and email of customers who have placed at leas
 
-??? tip "Hint"
-    `WHERE id IN (SELECT customer_id FROM orders)` — the subquery returns the list of customer IDs that have orders.
+
+Find the name and email of customers who have placed at least one order. Sort by name, top 15.
+
+
+**Hint 1:** `WHERE id IN (SELECT customer_id FROM orders)` — the subquery returns the list of customer IDs that have orders.
+
 
 ??? success "Answer"
     ```sql
@@ -70,14 +106,31 @@ Use an IN subquery to find only customers whose customer_id exists in the orders
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | email |
+    |---|---|
+    | Aaron Carr | user900@testmail.kr |
+    | Aaron Cooper | user3587@testmail.kr |
+    | Aaron Fuller | user2520@testmail.kr |
+    | Aaron Gillespie | user3365@testmail.kr |
+    | Aaron Green | user417@testmail.kr |
+    | Aaron Grimes | user347@testmail.kr |
+    | Aaron Harris | user1884@testmail.kr |
+
+
 ---
 
-### Problem 4. Find the name and grade of customers who have never written a review.
 
-Use a NOT IN subquery. Sort by grade descending (VIP, GOLD, SILVER, BRONZE), then by name, top 15.
+### 4. Find the name and grade of customers who have never written 
 
-??? tip "Hint"
-    `WHERE id NOT IN (SELECT customer_id FROM reviews)` — finds customers not in the reviews table.
+
+Find the name and grade of customers who have never written a review. Sort by grade descending, then by name, top 15.
+
+
+**Hint 1:** `WHERE id NOT IN (SELECT customer_id FROM reviews)` — finds customers not in the reviews table.
+
 
 ??? success "Answer"
     ```sql
@@ -95,14 +148,31 @@ Use a NOT IN subquery. Sort by grade descending (VIP, GOLD, SILVER, BRONZE), the
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | grade |
+    |---|---|
+    | Alex Gomez | VIP |
+    | Andrew Thompson | VIP |
+    | Brenda Nichols | VIP |
+    | Chad Wyatt | VIP |
+    | Christine Floyd | VIP |
+    | David Caldwell | VIP |
+    | David Levy | VIP |
+
+
 ---
 
-### Problem 5. Find products that have been added to a wishlist at least once, showing name and price.
 
-Use an IN subquery to find products whose product_id exists in the wishlists table. Sort by price descending, top 10.
+### 5. Find products that have been added to a wishlist at least on
 
-??? tip "Hint"
-    `WHERE id IN (SELECT product_id FROM wishlists)` — gets product IDs that have been wishlisted at least once.
+
+Find products that have been added to a wishlist at least once, showing name and price. Sort by price descending, top 10.
+
+
+**Hint 1:** `WHERE id IN (SELECT product_id FROM wishlists)` — gets product IDs that have been wishlisted at least once.
+
 
 ??? success "Answer"
     ```sql
@@ -113,14 +183,31 @@ Use an IN subquery to find products whose product_id exists in the wishlists tab
     LIMIT 10;
     ```
 
+
+    **Result** (top 7 of 10 rows)
+
+    | name | price |
+    |---|---|
+    | MacBook Air 15 M3 Silver | 5,481,100.00 |
+    | ASUS Dual RTX 5070 Ti [Special Limite... | 4,496,700.00 |
+    | Razer Blade 18 Black | 4,353,100.00 |
+    | Razer Blade 16 Silver | 3,702,900.00 |
+    | ASUS ROG Strix G16CH White | 3,671,500.00 |
+    | ASUS ROG Strix GT35 | 3,296,800.00 |
+    | Razer Blade 18 Black | 2,987,500.00 |
+
+
 ---
 
-### Problem 6. Find products that have never been ordered, showing name and stock quantity.
 
-Use a NOT IN subquery to find products that never appear in order_items.
+### 6. Find products that have never been ordered, showing name and
 
-??? tip "Hint"
-    `WHERE id NOT IN (SELECT product_id FROM order_items)` — filters for products not in order details.
+
+Find products that have never been ordered, showing name and stock quantity.
+
+
+**Hint 1:** `WHERE id NOT IN (SELECT product_id FROM order_items)` — filters for products not in order details.
+
 
 ??? success "Answer"
     ```sql
@@ -130,14 +217,25 @@ Use a NOT IN subquery to find products that never appear in order_items.
     ORDER BY stock_qty DESC;
     ```
 
+
+    **Result** (1 rows)
+
+    | name | stock_qty |
+    |---|---|
+    | FK 테스트 | 10 |
+
+
 ---
 
-### Problem 7. Find orders with amounts greater than the average order amount. Exclude cancelled orders. Show order number, amount, and order date.
 
-Use a scalar subquery to compute the average order amount, then filter for orders exceeding it. Sort by amount descending, top 10.
+### 7. Find orders with amounts greater than the average. Exclude c
 
-??? tip "Hint"
-    Both the main query and the subquery should exclude cancelled orders for a fair comparison. Apply `status NOT IN ('cancelled')` to both.
+
+Find orders with amounts greater than the average. Exclude cancelled. Sort by amount descending, top 10.
+
+
+**Hint 1:** Both the main query and the subquery should exclude cancelled orders for a fair comparison.
+
 
 ??? success "Answer"
     ```sql
@@ -153,14 +251,31 @@ Use a scalar subquery to compute the average order amount, then filter for order
     LIMIT 10;
     ```
 
+
+    **Result** (top 7 of 10 rows)
+
+    | order_number | total_amount | ordered_at |
+    |---|---|---|
+    | ORD-20201121-08810 | 50,867,500.00 | 2020-11-21 12:04:42 |
+    | ORD-20250305-32265 | 46,820,024.00 | 2025-03-05 09:01:08 |
+    | ORD-20200209-05404 | 43,677,500.00 | 2020-02-09 23:36:36 |
+    | ORD-20251218-37240 | 38,626,400.00 | 2025-12-18 17:09:12 |
+    | ORD-20220106-15263 | 37,987,600.00 | 2022-01-06 17:24:14 |
+    | ORD-20200820-07684 | 37,518,200.00 | 2020-08-20 19:00:29 |
+    | ORD-20220224-15869 | 35,397,700.00 | 2022-02-24 23:01:50 |
+
+
 ---
 
-### Problem 8. Find the average price per category, then find products more expensive than their category average.
 
-Use a FROM clause subquery (inline view) to compute the average price per category first, then JOIN it with products. Top 15.
+### 8. Find the average price per category, then find products more
 
-??? tip "Hint"
-    `FROM products AS p INNER JOIN (SELECT category_id, AVG(price) AS avg_price FROM products GROUP BY category_id) AS ca ON ...` — JOIN the inline view like a table.
+
+Find the average price per category, then find products more expensive than their category average. Top 15.
+
+
+**Hint 1:** JOIN the inline view like a table using `FROM products AS p INNER JOIN (SELECT ...) AS ca ON ...`.
+
 
 ??? success "Answer"
     ```sql
@@ -176,14 +291,31 @@ Use a FROM clause subquery (inline view) to compute the average price per catego
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | price | avg_price |
+    |---|---|---|
+    | ASUS TUF Gaming RTX 5080 White | 4,526,600.00 | 2,406,500.00 |
+    | ASUS Dual RTX 5070 Ti [Special Limite... | 4,496,700.00 | 2,406,500.00 |
+    | Razer Blade 18 Black | 4,353,100.00 | 2,684,477.78 |
+    | Razer Blade 16 Silver | 3,702,900.00 | 2,684,477.78 |
+    | ASUS ROG Strix G16CH White | 3,671,500.00 | 1,719,809.09 |
+    | ASUS ROG Zephyrus G16 | 3,429,900.00 | 2,684,477.78 |
+    | ASUS ROG Strix GT35 | 3,296,800.00 | 1,719,809.09 |
+
+
 ---
 
-### Problem 9. Use a SELECT clause scalar subquery to compute each customer's order count. Show only customers with 3 or more orders, sorted by order count descending, top 15.
 
-Practice scalar subqueries that compute a value for each row in the SELECT clause.
+### 9. Use a SELECT clause scalar subquery to compute each customer
 
-??? tip "Hint"
-    `SELECT name, (SELECT COUNT(*) FROM orders WHERE customer_id = c.id) AS order_count FROM customers AS c` — references the outer query's `c.id` in the subquery.
+
+Use a SELECT clause scalar subquery to compute each customer's order count. Show only customers with 3+ orders, top 15.
+
+
+**Hint 1:** References the outer query's `c.id` in the subquery.
+
 
 ??? success "Answer"
     ```sql
@@ -203,14 +335,31 @@ Practice scalar subqueries that compute a value for each row in the SELECT claus
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | grade | order_count |
+    |---|---|---|
+    | Jason Rivera | VIP | 352 |
+    | Allen Snyder | VIP | 312 |
+    | Gabriel Walters | VIP | 290 |
+    | Brenda Garcia | VIP | 250 |
+    | James Banks | VIP | 236 |
+    | Courtney Huff | VIP | 226 |
+    | Ronald Arellano | VIP | 225 |
+
+
 ---
 
-### Problem 10. Use a correlated subquery to retrieve each product's most recent review date. Top 15.
 
-A correlated subquery executes the subquery for each row of the outer query.
+### 10. Use a correlated subquery to retrieve each product's most re
 
-??? tip "Hint"
-    `(SELECT MAX(created_at) FROM reviews WHERE product_id = p.id)` — a correlated subquery referencing the outer query's `p.id`.
+
+Use a correlated subquery to retrieve each product's most recent review date. Top 15.
+
+
+**Hint 1:** `(SELECT MAX(created_at) FROM reviews WHERE product_id = p.id)` — a correlated subquery referencing the outer query's `p.id`.
+
 
 ??? success "Answer"
     ```sql
@@ -225,14 +374,31 @@ A correlated subquery executes the subquery for each row of the outer query.
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | price | last_review_at |
+    |---|---|---|
+    | Kingston FURY Beast DDR4 32GB Black | 83,300.00 | 2026-01-19 09:22:49 |
+    | Super Flower Leadex VII XG 850W White | 71,200.00 | 2026-01-14 10:58:04 |
+    | Samsung DDR4 16GB PC4-25600 | 83,400.00 | 2026-01-13 12:39:53 |
+    | Norton AntiVirus Plus Silver | 74,800.00 | 2026-01-13 12:09:18 |
+    | Razer DeathAdder V4 Pro White | 52,500.00 | 2026-01-12 10:35:41 |
+    | Netgear GS308 Silver | 194,800.00 | 2026-01-11 21:02:15 |
+    | CORSAIR HX1200 Silver | 122,200.00 | 2026-01-11 15:23:03 |
+
+
 ---
 
-### Problem 11. Use a FROM subquery to compute total order amount per customer, then show the top 10.
 
-Create a derived table in the FROM clause that aggregates orders, then JOIN with customers.
+### 11. Use a FROM subquery to compute total order amount per custom
 
-??? tip "Hint"
-    `FROM (SELECT customer_id, SUM(total_amount) AS total_spent FROM orders WHERE ... GROUP BY customer_id) AS os` — use the derived table with an alias.
+
+Use a FROM subquery to compute total order amount per customer, then show the top 10.
+
+
+**Hint 1:** Use the derived table with an alias.
+
 
 ??? success "Answer"
     ```sql
@@ -248,14 +414,31 @@ Create a derived table in the FROM clause that aggregates orders, then JOIN with
     LIMIT 10;
     ```
 
+
+    **Result** (top 7 of 10 rows)
+
+    | name | grade | total_spent |
+    |---|---|---|
+    | Allen Snyder | VIP | 409,734,279.00 |
+    | Jason Rivera | VIP | 382,314,874.00 |
+    | Ronald Arellano | VIP | 266,184,349.00 |
+    | Brenda Garcia | VIP | 254,525,838.00 |
+    | Courtney Huff | VIP | 248,498,783.00 |
+    | Gabriel Walters | VIP | 248,168,491.00 |
+    | James Banks | VIP | 244,859,844.00 |
+
+
 ---
 
-### Problem 12. Use EXISTS to find only products that have at least one review.
 
-EXISTS checks whether the subquery returns any results. Compare with IN.
+### 12. Use EXISTS to find only products that have at least one revi
 
-??? tip "Hint"
-    `WHERE EXISTS (SELECT 1 FROM reviews WHERE product_id = p.id)` — returns TRUE if the subquery returns at least one row.
+
+Use EXISTS to find only products that have at least one review. Sort by name, top 15.
+
+
+**Hint 1:** `WHERE EXISTS (SELECT 1 FROM reviews WHERE product_id = p.id)` — returns TRUE if the subquery returns at least one row.
+
 
 ??? success "Answer"
     ```sql
@@ -270,14 +453,31 @@ EXISTS checks whether the subquery returns any results. Compare with IN.
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | price |
+    |---|---|
+    | AMD Ryzen 9 9900X | 335,700.00 |
+    | AMD Ryzen 9 9900X | 591,800.00 |
+    | APC Back-UPS Pro Gaming BGM1500B Black | 516,300.00 |
+    | ASRock B850M Pro RS Black | 201,000.00 |
+    | ASRock B850M Pro RS Silver | 665,600.00 |
+    | ASRock B850M Pro RS White | 419,600.00 |
+    | ASRock B860M Pro RS Silver | 351,700.00 |
+
+
 ---
 
-### Problem 13. Find customer-product combinations that were wishlisted but never ordered. Most recent 20.
 
-Use a NOT EXISTS correlated subquery to check whether a customer has ordered that specific product.
+### 13. Find customer-product combinations that were wishlisted but 
 
-??? tip "Hint"
-    `WHERE NOT EXISTS (SELECT 1 FROM order_items AS oi INNER JOIN orders AS o ON ... WHERE o.customer_id = w.customer_id AND oi.product_id = w.product_id)` — a correlated subquery checking two conditions simultaneously.
+
+Find customer-product combinations that were wishlisted but never ordered. Most recent 20.
+
+
+**Hint 1:** A correlated subquery checking two conditions simultaneously.
+
 
 ??? success "Answer"
     ```sql
@@ -300,14 +500,31 @@ Use a NOT EXISTS correlated subquery to check whether a customer has ordered tha
     LIMIT 20;
     ```
 
+
+    **Result** (top 7 of 20 rows)
+
+    | customer | product | wishlisted_at |
+    |---|---|---|
+    | Olivia Watson | Jooyon Rionine Mini PC | 2025-12-30 19:11:10 |
+    | Kyle Ferguson | Samsung Galaxy Book4 360 Black | 2025-12-30 17:42:08 |
+    | James Mcgrath | TP-Link TL-SG108 | 2025-12-30 11:47:20 |
+    | Nathaniel Martinez | Seagate IronWolf 4TB Black | 2025-12-30 10:41:18 |
+    | Bryan Powers | SK hynix Platinum P41 2TB Black | 2025-12-30 10:16:54 |
+    | Warren Olsen | TeamGroup T-Force Vulcan DDR5 32GB 52... | 2025-12-30 09:25:54 |
+    | Alexander Logan | APC Back-UPS Pro Gaming BGM1500B Black | 2025-12-30 06:38:37 |
+
+
 ---
 
-### Problem 14. Find the most expensive product in each category, showing name and price.
 
-Use a correlated subquery to compare each product's price with the maximum price in its category.
+### 14. Find the most expensive product in each category, showing na
 
-??? tip "Hint"
-    `WHERE p.price = (SELECT MAX(price) FROM products WHERE category_id = p.category_id)` — computes the max price within the same category via correlated subquery.
+
+Find the most expensive product in each category, showing name and price.
+
+
+**Hint 1:** Computes the max price within the same category via correlated subquery.
+
 
 ??? success "Answer"
     ```sql
@@ -321,14 +538,31 @@ Use a correlated subquery to compare each product's price with the maximum price
     ORDER BY p.price DESC;
     ```
 
+
+    **Result** (top 7 of 41 rows)
+
+    | name | price | category_id |
+    |---|---|---|
+    | MacBook Air 15 M3 Silver | 5,481,100.00 | 9 |
+    | ASUS TUF Gaming RTX 5080 White | 4,526,600.00 | 28 |
+    | Razer Blade 18 Black | 4,353,100.00 | 7 |
+    | ASUS ROG Strix G16CH White | 3,671,500.00 | 3 |
+    | ASUS ExpertBook B5 [Special Limited E... | 2,121,600.00 | 6 |
+    | MSI Radeon RX 9070 XT GAMING X | 1,896,000.00 | 29 |
+    | ASUS ROG Swift PG32UCDM Silver | 1,890,300.00 | 12 |
+
+
 ---
 
-### Problem 15. Find products ordered by VIP customers that have an average rating of 4 or above.
 
-Multi-level subquery: first get VIP customer IDs, then get product IDs from their orders, then filter by rating.
+### 15. Find products ordered by VIP customers that have an average 
 
-??? tip "Hint"
-    `WHERE id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id IN (SELECT id FROM customers WHERE grade = 'VIP')))` — 3 levels of nesting. Note that such deep nesting hurts readability; in practice, JOINs or CTEs are recommended.
+
+Find products ordered by VIP customers that have an average rating of 4 or above. Top 15.
+
+
+**Hint 1:** 3-level nested IN subqueries: VIP customers -> orders -> products. Rating condition is filtered via a separate subquery.
+
 
 ??? success "Answer"
     ```sql
@@ -356,14 +590,31 @@ Multi-level subquery: first get VIP customer IDs, then get product IDs from thei
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | price |
+    |---|---|
+    | ASUS TUF Gaming RTX 5080 White | 4,526,600.00 |
+    | Razer Blade 18 Black | 4,353,100.00 |
+    | ASUS ROG Strix G16CH White | 3,671,500.00 |
+    | Razer Blade 18 White | 2,483,600.00 |
+    | ASUS ROG Strix Scar 16 | 2,452,500.00 |
+    | ASUS ROG Strix G16CH Silver | 1,879,100.00 |
+    | Jooyon Rionine i9 High-End | 1,849,900.00 |
+
+
 ---
 
-### Problem 16. Compare each customer's average order amount with the overall average, and find customers whose average is higher.
 
-Use a FROM subquery to compute per-customer averages, then compare with the overall average scalar subquery in WHERE.
+### 16. Compare each customer's average order amount with the overal
 
-??? tip "Hint"
-    Compute per-customer average order amount in a derived table, then filter with `WHERE avg_amount > (SELECT AVG(total_amount) FROM orders ...)`.
+
+Compare each customer's average order amount with the overall average, and find customers whose average is higher. Top 15.
+
+
+**Hint 1:** Compute per-customer average order amount in a derived table, then filter with a scalar subquery comparison.
+
 
 ??? success "Answer"
     ```sql
@@ -391,14 +642,31 @@ Use a FROM subquery to compute per-customer averages, then compare with the over
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | grade | avg_amount | order_count |
+    |---|---|---|---|
+    | Sandra Williams | VIP | 16,177,700.00 | 2 |
+    | Christine Johnson | VIP | 13,895,400.00 | 1 |
+    | Steven Johnson | BRONZE | 10,428,340.00 | 5 |
+    | Zachary Ford | VIP | 9,889,465.75 | 4 |
+    | Krista Martinez | BRONZE | 8,659,350.00 | 2 |
+    | Troy Carr | VIP | 8,319,100.00 | 1 |
+    | Donald Landry | BRONZE | 8,301,220.00 | 5 |
+
+
 ---
 
-### Problem 17. Find products whose total sales quantity exceeds the average sales quantity across all products.
 
-This uses a dual structure: aggregation inside a FROM subquery, and another subquery in WHERE.
+### 17. Find products whose total sales quantity exceeds the average
 
-??? tip "Hint"
-    First compute total sales per product in a derived table. Then compare with `WHERE total_qty > (SELECT AVG(total_qty) FROM (...))`. SQLite allows nesting subqueries inside subqueries.
+
+Find products whose total sales quantity exceeds the average sales quantity across all products. Top 15.
+
+
+**Hint 1:** First compute total sales per product in a derived table. Then compare with the average via a nested subquery.
+
 
 ??? success "Answer"
     ```sql
@@ -423,14 +691,31 @@ This uses a dual structure: aggregation inside a FROM subquery, and another subq
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | name | total_qty |
+    |---|---|
+    | Crucial T700 2TB Silver | 1503 |
+    | AMD Ryzen 9 9900X | 1447 |
+    | SK hynix Platinum P41 2TB Silver | 1359 |
+    | Logitech G502 X PLUS | 1087 |
+    | Kingston FURY Beast DDR4 16GB Silver | 1061 |
+    | SteelSeries Prime Wireless Black | 1034 |
+    | SteelSeries Aerox 5 Wireless Silver | 1030 |
+
+
 ---
 
-### Problem 18. Find reviews whose rating is below the product's average rating. Most recent 15.
 
-Use a correlated subquery in the WHERE clause to compare each review's rating with the product's average rating.
+### 18. Find reviews whose rating is below the product's average rat
 
-??? tip "Hint"
-    `WHERE r.rating < (SELECT AVG(rating) FROM reviews WHERE product_id = r.product_id)` — computes the average rating for the same product via correlated subquery for each review.
+
+Find reviews whose rating is below the product's average rating. Most recent 15.
+
+
+**Hint 1:** Computes the average rating for the same product via correlated subquery for each review.
+
 
 ??? success "Answer"
     ```sql
@@ -452,25 +737,42 @@ Use a correlated subquery in the WHERE clause to compare each review's rating wi
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
+    | id | product | rating | avg_rating | title | created_at |
+    |---|---|---|---|---|---|
+    | 8546 | Kingston FURY Beast DDR4 32GB Black | 2 | 3.96 | Needs Improvement | 2026-01-19 09:22:49 |
+    | 8538 | CORSAIR HX1200 Silver | 2 | 3.68 | Not Great | 2026-01-11 15:23:03 |
+    | 8525 | SK hynix Platinum P41 1TB | 2 | 4.13 | Needs Improvement | 2026-01-10 09:56:48 |
+    | 8544 | Logitech G715 White | 4 | 4.09 | Good | 2026-01-09 20:41:38 |
+    | 8501 | Microsoft Ergonomic Keyboard White | 1 | 3.75 | NULL | 2026-01-05 20:37:52 |
+    | 8476 | TP-Link TL-SG108 | 3 | 3.88 | Mediocre | 2025-12-31 10:11:39 |
+    | 8480 | V3 Endpoint Security Black | 3 | 3.92 | NULL | 2025-12-30 09:05:01 |
+
+
 ---
 
-### Problem 19. Subquery vs JOIN comparison: Write the query "customers who have written a review" using two different approaches.
 
-Write the same result using (A) IN subquery and (B) JOIN, and understand the differences.
+### 19. Subquery vs JOIN comparison: Write the query "customers who 
 
-??? tip "Hint"
-    (A) `WHERE id IN (SELECT customer_id FROM reviews)`, (B) `INNER JOIN reviews ON ...` with DISTINCT. Both queries produce the same result but execute differently.
+
+Subquery vs JOIN comparison: Write the query "customers who have written a review" using two different approaches.
+
+
+**Hint 1:** (A) `WHERE id IN (SELECT customer_id FROM reviews)`, (B) `INNER JOIN reviews ON ...` with DISTINCT. Both produce the same result but execute differently.
+
 
 ??? success "Answer"
     ```sql
-    -- (A) IN subquery approach
+    -- (A) IN 서브쿼리 방식
     SELECT name, email
     FROM customers
     WHERE id IN (SELECT customer_id FROM reviews)
     ORDER BY name
     LIMIT 10;
-
-    -- (B) JOIN approach (DISTINCT required)
+    
+    -- (B) JOIN 방식 (DISTINCT 필요)
     SELECT DISTINCT c.name, c.email
     FROM customers AS c
     INNER JOIN reviews AS r ON c.id = r.customer_id
@@ -478,19 +780,18 @@ Write the same result using (A) IN subquery and (B) JOIN, and understand the dif
     LIMIT 10;
     ```
 
-    Both queries return the same result. In general:
-
-    - **IN subquery**: Deduplication is automatic, no DISTINCT needed. Efficient when the subquery result is small.
-    - **JOIN**: Advantageous when you need additional columns (review content, etc.). May be better optimized for large datasets.
 
 ---
 
-### Problem 20. Find customers who have purchased products from 3 or more categories, showing name and category count.
 
-Use a FROM subquery to aggregate the number of purchase categories per customer, then filter for 3 or more.
+### 20. Find customers who have purchased products from 3 or more ca
 
-??? tip "Hint"
-    JOIN orders -> order_items -> products to compute the DISTINCT category_id count per customer. Create this aggregation as a derived table, then JOIN with customers.
+
+Find customers who have purchased products from 3 or more categories, showing name and category count. Top 15.
+
+
+**Hint 1:** JOIN orders -> order_items -> products to compute the DISTINCT category_id count per customer. Create this aggregation as a derived table, then JOIN with customers.
+
 
 ??? success "Answer"
     ```sql
@@ -510,5 +811,19 @@ Use a FROM subquery to aggregate the number of purchase categories per customer,
     ORDER BY cc.cat_count DESC, c.name
     LIMIT 15;
     ```
+
+
+    **Result** (top 7 of 15 rows)
+
+    | name | grade | cat_count |
+    |---|---|---|
+    | Brenda Garcia | VIP | 38 |
+    | Christina Suarez | VIP | 38 |
+    | Courtney Huff | VIP | 38 |
+    | Dennis Herrera | VIP | 38 |
+    | James Banks | VIP | 38 |
+    | Allen Snyder | VIP | 37 |
+    | Dominique Vaughn | VIP | 37 |
+
 
 ---

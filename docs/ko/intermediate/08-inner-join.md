@@ -453,6 +453,6 @@ ORDER BY o.total_amount DESC;
 
     | category_name | order_count | total_revenue |
     |---|---|---|
-    | 케이스 | 13,903 | 4,541,847,600.00 |
+    | 파워서플라이(PSU) | 13,903 | 4,541,847,600.00 |
 
 <!-- END_LESSON_EXERCISES -->

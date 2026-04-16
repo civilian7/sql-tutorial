@@ -1,35 +1,47 @@
 # Customer/Operations Analysis
 
 !!! info "Tables"
+
     `customers` — Customers (grade, points, channel)  
+
     `orders` — Orders (status, amount, date)  
+
     `order_items` — Order items (qty, unit price)  
+
     `products` — Products (name, price, stock, brand)  
+
     `categories` — Categories (parent-child hierarchy)  
+
     `inventory_transactions` — Inventory (type, quantity)  
+
     `customer_grade_history` — Grade history (before/after)  
+
     `complaints` — Complaints (type, priority)  
+
     `staff` — Staff (dept, role, manager)  
 
+
+
 !!! abstract "Concepts"
-    RFM Analysis, Cohort, LTV, Inventory ABC Analysis, Safety stock, CS Performance — CTE + Window Function + Multiple JOIN
 
-This is a customer analysis and operational analysis problem that comprehensively utilizes CTE, window functions, multiple JOINs, and aggregate functions.
-It covers analysis scenarios frequently encountered in practice, including customer segmentation, inventory management, CS performance, and comprehensive dashboards.
+    `RFM Analysis`, `Cohort`, `LTV`, `Inventory ABC Analysis`, `Safety Stock`, `CS Performance`, `CTE + Window Function`
 
----
 
-### Problem 1. RFM basics — calculation of key indicators for each customer
+
+### 1. RFM basics — calculation of key indicators for each customer
+
 
 The marketing team requested RFM metrics for each customer for customer segmentation.
 Find the last order date (Recency), total number of orders (Frequency), and total purchase amount (Monetary) for each customer.
 Excludes canceled/returned orders. Only the top 20 are shown.
 
-??? tip "Hint"
-    - Recency: `MAX(ordered_at)`
-    - Frequency: `COUNT(*)`
-    - Monetary: `SUM(total_amount)`
-    - `customers` + `orders` JOIN
+
+**Hint 1:** - Recency: `MAX(ordered_at)`
+- Frequency: `COUNT(*)`
+- Monetary: `SUM(total_amount)`
+- `customers` + `orders` JOIN
+
+
 
 ??? success "Answer"
     ```sql
@@ -48,25 +60,37 @@ Excludes canceled/returned orders. Only the top 20 are shown.
     LIMIT 20;
     ```
 
+
+    **Result** (top 7 of 20 rows)
+
     | customer_id | customer_name | grade | last_order_date | order_count | total_spent |
     |---|---|---|---|---|---|
-    | 42 | 김민수 | VIP | 2025-03-15 10:23:45 | 45 | 52000000 |
-    | 128 | 이서연 | VIP | 2025-03-12 14:55:20 | 38 | 48000000 |
-    | ... | ... | ... | ... | ... | ... |
+    | 226 | Allen Snyder | VIP | 2025-12-21 21:52:24 | 303 | 403,448,758.00 |
+    | 97 | Jason Rivera | VIP | 2025-12-28 11:37:58 | 342 | 366,385,931.00 |
+    | 162 | Brenda Garcia | VIP | 2025-12-20 10:21:05 | 249 | 253,180,338.00 |
+    | 356 | Courtney Huff | VIP | 2025-10-24 16:44:53 | 223 | 244,604,910.00 |
+    | 549 | Ronald Arellano | VIP | 2025-12-04 12:11:17 | 219 | 235,775,349.00 |
+    | 227 | James Banks | VIP | 2025-12-19 22:54:22 | 230 | 234,708,853.00 |
+    | 98 | Gabriel Walters | VIP | 2025-11-29 11:04:23 | 275 | 230,165,991.00 |
+
 
 ---
 
-### Problem 2. RFM quartile segment
+
+### 2. RFM quartile segment
+
 
 Divide your customers into quartiles (Q1 to Q4) based on RFM metrics.
 The more recent the Recency, the higher the score (4), and the larger the Frequency and Monetary, the higher the score (4).
 Displays each customer's R/F/M score and total score.
 
-??? tip "Hint"
-    - Divide each indicator into 4 equal parts with `NTILE(4)`
-    - Recency: `ORDER BY last_order_date ASC` → NTILE 4 is the most recent
-    - Frequency/Monetary: `ORDER BY ... ASC` → NTILE 4 is the largest
-    - Total score = R + F + M (maximum 12 points)
+
+**Hint 1:** - Divide each indicator into 4 equal parts with `NTILE(4)`
+- Recency: `ORDER BY last_order_date ASC` → NTILE 4 is the most recent
+- Frequency/Monetary: `ORDER BY ... ASC` → NTILE 4 is the largest
+- Total score = R + F + M (maximum 12 points)
+
+
 
 ??? success "Answer"
     ```sql
@@ -116,23 +140,35 @@ Displays each customer's R/F/M score and total score.
     LIMIT 20;
     ```
 
+
+    **Result** (top 7 of 20 rows)
+
     | customer_id | name | grade | r_score | f_score | m_score | rfm_total | segment |
     |---|---|---|---|---|---|---|---|
-    | 42 | 김민수 | VIP | 4 | 4 | 4 | 12 | Champion |
-    | 128 | 이서연 | VIP | 4 | 4 | 4 | 12 | Champion |
-    | ... | ... | ... | ... | ... | ... | ... | ... |
+    | 486 | Hannah Norton | GOLD | 4 | 4 | 4 | 12 | Champion |
+    | 10 | John Stark | GOLD | 4 | 4 | 4 | 12 | Champion |
+    | 1490 | April Lopez | VIP | 4 | 4 | 4 | 12 | Champion |
+    | 647 | Leslie Mccoy | VIP | 4 | 4 | 4 | 12 | Champion |
+    | 1241 | Cheryl Garcia | BRONZE | 4 | 4 | 4 | 12 | Champion |
+    | 256 | Jessica Craig | GOLD | 4 | 4 | 4 | 12 | Champion |
+    | 2328 | Julie Hamilton | VIP | 4 | 4 | 4 | 12 | Champion |
+
 
 ---
 
-### Problem 3. Cohort retention analysis
+
+### 3. Cohort retention analysis
+
 
 Find the monthly retention (repurchase rate) of customers who made their first purchase in 2023 through cohort analysis.
 Calculate the retention rate for 0 months (first purchase), 1 month, 2 months, ... 6 months after signing up.
 
-??? tip "Hint"
-    - Cohort = group of customers with the same first purchase month
-    - Month Difference = Order Month - First Purchase Month (in months)
-    - Retention rate = Number of cohort customers who ordered in that month / Total number of cohort customers
+
+**Hint 1:** - Cohort = group of customers with the same first purchase month
+- Month Difference = Order Month - First Purchase Month (in months)
+- Retention rate = Number of cohort customers who ordered in that month / Total number of cohort customers
+
+
 
 ??? success "Answer"
     ```sql
@@ -175,26 +211,36 @@ Calculate the retention rate for 0 months (first purchase), 1 month, 2 months, .
     ORDER BY ma.cohort_month, ma.month_offset;
     ```
 
+
+    **Result** (top 7 of 83 rows)
+
     | cohort_month | total_customers | month_offset | active_customers | retention_pct |
     |---|---|---|---|---|
-    | 2023-01 | 120 | 0 | 120 | 100.0 |
-    | 2023-01 | 120 | 1 | 42 | 35.0 |
-    | 2023-01 | 120 | 2 | 35 | 29.2 |
-    | 2023-01 | 120 | 3 | 30 | 25.0 |
-    | ... | ... | ... | ... | ... |
+    | 2023-01 | 21 | 0 | 21 | 100.00 |
+    | 2023-01 | 21 | 1 | 2 | 9.50 |
+    | 2023-01 | 21 | 2 | 1 | 4.80 |
+    | 2023-01 | 21 | 3 | 2 | 9.50 |
+    | 2023-01 | 21 | 4 | 5 | 23.80 |
+    | 2023-01 | 21 | 5 | 7 | 33.30 |
+    | 2023-02 | 31 | 0 | 31 | 100.00 |
+
 
 ---
 
-### Problem 4. Detecting Churning Customers
+
+### 4. Detecting Churning Customers
+
 
 Classify customers who haven't made a purchase in more than six months since their last order as "churn risk."
 Find the distribution of churned customers by grade and the average purchase amount before churning.
 (Base date: 2025-03-31)
 
-??? tip "Hint"
-    - Exit criteria: `JULIANDAY('2025-03-31') - JULIANDAY(MAX(ordered_at)) > 180`
-    - GROUP BY by grade
-    - Also displays comparison between churned and active customers
+
+**Hint 1:** - Exit criteria: `JULIANDAY('2025-03-31') - JULIANDAY(MAX(ordered_at)) > 180`
+- GROUP BY by grade
+- Also displays comparison between churned and active customers
+
+
 
 ??? success "Answer"
     ```sql
@@ -214,38 +260,46 @@ Find the distribution of churned customers by grade and the average purchase amo
     )
     SELECT
         grade,
-        CASE WHEN days_since_last > 180 THEN 'At risk' ELSE 'Active' END AS status,
+        CASE WHEN days_since_last > 180 THEN '이탈 위험' ELSE '활성' END AS status,
         COUNT(*) AS customer_count,
         ROUND(AVG(avg_order_value)) AS avg_order_value,
         ROUND(AVG(order_count), 1)  AS avg_orders,
         ROUND(AVG(days_since_last)) AS avg_days_inactive
     FROM customer_activity
     GROUP BY grade,
-        CASE WHEN days_since_last > 180 THEN 'At risk' ELSE 'Active' END
+        CASE WHEN days_since_last > 180 THEN '이탈 위험' ELSE '활성' END
     ORDER BY
         CASE grade WHEN 'VIP' THEN 1 WHEN 'GOLD' THEN 2 WHEN 'SILVER' THEN 3 ELSE 4 END,
         status;
     ```
 
+
+    **Result** (5 rows)
+
     | grade | status | customer_count | avg_order_value | avg_orders | avg_days_inactive |
     |---|---|---|---|---|---|
-    | VIP | Active | 85 | 1200000 | 15.2 | 25 |
-    | VIP | At risk | 12 | 980000 | 8.5 | 245 |
-    | GOLD | Active | 320 | 850000 | 10.1 | 35 |
-    | GOLD | At risk | 45 | 720000 | 5.2 | 220 |
-    | ... | ... | ... | ... | ... | ... |
+    | VIP | 활성 | 368 | 1,437,751.00 | 38.20 | -222.00 |
+    | GOLD | 활성 | 524 | 1,112,559.00 | 15.10 | -169.00 |
+    | SILVER | 활성 | 479 | 877,935.00 | 10.70 | -133.00 |
+    | BRONZE | 이탈 위험 | 599 | 840,118.00 | 4.50 | 578.00 |
+    | BRONZE | 활성 | 823 | 556,893.00 | 6.00 | -69.00 |
+
 
 ---
 
-### Problem 5. Estimating customer lifetime value (LTV)
+
+### 5. Estimating customer lifetime value (LTV)
+
 
 Estimate the average Life Time Value (LTV) for each customer tier.
 LTV = average order value x number of orders per year x average duration of activity (years)
 
-??? tip "Hint"
-    - Activity period = (last order date - first order date) / 365. Processed as a minimum of 1 year
-    - Number of orders per year = Total number of orders / Activity period
-    - Aggregation by grade
+
+**Hint 1:** - Activity period = (last order date - first order date) / 365. Processed as a minimum of 1 year
+- Number of orders per year = Total number of orders / Activity period
+- Aggregation by grade
+
+
 
 ??? success "Answer"
     ```sql
@@ -286,30 +340,28 @@ LTV = average order value x number of orders per year x average duration of acti
     ORDER BY avg_ltv DESC;
     ```
 
-    | grade | customer_count | avg_order_value | avg_annual_orders | avg_active_years | avg_ltv |
-    |---|---|---|---|---|---|
-    | VIP | 97 | 1150000 | 8.5 | 5.2 | 50830000 |
-    | GOLD | 365 | 820000 | 5.2 | 4.1 | 17472800 |
-    | SILVER | 1200 | 580000 | 3.1 | 3.0 | 5394000 |
-    | BRONZE | 3500 | 380000 | 1.8 | 2.2 | 1504800 |
 
 ---
 
-### Problem 6. Comparison of customer quality by subscription channel
+
+### 6. Comparison of customer quality by subscription channel
+
 
 Number of customers, average number of orders, average purchase amount by subscription channel (`acquisition_channel`),
 Compare VIP/GOLD conversion rates.
 
-??? tip "Hint"
-    - `customers.acquisition_channel`: organic/search_ad/social/referral/direct
-    - VIP/GOLD conversion rate = Number of VIP+GOLD customers in the channel / Total number of customers
-    - Including customers without orders (LEFT JOIN)
+
+**Hint 1:** - `customers.acquisition_channel`: organic/search_ad/social/referral/direct
+- VIP/GOLD conversion rate = Number of VIP+GOLD customers in the channel / Total number of customers
+- Including customers without orders (LEFT JOIN)
+
+
 
 ??? success "Answer"
     ```sql
     WITH channel_stats AS (
         SELECT
-            COALESCE(c.acquisition_channel, 'Unknown') AS channel,
+            COALESCE(c.acquisition_channel, '미확인') AS channel,
             c.id AS customer_id,
             c.grade,
             COUNT(o.id) AS order_count,
@@ -334,25 +386,33 @@ Compare VIP/GOLD conversion rates.
     ORDER BY avg_spent DESC;
     ```
 
+
+    **Result** (5 rows)
+
     | channel | customer_count | avg_orders | avg_spent | premium_rate_pct | never_ordered_pct |
     |---|---|---|---|---|---|
-    | referral | 800 | 6.2 | 4800000 | 15.2 | 5.0 |
-    | organic | 2200 | 4.5 | 3200000 | 10.5 | 8.5 |
-    | search_ad | 1500 | 3.8 | 2800000 | 8.2 | 12.0 |
-    | social | 1000 | 3.1 | 2200000 | 6.5 | 15.0 |
-    | direct | 600 | 2.5 | 1800000 | 5.0 | 18.0 |
+    | organic | 1146 | 8.00 | 14,523,151.00 | 19.00 | 45.90 |
+    | direct | 408 | 7.30 | 14,104,863.00 | 16.40 | 48.50 |
+    | referral | 708 | 6.80 | 12,712,480.00 | 16.80 | 45.80 |
+    | search_ad | 1543 | 6.40 | 11,875,351.00 | 17.30 | 45.70 |
+    | social | 1425 | 5.60 | 10,755,623.00 | 15.50 | 48.00 |
+
 
 ---
 
-### Problem 7. Tracking grade changes
+
+### 7. Tracking grade changes
+
 
 Using the `customer_grade_history` table, find the number of customers whose ratings went up and down in 2024.
 It also displays the number of cases by grade change path (e.g. SILVER → GOLD).
 
-??? tip "Hint"
-    - `customer_grade_history`: `customer_id`, `old_grade`, `new_grade`, `changed_at`
-    - Rank order: BRONZE < SILVER < GOLD < VIP
-    - Compare after assigning numbers to grades using a CASE statement
+
+**Hint 1:** - `customer_grade_history`: `customer_id`, `old_grade`, `new_grade`, `changed_at`
+- Rank order: BRONZE < SILVER < GOLD < VIP
+- Compare after assigning numbers to grades using a CASE statement
+
+
 
 ??? success "Answer"
     ```sql
@@ -370,9 +430,9 @@ It also displays the number of cases by grade change path (e.g. SILVER → GOLD)
     SELECT
         old_grade || ' → ' || new_grade AS grade_change,
         CASE
-            WHEN new_rank > old_rank THEN 'Upgraded'
-            WHEN new_rank < old_rank THEN 'Downgraded'
-            ELSE 'Maintained'
+            WHEN new_rank > old_rank THEN '승급'
+            WHEN new_rank < old_rank THEN '강등'
+            ELSE '유지'
         END AS direction,
         COUNT(*) AS change_count
     FROM grade_order
@@ -382,27 +442,36 @@ It also displays the number of cases by grade change path (e.g. SILVER → GOLD)
         change_count DESC;
     ```
 
+
+    **Result** (top 7 of 13 rows)
+
     | grade_change | direction | change_count |
     |---|---|---|
-    | BRONZE → SILVER | Upgraded | 250 |
-    | SILVER → GOLD | Upgraded | 120 |
-    | GOLD → VIP | Upgraded | 35 |
-    | GOLD → SILVER | Downgraded | 45 |
-    | SILVER → BRONZE | Downgraded | 80 |
-    | VIP → GOLD | Downgraded | 8 |
+    | BRONZE → GOLD | 승급 | 167 |
+    | BRONZE → SILVER | 승급 | 160 |
+    | BRONZE → VIP | 승급 | 66 |
+    | GOLD → VIP | 승급 | 63 |
+    | SILVER → GOLD | 승급 | 52 |
+    | SILVER → VIP | 승급 | 37 |
+    | SILVER → BRONZE | 강등 | 125 |
+
 
 ---
 
-### Problem 8. ABC inventory classification
+
+### 8. ABC inventory classification
+
 
 Sort products ABC based on current inventory amount (stock_qty x cost_price).
 (A: Top 70%, B: 70~90%, C: Rest)
 Displays the number of products in each grade and the total inventory amount.
 
-??? tip "Hint"
-    - Inventory amount = `stock_qty * cost_price`
-    - ABC classification by cumulative ratio (same pattern as ABC in sales analysis)
-    - Only active products are eligible
+
+**Hint 1:** - Inventory amount = `stock_qty * cost_price`
+- ABC classification by cumulative ratio (same pattern as ABC in sales analysis)
+- Only active products are eligible
+
+
 
 ??? success "Answer"
     ```sql
@@ -444,23 +513,31 @@ Displays the number of products in each grade and the total inventory amount.
     ORDER BY abc_class;
     ```
 
+
+    **Result** (3 rows)
+
     | abc_class | product_count | total_stock_value | value_pct | avg_stock_qty |
     |---|---|---|---|---|
-    | A | 35 | 1200000000 | 68.5 | 85 |
-    | B | 60 | 380000000 | 21.7 | 120 |
-    | C | 150 | 170000000 | 9.7 | 200 |
+    | A | 46 | 20,873,678,400.00 | 69.50 | 337.00 |
+    | B | 52 | 6,146,023,700.00 | 20.50 | 310.00 |
+    | C | 119 | 3,010,558,600.00 | 10.00 | 233.00 |
+
 
 ---
 
-### Problem 9. Dead stock detection
+
+### 9. Dead stock detection
+
 
 Find active products that haven't sold at all in the last 6 months.
 Displays inventory quantity, inventory amount, and last sale date.
 
-??? tip "Hint"
-    - Check last 6 months orders in `order_items` + `orders`
-    - Product with NULL order after LEFT JOIN = No sale
-    - or utilize the NOT EXISTS pattern
+
+**Hint 1:** - Check last 6 months orders in `order_items` + `orders`
+- Product with NULL order after LEFT JOIN = No sale
+- or utilize the NOT EXISTS pattern
+
+
 
 ??? success "Answer"
     ```sql
@@ -490,24 +567,23 @@ Displays inventory quantity, inventory amount, and last sale date.
     LIMIT 20;
     ```
 
-    | product_name | category | stock_qty | stock_value | last_sold_at | days_since_last_sale |
-    |---|---|---|---|---|---|
-    | (Legacy Part) | Storage | 45 | 13500000 | 2024-05-10 | 325 |
-    | (Soon Discontinued) | Memory | 30 | 9000000 | 2024-06-22 | 282 |
-    | ... | ... | ... | ... | ... | ... |
 
 ---
 
-### Problem 10. Reorder Point Calculation
+
+### 10. Reorder Point Calculation
+
 
 Calculate when to reorder based on the average daily shipment volume for each product.
 Reorder point = average daily shipment x lead time (7 days) x safety factor (1.5)
 Find products that are currently in stock at or below the reorder point.
 
-??? tip "Hint"
-    - Last 3 months shipment volume: `inventory_transactions` to `type = 'outbound'`
-    - Average daily shipment volume = Total shipment volume for 3 months / 90
-    - Re-order time = average daily shipment x 7 x 1.5
+
+**Hint 1:** - Last 3 months shipment volume: `inventory_transactions` to `type = 'outbound'`
+- Average daily shipment volume = Total shipment volume for 3 months / 90
+- Re-order time = average daily shipment x 7 x 1.5
+
+
 
 ??? success "Answer"
     ```sql
@@ -539,32 +615,38 @@ Find products that are currently in stock at or below the reorder point.
         reorder_point,
         days_of_stock,
         CASE
-            WHEN stock_qty <= reorder_point THEN 'Order now'
-            WHEN days_of_stock <= 14 THEN 'Order soon'
-            ELSE 'Sufficient'
+            WHEN stock_qty <= reorder_point THEN '즉시 발주'
+            WHEN days_of_stock <= 14 THEN '발주 예정'
+            ELSE '충분'
         END AS order_status
     FROM reorder_calc
     WHERE stock_qty <= reorder_point
     ORDER BY days_of_stock ASC;
     ```
 
+
+    **Result** (1 rows)
+
     | product_name | stock_qty | avg_daily_demand | reorder_point | days_of_stock | order_status |
     |---|---|---|---|---|---|
-    | (Popular SSD) | 8 | 2.5 | 26 | 3 | Order now |
-    | (Popular Memory) | 12 | 1.8 | 19 | 7 | Order now |
-    | ... | ... | ... | ... | ... | ... |
+    | Arctic Freezer 36 A-RGB White | 0 | 0.09 | 1.00 | 0.0 | 즉시 발주 |
+
 
 ---
 
-### Problem 11. Inventory turnover by category
+
+### 11. Inventory turnover by category
+
 
 Calculate inventory turnover by category.
 Inventory Turnover = Annual Cost of Goods Sold (COGS) / Average Inventory Amount
 
-??? tip "Hint"
-    - Cost of goods sold (COGS): `SUM(oi.quantity * p.cost_price)` (sales in 2024)
-    - Average inventory amount: `AVG(stock_qty * cost_price)` (current time)
-    - The higher the turnover rate, the faster inventory is sold.
+
+**Hint 1:** - Cost of goods sold (COGS): `SUM(oi.quantity * p.cost_price)` (sales in 2024)
+- Average inventory amount: `AVG(stock_qty * cost_price)` (current time)
+- The higher the turnover rate, the faster inventory is sold.
+
+
 
 ??? success "Answer"
     ```sql
@@ -602,23 +684,35 @@ Inventory Turnover = Annual Cost of Goods Sold (COGS) / Average Inventory Amount
     ORDER BY turnover_rate DESC;
     ```
 
+
+    **Result** (top 7 of 38 rows)
+
     | category | product_count | annual_cogs | current_stock_value | turnover_rate | days_in_inventory |
     |---|---|---|---|---|---|
-    | (Popular Category) | 50 | 2500000000 | 350000000 | 7.1 | 51 |
-    | (General Category) | 80 | 1800000000 | 500000000 | 3.6 | 101 |
-    | ... | ... | ... | ... | ... | ... |
+    | Wired | 2 | 10,751,300.00 | 1,612,200.00 | 13.30 | 27.00 |
+    | Case | 10 | 103,892,500.00 | 261,356,300.00 | 4.00 | 92.00 |
+    | Speakers/Headsets | 9 | 164,632,200.00 | 416,492,100.00 | 3.60 | 103.00 |
+    | Gaming | 8 | 76,210,600.00 | 187,113,000.00 | 3.30 | 112.00 |
+    | DDR5 | 8 | 115,931,100.00 | 308,598,300.00 | 3.00 | 121.00 |
+    | DDR4 | 5 | 41,246,500.00 | 69,961,100.00 | 2.90 | 124.00 |
+    | SSD | 6 | 122,676,700.00 | 258,240,800.00 | 2.90 | 128.00 |
+
 
 ---
 
-### Problem 12. Monthly trend of inventory arrival and departure
+
+### 12. Monthly trend of inventory arrival and departure
+
 
 Calculate monthly receipts, shipments, net changes, and month-end cumulative inventory for 2024.
 This is based on the sum of all products.
 
-??? tip "Hint"
-    - `type` in `inventory_transactions`: inbound (positive), outbound (negative)
-    - Separation of receipt/delivery through conditional counting
-    - Cumulative sum: `SUM(...) OVER (ORDER BY year_month)`
+
+**Hint 1:** - `type` in `inventory_transactions`: inbound (positive), outbound (negative)
+- Separation of receipt/delivery through conditional counting
+- Cumulative sum: `SUM(...) OVER (ORDER BY year_month)`
+
+
 
 ??? success "Answer"
     ```sql
@@ -642,24 +736,35 @@ This is based on the sum of all products.
     ORDER BY year_month;
     ```
 
+
+    **Result** (top 7 of 12 rows)
+
     | year_month | inbound_qty | outbound_qty | net_change | cumulative_change |
     |---|---|---|---|---|
-    | 2024-01 | 5200 | 4800 | 400 | 400 |
-    | 2024-02 | 4800 | 4500 | 300 | 700 |
-    | 2024-03 | 5500 | 5100 | 400 | 1100 |
-    | ... | ... | ... | ... | ... |
+    | 2024-01 | 2007 | 199 | 1808 | 1808 |
+    | 2024-02 | 943 | 163 | 780 | 2588 |
+    | 2024-03 | 3536 | 248 | 3288 | 5876 |
+    | 2024-04 | 3528 | 122 | 3406 | 9282 |
+    | 2024-05 | 3408 | 253 | 3155 | 12,437 |
+    | 2024-06 | 2688 | 171 | 2517 | 14,954 |
+    | 2024-07 | 2900 | 138 | 2762 | 17,716 |
+
 
 ---
 
-### Problem 13. Inquiry processing time analysis
+
+### 13. Inquiry processing time analysis
+
 
 Find the average processing time, median (approximate), and SLA compliance rate by inquiry type (category) in 2024.
 SLA: Resolution within 3 days for general inquiries, 1 day for claims, 0.5 days for emergencies
 
-??? tip "Hint"
-    - Processing time: `JULIANDAY(resolved_at) - JULIANDAY(created_at)`
-    - Median approximation: 50th percentile → use `NTILE` instead of `PERCENTILE`
-    - SLA standards are applied differently depending on `priority`
+
+**Hint 1:** - Processing time: `JULIANDAY(resolved_at) - JULIANDAY(created_at)`
+- Median approximation: 50th percentile → use `NTILE` instead of `PERCENTILE`
+- SLA standards are applied differently depending on `priority`
+
+
 
 ??? success "Answer"
     ```sql
@@ -691,28 +796,38 @@ SLA: Resolution within 3 days for general inquiries, 1 day for claims, 0.5 days 
     ORDER BY sla_compliance_pct ASC;
     ```
 
+
+    **Result** (7 rows)
+
     | category | resolved_count | avg_resolution_days | min_days | max_days | sla_compliance_pct |
     |---|---|---|---|---|---|
-    | product_defect | 180 | 2.5 | 0.1 | 12.0 | 55.0 |
-    | delivery_issue | 250 | 1.8 | 0.1 | 8.5 | 65.0 |
-    | refund_request | 200 | 1.2 | 0.1 | 5.0 | 72.0 |
-    | general_inquiry | 350 | 0.8 | 0.0 | 4.0 | 85.0 |
-    | ... | ... | ... | ... | ... | ... |
+    | general_inquiry | 195 | 1.92 | 0.04 | 4.00 | 76.90 |
+    | exchange_request | 34 | 1.25 | 0.08 | 3.96 | 88.20 |
+    | price_inquiry | 73 | 1.62 | 0.13 | 3.79 | 90.40 |
+    | delivery_issue | 109 | 0.73 | 0.04 | 4.00 | 95.40 |
+    | refund_request | 64 | 0.91 | 0.04 | 3.46 | 96.90 |
+    | wrong_item | 40 | 0.78 | 0.08 | 3.21 | 97.50 |
+    | product_defect | 69 | 0.7 | 0.04 | 3.46 | 98.60 |
+
 
 ---
 
-### Problem 14. Return reason analysis and trend
+
+### 14. Return reason analysis and trend
+
 
 Find the number, rate, and average refund amount by return reason in 2024.
 We also check quarterly trends.
 
-??? tip "Hint"
-    - `returns` table: `reason`, `refund_amount`, `requested_at`
-    - Write overall ratio + quarterly trend as a separate query
+
+**Hint 1:** - `returns` table: `reason`, `refund_amount`, `requested_at`
+- Write overall ratio + quarterly trend as a separate query
+
+
 
 ??? success "Answer"
     ```sql
-    -- Overall statistics by reason
+    -- 사유별 전체 통계
     SELECT
         reason,
         COUNT(*)                     AS return_count,
@@ -723,19 +838,8 @@ We also check quarterly trends.
     WHERE requested_at >= '2024-01-01' AND requested_at < '2025-01-01'
     GROUP BY reason
     ORDER BY return_count DESC;
-    ```
-
-    | reason | return_count | pct | avg_refund | total_refund |
-    |---|---|---|---|---|
-    | change_of_mind | 320 | 35.2 | 450000 | 144000000 |
-    | defective | 220 | 24.2 | 680000 | 149600000 |
-    | wrong_item | 150 | 16.5 | 520000 | 78000000 |
-    | damaged_in_transit | 120 | 13.2 | 550000 | 66000000 |
-    | not_as_described | 80 | 8.8 | 480000 | 38400000 |
-    | late_delivery | 18 | 2.0 | 380000 | 6840000 |
-
-    ```sql
-    -- Quarterly trend
+    
+    -- 분기별 추이
     SELECT
         'Q' || ((CAST(SUBSTR(requested_at, 6, 2) AS INTEGER) + 2) / 3) AS quarter,
         reason,
@@ -746,17 +850,22 @@ We also check quarterly trends.
     ORDER BY quarter, return_count DESC;
     ```
 
+
 ---
 
-### Problem 15. Comparison of performance by CS employee
+
+### 15. Comparison of performance by CS employee
+
 
 Compare the number of inquiries handled by each CS employee, resolution rate, average processing time, and customer satisfaction (rate without compensation).
 The difference from the overall average is also displayed.
 
-??? tip "Hint"
-    - `complaints.staff_id` → `staff` JOIN
-    - Display overall averages in the same row with the window function `AVG(...) OVER ()`
-    - Customer satisfaction proxy indicator: Proportion of compensation_type that is NULL or 'none'
+
+**Hint 1:** - `complaints.staff_id` → `staff` JOIN
+- Display overall averages in the same row with the window function `AVG(...) OVER ()`
+- Customer satisfaction proxy indicator: Proportion of compensation_type that is NULL or 'none'
+
+
 
 ??? success "Answer"
     ```sql
@@ -788,23 +897,33 @@ The difference from the overall average is also displayed.
     ORDER BY resolution_rate DESC;
     ```
 
+
+    **Result** (5 rows)
+
     | staff_name | case_count | resolution_rate | avg_days | satisfaction_proxy_pct | team_avg_cases | team_avg_days |
     |---|---|---|---|---|---|---|
-    | Park Jieun | 85 | 95.3 | 0.8 | 72.5 | 65.0 | 1.5 |
-    | Kim Haneul | 72 | 91.7 | 1.2 | 68.0 | 65.0 | 1.5 |
-    | ... | ... | ... | ... | ... | ... | ... |
+    | Jaime Phelps | 123 | 95.10 | 1.36 | 67.50 | 123.20 | 1.29 |
+    | Jonathan Smith | 118 | 94.90 | 1.29 | 60.20 | 123.20 | 1.29 |
+    | Michael Mcguire | 115 | 94.80 | 1.32 | 63.50 | 123.20 | 1.29 |
+    | Michael Thomas | 131 | 94.70 | 1.19 | 57.30 | 123.20 | 1.29 |
+    | Nicole Hamilton | 129 | 94.60 | 1.29 | 72.10 | 123.20 | 1.29 |
+
 
 ---
 
-### Problem 16. Escalation analysis
+
+### 16. Escalation analysis
+
 
 Analyze the characteristics of escalated (escalated = 1) inquiries.
 Understand which types, channels, and priorities are generating the most escalations.
 
-??? tip "Hint"
-    - The thing that is `complaints.escalated = 1`
-    - Escalation rate = Number of escalations / Total number of cases
-    - Aggregated by category, channel, and priority
+
+**Hint 1:** - The thing that is `complaints.escalated = 1`
+- Escalation rate = Number of escalations / Total number of cases
+- Aggregated by category, channel, and priority
+
+
 
 ??? success "Answer"
     ```sql
@@ -827,25 +946,36 @@ Understand which types, channels, and priorities are generating the most escalat
     LIMIT 15;
     ```
 
+
+    **Result** (top 7 of 15 rows)
+
     | category | channel | priority | total_count | escalated_count | escalation_rate_pct | escalated_avg_days |
     |---|---|---|---|---|---|---|
-    | product_defect | phone | urgent | 15 | 12 | 80.0 | 3.5 |
-    | delivery_issue | kakao | high | 25 | 15 | 60.0 | 2.8 |
-    | refund_request | email | high | 18 | 9 | 50.0 | 2.2 |
-    | ... | ... | ... | ... | ... | ... | ... |
+    | wrong_item | website | high | 8 | 3 | 37.50 | 0.4 |
+    | product_defect | website | medium | 8 | 2 | 25.00 | 0.92 |
+    | refund_request | phone | medium | 9 | 2 | 22.20 | 0.6 |
+    | product_defect | email | medium | 5 | 1 | 20.00 | 0.33 |
+    | product_defect | phone | urgent | 5 | 1 | 20.00 | 0.13 |
+    | wrong_item | phone | medium | 5 | 1 | 20.00 | 1.04 |
+    | exchange_request | website | medium | 6 | 1 | 16.70 | 1.33 |
+
 
 ---
 
-### Problem 17. CS incidence rate by product
+
+### 17. CS incidence rate by product
+
 
 Find the CS (inquiries + returns) incidence rate of the top 30 products in sales.
 Products with a high incidence of CS require quality improvement.
 
-??? tip "Hint"
-    - Ratio of inquiries/returns to number of sales
-    - Number of sales by product in `order_items`
-    - Number of product-related CS cases in `complaints` + `returns`
-    - Complaints are connected to order_id → order_items → product_id
+
+**Hint 1:** - Ratio of inquiries/returns to number of sales
+- Number of sales by product in `order_items`
+- Number of product-related CS cases in `complaints` + `returns`
+- Complaints are connected to order_id → order_items → product_id
+
+
 
 ??? success "Answer"
     ```sql
@@ -896,24 +1026,35 @@ Products with a high incidence of CS require quality improvement.
     ORDER BY cs_rate_pct DESC;
     ```
 
+
+    **Result** (top 7 of 30 rows)
+
     | product_name | total_sold | complaints | returns | total_cs | cs_rate_pct |
     |---|---|---|---|---|---|
-    | (Problem Product A) | 120 | 15 | 12 | 27 | 22.5 |
-    | (Problem Product B) | 85 | 8 | 10 | 18 | 21.2 |
-    | (Normal Product C) | 200 | 5 | 3 | 8 | 4.0 |
-    | ... | ... | ... | ... | ... | ... |
+    | SK hynix Platinum P41 2TB Silver | 183 | 22 | 9 | 31 | 16.90 |
+    | Crucial T700 2TB Silver | 173 | 17 | 9 | 26 | 15.00 |
+    | Intel Core Ultra 7 265K White | 405 | 33 | 18 | 51 | 12.60 |
+    | Logitech G715 | 240 | 21 | 9 | 30 | 12.50 |
+    | Kingston FURY Beast DDR4 16GB Silver | 170 | 15 | 6 | 21 | 12.40 |
+    | Kingston FURY Renegade DDR5 32GB 7200... | 131 | 14 | 2 | 16 | 12.20 |
+    | AMD Ryzen 9 9900X | 248 | 21 | 9 | 30 | 12.10 |
+
 
 ---
 
-### Problem 18. Daily operations dashboard
+
+### 18. Daily operations dashboard
+
 
 Create a dashboard that shows your operational status at a glance on a specific date (2024-12-15).
 Includes number of same-day orders, sales, new subscribers, completed deliveries, and number of outstanding CS cases.
 
-??? tip "Hint"
-    - Calculate each indicator as a scalar subquery or CTE
-    - Combine single rows with `CROSS JOIN`
-    - It is more useful to include changes compared to the previous day.
+
+**Hint 1:** - Calculate each indicator as a scalar subquery or CTE
+- Combine single rows with `CROSS JOIN`
+- It is more useful to include changes compared to the previous day.
+
+
 
 ??? success "Answer"
     ```sql
@@ -966,21 +1107,29 @@ Includes number of same-day orders, sales, new subscribers, completed deliveries
     CROSS JOIN open_cs AS oc;
     ```
 
+
+    **Result** (1 rows)
+
     | report_date | today_orders | today_revenue | yesterday_orders | yesterday_revenue | revenue_change_pct | new_signups | deliveries_completed | open_cs_tickets |
     |---|---|---|---|---|---|---|---|---|
-    | 2024-12-15 | 65 | 42000000 | 58 | 38000000 | 10.5 | 12 | 52 | 35 |
+    | 2024-12-15 | 17 | 14,671,908.00 | 16 | 8,477,723.00 | 73.10 | 0 | 15 | 197 |
+
 
 ---
 
-### Problem 19. Comprehensive evaluation of suppliers
+
+### 19. Comprehensive evaluation of suppliers
+
 
 Evaluate each supplier’s overall performance.
 Consolidate number of units supplied, total sales, return rate, average review rating, and inventory availability into one report.
 
-??? tip "Hint"
-    - `suppliers` → `products` → JOIN various tables
-    - Return rate: Number of returns/number of sales of the supplier’s products
-    - Inventory adequacy: Proportion of products with excess inventory (more than 180 days) or shortage (7 days or less)
+
+**Hint 1:** - `suppliers` → `products` → JOIN various tables
+- Return rate: Number of returns/number of sales of the supplier’s products
+- Inventory adequacy: Proportion of products with excess inventory (more than 180 days) or shortage (7 days or less)
+
+
 
 ??? success "Answer"
     ```sql
@@ -1041,15 +1190,25 @@ Consolidate number of units supplied, total sales, return rate, average review r
     ORDER BY revenue_2024 DESC;
     ```
 
+
+    **Result** (top 7 of 41 rows)
+
     | company_name | product_count | revenue_2024 | units_sold | return_rate_pct | avg_rating | total_stock |
     |---|---|---|---|---|---|---|
-    | TechSolution Inc. | 45 | 2500000000 | 3200 | 5.5 | 4.2 | 1500 |
-    | Digital Partner | 38 | 2100000000 | 2800 | 4.2 | 4.0 | 1200 |
-    | ... | ... | ... | ... | ... | ... | ... |
+    | ASUS Corp. | 21 | 794,354,100.00 | 828 | 4.00 | 3.88 | 5828 |
+    | Razer Corp. | 7 | 482,608,700.00 | 445 | 3.60 | 3.89 | 1742 |
+    | LG Official Distribution | 11 | 434,068,900.00 | 389 | 3.90 | 3.91 | 2667 |
+    | Samsung Official Distribution | 21 | 427,788,200.00 | 1012 | 3.50 | 3.90 | 6174 |
+    | MSI Corp. | 12 | 372,284,800.00 | 632 | 3.00 | 3.97 | 4070 |
+    | ASRock Corp. | 9 | 238,530,100.00 | 537 | 3.20 | 3.78 | 3084 |
+    | SteelSeries Corp. | 7 | 209,711,600.00 | 983 | 3.70 | 3.87 | 1626 |
+
 
 ---
 
-### Problem 20. Monthly Management Comprehensive Report (December 2024)
+
+### 20. Monthly Management Comprehensive Report (December 2024)
+
 
 Create a comprehensive management report for December 2024.
 Integrates key KPIs from four areas: sales, customers, inventory, and CS into one query.
@@ -1061,10 +1220,12 @@ Integrates key KPIs from four areas: sales, customers, inventory, and CS into on
 | Inventory | Out-of-stock product count, inventory value, low-stock alert count |
 | CS | Unresolved cases, avg resolution time, resolution rate |
 
-??? tip "Hint"
-    - Write each area as a separate CTE and then CROSS JOIN
-    - Calculate comparative period sales using subquery for previous month ratio/previous year same month ratio
-    - Repurchase rate: The percentage of customers who ordered previously in that month
+
+**Hint 1:** - Write each area as a separate CTE and then CROSS JOIN
+- Calculate comparative period sales using subquery for previous month ratio/previous year same month ratio
+- Repurchase rate: The percentage of customers who ordered previously in that month
+
+
 
 ??? success "Answer"
     ```sql
@@ -1117,15 +1278,15 @@ Integrates key KPIs from four areas: sales, customers, inventory, and CS into on
     )
     SELECT
         '2024-12' AS report_month,
-        -- Sales
+        -- 매출
         sk.dec_revenue,
         ROUND(100.0 * (sk.dec_revenue - sk.nov_revenue) / NULLIF(sk.nov_revenue, 0), 1) AS mom_growth_pct,
         ROUND(100.0 * (sk.dec_revenue - sk.dec_2023_revenue) / NULLIF(sk.dec_2023_revenue, 0), 1) AS yoy_growth_pct,
-        -- Customers
+        -- 고객
         ck.active_customers,
         ck.new_signups,
         ck.repeat_rate_pct,
-        -- Inventory
+        -- 재고
         ik.out_of_stock_count,
         ik.total_stock_value,
         ik.low_stock_warning,
@@ -1139,6 +1300,12 @@ Integrates key KPIs from four areas: sales, customers, inventory, and CS into on
     CROSS JOIN cs_kpi AS csk;
     ```
 
+
+    **Result** (1 rows)
+
     | report_month | dec_revenue | mom_growth_pct | yoy_growth_pct | active_customers | new_signups | repeat_rate_pct | out_of_stock_count | total_stock_value | low_stock_warning | open_tickets | avg_resolution_days | resolution_rate_pct |
     |---|---|---|---|---|---|---|---|---|---|---|---|---|
-    | 2024-12 | 1250000000 | 15.2 | 12.8 | 3200 | 180 | 72.5 | 15 | 1800000000 | 25 | 35 | 1.5 | 82.0 |
+    | 2024-12 | 417,148,762.00 | -23.20 | 14.90 | 379 | 59 | 90.20 | 1 | 30,030,260,700.00 | 2 | 197 | 1.39 | 91.70 |
+
+
+---

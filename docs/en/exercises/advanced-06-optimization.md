@@ -1,24 +1,25 @@
-# Index and execution plan
+# Index and Execution Plan
 
 !!! info "Tables"
+
     `orders` — Orders (status, amount, date)  
+
     `order_items` — Order items (qty, unit price)  
+
     `products` — Products (name, price, stock, brand)  
+
     `payments` — Payments (method, amount, status)  
 
+
+
 !!! abstract "Concepts"
-    `EXPLAIN QUERY PLAN`, `CREATE INDEX`, Composite index, Covering index, SCAN vs SEARCH, Index unusable pattern
 
-Practice what you learned in Lecture 23 index and action plan.
-Use SQLite's `EXPLAIN QUERY PLAN` to analyze how queries are executed and create indexes to improve performance.
+    `EXPLAIN QUERY PLAN`, `CREATE INDEX`, `Composite Index`, `Covering Index`, `Partial Index`, `SCAN vs SEARCH`, `Index Selectivity`, `SARGable`
 
-!!! warning "Practice Environment Note"
-    Creating an index (`CREATE INDEX`) changes the database.
-    Feel free to experiment with your practice DB copy.
 
----
 
-### Problem 1. EXPLAIN QUERY PLAN Basics — SCAN vs SEARCH
+### 1. EXPLAIN QUERY PLAN Basics — SCAN vs SEARCH
+
 
 Check the execution plans of the following two queries, and explain the difference between `SCAN TABLE` and `SEARCH TABLE`.
 
@@ -30,39 +31,41 @@ SELECT * FROM orders WHERE customer_id = 100;
 SELECT * FROM orders WHERE notes LIKE '%urgent delivery%';
 ```
 
-??? tip "Hint"
-    - Execute by adding `EXPLAIN QUERY PLAN` in front of each query.
-    - `SCAN TABLE` = Read entire rows sequentially (Full Table Scan)
-    - `SEARCH TABLE ... USING INDEX` = Access only required rows by index
+
+**Hint 1:** - Execute by adding `EXPLAIN QUERY PLAN` in front of each query.
+- `SCAN TABLE` = Read entire rows sequentially (Full Table Scan)
+- `SEARCH TABLE ... USING INDEX` = Access only required rows by index
+
+
 
 ??? success "Answer"
     ```sql
-    -- Query A: Search by customer_id (indexed)
+    -- 쿼리 A: 인덱스가 있는 customer_id로 검색
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE customer_id = 100;
-    -- Result: SEARCH TABLE orders USING INDEX idx_orders_customer_id (customer_id=?)
-
-    -- Query B: LIKE search on notes (no index)
+    -- 결과: SEARCH TABLE orders USING INDEX idx_orders_customer_id (customer_id=?)
+    
+    -- 쿼리 B: 인덱스가 없는 notes로 LIKE 검색
     EXPLAIN QUERY PLAN
-    SELECT * FROM orders WHERE notes LIKE '%urgent delivery%';
-    -- Result: SCAN TABLE orders
+    SELECT * FROM orders WHERE notes LIKE '%급히 배송%';
+    -- 결과: SCAN TABLE orders
     ```
 
-    | Category | Query A (customer_id) | Query B (notes LIKE) |
-    |---|---|---|
-    | Execution method | SEARCH (index) | SCAN (full scan) |
-    | Reason | idx_orders_customer_id exists | LIKE '%...' pattern cannot use index |
 
 ---
 
-### Problem 2. Check the existing index list
+
+### 2. Check the existing index list
+
 
 Check all indexes created in the current database by table.
 Displays table name, index name, and creation SQL.
 
-??? tip "Hint"
-    - Search for row `type = 'index'` in `sqlite_master` table.
-    - By grouping with `tbl_name`, you can identify indexes for each table.
+
+**Hint 1:** - Search for row `type = 'index'` in `sqlite_master` table.
+- By grouping with `tbl_name`, you can identify indexes for each table.
+
+
 
 ??? success "Answer"
     ```sql
@@ -72,29 +75,38 @@ Displays table name, index name, and creation SQL.
         sql       AS create_sql
     FROM sqlite_master
     WHERE type = 'index'
-      AND sql IS NOT NULL  -- Exclude auto-generated indexes (PK, etc.)
+      AND sql IS NOT NULL  -- 자동 생성 인덱스(PK 등) 제외
     ORDER BY tbl_name, name;
     ```
 
+
+    **Result** (top 7 of 61 rows)
+
     | table_name | index_name | create_sql |
     |---|---|---|
-    | complaints | idx_complaints_category | CREATE INDEX idx_complaints_category ON complaints(category) |
-    | complaints | idx_complaints_customer_id | CREATE INDEX idx_complaints_customer_id ON complaints(customer_id) |
-    | customers | idx_customers_email | CREATE INDEX idx_customers_email ON customers(email) |
-    | orders | idx_orders_customer_id | CREATE INDEX idx_orders_customer_id ON orders(customer_id) |
-    | orders | idx_orders_customer_status | CREATE INDEX idx_orders_customer_status ON orders(customer_id, status) |
-    | ... | ... | ... |
+    | calendar | idx_calendar_year_month | CREATE INDEX idx_calendar_year_month ... |
+    | cart_items | idx_cart_items_cart_id | CREATE INDEX idx_cart_items_cart_id O... |
+    | carts | idx_carts_customer_id | CREATE INDEX idx_carts_customer_id ON... |
+    | complaints | idx_complaints_category | CREATE INDEX idx_complaints_category ... |
+    | complaints | idx_complaints_customer_id | CREATE INDEX idx_complaints_customer_... |
+    | complaints | idx_complaints_order_id | CREATE INDEX idx_complaints_order_id ... |
+    | complaints | idx_complaints_staff_id | CREATE INDEX idx_complaints_staff_id ... |
+
 
 ---
 
-### Problem 3. Summary of index count for each table
+
+### 3. Summary of index count for each table
+
 
 Count how many indexes each table has.
 Exclude tables with an index of 0.
 
-??? tip "Hint"
-    - GROUP BY `tbl_name` `type = 'index'` IN `sqlite_master`
-    - Exclude auto-generated indexes with `sql IS NOT NULL`
+
+**Hint 1:** - GROUP BY `tbl_name` `type = 'index'` IN `sqlite_master`
+- Exclude auto-generated indexes with `sql IS NOT NULL`
+
+
 
 ??? success "Answer"
     ```sql
@@ -108,48 +120,57 @@ Exclude tables with an index of 0.
     ORDER BY index_count DESC;
     ```
 
+
+    **Result** (top 7 of 26 rows)
+
     | table_name | index_count |
     |---|---|
-    | orders | 4 |
-    | products | 5 |
+    | returns | 6 |
     | complaints | 6 |
-    | ... | ... |
+    | products | 5 |
+    | orders | 5 |
+    | product_views | 4 |
+    | point_transactions | 4 |
+    | reviews | 3 |
+
 
 ---
 
-### Problem 4. Create a simple index and check the effect
+
+### 4. Create a simple index and check the effect
+
 
 Create an index on the `method` column of the `payments` table, and compare the execution plan before and after creation.
 
-??? tip "Hint"
-    - First check the current status with `EXPLAIN QUERY PLAN SELECT ... WHERE method = 'card'`
-    -Run `CREATE INDEX idx_payments_method ON payments(method)`
-    - Compare by running the same EXPLAIN again
+
+**Hint 1:** - First check the current status with `EXPLAIN QUERY PLAN SELECT ... WHERE method = 'card'`
+-Run `CREATE INDEX idx_payments_method ON payments(method)`
+- Compare by running the same EXPLAIN again
+
+
 
 ??? success "Answer"
     ```sql
-    -- 1) Execution plan before index creation
+    -- 1) 인덱스 생성 전 실행 계획
     EXPLAIN QUERY PLAN
     SELECT * FROM payments WHERE method = 'card';
-    -- Result: SCAN TABLE payments
-
-    -- 2) Create index
+    -- 결과: SCAN TABLE payments
+    
+    -- 2) 인덱스 생성
     CREATE INDEX idx_payments_method ON payments(method);
-
-    -- 3) Execution plan after index creation
+    
+    -- 3) 인덱스 생성 후 실행 계획
     EXPLAIN QUERY PLAN
     SELECT * FROM payments WHERE method = 'card';
-    -- Result: SEARCH TABLE payments USING INDEX idx_payments_method (method=?)
+    -- 결과: SEARCH TABLE payments USING INDEX idx_payments_method (method=?)
     ```
 
-    | Step | Execution method |
-    |---|---|
-    | Before index creation | SCAN TABLE payments |
-    | After index creation | SEARCH TABLE payments USING INDEX idx_payments_method |
 
 ---
 
-### Problem 5. Analysis of execution plan of JOIN query
+
+### 5. Analysis of execution plan of JOIN query
+
 
 Analyze the execution plan of the following query that JOINs orders and order details.
 Check which tables are scanned first and which indexes are used.
@@ -163,10 +184,12 @@ WHERE o.ordered_at LIKE '2024-12%'
   AND o.status = 'delivered';
 ```
 
-??? tip "Hint"
-    - Execute by adding `EXPLAIN QUERY PLAN` in front of the query
-    - SQLite shows access methods for each table in order
-    - Distinguish between tables where `USING INDEX` is displayed and tables where it is not.
+
+**Hint 1:** - Execute by adding `EXPLAIN QUERY PLAN` in front of the query
+- SQLite shows access methods for each table in order
+- Distinguish between tables where `USING INDEX` is displayed and tables where it is not.
+
+
 
 ??? success "Answer"
     ```sql
@@ -179,21 +202,21 @@ WHERE o.ordered_at LIKE '2024-12%'
       AND o.status = 'delivered';
     ```
 
-    Example execution plan interpretation:
 
-    | id | parent | detail |
-    |---|---|---|
-    | 2 | 0 | SEARCH TABLE orders AS o USING INDEX idx_orders_ordered_at (ordered_at>? AND ordered_at<?) |
-    | 3 | 0 | SEARCH TABLE order_items AS oi USING INDEX idx_order_items_order_id (order_id=?) |
-    | 4 | 0 | SEARCH TABLE products AS p USING INTEGER PRIMARY KEY (rowid=?) |
+    **Result** (3 rows)
 
-    - orders: Quickly filter 2024-December orders by `idx_orders_ordered_at` index
-    - order_items: View detailed items of the order with `idx_order_items_order_id`
-    - products: Direct access to product information with PK (rowid)
+    | id | parent | notused | detail |
+    |---|---|---|---|
+    | 6 | 0 | 61 | SEARCH o USING INDEX idx_orders_statu... |
+    | 14 | 0 | 61 | SEARCH oi USING INDEX idx_order_items... |
+    | 19 | 0 | 45 | SEARCH p USING INTEGER PRIMARY KEY (r... |
+
 
 ---
 
-### Problem 6. Creating a Covering Index
+
+### 6. Creating a Covering Index
+
 
 Suppose you frequently look up only the order date and amount for a specific customer in your orders table.
 Create a covering index to return results using only the index without accessing the table data.
@@ -204,73 +227,73 @@ FROM orders
 WHERE customer_id = 100;
 ```
 
-??? tip "Hint"
-    - Covering index: Index that includes both WHERE condition column + SELECT column
-    - `CREATE INDEX idx_xxx ON orders(customer_id, ordered_at, total_amount)`
-    - Success is achieved when the phrase “COVERING INDEX” appears in EXPLAIN.
+
+**Hint 1:** - Covering index: Index that includes both WHERE condition column + SELECT column
+- `CREATE INDEX idx_xxx ON orders(customer_id, ordered_at, total_amount)`
+- Success is achieved when the phrase “COVERING INDEX” appears in EXPLAIN.
+
+
 
 ??? success "Answer"
     ```sql
-    -- Create covering index
+    -- 커버링 인덱스 생성
     CREATE INDEX idx_orders_cust_date_amount
         ON orders(customer_id, ordered_at, total_amount);
-
-    -- Check execution plan
+    
+    -- 실행 계획 확인
     EXPLAIN QUERY PLAN
     SELECT ordered_at, total_amount
     FROM orders
     WHERE customer_id = 100;
-    -- Result: SEARCH TABLE orders USING COVERING INDEX idx_orders_cust_date_amount (customer_id=?)
+    -- 결과: SEARCH TABLE orders USING COVERING INDEX idx_orders_cust_date_amount (customer_id=?)
     ```
 
-    | Index type | Behavior |
-    |---|---|
-    | Regular index | Index -> rowid -> table row access (2 steps) |
-    | Covering index | Return directly from index (1 step, no table access) |
 
 ---
 
-### Problem 7. Creating a partial index
+
+### 7. Creating a partial index
+
 
 Assume frequent category searches targeting only the active product (`is_active = 1`).
 Create a partial index to exclude inactive products from the index.
 
-??? tip "Hint"
-    - Create partial index with `CREATE INDEX ... WHERE is_active = 1` syntax
-    - Partial index includes only rows that meet the conditions in the index → ​​Reduces index size and improves performance
-    - Use partial indexes only if the same conditions exist in the WHERE clause of the query
+
+**Hint 1:** - Create partial index with `CREATE INDEX ... WHERE is_active = 1` syntax
+- Partial index includes only rows that meet the conditions in the index → ​​Reduces index size and improves performance
+- Use partial indexes only if the same conditions exist in the WHERE clause of the query
+
+
 
 ??? success "Answer"
     ```sql
-    -- Create partial index
+    -- 부분 인덱스 생성
     CREATE INDEX idx_products_active_category
         ON products(category_id)
         WHERE is_active = 1;
-
-    -- Query that uses the partial index
+    
+    -- 부분 인덱스를 사용하는 쿼리
     EXPLAIN QUERY PLAN
     SELECT name, price
     FROM products
     WHERE category_id = 5
       AND is_active = 1;
-    -- Result: SEARCH TABLE products USING INDEX idx_products_active_category (category_id=?)
-
-    -- Without the condition, partial index is not used
+    -- 결과: SEARCH TABLE products USING INDEX idx_products_active_category (category_id=?)
+    
+    -- 조건이 없으면 부분 인덱스 미사용
     EXPLAIN QUERY PLAN
     SELECT name, price
     FROM products
     WHERE category_id = 5;
-    -- Result: SEARCH TABLE products USING INDEX idx_products_category_id (category_id=?)
+    -- 결과: SEARCH TABLE products USING INDEX idx_products_category_id (category_id=?)
     ```
 
-    | Query condition | Index used |
-    |---|---|
-    | `category_id = 5 AND is_active = 1` | idx_products_active_category (partial index) |
-    | `category_id = 5` (no is_active condition) | idx_products_category_id (regular index) |
 
 ---
 
-### Problem 8. Importance of composite index column order
+
+### 8. Importance of composite index column order
+
 
 Create composite indexes in the `(status, ordered_at)` order and `(ordered_at, status)` order on the `orders` table, respectively.
 Check which index is used in the following two queries:
@@ -283,44 +306,46 @@ SELECT * FROM orders WHERE status = 'delivered' AND ordered_at >= '2024-01-01';
 SELECT * FROM orders WHERE ordered_at >= '2024-01-01';
 ```
 
-??? tip "Hint"
-    - Most effective when the **first column** of a composite index is used as an equals condition in the WHERE clause
-    - `(status, ordered_at)`: optimal for status = '...' AND ordered_at >= '...'
-    - `(ordered_at, status)`: Index can be used only with ordered_at (since it is the first column)
+
+**Hint 1:** - Most effective when the **first column** of a composite index is used as an equals condition in the WHERE clause
+- `(status, ordered_at)`: optimal for status = '...' AND ordered_at >= '...'
+- `(ordered_at, status)`: Index can be used only with ordered_at (since it is the first column)
+
+
 
 ??? success "Answer"
     ```sql
-    -- Create indexes
+    -- 인덱스 생성
     CREATE INDEX idx_orders_status_date ON orders(status, ordered_at);
     CREATE INDEX idx_orders_date_status ON orders(ordered_at, status);
-
-    -- Query A: status equality + ordered_at range
+    
+    -- 쿼리 A: status 등호 + ordered_at 범위
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE status = 'delivered' AND ordered_at >= '2024-01-01';
-    -- SQLite optimizer selects idx_orders_status_date (range scan on ordered_at after status equality)
-
-    -- Query B: ordered_at range only
+    -- SQLite 옵티마이저가 idx_orders_status_date를 선택 (status 등호 후 ordered_at 범위 스캔)
+    
+    -- 쿼리 B: ordered_at 범위만
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE ordered_at >= '2024-01-01';
-    -- Uses idx_orders_date_status or idx_orders_ordered_at (ordered_at is the first column)
+    -- idx_orders_date_status 또는 idx_orders_ordered_at 사용 (첫 번째 칼럼이 ordered_at)
     ```
 
-    | Query | Optimal index | Reason |
-    |---|---|---|
-    | status = ? AND ordered_at >= ? | (status, ordered_at) | Equality condition column is leading |
-    | ordered_at >= ? | (ordered_at, status) | Range search using only the first column |
 
 ---
 
-### Problem 9. Index selectivity analysis
+
+### 9. Index selectivity analysis
+
 
 Compare the selectivity of the `status` and `customer_id` columns in the `orders` table.
 Determine which column it is more effective to create an index on.
 
-??? tip "Hint"
-    - Selectivity = number of unique values ​​/ total number of rows
-    - The higher the selectivity (closer to 1), the greater the index effect.
-    - Calculated as `COUNT(DISTINCT ...)` / `COUNT(*)`
+
+**Hint 1:** - Selectivity = number of unique values ​​/ total number of rows
+- The higher the selectivity (closer to 1), the greater the index effect.
+- Calculated as `COUNT(DISTINCT ...)` / `COUNT(*)`
+
+
 
 ??? success "Answer"
     ```sql
@@ -333,17 +358,19 @@ Determine which column it is more effective to create an index on.
     FROM orders;
     ```
 
+
+    **Result** (1 rows)
+
     | total_rows | distinct_status | distinct_customer_id | selectivity_status | selectivity_customer |
     |---|---|---|---|---|
-    | 50000 | 9 | 5000 | 0.000180 | 0.100000 |
+    | 37,557 | 9 | 2839 | 0.00024 | 0.075592 |
 
-    - The selectivity of `customer_id` (0.1) is much higher than `status` (0.00018)
-    - customer_id index is more effective: can quickly find only one customer's order
-    - The status index returns about 11% of the total (delivered, etc.) → the index effect may be low
 
 ---
 
-### Problem 10. Determine when an index is not used
+
+### 10. Determine when an index is not used
+
 
 The following queries may not be used even if an index exists.
 Check each EXPLAIN result and explain why the index is being ignored.
@@ -359,46 +386,45 @@ SELECT * FROM orders WHERE customer_id = 100 OR status = 'cancelled';
 SELECT * FROM orders WHERE customer_id != 100;
 ```
 
-??? tip "Hint"
-    - If you apply a function to a column, you cannot use the index (SARGable violation)
-    - OR conditions can be inefficient because each condition must use a separate index.
-    - Negative conditions (`!=`, `NOT IN`) return most rows, so a full scan is efficient.
+
+**Hint 1:** - If you apply a function to a column, you cannot use the index (SARGable violation)
+- OR conditions can be inefficient because each condition must use a separate index.
+- Negative conditions (`!=`, `NOT IN`) return most rows, so a full scan is efficient.
+
+
 
 ??? success "Answer"
     ```sql
-    -- Query A: function applied -> index not used
+    -- 쿼리 A: 함수 적용 → 인덱스 미사용
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE SUBSTR(ordered_at, 1, 4) = '2024';
-    -- Result: SCAN TABLE orders
-    -- Reason: SUBSTR() function applied to column prevents index usage
-
-    -- SARGable alternative:
+    -- 결과: SCAN TABLE orders
+    -- 이유: SUBSTR() 함수가 칼럼에 적용되어 인덱스 활용 불가
+    
+    -- SARGable 대안:
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE ordered_at >= '2024-01-01' AND ordered_at < '2025-01-01';
-    -- Result: SEARCH TABLE orders USING INDEX idx_orders_ordered_at
-
-    -- Query B: OR condition
+    -- 결과: SEARCH TABLE orders USING INDEX idx_orders_ordered_at
+    
+    -- 쿼리 B: OR 조건
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE customer_id = 100 OR status = 'cancelled';
-    -- Result: SCAN TABLE orders (or MULTI-INDEX OR)
-    -- Reason: Two conditions use separate indexes -> optimizer may choose full scan
-
-    -- Query C: negation condition
+    -- 결과: SCAN TABLE orders (또는 MULTI-INDEX OR)
+    -- 이유: 두 조건이 별개 인덱스 → 옵티마이저가 전체 스캔 선택 가능
+    
+    -- 쿼리 C: 부정 조건
     EXPLAIN QUERY PLAN
     SELECT * FROM orders WHERE customer_id != 100;
-    -- Result: SCAN TABLE orders
-    -- Reason: Returns nearly all rows -> full scan is more efficient
+    -- 결과: SCAN TABLE orders
+    -- 이유: 거의 모든 행을 반환 → 전체 스캔이 더 효율적
     ```
 
-    | Pattern | Index used | Reason |
-    |---|---|---|
-    | `SUBSTR(col, ...) = ?` | X | Function applied to column (Non-SARGable) |
-    | `col_a = ? OR col_b = ?` | Limited | OR across different columns |
-    | `col != ?` | X | Returns most rows, scan is efficient |
 
 ---
 
-### Problem 11. Improve performance by converting subqueries to JOINs
+
+### 11. Improve performance by converting subqueries to JOINs
+
 
 Convert the following correlated subquery to a JOIN and compare the execution plans of the two queries.
 
@@ -413,14 +439,16 @@ FROM products AS p
 WHERE p.is_active = 1;
 ```
 
-??? tip "Hint"
-    - Correlated subqueries are executed for each row in the outer query.
-    - If you use `LEFT JOIN`, the results pre-aggregated with `GROUP BY` will be executed only once.
-    - Use `LEFT JOIN` to include products without reviews
+
+**Hint 1:** - Correlated subqueries are executed for each row in the outer query.
+- If you use `LEFT JOIN`, the results pre-aggregated with `GROUP BY` will be executed only once.
+- Use `LEFT JOIN` to include products without reviews
+
+
 
 ??? success "Answer"
     ```sql
-    -- Improved: convert to JOIN
+    -- 개선: JOIN으로 변환
     SELECT
         p.name,
         p.price,
@@ -439,22 +467,31 @@ WHERE p.is_active = 1;
     WHERE p.is_active = 1
     ORDER BY order_count DESC
     LIMIT 20;
+    
+    -- 실행 계획 비교
+    -- 원본 (서브쿼리): SCAN TABLE products + 행마다 CORRELATED SCALAR SUBQUERY 2회
+    -- 개선 (JOIN): SCAN TABLE products + SCAN TABLE order_items (1회) + LEFT JOIN reviews (1회)
     ```
 
-    ```sql
-    -- Execution plan comparison
-    -- Original (subquery): SCAN TABLE products + CORRELATED SCALAR SUBQUERY x2 per row
-    -- Improved (JOIN): SCAN TABLE products + SCAN TABLE order_items (once) + LEFT JOIN reviews (once)
-    ```
 
-    | Method | Subquery executions | Expected performance |
-    |---|---|---|
-    | Correlated subquery | Product count x 2 | Slow |
-    | JOIN (pre-aggregated) | Once | Fast |
+    **Result** (top 7 of 20 rows)
+
+    | name | price | order_count | avg_rating |
+    |---|---|---|---|
+    | Crucial T700 2TB Silver | 257,000.00 | 113,344 | 4.21 |
+    | Logitech G502 X PLUS | 97,500.00 | 98,879 | 4.18 |
+    | SteelSeries Aerox 5 Wireless Silver | 100,000.00 | 97,400 | 3.88 |
+    | SteelSeries Prime Wireless Silver | 95,900.00 | 96,495 | 3.88 |
+    | Kingston FURY Beast DDR4 16GB Silver | 48,000.00 | 93,738 | 3.75 |
+    | AMD Ryzen 9 9900X | 335,700.00 | 90,740 | 3.86 |
+    | SteelSeries Prime Wireless Black | 89,800.00 | 78,480 | 3.88 |
+
 
 ---
 
-### Problem 12. Improving queries with SARGable conditions
+
+### 12. Improving queries with SARGable conditions
+
 
 Convert the following queries to SARGable (indexable) format.
 
@@ -469,40 +506,39 @@ SELECT * FROM products WHERE price * 0.9 > 1000000;
 SELECT * FROM customers WHERE name LIKE '%Kim%';
 ```
 
-??? tip "Hint"
-    - You can use an index by moving the function/calculation to the **comparison value** side rather than the column.
-    - `LIKE 'Kim%'` (prefix search) can use indexes, `LIKE '%Kim%'` (intermediate search) cannot.
-    - Price terms are mathematically converted to both sides.
+
+**Hint 1:** - You can use an index by moving the function/calculation to the **comparison value** side rather than the column.
+- `LIKE 'Kim%'` (prefix search) can use indexes, `LIKE '%Kim%'` (intermediate search) cannot.
+- Price terms are mathematically converted to both sides.
+
+
 
 ??? success "Answer"
     ```sql
-    -- Improvement A: convert to range condition
+    -- 개선 A: 범위 조건으로 변환
     SELECT * FROM orders
     WHERE ordered_at >= '2024-01-01' AND ordered_at < '2025-01-01';
-    -- Can use idx_orders_ordered_at index
-
-    -- Improvement B: move calculation to comparison value side
+    -- idx_orders_ordered_at 인덱스 사용 가능
+    
+    -- 개선 B: 계산을 비교 값 쪽으로 이동
     SELECT * FROM products
     WHERE price > 1000000 / 0.9;  -- price > 1111111.11
-    -- Can use idx_products_xxx index
-
-    -- Improvement C: change to prefix search (when possible)
+    -- idx_products_xxx 인덱스 사용 가능
+    
+    -- 개선 C: 접두사 검색으로 변경 (가능한 경우)
     SELECT * FROM customers
-    WHERE name LIKE 'Kim%';  -- Customers whose name starts with 'Kim'
-    -- Can use idx_customers_name index (prefix LIKE)
-
-    -- If intermediate search is absolutely necessary -> consider FTS (full-text search) or a separate search column
+    WHERE name LIKE '김%';  -- '김'으로 시작하는 고객
+    -- idx_customers_name 인덱스 사용 가능 (접두사 LIKE)
+    
+    -- 중간 검색이 반드시 필요하면 → FTS(전문 검색)나 별도 검색 칼럼 고려
     ```
 
-    | Original | Improved | Index used |
-    |---|---|---|
-    | `strftime('%Y', ordered_at) = '2024'` | `ordered_at >= '2024-01-01' AND ...` | O |
-    | `price * 0.9 > 1000000` | `price > 1111111.11` | O |
-    | `name LIKE '%Kim%'` | `name LIKE 'Kim%'` | O (prefix only) |
 
 ---
 
-### Problem 13. EXISTS vs IN performance comparison
+
+### 13. EXISTS vs IN performance comparison
+
 
 When obtaining a list of customers who have written reviews, compare the two execution plans: `IN` and `EXISTS`.
 
@@ -515,48 +551,45 @@ SELECT * FROM customers AS c
 WHERE EXISTS (SELECT 1 FROM reviews AS r WHERE r.customer_id = c.id);
 ```
 
-??? tip "Hint"
-    - Check the execution plan of both queries with `EXPLAIN QUERY PLAN`
-    - The SQLite optimizer also automatically converts IN to EXISTS.
-    - EXISTS is advantageous when the outer table is small and the inner table has an index.
+
+**Hint 1:** - Check the execution plan of both queries with `EXPLAIN QUERY PLAN`
+- The SQLite optimizer also automatically converts IN to EXISTS.
+- EXISTS is advantageous when the outer table is small and the inner table has an index.
+
+
 
 ??? success "Answer"
     ```sql
-    -- Method A: IN
+    -- 방식 A: IN
     EXPLAIN QUERY PLAN
     SELECT * FROM customers WHERE id IN (SELECT DISTINCT customer_id FROM reviews);
-
-    -- Method B: EXISTS
+    
+    -- 방식 B: EXISTS
     EXPLAIN QUERY PLAN
     SELECT * FROM customers AS c
     WHERE EXISTS (SELECT 1 FROM reviews AS r WHERE r.customer_id = c.id);
     ```
 
-    SQLite often produces similar execution plans for both methods:
-
-    | Method | Execution plan | Notes |
-    |---|---|---|
-    | IN (subquery) | SCAN customers + LIST SUBQUERY (reviews) | Builds temporary list from subquery results |
-    | EXISTS | SCAN customers + CORRELATED (reviews USING INDEX) | Checks existence only via index |
-
-    - Since reviews have `idx_reviews_customer_id`, EXISTS utilizes the index to efficiently
-    - IN executes the entire subquery first and then compares it, so memory usage increases when the result is large.
 
 ---
 
-### Problem 14. Identifying unnecessary indexes
+
+### 14. Identifying unnecessary indexes
+
 
 Too many indexes will result in poor INSERT/UPDATE performance.
 Analyze whether any of the indexes in the `orders` table are redundant or unnecessary.
 
-??? tip "Hint"
-    - If there is a composite index `(customer_id, status)`, the single index `(customer_id)` is redundant.
-    - Search is possible using only the first column of the composite index.
-    - However, if you often search using only the second column, a separate index is required.
+
+**Hint 1:** - If there is a composite index `(customer_id, status)`, the single index `(customer_id)` is redundant.
+- Search is possible using only the first column of the composite index.
+- However, if you often search using only the second column, a separate index is required.
+
+
 
 ??? success "Answer"
     ```sql
-    -- Index list for the orders table
+    -- orders 테이블의 인덱스 목록
     SELECT name, sql
     FROM sqlite_master
     WHERE type = 'index'
@@ -565,20 +598,23 @@ Analyze whether any of the indexes in the `orders` table are redundant or unnece
     ORDER BY name;
     ```
 
-    | index_name | Column(s) | Analysis |
-    |---|---|---|
-    | idx_orders_customer_id | (customer_id) | Possibly redundant -- first column of idx_orders_customer_status |
-    | idx_orders_customer_status | (customer_id, status) | Keep -- also covers customer_id-only searches |
-    | idx_orders_ordered_at | (ordered_at) | Keep -- essential for date range searches |
-    | idx_orders_order_number | (order_number) | Keep -- for UNIQUE lookups |
-    | idx_orders_status | (status) | Low selectivity -- candidate for removal |
 
-    **Conclusion**: `idx_orders_customer_id` is included in `idx_orders_customer_status` and is therefore a candidate for removal.
-    However, considering the covering index effect (smaller index when status is not needed), it can be maintained.
+    **Result** (5 rows)
+
+    | name | sql |
+    |---|---|
+    | idx_orders_customer_id | CREATE INDEX idx_orders_customer_id O... |
+    | idx_orders_customer_status | CREATE INDEX idx_orders_customer_stat... |
+    | idx_orders_order_number | CREATE INDEX idx_orders_order_number ... |
+    | idx_orders_ordered_at | CREATE INDEX idx_orders_ordered_at ON... |
+    | idx_orders_status | CREATE INDEX idx_orders_status ON ord... |
+
 
 ---
 
-### Problem 15. Summary — Slow Query Optimization Workshop
+
+### 15. Summary — Slow Query Optimization Workshop
+
 
 The following query is a sales report by category that runs monthly.
 Analyze the execution plan and optimize it by adding indexes and improving query structure.
@@ -603,15 +639,17 @@ GROUP BY cat.name, strftime('%Y-%m', o.ordered_at)
 ORDER BY cat.name, month;
 ```
 
-??? tip "Hint"
-    1. `strftime('%Y', ordered_at) = '2024'` → Convert to range condition (SARGable)
-    2. Convert implicit JOIN (comma) to explicit `INNER JOIN`
-    3. Identify full scan table with `EXPLAIN QUERY PLAN`
-    4. Add covering index if necessary
+
+**Hint 1:** 1. `strftime('%Y', ordered_at) = '2024'` → Convert to range condition (SARGable)
+2. Convert implicit JOIN (comma) to explicit `INNER JOIN`
+3. Identify full scan table with `EXPLAIN QUERY PLAN`
+4. Add covering index if necessary
+
+
 
 ??? success "Answer"
     ```sql
-    -- 1) Check execution plan (original)
+    -- 1) 실행 계획 확인 (원본)
     EXPLAIN QUERY PLAN
     SELECT
         cat.name AS category,
@@ -629,9 +667,9 @@ ORDER BY cat.name, month;
       AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
     GROUP BY cat.name, strftime('%Y-%m', o.ordered_at)
     ORDER BY cat.name, month;
-    -- Problem: full table scan on orders due to strftime() function
-
-    -- 2) Optimized query
+    -- 문제점: strftime() 함수로 인해 orders 테이블 풀 스캔
+    
+    -- 2) 최적화된 쿼리
     SELECT
         cat.name AS category,
         SUBSTR(o.ordered_at, 1, 7) AS month,
@@ -646,8 +684,8 @@ ORDER BY cat.name, month;
       AND o.status NOT IN ('cancelled', 'returned', 'return_requested')
     GROUP BY cat.name, SUBSTR(o.ordered_at, 1, 7)
     ORDER BY cat.name, month;
-
-    -- 3) Check execution plan after optimization
+    
+    -- 3) 최적화 후 실행 계획 확인
     EXPLAIN QUERY PLAN
     SELECT
         cat.name AS category,
@@ -665,9 +703,5 @@ ORDER BY cat.name, month;
     ORDER BY cat.name, month;
     ```
 
-    | Improvement | Original | Optimized |
-    |---|---|---|
-    | Date filter | `strftime(...)` (Non-SARGable) | Range condition (SARGable) |
-    | JOIN syntax | Implicit (comma) | Explicit INNER JOIN |
-    | Month extraction | `strftime('%Y-%m', ...)` | `SUBSTR(..., 1, 7)` (lighter) |
-    | orders access | SCAN TABLE (full scan) | SEARCH USING INDEX idx_orders_ordered_at |
+
+---

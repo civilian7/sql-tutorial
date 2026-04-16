@@ -1,0 +1,465 @@
+metadata:
+  id: intermediate-11-data-quality
+  title: "데이터 품질 점검"
+  title_en: "Data Quality Checks"
+  difficulty: intermediate
+  concepts: [NULL check, duplicate check, range check, referential integrity, date inversion, outlier detection, quality dashboard]
+  tables: [customers, products, orders, order_items, payments, shipping, reviews, returns, customer_addresses, coupons, coupon_usage, product_prices]
+  prerequisites: [intermediate-04-subqueries, intermediate-06-dml]
+  estimated_minutes: 40
+  default_level: 2
+  default_type: "SELECT"
+
+problems:
+  - id: i11q-01
+    level: 1
+    type: "SELECT"
+    question: |
+      고객 테이블에서 birth_date, gender, last_login_at 세 칼럼의 NULL 비율을 계산하세요.
+    question_en: |
+      Calculate the NULL ratio for birth_date, gender, and last_login_at in the customers table.
+    reference_sql:
+      common: |
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN birth_date IS NULL THEN 1 ELSE 0 END) AS null_birth,
+            ROUND(100.0 * SUM(CASE WHEN birth_date IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_birth,
+            SUM(CASE WHEN gender IS NULL THEN 1 ELSE 0 END) AS null_gender,
+            ROUND(100.0 * SUM(CASE WHEN gender IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_gender,
+            SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS null_login,
+            ROUND(100.0 * SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_login
+        FROM customers;
+    hints:
+      - ko: "`SUM(CASE WHEN 칼럼 IS NULL THEN 1 ELSE 0 END)`로 NULL 건수를 구합니다."
+        en: "Use `SUM(CASE WHEN column IS NULL THEN 1 ELSE 0 END)` for NULL count."
+    max_score: 10
+    tags: [NULL check, CASE, SUM, customers]
+
+  - id: i11q-02
+    level: 1
+    type: "SELECT"
+    question: |
+      동일한 이메일을 가진 고객이 있는지 확인하세요. 중복 이메일과 해당 건수를 출력하세요.
+    question_en: |
+      Check if there are customers with duplicate emails. Output duplicate emails and counts.
+    reference_sql:
+      common: |
+        SELECT email, COUNT(*) AS cnt
+        FROM customers
+        GROUP BY email
+        HAVING COUNT(*) > 1
+        ORDER BY cnt DESC;
+    hints:
+      - ko: "`GROUP BY email` 후 `HAVING COUNT(*) > 1`로 중복을 탐지합니다."
+        en: "Group by email then HAVING COUNT(*) > 1 to detect duplicates."
+    max_score: 10
+    tags: [duplicate check, GROUP BY, HAVING, customers]
+
+  - id: i11q-03
+    level: 1
+    type: "SELECT"
+    question: |
+      상품 가격이 비정상적인 행을 찾으세요. 가격이 0 이하이거나, 원가보다 낮은 상품(역마진).
+    question_en: |
+      Find products with abnormal prices. Price at or below 0, or priced below cost (negative margin).
+    reference_sql:
+      common: |
+        SELECT name, sku, price, cost_price, ROUND(price - cost_price, 0) AS margin
+        FROM products
+        WHERE price <= 0 OR price < cost_price
+        ORDER BY margin ASC;
+    hints:
+      - ko: "`WHERE price <= 0 OR price < cost_price`로 비정상 가격을 탐지합니다."
+        en: "Use `WHERE price <= 0 OR price < cost_price` to detect abnormal pricing."
+    max_score: 10
+    tags: [range check, products]
+
+  - id: i11q-04
+    level: 1
+    type: "SELECT"
+    question: |
+      주문 금액이 0 이하인데 취소 상태가 아닌 주문을 찾으세요.
+    question_en: |
+      Find orders with amount at or below 0 that are not cancelled.
+    reference_sql:
+      common: |
+        SELECT order_number, status, total_amount, ordered_at
+        FROM orders
+        WHERE total_amount <= 0
+          AND status NOT IN ('cancelled', 'returned', 'return_requested')
+        ORDER BY ordered_at DESC;
+    hints:
+      - ko: "`total_amount <= 0`이면서 취소가 아닌 주문은 데이터 오류일 수 있습니다."
+        en: "Orders with non-positive amounts that aren't cancelled may be data errors."
+    max_score: 10
+    tags: [range check, status, orders]
+
+  - id: i11q-05
+    level: 1
+    type: "SELECT"
+    question: |
+      리뷰 평점이 허용 범위(1~5)를 벗어나는 행이 있는지 확인하세요.
+    question_en: |
+      Check if any review ratings fall outside the allowed range (1~5).
+    reference_sql:
+      common: |
+        SELECT id, product_id, customer_id, rating
+        FROM reviews
+        WHERE rating < 1 OR rating > 5;
+    hints:
+      - ko: "`WHERE rating NOT BETWEEN 1 AND 5`로 확인합니다."
+        en: "Check with `WHERE rating < 1 OR rating > 5`."
+    max_score: 10
+    tags: [range check, reviews]
+
+  - id: i11q-06
+    level: 1
+    type: "SELECT"
+    question: |
+      재고 수량이 음수인 상품을 찾으세요.
+    question_en: |
+      Find products with negative stock quantities.
+    reference_sql:
+      common: |
+        SELECT name, sku, stock_qty, is_active
+        FROM products
+        WHERE stock_qty < 0
+        ORDER BY stock_qty ASC;
+    hints:
+      - ko: "`WHERE stock_qty < 0`으로 확인합니다."
+        en: "Check with `WHERE stock_qty < 0`."
+    max_score: 10
+    tags: [range check, negative stock, products]
+
+  - id: i11q-07
+    level: 2
+    type: "SELECT"
+    question: |
+      같은 주문에 같은 상품이 중복 등록되었는지 확인하세요.
+    question_en: |
+      Check if the same product is duplicated within the same order.
+    reference_sql:
+      common: |
+        SELECT order_id, product_id, COUNT(*) AS cnt
+        FROM order_items
+        GROUP BY order_id, product_id
+        HAVING COUNT(*) > 1
+        ORDER BY cnt DESC;
+    hints:
+      - ko: "`GROUP BY order_id, product_id` 후 `HAVING COUNT(*) > 1`로 중복 조합을 탐지합니다."
+        en: "GROUP BY order_id, product_id then HAVING COUNT(*) > 1 for duplicate combinations."
+    max_score: 10
+    tags: [duplicate check, GROUP BY, HAVING, order_items]
+
+  - id: i11q-08
+    level: 2
+    type: "SELECT"
+    question: |
+      주문이 존재하지 않는 결제 레코드(고아 레코드)가 있는지 확인하세요.
+    question_en: |
+      Check for payment records with no corresponding order (orphan records).
+    reference_sql:
+      common: |
+        SELECT p.id AS payment_id, p.order_id, p.method, p.amount
+        FROM payments AS p
+        LEFT JOIN orders AS o ON p.order_id = o.id
+        WHERE o.id IS NULL;
+    hints:
+      - ko: "`payments LEFT JOIN orders`로 연결 후, `orders.id IS NULL`인 결제를 찾습니다."
+        en: "Use payments LEFT JOIN orders, then find where orders.id IS NULL."
+    max_score: 10
+    tags: [referential integrity, LEFT JOIN, orphan records, payments]
+
+  - id: i11q-09
+    level: 2
+    type: "SELECT"
+    question: |
+      고객 가입일보다 주문일이 빠른 주문이 있는지 확인하세요. (시간 역전)
+    question_en: |
+      Check if any orders have an order date earlier than the customer's signup date. (Time inversion)
+    reference_sql:
+      common: |
+        SELECT
+            o.order_number, o.ordered_at, c.name,
+            c.created_at AS signup_date,
+            ROUND(JULIANDAY(c.created_at) - JULIANDAY(o.ordered_at), 1) AS days_diff
+        FROM orders AS o
+        INNER JOIN customers AS c ON o.customer_id = c.id
+        WHERE o.ordered_at < c.created_at
+        ORDER BY days_diff DESC;
+    hints:
+      - ko: "`orders JOIN customers`로 연결 후, `ordered_at < created_at`인 행을 찾습니다."
+        en: "Join orders with customers, then find rows where ordered_at < created_at."
+    max_score: 10
+    tags: [date inversion, JULIANDAY, orders, customers]
+
+  - id: i11q-10
+    level: 2
+    type: "SELECT"
+    question: |
+      배송 완료일이 출고일보다 빠른 비정상 레코드를 찾으세요.
+    question_en: |
+      Find records where delivery date is earlier than shipment date.
+    reference_sql:
+      common: |
+        SELECT
+            sh.id, o.order_number, sh.shipped_at, sh.delivered_at,
+            ROUND(JULIANDAY(sh.delivered_at) - JULIANDAY(sh.shipped_at), 1) AS days_diff
+        FROM shipping AS sh
+        INNER JOIN orders AS o ON sh.order_id = o.id
+        WHERE sh.shipped_at IS NOT NULL AND sh.delivered_at IS NOT NULL
+          AND sh.delivered_at < sh.shipped_at;
+    hints:
+      - ko: "두 날짜가 모두 NOT NULL인 행 중에서 `delivered_at < shipped_at`인 경우를 찾습니다."
+        en: "Among rows where both dates are NOT NULL, find where delivered_at < shipped_at."
+    max_score: 10
+    tags: [date inversion, shipping]
+
+  - id: i11q-11
+    level: 2
+    type: "SELECT"
+    question: |
+      배송 완료인데 주문 상태가 배송 완료 이후 단계로 진행되지 않은 불일치를 찾으세요.
+    question_en: |
+      Find mismatches where shipping is delivered but order status hasn't progressed.
+    reference_sql:
+      common: |
+        SELECT
+            o.order_number, o.status AS order_status,
+            sh.status AS ship_status, sh.delivered_at
+        FROM orders AS o
+        INNER JOIN shipping AS sh ON o.id = sh.order_id
+        WHERE sh.status = 'delivered'
+          AND o.status NOT IN ('delivered', 'confirmed', 'return_requested', 'returned');
+    hints:
+      - ko: "배송이 delivered이면 주문 상태가 delivered, confirmed, return_requested, returned 중 하나여야 합니다."
+        en: "If shipping is delivered, order status should be one of delivered, confirmed, return_requested, or returned."
+    max_score: 10
+    tags: [status mismatch, orders, shipping]
+
+  - id: i11q-12
+    level: 2
+    type: "SELECT"
+    question: |
+      취소된 주문인데 배송 완료 기록이 있는 모순 데이터를 찾으세요.
+    question_en: |
+      Find contradictory data: cancelled orders with delivery completion records.
+    reference_sql:
+      common: |
+        SELECT
+            o.order_number, o.status AS order_status, o.cancelled_at,
+            sh.status AS ship_status, sh.delivered_at
+        FROM orders AS o
+        INNER JOIN shipping AS sh ON o.id = sh.order_id
+        WHERE o.status = 'cancelled' AND sh.status = 'delivered';
+    hints:
+      - ko: "`orders.status = 'cancelled'`이면서 `shipping.status = 'delivered'`인 주문은 논리적 모순입니다."
+        en: "Orders with cancelled status and delivered shipping are logically contradictory."
+    max_score: 10
+    tags: [logical contradiction, orders, shipping]
+
+  - id: i11q-13
+    level: 2
+    type: "SELECT"
+    question: |
+      단종된 상품이 단종 이후에 주문된 적이 있는지 확인하세요. 최근 20건.
+    question_en: |
+      Check if discontinued products have been ordered after discontinuation. Most recent 20.
+    reference_sql:
+      common: |
+        SELECT
+            p.name, p.discontinued_at, o.order_number, o.ordered_at
+        FROM products AS p
+        INNER JOIN order_items AS oi ON p.id = oi.product_id
+        INNER JOIN orders AS o ON oi.order_id = o.id
+        WHERE p.discontinued_at IS NOT NULL AND o.ordered_at > p.discontinued_at
+        ORDER BY o.ordered_at DESC
+        LIMIT 20;
+    hints:
+      - ko: "단종 상품의 `discontinued_at`과 주문의 `ordered_at`을 비교합니다."
+        en: "Compare product's discontinued_at with order's ordered_at."
+    max_score: 10
+    tags: [date comparison, products, orders, order_items]
+
+  - id: i11q-14
+    level: 2
+    type: "SELECT"
+    question: |
+      상품의 현재 가격과 가격 이력 테이블의 현재 유효 가격이 불일치하는 상품을 찾으세요.
+    question_en: |
+      Find products where current price doesn't match the active price in the history table.
+    reference_sql:
+      common: |
+        SELECT
+            p.name, p.price AS current_price, pp.price AS history_price,
+            ROUND(p.price - pp.price, 0) AS diff
+        FROM products AS p
+        INNER JOIN product_prices AS pp ON p.id = pp.product_id
+        WHERE pp.ended_at IS NULL AND p.price <> pp.price
+        ORDER BY ABS(p.price - pp.price) DESC;
+    hints:
+      - ko: "`product_prices`에서 `ended_at IS NULL`인 행이 현재 적용 중인 가격입니다."
+        en: "Rows in product_prices where ended_at IS NULL represent the currently active price."
+    max_score: 10
+    tags: [sync error, products, product_prices]
+
+  - id: i11q-15
+    level: 2
+    type: "SELECT"
+    question: |
+      결제 금액과 주문 금액이 일치하지 않는 주문을 찾으세요. 상위 20건.
+    question_en: |
+      Find orders where payment amount doesn't match order amount. Top 20.
+    reference_sql:
+      common: |
+        SELECT
+            o.order_number, o.total_amount AS order_amount,
+            pay_sum.paid_total,
+            ROUND(o.total_amount - pay_sum.paid_total, 2) AS diff
+        FROM orders AS o
+        INNER JOIN (
+            SELECT order_id, SUM(amount) AS paid_total
+            FROM payments WHERE status = 'completed'
+            GROUP BY order_id
+        ) AS pay_sum ON o.id = pay_sum.order_id
+        WHERE ABS(o.total_amount - pay_sum.paid_total) > 1
+        ORDER BY ABS(diff) DESC
+        LIMIT 20;
+    hints:
+      - ko: "주문별 결제 합계를 서브쿼리로 구한 뒤, `orders.total_amount`와 비교합니다."
+        en: "Compute per-order payment totals via subquery, then compare with orders.total_amount."
+    max_score: 10
+    tags: [FROM subquery, amount mismatch, orders, payments]
+
+  - id: i11q-16
+    level: 2
+    type: "SELECT"
+    question: |
+      고객별 기본 배송지가 2개 이상인 고객을 찾으세요.
+    question_en: |
+      Find customers with 2 or more default shipping addresses.
+    reference_sql:
+      common: |
+        SELECT c.name, c.email, COUNT(*) AS default_count
+        FROM customers AS c
+        INNER JOIN customer_addresses AS ca ON c.id = ca.customer_id
+        WHERE ca.is_default = 1
+        GROUP BY c.id, c.name, c.email
+        HAVING COUNT(*) > 1;
+    hints:
+      - ko: "`customer_addresses`에서 `is_default = 1`인 행을 고객별로 세어, 1보다 큰 고객을 찾습니다."
+        en: "Count is_default = 1 rows per customer, find those with more than 1."
+    max_score: 10
+    tags: [GROUP BY, HAVING, customer_addresses]
+
+  - id: i11q-17
+    level: 3
+    type: "SELECT"
+    question: |
+      쿠폰 사용 테이블에서 per_user_limit을 초과하여 사용한 건이 있는지 확인하세요.
+    question_en: |
+      Check if any coupon usage exceeds the per_user_limit.
+    reference_sql:
+      common: |
+        SELECT
+            cp.code AS coupon_code, cp.name AS coupon_name,
+            c.name AS customer_name,
+            COUNT(*) AS usage_count, cp.per_user_limit
+        FROM coupon_usage AS cu
+        INNER JOIN coupons AS cp ON cu.coupon_id = cp.id
+        INNER JOIN customers AS c ON cu.customer_id = c.id
+        GROUP BY cu.coupon_id, cu.customer_id, cp.code, cp.name, c.name, cp.per_user_limit
+        HAVING COUNT(*) > cp.per_user_limit
+        ORDER BY usage_count DESC;
+    hints:
+      - ko: "`coupon_usage`를 `coupon_id, customer_id`로 그룹화하여 사용 횟수를 센 뒤, `coupons.per_user_limit`과 비교합니다."
+        en: "Group coupon_usage by coupon_id, customer_id, count usage, then compare with per_user_limit."
+    max_score: 10
+    tags: [HAVING, GROUP BY, coupon_usage, coupons]
+
+  - id: i11q-18
+    level: 2
+    type: "SELECT"
+    question: |
+      반품 테이블에서 환불 금액 합계가 원래 주문 금액을 초과하는 주문을 찾으세요.
+    question_en: |
+      Find orders where total refund exceeds the original order amount.
+    reference_sql:
+      common: |
+        SELECT
+            o.order_number, o.total_amount AS order_amount,
+            SUM(ret.refund_amount) AS total_refund,
+            ROUND(SUM(ret.refund_amount) - o.total_amount, 2) AS over_refund
+        FROM returns AS ret
+        INNER JOIN orders AS o ON ret.order_id = o.id
+        GROUP BY ret.order_id, o.order_number, o.total_amount
+        HAVING SUM(ret.refund_amount) > o.total_amount
+        ORDER BY over_refund DESC;
+    hints:
+      - ko: "주문별 환불 금액 합계를 구한 뒤 `orders.total_amount`와 비교합니다."
+        en: "Compute per-order refund totals and compare with orders.total_amount."
+    max_score: 10
+    tags: [HAVING, SUM, returns, orders]
+
+  - id: i11q-19
+    level: 3
+    type: "SELECT"
+    question: |
+      데이터 완전성 점수를 customers, products, orders 3개 테이블에 대해 계산하세요. UNION ALL로 합쳐 보고서를 만드세요.
+    question_en: |
+      Calculate data completeness score for customers, products, and orders. Combine with UNION ALL.
+    reference_sql:
+      common: |
+        SELECT '고객' AS table_name, COUNT(*) AS total_rows,
+               ROUND(100.0 * (
+                   (1.0 - 1.0 * SUM(CASE WHEN birth_date IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN gender IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN acquisition_channel IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+               ) / 4.0, 1) AS completeness_pct
+        FROM customers
+        UNION ALL
+        SELECT '상품', COUNT(*),
+               ROUND(100.0 * (
+                   (1.0 - 1.0 * SUM(CASE WHEN description IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN specs IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN weight_grams IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN model_number IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+               ) / 4.0, 1)
+        FROM products
+        UNION ALL
+        SELECT '주문', COUNT(*),
+               ROUND(100.0 * (
+                   (1.0 - 1.0 * SUM(CASE WHEN notes IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN completed_at IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN cancelled_at IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+                 + (1.0 - 1.0 * SUM(CASE WHEN staff_id IS NULL THEN 1 ELSE 0 END) / COUNT(*))
+               ) / 4.0, 1)
+        FROM orders;
+    hints:
+      - ko: "각 테이블에서 NULL 가능 칼럼의 non-NULL 비율을 계산하고, 여러 칼럼의 평균을 구합니다."
+        en: "Calculate non-NULL ratio for nullable columns, then average across columns."
+    max_score: 10
+    tags: [UNION ALL, CASE, completeness, quality dashboard]
+
+  - id: i11q-20
+    level: 3
+    type: "SELECT"
+    question: |
+      한 쿼리로 주요 데이터 품질 지표를 요약하세요. 가입일 역전, 고아 결제, 배송일 역전, 중복 주문상세, 음수 재고, 취소+배송완료 모순 건수를 한 행에 출력.
+    question_en: |
+      Summarize key data quality indicators in a single query. Output signup inversion, orphan payments, date inversions, duplicate items, negative stock, and cancelled-but-delivered counts in one row.
+    reference_sql:
+      common: |
+        SELECT
+            (SELECT COUNT(*) FROM orders AS o INNER JOIN customers AS c ON o.customer_id = c.id WHERE o.ordered_at < c.created_at) AS orders_before_signup,
+            (SELECT COUNT(*) FROM payments AS p LEFT JOIN orders AS o ON p.order_id = o.id WHERE o.id IS NULL) AS orphan_payments,
+            (SELECT COUNT(*) FROM shipping WHERE shipped_at IS NOT NULL AND delivered_at IS NOT NULL AND delivered_at < shipped_at) AS date_inversions,
+            (SELECT COUNT(*) FROM (SELECT order_id, product_id FROM order_items GROUP BY order_id, product_id HAVING COUNT(*) > 1)) AS duplicate_items,
+            (SELECT COUNT(*) FROM products WHERE stock_qty < 0) AS negative_stock,
+            (SELECT COUNT(*) FROM orders AS o INNER JOIN shipping AS sh ON o.id = sh.order_id WHERE o.status = 'cancelled' AND sh.status = 'delivered') AS cancelled_but_delivered;
+    hints:
+      - ko: "각 품질 점검을 `(SELECT COUNT(*) FROM ... WHERE 조건)` 스칼라 서브쿼리로 만들어 하나의 SELECT에 나열합니다."
+        en: "Create each quality check as a scalar subquery and list them all in a single SELECT."
+    max_score: 10
+    tags: [scalar subquery, quality dashboard, comprehensive]

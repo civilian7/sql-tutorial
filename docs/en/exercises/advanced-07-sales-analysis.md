@@ -1,28 +1,37 @@
 # Sales Analysis
 
 !!! info "Tables"
+
     `orders` — Orders (status, amount, date)  
+
     `order_items` — Order items (qty, unit price)  
+
     `products` — Products (name, price, stock, brand)  
+
     `categories` — Categories (parent-child hierarchy)  
+
     `customers` — Customers (grade, points, channel)  
+
     `payments` — Payments (method, amount, status)  
 
+
+
 !!! abstract "Concepts"
-    CTE, Window functions, Multiple JOIN, Aggregation Functions Comprehensive — Sales by Month/Quarter/Category, Growth rate, Cumulative sales, cohort
 
-This is a business sales analysis problem that comprehensively utilizes CTE, window functions, multiple JOINs, and aggregate functions.
-Cancellation (`cancelled`) and return (`returned`, `return_requested`) orders are excluded unless specifically specified.
+    `CTE`, `Window Functions`, `Multiple JOIN`, `Aggregation`, `YoY Growth`, `Moving Average`, `ABC Analysis`, `Cohort`
 
----
 
-### Problem 1. Monthly sales trend (last 3 years)
+
+### 1. Monthly sales trend (last 3 years)
+
 
 Find monthly sales, number of orders, and average order value from 2022 to 2024.
 
-??? tip "Hint"
-    - Extract year-month with `SUBSTR(ordered_at, 1, 7)`
-    - `SUM(total_amount)`, `COUNT(*)`, `AVG(total_amount)`
+
+**Hint 1:** - Extract year-month with `SUBSTR(ordered_at, 1, 7)`
+- `SUM(total_amount)`, `COUNT(*)`, `AVG(total_amount)`
+
+
 
 ??? success "Answer"
     ```sql
@@ -39,22 +48,34 @@ Find monthly sales, number of orders, and average order value from 2022 to 2024.
     ORDER BY year_month;
     ```
 
+
+    **Result** (top 7 of 36 rows)
+
     | year_month | order_count | revenue | avg_order_value |
     |---|---|---|---|
-    | 2022-01 | 320 | 198000000 | 618750 |
-    | 2022-02 | 285 | 175000000 | 614035 |
-    | ... | ... | ... | ... |
+    | 2022-01 | 340 | 387,797,263.00 | 1,140,580.00 |
+    | 2022-02 | 343 | 349,125,148.00 | 1,017,858.00 |
+    | 2022-03 | 397 | 392,750,666.00 | 989,296.00 |
+    | 2022-04 | 337 | 313,546,744.00 | 930,406.00 |
+    | 2022-05 | 448 | 445,361,972.00 | 994,112.00 |
+    | 2022-06 | 348 | 353,057,024.00 | 1,014,532.00 |
+    | 2022-07 | 386 | 418,258,615.00 | 1,083,572.00 |
+
 
 ---
 
-### Problem 2. Proportion of sales by category
+
+### 2. Proportion of sales by category
+
 
 Find the sales of each major category and its proportion (%) compared to the total in 2024.
 
-??? tip "Hint"
-    - `categories.depth = 0` is the main category
-    - Subcategory → Middle category → Major category Path: JOIN `categories` self-reference twice
-    - Or use a subquery to find the top category with depth=0
+
+**Hint 1:** - `categories.depth = 0` is the main category
+- Subcategory → Middle category → Major category Path: JOIN `categories` self-reference twice
+- Or use a subquery to find the top category with depth=0
+
+
 
 ??? success "Answer"
     ```sql
@@ -80,22 +101,34 @@ Find the sales of each major category and its proportion (%) compared to the tot
     ORDER BY revenue DESC;
     ```
 
+
+    **Result** (top 7 of 18 rows)
+
     | top_category | revenue | revenue_pct |
     |---|---|---|
-    | Computer | 5200000000 | 45.2 |
-    | Peripherals | 3100000000 | 26.9 |
-    | ... | ... | ... |
+    | Laptop | 1,395,635,900.00 | 27.00 |
+    | Monitor | 727,065,300.00 | 14.10 |
+    | Graphics Card | 713,579,800.00 | 13.80 |
+    | Motherboard | 398,988,900.00 | 7.70 |
+    | Speakers/Headsets | 232,144,800.00 | 4.50 |
+    | Storage | 205,861,200.00 | 4.00 |
+    | Memory (RAM) | 200,423,600.00 | 3.90 |
+
 
 ---
 
-### Problem 3. Top 20 customer sales rankings
+
+### 3. Top 20 customer sales rankings
+
 
 Display information about the top 20 customers by total purchase amount for all time periods.
 Includes customer name, level, number of orders, total purchase amount, and rank.
 
-??? tip "Hint"
-    - Use `RANK()` or `ROW_NUMBER()` window functions
-    - `customers` + `orders` JOIN
+
+**Hint 1:** - Use `RANK()` or `ROW_NUMBER()` window functions
+- `customers` + `orders` JOIN
+
+
 
 ??? success "Answer"
     ```sql
@@ -113,23 +146,35 @@ Includes customer name, level, number of orders, total purchase amount, and rank
     LIMIT 20;
     ```
 
+
+    **Result** (top 7 of 20 rows)
+
     | ranking | customer_name | grade | order_count | total_spent |
     |---|---|---|---|---|
-    | 1 | Kim Minsu | VIP | 45 | 52000000 |
-    | 2 | Lee Seoyeon | VIP | 38 | 48000000 |
-    | ... | ... | ... | ... | ... |
+    | 1 | Allen Snyder | VIP | 303 | 403,448,758.00 |
+    | 2 | Jason Rivera | VIP | 342 | 366,385,931.00 |
+    | 3 | Brenda Garcia | VIP | 249 | 253,180,338.00 |
+    | 4 | Courtney Huff | VIP | 223 | 244,604,910.00 |
+    | 5 | Ronald Arellano | VIP | 219 | 235,775,349.00 |
+    | 6 | James Banks | VIP | 230 | 234,708,853.00 |
+    | 7 | Gabriel Walters | VIP | 275 | 230,165,991.00 |
+
 
 ---
 
-### Problem 4. Sales pattern by day of the week
+
+### 4. Sales pattern by day of the week
+
 
 Find the average number of orders and average sales by day of the week (Mon-Sun) from all order data.
 Find out which days of the week have the highest sales.
 
-??? tip "Hint"
-    - SQLite: `strftime('%w', ordered_at)` → 0 (Sun)~6 (Sat)
-    - Convert day name using CASE statement
-    - First, calculate daily sales and then average them for each day of the week.
+
+**Hint 1:** - SQLite: `strftime('%w', ordered_at)` → 0 (Sun)~6 (Sat)
+- Convert day name using CASE statement
+- First, calculate daily sales and then average them for each day of the week.
+
+
 
 ??? success "Answer"
     ```sql
@@ -145,13 +190,13 @@ Find out which days of the week have the highest sales.
     )
     SELECT
         CASE dow
-            WHEN 0 THEN 'Sunday'
-            WHEN 1 THEN 'Monday'
-            WHEN 2 THEN 'Tuesday'
-            WHEN 3 THEN 'Wednesday'
-            WHEN 4 THEN 'Thursday'
-            WHEN 5 THEN 'Friday'
-            WHEN 6 THEN 'Saturday'
+            WHEN 0 THEN '일요일'
+            WHEN 1 THEN '월요일'
+            WHEN 2 THEN '화요일'
+            WHEN 3 THEN '수요일'
+            WHEN 4 THEN '목요일'
+            WHEN 5 THEN '금요일'
+            WHEN 6 THEN '토요일'
         END AS day_of_week,
         ROUND(AVG(order_count)) AS avg_daily_orders,
         ROUND(AVG(revenue))     AS avg_daily_revenue
@@ -160,22 +205,34 @@ Find out which days of the week have the highest sales.
     ORDER BY dow;
     ```
 
+
+    **Result** (7 rows)
+
     | day_of_week | avg_daily_orders | avg_daily_revenue |
     |---|---|---|
-    | Sunday | 12 | 7500000 |
-    | Monday | 15 | 9200000 |
-    | ... | ... | ... |
+    | 일요일 | 11.00 | 10,702,305.00 |
+    | 월요일 | 11.00 | 10,470,017.00 |
+    | 화요일 | 9.00 | 9,434,724.00 |
+    | 수요일 | 9.00 | 8,818,457.00 |
+    | 목요일 | 9.00 | 8,818,498.00 |
+    | 금요일 | 9.00 | 9,178,156.00 |
+    | 토요일 | 11.00 | 10,550,779.00 |
+
 
 ---
 
-### Problem 5. Quarterly sales and growth rate compared to the previous quarter
+
+### 5. Quarterly sales and growth rate compared to the previous quarter
+
 
 Find quarterly sales from 2022 to 2024 and growth rate (%) compared to the previous quarter.
 
-??? tip "Hint"
-    - Branch: `(CAST(SUBSTR(ordered_at,6,2) AS INTEGER) + 2) / 3`
-    - Refer to the previous quarter’s sales using the `LAG(revenue, 1)` window function.
-    - Growth rate = (current quarter - previous quarter) / previous quarter * 100
+
+**Hint 1:** - Branch: `(CAST(SUBSTR(ordered_at,6,2) AS INTEGER) + 2) / 3`
+- Refer to the previous quarter’s sales using the `LAG(revenue, 1)` window function.
+- Growth rate = (current quarter - previous quarter) / previous quarter * 100
+
+
 
 ??? success "Answer"
     ```sql
@@ -203,24 +260,34 @@ Find quarterly sales from 2022 to 2024 and growth rate (%) compared to the previ
     ORDER BY yq;
     ```
 
+
+    **Result** (top 7 of 12 rows)
+
     | yq | revenue | order_count | prev_quarter_revenue | qoq_growth_pct |
     |---|---|---|---|---|
-    | 2022-Q1 | 580000000 | 920 | NULL | NULL |
-    | 2022-Q2 | 550000000 | 870 | 580000000 | -5.2 |
-    | 2022-Q3 | 490000000 | 780 | 550000000 | -10.9 |
-    | 2022-Q4 | 680000000 | 1050 | 490000000 | 38.8 |
-    | ... | ... | ... | ... | ... |
+    | 2022-Q1 | 1,129,673,077.00 | 1080 | NULL | NULL |
+    | 2022-Q2 | 1,111,965,740.00 | 1133 | 1,129,673,077.00 | -1.60 |
+    | 2022-Q3 | 1,312,284,718.00 | 1246 | 1,111,965,740.00 | 18.00 |
+    | 2022-Q4 | 1,271,192,508.00 | 1359 | 1,312,284,718.00 | -3.10 |
+    | 2023-Q1 | 1,075,250,589.00 | 1083 | 1,271,192,508.00 | -15.40 |
+    | 2023-Q2 | 1,026,296,754.00 | 1102 | 1,075,250,589.00 | -4.60 |
+    | 2023-Q3 | 1,127,278,823.00 | 1094 | 1,026,296,754.00 | 9.80 |
+
 
 ---
 
-### Problem 6. Trend in sales proportion by payment method
+
+### 6. Trend in sales proportion by payment method
+
 
 Find the sales share (%) of each payment method (card, bank_transfer, kakao_pay, etc.) by month in 2024.
 
-??? tip "Hint"
-    - Classify payment method as `payments.method`
-    - Total monthly sales with window function `SUM(revenue) OVER (PARTITION BY year_month)`
-    - Proportion = Sales by payment method / Total monthly sales * 100
+
+**Hint 1:** - Classify payment method as `payments.method`
+- Total monthly sales with window function `SUM(revenue) OVER (PARTITION BY year_month)`
+- Proportion = Sales by payment method / Total monthly sales * 100
+
+
 
 ??? success "Answer"
     ```sql
@@ -245,23 +312,21 @@ Find the sales share (%) of each payment method (card, bank_transfer, kakao_pay,
     ORDER BY year_month, revenue DESC;
     ```
 
-    | year_month | method | revenue | method_pct |
-    |---|---|---|---|
-    | 2024-01 | card | 650000000 | 62.5 |
-    | 2024-01 | kakao_pay | 180000000 | 17.3 |
-    | 2024-01 | bank_transfer | 120000000 | 11.5 |
-    | ... | ... | ... | ... |
 
 ---
 
-### Problem 7. Top 3 products by category (Top-N per Group)
+
+### 7. Top 3 products by category (Top-N per Group)
+
 
 Select the top three sales products in each major category in 2024.
 
-??? tip "Hint"
-    - Count product sales by category in CTE
-    - `ROW_NUMBER() OVER (PARTITION BY category ORDER BY revenue DESC)` Ranking
-    - `WHERE rn <= 3` filter in outer query
+
+**Hint 1:** - Count product sales by category in CTE
+- `ROW_NUMBER() OVER (PARTITION BY category ORDER BY revenue DESC)` Ranking
+- `WHERE rn <= 3` filter in outer query
+
+
 
 ??? success "Answer"
     ```sql
@@ -292,22 +357,33 @@ Select the top three sales products in each major category in 2024.
     ORDER BY top_category, rn;
     ```
 
+
+    **Result** (top 7 of 53 rows)
+
     | top_category | rank | product_name | units_sold | revenue |
     |---|---|---|---|---|
-    | Computer | 1 | (Laptop A) | 120 | 360000000 |
-    | Computer | 2 | (Desktop B) | 85 | 255000000 |
-    | Computer | 3 | (Laptop C) | 78 | 234000000 |
-    | Peripherals | 1 | ... | ... | ... |
+    | CPU | 1 | AMD Ryzen 9 9900X | 239 | 80,232,300.00 |
+    | CPU | 2 | Intel Core Ultra 7 265K White | 386 | 65,697,200.00 |
+    | Case | 1 | be quiet! Light Base 900 | 215 | 23,054,800.00 |
+    | Case | 2 | Fractal Design Define 7 White | 108 | 22,464,000.00 |
+    | Case | 3 | CORSAIR iCUE 4000X | 196 | 22,324,400.00 |
+    | Cooling | 1 | NZXT Kraken Elite 240 RGB Silver | 174 | 33,876,500.00 |
+    | Cooling | 2 | Arctic Liquid Freezer III 240 | 198 | 19,522,800.00 |
+
 
 ---
 
-### Problem 8. Year-on-year (YoY) sales growth rate
+
+### 8. Year-on-year (YoY) sales growth rate
+
 
 Find the sales for each month in 2023 and 2024 and the growth rate (%) compared to the same month of the previous year.
 
-??? tip "Hint"
-    - `LAG(revenue, 12)` — See sales 12 months ago
-    - Or, after separating year + month from CTE, SELF JOIN the previous year of the same month
+
+**Hint 1:** - `LAG(revenue, 12)` — See sales 12 months ago
+- Or, after separating year + month from CTE, SELF JOIN the previous year of the same month
+
+
 
 ??? success "Answer"
     ```sql
@@ -335,24 +411,34 @@ Find the sales for each month in 2023 and 2024 and the growth rate (%) compared 
     ORDER BY cur.year_month;
     ```
 
+
+    **Result** (top 7 of 24 rows)
+
     | year_month | current_revenue | prev_year_revenue | yoy_growth_pct |
     |---|---|---|---|
-    | 2023-01 | 210000000 | 198000000 | 6.1 |
-    | 2023-02 | 195000000 | 175000000 | 11.4 |
-    | ... | ... | ... | ... |
-    | 2024-01 | 235000000 | 210000000 | 11.9 |
-    | ... | ... | ... | ... |
+    | 2023-01 | 270,083,587.00 | 387,797,263.00 | -30.40 |
+    | 2023-02 | 327,431,648.00 | 349,125,148.00 | -6.20 |
+    | 2023-03 | 477,735,354.00 | 392,750,666.00 | 21.60 |
+    | 2023-04 | 396,849,049.00 | 313,546,744.00 | 26.60 |
+    | 2023-05 | 349,749,072.00 | 445,361,972.00 | -21.50 |
+    | 2023-06 | 279,698,633.00 | 353,057,024.00 | -20.80 |
+    | 2023-07 | 312,983,148.00 | 418,258,615.00 | -25.20 |
+
 
 ---
 
-### Problem 9. Moving Average — 3-month moving average of sales
+
+### 9. Moving Average — 3-month moving average of sales
+
 
 Find the three-month moving average of monthly sales.
 Moving averages smooth out seasonal fluctuations when identifying trends.
 
-??? tip "Hint"
-    - `AVG(revenue) OVER (ORDER BY year_month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)`
-    - There is insufficient data in the first 2 months, so moving averages may not be accurate.
+
+**Hint 1:** - `AVG(revenue) OVER (ORDER BY year_month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)`
+- There is insufficient data in the first 2 months, so moving averages may not be accurate.
+
+
 
 ??? success "Answer"
     ```sql
@@ -380,25 +466,35 @@ Moving averages smooth out seasonal fluctuations when identifying trends.
     ORDER BY year_month;
     ```
 
+
+    **Result** (top 7 of 24 rows)
+
     | year_month | revenue | moving_avg_3m | moving_avg_6m |
     |---|---|---|---|
-    | 2023-01 | 210000000 | 210000000 | 210000000 |
-    | 2023-02 | 195000000 | 202500000 | 202500000 |
-    | 2023-03 | 220000000 | 208333333 | 208333333 |
-    | 2023-04 | 205000000 | 206666667 | 207500000 |
-    | ... | ... | ... | ... |
+    | 2023-01 | 270,083,587.00 | 270,083,587.00 | 270,083,587.00 |
+    | 2023-02 | 327,431,648.00 | 298,757,618.00 | 298,757,618.00 |
+    | 2023-03 | 477,735,354.00 | 358,416,863.00 | 358,416,863.00 |
+    | 2023-04 | 396,849,049.00 | 400,672,017.00 | 368,024,910.00 |
+    | 2023-05 | 349,749,072.00 | 408,111,158.00 | 364,369,742.00 |
+    | 2023-06 | 279,698,633.00 | 342,098,918.00 | 350,257,891.00 |
+    | 2023-07 | 312,983,148.00 | 314,143,618.00 | 357,407,817.00 |
+
 
 ---
 
-### Problem 10. ABC Analysis — Cumulative sales ratio by product
+
+### 10. ABC Analysis — Cumulative sales ratio by product
+
 
 Sort sales by product in descending order in 2024, and assign A/B/C grades based on cumulative sales ratio.
 (A: Top 70%, B: 70~90%, C: Rest)
 
-??? tip "Hint"
-    - Cumulative ratio: `SUM(revenue) OVER (ORDER BY revenue DESC) / SUM(revenue) OVER ()`
-    - Classification into A/B/C grades using CASE statement
-    - A variation of Pareto's law (80:20)
+
+**Hint 1:** - Cumulative ratio: `SUM(revenue) OVER (ORDER BY revenue DESC) / SUM(revenue) OVER ()`
+- Classification into A/B/C grades using CASE statement
+- A variation of Pareto's law (80:20)
+
+
 
 ??? success "Answer"
     ```sql
@@ -436,23 +532,34 @@ Sort sales by product in descending order in 2024, and assign A/B/C grades based
     LIMIT 30;
     ```
 
+
+    **Result** (top 7 of 30 rows)
+
     | product_name | revenue | cum_pct | abc_class |
     |---|---|---|---|
-    | (Premium Laptop) | 360000000 | 3.2 | A |
-    | (Popular Desktop) | 280000000 | 5.7 | A |
-    | ... | ... | ... | ... |
-    | (Budget Mouse) | 5000000 | 91.2 | C |
+    | Razer Blade 18 Black | 165,417,800.00 | 3.20 | A |
+    | Razer Blade 16 Silver | 137,007,300.00 | 5.90 | A |
+    | MacBook Air 15 M3 Silver | 126,065,300.00 | 8.30 | A |
+    | ASUS Dual RTX 4060 Ti Black | 106,992,000.00 | 10.40 | A |
+    | ASUS Dual RTX 5070 Ti Silver | 104,558,400.00 | 12.40 | A |
+    | ASUS ROG Swift PG32UCDM Silver | 90,734,400.00 | 14.20 | A |
+    | ASUS ROG Strix Scar 16 | 85,837,500.00 | 15.80 | A |
+
 
 ---
 
-### Problem 11. Comparison of sales from new customers vs. repeat customers
+
+### 11. Comparison of sales from new customers vs. repeat customers
+
 
 Separate the number of orders and sales from new customers (first order that month) and repeat customers by month in 2024.
 
-??? tip "Hint"
-    - Month of first order for each customer: obtained as `MIN(ordered_at)`
-    - Order month = “New” if it is the month of first order, otherwise “Repurchase”
-    - Step by step treatment with CTE
+
+**Hint 1:** - Month of first order for each customer: obtained as `MIN(ordered_at)`
+- Order month = “New” if it is the month of first order, otherwise “Repurchase”
+- Step by step treatment with CTE
+
+
 
 ??? success "Answer"
     ```sql
@@ -468,8 +575,8 @@ Separate the number of orders and sales from new customers (first order that mon
         SELECT
             SUBSTR(o.ordered_at, 1, 7) AS year_month,
             CASE
-                WHEN SUBSTR(o.ordered_at, 1, 7) = fo.first_month THEN 'New'
-                ELSE 'Repeat'
+                WHEN SUBSTR(o.ordered_at, 1, 7) = fo.first_month THEN '신규'
+                ELSE '재구매'
             END AS customer_type,
             o.total_amount
         FROM orders AS o
@@ -487,24 +594,34 @@ Separate the number of orders and sales from new customers (first order that mon
     ORDER BY year_month, customer_type;
     ```
 
+
+    **Result** (top 7 of 24 rows)
+
     | year_month | customer_type | order_count | revenue |
     |---|---|---|---|
-    | 2024-01 | New | 85 | 42000000 |
-    | 2024-01 | Repeat | 350 | 193000000 |
-    | 2024-02 | New | 72 | 38000000 |
-    | 2024-02 | Repeat | 320 | 180000000 |
-    | ... | ... | ... | ... |
+    | 2024-01 | 신규 | 32 | 31,865,130.00 |
+    | 2024-01 | 재구매 | 282 | 257,043,190.00 |
+    | 2024-02 | 신규 | 30 | 8,770,172.00 |
+    | 2024-02 | 재구매 | 386 | 394,357,577.00 |
+    | 2024-03 | 신규 | 50 | 28,455,371.00 |
+    | 2024-03 | 재구매 | 505 | 491,389,131.00 |
+    | 2024-04 | 신규 | 34 | 25,112,310.00 |
+
 
 ---
 
-### Problem 12. Trend of average unit price by customer level
+
+### 12. Trend of average unit price by customer level
+
 
 Find the average order amount by customer level (BRONZE/SILVER/GOLD/VIP) by month in 2024.
 
-??? tip "Hint"
-    - Graded as `customers.grade`
-    - `AVG(total_amount)` Aggregation by group
-    - GROUP BY with two dimensions: month + grade
+
+**Hint 1:** - Graded as `customers.grade`
+- `AVG(total_amount)` Aggregation by group
+- GROUP BY with two dimensions: month + grade
+
+
 
 ??? success "Answer"
     ```sql
@@ -527,25 +644,35 @@ Find the average order amount by customer level (BRONZE/SILVER/GOLD/VIP) by mont
         END;
     ```
 
+
+    **Result** (top 7 of 48 rows)
+
     | year_month | grade | order_count | avg_order_value |
     |---|---|---|---|
-    | 2024-01 | VIP | 45 | 1200000 |
-    | 2024-01 | GOLD | 85 | 850000 |
-    | 2024-01 | SILVER | 120 | 620000 |
-    | 2024-01 | BRONZE | 185 | 380000 |
-    | ... | ... | ... | ... |
+    | 2024-01 | VIP | 124 | 834,949.00 |
+    | 2024-01 | GOLD | 73 | 1,202,930.00 |
+    | 2024-01 | SILVER | 56 | 904,820.00 |
+    | 2024-01 | BRONZE | 61 | 768,702.00 |
+    | 2024-02 | VIP | 178 | 926,721.00 |
+    | 2024-02 | GOLD | 97 | 926,946.00 |
+    | 2024-02 | SILVER | 40 | 974,420.00 |
+
 
 ---
 
-### Problem 13. Delivery time analysis by shipping company
+
+### 13. Delivery time analysis by shipping company
+
 
 Find the average delivery days, minimum/maximum lead days, and number of deliveries by carrier in 2024.
 Only items that have been delivered are eligible.
 
-??? tip "Hint"
-    - Delivery time: `JULIANDAY(delivered_at) - JULIANDAY(shipped_at)`
-    - `status = 'delivered'` in table `shipping`
-    - Only if both `shipped_at` and `delivered_at` are NOT NULL.
+
+**Hint 1:** - Delivery time: `JULIANDAY(delivered_at) - JULIANDAY(shipped_at)`
+- `status = 'delivered'` in table `shipping`
+- Only if both `shipped_at` and `delivered_at` are NOT NULL.
+
+
 
 ??? success "Answer"
     ```sql
@@ -569,23 +696,33 @@ Only items that have been delivered are eligible.
     ORDER BY avg_days;
     ```
 
+
+    **Result** (5 rows)
+
     | carrier | delivery_count | avg_days | min_days | max_days | within_2days_pct |
     |---|---|---|---|---|---|
-    | CJ Logistics | 3200 | 1.8 | 0.5 | 5.2 | 68.5 |
-    | Hanjin Express | 2800 | 2.1 | 0.5 | 6.0 | 55.2 |
-    | ... | ... | ... | ... | ... | ... |
+    | OnTrac | 556 | 2.40 | 1.00 | 4.00 | 53.80 |
+    | UPS | 1349 | 2.50 | 1.00 | 4.00 | 52.50 |
+    | USPS | 1068 | 2.50 | 1.00 | 4.00 | 50.00 |
+    | DHL | 778 | 2.60 | 1.00 | 4.00 | 46.10 |
+    | FedEx | 1569 | 2.60 | 1.00 | 4.00 | 47.20 |
+
 
 ---
 
-### Problem 14. Sales impact by discount rate section
+
+### 14. Sales impact by discount rate section
+
 
 Divide the discount rate for orders in 2024 (discount_amount / (total_amount + discount_amount)) into sections,
 Analyze the number of orders, average order amount, and total sales for each segment.
 
-??? tip "Hint"
-    - Discount rate = `discount_amount / (total_amount + discount_amount) * 100`
-    - Categorize into 0%, 1~5%, 6~10%, 11~20%, 20%+ sections using CASE statement
-    - If `discount_amount = 0`, no discount
+
+**Hint 1:** - Discount rate = `discount_amount / (total_amount + discount_amount) * 100`
+- Categorize into 0%, 1~5%, 6~10%, 11~20%, 20%+ sections using CASE statement
+- If `discount_amount = 0`, no discount
+
+
 
 ??? success "Answer"
     ```sql
@@ -604,22 +741,22 @@ Analyze the number of orders, average order amount, and total sales for each seg
     )
     SELECT
         CASE
-            WHEN discount_pct = 0    THEN 'No discount'
+            WHEN discount_pct = 0    THEN '할인 없음'
             WHEN discount_pct <= 5   THEN '1~5%'
             WHEN discount_pct <= 10  THEN '6~10%'
             WHEN discount_pct <= 20  THEN '11~20%'
-            ELSE 'Over 20%'
+            ELSE '20% 초과'
         END AS discount_range,
         COUNT(*)                    AS order_count,
         ROUND(AVG(total_amount))    AS avg_order_value,
         ROUND(SUM(total_amount))    AS total_revenue
     FROM order_discount
     GROUP BY CASE
-        WHEN discount_pct = 0    THEN 'No discount'
+        WHEN discount_pct = 0    THEN '할인 없음'
         WHEN discount_pct <= 5   THEN '1~5%'
         WHEN discount_pct <= 10  THEN '6~10%'
         WHEN discount_pct <= 20  THEN '11~20%'
-        ELSE 'Over 20%'
+        ELSE '20% 초과'
     END
     ORDER BY
         CASE
@@ -631,26 +768,33 @@ Analyze the number of orders, average order amount, and total sales for each seg
         END;
     ```
 
+
+    **Result** (4 rows)
+
     | discount_range | order_count | avg_order_value | total_revenue |
     |---|---|---|---|
-    | No discount | 8500 | 580000 | 4930000000 |
-    | 1~5% | 2100 | 620000 | 1302000000 |
-    | 6~10% | 1500 | 750000 | 1125000000 |
-    | 11~20% | 800 | 900000 | 720000000 |
-    | Over 20% | 200 | 1100000 | 220000000 |
+    | 할인 없음 | 4152 | 815,975.00 | 3,387,926,737.00 |
+    | 1~5% | 811 | 1,783,303.00 | 1,446,258,687.00 |
+    | 6~10% | 228 | 848,082.00 | 193,362,738.00 |
+    | 11~20% | 129 | 673,607.00 | 86,895,358.00 |
+
 
 ---
 
-### Problem 15. Promotion ROI analysis
+
+### 15. Promotion ROI analysis
+
 
 Analyze the sales effect (ROI) of each promotion compared to the input discount amount.
 During the promotion period, sales and discount amounts for promotional products are counted.
 
-??? tip "Hint"
-    - Identify target product with `promotions` + `promotion_products`
-    - Promotion period: `started_at` ~ `ended_at`
-    - In `order_items`, sales for the relevant period + the relevant product are tallied.
-    - ROI = (Sales - Discount Total) / Discount Total * 100
+
+**Hint 1:** - Identify target product with `promotions` + `promotion_products`
+- Promotion period: `started_at` ~ `ended_at`
+- In `order_items`, sales for the relevant period + the relevant product are tallied.
+- ROI = (Sales - Discount Total) / Discount Total * 100
+
+
 
 ??? success "Answer"
     ```sql
@@ -690,22 +834,34 @@ During the promotion period, sales and discount amounts for promotional products
     ORDER BY roi_pct DESC;
     ```
 
+
+    **Result** (top 7 of 105 rows)
+
     | promo_name | promo_type | discount_info | order_count | gross_revenue | total_discount | net_revenue | roi_pct |
     |---|---|---|---|---|---|---|---|
-    | Summer Sale | seasonal | percent 15 | 450 | 320000000 | 48000000 | 272000000 | 566.7 |
-    | Year-end Special | flash | fixed 50000 | 280 | 250000000 | 14000000 | 236000000 | 1685.7 |
-    | ... | ... | ... | ... | ... | ... | ... | ... |
+    | Gaming Gear Festa 2023 | category | percent 18.0 | 25 | 16,859,400.00 | 15,600.00 | 16,843,800.00 | 107,973.10 |
+    | Black Friday 2022 | seasonal | percent 25.0 | 25 | 17,059,700.00 | 18,500.00 | 17,041,200.00 | 92,114.60 |
+    | Gaming Gear Festa 2024 | category | percent 18.0 | 30 | 18,118,000.00 | 27,600.00 | 18,090,400.00 | 65,544.90 |
+    | Gaming Gear Festa 2020 | category | percent 18.0 | 33 | 12,592,900.00 | 19,500.00 | 12,573,400.00 | 64,479.00 |
+    | Black Friday 2020 | seasonal | percent 25.0 | 35 | 18,172,900.00 | 31,300.00 | 18,141,600.00 | 57,960.40 |
+    | Gaming Gear Festa 2016 | category | percent 18.0 | 5 | 5,221,100.00 | 11,300.00 | 5,209,800.00 | 46,104.40 |
+    | New Year Sale 2021 | seasonal | percent 10.0 | 35 | 33,039,800.00 | 76,200.00 | 32,963,600.00 | 43,259.30 |
+
 
 ---
 
-### Problem 16. Shopping Cart → Purchase Conversion Rate
+
+### 16. Shopping Cart → Purchase Conversion Rate
+
 
 Find the percentage of products in your shopping cart that were converted into actual purchases by category.
 
-??? tip "Hint"
-    - Number of products contained in `cart_items` vs. number of identical products actually ordered by the same customer
-    - `carts` + `cart_items` + `order_items` + `orders` JOIN
-    - Conversion rate = Number of cart items purchased / Total number of cart items * 100
+
+**Hint 1:** - Number of products contained in `cart_items` vs. number of identical products actually ordered by the same customer
+- `carts` + `cart_items` + `order_items` + `orders` JOIN
+- Conversion rate = Number of cart items purchased / Total number of cart items * 100
+
+
 
 ??? success "Answer"
     ```sql
@@ -741,23 +897,35 @@ Find the percentage of products in your shopping cart that were converted into a
     ORDER BY conversion_rate_pct DESC;
     ```
 
+
+    **Result** (top 7 of 38 rows)
+
     | category | cart_items_total | converted | conversion_rate_pct |
     |---|---|---|---|
-    | (Popular Category) | 1200 | 840 | 70.0 |
-    | (General Category) | 800 | 320 | 40.0 |
-    | ... | ... | ... | ... |
+    | Gaming | 332 | 49 | 14.80 |
+    | Case | 325 | 37 | 11.40 |
+    | SSD | 201 | 22 | 10.90 |
+    | DDR4 | 197 | 21 | 10.70 |
+    | Intel | 158 | 14 | 8.90 |
+    | Wireless | 205 | 18 | 8.80 |
+    | Speakers/Headsets | 398 | 34 | 8.50 |
+
 
 ---
 
-### Problem 17. Simultaneous purchase patterns (shopping cart analysis)
+
+### 17. Simultaneous purchase patterns (shopping cart analysis)
+
 
 Find pairs of products purchased together in the same order.
 Shows only product pairs with more than 5 simultaneous purchases.
 
-??? tip "Hint"
-    - Self-join `order_items` to create different product pairs of the same order
-    - Deduplication: `oi1.product_id < oi2.product_id`
-    - Count the number of simultaneous purchases by `GROUP BY` product pair
+
+**Hint 1:** - Self-join `order_items` to create different product pairs of the same order
+- Deduplication: `oi1.product_id < oi2.product_id`
+- Count the number of simultaneous purchases by `GROUP BY` product pair
+
+
 
 ??? success "Answer"
     ```sql
@@ -779,23 +947,35 @@ Shows only product pairs with more than 5 simultaneous purchases.
     LIMIT 20;
     ```
 
+
+    **Result** (top 7 of 20 rows)
+
     | product_a | product_b | co_purchase_count |
     |---|---|---|
-    | (Keyboard A) | (Mouse B) | 25 |
-    | (SSD C) | (Memory D) | 18 |
-    | ... | ... | ... |
+    | AMD Ryzen 9 9900X | Crucial T700 2TB Silver | 430 |
+    | AMD Ryzen 9 9900X | SK hynix Platinum P41 2TB Silver | 329 |
+    | be quiet! Light Base 900 | Crucial T700 2TB Silver | 294 |
+    | Intel Core Ultra 5 245KF | Crucial T700 2TB Silver | 282 |
+    | be quiet! Light Base 900 | AMD Ryzen 9 9900X | 249 |
+    | Seasonic VERTEX GX-1200 Black | Crucial T700 2TB Silver | 221 |
+    | Samsung DDR5 32GB PC5-38400 | Crucial T700 2TB Silver | 217 |
+
 
 ---
 
-### Problem 18. Correlation between review ratings and sales
+
+### 18. Correlation between review ratings and sales
+
 
 Analyze the relationship between average review rating and sales for each product.
 Calculate average sales by rating range (1~2, 2~3, 3~4, 4~5).
 
-??? tip "Hint"
-    - First calculate the average rating and sales for each product
-    - Classification of rating sections using CASE statement
-    - Excluding products without reviews
+
+**Hint 1:** - First calculate the average rating and sales for each product
+- Classification of rating sections using CASE statement
+- Excluding products without reviews
+
+
 
 ??? success "Answer"
     ```sql
@@ -835,24 +1015,30 @@ Calculate average sales by rating range (1~2, 2~3, 3~4, 4~5).
     ORDER BY rating_range;
     ```
 
+
+    **Result** (2 rows)
+
     | rating_range | product_count | avg_revenue | avg_reviews | avg_rating_in_range |
     |---|---|---|---|---|
-    | 1.0~1.9 | 5 | 12000000 | 8 | 1.65 |
-    | 2.0~2.9 | 15 | 28000000 | 12 | 2.55 |
-    | 3.0~3.9 | 80 | 45000000 | 18 | 3.52 |
-    | 4.0~5.0 | 120 | 62000000 | 25 | 4.35 |
+    | 3.0~3.9 | 165 | 3,987,852,901.00 | 33.00 | 3.73 |
+    | 4.0~5.0 | 99 | 4,123,862,055.00 | 30.00 | 4.15 |
+
 
 ---
 
-### Problem 19. Analysis of point usage effects
+
+### 19. Analysis of point usage effects
+
 
 Compare the average order amount and repurchase rate for orders that used points and those that did not.
 (As of 2024)
 
-??? tip "Hint"
-    - If `orders.point_used > 0`, order using points
-    - Repurchase rate: The percentage of customers in the group who ordered more than twice
-    - First aggregate order characteristics for each customer using CTE
+
+**Hint 1:** - If `orders.point_used > 0`, order using points
+- Repurchase rate: The percentage of customers in the group who ordered more than twice
+- First aggregate order characteristics for each customer using CTE
+
+
 
 ??? success "Answer"
     ```sql
@@ -860,7 +1046,7 @@ Compare the average order amount and repurchase rate for orders that used points
         SELECT
             customer_id,
             total_amount,
-            CASE WHEN point_used > 0 THEN 'Points used' ELSE 'Not used' END AS point_type
+            CASE WHEN point_used > 0 THEN '포인트 사용' ELSE '미사용' END AS point_type
         FROM orders
         WHERE ordered_at >= '2024-01-01' AND ordered_at < '2025-01-01'
           AND status NOT IN ('cancelled', 'returned', 'return_requested')
@@ -884,22 +1070,30 @@ Compare the average order amount and repurchase rate for orders that used points
     GROUP BY point_type;
     ```
 
+
+    **Result** (2 rows)
+
     | point_type | customer_count | avg_order_value | repeat_rate_pct |
     |---|---|---|---|
-    | Points used | 2800 | 720000 | 65.3 |
-    | Not used | 3500 | 550000 | 42.1 |
+    | 미사용 | 1607 | 895,789.00 | 57.70 |
+    | 포인트 사용 | 396 | 1,033,110.00 | 18.70 |
+
 
 ---
 
-### Problem 20. Comprehensive management dashboard
+
+### 20. Comprehensive management dashboard
+
 
 Create a comprehensive 2024 management dashboard for CEOs with a single query.
 Includes total sales, number of orders, number of customers, average unit price, return rate, average delivery date, and average review rating.
 
-??? tip "Hint"
-    - Calculate each indicator individually using subquery or CTE and then combine them
-    - Combine single rows with `CROSS JOIN` or scalar subqueries
-    - Return rate = Number of returned orders / Total number of orders
+
+**Hint 1:** - Calculate each indicator individually using subquery or CTE and then combine them
+- Combine single rows with `CROSS JOIN` or scalar subqueries
+- Return rate = Number of returned orders / Total number of orders
+
+
 
 ??? success "Answer"
     ```sql
@@ -955,6 +1149,12 @@ Includes total sales, number of orders, number of customers, average unit price,
     CROSS JOIN review_stat AS rv;
     ```
 
+
+    **Result** (1 rows)
+
     | total_revenue | total_orders | unique_customers | avg_order_value | return_rate_pct | avg_delivery_days | avg_rating | review_count |
     |---|---|---|---|---|---|---|---|
-    | 12500000000 | 18500 | 5200 | 675676 | 8.5 | 2.1 | 4.12 | 4800 |
+    | 5,114,443,520.00 | 5320 | 1669 | 961,362.00 | 2.70 | 2.50 | 3.91 | 1267 |
+
+
+---

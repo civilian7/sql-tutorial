@@ -1868,6 +1868,48 @@ _DATE_COLUMNS = {
 }
 
 
+COMMENTS_SQL = """\n-- =============================================
+-- Table & Column Comments - MySQL 8.0+
+-- =============================================
+
+USE ecommerce;
+
+-- Table comments
+ALTER TABLE customers COMMENT = '고객 마스터. 등급(BRONZE/SILVER/GOLD/VIP), 적립금, 가입채널, 활성상태 관리';
+ALTER TABLE customer_addresses COMMENT = '고객 배송지. 고객당 복수 주소, 기본 배송지 지정';
+ALTER TABLE categories COMMENT = '상품 카테고리. 대/중/소 3단계 계층(self-referencing FK)';
+ALTER TABLE suppliers COMMENT = '공급업체(입점 판매자). 사업자 정보, 담당자 연락처 관리';
+ALTER TABLE products COMMENT = '상품 마스터. SKU, 판매가/원가, 재고, 브랜드/모델, 후속상품 관리';
+ALTER TABLE product_images COMMENT = '상품 이미지. 상품당 복수 이미지(메인/상세/라이프스타일 등)';
+ALTER TABLE product_prices COMMENT = '상품 가격 이력. 가격 변경 시 트리거 자동 기록';
+ALTER TABLE orders COMMENT = '주문. 주문번호(ORD-YYYYMMDD-NNNNN), 상태 흐름(pending→delivered/cancelled)';
+ALTER TABLE order_items COMMENT = '주문 상세 항목. 주문 시점 단가/수량, 아이템별 할인';
+ALTER TABLE payments COMMENT = '결제. 카드/계좌이체/간편결제, PG 거래번호, 현금영수증';
+ALTER TABLE shipping COMMENT = '배송. 택배사, 운송장번호, 배송 상태 추적';
+ALTER TABLE returns COMMENT = '반품/교환. 사유, 검수 결과, 환불 상태, 수거 택배 정보';
+ALTER TABLE reviews COMMENT = '상품 리뷰. 1~5점 별점, 구매 인증 여부';
+ALTER TABLE carts COMMENT = '장바구니. active/converted/abandoned 상태 관리';
+ALTER TABLE cart_items COMMENT = '장바구니 항목. 담긴 상품과 수량';
+ALTER TABLE coupons COMMENT = '쿠폰 정의. 정률/정액 할인, 사용 한도, 유효기간';
+ALTER TABLE coupon_usage COMMENT = '쿠폰 사용 이력. 고객-주문-쿠폰 매핑';
+ALTER TABLE complaints COMMENT = '고객 문의/불만. 카테고리별 분류, 우선순위, CS 담당자 배정, 보상 관리';
+ALTER TABLE inventory_transactions COMMENT = '재고 변동 이력. 입고/출고/반품/조정 트랜잭션';
+ALTER TABLE staff COMMENT = '내부 직원. 부서(sales/CS/logistics 등), 역할(admin/manager/staff), 조직도';
+ALTER TABLE wishlists COMMENT = '위시리스트. 고객-상품 UNIQUE, 가격 하락 알림 설정';
+ALTER TABLE calendar COMMENT = '날짜 차원 테이블. 요일, 공휴일, 분기 등 날짜 속성';
+ALTER TABLE customer_grade_history COMMENT = '고객 등급 변경 이력(SCD Type 2). 변경 전후 등급, 변경 사유';
+ALTER TABLE point_transactions COMMENT = '포인트 적립/사용/소멸 원장. 거래 유형별 증감, 잔액 추적';
+ALTER TABLE product_qna COMMENT = '상품 Q&A. 질문-답변 자기참조 스레드';
+ALTER TABLE product_tags COMMENT = '상품-태그 연결(M:N). 복합 PK';
+ALTER TABLE product_views COMMENT = '상품 조회 로그. 유입경로, 기기유형, 체류시간 기록';
+ALTER TABLE promotion_products COMMENT = '프로모션 대상 상품. 프로모션-상품 연결(M:N), 특가 설정';
+ALTER TABLE promotions COMMENT = '프로모션/세일 이벤트. 할인율/금액, 기간, 대상 상품';
+ALTER TABLE tags COMMENT = '상품 태그 마스터. 태그명, 분류(feature/use_case/target/spec)';
+
+-- Note: MySQL column comments require ALTER TABLE MODIFY with full column definition.
+-- Table-level comments are sufficient for documentation purposes.
+"""
+
 class MySQLExporter:
     """Export generated data to MySQL-compatible SQL files."""
 
@@ -1920,6 +1962,11 @@ class MySQLExporter:
         # Write stored procedures
         with open(proc_path, "w", encoding="utf-8") as f:
             f.write(PROCEDURES_SQL)
+
+        # Write comments
+        comments_path = os.path.join(self.output_dir, "comments.sql")
+        with open(comments_path, "w", encoding="utf-8") as f:
+            f.write(COMMENTS_SQL)
 
         return self.output_dir
 

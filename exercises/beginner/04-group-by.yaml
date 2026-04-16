@@ -1,0 +1,891 @@
+metadata:
+  id: beginner-04-group-by
+  title: "그룹화와 필터"
+  title_en: "Grouping and Filtering"
+  difficulty: beginner
+  concepts: [GROUP BY, HAVING, Aggregate functions, Multi-column grouping]
+  tables: [products, customers, orders, reviews, payments, complaints]
+  prerequisites: []
+  estimated_minutes: 30
+  default_level: 1
+  default_type: "Aggregate"
+  description: "products, customers, orders, reviews, payments, complaints 테이블을 사용합니다."
+  description_en: "Uses products, customers, orders, reviews, payments, complaints tables."
+
+problems:
+  - id: b04g-01
+    level: 1
+    type: "Aggregate"
+    question: |
+      브랜드(brand)별로 등록된 상품이 몇 개인지 조회하세요. 상품 수가 많은 순으로 정렬합니다.
+    question_en: |
+      Query the number of registered products per brand. Sort by product count in descending order.
+    reference_sql:
+      common: |
+        SELECT brand, COUNT(*) AS product_count
+        FROM products
+        GROUP BY brand
+        ORDER BY product_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY brand와 COUNT(*)를 사용하세요"
+        en: "Use GROUP BY brand and COUNT(*)"
+    rubric:
+      ko: "GROUP BY brand와 COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY brand and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, ORDER BY, products]
+
+  - id: b04g-02
+    level: 1
+    type: "Aggregate"
+    question: |
+      고객 등급(grade)별 고객 수를 조회하세요.
+    question_en: |
+      Query the number of customers per grade (tier).
+    reference_sql:
+      common: |
+        SELECT grade, COUNT(*) AS customer_count
+        FROM customers
+        GROUP BY grade
+        ORDER BY customer_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY grade와 COUNT(*)를 사용하세요"
+        en: "Use GROUP BY grade and COUNT(*)"
+    rubric:
+      ko: "GROUP BY grade와 COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY grade and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, customers]
+
+  - id: b04g-03
+    level: 1
+    type: "Aggregate"
+    question: |
+      주문 상태(status)별로 주문 건수와 총 매출(total_amount 합계)을 조회하세요.
+    question_en: |
+      Query the number of orders and total revenue (sum of total_amount) per order status.
+    reference_sql:
+      common: |
+        SELECT
+            status,
+            COUNT(*) AS order_count,
+            ROUND(SUM(total_amount), 0) AS total_revenue
+        FROM orders
+        GROUP BY status
+        ORDER BY total_revenue DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY status, COUNT(*), SUM(total_amount)를 함께 사용하세요"
+        en: "Use GROUP BY status, COUNT(*), and SUM(total_amount) together"
+    rubric:
+      ko: "GROUP BY status와 COUNT, SUM을 사용해야 함"
+      en: "Must use GROUP BY status with COUNT and SUM"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, SUM, ROUND, orders]
+
+  - id: b04g-04
+    level: 1
+    type: "Aggregate"
+    question: |
+      별점(rating) 1~5점별로 리뷰가 몇 건인지 조회하세요. 별점순으로 정렬합니다.
+    question_en: |
+      Query how many reviews exist for each rating (1-5). Sort by rating.
+    reference_sql:
+      common: |
+        SELECT rating, COUNT(*) AS review_count
+        FROM reviews
+        GROUP BY rating
+        ORDER BY rating;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY rating과 COUNT(*)를 사용하세요"
+        en: "Use GROUP BY rating and COUNT(*)"
+    rubric:
+      ko: "GROUP BY rating과 COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY rating and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, reviews]
+
+  - id: b04g-05
+    level: 1
+    type: "Aggregate"
+    question: |
+      결제 수단(method)별로 결제 건수와 총 금액(amount 합계)을 조회하세요. 총 금액이 큰 순으로 정렬합니다.
+    question_en: |
+      Query the number of payments and total amount (sum of amount) per payment method. Sort by total amount in descending order.
+    reference_sql:
+      common: |
+        SELECT
+            method,
+            COUNT(*) AS payment_count,
+            ROUND(SUM(amount), 0) AS total_amount
+        FROM payments
+        GROUP BY method
+        ORDER BY total_amount DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY method와 SUM(amount)를 사용하세요"
+        en: "Use GROUP BY method and SUM(amount)"
+    rubric:
+      ko: "GROUP BY method와 COUNT, SUM을 사용해야 함"
+      en: "Must use GROUP BY method with COUNT and SUM"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, SUM, payments]
+
+  - id: b04g-06
+    level: 1
+    type: "Aggregate"
+    question: |
+      불만 접수 채널(channel)별로 접수 건수를 조회하세요. 건수가 많은 순으로 정렬합니다.
+    question_en: |
+      Query the number of complaints per submission channel. Sort by count in descending order.
+    reference_sql:
+      common: |
+        SELECT channel, COUNT(*) AS complaint_count
+        FROM complaints
+        GROUP BY channel
+        ORDER BY complaint_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "complaints 테이블의 channel 컬럼을 GROUP BY로 그룹화하세요"
+        en: "Group the channel column of the complaints table using GROUP BY"
+    rubric:
+      ko: "GROUP BY channel과 COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY channel and COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, complaints]
+
+  - id: b04g-07
+    level: 1
+    type: "Aggregate"
+    question: |
+      가입 경로(acquisition_channel)별로 고객 수와 평균 포인트 잔액(point_balance)을 조회하세요.
+    question_en: |
+      Query the number of customers and average point balance (point_balance) per acquisition channel (acquisition_channel).
+    reference_sql:
+      common: |
+        SELECT
+            acquisition_channel,
+            COUNT(*) AS customer_count,
+            ROUND(AVG(point_balance), 0) AS avg_points
+        FROM customers
+        GROUP BY acquisition_channel
+        ORDER BY avg_points DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY acquisition_channel과 AVG(point_balance)를 사용하세요. acquisition_channel이 NULL인 경우도 하나의 그룹으로 표시됩니다"
+        en: "Use GROUP BY acquisition_channel and AVG(point_balance). Cases where acquisition_channel is NULL will appear as a separate group"
+    rubric:
+      ko: "GROUP BY acquisition_channel과 COUNT, AVG를 사용해야 함"
+      en: "Must use GROUP BY acquisition_channel with COUNT and AVG"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, AVG, ROUND, customers]
+
+  - id: b04g-08
+    level: 2
+    type: "Aggregate"
+    question: |
+      주문일(ordered_at)에서 연도를 추출하여 연도별 주문 건수와 총 매출을 조회하세요.
+    question_en: |
+      Extract the year from the order date (ordered_at) and query the number of orders and total revenue per year.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(ordered_at, 1, 4) AS year,
+            COUNT(*) AS order_count,
+            ROUND(SUM(total_amount), 0) AS total_revenue
+        FROM orders
+        GROUP BY SUBSTR(ordered_at, 1, 4)
+        ORDER BY year;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SUBSTR(ordered_at, 1, 4)로 연도를 추출하고 GROUP BY로 그룹화하세요"
+        en: "Extract the year with SUBSTR(ordered_at, 1, 4) and group with GROUP BY"
+    rubric:
+      ko: "SUBSTR로 연도 추출과 GROUP BY를 사용해야 함"
+      en: "Must use SUBSTR for year extraction and GROUP BY"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, SUM, SUBSTR, orders]
+
+  - id: b04g-09
+    level: 2
+    type: "Aggregate"
+    question: |
+      브랜드(brand)별로 평균 판매 가격(price)과 평균 원가(cost_price)를 조회하세요. 평균 가격이 높은 순으로 정렬합니다.
+    question_en: |
+      Query the average selling price (price) and average cost (cost_price) per brand. Sort by average price in descending order.
+    reference_sql:
+      common: |
+        SELECT
+            brand,
+            ROUND(AVG(price), 0) AS avg_price,
+            ROUND(AVG(cost_price), 0) AS avg_cost
+        FROM products
+        GROUP BY brand
+        ORDER BY avg_price DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY brand와 AVG(price), AVG(cost_price)를 함께 사용하세요"
+        en: "Use GROUP BY brand with AVG(price) and AVG(cost_price) together"
+    rubric:
+      ko: "GROUP BY brand와 AVG를 사용해야 함"
+      en: "Must use GROUP BY brand and AVG"
+    max_score: 10
+    tags: [SELECT, GROUP BY, AVG, ROUND, products]
+
+  - id: b04g-10
+    level: 2
+    type: "Aggregate"
+    question: |
+      불만 카테고리(category)별로 접수 건수와 평균 응대 횟수(response_count)를 조회하세요.
+    question_en: |
+      Query the number of complaints and average response count (response_count) per complaint category.
+    reference_sql:
+      common: |
+        SELECT
+            category,
+            COUNT(*) AS complaint_count,
+            ROUND(AVG(response_count), 1) AS avg_responses
+        FROM complaints
+        GROUP BY category
+        ORDER BY complaint_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY category와 AVG(response_count)를 사용하세요"
+        en: "Use GROUP BY category and AVG(response_count)"
+    rubric:
+      ko: "GROUP BY category와 COUNT, AVG를 사용해야 함"
+      en: "Must use GROUP BY category with COUNT and AVG"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, AVG, complaints]
+
+  - id: b04g-11
+    level: 2
+    type: "Aggregate"
+    question: |
+      브랜드별 상품 수를 구한 후, 상품이 10개 이상 등록된 브랜드만 조회하세요.
+    question_en: |
+      Calculate the product count per brand, then query only brands with 10 or more registered products.
+    reference_sql:
+      common: |
+        SELECT brand, COUNT(*) AS product_count
+        FROM products
+        GROUP BY brand
+        HAVING COUNT(*) >= 10
+        ORDER BY product_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY 이후 그룹을 필터링할 때는 WHERE가 아니라 HAVING을 사용합니다"
+        en: "To filter groups after GROUP BY, use HAVING instead of WHERE"
+    rubric:
+      ko: "GROUP BY와 HAVING COUNT(*) >= 10을 사용해야 함"
+      en: "Must use GROUP BY and HAVING COUNT(*) >= 10"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, COUNT, products]
+
+  - id: b04g-12
+    level: 2
+    type: "Aggregate"
+    question: |
+      주문 상태(status)별 평균 주문 금액을 구하고, 평균이 300,000원 이상인 상태만 조회하세요.
+    question_en: |
+      Calculate the average order amount per order status, then query only statuses with an average of 300,000 or more.
+    reference_sql:
+      common: |
+        SELECT
+            status,
+            COUNT(*) AS order_count,
+            ROUND(AVG(total_amount), 0) AS avg_amount
+        FROM orders
+        GROUP BY status
+        HAVING AVG(total_amount) >= 300000
+        ORDER BY avg_amount DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "HAVING AVG(total_amount) >= 300000 으로 필터링하세요"
+        en: "Filter with HAVING AVG(total_amount) >= 300000"
+    rubric:
+      ko: "GROUP BY와 HAVING AVG를 사용해야 함"
+      en: "Must use GROUP BY and HAVING AVG"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, AVG, orders]
+
+  - id: b04g-13
+    level: 2
+    type: "Aggregate"
+    question: |
+      2024년 월별 주문 건수를 집계하고, 주문이 3,000건 이상인 월만 조회하세요.
+    question_en: |
+      Aggregate the monthly order count for 2024, and query only months with 3,000 or more orders.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(ordered_at, 1, 7) AS month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+        GROUP BY SUBSTR(ordered_at, 1, 7)
+        HAVING COUNT(*) >= 3000
+        ORDER BY month;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE로 2024년을 먼저 필터링하고, GROUP BY로 월별 집계 후, HAVING으로 건수를 필터링하세요"
+        en: "Filter 2024 first with WHERE, then aggregate by month with GROUP BY, and filter the count with HAVING"
+    rubric:
+      ko: "WHERE, GROUP BY, HAVING을 함께 사용해야 함"
+      en: "Must use WHERE, GROUP BY, and HAVING together"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, HAVING, COUNT, SUBSTR, orders]
+
+  - id: b04g-14
+    level: 2
+    type: "Aggregate"
+    question: |
+      불만의 우선순위(priority)와 상태(status) 조합별로 건수를 조회하세요.
+    question_en: |
+      Query the count for each combination of complaint priority and status.
+    reference_sql:
+      common: |
+        SELECT
+            priority,
+            status,
+            COUNT(*) AS cnt
+        FROM complaints
+        GROUP BY priority, status
+        ORDER BY priority, status;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY에 여러 컬럼을 쉼표로 나열할 수 있습니다: GROUP BY priority, status"
+        en: "You can list multiple columns separated by commas in GROUP BY: GROUP BY priority, status"
+    rubric:
+      ko: "GROUP BY priority, status로 다중 그룹화를 사용해야 함"
+      en: "Must use multi-column grouping with GROUP BY priority, status"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, complaints]
+
+  - id: b04g-15
+    level: 2
+    type: "Aggregate"
+    question: |
+      성별(gender)과 등급(grade) 조합별로 고객 수를 조회하세요. 고객 수가 많은 순으로 정렬합니다.
+    question_en: |
+      Query the customer count for each combination of gender and grade (tier). Sort by customer count in descending order.
+    reference_sql:
+      common: |
+        SELECT
+            gender,
+            grade,
+            COUNT(*) AS customer_count
+        FROM customers
+        GROUP BY gender, grade
+        ORDER BY customer_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY gender, grade로 두 컬럼을 함께 그룹화하세요. gender가 NULL인 경우도 하나의 그룹으로 나타납니다"
+        en: "Group both columns together with GROUP BY gender, grade. Cases where gender is NULL will also appear as a separate group"
+    rubric:
+      ko: "GROUP BY gender, grade를 사용해야 함"
+      en: "Must use GROUP BY gender, grade"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, customers]
+
+  - id: b04g-16
+    level: 2
+    type: "Aggregate"
+    question: |
+      결제 상태가 'completed'인 건만 필터링하고, 결제 수단(method)별 평균 금액이 200,000원 이상인 수단을 조회하세요.
+    question_en: |
+      Filter only payments with status 'completed', then query payment methods with an average amount of 200,000 or more.
+    reference_sql:
+      common: |
+        SELECT
+            method,
+            COUNT(*) AS payment_count,
+            ROUND(AVG(amount), 0) AS avg_amount
+        FROM payments
+        WHERE status = 'completed'
+        GROUP BY method
+        HAVING AVG(amount) >= 200000
+        ORDER BY avg_amount DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE로 status = 'completed'를 먼저 필터링하고, GROUP BY + HAVING으로 평균 금액을 필터링하세요"
+        en: "Filter with WHERE status = 'completed' first, then filter the average amount with GROUP BY + HAVING"
+    rubric:
+      ko: "WHERE, GROUP BY, HAVING을 함께 사용해야 함"
+      en: "Must use WHERE, GROUP BY, and HAVING together"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, HAVING, AVG, payments]
+
+  - id: b04g-17
+    level: 2
+    type: "Aggregate"
+    question: |
+      판매 중(is_active = 1)인 상품만 대상으로, 브랜드별 총 재고(stock_qty 합계)가 100개 이상인 브랜드를 조회하세요.
+    question_en: |
+      For products currently on sale (is_active = 1), query brands with a total stock (sum of stock_qty) of 100 or more.
+    reference_sql:
+      common: |
+        SELECT
+            brand,
+            COUNT(*) AS product_count,
+            SUM(stock_qty) AS total_stock
+        FROM products
+        WHERE is_active = 1
+        GROUP BY brand
+        HAVING SUM(stock_qty) >= 100
+        ORDER BY total_stock DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE is_active = 1로 활성 상품만 필터링한 후, GROUP BY brand + HAVING SUM(stock_qty) >= 100을 적용하세요"
+        en: "Filter active products with WHERE is_active = 1, then apply GROUP BY brand + HAVING SUM(stock_qty) >= 100"
+    rubric:
+      ko: "WHERE, GROUP BY, HAVING SUM을 사용해야 함"
+      en: "Must use WHERE, GROUP BY, and HAVING SUM"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, HAVING, SUM, products]
+
+  - id: b04g-18
+    level: 2
+    type: "Aggregate"
+    question: |
+      주문일에서 연도를 추출하여 연도와 상태(status) 조합별 주문 건수를 조회하세요.
+    question_en: |
+      Extract the year from the order date and query the order count for each year and status combination.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(ordered_at, 1, 4) AS year,
+            status,
+            COUNT(*) AS order_count
+        FROM orders
+        GROUP BY SUBSTR(ordered_at, 1, 4), status
+        ORDER BY year, order_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY SUBSTR(ordered_at, 1, 4), status로 두 기준을 함께 그룹화하세요"
+        en: "Group by both criteria together with GROUP BY SUBSTR(ordered_at, 1, 4), status"
+    rubric:
+      ko: "SUBSTR과 다중 GROUP BY를 사용해야 함"
+      en: "Must use SUBSTR and multi-column GROUP BY"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, SUBSTR, orders]
+
+  - id: b04g-19
+    level: 2
+    type: "Aggregate"
+    question: |
+      상품(product_id)별 리뷰 수를 집계하고, 50건 이상인 상품만 조회하세요.
+    question_en: |
+      Aggregate the review count per product (product_id), and query only products with 50 or more reviews.
+    reference_sql:
+      common: |
+        SELECT
+            product_id,
+            COUNT(*) AS review_count
+        FROM reviews
+        GROUP BY product_id
+        HAVING COUNT(*) >= 50
+        ORDER BY review_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY product_id + HAVING COUNT(*) >= 50을 사용하세요"
+        en: "Use GROUP BY product_id + HAVING COUNT(*) >= 50"
+    rubric:
+      ko: "GROUP BY와 HAVING COUNT(*)를 사용해야 함"
+      en: "Must use GROUP BY and HAVING COUNT(*)"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, COUNT, reviews]
+
+  - id: b04g-20
+    level: 2
+    type: "Aggregate"
+    question: |
+      등급(grade)과 가입 채널(acquisition_channel) 조합별 고객 수를 구하고, 100명 이상인 조합만 조회하세요.
+    question_en: |
+      Calculate the customer count per grade and acquisition_channel combination, and query only combinations with 100 or more customers.
+    reference_sql:
+      common: |
+        SELECT
+            grade,
+            acquisition_channel,
+            COUNT(*) AS customer_count
+        FROM customers
+        GROUP BY grade, acquisition_channel
+        HAVING COUNT(*) >= 100
+        ORDER BY grade, customer_count DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY grade, acquisition_channel 후 HAVING COUNT(*) >= 100으로 필터링하세요"
+        en: "After GROUP BY grade, acquisition_channel, filter with HAVING COUNT(*) >= 100"
+    rubric:
+      ko: "다중 GROUP BY와 HAVING을 사용해야 함"
+      en: "Must use multi-column GROUP BY and HAVING"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, COUNT, customers]
+
+  - id: b04g-21
+    level: 3
+    type: "Aggregate"
+    question: |
+      2024년 주문을 분기별로 나누어 주문 건수, 총 매출, 평균 주문 금액을 조회하세요. 분기는 월을 기준으로 구분합니다.
+    question_en: |
+      Divide the 2024 orders by quarter and query the order count, total revenue, and average order amount. Quarters are determined by month.
+    reference_sql:
+      common: |
+        SELECT
+            (CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) - 1) / 3 + 1 AS quarter,
+            COUNT(*) AS order_count,
+            ROUND(SUM(total_amount), 0) AS total_revenue,
+            ROUND(AVG(total_amount), 0) AS avg_amount
+        FROM orders
+        WHERE ordered_at LIKE '2024%'
+        GROUP BY (CAST(SUBSTR(ordered_at, 6, 2) AS INTEGER) - 1) / 3 + 1
+        ORDER BY quarter;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SUBSTR(ordered_at, 6, 2)로 월을 추출한 뒤, (월 - 1) / 3 + 1로 분기를 계산할 수 있습니다"
+        en: "Extract the month with SUBSTR(ordered_at, 6, 2), then calculate the quarter with (month - 1) / 3 + 1"
+    rubric:
+      ko: "분기 계산식과 GROUP BY를 사용해야 함"
+      en: "Must use quarter calculation and GROUP BY"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, COUNT, SUM, AVG, SUBSTR, CAST, orders]
+
+  - id: b04g-22
+    level: 3
+    type: "Aggregate"
+    question: |
+      불만 카테고리(category)별로 전체 건수, 에스컬레이션(escalated = 1) 건수, 에스컬레이션 비율(%)을 구하세요. 비율이 10% 이상인 카테고리만 조회합니다.
+    question_en: |
+      For each complaint category, calculate the total count, escalation count (escalated = 1), and escalation rate (%). Show only categories with a rate of 10% or more.
+    reference_sql:
+      common: |
+        SELECT
+            category,
+            COUNT(*) AS total_count,
+            SUM(escalated) AS escalated_count,
+            ROUND(100.0 * SUM(escalated) / COUNT(*), 1) AS escalation_rate
+        FROM complaints
+        GROUP BY category
+        HAVING 100.0 * SUM(escalated) / COUNT(*) >= 10
+        ORDER BY escalation_rate DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SUM(escalated)으로 에스컬레이션 건수를 구하고, 100.0 * SUM(escalated) / COUNT(*)로 비율을 계산하세요"
+        en: "Calculate the escalation count with SUM(escalated), and the rate with 100.0 * SUM(escalated) / COUNT(*)"
+    rubric:
+      ko: "SUM, COUNT, 비율 계산과 HAVING을 사용해야 함"
+      en: "Must use SUM, COUNT, ratio calculation, and HAVING"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, SUM, COUNT, complaints]
+
+  - id: b04g-23
+    level: 3
+    type: "Aggregate"
+    question: |
+      카드 결제(method = 'card')만 대상으로, 카드 발급사(card_issuer)별 결제 건수와 총 금액을 조회하세요. 총 금액이 큰 순으로 정렬합니다.
+    question_en: |
+      For card payments only (method = 'card'), query the payment count and total amount per card issuer (card_issuer). Sort by total amount in descending order.
+    reference_sql:
+      common: |
+        SELECT
+            card_issuer,
+            COUNT(*) AS payment_count,
+            ROUND(SUM(amount), 0) AS total_amount
+        FROM payments
+        WHERE method = 'card'
+        GROUP BY card_issuer
+        ORDER BY total_amount DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE method = 'card'로 카드 결제만 필터링한 후, GROUP BY card_issuer로 집계하세요"
+        en: "Filter card payments with WHERE method = 'card', then aggregate with GROUP BY card_issuer"
+    rubric:
+      ko: "WHERE 필터링과 GROUP BY card_issuer를 사용해야 함"
+      en: "Must use WHERE filtering and GROUP BY card_issuer"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, COUNT, SUM, payments]
+
+  - id: b04g-24
+    level: 3
+    type: "Aggregate"
+    question: |
+      상품별 리뷰 평균 별점을 구하고, 리뷰가 5건 이상이면서 평균 별점이 3.0 미만인 상품을 조회하세요.
+    question_en: |
+      Calculate the average rating per product, then query products with 5 or more reviews and an average rating below 3.0.
+    reference_sql:
+      common: |
+        SELECT
+            product_id,
+            COUNT(*) AS review_count,
+            ROUND(AVG(rating), 2) AS avg_rating
+        FROM reviews
+        GROUP BY product_id
+        HAVING COUNT(*) >= 5 AND AVG(rating) < 3.0
+        ORDER BY avg_rating;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "HAVING에 조건을 2개 쓸 수 있습니다: HAVING COUNT(*) >= 5 AND AVG(rating) < 3.0"
+        en: "You can use multiple conditions in HAVING: HAVING COUNT(*) >= 5 AND AVG(rating) < 3.0"
+    rubric:
+      ko: "HAVING에 AND로 두 조건을 사용해야 함"
+      en: "Must use two conditions with AND in HAVING"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, COUNT, AVG, reviews]
+
+  - id: b04g-25
+    level: 3
+    type: "Aggregate"
+    question: |
+      연도와 월 조합별로 주문 건수를 조회하되, 2023년과 2024년 데이터만 대상으로 하세요. 연도, 월 순으로 정렬합니다.
+    question_en: |
+      Query the order count per year-month combination, but only for 2023 and 2024 data. Sort by year, then month.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(ordered_at, 1, 4) AS year,
+            SUBSTR(ordered_at, 6, 2) AS month,
+            COUNT(*) AS order_count
+        FROM orders
+        WHERE SUBSTR(ordered_at, 1, 4) IN ('2023', '2024')
+        GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)
+        ORDER BY year, month;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE로 2023년과 2024년을 필터링하고, GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)로 연도+월 그룹화하세요"
+        en: "Filter 2023 and 2024 with WHERE, then group by year and month with GROUP BY SUBSTR(ordered_at, 1, 4), SUBSTR(ordered_at, 6, 2)"
+    rubric:
+      ko: "WHERE IN과 다중 SUBSTR GROUP BY를 사용해야 함"
+      en: "Must use WHERE IN and multi-SUBSTR GROUP BY"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, COUNT, SUBSTR, orders]
+
+  - id: b04g-26
+    level: 3
+    type: "Aggregate"
+    question: |
+      등급(grade)과 활성 여부(is_active) 조합별로 고객 수와 평균 포인트 잔액을 조회하세요. 등급순, 활성 여부순으로 정렬합니다.
+    question_en: |
+      Query the customer count and average point balance per grade and is_active flag combination. Sort by grade, then is_active flag.
+    reference_sql:
+      common: |
+        SELECT
+            grade,
+            is_active,
+            COUNT(*) AS customer_count,
+            ROUND(AVG(point_balance), 0) AS avg_points
+        FROM customers
+        GROUP BY grade, is_active
+        ORDER BY grade, is_active DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "GROUP BY grade, is_active로 두 기준을 조합하세요"
+        en: "Combine both criteria with GROUP BY grade, is_active"
+    rubric:
+      ko: "GROUP BY grade, is_active를 사용해야 함"
+      en: "Must use GROUP BY grade, is_active"
+    max_score: 10
+    tags: [SELECT, GROUP BY, COUNT, AVG, customers]
+
+  - id: b04g-27
+    level: 3
+    type: "Aggregate"
+    question: |
+      채널(channel)과 우선순위(priority) 조합별로 건수와 평균 응대 횟수를 조회하되, 건수 50건 이상이면서 평균 응대 횟수 2회 이상인 조합만 표시하세요.
+    question_en: |
+      Query the count and average response count per channel and priority combination, showing only combinations with 50+ complaints and an average response count of 2 or more.
+    reference_sql:
+      common: |
+        SELECT
+            channel,
+            priority,
+            COUNT(*) AS complaint_count,
+            ROUND(AVG(response_count), 1) AS avg_responses
+        FROM complaints
+        GROUP BY channel, priority
+        HAVING COUNT(*) >= 50 AND AVG(response_count) >= 2
+        ORDER BY avg_responses DESC;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "HAVING에 AND로 두 조건을 결합하세요: HAVING COUNT(*) >= 50 AND AVG(response_count) >= 2"
+        en: "Combine two conditions with AND in HAVING: HAVING COUNT(*) >= 50 AND AVG(response_count) >= 2"
+    rubric:
+      ko: "다중 GROUP BY와 HAVING AND를 사용해야 함"
+      en: "Must use multi-column GROUP BY and HAVING AND"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, COUNT, AVG, complaints]
+
+  - id: b04g-28
+    level: 3
+    type: "Aggregate"
+    question: |
+      브랜드별 평균 마진율(%)을 구하고, 마진율이 높은 상위 5개 브랜드를 조회하세요. 마진율은 (price - cost_price) / price * 100으로 계산합니다. 활성 상품(is_active = 1)만 대상으로 하세요.
+    question_en: |
+      Find the average margin rate (%) per brand and show the top 5 brands. The margin rate is calculated as (price - cost_price) / price * 100. Only include active products (is_active = 1).
+    reference_sql:
+      common: |
+        SELECT
+            brand,
+            COUNT(*) AS product_count,
+            ROUND(AVG((price - cost_price) / price * 100), 1) AS avg_margin_pct
+        FROM products
+        WHERE is_active = 1
+        GROUP BY brand
+        ORDER BY avg_margin_pct DESC
+        LIMIT 5;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "AVG((price - cost_price) / price * 100)으로 브랜드별 평균 마진율을 계산하세요. ORDER BY + LIMIT으로 상위 5개를 추출합니다"
+        en: "Calculate the average margin rate per brand with AVG((price - cost_price) / price * 100). Extract the top 5 with ORDER BY + LIMIT"
+    rubric:
+      ko: "WHERE, GROUP BY, AVG 산술식, LIMIT을 사용해야 함"
+      en: "Must use WHERE, GROUP BY, AVG arithmetic, and LIMIT"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, AVG, ROUND, ORDER BY, LIMIT, products]
+
+  - id: b04g-29
+    level: 3
+    type: "Aggregate"
+    question: |
+      카드 결제(method = 'card')를 대상으로 할부 개월 수(installment_months)별 결제 건수와 평균 금액을 구하세요. 100건 이상인 할부 구간만 표시합니다.
+    question_en: |
+      For card payments (method = 'card'), calculate the payment count and average amount per installment period (installment_months). Show only installment periods with 100 or more payments.
+    reference_sql:
+      common: |
+        SELECT
+            installment_months,
+            COUNT(*) AS payment_count,
+            ROUND(AVG(amount), 0) AS avg_amount
+        FROM payments
+        WHERE method = 'card'
+        GROUP BY installment_months
+        HAVING COUNT(*) >= 100
+        ORDER BY installment_months;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "WHERE method = 'card'로 필터링 후, GROUP BY installment_months + HAVING COUNT(*) >= 100을 적용하세요"
+        en: "Filter with WHERE method = 'card', then apply GROUP BY installment_months + HAVING COUNT(*) >= 100"
+    rubric:
+      ko: "WHERE, GROUP BY, HAVING을 조합해야 함"
+      en: "Must combine WHERE, GROUP BY, and HAVING"
+    max_score: 10
+    tags: [SELECT, WHERE, GROUP BY, HAVING, COUNT, AVG, payments]
+
+  - id: b04g-30
+    level: 3
+    type: "Aggregate"
+    question: |
+      고객의 가입일(created_at)에서 연도를 추출하여 연도별 신규 가입자 수를 조회하세요. 가입자가 100명 이상인 연도만 표시합니다.
+    question_en: |
+      Extract the year from the customer signup date (created_at) and query the number of new signups per year. Show only years with 100 or more signups.
+    reference_sql:
+      common: |
+        SELECT
+            SUBSTR(created_at, 1, 4) AS year,
+            COUNT(*) AS new_customers
+        FROM customers
+        GROUP BY SUBSTR(created_at, 1, 4)
+        HAVING COUNT(*) >= 100
+        ORDER BY year;
+    supported_db: [sqlite, mysql, postgresql]
+    validation:
+      type: result_match
+      ordered: true
+    hints:
+      - ko: "SUBSTR(created_at, 1, 4)로 연도를 추출하고, GROUP BY + HAVING COUNT(*) >= 100으로 필터링하세요"
+        en: "Extract the year with SUBSTR(created_at, 1, 4), then filter with GROUP BY + HAVING COUNT(*) >= 100"
+    rubric:
+      ko: "SUBSTR, GROUP BY, HAVING을 사용해야 함"
+      en: "Must use SUBSTR, GROUP BY, and HAVING"
+    max_score: 10
+    tags: [SELECT, GROUP BY, HAVING, COUNT, SUBSTR, customers]

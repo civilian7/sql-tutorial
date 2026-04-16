@@ -1,25 +1,33 @@
-# aggregate function
+# Aggregate Functions
 
 !!! info "Tables"
+
     `products` — Products (name, price, stock, brand)  
+
     `customers` — Customers (grade, points, channel)  
+
     `orders` — Orders (status, amount, date)  
+
     `reviews` — Reviews (rating, content)  
+
     `payments` — Payments (method, amount, status)  
 
+
+
 !!! abstract "Concepts"
-    `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `ROUND`, `COUNT(DISTINCT)` + Previous lecture contents
 
-Practice one aggregate function at a time.
+    `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `ROUND`, `COUNT DISTINCT`
 
----
 
-### Problem 1
 
-**Check the total number of products registered in the product table.**
+### 1. Check the total number of products registered in the product
 
-??? tip "Hint"
-    `COUNT(*)` counts the total number of rows in the table.
+
+Check the total number of products registered in the product table.
+
+
+**Hint 1:** COUNT(*) counts the total number of rows in the table
+
 
 ??? success "Answer"
     ```sql
@@ -27,20 +35,25 @@ Practice one aggregate function at a time.
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | total_products |
-    | ----------: |
+    |---|
     | 280 |
+
 
 ---
 
-### Problem 2
 
-**Check the number of products on sale (`is_active = 1`).**
+### 2. Check the number of products on sale (`is_active = 1`).
 
-??? tip "Hint"
-    If you set a condition with `WHERE` and count with `COUNT(*)`, only rows that meet the condition are counted.
+
+Check the number of products on sale (`is_active = 1`).
+
+
+**Hint 1:** If you set a condition with WHERE and count with COUNT(*), only rows that meet the condition are counted
+
 
 ??? success "Answer"
     ```sql
@@ -49,20 +62,25 @@ Practice one aggregate function at a time.
     WHERE is_active = 1;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | active_count |
-    | ----------: |
+    |---|
     | 218 |
+
 
 ---
 
-### Problem 3
 
-**Check how many products have the discontinuation date (`discontinued_at`) recorded.**
+### 3. Check how many products have the discontinuation date (`disc
 
-??? tip "Hint"
-    `COUNT(column_name)` counts only rows where the corresponding column is not NULL. Remember the difference from `COUNT(*)`.
+
+Check how many products have the discontinuation date (`discontinued_at`) recorded.
+
+
+**Hint 1:** COUNT(column_name) counts only rows where the corresponding column is not NULL. Remember the difference from COUNT(*)
+
 
 ??? success "Answer"
     ```sql
@@ -70,22 +88,25 @@ Practice one aggregate function at a time.
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | discontinued_count |
-    | ----------: |
+    |---|
     | 62 |
 
-    > `COUNT(*)` returns 280, but `COUNT(discontinued_at)` returns 62 excluding NULL.
 
 ---
 
-### Problem 4
 
-**Get the total inventory quantity for all products.**
+### 4. Get the total inventory quantity for all products.
 
-??? tip "Hint"
-    `SUM(column_name)` adds all values in that column.
+
+Get the total inventory quantity for all products.
+
+
+**Hint 1:** SUM(column_name) adds all values in that column
+
 
 ??? success "Answer"
     ```sql
@@ -93,20 +114,25 @@ Practice one aggregate function at a time.
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | total_stock |
-    | ----------: |
-    | 76887 |
+    |---|
+    | 76,887 |
+
 
 ---
 
-### Problem 5
 
-**Check the average price of all products.**
+### 5. Check the average price of all products.
 
-??? tip "Hint"
-    `AVG(column_name)` calculates the average of that column.
+
+Check the average price of all products.
+
+
+**Hint 1:** AVG(column_name) calculates the average of that column
+
 
 ??? success "Answer"
     ```sql
@@ -114,22 +140,25 @@ Practice one aggregate function at a time.
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | avg_price |
-    | ----------: |
-    | 649272.5 |
+    |---|
+    | 649,272.50 |
 
-    > The decimal point appears long. Later you will learn how to organize it with `ROUND`.
 
 ---
 
-### Problem 6
 
-**Check the price of the most expensive product.**
+### 6. Check the price of the most expensive product.
 
-??? tip "Hint"
-    `MAX(column_name)` returns the maximum value of the column.
+
+Check the price of the most expensive product.
+
+
+**Hint 1:** MAX(column_name) returns the maximum value of the column
+
 
 ??? success "Answer"
     ```sql
@@ -137,20 +166,25 @@ Practice one aggregate function at a time.
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | max_price |
-    | ----------: |
-    | 5481100.0 |
+    |---|
+    | 5,481,100.00 |
+
 
 ---
 
-### Problem 7
 
-**Check the price of the cheapest product.**
+### 7. Check the price of the cheapest product.
 
-??? tip "Hint"
-    `MIN(column_name)` returns the minimum value of the column.
+
+Check the price of the cheapest product.
+
+
+**Hint 1:** MIN(column_name) returns the minimum value of the column
+
 
 ??? success "Answer"
     ```sql
@@ -158,20 +192,25 @@ Practice one aggregate function at a time.
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | min_price |
-    | ----------: |
-    | 18500.0 |
+    |---|
+    | 18,500.00 |
+
 
 ---
 
-### Problem 8
 
-**Find the total sales (`total_amount` sum) of all orders.**
+### 8. Find the total sales (`total_amount` sum) of all orders.
 
-??? tip "Hint"
-    Applies `SUM` to the `total_amount` column of the `orders` table.
+
+Find the total sales (`total_amount` sum) of all orders.
+
+
+**Hint 1:** Applies SUM to the total_amount column of the orders table
+
 
 ??? success "Answer"
     ```sql
@@ -179,22 +218,25 @@ Practice one aggregate function at a time.
     FROM orders;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | total_revenue |
-    | ----------: |
-    | 38183495063.0 |
+    |---|
+    | 38,183,495,063.00 |
 
-    > It is approximately 35.5 billion won. Cumulative sales over 10 years.
 
 ---
 
-### Problem 9
 
-**Check the average rating of the reviews.**
+### 9. Check the average rating of the reviews.
 
-??? tip "Hint"
-    Applies `AVG` to the `rating` column of the `reviews` table.
+
+Check the average rating of the reviews.
+
+
+**Hint 1:** Applies AVG to the rating column of the reviews table
+
 
 ??? success "Answer"
     ```sql
@@ -202,20 +244,25 @@ Practice one aggregate function at a time.
     FROM reviews;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | avg_rating |
-    | ----------: |
-    | 3.904984788205008 |
+    |---|
+    | 3.90 |
+
 
 ---
 
-### Problem 10
 
-**Check which customer has the most points.**
+### 10. Check which customer has the most points.
 
-??? tip "Hint"
-    Applies `MAX` to `point_balance` in table `customers`.
+
+Check which customer has the most points.
+
+
+**Hint 1:** Applies MAX to point_balance in table customers
+
 
 ??? success "Answer"
     ```sql
@@ -223,26 +270,25 @@ Practice one aggregate function at a time.
     FROM customers;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | max_points |
-    | ----------: |
-    | 3955828 |
+    |---|
+    | 3,955,828 |
 
-    > There is a customer who holds approximately 3.34 million points.
-
----
-
-Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate functions, and WHERE filters.
 
 ---
 
-### Problem 11
 
-**View the average price of products on sale, rounded to two decimal places.**
+### 11. View the average price of products on sale, rounded to two d
 
-??? tip "Hint"
-    Specify the number of decimal places with `ROUND(value, digits)`. You can wrap an aggregate function like `ROUND(AVG(price), 2)`.
+
+View the average price of products on sale, rounded to two decimal places.
+
+
+**Hint 1:** Specify the number of decimal places with ROUND(value, digits). You can wrap an aggregate function like ROUND(AVG(price), 2)
+
 
 ??? success "Answer"
     ```sql
@@ -251,20 +297,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     WHERE is_active = 1;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | avg_price |
-    | ----------: |
-    | 659594.5 |
+    |---|
+    | 659,594.50 |
+
 
 ---
 
-### Problem 12
 
-**Check how many brands are registered in the product table.**
+### 12. Check how many brands are registered in the product table.
 
-??? tip "Hint"
-    `COUNT(DISTINCT column_name)` counts the number of unique values with duplicates removed.
+
+Check how many brands are registered in the product table.
+
+
+**Hint 1:** COUNT(DISTINCT column_name) counts the number of unique values with duplicates removed
+
 
 ??? success "Answer"
     ```sql
@@ -272,20 +323,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | brand_count |
-    | ----------: |
+    |---|
     | 55 |
+
 
 ---
 
-### Problem 13
 
-**Check how many customers have placed an order.**
+### 13. Check how many customers have placed an order.
 
-??? tip "Hint"
-    Applying `COUNT(DISTINCT ...)` to `customer_id` in the `orders` table gives you the number of unique customers who placed an order.
+
+Check how many customers have placed an order.
+
+
+**Hint 1:** Applying COUNT(DISTINCT ...) to customer_id in the orders table gives you the number of unique customers who placed an order
+
 
 ??? success "Answer"
     ```sql
@@ -293,22 +349,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     FROM orders;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | ordering_customers |
-    | ----------: |
+    |---|
     | 2839 |
 
-    > Approximately 52% of the total 5,230 people have experience ordering.
 
 ---
 
-### Problem 14
 
-**View the lowest, highest, and average price of a product (without decimal points) at once.**
+### 14. View the lowest, highest, and average price of a product (wi
 
-??? tip "Hint"
-    You can list multiple aggregate functions in one `SELECT`, separated by commas.
+
+View the lowest, highest, and average price of a product (without decimal points) at once.
+
+
+**Hint 1:** You can list multiple aggregate functions in one SELECT, separated by commas
+
 
 ??? success "Answer"
     ```sql
@@ -318,20 +377,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     FROM products;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | min_price | max_price | avg_price |
-    | ----------: | ----------: | ----------: |
-    | 18500.0 | 5481100.0 | 649273.0 |
+    |---|---|---|
+    | 18,500.00 | 5,481,100.00 | 649,273.00 |
+
 
 ---
 
-### Problem 15
 
-**Check how many 5-star reviews there are**
+### 15. Check how many 5-star reviews there are.
 
-??? tip "Hint"
-    Filter by `WHERE rating = 5` and then use `COUNT(*)`.
+
+Check how many 5-star reviews there are.
+
+
+**Hint 1:** Filter by WHERE rating = 5 and then use COUNT(*)
+
 
 ??? success "Answer"
     ```sql
@@ -340,22 +404,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     WHERE rating = 5;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | five_star_count |
-    | ----------: |
+    |---|
     | 3433 |
 
-    > Approximately 41% of the total 7,945 reviews are 5-star reviews.
 
 ---
 
-### Problem 16
 
-**View the average rating of the review to one decimal place, lowest rating, and highest rating at once.**
+### 16. View the average rating of the review to one decimal place, 
 
-??? tip "Hint"
-    List `ROUND(AVG(...), 1)`, `MIN(...)`, and `MAX(...)` in one SELECT.
+
+View the average rating of the review to one decimal place, lowest rating, and highest rating at once.
+
+
+**Hint 1:** List ROUND(AVG(...), 1), MIN(...), and MAX(...) in one SELECT
+
 
 ??? success "Answer"
     ```sql
@@ -365,20 +432,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     FROM reviews;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | avg_rating | min_rating | max_rating |
-    | ----------: | ----------: | ----------: |
-    | 3.9 | 1 | 5 |
+    |---|---|---|
+    | 3.90 | 1 | 5 |
+
 
 ---
 
-### Problem 17
 
-**Check the number of payments made with card (`card`).**
+### 17. Check the number of payments made with card (`card`).
 
-??? tip "Hint"
-    Filter by `method = 'card'` in table `payments`.
+
+Check the number of payments made with card (`card`).
+
+
+**Hint 1:** Filter by method = 'card' in table payments
+
 
 ??? success "Answer"
     ```sql
@@ -387,20 +459,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     WHERE method = 'card';
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | card_count |
-    | ----------: |
-    | 16841 |
+    |---|
+    | 16,841 |
+
 
 ---
 
-### Problem 18
 
-**Check how many payment methods there are.**
+### 18. Check how many payment methods there are.
 
-??? tip "Hint"
-    Applies `COUNT(DISTINCT ...)` to the `method` column of the `payments` table.
+
+Check how many payment methods there are.
+
+
+**Hint 1:** Applies COUNT(DISTINCT ...) to the method column of the payments table
+
 
 ??? success "Answer"
     ```sql
@@ -408,20 +485,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     FROM payments;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | method_count |
-    | ----------: |
+    |---|
     | 6 |
+
 
 ---
 
-### Problem 19
 
-**View the oldest and most recent order dates.**
+### 19. View the oldest and most recent order dates.
 
-??? tip "Hint"
-    You can also use `MIN` and `MAX` in date/time strings. This is because comparing alphabetical order is the same as comparing date order.
+
+View the oldest and most recent order dates.
+
+
+**Hint 1:** You can also use MIN and MAX in date/time strings
+
 
 ??? success "Answer"
     ```sql
@@ -430,22 +512,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     FROM orders;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | first_order | last_order |
-    | ---------- | ---------- |
+    |---|---|
     | 2016-01-09 10:20:06 | 2025-12-31 22:25:39 |
 
-    > Order data for approximately 9 years and 6 months exists.
 
 ---
 
-### Problem 20
 
-**Check how many orders (`discount_amount > 0`) have discounts applied to all orders.**
+### 20. Check how many orders (`discount_amount > 0`) have discounts
 
-??? tip "Hint"
-    Filter by `WHERE discount_amount > 0` and then use `COUNT(*)`.
+
+Check how many orders (`discount_amount > 0`) have discounts applied to all orders.
+
+
+**Hint 1:** Filter by WHERE discount_amount > 0 and then use COUNT(*)
+
 
 ??? success "Answer"
     ```sql
@@ -454,26 +539,25 @@ Use aggregates with ROUND, COUNT(DISTINCT), combinations of multiple aggregate f
     WHERE discount_amount > 0;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | discounted_orders |
-    | ----------: |
+    |---|
     | 7917 |
 
-    > Discounts were applied to approximately 21% of the total 34,908 orders.
 
 ---
 
-We cover complex conditions + aggregates, arithmetic operations + aggregates, and frequently used questions in practice.
 
----
+### 21. Check the number of confirmed (`confirmed`) status orders, t
 
-### Problem 21
 
-**Check the number of confirmed (`confirmed`) status orders, total sales, and average order amount. Amounts are rounded without decimal places.**
+Check the number of confirmed (`confirmed`) status orders, total sales, and average order amount. Amounts are rounded without decimal places.
 
-??? tip "Hint"
-    Filter by `WHERE status = 'confirmed'`, then use `COUNT`, `SUM`, and `AVG` at once.
+
+**Hint 1:** Filter by WHERE status = 'confirmed', then use COUNT, SUM, and AVG at once
+
 
 ??? success "Answer"
     ```sql
@@ -484,20 +568,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     WHERE status = 'confirmed';
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | order_count | total_revenue | avg_amount |
-    | ----------: | ----------: | ----------: |
-    | 34393 | 34386590179.0 | 999814.0 |
+    |---|---|---|
+    | 34,393 | 34,386,590,179.00 | 999,814.00 |
+
 
 ---
 
-### Problem 22
 
-**Check at once how many customers have written reviews and how many types of products have reviews.**
+### 22. Check at once how many customers have written reviews and ho
 
-??? tip "Hint"
-    Use `COUNT(DISTINCT customer_id)` and `COUNT(DISTINCT product_id)` together in one SELECT.
+
+Check at once how many customers have written reviews and how many types of products have reviews.
+
+
+**Hint 1:** Use COUNT(DISTINCT customer_id) and COUNT(DISTINCT product_id) together in one SELECT
+
 
 ??? success "Answer"
     ```sql
@@ -506,22 +595,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     FROM reviews;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | reviewer_count | reviewed_product_count |
-    | ----------: | ----------: |
+    |---|---|
     | 1899 | 278 |
 
-    > Out of 280 products, 256 (91%) had reviews.
 
 ---
 
-### Problem 23
 
-**View the customer's accumulated points and average (without decimal points).**
+### 23. View the customer's accumulated points and average (without 
 
-??? tip "Hint"
-    Apply `SUM` and `ROUND(AVG(...), 0)` to `point_balance` in table `customers`.
+
+View the customer's accumulated points and average (without decimal points).
+
+
+**Hint 1:** Apply SUM and ROUND(AVG(...), 0) to point_balance in table customers
+
 
 ??? success "Answer"
     ```sql
@@ -530,22 +622,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     FROM customers;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | total_points | avg_points |
-    | ----------: | ----------: |
-    | 337459019 | 64524.0 |
+    |---|---|
+    | 337,459,019 | 64,524.00 |
 
-    > The total accumulated points of all customers is approximately 320 million points, with an average of approximately 60,000 points per person.
 
 ---
 
-### Problem 24
 
-**View the number of orders placed and total sales (without decimal points) in 2024.**
+### 24. View the number of orders placed and total sales (without de
 
-??? tip "Hint"
-    Use the condition that `ordered_at` is greater than or equal to `'2024-01-01'` and less than `'2025-01-01'`. You can use `BETWEEN`, or you can combine `>=` and `<`.
+
+View the number of orders placed and total sales (without decimal points) in 2024.
+
+
+**Hint 1:** Use the condition that ordered_at is greater than or equal to '2024-01-01' and less than '2025-01-01'
+
 
 ??? success "Answer"
     ```sql
@@ -556,22 +651,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
       AND ordered_at < '2025-01-01';
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | order_count | revenue |
-    | ----------: | ----------: |
-    | 5785 | 5622439762.0 |
+    |---|---|
+    | 5785 | 5,622,439,762.00 |
 
-    > Sales in 2024 are approximately 5.6 billion won.
 
 ---
 
-### Problem 25
 
-**Check the number of refund (`refunded`) status payments and the total refund amount.**
+### 25. Check the number of refund (`refunded`) status payments and 
 
-??? tip "Hint"
-    Filter by `status = 'refunded'` in table `payments`.
+
+Check the number of refund (`refunded`) status payments and the total refund amount.
+
+
+**Hint 1:** Filter by status = 'refunded' in table payments
+
 
 ??? success "Answer"
     ```sql
@@ -581,22 +679,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     WHERE status = 'refunded';
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | refund_count | refund_total |
-    | ----------: | ----------: |
-    | 1930 | 2357145631.0 |
+    |---|---|
+    | 1930 | 2,357,145,631.00 |
 
-    > Approximately 2.25 billion won was refunded.
 
 ---
 
-### Problem 26
 
-**Find the total inventory value (cost x inventory quantity) of the products you are selling.**
+### 26. Find the total inventory value (cost x inventory quantity) o
 
-??? tip "Hint"
-    Arithmetic operations can be used inside `SUM`. Like `SUM(cost_price * stock_qty)`, the values ​​multiplied by columns are added together.
+
+Find the total inventory value (cost x inventory quantity) of the products you are selling.
+
+
+**Hint 1:** Arithmetic operations can be used inside SUM. Like SUM(cost_price * stock_qty), the values multiplied by columns are added together
+
 
 ??? success "Answer"
     ```sql
@@ -605,22 +706,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     WHERE is_active = 1;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | inventory_value |
-    | ----------: |
-    | 30030260700.0 |
+    |---|
+    | 30,030,260,700.00 |
 
-    > The total inventory cost of products being sold is approximately 30 billion won.
 
 ---
 
-### Problem 27
 
-**Find the net sales (order amount minus discount amount) for all orders.**
+### 27. Find the net sales (order amount minus discount amount) for 
 
-??? tip "Hint"
-    Like `SUM(total_amount - discount_amount)`, you can subtract between columns within SUM.
+
+Find the net sales (order amount minus discount amount) for all orders.
+
+
+**Hint 1:** Like SUM(total_amount - discount_amount), you can subtract between columns within SUM
+
 
 ??? success "Answer"
     ```sql
@@ -628,22 +732,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     FROM orders;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | net_revenue |
-    | ----------: |
-    | 37831403663.0 |
+    |---|
+    | 37,831,403,663.00 |
 
-    > Total sales before discount of KRW 35.5 billion, excluding discount of approximately KRW 310 million, net sales are approximately KRW 35.2 billion.
 
 ---
 
-### Problem 28
 
-**Find the number of 1-star reviews and 5-star reviews, respectively.**
+### 28. Find the number of 1-star reviews and 5-star reviews, respec
 
-??? tip "Hint"
-    It is not possible to split two groups in one query without an aggregate function, but it is possible using `COUNT` and `WHERE`. Since we haven't learned `SUM(CASE ...)` or `GROUP BY` yet, let's use the two `COUNT` + arithmetic expressions. `COUNT` only counts non-NULL values, so couldn't we use a trick to return NULL when the condition is false? In fact, for this problem you can run two queries side by side.
+
+Find the number of 1-star reviews and 5-star reviews, respectively.
+
+
+**Hint 1:** Since we haven't learned GROUP BY yet, you can run two queries side by side
+
 
 ??? success "Answer"
     ```sql
@@ -652,34 +759,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     WHERE rating = 1;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | one_star_count |
-    | ----------: |
+    |---|
     | 434 |
 
-    ```sql
-    SELECT COUNT(*) AS five_star_count
-    FROM reviews
-    WHERE rating = 5;
-    ```
-
-    **Result:**
-
-    | five_star_count |
-    | ----------: |
-    | 3433 |
-
-    > A score of 5 (3,221 cases) is approximately 8 times more than a score of 1 (395 cases). If you learn GROUP BY, you can get the number of cases by all ratings with one query.
 
 ---
 
-### Problem 29
 
-**Find the average margin rate (%) for products being sold. The margin rate is `(price - cost_price) * 100.0 / price`, rounded to one decimal place.**
+### 29. Find the average margin rate (%) for products being sold. Th
 
-??? tip "Hint"
-    You can put an arithmetic expression in `AVG`. Calculate the average margin rate for each row with `AVG((price - cost_price) * 100.0 / price)`.
+
+Find the average margin rate (%) for products being sold. The margin rate is `(price - cost_price) * 100.0 / price`, rounded to one decimal place.
+
+
+**Hint 1:** You can put an arithmetic expression in AVG. Calculate the average margin rate for each row with AVG((price - cost_price) * 100.0 / price)
+
 
 ??? success "Answer"
     ```sql
@@ -688,22 +786,25 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     WHERE is_active = 1;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | avg_margin_pct |
-    | ----------: |
-    | 23.9 |
+    |---|
+    | 23.90 |
 
-    > The average margin for products being sold is approximately 23%.
 
 ---
 
-### Problem 30
 
-**View the total number of orders, total sales, average order amount, total discount amount, total shipping cost, and total points used in the order table at once. All amounts are rounded without decimal places.**
+### 30. View the total number of orders, total sales, average order 
 
-??? tip "Hint"
-    Lists six aggregate functions in one `SELECT`. This is the true power of aggregate functions --- condensing tens of thousands of pieces of data into a single line summary.
+
+View the total number of orders, total sales, average order amount, total discount amount, total shipping cost, and total points used in the order table at once. All amounts are rounded without decimal places.
+
+
+**Hint 1:** Lists six aggregate functions in one SELECT
+
 
 ??? success "Answer"
     ```sql
@@ -716,10 +817,12 @@ We cover complex conditions + aggregates, arithmetic operations + aggregates, an
     FROM orders;
     ```
 
-    **Result:**
+
+    **Result** (1 rows)
 
     | total_orders | total_revenue | avg_amount | total_discount | total_shipping | total_point_used |
-    | ----------: | ----------: | ----------: | ----------: | ----------: | ----------: |
-    | 37557 | 38183495063.0 | 1016681.0 | 352091400.0 | 9198000.0 | 9303137 |
+    |---|---|---|---|---|---|
+    | 37,557 | 38,183,495,063.00 | 1,016,681.00 | 352,091,400.00 | 9,198,000.00 | 9,303,137 |
 
-    > Approximately 35,000 cases over 10 years, sales of KRW 35.5 billion, average of approximately KRW 1.02 million per case, total discounts of KRW 310 million, delivery fee income of 8.87 million, and point usage of 8.82 million.
+
+---
