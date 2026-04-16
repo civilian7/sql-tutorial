@@ -61,6 +61,18 @@
         git --version
         ```
 
+    === "Linux (RHEL/Fedora)"
+
+        ```bash
+        # Fedora
+        sudo dnf install git
+
+        # RHEL / CentOS
+        sudo yum install git
+
+        git --version
+        ```
+
 ## 다운로드 방법
 
 === "Git (추천)"

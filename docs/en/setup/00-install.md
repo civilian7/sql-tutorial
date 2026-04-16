@@ -61,6 +61,18 @@ Since the documentation is updated frequently, **we recommend using Git to alway
         git --version
         ```
 
+    === "Linux (RHEL/Fedora)"
+
+        ```bash
+        # Fedora
+        sudo dnf install git
+
+        # RHEL / CentOS
+        sudo yum install git
+
+        git --version
+        ```
+
 ## Download Methods
 
 === "Git (Recommended)"
