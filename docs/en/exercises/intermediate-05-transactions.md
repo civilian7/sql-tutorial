@@ -1,24 +1,14 @@
 # Transactions
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `inventory_transactions` — Inventory (type, quantity)
 
 
-`customers` — Customers (grade, points, channel)<br>
+!!! abstract "Concepts"
 
-`orders` — Orders (status, amount, date)<br>
+    `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ACID`, `atomicity`, `bulk insert`
 
-`payments` — Payments (method, amount, status)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`inventory_transactions` — Inventory (type, quantity)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ACID`, `atomicity`, `bulk insert`
-
-
----
 
 
 ### 1. Wrap an order and its payment in a single transaction. Both 

@@ -223,33 +223,29 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
     md_ko_lines = [f"# {meta.get('title', exercise_id)}\n"]
     md_en_lines = [f"# {meta.get('title_en', exercise_id)}\n"]
 
-    # Standard info block: tables + concepts (single column)
+    # Standard info block: admonition style (tables + concepts)
     tables = meta.get("tables", [])
     concepts = meta.get("concepts", [])
 
     if tables or concepts:
         for lines, lang in [(md_ko_lines, "ko"), (md_en_lines, "en")]:
-            # Tables
+            # Tables admonition
             if tables:
-                if lang == "ko":
-                    lines.append('#### :material-database: 사용 테이블\n\n')
-                else:
-                    lines.append('#### :material-database: Tables\n\n')
+                title = "사용 테이블" if lang == "ko" else "Tables"
+                lines.append(f'!!! info "{title}"\n')
+                table_parts = []
                 for t in tables:
                     desc_ko_t, desc_en_t = _TABLE_DESC.get(t, (t, t))
                     desc = desc_ko_t if lang == "ko" else desc_en_t
-                    lines.append(f'`{t}` — {desc}<br>\n')
-                lines.append('\n')
+                    table_parts.append(f"`{t}` — {desc}")
+                lines.append(f'    {"  ·  ".join(table_parts)}\n\n')
 
-            # Concepts (inline, comma-separated)
+            # Concepts admonition
             if concepts:
+                title = "학습 범위" if lang == "ko" else "Concepts"
                 concepts_str = ", ".join(f"`{c}`" for c in concepts)
-                if lang == "ko":
-                    lines.append(f'**:material-book-open-variant: 학습 범위:** {concepts_str}\n')
-                else:
-                    lines.append(f'**:material-book-open-variant: Concepts:** {concepts_str}\n')
-
-            lines.append('\n---\n')
+                lines.append(f'!!! abstract "{title}"\n')
+                lines.append(f'    {concepts_str}\n\n')
 
     problems = data.get("problems", [])
     for i, prob in enumerate(problems):

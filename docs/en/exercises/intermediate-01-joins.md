@@ -1,36 +1,14 @@
 # JOIN Master
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `shipping` — Shipping (carrier, tracking, status)  ·  `staff` — Staff (dept, role, manager)  ·  `suppliers` — Suppliers (company, contact)  ·  `tags` — Tags (name, category)  ·  `product_tags` — Product-tag mapping
 
 
-`categories` — Categories (parent-child hierarchy)<br>
+!!! abstract "Concepts"
 
-`customers` — Customers (grade, points, channel)<br>
+    `INNER JOIN`, `LEFT JOIN`, `multi-table JOIN`, `GROUP BY`, `aggregate functions`
 
-`orders` — Orders (status, amount, date)<br>
-
-`order_items` — Order items (qty, unit price)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`reviews` — Reviews (rating, content)<br>
-
-`shipping` — Shipping (carrier, tracking, status)<br>
-
-`staff` — Staff (dept, role, manager)<br>
-
-`suppliers` — Suppliers (company, contact)<br>
-
-`tags` — Tags (name, category)<br>
-
-`product_tags` — Product-tag mapping<br>
-
-
-
-**:material-book-open-variant: Concepts:** `INNER JOIN`, `LEFT JOIN`, `multi-table JOIN`, `GROUP BY`, `aggregate functions`
-
-
----
 
 
 ### 1. Retrieve each product's name, price, and category name. Top 

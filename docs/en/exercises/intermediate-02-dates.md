@@ -1,28 +1,14 @@
 # Date and Time Analysis
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `calendar` — Calendar (weekday, holiday)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `products` — Products (name, price, stock, brand)  ·  `promotions` — Promotions (period, discount)  ·  `returns` — Returns (reason, status)  ·  `shipping` — Shipping (carrier, tracking, status)
 
 
-`calendar` — Calendar (weekday, holiday)<br>
+!!! abstract "Concepts"
 
-`customers` — Customers (grade, points, channel)<br>
+    `SUBSTR`, `JULIANDAY`, `STRFTIME`, `date arithmetic`, `LAG`, `CTE`, `window functions`
 
-`orders` — Orders (status, amount, date)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`promotions` — Promotions (period, discount)<br>
-
-`returns` — Returns (reason, status)<br>
-
-`shipping` — Shipping (carrier, tracking, status)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `SUBSTR`, `JULIANDAY`, `STRFTIME`, `date arithmetic`, `LAG`, `CTE`, `window functions`
-
-
----
 
 
 ### 1. Find the number of orders and revenue per month in 2025. Exc

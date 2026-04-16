@@ -1,26 +1,14 @@
 # Customer Analysis
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `customers` — Customers (grade, points, channel)  ·  `customer_addresses` — Addresses (address, default flag)  ·  `orders` — Orders (status, amount, date)  ·  `products` — Products (name, price, stock, brand)  ·  `tags` — Tags (name, category)  ·  `product_tags` — Product-tag mapping
 
 
-`customers` — Customers (grade, points, channel)<br>
+!!! abstract "Concepts"
 
-`customer_addresses` — Addresses (address, default flag)<br>
+    `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `AVG`, `MAX`, `COALESCE`, `SUBSTR`, `INSTR`, `JOIN`, `HAVING`, `LIKE`, `IN`, `CASE WHEN`
 
-`orders` — Orders (status, amount, date)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`tags` — Tags (name, category)<br>
-
-`product_tags` — Product-tag mapping<br>
-
-
-
-**:material-book-open-variant: Concepts:** `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `AVG`, `MAX`, `COALESCE`, `SUBSTR`, `INSTR`, `JOIN`, `HAVING`, `LIKE`, `IN`, `CASE WHEN`
-
-
----
 
 
 ### 1. Find the number of active and inactive customers separately.

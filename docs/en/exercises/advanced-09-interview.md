@@ -1,26 +1,14 @@
 # SQL Interview Preparation
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `reviews` — Reviews (rating, content)  ·  `customers` — Customers (grade, points, channel)
 
 
-`orders` — Orders (status, amount, date)<br>
+!!! abstract "Concepts"
 
-`order_items` — Order items (qty, unit price)<br>
+    `ROW_NUMBER`, `LAG`, `Running Total`, `Moving Average`, `Recursive CTE`, `NTILE`, `Funnel`
 
-`products` — Products (name, price, stock, brand)<br>
-
-`categories` — Categories (parent-child hierarchy)<br>
-
-`reviews` — Reviews (rating, content)<br>
-
-`customers` — Customers (grade, points, channel)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `ROW_NUMBER`, `LAG`, `Running Total`, `Moving Average`, `Recursive CTE`, `NTILE`, `Funnel`
-
-
----
 
 
 ### 1. Top-N per Group

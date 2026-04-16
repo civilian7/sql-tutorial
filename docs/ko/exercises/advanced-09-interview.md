@@ -1,26 +1,14 @@
 # SQL 면접 대비
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `categories` — 카테고리 (부모-자식 계층)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `customers` — 고객 (등급, 포인트, 가입채널)
 
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+!!! abstract "학습 범위"
 
-`order_items` — 주문 상세 (수량, 단가)<br>
+    `ROW_NUMBER`, `LAG`, `Running Total`, `Moving Average`, `Recursive CTE`, `NTILE`, `Funnel`
 
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`categories` — 카테고리 (부모-자식 계층)<br>
-
-`reviews` — 리뷰 (평점, 내용)<br>
-
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `ROW_NUMBER`, `LAG`, `Running Total`, `Moving Average`, `Recursive CTE`, `NTILE`, `Funnel`
-
-
----
 
 
 ### 1. Top-N per Group

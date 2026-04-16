@@ -1,24 +1,14 @@
 # CS 성과 분석
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `complaints` — 고객 불만 (유형, 우선순위)  ·  `staff` — 직원 (부서, 역할, 관리자)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `returns` — 반품/교환 (사유, 상태)
 
 
-`complaints` — 고객 불만 (유형, 우선순위)<br>
+!!! abstract "학습 범위"
 
-`staff` — 직원 (부서, 역할, 관리자)<br>
+    `JULIANDAY`, `CASE`, `Window Functions`, `CTE`, `Pivot`
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
-
-`orders` — 주문 (상태, 금액, 일시)<br>
-
-`returns` — 반품/교환 (사유, 상태)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `JULIANDAY`, `CASE`, `Window Functions`, `CTE`, `Pivot`
-
-
----
 
 
 ### 1. 문의 유형별 현황

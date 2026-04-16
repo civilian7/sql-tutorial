@@ -1,28 +1,14 @@
 # 날짜와 시간 분석
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `calendar` — 날짜 차원 (요일, 공휴일)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `promotions` — 프로모션 (기간, 할인)  ·  `returns` — 반품/교환 (사유, 상태)  ·  `shipping` — 배송 (택배사, 추적번호, 상태)
 
 
-`calendar` — 날짜 차원 (요일, 공휴일)<br>
+!!! abstract "학습 범위"
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `SUBSTR`, `JULIANDAY`, `STRFTIME`, `date arithmetic`, `LAG`, `CTE`, `window functions`
 
-`orders` — 주문 (상태, 금액, 일시)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`promotions` — 프로모션 (기간, 할인)<br>
-
-`returns` — 반품/교환 (사유, 상태)<br>
-
-`shipping` — 배송 (택배사, 추적번호, 상태)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `SUBSTR`, `JULIANDAY`, `STRFTIME`, `date arithmetic`, `LAG`, `CTE`, `window functions`
-
-
----
 
 
 ### 1. 2025년 월별 주문 수와 매출을 구하세요. 취소 제외.

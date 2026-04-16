@@ -1,32 +1,14 @@
 # 서브쿼리와 데이터 변환
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `categories` — 카테고리 (부모-자식 계층)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `payments` — 결제 (방법, 금액, 상태)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `returns` — 반품/교환 (사유, 상태)  ·  `wishlists` — 위시리스트 (고객-상품)
 
 
-`categories` — 카테고리 (부모-자식 계층)<br>
+!!! abstract "학습 범위"
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `scalar subquery`, `correlated subquery`, `CTE`, `CASE WHEN`, `NOT EXISTS`, `UNION ALL`, `window functions`
 
-`orders` — 주문 (상태, 금액, 일시)<br>
-
-`order_items` — 주문 상세 (수량, 단가)<br>
-
-`payments` — 결제 (방법, 금액, 상태)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`reviews` — 리뷰 (평점, 내용)<br>
-
-`returns` — 반품/교환 (사유, 상태)<br>
-
-`wishlists` — 위시리스트 (고객-상품)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `scalar subquery`, `correlated subquery`, `CTE`, `CASE WHEN`, `NOT EXISTS`, `UNION ALL`, `window functions`
-
-
----
 
 
 ### 1. 전체 평균 가격보다 비싼 상품의 이름과 가격을 조회하세요.

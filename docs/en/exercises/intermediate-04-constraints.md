@@ -1,22 +1,14 @@
 # Exploring Constraints
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `customers` — Customers (grade, points, channel)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `wishlists` — Wishlists (customer-product)
 
 
-`customers` — Customers (grade, points, channel)<br>
+!!! abstract "Concepts"
 
-`products` — Products (name, price, stock, brand)<br>
+    `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY`, `CHECK`, `NOT NULL`, `ON CONFLICT`, `UPSERT`
 
-`reviews` — Reviews (rating, content)<br>
-
-`wishlists` — Wishlists (customer-product)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY`, `CHECK`, `NOT NULL`, `ON CONFLICT`, `UPSERT`
-
-
----
 
 
 ### 1. What happens if you insert a product with an id that already

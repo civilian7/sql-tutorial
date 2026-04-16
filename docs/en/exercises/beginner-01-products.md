@@ -1,20 +1,14 @@
 # Product Exploration
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `categories` — Categories (parent-child hierarchy)  ·  `products` — Products (name, price, stock, brand)  ·  `suppliers` — Suppliers (company, contact)
 
 
-`categories` — Categories (parent-child hierarchy)<br>
+!!! abstract "Concepts"
 
-`products` — Products (name, price, stock, brand)<br>
+    `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `COUNT`, `AVG`, `MIN`, `MAX`, `GROUP BY`, `HAVING`, `LIKE`, `CASE WHEN`, `IS NOT NULL`
 
-`suppliers` — Suppliers (company, contact)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `COUNT`, `AVG`, `MIN`, `MAX`, `GROUP BY`, `HAVING`, `LIKE`, `CASE WHEN`, `IS NOT NULL`
-
-
----
 
 
 ### 1. Find the total number of registered products.

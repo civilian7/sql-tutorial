@@ -1,26 +1,14 @@
 # Data Quality Checks
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `shipping` — Shipping (carrier, tracking, status)
 
 
-`customers` — Customers (grade, points, channel)<br>
+!!! abstract "Concepts"
 
-`orders` — Orders (status, amount, date)<br>
+    `data validation`, `orphan records`, `NULL analysis`, `status consistency`, `date validation`, `duplicates`, `outliers`, `cross-table consistency`
 
-`order_items` — Order items (qty, unit price)<br>
-
-`payments` — Payments (method, amount, status)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`shipping` — Shipping (carrier, tracking, status)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `data validation`, `orphan records`, `NULL analysis`, `status consistency`, `date validation`, `duplicates`, `outliers`, `cross-table consistency`
-
-
----
 
 
 ### 1. Check if there are any orders placed before the customer's s

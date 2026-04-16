@@ -1,26 +1,14 @@
 # Inventory Management
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `suppliers` — Suppliers (company, contact)  ·  `inventory_transactions` — Inventory (type, quantity)  ·  `order_items` — Order items (qty, unit price)  ·  `orders` — Orders (status, amount, date)
 
 
-`products` — Products (name, price, stock, brand)<br>
+!!! abstract "Concepts"
 
-`categories` — Categories (parent-child hierarchy)<br>
+    `Conditional Aggregation`, `Window Functions`, `ABC Analysis`, `Pareto`, `CTE`
 
-`suppliers` — Suppliers (company, contact)<br>
-
-`inventory_transactions` — Inventory (type, quantity)<br>
-
-`order_items` — Order items (qty, unit price)<br>
-
-`orders` — Orders (status, amount, date)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `Conditional Aggregation`, `Window Functions`, `ABC Analysis`, `Pareto`, `CTE`
-
-
----
 
 
 ### 1. Current Inventory Status and Low-Stock Products

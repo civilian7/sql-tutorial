@@ -1,26 +1,14 @@
 # EXPLAIN / Query Plan Analysis
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `point_transactions` — Points (earn, use, expire)  ·  `product_views` — View log (customer, product, date)
 
 
-`customers` — Customers (grade, points, channel)<br>
+!!! abstract "Concepts"
 
-`orders` — Orders (status, amount, date)<br>
+    `EXPLAIN`, `QUERY PLAN`, `index`, `performance`, `optimization`
 
-`order_items` — Order items (qty, unit price)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`point_transactions` — Points (earn, use, expire)<br>
-
-`product_views` — View log (customer, product, date)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `EXPLAIN`, `QUERY PLAN`, `index`, `performance`, `optimization`
-
-
----
 
 
 ### 1. Check the execution plan for this query. Determine if a full

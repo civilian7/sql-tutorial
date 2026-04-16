@@ -1,38 +1,14 @@
 # Business Scenarios
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `complaints` — Complaints (type, priority)  ·  `returns` — Returns (reason, status)  ·  `shipping` — Shipping (carrier, tracking, status)  ·  `reviews` — Reviews (rating, content)  ·  `payments` — Payments (method, amount, status)  ·  `suppliers` — Suppliers (company, contact)  ·  `staff` — Staff (dept, role, manager)
 
 
-`orders` — Orders (status, amount, date)<br>
+!!! abstract "Concepts"
 
-`order_items` — Order items (qty, unit price)<br>
+    `CTE`, `Scalar Subquery`, `CASE`, `JULIANDAY`, `Business Reporting`
 
-`products` — Products (name, price, stock, brand)<br>
-
-`categories` — Categories (parent-child hierarchy)<br>
-
-`customers` — Customers (grade, points, channel)<br>
-
-`complaints` — Complaints (type, priority)<br>
-
-`returns` — Returns (reason, status)<br>
-
-`shipping` — Shipping (carrier, tracking, status)<br>
-
-`reviews` — Reviews (rating, content)<br>
-
-`payments` — Payments (method, amount, status)<br>
-
-`suppliers` — Suppliers (company, contact)<br>
-
-`staff` — Staff (dept, role, manager)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `CTE`, `Scalar Subquery`, `CASE`, `JULIANDAY`, `Business Reporting`
-
-
----
 
 
 ### 1. Scenario 1: CEO Weekly Report

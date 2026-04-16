@@ -1,20 +1,14 @@
 # Customer Segmentation
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `reviews` — Reviews (rating, content)
 
 
-`customers` — Customers (grade, points, channel)<br>
+!!! abstract "Concepts"
 
-`orders` — Orders (status, amount, date)<br>
+    `RFM`, `NTILE`, `Window Functions`, `CTE`, `Cohort Analysis`, `JULIANDAY`
 
-`reviews` — Reviews (rating, content)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `RFM`, `NTILE`, `Window Functions`, `CTE`, `Cohort Analysis`, `JULIANDAY`
-
-
----
 
 
 ### 1. RFM Basics: Customer Key Metrics

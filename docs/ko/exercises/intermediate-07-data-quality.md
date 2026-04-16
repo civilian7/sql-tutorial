@@ -1,26 +1,14 @@
 # 데이터 품질 점검
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `payments` — 결제 (방법, 금액, 상태)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `shipping` — 배송 (택배사, 추적번호, 상태)
 
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+!!! abstract "학습 범위"
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+    `data validation`, `orphan records`, `NULL analysis`, `status consistency`, `date validation`, `duplicates`, `outliers`, `cross-table consistency`
 
-`order_items` — 주문 상세 (수량, 단가)<br>
-
-`payments` — 결제 (방법, 금액, 상태)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`shipping` — 배송 (택배사, 추적번호, 상태)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `data validation`, `orphan records`, `NULL analysis`, `status consistency`, `date validation`, `duplicates`, `outliers`, `cross-table consistency`
-
-
----
 
 
 ### 1. 고객 가입일보다 주문일이 빠른 주문이 있는지 확인하세요.

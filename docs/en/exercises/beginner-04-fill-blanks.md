@@ -1,26 +1,14 @@
 # Fill in the Blanks
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `shipping` — Shipping (carrier, tracking, status)
 
 
-`categories` — Categories (parent-child hierarchy)<br>
+!!! abstract "Concepts"
 
-`customers` — Customers (grade, points, channel)<br>
+    `WHERE`, `ORDER BY`, `COUNT`, `HAVING`, `JOIN`, `LEFT JOIN`, `IS NULL`, `BETWEEN`, `CASE WHEN`, `COALESCE`, `subquery`, `GROUP BY`, `LIKE`, `SUBSTR`, `IN`
 
-`orders` — Orders (status, amount, date)<br>
-
-`payments` — Payments (method, amount, status)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`shipping` — Shipping (carrier, tracking, status)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `WHERE`, `ORDER BY`, `COUNT`, `HAVING`, `JOIN`, `LEFT JOIN`, `IS NULL`, `BETWEEN`, `CASE WHEN`, `COALESCE`, `subquery`, `GROUP BY`, `LIKE`, `SUBSTR`, `IN`
-
-
----
 
 
 ### 1. Retrieve only VIP grade customers.

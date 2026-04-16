@@ -1,24 +1,14 @@
 # 트랜잭션
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `payments` — 결제 (방법, 금액, 상태)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `inventory_transactions` — 재고 입출고 (유형, 수량)
 
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+!!! abstract "학습 범위"
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+    `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ACID`, `atomicity`, `bulk insert`
 
-`payments` — 결제 (방법, 금액, 상태)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`inventory_transactions` — 재고 입출고 (유형, 수량)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `BEGIN`, `COMMIT`, `ROLLBACK`, `SAVEPOINT`, `ACID`, `atomicity`, `bulk insert`
-
-
----
 
 
 ### 1. 주문과 결제를 하나의 트랜잭션으로 묶으세요. 둘 다 성공해야 반영됩니다.

@@ -1,18 +1,14 @@
 # 주문 기초
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `orders` — 주문 (상태, 금액, 일시)  ·  `payments` — 결제 (방법, 금액, 상태)
 
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+!!! abstract "학습 범위"
 
-`payments` — 결제 (방법, 금액, 상태)<br>
+    `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `SUM`, `AVG`, `MAX`, `ROUND`, `SUBSTR`, `STRFTIME`, `CASE WHEN`, `LIKE`, `subquery`
 
-
-
-**:material-book-open-variant: 학습 범위:** `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `SUM`, `AVG`, `MAX`, `ROUND`, `SUBSTR`, `STRFTIME`, `CASE WHEN`, `LIKE`, `subquery`
-
-
----
 
 
 ### 1. 전체 주문 수와 총 매출을 구하세요.

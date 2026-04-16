@@ -1,24 +1,14 @@
 # 매출 분석
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `categories` — 카테고리 (부모-자식 계층)  ·  `payments` — 결제 (방법, 금액, 상태)
 
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+!!! abstract "학습 범위"
 
-`order_items` — 주문 상세 (수량, 단가)<br>
+    `Aggregation`, `GROUP BY`, `Window Functions`, `CTE`, `YoY Growth`, `Pivot`
 
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`categories` — 카테고리 (부모-자식 계층)<br>
-
-`payments` — 결제 (방법, 금액, 상태)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `Aggregation`, `GROUP BY`, `Window Functions`, `CTE`, `YoY Growth`, `Pivot`
-
-
----
 
 
 ### 1. 월별 매출 추이 (2022-2024)

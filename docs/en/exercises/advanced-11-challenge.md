@@ -1,38 +1,14 @@
 # Challenge Problems
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `shipping` — Shipping (carrier, tracking, status)  ·  `point_transactions` — Points (earn, use, expire)  ·  `product_views` — View log (customer, product, date)  ·  `inventory_transactions` — Inventory (type, quantity)  ·  `wishlists` — Wishlists (customer-product)  ·  `calendar` — Calendar (weekday, holiday)
 
 
-`categories` — Categories (parent-child hierarchy)<br>
+!!! abstract "Concepts"
 
-`customers` — Customers (grade, points, channel)<br>
+    `Window`, `Analytics`, `CTE`, `consecutive`, `median`, `retention`
 
-`orders` — Orders (status, amount, date)<br>
-
-`order_items` — Order items (qty, unit price)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`reviews` — Reviews (rating, content)<br>
-
-`shipping` — Shipping (carrier, tracking, status)<br>
-
-`point_transactions` — Points (earn, use, expire)<br>
-
-`product_views` — View log (customer, product, date)<br>
-
-`inventory_transactions` — Inventory (type, quantity)<br>
-
-`wishlists` — Wishlists (customer-product)<br>
-
-`calendar` — Calendar (weekday, holiday)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `Window`, `Analytics`, `CTE`, `consecutive`, `median`, `retention`
-
-
----
 
 
 ### 1. Duplicate Review Detection

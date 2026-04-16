@@ -1,30 +1,14 @@
 # SQL 디버깅
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `categories` — 카테고리 (부모-자식 계층)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `returns` — 반품/교환 (사유, 상태)  ·  `suppliers` — 공급업체 (업체명, 연락처)
 
 
-`categories` — 카테고리 (부모-자식 계층)<br>
+!!! abstract "학습 범위"
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `cardinality explosion`, `NULL comparison`, `LEFT JOIN pitfall`, `GROUP BY`, `HAVING vs WHERE`, `DISTINCT`, `correlated subquery`, `date range`, `NULLIF`, `UNION`
 
-`orders` — 주문 (상태, 금액, 일시)<br>
-
-`order_items` — 주문 상세 (수량, 단가)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`reviews` — 리뷰 (평점, 내용)<br>
-
-`returns` — 반품/교환 (사유, 상태)<br>
-
-`suppliers` — 공급업체 (업체명, 연락처)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `cardinality explosion`, `NULL comparison`, `LEFT JOIN pitfall`, `GROUP BY`, `HAVING vs WHERE`, `DISTINCT`, `correlated subquery`, `date range`, `NULLIF`, `UNION`
-
-
----
 
 
 ### 1. 아래 쿼리는 2024년 상품별 매출을 구합니다. 그런데 실제보다 매출이 훨씬 크게 나옵니다. 왜일까요?

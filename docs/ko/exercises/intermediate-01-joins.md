@@ -1,36 +1,14 @@
 # JOIN 마스터
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `categories` — 카테고리 (부모-자식 계층)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `shipping` — 배송 (택배사, 추적번호, 상태)  ·  `staff` — 직원 (부서, 역할, 관리자)  ·  `suppliers` — 공급업체 (업체명, 연락처)  ·  `tags` — 태그 (이름, 카테고리)  ·  `product_tags` — 상품-태그 연결
 
 
-`categories` — 카테고리 (부모-자식 계층)<br>
+!!! abstract "학습 범위"
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `INNER JOIN`, `LEFT JOIN`, `multi-table JOIN`, `GROUP BY`, `aggregate functions`
 
-`orders` — 주문 (상태, 금액, 일시)<br>
-
-`order_items` — 주문 상세 (수량, 단가)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`reviews` — 리뷰 (평점, 내용)<br>
-
-`shipping` — 배송 (택배사, 추적번호, 상태)<br>
-
-`staff` — 직원 (부서, 역할, 관리자)<br>
-
-`suppliers` — 공급업체 (업체명, 연락처)<br>
-
-`tags` — 태그 (이름, 카테고리)<br>
-
-`product_tags` — 상품-태그 연결<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `INNER JOIN`, `LEFT JOIN`, `multi-table JOIN`, `GROUP BY`, `aggregate functions`
-
-
----
 
 
 ### 1. 각 상품의 이름, 가격, 카테고리명을 조회하세요. 가격 내림차순으로 10개만.

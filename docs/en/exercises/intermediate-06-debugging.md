@@ -1,30 +1,14 @@
 # SQL Debugging
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `returns` — Returns (reason, status)  ·  `suppliers` — Suppliers (company, contact)
 
 
-`categories` — Categories (parent-child hierarchy)<br>
+!!! abstract "Concepts"
 
-`customers` — Customers (grade, points, channel)<br>
+    `cardinality explosion`, `NULL comparison`, `LEFT JOIN pitfall`, `GROUP BY`, `HAVING vs WHERE`, `DISTINCT`, `correlated subquery`, `date range`, `NULLIF`, `UNION`
 
-`orders` — Orders (status, amount, date)<br>
-
-`order_items` — Order items (qty, unit price)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`reviews` — Reviews (rating, content)<br>
-
-`returns` — Returns (reason, status)<br>
-
-`suppliers` — Suppliers (company, contact)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `cardinality explosion`, `NULL comparison`, `LEFT JOIN pitfall`, `GROUP BY`, `HAVING vs WHERE`, `DISTINCT`, `correlated subquery`, `date range`, `NULLIF`, `UNION`
-
-
----
 
 
 ### 1. The query below calculates revenue by product for 2024. Howe

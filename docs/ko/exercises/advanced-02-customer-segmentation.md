@@ -1,20 +1,14 @@
 # 고객 세분화
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `reviews` — 리뷰 (평점, 내용)
 
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+!!! abstract "학습 범위"
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+    `RFM`, `NTILE`, `Window Functions`, `CTE`, `Cohort Analysis`, `JULIANDAY`
 
-`reviews` — 리뷰 (평점, 내용)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `RFM`, `NTILE`, `Window Functions`, `CTE`, `Cohort Analysis`, `JULIANDAY`
-
-
----
 
 
 ### 1. RFM 기초: 고객별 핵심 지표 산출

@@ -1,22 +1,14 @@
 # Query Optimization
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)
 
 
-`orders` — Orders (status, amount, date)<br>
+!!! abstract "Concepts"
 
-`order_items` — Order items (qty, unit price)<br>
+    `EXPLAIN`, `Index`, `Covering Index`, `Correlated Subquery`, `IN vs EXISTS`
 
-`products` — Products (name, price, stock, brand)<br>
-
-`reviews` — Reviews (rating, content)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `EXPLAIN`, `Index`, `Covering Index`, `Correlated Subquery`, `IN vs EXISTS`
-
-
----
 
 
 ### 1. Reading EXPLAIN

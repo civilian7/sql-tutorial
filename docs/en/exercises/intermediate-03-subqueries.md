@@ -1,32 +1,14 @@
 # Subqueries and Data Transformation
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `categories` — Categories (parent-child hierarchy)  ·  `customers` — Customers (grade, points, channel)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `payments` — Payments (method, amount, status)  ·  `products` — Products (name, price, stock, brand)  ·  `reviews` — Reviews (rating, content)  ·  `returns` — Returns (reason, status)  ·  `wishlists` — Wishlists (customer-product)
 
 
-`categories` — Categories (parent-child hierarchy)<br>
+!!! abstract "Concepts"
 
-`customers` — Customers (grade, points, channel)<br>
+    `scalar subquery`, `correlated subquery`, `CTE`, `CASE WHEN`, `NOT EXISTS`, `UNION ALL`, `window functions`
 
-`orders` — Orders (status, amount, date)<br>
-
-`order_items` — Order items (qty, unit price)<br>
-
-`payments` — Payments (method, amount, status)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`reviews` — Reviews (rating, content)<br>
-
-`returns` — Returns (reason, status)<br>
-
-`wishlists` — Wishlists (customer-product)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `scalar subquery`, `correlated subquery`, `CTE`, `CASE WHEN`, `NOT EXISTS`, `UNION ALL`, `window functions`
-
-
----
 
 
 ### 1. Retrieve the name and price of products that are more expens

@@ -1,20 +1,14 @@
 # 상품 탐색
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `categories` — 카테고리 (부모-자식 계층)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `suppliers` — 공급업체 (업체명, 연락처)
 
 
-`categories` — 카테고리 (부모-자식 계층)<br>
+!!! abstract "학습 범위"
 
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+    `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `COUNT`, `AVG`, `MIN`, `MAX`, `GROUP BY`, `HAVING`, `LIKE`, `CASE WHEN`, `IS NOT NULL`
 
-`suppliers` — 공급업체 (업체명, 연락처)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `COUNT`, `AVG`, `MIN`, `MAX`, `GROUP BY`, `HAVING`, `LIKE`, `CASE WHEN`, `IS NOT NULL`
-
-
----
 
 
 ### 1. 현재 등록된 전체 상품 수를 구하세요.

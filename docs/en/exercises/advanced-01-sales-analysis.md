@@ -1,24 +1,14 @@
 # Sales Analysis
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `products` — Products (name, price, stock, brand)  ·  `categories` — Categories (parent-child hierarchy)  ·  `payments` — Payments (method, amount, status)
 
 
-`orders` — Orders (status, amount, date)<br>
+!!! abstract "Concepts"
 
-`order_items` — Order items (qty, unit price)<br>
+    `Aggregation`, `GROUP BY`, `Window Functions`, `CTE`, `YoY Growth`, `Pivot`
 
-`products` — Products (name, price, stock, brand)<br>
-
-`categories` — Categories (parent-child hierarchy)<br>
-
-`payments` — Payments (method, amount, status)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `Aggregation`, `GROUP BY`, `Window Functions`, `CTE`, `YoY Growth`, `Pivot`
-
-
----
 
 
 ### 1. Monthly Revenue Trend (2022-2024)

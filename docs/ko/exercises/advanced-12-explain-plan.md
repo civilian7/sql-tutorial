@@ -1,26 +1,14 @@
 # 실행 계획 분석
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `point_transactions` — 포인트 (적립, 사용, 소멸)  ·  `product_views` — 조회 로그 (고객, 상품, 일시)
 
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+!!! abstract "학습 범위"
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+    `EXPLAIN`, `QUERY PLAN`, `index`, `performance`, `optimization`
 
-`order_items` — 주문 상세 (수량, 단가)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`point_transactions` — 포인트 (적립, 사용, 소멸)<br>
-
-`product_views` — 조회 로그 (고객, 상품, 일시)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `EXPLAIN`, `QUERY PLAN`, `index`, `performance`, `optimization`
-
-
----
 
 
 ### 1. 다음 쿼리의 실행 계획을 확인하세요. 풀 테이블 스캔이 발생하는지 판단하세요.

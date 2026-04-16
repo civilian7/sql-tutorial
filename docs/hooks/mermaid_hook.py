@@ -107,15 +107,15 @@ def _link_table_names(markdown: str, page, config=None) -> str:
 
         return f'{pre_char}[`{table}`]({schema_path}#{table} "{tip}")'
 
-    # Protect exercise header blocks (table list + concepts) — already has descriptions
+    # Protect exercise header admonitions — already has table descriptions
     _protected = []
     def _save_block(m):
         _protected.append(m.group(0))
         return f"__PROTECTED_{len(_protected) - 1}__"
-    # Match: #### :material-database: ... through next ---
+    # Match: !!! info "사용 테이블" / !!! info "Tables" block (indented content)
     markdown = re.sub(
-        r'#{4}\s+:material-database:.*?(?=\n---)',
-        _save_block, markdown, flags=re.DOTALL,
+        r'!!! info "(?:사용 테이블|Tables)"\n    .+',
+        _save_block, markdown,
     )
 
     # Match `table_name` — backtick-wrapped words

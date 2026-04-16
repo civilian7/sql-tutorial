@@ -1,22 +1,14 @@
 # 제약조건 체험
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `customers` — 고객 (등급, 포인트, 가입채널)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)  ·  `wishlists` — 위시리스트 (고객-상품)
 
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+!!! abstract "학습 범위"
 
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+    `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY`, `CHECK`, `NOT NULL`, `ON CONFLICT`, `UPSERT`
 
-`reviews` — 리뷰 (평점, 내용)<br>
-
-`wishlists` — 위시리스트 (고객-상품)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY`, `CHECK`, `NOT NULL`, `ON CONFLICT`, `UPSERT`
-
-
----
 
 
 ### 1. 이미 존재하는 id로 상품을 삽입하면 어떻게 될까요?

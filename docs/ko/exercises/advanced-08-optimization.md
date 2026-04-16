@@ -1,22 +1,14 @@
 # 쿼리 최적화
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `orders` — 주문 (상태, 금액, 일시)  ·  `order_items` — 주문 상세 (수량, 단가)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `reviews` — 리뷰 (평점, 내용)
 
 
-`orders` — 주문 (상태, 금액, 일시)<br>
+!!! abstract "학습 범위"
 
-`order_items` — 주문 상세 (수량, 단가)<br>
+    `EXPLAIN`, `Index`, `Covering Index`, `Correlated Subquery`, `IN vs EXISTS`
 
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`reviews` — 리뷰 (평점, 내용)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `EXPLAIN`, `Index`, `Covering Index`, `Correlated Subquery`, `IN vs EXISTS`
-
-
----
 
 
 ### 1. EXPLAIN 읽기

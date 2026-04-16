@@ -1,18 +1,14 @@
 # Order Basics
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `orders` — Orders (status, amount, date)  ·  `payments` — Payments (method, amount, status)
 
 
-`orders` — Orders (status, amount, date)<br>
+!!! abstract "Concepts"
 
-`payments` — Payments (method, amount, status)<br>
+    `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `SUM`, `AVG`, `MAX`, `ROUND`, `SUBSTR`, `STRFTIME`, `CASE WHEN`, `LIKE`, `subquery`
 
-
-
-**:material-book-open-variant: Concepts:** `SELECT`, `WHERE`, `GROUP BY`, `COUNT`, `SUM`, `AVG`, `MAX`, `ROUND`, `SUBSTR`, `STRFTIME`, `CASE WHEN`, `LIKE`, `subquery`
-
-
----
 
 
 ### 1. Find the total number of orders and total revenue.

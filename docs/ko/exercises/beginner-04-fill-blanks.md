@@ -1,26 +1,14 @@
 # 빈칸 채우기
 
-#### :material-database: 사용 테이블
+!!! info "사용 테이블"
+
+    `categories` — 카테고리 (부모-자식 계층)  ·  `customers` — 고객 (등급, 포인트, 가입채널)  ·  `orders` — 주문 (상태, 금액, 일시)  ·  `payments` — 결제 (방법, 금액, 상태)  ·  `products` — 상품 (이름, 가격, 재고, 브랜드)  ·  `shipping` — 배송 (택배사, 추적번호, 상태)
 
 
-`categories` — 카테고리 (부모-자식 계층)<br>
+!!! abstract "학습 범위"
 
-`customers` — 고객 (등급, 포인트, 가입채널)<br>
+    `WHERE`, `ORDER BY`, `COUNT`, `HAVING`, `JOIN`, `LEFT JOIN`, `IS NULL`, `BETWEEN`, `CASE WHEN`, `COALESCE`, `subquery`, `GROUP BY`, `LIKE`, `SUBSTR`, `IN`
 
-`orders` — 주문 (상태, 금액, 일시)<br>
-
-`payments` — 결제 (방법, 금액, 상태)<br>
-
-`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
-
-`shipping` — 배송 (택배사, 추적번호, 상태)<br>
-
-
-
-**:material-book-open-variant: 학습 범위:** `WHERE`, `ORDER BY`, `COUNT`, `HAVING`, `JOIN`, `LEFT JOIN`, `IS NULL`, `BETWEEN`, `CASE WHEN`, `COALESCE`, `subquery`, `GROUP BY`, `LIKE`, `SUBSTR`, `IN`
-
-
----
 
 
 ### 1. VIP 등급 고객만 조회합니다.

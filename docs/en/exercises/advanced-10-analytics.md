@@ -1,40 +1,14 @@
 # Advanced Analytics
 
-#### :material-database: Tables
+!!! info "Tables"
+
+    `point_transactions` — Points (earn, use, expire)  ·  `customer_grade_history` — Grade history (before/after)  ·  `product_views` — View log (customer, product, date)  ·  `orders` — Orders (status, amount, date)  ·  `order_items` — Order items (qty, unit price)  ·  `carts` — Carts (status)  ·  `cart_items` — Cart items (quantity)  ·  `promotions` — Promotions (period, discount)  ·  `promotion_products` — Promotion products  ·  `staff` — Staff (dept, role, manager)  ·  `product_qna` — Product Q&A (question-answer)  ·  `products` — Products (name, price, stock, brand)  ·  `customers` — Customers (grade, points, channel)
 
 
-`point_transactions` — Points (earn, use, expire)<br>
+!!! abstract "Concepts"
 
-`customer_grade_history` — Grade history (before/after)<br>
+    `Window Functions`, `CTE`, `Funnel`, `Session`, `Cohort`, `Recursive CTE`, `RFM`
 
-`product_views` — View log (customer, product, date)<br>
-
-`orders` — Orders (status, amount, date)<br>
-
-`order_items` — Order items (qty, unit price)<br>
-
-`carts` — Carts (status)<br>
-
-`cart_items` — Cart items (quantity)<br>
-
-`promotions` — Promotions (period, discount)<br>
-
-`promotion_products` — Promotion products<br>
-
-`staff` — Staff (dept, role, manager)<br>
-
-`product_qna` — Product Q&A (question-answer)<br>
-
-`products` — Products (name, price, stock, brand)<br>
-
-`customers` — Customers (grade, points, channel)<br>
-
-
-
-**:material-book-open-variant: Concepts:** `Window Functions`, `CTE`, `Funnel`, `Session`, `Cohort`, `Recursive CTE`, `RFM`
-
-
----
 
 
 ### 1. Point Running Total Verification
