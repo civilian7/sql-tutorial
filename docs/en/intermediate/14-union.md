@@ -136,7 +136,7 @@ SELECT
     'complaint'         AS event_type,
     c.customer_id,
     c.created_at        AS event_date,
-    c.subject           AS description
+    c.title             AS description
 FROM complaints AS c
 WHERE c.created_at LIKE '2024%'
 
@@ -182,11 +182,11 @@ INNER JOIN orders AS o ON oi.order_id = o.id
 WHERE o.status IN ('delivered', 'confirmed')
   AND o.ordered_at LIKE '2024%'
 
-ORDER BY sort_key, revenue DESC;
+ORDER BY 1, 3 DESC;
 ```
 
-> **SQLite note:** `CASE` expressions cannot be used directly in `ORDER BY` with `UNION` / `UNION ALL`.
-> Instead, adding a sort column (`sort_key`) to each `SELECT` as shown above is the most concise approach.
+> **SQLite note:** `CASE` expressions cannot be used directly in `ORDER BY` with `UNION` / `UNION ALL`, and using **column position numbers** instead of aliases is safer.
+> Above, `ORDER BY 1, 3 DESC` means first column (`sort_key`) ascending, third column (`revenue`) descending.
 
 **Result (partial):**
 

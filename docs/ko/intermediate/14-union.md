@@ -136,7 +136,7 @@ SELECT
     'complaint'         AS event_type,
     c.customer_id,
     c.created_at        AS event_date,
-    c.subject           AS description
+    c.title             AS description
 FROM complaints AS c
 WHERE c.created_at LIKE '2024%'
 
@@ -182,11 +182,11 @@ INNER JOIN orders AS o ON oi.order_id = o.id
 WHERE o.status IN ('delivered', 'confirmed')
   AND o.ordered_at LIKE '2024%'
 
-ORDER BY sort_key, revenue DESC;
+ORDER BY 1, 3 DESC;
 ```
 
-> **SQLite 참고:** `UNION` / `UNION ALL`의 `ORDER BY`에서는 `CASE` 표현식을 직접 사용할 수 없습니다.
-> 대신 위처럼 정렬용 칼럼(`sort_key`)을 각 `SELECT`에 추가하는 것이 가장 간결합니다.
+> **SQLite 참고:** `UNION` / `UNION ALL`의 `ORDER BY`에서는 `CASE` 표현식을 직접 사용할 수 없고, 별칭 대신 **칼럼 위치 번호**를 쓰는 것이 안전합니다.
+> 위에서 `ORDER BY 1, 3 DESC`는 첫 번째 칼럼(`sort_key`) 오름차순, 세 번째 칼럼(`revenue`) 내림차순입니다.
 
 **결과 (일부):**
 
