@@ -12,46 +12,12 @@
 <style>
 #playground { font-family: var(--md-text-font-family, sans-serif); }
 
-.pg-toolbar {
-  display: flex; gap: 8px; align-items: center;
-  padding: 8px 0; border-bottom: 1px solid var(--md-default-fg-color--lightest, #ddd);
-  flex-wrap: wrap;
-}
-.pg-btn {
-  padding: 6px 16px; border: none; border-radius: 4px;
-  font-size: 0.85rem; font-weight: 600; cursor: pointer;
-}
-.pg-btn-run { background: var(--md-accent-fg-color, #5c6bc0); color: #fff; }
-.pg-btn-run:hover { opacity: 0.85; }
-.pg-btn-reset { background: var(--md-default-fg-color--lightest, #ddd); color: var(--md-default-fg-color, #333); }
-.pg-btn-reset:hover { opacity: 0.7; }
-.pg-shortcut { font-size: 0.75rem; color: var(--md-default-fg-color--light, #999); }
-
-.pg-samples { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
-.pg-sample-btn {
-  padding: 4px 10px; font-size: 0.73rem;
-  font-family: var(--md-code-font-family, monospace);
-  background: var(--md-code-bg-color, #f5f5f5);
-  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
-  border-radius: 3px; cursor: pointer;
-  color: var(--md-default-fg-color, #333);
-}
-.pg-sample-btn:hover {
-  background: var(--md-accent-fg-color--transparent, rgba(92,107,192,0.1));
-  border-color: var(--md-accent-fg-color, #5c6bc0);
-}
-
-/* CodeMirror wrapper */
 /* Table list (collapsible) */
-.pg-tables {
-  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
-  border-top: none;
-}
+.pg-tables { border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-radius: 4px 4px 0 0; }
 .pg-tables summary {
   padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 600;
   color: var(--md-default-fg-color--light, #666);
-  background: var(--md-code-bg-color, #f5f5f5);
-  user-select: none;
+  background: var(--md-code-bg-color, #f5f5f5); user-select: none;
 }
 .pg-tables summary:hover { color: var(--md-accent-fg-color, #5c6bc0); }
 .pg-tables-grid {
@@ -63,7 +29,6 @@
   font-family: var(--md-code-font-family, monospace);
   color: var(--md-default-fg-color, #333);
   cursor: pointer; border-radius: 3px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .pg-table-chip:hover {
   background: var(--md-accent-fg-color--transparent, rgba(92,107,192,0.1));
@@ -73,12 +38,36 @@
   font-size: 0.65rem; color: var(--md-default-fg-color--lighter, #aaa); margin-left: 4px;
 }
 
-#pg-editor-wrap { border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-top: none; }
-#pg-editor-wrap .CodeMirror { height: 180px; font-size: 0.88rem; }
+/* Toolbar */
+.pg-toolbar {
+  display: flex; gap: 8px; align-items: center;
+  padding: 6px 8px;
+  border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-top: none;
+  background: var(--md-code-bg-color, #f5f5f5);
+}
+.pg-btn {
+  padding: 5px 14px; border: none; border-radius: 3px;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer;
+}
+.pg-btn-run { background: var(--md-accent-fg-color, #5c6bc0); color: #fff; }
+.pg-btn-run:hover { opacity: 0.85; }
+.pg-btn-reset { background: var(--md-default-fg-color--lightest, #ddd); color: var(--md-default-fg-color, #333); }
+.pg-btn-reset:hover { opacity: 0.7; }
+.pg-shortcut { font-size: 0.72rem; color: var(--md-default-fg-color--light, #999); }
 
+/* Editor */
+#pg-editor-wrap { border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-top: none; }
+#pg-editor-wrap .CodeMirror {
+  height: 200px; font-size: 0.88rem;
+}
+#pg-editor-wrap .CodeMirror-vscrollbar { display: block !important; }
+#pg-editor-wrap .CodeMirror-scroll { overflow-y: scroll !important; }
+
+/* Result */
 .pg-result {
-  border: 1px solid var(--md-default-fg-color--lightest, #ddd);
-  border-top: none; min-height: 60px; max-height: 400px; overflow-y: auto;
+  border: 1px solid var(--md-default-fg-color--lightest, #ddd); border-top: none;
+  border-radius: 0 0 4px 4px;
+  min-height: 60px; max-height: 400px; overflow-y: auto;
 }
 .pg-result-table-wrap { overflow-x: auto; }
 .pg-result-table {
@@ -123,21 +112,15 @@
   </div>
 
   <div id="pg-app" style="display:none;">
-    <div class="pg-toolbar">
-      <button class="pg-btn pg-btn-run" id="pg-run">실행</button>
-      <button class="pg-btn pg-btn-reset" id="pg-reset">초기화</button>
-      <span class="pg-shortcut">Ctrl+Enter</span>
-      <div class="pg-samples">
-        <button class="pg-sample-btn" data-sql="SELECT * FROM customers LIMIT 10;">customers</button>
-        <button class="pg-sample-btn" data-sql="SELECT name, price FROM products ORDER BY price DESC LIMIT 5;">비싼 상품</button>
-        <button class="pg-sample-btn" data-sql="SELECT grade, COUNT(*) AS cnt FROM customers GROUP BY grade;">등급별 고객</button>
-        <button class="pg-sample-btn" data-sql="SELECT c.name, COUNT(o.id) AS orders\nFROM customers c\nJOIN orders o ON c.id = o.customer_id\nGROUP BY c.id\nORDER BY orders DESC LIMIT 5;">주문 TOP 5</button>
-      </div>
-    </div>
     <details class="pg-tables" id="pg-tables">
       <summary>테이블 목록 (클릭하면 SELECT 쿼리 삽입)</summary>
       <div class="pg-tables-grid" id="pg-tables-grid"></div>
     </details>
+    <div class="pg-toolbar">
+      <button class="pg-btn pg-btn-run" id="pg-run">실행</button>
+      <button class="pg-btn pg-btn-reset" id="pg-reset">초기화</button>
+      <span class="pg-shortcut">Ctrl+Enter</span>
+    </div>
     <div id="pg-editor-wrap"></div>
     <div class="pg-result" id="pg-result"></div>
   </div>
@@ -175,6 +158,7 @@
       lineNumbers: true,
       indentWithTabs: false,
       tabSize: 2,
+      scrollbarStyle: 'native',
       autofocus: true,
       extraKeys: { 'Ctrl-Enter': run }
     });
@@ -233,10 +217,6 @@
       editor.setValue('SELECT * FROM customers LIMIT 10;');
       document.getElementById('pg-result').innerHTML = '';
     });
-    document.querySelectorAll('.pg-sample-btn').forEach(b => b.addEventListener('click', function() {
-      editor.setValue(this.getAttribute('data-sql').replace(/\\n/g, '\n'));
-      run();
-    }));
   });
 })();
 </script>
