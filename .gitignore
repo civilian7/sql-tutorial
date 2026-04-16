@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 *.db
+!docs/**/playground/*.db
 logs/
 .claude/
 
