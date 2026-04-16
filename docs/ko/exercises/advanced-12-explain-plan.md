@@ -1,9 +1,40 @@
 # 실행 계획 분석
 
-**사용 테이블:** `customers`, `orders`, `order_items`, `products`, `point_transactions`, `product_views`
+<div class="grid" markdown>
 
-**학습 범위:** EXPLAIN, QUERY PLAN, index, performance, optimization
+<div markdown>
+#### :material-database: 사용 테이블
 
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`point_transactions` — 포인트 (적립, 사용, 소멸)<br>
+
+`product_views` — 조회 로그 (고객, 상품, 일시)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`EXPLAIN`
+
+`QUERY PLAN`
+
+`index`
+
+`performance`
+
+`optimization`
+
+</div>
+
+</div>
 
 ---
 

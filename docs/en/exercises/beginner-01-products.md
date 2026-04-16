@@ -1,9 +1,50 @@
 # Product Exploration
 
-**Tables:** `categories`, `products`, `suppliers`
+<div class="grid" markdown>
 
-**Concepts:** SELECT, WHERE, ORDER BY, LIMIT, COUNT, AVG, MIN, MAX, GROUP BY, HAVING, LIKE, CASE WHEN, IS NOT NULL
+<div markdown>
+#### :material-database: Tables
 
+`categories` — Categories (parent-child hierarchy)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`suppliers` — Suppliers (company, contact)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`SELECT`
+
+`WHERE`
+
+`ORDER BY`
+
+`LIMIT`
+
+`COUNT`
+
+`AVG`
+
+`MIN`
+
+`MAX`
+
+`GROUP BY`
+
+`HAVING`
+
+`LIKE`
+
+`CASE WHEN`
+
+`IS NOT NULL`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,36 @@
 # Query Optimization
 
-**Tables:** `orders`, `order_items`, `products`, `reviews`
+<div class="grid" markdown>
 
-**Concepts:** EXPLAIN, Index, Covering Index, Correlated Subquery, IN vs EXISTS
+<div markdown>
+#### :material-database: Tables
 
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`EXPLAIN`
+
+`Index`
+
+`Covering Index`
+
+`Correlated Subquery`
+
+`IN vs EXISTS`
+
+</div>
+
+</div>
 
 ---
 

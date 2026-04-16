@@ -1,9 +1,54 @@
 # 도전 문제
 
-**사용 테이블:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `shipping`, `point_transactions`, `product_views`, `inventory_transactions`, `wishlists`, `calendar`
+<div class="grid" markdown>
 
-**학습 범위:** Window, Analytics, CTE, consecutive, median, retention
+<div markdown>
+#### :material-database: 사용 테이블
 
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`reviews` — 리뷰 (평점, 내용)<br>
+
+`shipping` — 배송 (택배사, 추적번호, 상태)<br>
+
+`point_transactions` — 포인트 (적립, 사용, 소멸)<br>
+
+`product_views` — 조회 로그 (고객, 상품, 일시)<br>
+
+`inventory_transactions` — 재고 입출고 (유형, 수량)<br>
+
+`wishlists` — 위시리스트 (고객-상품)<br>
+
+`calendar` — 날짜 차원 (요일, 공휴일)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`Window`
+
+`Analytics`
+
+`CTE`
+
+`consecutive`
+
+`median`
+
+`retention`
+
+</div>
+
+</div>
 
 ---
 

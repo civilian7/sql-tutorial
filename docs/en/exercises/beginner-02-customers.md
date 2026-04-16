@@ -1,9 +1,58 @@
 # Customer Analysis
 
-**Tables:** `customers`, `customer_addresses`, `orders`, `products`, `tags`, `product_tags`
+<div class="grid" markdown>
 
-**Concepts:** SELECT, WHERE, GROUP BY, COUNT, AVG, MAX, COALESCE, SUBSTR, INSTR, JOIN, HAVING, LIKE, IN, CASE WHEN
+<div markdown>
+#### :material-database: Tables
 
+`customers` — Customers (grade, points, channel)<br>
+
+`customer_addresses` — Addresses (address, default flag)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`tags` — Tags (name, category)<br>
+
+`product_tags` — Product-tag mapping<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`SELECT`
+
+`WHERE`
+
+`GROUP BY`
+
+`COUNT`
+
+`AVG`
+
+`MAX`
+
+`COALESCE`
+
+`SUBSTR`
+
+`INSTR`
+
+`JOIN`
+
+`HAVING`
+
+`LIKE`
+
+`IN`
+
+`CASE WHEN`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,40 @@
 # Sales Analysis
 
-**Tables:** `orders`, `order_items`, `products`, `categories`, `payments`
+<div class="grid" markdown>
 
-**Concepts:** Aggregation, GROUP BY, Window Functions, CTE, YoY Growth, Pivot
+<div markdown>
+#### :material-database: Tables
 
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`categories` — Categories (parent-child hierarchy)<br>
+
+`payments` — Payments (method, amount, status)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`Aggregation`
+
+`GROUP BY`
+
+`Window Functions`
+
+`CTE`
+
+`YoY Growth`
+
+`Pivot`
+
+</div>
+
+</div>
 
 ---
 

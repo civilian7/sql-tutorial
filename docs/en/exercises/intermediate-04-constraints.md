@@ -1,9 +1,40 @@
 # Exploring Constraints
 
-**Tables:** `customers`, `products`, `reviews`, `wishlists`
+<div class="grid" markdown>
 
-**Concepts:** PRIMARY KEY, UNIQUE, FOREIGN KEY, CHECK, NOT NULL, ON CONFLICT, UPSERT
+<div markdown>
+#### :material-database: Tables
 
+`customers` — Customers (grade, points, channel)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+`wishlists` — Wishlists (customer-product)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`PRIMARY KEY`
+
+`UNIQUE`
+
+`FOREIGN KEY`
+
+`CHECK`
+
+`NOT NULL`
+
+`ON CONFLICT`
+
+`UPSERT`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,46 @@
 # 정규화 이해
 
-**사용 테이블:** `orders`, `order_items`, `products`, `customers`, `categories`, `wishlists`, `customer_addresses`
+<div class="grid" markdown>
 
-**학습 범위:** 1NF, 2NF, 3NF, Denormalization, Self-Reference, M:N, Recursive CTE
+<div markdown>
+#### :material-database: 사용 테이블
 
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`wishlists` — 위시리스트 (고객-상품)<br>
+
+`customer_addresses` — 배송지 (주소, 기본 여부)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`1NF`
+
+`2NF`
+
+`3NF`
+
+`Denormalization`
+
+`Self-Reference`
+
+`M:N`
+
+`Recursive CTE`
+
+</div>
+
+</div>
 
 ---
 

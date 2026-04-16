@@ -1,9 +1,36 @@
 # Customer Segmentation
 
-**Tables:** `customers`, `orders`, `reviews`
+<div class="grid" markdown>
 
-**Concepts:** RFM, NTILE, Window Functions, CTE, Cohort Analysis, JULIANDAY
+<div markdown>
+#### :material-database: Tables
 
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`RFM`
+
+`NTILE`
+
+`Window Functions`
+
+`CTE`
+
+`Cohort Analysis`
+
+`JULIANDAY`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,50 @@
 # 상품 탐색
 
-**사용 테이블:** `categories`, `products`, `suppliers`
+<div class="grid" markdown>
 
-**학습 범위:** SELECT, WHERE, ORDER BY, LIMIT, COUNT, AVG, MIN, MAX, GROUP BY, HAVING, LIKE, CASE WHEN, IS NOT NULL
+<div markdown>
+#### :material-database: 사용 테이블
 
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`suppliers` — 공급업체 (업체명, 연락처)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`SELECT`
+
+`WHERE`
+
+`ORDER BY`
+
+`LIMIT`
+
+`COUNT`
+
+`AVG`
+
+`MIN`
+
+`MAX`
+
+`GROUP BY`
+
+`HAVING`
+
+`LIKE`
+
+`CASE WHEN`
+
+`IS NOT NULL`
+
+</div>
+
+</div>
 
 ---
 

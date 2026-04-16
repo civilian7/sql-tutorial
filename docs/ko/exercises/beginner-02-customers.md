@@ -1,9 +1,58 @@
 # 고객 분석
 
-**사용 테이블:** `customers`, `customer_addresses`, `orders`, `products`, `tags`, `product_tags`
+<div class="grid" markdown>
 
-**학습 범위:** SELECT, WHERE, GROUP BY, COUNT, AVG, MAX, COALESCE, SUBSTR, INSTR, JOIN, HAVING, LIKE, IN, CASE WHEN
+<div markdown>
+#### :material-database: 사용 테이블
 
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`customer_addresses` — 배송지 (주소, 기본 여부)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`tags` — 태그 (이름, 카테고리)<br>
+
+`product_tags` — 상품-태그 연결<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`SELECT`
+
+`WHERE`
+
+`GROUP BY`
+
+`COUNT`
+
+`AVG`
+
+`MAX`
+
+`COALESCE`
+
+`SUBSTR`
+
+`INSTR`
+
+`JOIN`
+
+`HAVING`
+
+`LIKE`
+
+`IN`
+
+`CASE WHEN`
+
+</div>
+
+</div>
 
 ---
 

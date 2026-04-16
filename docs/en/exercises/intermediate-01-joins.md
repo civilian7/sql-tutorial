@@ -1,9 +1,50 @@
 # JOIN Master
 
-**Tables:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `shipping`, `staff`, `suppliers`, `tags`, `product_tags`
+<div class="grid" markdown>
 
-**Concepts:** INNER JOIN, LEFT JOIN, multi-table JOIN, GROUP BY, aggregate functions
+<div markdown>
+#### :material-database: Tables
 
+`categories` — Categories (parent-child hierarchy)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+`shipping` — Shipping (carrier, tracking, status)<br>
+
+`staff` — Staff (dept, role, manager)<br>
+
+`suppliers` — Suppliers (company, contact)<br>
+
+`tags` — Tags (name, category)<br>
+
+`product_tags` — Product-tag mapping<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`INNER JOIN`
+
+`LEFT JOIN`
+
+`multi-table JOIN`
+
+`GROUP BY`
+
+`aggregate functions`
+
+</div>
+
+</div>
 
 ---
 

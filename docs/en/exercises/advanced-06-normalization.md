@@ -1,9 +1,46 @@
 # Understanding Normalization
 
-**Tables:** `orders`, `order_items`, `products`, `customers`, `categories`, `wishlists`, `customer_addresses`
+<div class="grid" markdown>
 
-**Concepts:** 1NF, 2NF, 3NF, Denormalization, Self-Reference, M:N, Recursive CTE
+<div markdown>
+#### :material-database: Tables
 
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`categories` — Categories (parent-child hierarchy)<br>
+
+`wishlists` — Wishlists (customer-product)<br>
+
+`customer_addresses` — Addresses (address, default flag)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`1NF`
+
+`2NF`
+
+`3NF`
+
+`Denormalization`
+
+`Self-Reference`
+
+`M:N`
+
+`Recursive CTE`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,38 @@
 # CS 성과 분석
 
-**사용 테이블:** `complaints`, `staff`, `customers`, `orders`, `returns`
+<div class="grid" markdown>
 
-**학습 범위:** JULIANDAY, CASE, Window Functions, CTE, Pivot
+<div markdown>
+#### :material-database: 사용 테이블
 
+`complaints` — 고객 불만 (유형, 우선순위)<br>
+
+`staff` — 직원 (부서, 역할, 관리자)<br>
+
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`returns` — 반품/교환 (사유, 상태)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`JULIANDAY`
+
+`CASE`
+
+`Window Functions`
+
+`CTE`
+
+`Pivot`
+
+</div>
+
+</div>
 
 ---
 

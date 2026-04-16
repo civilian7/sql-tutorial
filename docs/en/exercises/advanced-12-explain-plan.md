@@ -1,9 +1,40 @@
 # EXPLAIN / Query Plan Analysis
 
-**Tables:** `customers`, `orders`, `order_items`, `products`, `point_transactions`, `product_views`
+<div class="grid" markdown>
 
-**Concepts:** EXPLAIN, QUERY PLAN, index, performance, optimization
+<div markdown>
+#### :material-database: Tables
 
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`point_transactions` — Points (earn, use, expire)<br>
+
+`product_views` — View log (customer, product, date)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`EXPLAIN`
+
+`QUERY PLAN`
+
+`index`
+
+`performance`
+
+`optimization`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,44 @@
 # SQL Interview Preparation
 
-**Tables:** `orders`, `order_items`, `products`, `categories`, `reviews`, `customers`
+<div class="grid" markdown>
 
-**Concepts:** ROW_NUMBER, LAG, Running Total, Moving Average, Recursive CTE, NTILE, Funnel
+<div markdown>
+#### :material-database: Tables
 
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`categories` — Categories (parent-child hierarchy)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`ROW_NUMBER`
+
+`LAG`
+
+`Running Total`
+
+`Moving Average`
+
+`Recursive CTE`
+
+`NTILE`
+
+`Funnel`
+
+</div>
+
+</div>
 
 ---
 

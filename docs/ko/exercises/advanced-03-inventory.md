@@ -1,9 +1,40 @@
 # 재고 관리
 
-**사용 테이블:** `products`, `categories`, `suppliers`, `inventory_transactions`, `order_items`, `orders`
+<div class="grid" markdown>
 
-**학습 범위:** Conditional Aggregation, Window Functions, ABC Analysis, Pareto, CTE
+<div markdown>
+#### :material-database: 사용 테이블
 
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`suppliers` — 공급업체 (업체명, 연락처)<br>
+
+`inventory_transactions` — 재고 입출고 (유형, 수량)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`Conditional Aggregation`
+
+`Window Functions`
+
+`ABC Analysis`
+
+`Pareto`
+
+`CTE`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,54 @@
 # Challenge Problems
 
-**Tables:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `shipping`, `point_transactions`, `product_views`, `inventory_transactions`, `wishlists`, `calendar`
+<div class="grid" markdown>
 
-**Concepts:** Window, Analytics, CTE, consecutive, median, retention
+<div markdown>
+#### :material-database: Tables
 
+`categories` — Categories (parent-child hierarchy)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+`shipping` — Shipping (carrier, tracking, status)<br>
+
+`point_transactions` — Points (earn, use, expire)<br>
+
+`product_views` — View log (customer, product, date)<br>
+
+`inventory_transactions` — Inventory (type, quantity)<br>
+
+`wishlists` — Wishlists (customer-product)<br>
+
+`calendar` — Calendar (weekday, holiday)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`Window`
+
+`Analytics`
+
+`CTE`
+
+`consecutive`
+
+`median`
+
+`retention`
+
+</div>
+
+</div>
 
 ---
 

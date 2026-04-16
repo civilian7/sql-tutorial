@@ -1,9 +1,36 @@
 # 고객 세분화
 
-**사용 테이블:** `customers`, `orders`, `reviews`
+<div class="grid" markdown>
 
-**학습 범위:** RFM, NTILE, Window Functions, CTE, Cohort Analysis, JULIANDAY
+<div markdown>
+#### :material-database: 사용 테이블
 
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`reviews` — 리뷰 (평점, 내용)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`RFM`
+
+`NTILE`
+
+`Window Functions`
+
+`CTE`
+
+`Cohort Analysis`
+
+`JULIANDAY`
+
+</div>
+
+</div>
 
 ---
 

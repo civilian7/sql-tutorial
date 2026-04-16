@@ -1,9 +1,48 @@
 # Order Basics
 
-**Tables:** `orders`, `payments`
+<div class="grid" markdown>
 
-**Concepts:** SELECT, WHERE, GROUP BY, COUNT, SUM, AVG, MAX, ROUND, SUBSTR, STRFTIME, CASE WHEN, LIKE, subquery
+<div markdown>
+#### :material-database: Tables
 
+`orders` — Orders (status, amount, date)<br>
+
+`payments` — Payments (method, amount, status)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`SELECT`
+
+`WHERE`
+
+`GROUP BY`
+
+`COUNT`
+
+`SUM`
+
+`AVG`
+
+`MAX`
+
+`ROUND`
+
+`SUBSTR`
+
+`STRFTIME`
+
+`CASE WHEN`
+
+`LIKE`
+
+`subquery`
+
+</div>
+
+</div>
 
 ---
 

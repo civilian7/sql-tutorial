@@ -1,9 +1,40 @@
 # Inventory Management
 
-**Tables:** `products`, `categories`, `suppliers`, `inventory_transactions`, `order_items`, `orders`
+<div class="grid" markdown>
 
-**Concepts:** Conditional Aggregation, Window Functions, ABC Analysis, Pareto, CTE
+<div markdown>
+#### :material-database: Tables
 
+`products` — Products (name, price, stock, brand)<br>
+
+`categories` — Categories (parent-child hierarchy)<br>
+
+`suppliers` — Suppliers (company, contact)<br>
+
+`inventory_transactions` — Inventory (type, quantity)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`Conditional Aggregation`
+
+`Window Functions`
+
+`ABC Analysis`
+
+`Pareto`
+
+`CTE`
+
+</div>
+
+</div>
 
 ---
 

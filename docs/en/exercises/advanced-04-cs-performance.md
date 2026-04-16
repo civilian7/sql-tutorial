@@ -1,9 +1,38 @@
 # CS Performance Analysis
 
-**Tables:** `complaints`, `staff`, `customers`, `orders`, `returns`
+<div class="grid" markdown>
 
-**Concepts:** JULIANDAY, CASE, Window Functions, CTE, Pivot
+<div markdown>
+#### :material-database: Tables
 
+`complaints` — Complaints (type, priority)<br>
+
+`staff` — Staff (dept, role, manager)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`returns` — Returns (reason, status)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`JULIANDAY`
+
+`CASE`
+
+`Window Functions`
+
+`CTE`
+
+`Pivot`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,48 @@
 # 주문 기초
 
-**사용 테이블:** `orders`, `payments`
+<div class="grid" markdown>
 
-**학습 범위:** SELECT, WHERE, GROUP BY, COUNT, SUM, AVG, MAX, ROUND, SUBSTR, STRFTIME, CASE WHEN, LIKE, subquery
+<div markdown>
+#### :material-database: 사용 테이블
 
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`payments` — 결제 (방법, 금액, 상태)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`SELECT`
+
+`WHERE`
+
+`GROUP BY`
+
+`COUNT`
+
+`SUM`
+
+`AVG`
+
+`MAX`
+
+`ROUND`
+
+`SUBSTR`
+
+`STRFTIME`
+
+`CASE WHEN`
+
+`LIKE`
+
+`subquery`
+
+</div>
+
+</div>
 
 ---
 

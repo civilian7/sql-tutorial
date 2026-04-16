@@ -1,9 +1,54 @@
 # SQL 디버깅
 
-**사용 테이블:** `categories`, `customers`, `orders`, `order_items`, `products`, `reviews`, `returns`, `suppliers`
+<div class="grid" markdown>
 
-**학습 범위:** cardinality explosion, NULL comparison, LEFT JOIN pitfall, GROUP BY, HAVING vs WHERE, DISTINCT, correlated subquery, date range, NULLIF, UNION
+<div markdown>
+#### :material-database: 사용 테이블
 
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`reviews` — 리뷰 (평점, 내용)<br>
+
+`returns` — 반품/교환 (사유, 상태)<br>
+
+`suppliers` — 공급업체 (업체명, 연락처)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`cardinality explosion`
+
+`NULL comparison`
+
+`LEFT JOIN pitfall`
+
+`GROUP BY`
+
+`HAVING vs WHERE`
+
+`DISTINCT`
+
+`correlated subquery`
+
+`date range`
+
+`NULLIF`
+
+`UNION`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,40 @@
 # 매출 분석
 
-**사용 테이블:** `orders`, `order_items`, `products`, `categories`, `payments`
+<div class="grid" markdown>
 
-**학습 범위:** Aggregation, GROUP BY, Window Functions, CTE, YoY Growth, Pivot
+<div markdown>
+#### :material-database: 사용 테이블
 
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`payments` — 결제 (방법, 금액, 상태)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`Aggregation`
+
+`GROUP BY`
+
+`Window Functions`
+
+`CTE`
+
+`YoY Growth`
+
+`Pivot`
+
+</div>
+
+</div>
 
 ---
 

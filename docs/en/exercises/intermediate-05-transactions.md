@@ -1,9 +1,42 @@
 # Transactions
 
-**Tables:** `customers`, `orders`, `payments`, `products`, `inventory_transactions`
+<div class="grid" markdown>
 
-**Concepts:** BEGIN, COMMIT, ROLLBACK, SAVEPOINT, ACID, atomicity, bulk insert
+<div markdown>
+#### :material-database: Tables
 
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`payments` — Payments (method, amount, status)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`inventory_transactions` — Inventory (type, quantity)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`BEGIN`
+
+`COMMIT`
+
+`ROLLBACK`
+
+`SAVEPOINT`
+
+`ACID`
+
+`atomicity`
+
+`bulk insert`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,52 @@
 # Business Scenarios
 
-**Tables:** `orders`, `order_items`, `products`, `categories`, `customers`, `complaints`, `returns`, `shipping`, `reviews`, `payments`, `suppliers`, `staff`
+<div class="grid" markdown>
 
-**Concepts:** CTE, Scalar Subquery, CASE, JULIANDAY, Business Reporting
+<div markdown>
+#### :material-database: Tables
 
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`categories` — Categories (parent-child hierarchy)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`complaints` — Complaints (type, priority)<br>
+
+`returns` — Returns (reason, status)<br>
+
+`shipping` — Shipping (carrier, tracking, status)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+`payments` — Payments (method, amount, status)<br>
+
+`suppliers` — Suppliers (company, contact)<br>
+
+`staff` — Staff (dept, role, manager)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`CTE`
+
+`Scalar Subquery`
+
+`CASE`
+
+`JULIANDAY`
+
+`Business Reporting`
+
+</div>
+
+</div>
 
 ---
 

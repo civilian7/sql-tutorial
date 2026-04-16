@@ -1,9 +1,50 @@
 # Subqueries and Data Transformation
 
-**Tables:** `categories`, `customers`, `orders`, `order_items`, `payments`, `products`, `reviews`, `returns`, `wishlists`
+<div class="grid" markdown>
 
-**Concepts:** scalar subquery, correlated subquery, CTE, CASE WHEN, NOT EXISTS, UNION ALL, window functions
+<div markdown>
+#### :material-database: Tables
 
+`categories` — Categories (parent-child hierarchy)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`payments` — Payments (method, amount, status)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+`returns` — Returns (reason, status)<br>
+
+`wishlists` — Wishlists (customer-product)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`scalar subquery`
+
+`correlated subquery`
+
+`CTE`
+
+`CASE WHEN`
+
+`NOT EXISTS`
+
+`UNION ALL`
+
+`window functions`
+
+</div>
+
+</div>
 
 ---
 

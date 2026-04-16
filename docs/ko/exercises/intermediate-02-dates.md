@@ -1,9 +1,46 @@
 # 날짜와 시간 분석
 
-**사용 테이블:** `calendar`, `customers`, `orders`, `products`, `promotions`, `returns`, `shipping`
+<div class="grid" markdown>
 
-**학습 범위:** SUBSTR, JULIANDAY, STRFTIME, date arithmetic, LAG, CTE, window functions
+<div markdown>
+#### :material-database: 사용 테이블
 
+`calendar` — 날짜 차원 (요일, 공휴일)<br>
+
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`promotions` — 프로모션 (기간, 할인)<br>
+
+`returns` — 반품/교환 (사유, 상태)<br>
+
+`shipping` — 배송 (택배사, 추적번호, 상태)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`SUBSTR`
+
+`JULIANDAY`
+
+`STRFTIME`
+
+`date arithmetic`
+
+`LAG`
+
+`CTE`
+
+`window functions`
+
+</div>
+
+</div>
 
 ---
 

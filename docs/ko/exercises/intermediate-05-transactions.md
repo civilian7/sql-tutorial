@@ -1,9 +1,42 @@
 # 트랜잭션
 
-**사용 테이블:** `customers`, `orders`, `payments`, `products`, `inventory_transactions`
+<div class="grid" markdown>
 
-**학습 범위:** BEGIN, COMMIT, ROLLBACK, SAVEPOINT, ACID, atomicity, bulk insert
+<div markdown>
+#### :material-database: 사용 테이블
 
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`payments` — 결제 (방법, 금액, 상태)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`inventory_transactions` — 재고 입출고 (유형, 수량)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`BEGIN`
+
+`COMMIT`
+
+`ROLLBACK`
+
+`SAVEPOINT`
+
+`ACID`
+
+`atomicity`
+
+`bulk insert`
+
+</div>
+
+</div>
 
 ---
 

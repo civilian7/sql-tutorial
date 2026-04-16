@@ -1,9 +1,46 @@
 # Real-World SQL Patterns
 
-**Tables:** `orders`, `order_items`, `products`, `categories`, `reviews`, `carts`, `cart_items`, `coupons`, `coupon_usage`
+<div class="grid" markdown>
 
-**Concepts:** LAG, ROW_NUMBER, Cart Abandonment, Coupon ROI, Time Pattern
+<div markdown>
+#### :material-database: Tables
 
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`categories` — Categories (parent-child hierarchy)<br>
+
+`reviews` — Reviews (rating, content)<br>
+
+`carts` — Carts (status)<br>
+
+`cart_items` — Cart items (quantity)<br>
+
+`coupons` — Coupons (discount, validity)<br>
+
+`coupon_usage` — Coupon usage records<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`LAG`
+
+`ROW_NUMBER`
+
+`Cart Abandonment`
+
+`Coupon ROI`
+
+`Time Pattern`
+
+</div>
+
+</div>
 
 ---
 

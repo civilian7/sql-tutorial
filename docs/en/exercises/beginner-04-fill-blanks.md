@@ -1,9 +1,60 @@
 # Fill in the Blanks
 
-**Tables:** `categories`, `customers`, `orders`, `payments`, `products`, `shipping`
+<div class="grid" markdown>
 
-**Concepts:** WHERE, ORDER BY, COUNT, HAVING, JOIN, LEFT JOIN, IS NULL, BETWEEN, CASE WHEN, COALESCE, subquery, GROUP BY, LIKE, SUBSTR, IN
+<div markdown>
+#### :material-database: Tables
 
+`categories` — Categories (parent-child hierarchy)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`payments` — Payments (method, amount, status)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`shipping` — Shipping (carrier, tracking, status)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`WHERE`
+
+`ORDER BY`
+
+`COUNT`
+
+`HAVING`
+
+`JOIN`
+
+`LEFT JOIN`
+
+`IS NULL`
+
+`BETWEEN`
+
+`CASE WHEN`
+
+`COALESCE`
+
+`subquery`
+
+`GROUP BY`
+
+`LIKE`
+
+`SUBSTR`
+
+`IN`
+
+</div>
+
+</div>
 
 ---
 

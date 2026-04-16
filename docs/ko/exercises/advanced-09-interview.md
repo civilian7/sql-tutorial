@@ -1,9 +1,44 @@
 # SQL 면접 대비
 
-**사용 테이블:** `orders`, `order_items`, `products`, `categories`, `reviews`, `customers`
+<div class="grid" markdown>
 
-**학습 범위:** ROW_NUMBER, LAG, Running Total, Moving Average, Recursive CTE, NTILE, Funnel
+<div markdown>
+#### :material-database: 사용 테이블
 
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`reviews` — 리뷰 (평점, 내용)<br>
+
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`ROW_NUMBER`
+
+`LAG`
+
+`Running Total`
+
+`Moving Average`
+
+`Recursive CTE`
+
+`NTILE`
+
+`Funnel`
+
+</div>
+
+</div>
 
 ---
 

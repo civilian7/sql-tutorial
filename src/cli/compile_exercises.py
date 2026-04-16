@@ -26,6 +26,40 @@ from pathlib import Path
 import yaml
 
 
+# Table descriptions for exercise header blocks
+_TABLE_DESC = {
+    "categories":              ("카테고리 (부모-자식 계층)", "Categories (parent-child hierarchy)"),
+    "suppliers":               ("공급업체 (업체명, 연락처)", "Suppliers (company, contact)"),
+    "products":                ("상품 (이름, 가격, 재고, 브랜드)", "Products (name, price, stock, brand)"),
+    "product_images":          ("상품 이미지 (유형, 크기)", "Product images (type, size)"),
+    "product_prices":          ("가격 이력 (변경 사유)", "Price history (change reason)"),
+    "customers":               ("고객 (등급, 포인트, 가입채널)", "Customers (grade, points, channel)"),
+    "customer_addresses":      ("배송지 (주소, 기본 여부)", "Addresses (address, default flag)"),
+    "staff":                   ("직원 (부서, 역할, 관리자)", "Staff (dept, role, manager)"),
+    "orders":                  ("주문 (상태, 금액, 일시)", "Orders (status, amount, date)"),
+    "order_items":             ("주문 상세 (수량, 단가)", "Order items (qty, unit price)"),
+    "payments":                ("결제 (방법, 금액, 상태)", "Payments (method, amount, status)"),
+    "shipping":                ("배송 (택배사, 추적번호, 상태)", "Shipping (carrier, tracking, status)"),
+    "reviews":                 ("리뷰 (평점, 내용)", "Reviews (rating, content)"),
+    "wishlists":               ("위시리스트 (고객-상품)", "Wishlists (customer-product)"),
+    "complaints":              ("고객 불만 (유형, 우선순위)", "Complaints (type, priority)"),
+    "returns":                 ("반품/교환 (사유, 상태)", "Returns (reason, status)"),
+    "coupons":                 ("쿠폰 (할인율, 유효기간)", "Coupons (discount, validity)"),
+    "coupon_usage":            ("쿠폰 사용 내역", "Coupon usage records"),
+    "inventory_transactions":  ("재고 입출고 (유형, 수량)", "Inventory (type, quantity)"),
+    "carts":                   ("장바구니 (상태)", "Carts (status)"),
+    "cart_items":              ("장바구니 상품 (수량)", "Cart items (quantity)"),
+    "calendar":                ("날짜 차원 (요일, 공휴일)", "Calendar (weekday, holiday)"),
+    "customer_grade_history":  ("등급 이력 (변경 전후)", "Grade history (before/after)"),
+    "tags":                    ("태그 (이름, 카테고리)", "Tags (name, category)"),
+    "product_tags":            ("상품-태그 연결", "Product-tag mapping"),
+    "product_views":           ("조회 로그 (고객, 상품, 일시)", "View log (customer, product, date)"),
+    "point_transactions":      ("포인트 (적립, 사용, 소멸)", "Points (earn, use, expire)"),
+    "promotions":              ("프로모션 (기간, 할인)", "Promotions (period, discount)"),
+    "promotion_products":      ("프로모션 대상 상품", "Promotion products"),
+    "product_qna":             ("상품 Q&A (질문-답변)", "Product Q&A (question-answer)"),
+}
+
 EXERCISES_DIR = Path("exercises")
 LECTURES_DIR = Path("exercises/lectures")
 DOCS_KO_DIR = Path("docs/ko/exercises")
@@ -189,28 +223,35 @@ def compile_yaml_file(yaml_path: Path, conn_db, conn_tutorial, sort_base: int) -
     md_ko_lines = [f"# {meta.get('title', exercise_id)}\n"]
     md_en_lines = [f"# {meta.get('title_en', exercise_id)}\n"]
 
-    # Standard info block: tables + concepts
+    # Standard info block: 2-column grid (tables + concepts)
     tables = meta.get("tables", [])
     concepts = meta.get("concepts", [])
-    desc_ko = meta.get("description", "")
-    desc_en = meta.get("description_en", "")
 
     if tables or concepts:
-        if tables:
-            tables_str = ", ".join(f"`{t}`" for t in tables)
-            md_ko_lines.append(f"**사용 테이블:** {tables_str}\n")
-            md_en_lines.append(f"**Tables:** {tables_str}\n")
-        if concepts:
-            concepts_str = ", ".join(concepts)
-            md_ko_lines.append(f"**학습 범위:** {concepts_str}\n")
-            md_en_lines.append(f"**Concepts:** {concepts_str}\n")
-        md_ko_lines.append("\n---\n")
-        md_en_lines.append("\n---\n")
-    elif desc_ko or desc_en:
-        if desc_ko:
-            md_ko_lines.append(f"{desc_ko}\n\n---\n")
-        if desc_en:
-            md_en_lines.append(f"{desc_en}\n\n---\n")
+        for lines, lang in [(md_ko_lines, "ko"), (md_en_lines, "en")]:
+            lines.append('<div class="grid" markdown>\n')
+
+            # Left column: tables
+            if lang == "ko":
+                lines.append('<div markdown>\n#### :material-database: 사용 테이블\n')
+            else:
+                lines.append('<div markdown>\n#### :material-database: Tables\n')
+            for t in tables:
+                desc_ko_t, desc_en_t = _TABLE_DESC.get(t, (t, t))
+                desc = desc_ko_t if lang == "ko" else desc_en_t
+                lines.append(f'`{t}` — {desc}<br>\n')
+            lines.append('</div>\n')
+
+            # Right column: concepts
+            if lang == "ko":
+                lines.append('<div markdown>\n#### :material-book-open-variant: 학습 범위\n')
+            else:
+                lines.append('<div markdown>\n#### :material-book-open-variant: Concepts\n')
+            for c in concepts:
+                lines.append(f'`{c}`\n')
+            lines.append('</div>\n')
+
+            lines.append('</div>\n\n---\n')
 
     problems = data.get("problems", [])
     for i, prob in enumerate(problems):

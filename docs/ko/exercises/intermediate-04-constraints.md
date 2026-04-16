@@ -1,9 +1,40 @@
 # 제약조건 체험
 
-**사용 테이블:** `customers`, `products`, `reviews`, `wishlists`
+<div class="grid" markdown>
 
-**학습 범위:** PRIMARY KEY, UNIQUE, FOREIGN KEY, CHECK, NOT NULL, ON CONFLICT, UPSERT
+<div markdown>
+#### :material-database: 사용 테이블
 
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`reviews` — 리뷰 (평점, 내용)<br>
+
+`wishlists` — 위시리스트 (고객-상품)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`PRIMARY KEY`
+
+`UNIQUE`
+
+`FOREIGN KEY`
+
+`CHECK`
+
+`NOT NULL`
+
+`ON CONFLICT`
+
+`UPSERT`
+
+</div>
+
+</div>
 
 ---
 

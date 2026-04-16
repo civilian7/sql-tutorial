@@ -1,9 +1,58 @@
 # Advanced Analytics
 
-**Tables:** `point_transactions`, `customer_grade_history`, `product_views`, `orders`, `order_items`, `carts`, `cart_items`, `promotions`, `promotion_products`, `staff`, `product_qna`, `products`, `customers`
+<div class="grid" markdown>
 
-**Concepts:** Window Functions, CTE, Funnel, Session, Cohort, Recursive CTE, RFM
+<div markdown>
+#### :material-database: Tables
 
+`point_transactions` — Points (earn, use, expire)<br>
+
+`customer_grade_history` — Grade history (before/after)<br>
+
+`product_views` — View log (customer, product, date)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`carts` — Carts (status)<br>
+
+`cart_items` — Cart items (quantity)<br>
+
+`promotions` — Promotions (period, discount)<br>
+
+`promotion_products` — Promotion products<br>
+
+`staff` — Staff (dept, role, manager)<br>
+
+`product_qna` — Product Q&A (question-answer)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`Window Functions`
+
+`CTE`
+
+`Funnel`
+
+`Session`
+
+`Cohort`
+
+`Recursive CTE`
+
+`RFM`
+
+</div>
+
+</div>
 
 ---
 

@@ -1,9 +1,46 @@
 # Date and Time Analysis
 
-**Tables:** `calendar`, `customers`, `orders`, `products`, `promotions`, `returns`, `shipping`
+<div class="grid" markdown>
 
-**Concepts:** SUBSTR, JULIANDAY, STRFTIME, date arithmetic, LAG, CTE, window functions
+<div markdown>
+#### :material-database: Tables
 
+`calendar` — Calendar (weekday, holiday)<br>
+
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`promotions` — Promotions (period, discount)<br>
+
+`returns` — Returns (reason, status)<br>
+
+`shipping` — Shipping (carrier, tracking, status)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`SUBSTR`
+
+`JULIANDAY`
+
+`STRFTIME`
+
+`date arithmetic`
+
+`LAG`
+
+`CTE`
+
+`window functions`
+
+</div>
+
+</div>
 
 ---
 

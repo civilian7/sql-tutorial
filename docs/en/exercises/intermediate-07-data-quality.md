@@ -1,9 +1,46 @@
 # Data Quality Checks
 
-**Tables:** `customers`, `orders`, `order_items`, `payments`, `products`, `shipping`
+<div class="grid" markdown>
 
-**Concepts:** data validation, orphan records, NULL analysis, status consistency, date validation, duplicates, outliers, cross-table consistency
+<div markdown>
+#### :material-database: Tables
 
+`customers` — Customers (grade, points, channel)<br>
+
+`orders` — Orders (status, amount, date)<br>
+
+`order_items` — Order items (qty, unit price)<br>
+
+`payments` — Payments (method, amount, status)<br>
+
+`products` — Products (name, price, stock, brand)<br>
+
+`shipping` — Shipping (carrier, tracking, status)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: Concepts
+
+`data validation`
+
+`orphan records`
+
+`NULL analysis`
+
+`status consistency`
+
+`date validation`
+
+`duplicates`
+
+`outliers`
+
+`cross-table consistency`
+
+</div>
+
+</div>
 
 ---
 

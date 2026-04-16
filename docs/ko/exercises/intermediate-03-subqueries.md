@@ -1,9 +1,50 @@
 # 서브쿼리와 데이터 변환
 
-**사용 테이블:** `categories`, `customers`, `orders`, `order_items`, `payments`, `products`, `reviews`, `returns`, `wishlists`
+<div class="grid" markdown>
 
-**학습 범위:** scalar subquery, correlated subquery, CTE, CASE WHEN, NOT EXISTS, UNION ALL, window functions
+<div markdown>
+#### :material-database: 사용 테이블
 
+`categories` — 카테고리 (부모-자식 계층)<br>
+
+`customers` — 고객 (등급, 포인트, 가입채널)<br>
+
+`orders` — 주문 (상태, 금액, 일시)<br>
+
+`order_items` — 주문 상세 (수량, 단가)<br>
+
+`payments` — 결제 (방법, 금액, 상태)<br>
+
+`products` — 상품 (이름, 가격, 재고, 브랜드)<br>
+
+`reviews` — 리뷰 (평점, 내용)<br>
+
+`returns` — 반품/교환 (사유, 상태)<br>
+
+`wishlists` — 위시리스트 (고객-상품)<br>
+
+</div>
+
+<div markdown>
+#### :material-book-open-variant: 학습 범위
+
+`scalar subquery`
+
+`correlated subquery`
+
+`CTE`
+
+`CASE WHEN`
+
+`NOT EXISTS`
+
+`UNION ALL`
+
+`window functions`
+
+</div>
+
+</div>
 
 ---
 
