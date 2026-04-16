@@ -105,6 +105,18 @@
   min-width: 12em;
 }
 
+/* Schema table — icon column fixed width */
+.md-typeset table:not([class]) th:first-child:empty,
+.md-typeset table:not([class]) td:first-child:empty,
+.md-typeset table:not([class]) th[align="center"]:first-child,
+.md-typeset table:not([class]) td[align="center"]:first-child {
+  width: 1.5em;
+  min-width: 1.5em;
+  max-width: 1.5em;
+  padding: 0.35em 0.2em;
+  text-align: center;
+}
+
 /* Code in table cells — tighter */
 .md-typeset table:not([class]) code {
   font-size: 0.7rem;
