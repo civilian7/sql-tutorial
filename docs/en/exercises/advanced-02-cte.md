@@ -12,13 +12,6 @@
 !!! abstract "Concepts"
     `WITH`, Recursive CTE(`WITH RECURSIVE`), Multiple CTE Chaining, CTE + Aggregate/JOIN/Window Function
 
-!!! info "Before You Begin"
-    This exercise puts into practice what you learned in **Advanced Lesson 19** (CTE).
-    Recursive CTEs are used in SQLite with the `WITH RECURSIVE` syntax.
-    Cancellation/return order exclusion conditions: `status NOT IN ('cancelled', 'returned', 'return_requested')`
-
----
-
 ## Basic (1~5)
 
 Practice single CTE and CTE + JOIN/aggregation.

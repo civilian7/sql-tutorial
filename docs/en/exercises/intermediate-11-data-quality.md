@@ -17,13 +17,6 @@
 !!! abstract "Concepts"
     NULL/duplicate/range checks, Referential integrity verification, Date inversion detection, Outlier discovery, Comprehensive quality dashboard
 
-!!! info "Before You Begin"
-    Data is never perfect. NULL values, duplicates, referential integrity violations, date inversions, outliers --
-    this exercise practices detecting **common quality issues found in real-world data** using SQL.
-    You will write practical queries that cross-validate across all 30 tables.
-
----
-
 ## Basic (1~7): NULL, Duplicates, Value Ranges
 
 ### Problem 1

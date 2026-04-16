@@ -10,12 +10,6 @@
 !!! abstract "Concepts"
     `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`, Aliases (`AS`), arithmetic operations
 
-!!! info "Before You Begin"
-    This exercise uses only what you learned in **Introductory Lessons 1-3** (SELECT, WHERE, ORDER BY, LIMIT, OFFSET).
-    JOINs, subqueries, GROUP BY, and aggregate functions are not used.
-
----
-
 ## Basic (1~10)
 
 Practice one concept at a time.

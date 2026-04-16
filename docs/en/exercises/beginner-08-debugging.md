@@ -10,12 +10,6 @@
 !!! abstract "Concepts"
     Finding and fixing syntax/logic errors from Beginner Lessons 1-7
 
-!!! info "Before You Begin"
-    Each problem contains **SQL with an error**.
-    Find the error and fix it correctly. Errors may be syntax errors, logic errors, or subtle semantic errors.
-
----
-
 ## Basic (1~10)
 
 Find syntax errors.

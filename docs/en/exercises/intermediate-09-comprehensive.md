@@ -15,24 +15,14 @@
 !!! abstract "Concepts"
     All intermediate: `JOIN`, Subqueries, Date functions, String functions, `CASE`, `UNION`, `GROUP BY`/`HAVING`, Aggregate functions
 
-!!! info "Before You Begin"
-    이 연습은 **중급 과정(8~17강)에서 배운 모든 개념**을 조합합니다.
-    JOIN, Subqueries, Date functions, String functions, CASE, UNION, GROUP BY/HAVING, Aggregate functions 등 여러 개념을 함께 사용하는 실전 쿼리를 연습합니다.
-
----
-
-
 ## Basic (1~8): Combining 2~3 Concepts
-
 
 ### Problem 1
 
 **JOIN + GROUP BY:** Find active product count and average price per category. Top 10 by product count.
 
-
 ??? tip "Hint"
     JOIN `products` with `categories`, aggregate per category with `GROUP BY`. Filter active with `WHERE is_active = 1`.
-
 
 ??? success "Answer"
     ```sql
@@ -52,18 +42,14 @@
     |--------------|---------------|-----------|
     | ...          | ...           | ...       |
 
-
 ---
-
 
 ### Problem 2
 
 **JOIN + CASE:** Find order number, customer name, and payment method for each order. Display payment method in Korean (card→카드, bank_transfer→계좌이체, kakao_pay→카카오페이, others→기타). Most recent 10 orders.
 
-
 ??? tip "Hint"
     Connect 3 tables with `orders JOIN customers JOIN payments`. Convert to Korean with `CASE payments.method WHEN ... THEN ...`.
-
 
 ??? success "Answer"
     ```sql
@@ -91,18 +77,14 @@
     |--------------------|---------------|-------------------|--------------|
     | ORD-2025...-...    | ...           | 카드              | ...          |
 
-
 ---
-
 
 ### Problem 3
 
 **Subqueries + Date functions:** 2024년에 가장 많이 주문한 고객 TOP 5의 이름, 주문 건수, 총 결제금액을 조회하세요.
 
-
 ??? tip "Hint"
     Filter with `ordered_at LIKE '2024%'` in `orders`, aggregate with `GROUP BY customer_id`. JOIN with `customers` for names.
-
 
 ??? success "Answer"
     ```sql
@@ -129,18 +111,14 @@
     |--------|-------------|-------------|
     | ...    | ...         | ...         |
 
-
 ---
-
 
 ### Problem 4
 
 **String functions + GROUP BY:** 고객 이메일 도메인별 고객 수를 집계하세요. 이메일에서 `@` 뒤의 도메인을 추출합니다.
 
-
 ??? tip "Hint"
     Extract domain with `SUBSTR(email, INSTR(email, '@') + 1)`. Aggregate with `GROUP BY`.
-
 
 ??? success "Answer"
     ```sql
@@ -156,18 +134,14 @@
     |--------------|----------------|
     | testmail.kr  | ...            |
 
-
 ---
-
 
 ### Problem 5
 
 **JOIN + HAVING:** Find customers who wrote 5+ reviews, showing name and average rating.
 
-
 ??? tip "Hint"
     JOIN `reviews` with `customers`, then `GROUP BY customer_id` + `HAVING COUNT(*) >= 5` for 5+ reviews.
-
 
 ??? success "Answer"
     ```sql
@@ -187,18 +161,14 @@
     |------|--------------|------------|
     | ...  | ...          | ...        |
 
-
 ---
-
 
 ### Problem 6
 
 **UNION + CASE:** Combine new customer count and new product count from the past year into a single result.
 
-
 ??? tip "Hint"
     `SELECT 'New Customers' AS type, COUNT(*)... FROM customers WHERE ...` UNION ALL `SELECT 'New Products'...FROM products WHERE ...`
-
 
 ??? success "Answer"
     ```sql
@@ -220,18 +190,14 @@
     | 신규 고객 | ...        |
     | 신규 상품 | ...        |
 
-
 ---
-
 
 ### Problem 7
 
 **Date functions + JOIN:** 주문 후 배송 완료까지 걸린 평균 일수를 택배사별로 조회하세요. 배송 완료된 건만 대상입니다.
 
-
 ??? tip "Hint"
     JOIN `shipping` with `orders`. Calculate days with `julianday(delivered_at) - julianday(ordered_at)`. Filter with `WHERE shipping.status = 'delivered'`.
-
 
 ??? success "Answer"
     ```sql
@@ -251,18 +217,14 @@
     |--------------|-----------------|----------|
     | ...          | ...             | ...      |
 
-
 ---
-
 
 ### Problem 8
 
 **Subqueries + CASE:** 각 상품의 이름, 가격, 그리고 해당 상품의 카테고리 평균 가격 대비 비싼지/싼지를 표시하세요. 상위 15개만.
 
-
 ??? tip "Hint"
     Subqueries로 카테고리별 평균 가격을 구한 뒤 JOIN. `CASE WHEN price > avg_price THEN '평균 이상'...`으로 비교.
-
 
 ??? success "Answer"
     ```sql
@@ -291,21 +253,16 @@
     |------|---------|-----------|-------------|
     | ...  | ...     | ...       | 고가        |
 
-
 ---
 
-
 ## Applied (9~16): Combining 3~4 Concepts, Business Analysis
-
 
 ### Problem 9
 
 **JOIN + GROUP BY + HAVING + Subqueries:** 전체 평균보다 높은 매출을 올린 브랜드의 이름, 총 매출, 주문 건수를 조회하세요.
 
-
 ??? tip "Hint"
     Aggregate revenue by brand via `order_items JOIN products` → `HAVING SUM(subtotal) > (SELECT AVG(...))`. Overall average is the mean of per-brand revenues.
-
 
 ??? success "Answer"
     ```sql
@@ -333,18 +290,14 @@
     |--------|---------------|-------------|
     | ...    | ...           | ...         |
 
-
 ---
-
 
 ### Problem 10
 
 **JOIN + Date functions + CASE + GROUP BY:** 2024년 월별로 주문 상태 분포를 조회하세요. 각 월의 완료(confirmed), 취소(cancelled), 기타 건수를 표시합니다.
 
-
 ??? tip "Hint"
     Extract year-month with `SUBSTR(ordered_at, 1, 7)`. Conditional aggregation with `SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END)`.
-
 
 ??? success "Answer"
     ```sql
@@ -367,18 +320,14 @@
     | 2024-02 | ...          | ...       | ...       | ...         | ...         |
     | ...     | ...          | ...       | ...       | ...         | ...         |
 
-
 ---
-
 
 ### Problem 11
 
 **다중 JOIN + Subqueries + String functions:** VIP 고객이 구매한 상품 중, 리뷰 평점이 4점 이상인 상품의 이름, 브랜드, 평균 평점, VIP 구매 횟수를 조회하세요.
 
-
 ??? tip "Hint"
     `customers(grade='VIP') JOIN orders JOIN order_items JOIN products`로 VIP 구매 상품을 파악. Subqueries로 리뷰 평균 4점 이상 필터링.
-
 
 ??? success "Answer"
     ```sql
@@ -407,18 +356,14 @@
     |------|-------|------------|--------------------|
     | ...  | ...   | ...        | ...                |
 
-
 ---
-
 
 ### Problem 12
 
 **LEFT JOIN + COALESCE + GROUP BY:** Find all products' name, price, total units sold, and total review count. Show 0 for products with no sales/reviews.
 
-
 ??? tip "Hint"
     카디널리티 폭발 방지를 위해 판매 수량과 리뷰 수를 각각 Subqueries로 집계한 뒤 LEFT JOIN합니다. `COALESCE(값, 0)`으로 NULL을 0으로 변환.
-
 
 ??? success "Answer"
     ```sql
@@ -447,18 +392,14 @@
     |------|--------|------------|--------------|
     | ...  | ...    | ...        | ...          |
 
-
 ---
-
 
 ### Problem 13
 
 **UNION + JOIN + GROUP BY:** Calculate per-customer "activity score". 1 order=10pts, 1 review=5pts, 1 inquiry=3pts. Show top 10.
 
-
 ??? tip "Hint"
     Combine scores per activity type with UNION ALL, then SUM externally for total. JOIN with `customers` for names.
-
 
 ??? success "Answer"
     ```sql
@@ -486,18 +427,14 @@
     |------|-------|-------------|--------|---------|------------|
     | ...  | VIP   | ...         | ...    | ...     | ...        |
 
-
 ---
-
 
 ### Problem 14
 
 **Subqueries + JOIN + Date functions:** 가입 후 30일 이내에 첫 주문을 한 고객과, 30일이 지나서야 첫 주문을 한 고객의 수를 비교하세요.
 
-
 ??? tip "Hint"
     `MIN(ordered_at)`으로 고객별 첫 주문일을 구한 Subqueries를 만들고, `julianday(first_order) - julianday(created_at)`으로 가입~첫 주문 간 일수를 계산합니다.
-
 
 ??? success "Answer"
     ```sql
@@ -527,18 +464,14 @@
     | 31~90일     | ...            | ...      |
     | 90일 초과   | ...            | ...      |
 
-
 ---
-
 
 ### Problem 15
 
 **Multi-JOIN + CASE + GROUP BY:** Show revenue by payment method and card issuer. For non-card payments, show issuer as 'N/A'.
 
-
 ??? tip "Hint"
     `payments JOIN orders`. Handle NULL with `COALESCE(card_issuer, '해당없음')`. `GROUP BY method, card_issuer`.
-
 
 ??? success "Answer"
     ```sql
@@ -567,9 +500,7 @@
     | 카드      | 신한카드 | ...           | ...          | ...        |
     | ...       | ...      | ...           | ...          | ...        |
 
-
 ---
-
 
 ### Problem 16
 
@@ -580,10 +511,8 @@
 - 91~180일: Cold
 - 181일 이상 또는 주문 없음: Dormant
 
-
 ??? tip "Hint"
     Include customers without orders via `LEFT JOIN`. Get last order with `MAX(ordered_at)`, then calculate elapsed days with `julianday('now') - julianday(last_order)`.
-
 
 ??? success "Answer"
     ```sql
@@ -622,21 +551,16 @@
     | Cold          | ...            | ...  |
     | Dormant       | ...            | ...  |
 
-
 ---
 
-
 ## Advanced (17~25): Complex Real-world Scenarios
-
 
 ### Problem 17
 
 **Monthly Revenue Report:** Find 2024 monthly revenue, order count, unique customers, avg order value, and month-over-month growth rate.
 
-
 ??? tip "Hint"
     Use `LAG()` window function to get previous month revenue and calculate growth rate. Supported in SQLite 3.25+.
-
 
 ??? success "Answer"
     ```sql
@@ -671,18 +595,14 @@
     | 2024-02 | ...           | ...         | ...              | ...             | ...%        |
     | ...     | ...           | ...         | ...              | ...             | ...%        |
 
-
 ---
-
 
 ### Problem 18
 
 **Customer Segment Analysis:** Find average order amount, average review rating, and return rate (returns/orders) per customer grade.
 
-
 ??? tip "Hint"
     각 지표를 Subqueries로 따로 집계한 뒤 `customers`의 `grade`로 GROUP BY. 반품 건수는 `returns` 테이블에서 카운트합니다.
-
 
 ??? success "Answer"
     ```sql
@@ -728,18 +648,14 @@
     | SILVER | ...            | ...              | ...        | ...             |
     | BRONZE | ...            | ...              | ...        | ...             |
 
-
 ---
-
 
 ### Problem 19
 
 **Low Stock Risk Check:** Find products where current stock is less than 30-day sales volume. Show name, current stock, 30-day sales, and estimated days until depletion.
 
-
 ??? tip "Hint"
     Calculate 30-day sales from `order_items JOIN orders` with `ordered_at >= date('now', '-30 days')`. Estimated days: `stock_qty / (30d_sales / 30)`.
-
 
 ??? success "Answer"
     ```sql
@@ -770,18 +686,14 @@
     |------|---------------|----------|---------------|
     | ...  | ...           | ...      | ...일         |
 
-
 ---
-
 
 ### Problem 20
 
 **Category Hierarchy Analysis:** Find product count, total revenue, and avg review rating per top-level category (depth=0). Include mid/sub-category products in the top-level total.
 
-
 ??? tip "Hint"
     Follow the category `parent_id` upward. Self-JOIN `categories` to find top-level. depth=0 is top, depth=1 is mid, depth=2 is sub.
-
 
 ??? success "Answer"
     ```sql
@@ -813,18 +725,14 @@
     |--------------|---------------|---------------|------------|
     | ...          | ...           | ...           | ...        |
 
-
 ---
-
 
 ### Problem 21
 
 **Supplier Performance Comparison:** Find product count, total revenue, avg review rating, and return rate per supplier. Top 10 by revenue.
 
-
 ??? tip "Hint"
     `suppliers JOIN products JOIN order_items`로 매출 집계. 반품은 `returns JOIN orders JOIN order_items`에서 `product_id`로 연결. 각 지표를 Subqueries로 분리하면 깔끔합니다.
-
 
 ??? success "Answer"
     ```sql
@@ -865,18 +773,14 @@
     |--------------|---------------|---------------|------------|-----------------|
     | ...          | ...           | ...           | ...        | ...             |
 
-
 ---
-
 
 ### Problem 22
 
 **Coupon Impact Analysis:** Compare average payment amount, average item count, and completion rate between coupon-used and non-coupon orders.
 
-
 ??? tip "Hint"
     JOIN `orders LEFT JOIN coupon_usage`. Distinguish with `CASE WHEN cu.id IS NOT NULL THEN 'Used' ELSE 'Unused' END`.
-
 
 ??? success "Answer"
     ```sql
@@ -902,18 +806,14 @@
     | 쿠폰 미사용 | ...         | ...        | ...       | ...              |
     | 쿠폰 사용   | ...         | ...        | ...       | ...              |
 
-
 ---
-
 
 ### Problem 23
 
 **Wishlist Conversion Analysis:** Find the conversion rate (% that led to actual purchase) per category for wishlisted products.
 
-
 ??? tip "Hint"
     Determine conversion via `wishlists.is_purchased`. Connect categories via `products JOIN categories`.
-
 
 ??? success "Answer"
     ```sql
@@ -935,18 +835,14 @@
     |----------|----------------|-----------------|---------------------|
     | ...      | ...            | ...             | ...                 |
 
-
 ---
-
 
 ### Problem 24
 
 **Customer Inquiry Response Analysis:** Find average resolution time (created_at ~ resolved_at), resolution rate, and escalation rate per inquiry type (category).
 
-
 ??? tip "Hint"
     Resolution time: `julianday(resolved_at) - julianday(created_at)`. Count resolved with `CASE WHEN resolved_at IS NOT NULL`. Aggregate escalations with `SUM(escalated)`.
-
 
 ??? success "Answer"
     ```sql
@@ -970,9 +866,7 @@
     |----------------|-------------|------------------|------------------|---------------------|
     | ...            | ...         | ...              | ...              | ...                 |
 
-
 ---
-
 
 ### Problem 25
 
@@ -984,10 +878,8 @@
 4. 평균 리뷰 평점
 5. 미해결 문의 건수
 
-
 ??? tip "Hint"
     Create each KPI as `SELECT 'metric_name' AS metric, value AS value` and combine with `UNION ALL`. Use `strftime` for this/last month.
-
 
 ??? success "Answer"
     ```sql

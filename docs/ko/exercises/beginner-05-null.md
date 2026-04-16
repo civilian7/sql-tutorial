@@ -8,12 +8,6 @@
 !!! abstract "학습 범위"
     `IS NULL`, `IS NOT NULL`, `COALESCE`, `IFNULL`, NULL과 집계 함수, NULL 정렬
 
-!!! info "시작하기 전에"
-    이 연습은 **입문 1~6강**에서 배운 내용을 사용합니다.
-    JOIN, 서브쿼리, CASE, 윈도우 함수는 사용하지 않습니다.
-
----
-
 ## 기초 (1~10)
 
 IS NULL, IS NOT NULL, COALESCE의 기본 사용법을 연습합니다.

@@ -11,12 +11,6 @@
 !!! abstract "Concepts"
     `SUBSTR`, `LENGTH`, `UPPER`/`LOWER`, `REPLACE`, `TRIM`, `INSTR`, `GROUP_CONCAT`, `COALESCE`, `ROUND`, `ABS`, `CAST`, `NULLIF`, `IIF`/`CASE`, `printf`
 
-!!! info "Before You Begin"
-    This exercise applies what you learned in **Intermediate Lessons 12~13** (string functions, math/utility functions) to practical scenarios.
-    Transform and format data using SQLite string/math functions.
-
----
-
 ## Basic (1~7)
 
 Practice basic string functions (LENGTH, UPPER, SUBSTR, REPLACE).

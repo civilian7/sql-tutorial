@@ -10,12 +10,6 @@
 !!! abstract "Concepts"
     `CASE WHEN THEN ELSE END`, Simple CASE, Searched CASE, CASE + aggregation/sorting
 
-!!! info "Before You Begin"
-    This exercise uses concepts from **Beginner Lessons 1-7**.
-    JOIN, subqueries, and window functions are not used.
-
----
-
 ## Basic (1~10)
 
 Practice the basic usage of simple CASE and searched CASE.

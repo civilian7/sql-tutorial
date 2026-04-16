@@ -11,12 +11,6 @@
 !!! abstract "학습 범위"
     `SUBSTR`, `LENGTH`, `UPPER`/`LOWER`, `REPLACE`, `TRIM`, `INSTR`, `GROUP_CONCAT`, `COALESCE`, `ROUND`, `ABS`, `CAST`, `NULLIF`, `IIF`/`CASE`, `printf`
 
-!!! info "시작하기 전에"
-    이 연습은 **중급 12~13강**(문자열 함수, 수학/유틸리티 함수)에서 배운 내용을 실전에 적용합니다.
-    SQLite의 문자열/숫자 함수를 사용하여 데이터를 변환하고 포매팅합니다.
-
----
-
 ## 기초 (1~7)
 
 기본 문자열 함수(LENGTH, UPPER, SUBSTR, REPLACE)를 연습합니다.

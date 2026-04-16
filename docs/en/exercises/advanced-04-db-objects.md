@@ -14,13 +14,6 @@
 !!! abstract "Concepts"
     `CREATE VIEW`, View query, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), Audit Logging, Stored procedure concepts (MySQL/PG)
 
-!!! info "Before You Begin"
-    This exercise puts into practice what you learned in **Advanced Lesson 22** (Views), **Lecture 24** (Trigger), and **Lecture 26** (Stored Procedures).
-    Views and triggers can be run in SQLite.
-    Stored procedure questions (15-20) are provided under the MySQL/PostgreSQL tab.
-
----
-
 ## Views (1~7)
 
 Practice creating, using, and managing views.

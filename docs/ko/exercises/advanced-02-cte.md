@@ -12,13 +12,6 @@
 !!! abstract "학습 범위"
     `WITH`, 재귀 CTE(`WITH RECURSIVE`), 다중 CTE 체이닝, CTE + 집계/JOIN/윈도우 함수
 
-!!! info "시작하기 전에"
-    이 연습은 **고급 19강**(CTE)에서 배운 내용을 실전에 적용합니다.
-    재귀 CTE는 SQLite에서 `WITH RECURSIVE` 구문으로 사용합니다.
-    취소/반품 주문 제외 조건: `status NOT IN ('cancelled', 'returned', 'return_requested')`
-
----
-
 ## 기초 (1~5)
 
 단일 CTE와 CTE + JOIN/집계를 연습합니다.

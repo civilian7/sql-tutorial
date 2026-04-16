@@ -12,12 +12,6 @@
 !!! abstract "Concepts"
     `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG`, `LEAD`, `SUM/AVG/COUNT OVER`, `FIRST_VALUE`, `LAST_VALUE`, `ROWS BETWEEN`
 
-!!! info "Before You Begin"
-    This exercise puts into practice what you learned in **Advanced Lesson 18** (Window Functions).
-    All queries can be executed in SQLite. Cancellation/return order exclusion conditions: `status NOT IN ('cancelled', 'returned', 'return_requested')`
-
----
-
 ## Basic (1~5)
 
 Practice the basic syntax of window functions.

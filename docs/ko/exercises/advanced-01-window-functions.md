@@ -12,12 +12,6 @@
 !!! abstract "학습 범위"
     `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`, `LAG`, `LEAD`, `SUM/AVG/COUNT OVER`, `FIRST_VALUE`, `LAST_VALUE`, `ROWS BETWEEN`
 
-!!! info "시작하기 전에"
-    이 연습은 **고급 18강**(윈도우 함수)에서 배운 내용을 실전에 적용합니다.
-    모든 쿼리는 SQLite에서 실행 가능합니다. 취소/반품 주문 제외 조건: `status NOT IN ('cancelled', 'returned', 'return_requested')`
-
----
-
 ## 기초 (1~5)
 
 윈도우 함수의 기본 구문을 연습합니다.

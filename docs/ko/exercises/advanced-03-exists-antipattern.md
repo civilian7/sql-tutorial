@@ -14,13 +14,6 @@
 !!! abstract "학습 범위"
     `EXISTS`, `NOT EXISTS`, 상관 서브쿼리, 안티 조인 패턴, 전칭 한정(Universal Quantification)
 
-!!! info "시작하기 전에"
-    이 연습은 **고급 20강**(EXISTS)에서 배운 내용을 실전에 적용합니다.
-    `EXISTS`는 서브쿼리의 결과가 한 행이라도 있으면 TRUE를 반환합니다.
-    `NOT EXISTS`는 그 반대 — 결과가 한 행도 없을 때 TRUE입니다.
-
----
-
 ## 기초 (1~5)
 
 EXISTS와 NOT EXISTS의 기본 사용법을 연습합니다.

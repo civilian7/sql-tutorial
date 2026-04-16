@@ -8,12 +8,6 @@
 !!! abstract "Concepts"
     `IS NULL`, `IS NOT NULL`, `COALESCE`, `IFNULL`, NULL and aggregate functions, NULL sorting
 
-!!! info "Before You Begin"
-    This exercise uses concepts from **Beginner Lessons 1-6**.
-    JOIN, subqueries, CASE, and window functions are not used.
-
----
-
 ## Basic (1~10)
 
 Practice the basic usage of IS NULL, IS NOT NULL, and COALESCE.

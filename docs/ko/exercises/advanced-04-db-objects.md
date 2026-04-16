@@ -14,13 +14,6 @@
 !!! abstract "학습 범위"
     `CREATE VIEW`, 뷰 쿼리, `DROP VIEW`, `CREATE TRIGGER` (AFTER/BEFORE, INSERT/UPDATE/DELETE, WHEN, OLD/NEW), 감사 로깅, 저장 프로시저 개념(MySQL/PG)
 
-!!! info "시작하기 전에"
-    이 연습은 **고급 22강**(뷰), **24강**(트리거), **26강**(저장 프로시저)에서 배운 내용을 실전에 적용합니다.
-    뷰와 트리거는 SQLite에서 실행 가능합니다.
-    저장 프로시저 문제(15~20)는 MySQL/PostgreSQL 탭으로 제공됩니다.
-
----
-
 ## 뷰 (1~7)
 
 뷰(View)의 생성, 활용, 관리를 연습합니다.

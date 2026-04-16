@@ -12,12 +12,6 @@
 !!! abstract "Concepts"
     All Beginner topics: `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, Aggregate functions, `GROUP BY`, `HAVING`, `IS NULL`, `COALESCE`, `CASE`
 
-!!! info "Before You Begin"
-    This exercise combines **all concepts from Beginner Lessons 1-7**. Each problem requires using 2-5 concepts simultaneously.
-    JOIN, subqueries, and window functions are not used. All problems use a single table only.
-
----
-
 ## Basic (1~10)
 
 Practice combining 2-3 concepts.

@@ -14,13 +14,6 @@
 !!! abstract "Concepts"
     `EXISTS`, `NOT EXISTS`, Correlated subquery, Anti-join pattern, Universal Quantification
 
-!!! info "Before You Begin"
-    This exercise puts into practice what you learned in **Advanced Lesson 20** (EXISTS).
-    `EXISTS` returns TRUE if there is at least one row as a result of the subquery.
-    `NOT EXISTS` is the opposite — TRUE when there are no rows of results.
-
----
-
 ## Basic (1~5)
 
 Practice the basic usage of EXISTS and NOT EXISTS.

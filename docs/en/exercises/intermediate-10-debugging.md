@@ -14,12 +14,6 @@
 !!! abstract "Concepts"
     JOIN, Subqueries, Date functions, Aggregation, UNION, Diagnosing and fixing errors from intermediate syntax (Lessons 08~17) including DML
 
-!!! info "Before You Begin"
-    In practice, **logical errors** are more common than syntax errors when writing SQL.
-    This covers cases where queries run but produce wrong results, or unexpected errors occur.
-
----
-
 ## Basic (1~8): JOIN and Table Alias Errors
 
 ### Problem 1

@@ -10,12 +10,6 @@
 !!! abstract "학습 범위"
     `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `OFFSET`, `DISTINCT`, 별칭(`AS`), 산술 연산
 
-!!! info "시작하기 전에"
-    이 연습은 **입문 1~3강**(SELECT, WHERE, ORDER BY, LIMIT, OFFSET)에서 배운 내용만 사용합니다.
-    JOIN, 서브쿼리, GROUP BY, 집계 함수는 사용하지 않습니다.
-
----
-
 ## 기초 (1~10)
 
 한 가지 개념씩 연습합니다.

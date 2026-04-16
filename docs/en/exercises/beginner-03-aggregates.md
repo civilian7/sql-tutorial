@@ -10,13 +10,6 @@
 !!! abstract "Concepts"
     `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `ROUND`, `COUNT(DISTINCT)` + Previous lecture contents
 
-!!! info "Before You Begin"
-    This exercise uses only what you learned in **Introduction Lessons 1-4**.
-    GROUP BY, HAVING, JOIN, and subqueries are not used.
-    Aggregate functions return one result for **entire rows** filtered by WHERE.
-
----
-
 ## Basic (1~10)
 
 Practice one aggregate function at a time.
