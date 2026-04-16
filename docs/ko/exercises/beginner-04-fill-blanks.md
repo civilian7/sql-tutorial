@@ -197,7 +197,7 @@ LIMIT 10;
 ```
 
 
-**힌트 1:** 빈칸에는 두 테이블의 연결 조건이 들어갑니다. products의 외래키와 categories의 기본키를 매칭
+**힌트 1:** 빈칸에는 두 테이블의 연결 조건이 들어갑니다. products의 외래 키와 categories의 기본 키를 매칭
 
 
 ??? success "정답"
@@ -630,7 +630,7 @@ LIMIT 5;
 ```
 
 
-**힌트 1:** 각 빈칸에는 외래키 관계가 들어갑니다. o.customer_id = c.id, o.id = p.order_id, o.id = sh.order_id 패턴
+**힌트 1:** 각 빈칸에는 외래 키 관계가 들어갑니다. o.customer_id = c.id, o.id = p.order_id, o.id = sh.order_id 패턴
 
 
 ??? success "정답"

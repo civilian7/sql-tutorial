@@ -13,7 +13,7 @@
 
 **기본 테이블을 만드세요.** 아래 요구사항으로 `temp_memo` 테이블을 생성하세요.
 
-- `id`: 정수, 자동증가 기본키
+- `id`: 정수, 자동증가 기본 키
 - `title`: 텍스트, NOT NULL
 - `content`: 텍스트, NULL 허용
 - `created_at`: 텍스트, NOT NULL, 기본값 현재시각
@@ -47,7 +47,7 @@
 
 **UNIQUE 제약조건이 있는 테이블을 만드세요.** `temp_tag` 테이블을 생성하세요.
 
-- `id`: 정수, 자동증가 기본키
+- `id`: 정수, 자동증가 기본 키
 - `name`: 텍스트, NOT NULL, UNIQUE
 
 ??? tip "힌트"
@@ -81,7 +81,7 @@
 
 **CHECK 제약조건을 사용하세요.** `temp_product` 테이블을 생성하세요.
 
-- `id`: 정수, 자동증가 기본키
+- `id`: 정수, 자동증가 기본 키
 - `name`: 텍스트, NOT NULL
 - `price`: 실수, NOT NULL, 0 이상
 - `stock_qty`: 정수, NOT NULL, 0 이상, 기본값 0
@@ -117,7 +117,7 @@
 
 **NOT NULL과 DEFAULT를 적절히 조합하세요.** `temp_customer` 테이블을 생성하세요.
 
-- `id`: 정수, 자동증가 기본키
+- `id`: 정수, 자동증가 기본 키
 - `name`: 텍스트, NOT NULL
 - `email`: 텍스트, NOT NULL, UNIQUE
 - `grade`: 텍스트, NOT NULL, 기본값 `'BRONZE'`, `CHECK(grade IN ('BRONZE','SILVER','GOLD','VIP'))`
@@ -157,7 +157,7 @@
 
 **외래 키(FOREIGN KEY)가 있는 테이블을 만드세요.** `temp_order` 테이블을 생성하세요. `temp_customer`의 `id`를 참조합니다.
 
-- `id`: 정수, 자동증가 기본키
+- `id`: 정수, 자동증가 기본 키
 - `customer_id`: 정수, NOT NULL, `temp_customer(id)` 참조
 - `total_amount`: 실수, NOT NULL, CHECK >= 0
 - `ordered_at`: 텍스트, NOT NULL
@@ -252,7 +252,7 @@
 
 **ON DELETE CASCADE를 체험하세요.** `temp_order_item` 테이블을 생성하되, `temp_order`가 삭제되면 관련 아이템도 자동 삭제되도록 설정하세요.
 
-- `id`: 정수, 자동증가 기본키
+- `id`: 정수, 자동증가 기본 키
 - `order_id`: 정수, NOT NULL, `temp_order(id)` 참조, ON DELETE CASCADE
 - `product_name`: 텍스트, NOT NULL
 - `quantity`: 정수, NOT NULL, CHECK > 0
@@ -303,7 +303,7 @@
 
 **ON DELETE SET NULL을 체험하세요.** `temp_task` 테이블을 생성하세요. 담당자(`assignee_id`)가 삭제되어도 업무 기록은 남기되, 담당자만 NULL로 바뀌도록 설정하세요.
 
-- `id`: 정수, 자동증가 기본키
+- `id`: 정수, 자동증가 기본 키
 - `title`: 텍스트, NOT NULL
 - `assignee_id`: 정수, NULL 허용, `temp_customer(id)` 참조, ON DELETE SET NULL
 

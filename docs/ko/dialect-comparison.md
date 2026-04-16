@@ -37,7 +37,8 @@
 | 용도 | SQLite | MySQL | PostgreSQL | SQL Server | Oracle |
 |------|--------|-------|------------|------------|--------|
 | 정수 | INTEGER | INT | INTEGER | INT | NUMBER(10) |
-| 실수 | REAL | DECIMAL(12,2) | NUMERIC(12,2) | DECIMAL(12,2) | NUMBER(12,2) |
+| 고정소수점 | REAL | DECIMAL(12,2) | NUMERIC(12,2) | DECIMAL(12,2) | NUMBER(12,2) |
+| 부동소수점 | REAL | DOUBLE | DOUBLE PRECISION | FLOAT | BINARY_DOUBLE |
 | 짧은 문자열 | TEXT | VARCHAR(200) | VARCHAR(200) | NVARCHAR(200) | VARCHAR2(200) |
 | 긴 텍스트 | TEXT | TEXT | TEXT | NVARCHAR(MAX) | CLOB |
 | 날짜/시간 | TEXT (ISO 8601) | DATETIME | TIMESTAMP | DATETIME2 | TIMESTAMP |

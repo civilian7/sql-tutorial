@@ -107,7 +107,7 @@
 불만 접수 채널(channel)별로 접수 건수를 조회하세요. 건수가 많은 순으로 정렬합니다.
 
 ??? tip "힌트"
-    complaints 테이블의 channel 컬럼을 GROUP BY로 그룹화하세요.
+    complaints 테이블의 channel 칼럼을 GROUP BY로 그룹화하세요.
 
 ??? success "정답"
     ```sql
@@ -264,7 +264,7 @@
 불만의 우선순위(priority)와 상태(status) 조합별로 건수를 조회하세요.
 
 ??? tip "힌트"
-    GROUP BY에 여러 컬럼을 쉼표로 나열할 수 있습니다: GROUP BY priority, status
+    GROUP BY에 여러 칼럼을 쉼표로 나열할 수 있습니다: GROUP BY priority, status
 
 ??? success "정답"
     ```sql
@@ -284,7 +284,7 @@
 성별(gender)과 등급(grade) 조합별로 고객 수를 조회하세요. 고객 수가 많은 순으로 정렬합니다.
 
 ??? tip "힌트"
-    GROUP BY gender, grade로 두 컬럼을 함께 그룹화하세요. gender가 NULL인 경우도 하나의 그룹으로 나타납니다.
+    GROUP BY gender, grade로 두 칼럼을 함께 그룹화하세요. gender가 NULL인 경우도 하나의 그룹으로 나타납니다.
 
 ??? success "정답"
     ```sql

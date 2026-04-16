@@ -37,7 +37,8 @@ These are topics covered in detail with SQLite/MySQL/PostgreSQL tabs in each les
 | Purpose | SQLite | MySQL | PostgreSQL | SQL Server | Oracle |
 |---------|--------|-------|------------|------------|--------|
 | Integer | INTEGER | INT | INTEGER | INT | NUMBER(10) |
-| Decimal | REAL | DECIMAL(12,2) | NUMERIC(12,2) | DECIMAL(12,2) | NUMBER(12,2) |
+| Fixed-point | REAL | DECIMAL(12,2) | NUMERIC(12,2) | DECIMAL(12,2) | NUMBER(12,2) |
+| Floating-point | REAL | DOUBLE | DOUBLE PRECISION | FLOAT | BINARY_DOUBLE |
 | Short string | TEXT | VARCHAR(200) | VARCHAR(200) | NVARCHAR(200) | VARCHAR2(200) |
 | Long text | TEXT | TEXT | TEXT | NVARCHAR(MAX) | CLOB |
 | Date/Time | TEXT (ISO 8601) | DATETIME | TIMESTAMP | DATETIME2 | TIMESTAMP |
