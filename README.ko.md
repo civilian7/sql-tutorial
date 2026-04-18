@@ -349,3 +349,10 @@ pdf.bat en       # 영어만
 ### v1.0.0
 
 최초 릴리스: 21 테이블, 18 뷰, 5 트리거, SQLite 전용, 201 연습문제
+
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=civilian7/sql-tutorial&type=Date&theme=dark" />
+  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=civilian7/sql-tutorial&type=Date" />
+  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=civilian7/sql-tutorial&type=Date" />
+</picture>
