@@ -349,3 +349,9 @@ Free for personal learning and non-commercial education. For commercial use: civ
 ### v1.0.0
 
 Initial release: 21 tables, 18 views, 5 triggers, SQLite only, 201 exercises
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=civilian7/sql-tutorial&type=Date&theme=dark" />
+  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=civilian7/sql-tutorial&type=Date" />
+  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=civilian7/sql-tutorial&type=Date" />
+</picture>
