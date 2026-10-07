@@ -14,7 +14,7 @@ SCHEMA_SQL = """\
 -- E-commerce Test Database - SQL Server 2019+
 -- =============================================
 
-CREATE DATABASE ecommerce COLLATE Korean_CI_AS;
+CREATE DATABASE ecommerce COLLATE Korean_Wansung_CI_AS;
 GO
 
 USE ecommerce;
@@ -755,7 +755,7 @@ CREATE OR ALTER VIEW v_category_tree AS
 WITH tree AS (
     SELECT id, name, parent_id, depth,
            CAST(name AS NVARCHAR(MAX)) AS full_path,
-           RIGHT('0000' + CAST(sort_order AS NVARCHAR(4)), 4) AS sort_key
+           CAST(RIGHT('0000' + CAST(sort_order AS NVARCHAR(4)), 4) AS NVARCHAR(MAX)) AS sort_key
     FROM categories
     WHERE parent_id IS NULL
     UNION ALL
