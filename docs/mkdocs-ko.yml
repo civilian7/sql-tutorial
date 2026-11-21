@@ -46,6 +46,7 @@ extra_css:
 
 hooks:
   - hooks/mermaid_hook.py
+  - hooks/canonical_hook.py
 
 nav:
   - 교재 소개: index.md
